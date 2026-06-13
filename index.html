@@ -2,37 +2,18 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>level.immo | Escenario 1.0</title>
+    <title>level.immo | Estilo Arquitectónico</title>
     <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
     <style>
-        /* Estilo de los botones Glassmorphism */
-        .ui-overlay {
-            position: absolute; bottom: 10%; left: 50%; transform: translateX(-50%);
-            display: flex; gap: 20px; z-index: 100;
+        .ui-overlay { position: absolute; bottom: 5%; left: 50%; transform: translateX(-50%); display: flex; gap: 40px; z-index: 100; }
+        .btn { 
+            background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2); color: #fff; padding: 20px 40px; 
+            border-radius: 10px; font-family: 'Helvetica Neue', sans-serif; 
+            letter-spacing: 3px; cursor: pointer; transition: 0.5s;
         }
-        .btn {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(222, 255, 154, 0.3);
-            color: white; padding: 15px 30px; border-radius: 50px;
-            font-family: 'Urbanist', sans-serif; font-weight: bold; cursor: pointer;
-            text-transform: uppercase; letter-spacing: 2px;
-            transition: all 0.3s;
-        }
-        .btn:hover { background: #deff9a; color: black; border-color: #deff9a; }
-        
-        /* Efecto Láser Inicial */
-        #laser-fx {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: black; z-index: 999; display: flex; align-items: center; justify-content: center;
-            animation: fadeOut 3s forwards; pointer-events: none;
-        }
-        .laser-line {
-            width: 100%; height: 2px; background: #deff9a; box-shadow: 0 0 20px #deff9a;
-            animation: laserSweep 1.5s ease-in-out;
-        }
-        @keyframes laserSweep { 0% { transform: scaleX(0); } 100% { transform: scaleX(1); } }
-        @keyframes fadeOut { 0%, 80% { opacity: 1; } 100% { opacity: 0; } }
+        .btn:hover { background: rgba(222, 255, 154, 0.2); border-color: #deff9a; }
+        #laser-fx { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 999; animation: fadeOut 2.5s forwards; }
     </style>
 </head>
 <body>
@@ -40,35 +21,31 @@
     <div id="laser-fx"><div class="laser-line"></div></div>
 
     <div class="ui-overlay">
-        <button class="btn" onclick="alert('Cargando Catálogo Villas...')">Comprar</button>
-        <button class="btn" onclick="alert('Iniciando Valoración IA...')">Vender</button>
-        <button class="btn" onclick="alert('Conectando con Banca...')">Hipoteca</button>
+        <button class="btn">COMPRAR</button>
+        <button class="btn">VENDER</button>
+        <button class="btn">HIPOTECA</button>
     </div>
 
     <a-scene>
         <a-assets>
-            <video id="level-intro.mp4" src="intro.mp4" autoplay loop="true" crossorigin="anonymous" playsinline></video>
-            <img id="sky360" src="https://alvarocastellanos.com/wp-content/uploads/2021/04/render-360-interior-vivienda-lujo.jpg">
+            <video id="avatar" src="level-intro.mp4" autoplay loop="true" playsinline></video>
+            <img id="sky" src="https://polyhaven.com/textures/hdri/sunrise_mediterranean.jpg">
         </a-assets>
 
-        <a-sky src="#sky360" rotation="0 -90 0"></a-sky>
+        <a-sky src="#sky"></a-sky>
 
-        <a-video src="#videoAvatar" position="0 1.6 -3" width="3" height="1.7" class="raycastable">
-            <a-entity geometry="primitive: plane; width: 3.1; height: 1.8" 
-                      material="color: #000; opacity: 0.5" position="0 0 -0.01"></a-entity>
-        </a-video>
+        <a-video src="#avatar" position="0 1.6 -3" width="3" height="1.7" material="shader: flat; transparent: true; opacity: 0.9"></a-video>
 
         <a-camera><a-cursor color="#deff9a"></a-cursor></a-camera>
     </a-scene>
 
     <script>
-        // Lógica de Sonido Dolby Surround (Simulado)
-        window.addEventListener('click', function() {
-            var audio = new Audio('https://www.soundjay.com/mechanical/sounds/laser-gun-01.mp3');
+        // Lógica de Audio Fina Filipino
+        window.addEventListener('click', () => {
+            const audio = new Audio('FindMyWay.mp3'); // Asegúrate de llamar a tu archivo así al subirlo
+            audio.volume = 0.5;
             audio.play();
         });
     </script>
 </body>
 </html>
-
-¡Ya tienes el diseño que merece **level.immo**! Si el video que subiste se llama de otra forma, solo cambia `intro.mp4` por el nombre exacto. ¿Qué te parece este nivel de sofisticación?
