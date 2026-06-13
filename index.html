@@ -2,16 +2,54 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>LEVEL IMMO | Hub con Avatar IA</title>
+    <title>LEVEL IMMO | Hub con Avatar IA Interactivo</title>
     <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+    
+    <script>
+        AFRAME.registerComponent('avatar-ia', {
+            init: function () {
+                var el = this.el;
+                var textEl = el.querySelector('.status-text');
+                var hablando = false;
+
+                el.addEventListener('click', function () {
+                    // Si ya está hablando, no hacemos nada para que no se pisen las voces
+                    if (hablando) return;
+                    
+                    hablando = true;
+
+                    // Cambiamos el texto visual a dorado para indicar que está activo
+                    textEl.setAttribute('value', 'HABLANDO...');
+                    textEl.setAttribute('color', '#FFCC00');
+
+                    // Creamos el mensaje de voz
+                    var mensaje = new SpeechSynthesisUtterance("Bienvenido a LEVEL punto IMMO, tu espacio inmobiliario de alto rendimiento. Soy tu agente de inteligencia artificial. ¿En qué puedo ayudarte hoy, Joan?");
+                    
+                    // Configuramos idioma y tono (voz femenina de España por defecto en la mayoría de navegadores)
+                    mensaje.lang = 'es-ES';
+                    mensaje.rate = 1.0;  // Velocidad
+                    mensaje.pitch = 1.1; // Un tono ligeramente más agudo/tecnológico
+
+                    // Qué hacer cuando termine de hablar
+                    mensaje.onend = function() {
+                        hablando = false;
+                        textEl.setAttribute('value', 'IA ACTIVA');
+                        textEl.setAttribute('color', '#00d2ff');
+                    };
+
+                    // Lanzamos la voz
+                    window.speechSynthesis.speak(mensaje);
+                });
+            }
+        });
+    </script>
 </head>
 <body>
     <a-scene cursor="rayOrigin: mouse" raycaster="objects: .interactive">
         <a-assets>
             <img id="office" src="https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=2000" crossorigin="anonymous">
             <video id="video-corp" autoplay loop="true" src="tu-video.mp4" crossorigin="anonymous" muted></video>
-
-            </a-assets>
+        </a-assets>
 
         <a-sky src="#office" rotation="0 -90 0"></a-sky>
 
@@ -23,20 +61,23 @@
             <a-entity animation="property: rotation; to: 0 360 0; loop: true; dur: 10000; easing: linear">
                 <a-icosahedron radius="0.2" color="#FFCC00"></a-icosahedron>
             </a-entity>
-            <a-plane class="interactive" position="0 -0.35 0" width="0.7" height="0.2" color="#000000" opacity="0.8">
+            <a-plane position="0 -0.35 0" width="0.7" height="0.2" color="#000000" opacity="0.8">
                 <a-text value="ADVISORS" align="center" scale="0.4 0.4 0.4" color="#FFCC00" font="exo2bold"></a-text>
             </a-plane>
         </a-entity>
 
         <a-entity id="avatar-container" position="0 1.2 -2" animation="property: position; to: 0 1.25 -2; dir: alternate; loop: true; dur: 2000; easing: easeInOutSine">
-
-            <a-entity id="avatar-placeholder">
-                <a-sphere radius="0.12" color="#00d2ff" material="emissive: #00d2ff; emissiveIntensity: 0.5" position="0 0.15 0"></a-sphere>
+            
+            <a-entity id="avatar-placeholder" class="interactive" avatar-ia>
+                <a-sphere radius="0.12" color="#00d2ff" material="emissive: #00d2ff; emissiveIntensity: 0.5" position="0 0.15 0"
+                          animation="property: material.emissiveIntensity; to: 1; dir: alternate; loop: true; dur: 1000"></a-sphere>
+                
                 <a-cylinder radius="0.06" height="0.3" color="#fff" material="opacity: 0.8; transparent: true"></a-cylinder>
-                <a-text value="ESPERANDO\nAVATAR 3D" align="center" position="0 -0.3 0" scale="0.3 0.3 0.3" color="#00d2ff"></a-text>
+                
+                <a-text class="status-text" value="TOCA PARA INICIAR" align="center" position="0 -0.3 0" scale="0.3 0.3 0.3" color="#00d2ff" font="exo2bold"></a-text>
             </a-entity>
 
-            </a-entity>
+        </a-entity>
 
         <a-entity position="0 0.8 -2">
             <a-plane class="interactive" position="-0.8 0 0" width="0.7" height="0.2" color="#000" opacity="0.9"><a-text value="COMPRAR" align="center" scale="0.4 0.4 0.4" color="#fff" font="exo2bold"></a-text></a-plane>
