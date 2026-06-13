@@ -2,29 +2,65 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>level.immo | Computación Espacial</title>
+    <title>LEVEL IMMO | Experiencia VR Pro</title>
     <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
-    <style>
-        body { margin: 0; font-family: 'Helvetica Neue', Arial, sans-serif; }
-        #header { position: absolute; top: 20px; width: 100%; text-align: center; color: white; z-index: 1000; pointer-events: none; }
-        #menu { position: absolute; bottom: 50px; width: 100%; text-align: center; z-index: 1000; display: flex; justify-content: center; gap: 20px; }
-        .btn { padding: 15px 30px; background: rgba(0, 0, 0, 0.7); color: #fff; border: 1px solid #fff; cursor: pointer; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; transition: 0.3s; }
-        .btn:hover { background: #fff; color: #000; }
-    </style>
+    <script src="https://unpkg.com/aframe-event-set-component@5.0.0/dist/aframe-event-set-component.min.js"></script>
 </head>
 <body>
-    <div id="header">
-        <h1 style="margin:0; font-size: 24px;">LEVEL IMMO</h1>
-        <p style="margin:5px; font-size: 12px; opacity: 0.8;">COMPUTACIÓN ESPACIAL INMOBILIARIA</p>
-    </div>
-    <div id="menu">
-        <button class="btn" onclick="window.open('https://www.youtube.com/watch?v=oTGUy0fR9i4', '_blank')">Piso La Ràpita</button>
-        <button class="btn" onclick="window.open('https://www.youtube.com/watch?v=9TTqR1wD3jI', '_blank')">Vender Chalet</button>
-        <button class="btn" onclick="window.open('https://www.youtube.com/watch?v=WFv2xu42U40', '_blank')">Villa L'Oasis</button>
-    </div>
-    <a-scene embedded vr-mode-ui="enabled: false">
-        <a-sky color="#2c3e50"></a-sky>
-        <a-camera position="0 0 0"></a-camera>
+
+    <a-scene shadow="type: pcfsoft" renderer="antialias: true; colorManagement: true;">
+        
+        <a-assets>
+            <img id="mar-horizonte" src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=2000&q=80" crossorigin="anonymous">
+            <img id="publicidad" src="https://images.unsplash.com/photo-1533750349088-cd871a92f312?auto=format&fit=crop&w=2000&q=80" crossorigin="anonymous">
+            <img id="btn-tex" src="https://img.freepik.com/free-photo/dark-blue-product-background_53876-92804.jpg" crossorigin="anonymous">
+        </a-assets>
+
+        <a-entity id="rig">
+            <a-camera position="0 1.6 0" look-controls>
+                <a-cursor id="cursor" material="color: #00d2ff; shader: flat" geometry="primitive: ring; radiusInner: 0.02; radiusOuter: 0.03"></a-cursor>
+            </a-camera>
+            <a-entity laser-controls="hand: left" raycaster="objects: .interactive; far: 100; interval: 100"></a-entity>
+            <a-entity laser-controls="hand: right" raycaster="objects: .interactive; far: 100; interval: 100"></a-entity>
+        </a-entity>
+
+        <a-sky src="#mar-horizonte" phi-length="180" rotation="0 90 0" radius="100"></a-sky>
+        <a-sky src="#publicidad" phi-length="180" rotation="0 -90 0" radius="95"></a-sky>
+
+        <a-entity line="start: 0 -1 0; end: 0 -1 -100; color: #00d2ff" opacity="0.8"></a-entity>
+        <a-cylinder position="0 -1.5 -50" rotation="90 0 0" radius="0.05" height="100" material="color: #00d2ff; emissive: #00d2ff; emissiveIntensity: 2; opacity: 0.4; transparent: true"></a-cylinder>
+
+        <a-entity id="bot-pedestal" position="2.5 0 -2">
+            <a-cylinder radius="0.5" height="0.1" material="color: #00d2ff; opacity: 0.3; transparent: true"></a-cylinder>
+            <a-text value="LEVEL AGENT\n(IA PREPARADA)" align="center" position="0 1.5 0" scale="0.6 0.6 0.6" color="#ffffff"></a-text>
+        </a-entity>
+
+        <a-entity id="menu-3d" position="0 1.2 -3">
+            <a-box class="interactive" position="-1.2 0 0" width="1" height="0.4" depth="0.1" material="src: #btn-tex"
+                   event-set__mouseenter="scale: 1.1 1.1 1.1; material.emissive: #00d2ff"
+                   event-set__mouseleave="scale: 1 1 1; material.emissive: #000"
+                   onclick="window.open('https://www.youtube.com/watch?v=oTGUy0fR9i4', '_blank')">
+                <a-text value="PISO RAPITA" align="center" position="0 0 0.06" scale="0.3 0.3 0.3"></a-text>
+            </a-box>
+
+            <a-box class="interactive" position="0 0 0" width="1" height="0.4" depth="0.1" material="src: #btn-tex"
+                   event-set__mouseenter="scale: 1.1 1.1 1.1; material.emissive: #00d2ff"
+                   event-set__mouseleave="scale: 1 1 1; material.emissive: #000"
+                   onclick="window.open('https://www.youtube.com/watch?v=9TTqR1wD3jI', '_blank')">
+                <a-text value="CHALET" align="center" position="0 0 0.06" scale="0.3 0.3 0.3"></a-text>
+            </a-box>
+
+            <a-box class="interactive" position="1.2 0 0" width="1" height="0.4" depth="0.1" material="src: #btn-tex"
+                   event-set__mouseenter="scale: 1.1 1.1 1.1; material.emissive: #00d2ff"
+                   event-set__mouseleave="scale: 1 1 1; material.emissive: #000"
+                   onclick="window.open('https://www.youtube.com/watch?v=WFv2xu42U40', '_blank')">
+                <a-text value="L'OASIS" align="center" position="0 0 0.06" scale="0.3 0.3 0.3"></a-text>
+            </a-box>
+        </a-entity>
+
+        <a-light type="ambient" color="#fff" intensity="0.5"></a-light>
+        <a-light type="point" position="0 5 0" intensity="1" color="#00d2ff"></a-light>
     </a-scene>
+
 </body>
 </html>
