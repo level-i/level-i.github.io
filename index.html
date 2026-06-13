@@ -2,16 +2,51 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>LEVEL IMMO | Spatial Hub</title>
+    <title>LEVEL IMMO | Spatial Hub 10.0</title>
     <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+    
     <script>
-        // Este pequeño script asegura que el video empiece a reproducirse en cuanto se toca la pantalla
+        // 1. MOTOR DE VOZ DEL AVATAR
+        AFRAME.registerComponent('avatar-ia', {
+            init: function () {
+                var el = this.el;
+                var textEl = el.querySelector('.status-text');
+                var hablando = false;
+
+                el.addEventListener('click', function () {
+                    if (hablando) return;
+                    hablando = true;
+                    
+                    textEl.setAttribute('value', 'HABLANDO...');
+                    textEl.setAttribute('color', '#FFCC00');
+
+                    var mensaje = new SpeechSynthesisUtterance("Bienvenido a LEVEL punto IMMO. Sistema de voz activado.");
+                    mensaje.lang = 'es-ES';
+
+                    mensaje.onend = function() {
+                        hablando = false;
+                        textEl.setAttribute('value', 'IA ACTIVA');
+                        textEl.setAttribute('color', '#00d2ff');
+                    };
+
+                    window.speechSynthesis.speak(mensaje);
+                });
+            }
+        });
+
+        // 2. CONTROL DEL VÍDEO (Reproducir/Pausar al hacer clic)
         AFRAME.registerComponent('control-video', {
             init: function () {
+                var el = this.el;
                 var videoEl = document.querySelector('#video-corp');
-                this.el.addEventListener('click', function () {
-                    if (videoEl) {
+                
+                el.addEventListener('click', function () {
+                    if (!videoEl) return;
+                    // Si está pausado, arranca. Si está sonando, se pausa.
+                    if (videoEl.paused) {
                         videoEl.play();
+                    } else {
+                        videoEl.pause();
                     }
                 });
             }
@@ -23,7 +58,7 @@
         <a-assets>
             <img id="office" src="https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=2000" crossorigin="anonymous">
             
-            <video id="video-corp" autoplay loop="true" src="level-intro.mp4" crossorigin="anonymous" muted playsinline webkit-playsinline></video>
+            <video id="video-corp" loop="true" src="https://cdn.aframe.io/videos/bunny.mp4" crossorigin="anonymous" playsinline webkit-playsinline></video>
         </a-assets>
 
         <a-sky src="#office" rotation="0 -90 0"></a-sky>
@@ -41,10 +76,10 @@
         </a-entity>
 
         <a-entity id="avatar-container" position="0 1.2 -2" animation="property: position; to: 0 1.25 -2; dir: alternate; loop: true; dur: 2000; easing: easeInOutSine">
-            <a-entity id="avatar-placeholder" geometry="primitive: sphere; radius: 0.3" material="opacity: 0; transparent: true">
+            <a-entity id="avatar-placeholder" class="interactive" avatar-ia geometry="primitive: sphere; radius: 0.3" material="opacity: 0; transparent: true">
                 <a-sphere radius="0.12" color="#00d2ff" material="emissive: #00d2ff; emissiveIntensity: 0.5" position="0 0.15 0" animation="property: material.emissiveIntensity; to: 1; dir: alternate; loop: true; dur: 1000"></a-sphere>
                 <a-cylinder radius="0.06" height="0.3" color="#fff" material="opacity: 0.8; transparent: true"></a-cylinder>
-                <a-text class="status-text" value="IA ACTIVA" align="center" position="0 -0.3 0" scale="0.3 0.3 0.3" color="#00d2ff" font="exo2bold"></a-text>
+                <a-text class="status-text" value="TOCA PARA VOZ" align="center" position="0 -0.3 0" scale="0.3 0.3 0.3" color="#00d2ff" font="exo2bold"></a-text>
             </a-entity>
         </a-entity>
 
@@ -62,7 +97,8 @@
 
         <a-entity position="0 1.6 3.5" rotation="0 180 0" class="interactive" control-video>
             <a-plane width="4" height="2.25" color="#000" position="0 0 -0.01"></a-plane>
-            <a-video src="#video-corp" width="3.8" height="2.15"></a-video>
+            <a-text value="CLIC PARA REPRODUCIR" align="center" position="0 0 0.01" scale="0.8 0.8 0.8" color="#fff" opacity="0.5"></a-text>
+            <a-video src="#video-corp" width="3.8" height="2.15" position="0 0 0.02"></a-video>
         </a-entity>
 
     </a-scene>
