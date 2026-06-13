@@ -6,7 +6,7 @@
     <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
     
     <script>
-        // 1. MOTOR DE VOZ DEL AVATAR
+        // 1. MOTOR DE VOZ DEL AVATAR (Exorcismo realizado, voz neutra)
         AFRAME.registerComponent('avatar-ia', {
             init: function () {
                 var el = this.el;
@@ -22,6 +22,8 @@
 
                     var mensaje = new SpeechSynthesisUtterance("Bienvenido a LEVEL punto IMMO. Sistema de voz activado. ¿En qué te podemos ayudar?");
                     mensaje.lang = 'es-ES';
+                    mensaje.pitch = 1.0; 
+                    mensaje.rate = 1.0;
 
                     mensaje.onend = function() {
                         hablando = false;
@@ -34,7 +36,7 @@
             }
         });
 
-        // 2. CONTROL DEL VÍDEO (Reproducir/Pausar al hacer clic)
+        // 2. CONTROL DEL VÍDEO (Desbloqueo y reproducción)
         AFRAME.registerComponent('control-video', {
             init: function () {
                 var el = this.el;
@@ -42,11 +44,16 @@
                 
                 el.addEventListener('click', function () {
                     if (!videoEl) return;
-                    // Si está pausado, arranca. Si está sonando, se pausa.
+                    
+                    // Le quitamos el silencio de seguridad al hacer clic
+                    videoEl.muted = false;
+
                     if (videoEl.paused) {
                         videoEl.play();
+                        el.querySelector('a-text').setAttribute('visible', 'false');
                     } else {
                         videoEl.pause();
+                        el.querySelector('a-text').setAttribute('visible', 'true');
                     }
                 });
             }
@@ -58,7 +65,7 @@
         <a-assets>
             <img id="office" src="https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=2000" crossorigin="anonymous">
             
-            <video id="video-corp" loop="true" src="level-intro.mp4" crossorigin="anonymous" playsinline webkit-playsinline></video>
+            <video id="video-corp" loop="true" src="level-intro.mp4" crossorigin="anonymous" playsinline webkit-playsinline muted></video>
         </a-assets>
 
         <a-sky src="#office" rotation="0 -90 0"></a-sky>
@@ -98,7 +105,7 @@
         <a-entity position="0 1.6 3.5" rotation="0 180 0" class="interactive" control-video>
             <a-plane width="4" height="2.25" color="#000" position="0 0 -0.01"></a-plane>
             <a-text value="CLIC PARA REPRODUCIR" align="center" position="0 0 0.01" scale="0.8 0.8 0.8" color="#fff" opacity="0.5"></a-text>
-            <a-video src="level-intro.mp4" width="3.8" height="2.15" position="0 0 0.02"></a-video>
+            <a-video src="#video-corp" width="3.8" height="2.15" position="0 0 0.02"></a-video>
         </a-entity>
 
     </a-scene>
