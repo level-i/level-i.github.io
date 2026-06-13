@@ -2,68 +2,61 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>level.immo | Registro de Acceso</title>
+    <title>level.immo | Computación Espacial</title>
     <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
     <style>
-        /* Estilos del Modal */
-        #form-overlay { 
+        body { margin: 0; overflow: hidden; font-family: 'Helvetica Neue', sans-serif; }
+        
+        /* Capas de formularios (Ocultas por defecto) */
+        .overlay { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: rgba(0,0,0,0.85); backdrop-filter: blur(15px);
-            display: none; justify-content: center; align-items: center; z-index: 1000;
+            background: rgba(0,0,0,0.85); backdrop-filter: blur(20px);
+            display: none; justify-content: center; align-items: center; z-index: 999;
         }
-        .form-container { 
-            background: rgba(20,20,20,0.9); padding: 40px; border: 1px solid #deff9a;
-            border-radius: 20px; color: white; width: 400px;
-        }
-        input { 
-            width: 100%; padding: 10px; margin: 10px 0; background: transparent; 
-            border: 1px solid #555; color: white; border-radius: 5px;
-        }
-        button { width: 100%; padding: 15px; background: #deff9a; border: none; cursor: pointer; font-weight: bold; }
+        .panel { background: #111; padding: 40px; border-radius: 20px; border: 1px solid #deff9a; width: 400px; color: white; }
+        .panel h2 { color: #deff9a; }
+        input, select { width: 100%; margin: 10px 0; padding: 10px; background: #222; border: 1px solid #444; color: white; border-radius: 5px; }
+        
+        /* Botones de acción */
+        .ui-menu { position: absolute; bottom: 5%; left: 50%; transform: translateX(-50%); display: flex; gap: 20px; z-index: 100; }
+        .btn { padding: 15px 30px; background: rgba(255,255,255,0.05); border: 1px solid #deff9a; color: white; cursor: pointer; text-transform: uppercase; border-radius: 50px; }
     </style>
 </head>
 <body>
 
-    <div id="form-overlay">
-        <div class="form-container">
-            <h2>Acceso al Catálogo</h2>
-            <input type="text" id="nombre" placeholder="Nombre completo">
-            <input type="text" id="dni" placeholder="DNI">
-            <input type="email" id="email" placeholder="Email">
-            <input type="tel" id="tlf" placeholder="Teléfono">
-            <button onclick="enviarDatos()">SOLICITAR ACCESO</button>
+    <div class="ui-menu">
+        <button class="btn" onclick="openPanel('form-compra')">Comprar</button>
+        <button class="btn" onclick="openPanel('form-vender')">Vender</button>
+        <button class="btn" onclick="openPanel('form-advisors')">Advisors</button>
+    </div>
+
+    <div id="form-compra" class="overlay">
+        <div class="panel">
+            <h2>Acceso a Activos</h2>
+            <input type="text" id="Nombre" placeholder="Nombre completo">
+            <input type="text" id="Telefono" placeholder="Teléfono">
+            <button onclick="enviar()">SOLICITAR ACCESO</button>
         </div>
     </div>
 
     <a-scene>
         <a-sky src="https://polyhaven.com/textures/hdri/sunrise_mediterranean.jpg"></a-sky>
-        <a-entity position="0 1.6 -3">
-            <a-video src="level-intro.mp4" width="3" height="1.7"></a-video>
-        </a-entity>
-        <a-entity position="0 0.5 -2.5" class="ui">
-            <a-entity geometry="primitive: plane; width: 0.8; height: 0.3" material="color: #deff9a" position="-1 0 0" 
-                      onclick="document.getElementById('form-overlay').style.display='flex'">
-                <a-text value="COMPRAR" align="center" color="black" position="0 0 0.01"></a-text>
-            </a-entity>
-        </a-entity>
         <a-camera><a-cursor></a-cursor></a-camera>
     </a-scene>
 
     <script>
-        function enviarDatos() {
+        function openPanel(id) { document.getElementById(id).style.display = 'flex'; }
+        
+        function enviar() {
             const data = {
-                nombre: document.getElementById('nombre').value,
-                dni: document.getElementById('dni').value,
-                email: document.getElementById('email').value,
-                tlf: document.getElementById('tlf').value
+                Nombre: document.getElementById('Nombre').value,
+                Telefono: document.getElementById('Telefono').value
             };
-            
-            // AQUÍ PEGA TU URL DE WEBHOOK DE LARK
-            fetch('TU_URL_WEBHOOK_LARK_AQUI', {
+            fetch('https://hook.eu1.make.com/3lfkz9o57xe4yr5twdnrg3523akp8jkv', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify(data)
-            }).then(() => alert('Datos recibidos. Acceso en proceso.'));
+            }).then(() => alert('Datos enviados'));
         }
     </script>
 </body>
