@@ -13,41 +13,45 @@
         /* PANTALLA DE ACCESO PROFESIONAL (FASE CERO) */
         #pantalla-bloqueo {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: #020617; z-index: 9999; 
+            background: #020617; z-index: 99999; 
             display: flex; flex-direction: column; align-items: center; justify-content: center; 
             font-family: 'Montserrat', sans-serif; color: white; text-align: center;
-            transition: opacity 1s ease;
+            opacity: 1;
+            transition: opacity 1.2s ease-in-out; /* Desvanecimiento lento y fluido */
         }
         .btn-entrar {
             background: linear-gradient(135deg, #00f2fe, #4f46e5); color: white; border: none; 
             padding: 20px 50px; font-size: 1.1rem; font-weight: bold; border-radius: 30px; 
             cursor: pointer; box-shadow: 0 0 30px rgba(0,242,254,0.5); text-transform: uppercase; letter-spacing: 1px;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             z-index: 100000;
+            transition: transform 0.2s;
         }
         .btn-entrar:hover { transform: scale(1.02); }
 
-        /* PRIORIDAD ABSOLUTA PARA EL BOTÓN DE DESCONEXIÓN HÚBS */
+        /* BOTÓN DE SALIDA CON PRIORIDAD ABSOLUTA EN LA ZONA CERO */
         .btn-desconectar-hub {
-            background: transparent; 
-            border: 2px solid #334155; 
-            color: #94a3b8; 
-            padding: 12px 30px; 
+            background: rgba(239, 68, 68, 0.1); 
+            border: 2px solid #ef4444; 
+            color: #fca5a5; 
+            padding: 14px 35px; 
             border-radius: 25px; 
             cursor: pointer; 
             font-family: 'Montserrat', sans-serif; 
             font-size: 0.85rem; 
             letter-spacing: 1px;
-            font-weight: 600;
+            font-weight: 700;
+            text-transform: uppercase;
             z-index: 999999 !important; 
             position: relative;
             display: inline-block;
-            transition: all 0.3s;
+            transition: all 0.3s ease;
         }
         .btn-desconectar-hub:hover {
-            border-color: #00f2fe;
-            color: #00f2fe;
-            box-shadow: 0 0 15px rgba(0,242,254,0.2);
+            background: #ef4444;
+            color: white;
+            box-shadow: 0 0 20px rgba(239,68,68,0.6);
+            transform: scale(1.02);
         }
         
         .a-canvas {
@@ -303,7 +307,7 @@
         function solicitarPermisosYEntrar() {
             const capaBloqueo = document.getElementById('pantalla-bloqueo');
             if (capaBloqueo) capaBloqueo.style.opacity = '0';
-            setTimeout(() => { if (capaBloqueo) capaBloqueo.remove(); }, 1000);
+            setTimeout(() => { if (capaBloqueo) capaBloqueo.remove(); }, 1200);
             
             iaActiva = true;
 
@@ -327,18 +331,19 @@
             }, 300);
         }
 
+        // ACCIÓN DE SALIDA CORREGIDA: Desvanecimiento lento de 1.2s y salto a home
         function desactivarHubSutil() {
             const hub = document.getElementById('pantalla-bloqueo');
             if(hub) {
                 hub.style.opacity = '0';
-                setTimeout(() => { window.location.href = "https://level.immo"; }, 1000);
+                setTimeout(() => { window.location.href = "https://level.immo"; }, 1200);
             } else {
                 window.location.href = "https://level.immo";
             }
         }
 
         function abrirMicrofonoCliente() {
-            if (!iaActiva || faseFormulario === 3) return; // BLOQUEO: Si estamos escribiendo el mail manual, el micro se apaga
+            if (!iaActiva || faseFormulario === 3) return; 
             clearTimeout(timerInactividad);
             document.getElementById('texto-estado-vr').setAttribute('value', 'ESCUCHANDO AL CLIENTE...');
             timerInactividad = setTimeout(() => { forzarReinicioCanalVoz(); }, 8000);
@@ -346,7 +351,7 @@
         }
 
         function forzarReinicioCanalVoz() {
-            if (faseFormulario === 3) return; // Seguro total: evita el bucle de reintento oral en el email
+            if (faseFormulario === 3) return; 
             try { recognition.abort(); } catch(e) {}
             if (faseFormulario > 0) {
                 abrirMicrofonoCliente();
@@ -380,7 +385,6 @@
                 document.getElementById('texto-estado-vr').setAttribute('value', 'SARA: PREGUNTA TELEFONO');
                 hablarSara("Gracias. Ahora necesito que me facilites tu numero de contacto completo.", abrirMicrofonoCliente);
             } else if (faseFormulario === 3) {
-                // FLUJO MANUAL LIMPIO CON LLAMADA EXCLUSIVA DE ACCIÓN
                 try { recognition.abort(); } catch(e){} 
                 document.getElementById('texto-estado-vr').setAttribute('value', 'TECLADO: ESCRIBIR EMAIL');
                 
@@ -391,7 +395,6 @@
                         faseFormulario = 4;
                         ejecutarFlujoFormulario();
                     } else {
-                        // RE-RECORDATORIO PROACTIVO: Si cancela o se calla, Sara le recuerda de forma segura el paso
                         hablarSara("Necesitamos que indiques tu correo electronico obligatoriamente para poder enviarte el justificante. Por favor, escribelo.", function() {
                             faseFormulario = 3;
                             ejecutarFlujoFormulario();
