@@ -10,7 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Orbitron:wght@700&display=swap" rel="stylesheet">
     
     <style>
-        /* PANTALLA DE ACCESO PROFESIONAL */
+        /* PANTALLA DE ACCESO PROFESIONAL CAPA ABSOLUTA FLOTANTE */
         #pantalla-bloqueo {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background: #020617; z-index: 9999; 
@@ -24,12 +24,6 @@
         }
         .btn-entrar:hover { transform: scale(1.02); }
         
-        /* OCULTACIÓN TÉCNICA REPARADA PARA MÓVILES (Evita canvas a 0px) */
-        #escena-vr {
-            visibility: hidden;
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-        }
         .a-canvas {
             position: absolute !important; top: 0 !important; left: 0 !important;
             width: 100% !important; height: 100% !important;
@@ -44,7 +38,7 @@
     </style>
 
     <script>
-        // REGISTRO INMEDIATO: Imprescindible para evitar cuelgues en PC y Oculus al arrancar la escena
+        // REGISTRO INMEDIATO DEL COMPONENTE DE ENLACES EXTERNOS EN REALIDAD VIRTUAL
         AFRAME.registerComponent('componente-enlace-vr', {
             init: function () {
                 var el = this.el;
@@ -70,7 +64,7 @@
         <a class="btn-privacidad-html" href="https://level.immo/politica-de-privacidad/" target="_blank">Política de Privacidad</a>
     </div>
 
-    <a-scene id="escena-vr" loading-screen="enabled: false">
+    <a-scene loading-screen="enabled: false">
         
         <a-assets>
             <video id="video-tiktok" src="https://level-i.github.io/level-intro.mp4" loop muted playsinline crossorigin="anonymous"></video>
@@ -219,16 +213,13 @@
         };
 
         function solicitarPermisosYEntrar() {
-            // 1. Desbloqueo visual inmediato compatible (Bypass de la capa oculta)
-            document.getElementById('pantalla-bloqueo').style.display = 'none';
-            
-            const escena = document.getElementById('escena-vr');
-            escena.style.visibility = 'visible';
-            escena.style.position = 'relative';
+            // DESTRUCCIÓN FULMINANTE DE LA CAPA: Desaparece la pantalla azul sin tocar el canvas 3D
+            const capaBloqueo = document.getElementById('pantalla-bloqueo');
+            if (capaBloqueo) capaBloqueo.remove(); 
             
             iaActiva = true;
 
-            // 2. INYECCIÓN LIMPIA DEL CURSOR ESPACIAL
+            // INYECCIÓN LIMPIA Y DIRECTA DEL CURSOR
             const camaraContainer = document.getElementById('contenedor-camara');
             const nuevoCursor = document.createElement('a-entity');
             nuevoCursor.setAttribute('cursor', 'fuse: false; rayOrigin: mouse;');
@@ -238,7 +229,7 @@
             nuevoCursor.setAttribute('raycaster', 'objects: .clickable');
             camaraContainer.appendChild(nuevoCursor);
 
-            // 3. Activación de vídeo de fondo sutil al 10%
+            // Activación inmediata del vídeo vertical al 10% sutil ambiente
             const video = document.getElementById('video-tiktok');
             video.muted = false;
             video.volume = 0.1;
@@ -247,14 +238,14 @@
                 vPromise.catch(error => {});
             }
 
-            // 4. Secuencia limpia para evitar el colapso asíncrono en móviles
+            // Llamada limpia y asíncrona de Susana
             document.getElementById('texto-estado-vr').setAttribute('value', 'INICIALIZANDO VOZ...');
             setTimeout(() => {
                 document.getElementById('texto-estado-vr').setAttribute('value', 'SUSANA HABLANDO...');
                 hablarSusana(welcomeMsg, abrirMicrofonoCliente);
             }, 300);
 
-            // Permisos pasivos de giroscopio en iOS
+            // Permisos pasivos de giroscopio sólo en terminales iOS
             try {
                 if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
                     DeviceOrientationEvent.requestPermission();
