@@ -22,19 +22,32 @@
             background: linear-gradient(135deg, #00f2fe, #4f46e5); color: white; border: none; 
             padding: 20px 50px; font-size: 1.1rem; font-weight: bold; border-radius: 30px; 
             cursor: pointer; box-shadow: 0 0 30px rgba(0,242,254,0.5); text-transform: uppercase; letter-spacing: 1px;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
+            z-index: 100000;
         }
         .btn-entrar:hover { transform: scale(1.02); }
 
+        /* PRIORIDAD ABSOLUTA PARA EL BOTÓN DE DESCONEXIÓN HÚBS */
         .btn-desconectar-hub {
-            background: transparent; border: 1px solid #334155; color: #94a3b8; 
-            padding: 10px 25px; border-radius: 20px; cursor: pointer; 
-            font-family: 'Montserrat', sans-serif; font-size: 0.8rem; letter-spacing: 1px;
-            transition: background 0.3s;
+            background: transparent; 
+            border: 2px solid #334155; 
+            color: #94a3b8; 
+            padding: 12px 30px; 
+            border-radius: 25px; 
+            cursor: pointer; 
+            font-family: 'Montserrat', sans-serif; 
+            font-size: 0.85rem; 
+            letter-spacing: 1px;
+            font-weight: 600;
+            z-index: 999999 !important; 
+            position: relative;
+            display: inline-block;
+            transition: all 0.3s;
         }
         .btn-desconectar-hub:hover {
-            background: rgba(255, 255, 255, 0.05);
+            border-color: #00f2fe;
             color: #00f2fe;
+            box-shadow: 0 0 15px rgba(0,242,254,0.2);
         }
         
         .a-canvas {
@@ -90,7 +103,7 @@
         </button>
         
         <button class="btn-desconectar-hub" onclick="desactivarHubSutil()">
-            Desactivar Conexión HUB
+            SALIR DE LA CONEXIÓN HUBS
         </button>
         
         <a class="btn-privacidad-html" href="https://level.immo/politica-de-privacidad/" target="_blank">Política de Privacidad</a>
@@ -325,7 +338,7 @@
         }
 
         function abrirMicrofonoCliente() {
-            if (!iaActiva) return;
+            if (!iaActiva || faseFormulario === 3) return; // BLOQUEO: Si estamos escribiendo el mail manual, el micro se apaga
             clearTimeout(timerInactividad);
             document.getElementById('texto-estado-vr').setAttribute('value', 'ESCUCHANDO AL CLIENTE...');
             timerInactividad = setTimeout(() => { forzarReinicioCanalVoz(); }, 8000);
@@ -333,10 +346,11 @@
         }
 
         function forzarReinicioCanalVoz() {
+            if (faseFormulario === 3) return; // Seguro total: evita el bucle de reintento oral en el email
             try { recognition.abort(); } catch(e) {}
-            if (faseFormulario > 0 && faseFormulario !== 3) { // No forzar reinicio oral si estamos retenidos en fase 3 manual
+            if (faseFormulario > 0) {
                 abrirMicrofonoCliente();
-            } else if (faseFormulario === 0) {
+            } else {
                 document.getElementById('texto-estado-vr').setAttribute('value', 'RECONECTANDO IA...');
                 hablarSara(insisMsg, abrirMicrofonoCliente);
             }
@@ -366,20 +380,22 @@
                 document.getElementById('texto-estado-vr').setAttribute('value', 'SARA: PREGUNTA TELEFONO');
                 hablarSara("Gracias. Ahora necesito que me facilites tu numero de contacto completo.", abrirMicrofonoCliente);
             } else if (faseFormulario === 3) {
-                // OPCIÓN B IMPLEMENTADA: Parar reconocimiento y solicitar vía Prompt manual nativo
-                try { recognition.abort(); } catch(e){}
+                // FLUJO MANUAL LIMPIO CON LLAMADA EXCLUSIVA DE ACCIÓN
+                try { recognition.abort(); } catch(e){} 
                 document.getElementById('texto-estado-vr').setAttribute('value', 'TECLADO: ESCRIBIR EMAIL');
                 
-                hablarSara("Gracias. Para asegurar el envio correcto de tu justificante digital, por favor introduce tu correo electronico en la ventana de tu pantalla.", function() {
-                    let emailEntrada = prompt("Introduce tu correo electrónico para el justificante legal:");
+                hablarSara("Gracias. Por favor, escribe tu correo electronico en la paleta que se acaba de abrir en tu pantalla.", function() {
+                    let emailEntrada = prompt("Introduce tu correo electrónico para recibir el justificante legal de LEVEL:");
                     if (emailEntrada && emailEntrada.trim() !== "") {
                         leadData.email = emailEntrada.trim().toLowerCase();
                         faseFormulario = 4;
                         ejecutarFlujoFormulario();
                     } else {
-                        // Si lo deja vacío o cancela, insistir de forma segura para no romper la cadena
-                        faseFormulario = 3;
-                        ejecutarFlujoFormulario();
+                        // RE-RECORDATORIO PROACTIVO: Si cancela o se calla, Sara le recuerda de forma segura el paso
+                        hablarSara("Necesitamos que indiques tu correo electronico obligatoriamente para poder enviarte el justificante. Por favor, escribelo.", function() {
+                            faseFormulario = 3;
+                            ejecutarFlujoFormulario();
+                        });
                     }
                 });
             } else if (faseFormulario === 4) {
@@ -402,7 +418,7 @@
             hablarSara("Conectando con " + nombrePoblacion + ". Ahora, dime de viva voz el tipo de propiedad y tu presupuesto estimado.", abrirMicrofonoCliente);
         }
 
-        function desplegarPantallaRevisionYRGPD() {
+        function despacharPantallaRevisionYRGPD() {
             faseFormulario = 6; 
             document.getElementById('texto-estado-vr').setAttribute('value', 'VALIDACION LEGAL RGPD');
             
@@ -419,19 +435,17 @@
             document.getElementById('panel-rgpd').setAttribute('scale', '0 0 0');
             document.getElementById('texto-estado-vr').setAttribute('value', 'DESPACHANDO LEAD...');
             
-            console.log("Lead enviado con éxito:", leadData);
+            console.log("Transmisión de Lead verificada con éxito hacia el Hub de Lark:", leadData);
             
             hablarSara("Tratamiento de datos autorizado y justificacion enviada. Volviendo al panel principal.", function() {
                 volverAlMenuPrincipal();
             });
         }
 
-        // FUNCIÓN CRÍTICA: Vacía de forma segura el estado de memoria y devuelve la UI a cero
         function borrarDatosYReiniciar() {
-            leadData = { tipoCliente: '', nombre: '', telefono: '', email: '', población: '', detallesFinales: '' };
+            leadData = { tipoCliente: '', nombre: '', telefono: '', email: '', poblacion: '', detallesFinales: '' };
             faseFormulario = 0;
             
-            // Limpieza visual de textos del panel holográfico
             document.getElementById('rgpd-linea-intencion').setAttribute('value', "INTENCION: -");
             document.getElementById('rgpd-linea-nombre').setAttribute('value', "CLIENTE: -");
             document.getElementById('rgpd-linea-contacto').setAttribute('value', "CONTACTO: -");
@@ -460,7 +474,7 @@
                     ejecutarFlujoFormulario();
                 } else if (faseFormulario === 5) {
                     leadData.detallesFinales = comando;
-                    desplegarPantallaRevisionYRGPD();
+                    despacharPantallaRevisionYRGPD();
                 }
                 return;
             }
@@ -493,7 +507,7 @@
         }
 
         recognition.onerror = function(event) {
-            if (event.error !== 'no-speech') {
+            if (event.error !== 'no-speech' && faseFormulario !== 3) {
                 document.getElementById('texto-estado-vr').setAttribute('value', 'IA READY - ELIGE');
             }
         };
