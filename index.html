@@ -22,6 +22,7 @@
             padding: 20px 50px; font-size: 1.1rem; font-weight: bold; border-radius: 30px; 
             cursor: pointer; box-shadow: 0 0 30px rgba(0,242,254,0.5); text-transform: uppercase; letter-spacing: 1px;
         }
+        .btn-entrar:hover { transform: scale(1.02); }
         .a-canvas {
             position: absolute !important; top: 0 !important; left: 0 !important;
             width: 100% !important; height: 100% !important;
@@ -208,25 +209,30 @@
             }
         };
 
-        // PARCHE DE INGENIERÍA PARA SENSOR MÓVIL (iOS / Android)
+        // ENTRADA MULTIPLATAFORMA SEGURA (PC, ANDROID E IOS)
         function solicitarPermisosYEntrar() {
-            // Comprobamos si el navegador móvil exige permisos DeviceOrientation (Caso Apple iOS 13+)
-            if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
-                DeviceOrientationEvent.requestPermission()
-                    .then(permissionState => {
-                        if (permissionState === 'granted') {
-                            console.log("Sensores desbloqueados por el usuario en iOS.");
+            try {
+                // Comprobamos de forma segura si el navegador implementa la API de Apple (iOS 13+)
+                if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+                    DeviceOrientationEvent.requestPermission()
+                        .then(permissionState => {
+                            if (permissionState === 'granted') {
+                                console.log("Sensores desbloqueados en iOS.");
+                                arrancarEntornoVR();
+                            } else {
+                                alert("Es necesario habilitar los sensores para usar la oficina 360.");
+                            }
+                        })
+                        .catch(error => {
+                            console.warn("Fallo controlado en solicitud de sensores, accediendo igual:", error);
                             arrancarEntornoVR();
-                        } else {
-                            alert("Para disfrutar de la oficina 360 necesitas habilitar los sensores de movimiento.");
-                        }
-                    })
-                    .catch(error => {
-                        console.error("Error al solicitar sensores:", error);
-                        arrancarEntornoVR(); // Intento de arranque de respaldo
-                    });
-            } else {
-                // Caso Android o PC: Los sensores no requieren autorización explícita API de Apple
+                        });
+                } else {
+                    // PC, Android y Oculus entran directamente sin lanzar excepción
+                    arrancarEntornoVR();
+                }
+            } catch (err) {
+                console.warn("Navegador estándar detectado. Ejecutando arranque directo.", err);
                 arrancarEntornoVR();
             }
         }
