@@ -10,48 +10,28 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Orbitron:wght@700&display=swap" rel="stylesheet">
     
     <style>
-        /* PANTALLA DE ACCESO PROFESIONAL (FASE CERO) */
+        /* PANTALLA DE ACCESO PROFESIONAL (BIENVENIDA) */
         #pantalla-bloqueo {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background: #020617; z-index: 99999; 
             display: flex; flex-direction: column; align-items: center; justify-content: center; 
             font-family: 'Montserrat', sans-serif; color: white; text-align: center;
-            opacity: 1;
-            transition: opacity 1.2s ease-in-out; /* Desvanecimiento lento y fluido */
         }
         .btn-entrar {
             background: linear-gradient(135deg, #00f2fe, #4f46e5); color: white; border: none; 
             padding: 20px 50px; font-size: 1.1rem; font-weight: bold; border-radius: 30px; 
             cursor: pointer; box-shadow: 0 0 30px rgba(0,242,254,0.5); text-transform: uppercase; letter-spacing: 1px;
-            margin-bottom: 20px;
             z-index: 100000;
             transition: transform 0.2s;
         }
         .btn-entrar:hover { transform: scale(1.02); }
 
-        /* BOTÓN DE SALIDA CON PRIORIDAD ABSOLUTA EN LA ZONA CERO */
-        .btn-desconectar-hub {
-            background: rgba(239, 68, 68, 0.1); 
-            border: 2px solid #ef4444; 
-            color: #fca5a5; 
-            padding: 14px 35px; 
-            border-radius: 25px; 
-            cursor: pointer; 
-            font-family: 'Montserrat', sans-serif; 
-            font-size: 0.85rem; 
-            letter-spacing: 1px;
-            font-weight: 700;
-            text-transform: uppercase;
-            z-index: 999999 !important; 
-            position: relative;
-            display: inline-block;
-            transition: all 0.3s ease;
-        }
-        .btn-desconectar-hub:hover {
-            background: #ef4444;
-            color: white;
-            box-shadow: 0 0 20px rgba(239,68,68,0.6);
-            transform: scale(1.02);
+        /* CAPA DE FUNDIDO FINO FILIPINO ANTES DE IR A LA WEB */
+        #capa-fundido-negro {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000000; z-index: 9999999 !important;
+            opacity: 0; pointer-events: none;
+            transition: opacity 1.5s ease-in-out;
         }
         
         .a-canvas {
@@ -98,16 +78,14 @@
 </head>
 <body>
 
+    <div id="capa-fundido-negro"></div>
+
     <div id="pantalla-bloqueo">
         <h1 style="letter-spacing: 3px; font-size: 2.2rem; margin-bottom: 5px; font-family: 'Orbitron';">LEVEL – i</h1>
         <p style="color: #00f2fe; letter-spacing: 2px; margin-bottom: 40px; font-size: 0.85rem; font-weight: 600;">ORBITAL OFFICE CLIENT EXPERIENCE by Level.immo</p>
         
         <button class="btn-entrar" onclick="solicitarPermisosYEntrar()">
             Entrar en la Experiencia VR
-        </button>
-        
-        <button class="btn-desconectar-hub" onclick="desactivarHubSutil()">
-            SALIR DE LA CONEXIÓN HUBS
         </button>
         
         <a class="btn-privacidad-html" href="https://level.immo/politica-de-privacidad/" target="_blank">Política de Privacidad</a>
@@ -145,6 +123,10 @@
 
             <a-text id="nombre-advisor" value="SARA ADVISOR" align="center" position="0 1.05 0" scale="0.8 0.8 0.8" font="exo2bold" color="#00f2fe"></a-text>
             <a-text id="texto-estado-vr" value="IA READY" align="center" position="0 0.8 0" scale="0.55 0.55 0.55" font="monoid" color="#fff"></a-text>
+
+            <a-plane id="boton-salir-hub-3d" class="clickable" onclick="desactivarHubSutil()" position="0 0.62 0" width="0.9" height="0.12" color="#7f1d1d" material="opacity: 0.9; transparent: true;">
+                <a-text value="SALIR DE LA CONEXION HUBS" align="center" scale="0.22 0.22 0.22" font="exo2bold" color="#fca5a5"></a-text>
+            </a-plane>
 
             <a-entity id="contenedor-video-tiktok" position="0.75 0.1 0" scale="1 1 1">
                 <a-video src="#video-tiktok" width="0.75" height="1.3" material="opacity: 0.95; shader: flat; side: double;"></a-video>
@@ -306,8 +288,10 @@
 
         function solicitarPermisosYEntrar() {
             const capaBloqueo = document.getElementById('pantalla-bloqueo');
-            if (capaBloqueo) capaBloqueo.style.opacity = '0';
-            setTimeout(() => { if (capaBloqueo) capaBloqueo.remove(); }, 1200);
+            if (capaBloqueo) {
+                capaBloqueo.style.opacity = '0';
+                setTimeout(() => { if (capaBloqueo) capaBloqueo.remove(); }, 1200);
+            }
             
             iaActiva = true;
 
@@ -331,12 +315,16 @@
             }, 300);
         }
 
-        // ACCIÓN DE SALIDA CORREGIDA: Desvanecimiento lento de 1.2s y salto a home
+        // ACCIÓN DE SALIDA MEJORADA CON FUNDIDO FINO FILIPINO DESDE EL ENTORNO 3D
         function desactivarHubSutil() {
-            const hub = document.getElementById('pantalla-bloqueo');
-            if(hub) {
-                hub.style.opacity = '0';
-                setTimeout(() => { window.location.href = "https://level.immo"; }, 1200);
+            const fundido = document.getElementById('capa-fundido-negro');
+            if (fundido) {
+                fundido.style.pointerEvents = 'auto'; 
+                fundido.style.opacity = '1';          
+                
+                setTimeout(() => {
+                    window.location.href = "https://level.immo";
+                }, 1500); 
             } else {
                 window.location.href = "https://level.immo";
             }
@@ -362,6 +350,9 @@
         }
 
         function activarModulo1() {
+            // El botón de salir de la oficina se apaga mientras el usuario rellena datos
+            document.getElementById('boton-salir-hub-3d').setAttribute('scale', '0 0 0');
+            
             document.getElementById('contenedor-video-tiktok').setAttribute('scale', '0 0 0');
             document.getElementById('paleta-principal').setAttribute('scale', '0 0 0');
             document.getElementById('paleta-subintencion').setAttribute('scale', '1 1 1');
@@ -495,6 +486,8 @@
             document.getElementById('paleta-poblaciones').setAttribute('scale', '0 0 0');
             document.getElementById('panel-rgpd').setAttribute('scale', '0 0 0');
             
+            // Al volver, el botón de cerrar sesión se vuelve a activar en la oficina
+            document.getElementById('boton-salir-hub-3d').setAttribute('scale', '1 1 1');
             document.getElementById('contenedor-video-tiktok').setAttribute('scale', '1 1 1');
             document.getElementById('paleta-principal').setAttribute('scale', '1 1 1');
             
@@ -505,6 +498,7 @@
 
         function navegarModuloGeneric(id) {
             document.getElementById('contenedor-video-tiktok').setAttribute('scale', '0 0 0');
+            document.getElementById('boton-salir-hub-3d').setAttribute('scale', '0 0 0');
             document.getElementById('texto-estado-vr').setAttribute('value', 'CARGANDO MÓDULO ' + id + '...');
             hablarSara("Conectando con el sub modulo numero " + id);
         }
