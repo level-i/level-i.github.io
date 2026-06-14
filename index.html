@@ -3,267 +3,201 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LEVEL - Plataforma VR Advisor</title>
+    <title>LEVEL AI - Pantalla Cero</title>
     <style>
-        /* FONDO Y ENTORNO GENERAL */
-        body {
-            margin: 0;
-            padding: 0;
-            background: #0d1117;
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            color: #ffffff;
+        /* 1. ESTÉTICA ESPACIAL Y OFICINA EN LA NUBE */
+        body, html {
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            background: #020617;
+            font-family: 'Segoe UI', sans-serif;
+            color: white;
+            overflow: hidden;
+            background-image: radial-gradient(circle at center, rgba(0, 242, 254, 0.1) 0%, transparent 80%),
+                              url('http://googleusercontent.com/image_collection/image_retrieval/12211095272962485632');
+            background-size: cover;
+            background-position: center;
+        }
+
+        /* 2. DISEÑO CRISTAL DIAMANTE (Glassmorphism) */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+        }
+
+        .btn-diamante {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.05));
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.3s;
+            font-weight: bold;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            clip-path: polygon(10% 0, 90% 0, 100% 50%, 90% 100%, 10% 100%, 0 50%); /* Corte diamante */
+        }
+
+        .btn-diamante:hover {
+            background: rgba(0, 242, 254, 0.3);
+            border-color: #00f2fe;
+            transform: scale(1.05);
+        }
+
+        /* 3. LAYOUT DE PANTALLA CERO */
+        #pantalla-cero {
+            display: grid;
+            grid-template-columns: 300px 1fr 350px;
+            gap: 20px;
+            padding: 20px;
+            height: 90vh;
+        }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            align-content: center;
+        }
+
+        .video-sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        iframe {
+            width: 100%;
+            height: 180px;
+            border-radius: 10px;
+            border: 1px solid rgba(0, 242, 254, 0.3);
+        }
+
+        .susana-avatar {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            min-height: 100vh;
-            overflow: hidden;
-        }
-
-        /* CONTENEDOR DEL ESTADO DE LA IA */
-        #contenedor-ia {
-            margin-bottom: 40px;
             text-align: center;
         }
 
-        #estado-ia {
-            font-size: 1.2rem;
-            font-weight: 600;
-            letter-spacing: 2px;
+        .susana-img {
+            width: 250px;
+            height: 250px;
+            border-radius: 50%;
+            border: 3px solid #00f2fe;
+            box-shadow: 0 0 30px rgba(0, 242, 254, 0.5);
+            margin-bottom: 20px;
+            object-fit: cover;
+        }
+
+        #status-text {
             color: #00f2fe;
-            text-shadow: 0 0 10px rgba(0, 242, 254, 0.6);
-            transition: all 0.3s ease;
-        }
-
-        /* EFECTO CRISTAL DIAMANTE (GLASSMORPHISM PREMIUM) */
-        .btn-diamante {
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.05));
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.25);
-            border-top: 1px solid rgba(255, 255, 255, 0.4);
-            border-left: 1px solid rgba(255, 255, 255, 0.4);
-            padding: 18px 40px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #ffffff;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            border-radius: 4px; /* Corte limpio estilo joya */
-            cursor: pointer;
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37),
-                        inset 0 0 15px rgba(255, 255, 255, 0.1);
-            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-            position: relative;
-            overflow: hidden;
-        }
-
-        /* DESTELLO DE DIAMANTE EN REPOSO Y HOVER */
-        .btn-diamante::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -150%;
-            width: 50%;
-            height: 100%;
-            background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.4) 50%, rgba(255,255,255,0) 100%);
-            transform: skewX(-25deg);
-            transition: 0.75s;
-        }
-
-        .btn-diamante:hover::before {
-            left: 150%;
-        }
-
-        .btn-diamante:hover {
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0.08));
-            border-color: rgba(255, 255, 255, 0.5);
-            box-shadow: 0 12px 40px 0 rgba(0, 242, 254, 0.25),
-                        inset 0 0 20px rgba(255, 255, 255, 0.2);
-            transform: translateY(-2px);
-        }
-
-        .btn-diamante:active {
-            transform: translateY(1px);
-            box-shadow: 0 4px 15px 0 rgba(0, 242, 254, 0.15);
+            font-weight: bold;
+            letter-spacing: 2px;
+            margin-top: 10px;
+            text-shadow: 0 0 10px #00f2fe;
         }
     </style>
 </head>
 <body>
 
-    <div id="contenedor-ia">
-        <div id="estado-ia">IA READY</div>
+<div id="main-wrapper">
+    <div id="pantalla-cero">
+        
+        <div class="menu-grid">
+            <div class="btn-diamante" onclick="navegar(1)">1) Comprar o Invertir</div>
+            <div class="btn-diamante" onclick="navegar(2)">2) Vender Propiedad</div>
+            <div class="btn-diamante" onclick="navegar(3)">3) Hipoteca Pre-Aprobada</div>
+            <div class="btn-diamante" onclick="navegar(4)">4) Trámites Catastro</div>
+        </div>
+
+        <div class="susana-avatar">
+            <img src="http://googleusercontent.com/image_collection/image_retrieval/1194389574114506983" class="susana-img" alt="Susana Advisor">
+            <h2 style="font-family: 'Orbitron', sans-serif;">SUSANA ADVISOR</h2>
+            <div id="status-text">ESPERANDO...</div>
+        </div>
+
+        <div class="video-sidebar">
+            <div class="menu-grid" style="grid-template-columns: 1fr; margin-bottom: 20px;">
+                <div class="btn-diamante" onclick="navegar(5)">5) Ser Advisor Exclusivo</div>
+                <div class="btn-diamante" onclick="navegar(6)">6) Admin / Contratación</div>
+                <div class="btn-diamante" onclick="navegar(7)">7) English Speaker</div>
+                <div class="btn-diamante" onclick="navegar(8)">8) Parle Françoise</div>
+            </div>
+            
+            <iframe src="https://www.youtube.com/embed/oTGUy0fR9i4" frameborder="0" allowfullscreen></iframe>
+            <iframe src="https://www.youtube.com/embed/9TTqR1wD3jI" frameborder="0" allowfullscreen></iframe>
+            <iframe src="https://www.youtube.com/embed/WFv2xu42U40" frameborder="0" allowfullscreen></iframe>
+        </div>
+
     </div>
+</div>
 
-    <button class="btn-diamante" onclick="iniciarCuestionario('Vender')">
-        IA Activa - Vender
-    </button>
+<script>
+    // --- LÓGICA DEL MOTOR LEVEL AI ---
 
-    <script>
-        // 1. MEMORIA DE CAPTACIÓN (Variables del Lead)
-        let leadData = {
-            operacion: '', 
-            zona: '',      
-            inmueble: '',  
-            telefono: ''   
-        };
+    const welcomeMsg = "Hola. Te encuentras en una web profesional de servicios de consultoría inmobiliaria y marketing digital, dirigida por el API colegiado número 4351 de Barcelona. Soy Susana, tu Asistente Advisor con ADN LEVEL AI. Nos alegramos de tu visita. ¿En qué te podemos ayudar?";
 
-        let pasoActual = 0; 
+    // Función de voz de Susana
+    function hablarSusana(texto, callback) {
+        window.speechSynthesis.cancel();
+        const ssu = new SpeechSynthesisUtterance(texto);
+        const voces = window.speechSynthesis.getVoices();
+        // Intentamos buscar voz femenina profesional
+        let vozFemenina = voces.find(v => v.lang.includes('es') && (v.name.includes('Monica') || v.name.includes('Google')));
+        if (vozFemenina) ssu.voice = vozFemenina;
+        ssu.rate = 0.95;
+        ssu.onend = callback;
+        window.speechSynthesis.speak(ssu);
+    }
 
-        // 2. CONTROL DE LA VOZ FEMENINA ROBÓTICA/PROFESIONAL
-        function hablarAdvisor(texto) {
-            // Cancelamos cualquier locución residual activa para evitar solapamientos
-            window.speechSynthesis.cancel();
-
-            const ssu = new SpeechSynthesisUtterance(texto);
-            const voces = window.speechSynthesis.getVoices();
-            
-            // Filtro selectivo para buscar el mejor registro de voz en español disponible en el sistema
-            let vozFemenina = voces.find(voz => voz.lang.includes('es') && 
-                (voz.name.includes('Google') || voz.name.includes('Monica') || voz.name.includes('Hazel') || voz.name.includes('Microsoft Helena')));
-            
-            if (vozFemenina) ssu.voice = vozFemenina;
-            ssu.rate = 0.92;   // Velocidad refinada, elegante y pausada
-            ssu.pitch = 1.02;  // Tono optimizado profesional
-
-            // Automatización del micrófono: Cuando el Advisor termine de hablar, abre la escucha de inmediato
-            ssu.onend = function() {
-                if (pasoActual > 0 && pasoActual <= 3) {
-                    escucharCliente();
-                }
-            };
-            
-            window.speechSynthesis.speak(ssu);
-        }
-
-        // Carga forzada de voces para navegadores basados en Chromium (imprescindible)
-        window.speechSynthesis.onvoiceschanged = () => { window.speechSynthesis.getVoices(); };
-
-        // 3. RECEPTOR ASISTIDO DE AUDIO (El oído de la IA)
-        const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-        recognition.lang = 'es-ES';
-        recognition.interimResults = false;
-        recognition.maxAlternatives = 1;
-
-        function escucharCliente() {
-            document.getElementById('estado-ia').innerText = "ESCUCHANDO...";
-            document.getElementById('estado-ia').style.color = "#ff007f";
-            document.getElementById('estado-ia').style.textShadow = "0 0 10px rgba(255, 0, 127, 0.6)";
-            try {
-                recognition.start();
-            } catch(e) {
-                console.log("Reconocimiento ya activo o reiniciando.");
-            }
-        }
-
-        recognition.onresult = function(event) {
-            const respuesta = event.results[0][0].transcript.toLowerCase().trim();
-            document.getElementById('estado-ia').innerText = "PROCESANDO...";
-            document.getElementById('estado-ia').style.color = "#00f2fe";
-            document.getElementById('estado-ia').style.textShadow = "0 0 10px rgba(0, 242, 254, 0.6)";
-            procesarFlujo(respuesta);
-        };
-
-        recognition.onerror = function(event) {
-            console.error("Error capturado en reconocimiento:", event.error);
-            document.getElementById('estado-ia').innerText = "IA ACTIVA";
-            document.getElementById('estado-ia').style.color = "#00f2fe";
-            
-            // Gestión elegante del silencio/ruido para no romper la experiencia
-            if(event.error === 'no-speech') {
-                hablarAdvisor("Disculpa, no te he oído. ¿Podrías repetírmelo?");
-            } else {
-                hablarAdvisor("Vaya, ha habido un pequeño ruido. ¿Me lo repites por favor?");
-            }
-        };
-
-        // 4. FLUJO CONVERSACIONAL PASO A PASO
-        function iniciarCuestionario(tipo) {
-            leadData.operacion = tipo; 
-            pasoActual = 1;
-            document.getElementById('estado-ia').innerText = "IA ACTIVA";
-            hablarAdvisor("Excelente elección. Para cruzar los datos con nuestra inteligencia artificial, ¿en qué localidad se encuentra tu propiedad? ¿En La Ràpita o en Alcanar?");
-        }
-
-        function procesarFlujo(respuesta) {
-            console.log("Cliente responde (Paso " + pasoActual + "):", respuesta);
-
-            // PASO 1: Procesar Ubicación
-            if (pasoActual === 1) {
-                if (respuesta.includes('rápita') || respuesta.includes('rapita') || respuesta.includes('sant carles')) {
-                    leadData.zona = 'La Ràpita';
-                } else if (respuesta.includes('alcanar')) {
-                    leadData.zona = 'Alcanar';
-                } else {
-                    leadData.zona = respuesta; 
-                }
-                
-                pasoActual = 2;
-                hablarAdvisor("Entendido. ¿Y de qué tipo de inmueble se trata? ¿Es un piso, un chalet o una villa?");
-                return;
-            }
-            
-            // PASO 2: Procesar Tipo de Inmueble
-            if (pasoActual === 2) {
-                if (respuesta.includes('piso') || respuesta.includes('planta baja') || respuesta.includes('apartamento')) {
-                    leadData.inmueble = 'Piso';
-                } else if (respuesta.includes('chalet') || respuesta.includes('casa')) {
-                    leadData.inmueble = 'Chalet';
-                } else if (respuesta.includes('villa') || respuesta.includes('finca')) {
-                    leadData.inmueble = 'Villa';
-                } else {
-                    leadData.inmueble = respuesta;
-                }
-                
-                pasoActual = 3;
-                hablarAdvisor("Perfecto. Por último, para registrar tu valoración en nuestra base de datos, por favor, dime tu número de teléfono en voz alta.");
-                return;
-            }
-            
-            // PASO 3: Captura de Teléfono y Cierre de Envío
-            if (pasoActual === 3) {
-                // Filtramos el string eliminando espacios vacíos por si el navegador añade separaciones en los números
-                leadData.telefono = respuesta.replace(/\s+/g, '');
-                pasoActual = 4; // Cierre de cuestionario
-                
-                hablarAdvisor("Muchas gracias. Estoy transmitiendo los datos a la aplicación central de LEVEL de inmediato. Nos vemos muy pronto.");
-                document.getElementById('estado-ia').innerText = "ENVIANDO DATOS...";
-                enviarDatosALark();
-            }
-        }
-
-        // 5. VOLCADO DIRECTO DE DATOS A TU INFRAESTRUCTURA (Webhook)
-        function enviarDatosALark() {
-            console.log("Inyectando estructura final en la base de datos...", leadData);
-            
-            // Reemplazar este enlace ficticio por tu Webhook definitivo cuando hagamos la integración
-            const urlWebhook = 'AQUÍ_PONDREMOS_TU_ENDPOINT_DE_LARK_O_APP';
-            
-            fetch(urlWebhook, {
-                method: 'POST',
-                headers: { 
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    "operacion": leadData.operacion,
-                    "zona": leadData.zona,
-                    "inmueble": leadData.inmueble,
-                    "telefono": leadData.telefono,
-                    "origen": "Plataforma VR"
-                })
-            })
-            .then(res => {
-                document.getElementById('estado-ia').innerText = "SISTEMA COMPLETADO";
-                document.getElementById('estado-ia').style.color = "#00ff66";
-                document.getElementById('estado-ia').style.textShadow = "0 0 10px rgba(0, 255, 102, 0.6)";
-                console.log("¡Éxito! Fila consolidada.");
-            })
-            .catch(err => {
-                console.error("Error crítico de transmisión:", err);
-                document.getElementById('estado-ia').innerText = "ERROR DE ENVÍO";
-                document.getElementById('estado-ia').style.color = "#ff0000";
+    // Al cargar la página, Susana da la bienvenida
+    window.onload = () => {
+        setTimeout(() => {
+            document.getElementById('status-text').innerText = "SUSANA HABLANDO...";
+            hablarSusana(welcomeMsg, () => {
+                document.getElementById('status-text').innerText = "IA ACTIVA - ELIGE OPCIÓN";
             });
+        }, 1000);
+    };
+
+    // MOTOR DE NAVEGACIÓN MODULAR
+    function navegar(idPantalla) {
+        console.log("Cambiando a pantalla script: " + idPantalla);
+        document.getElementById('status-text').innerText = "CARGANDO MÓDULO " + idPantalla + "...";
+        
+        // Aquí es donde el script "cero" llama a los sub-guiones
+        // Por ejemplo, si elige 2, lanzamos el flujo de venta que ya teníamos.
+        if(idPantalla === 2) {
+            // Limpiamos la pantalla cero y cargamos el script de ventas
+            cargarScriptVenta();
+        } else {
+            hablarSusana("Entendido. Accediendo al módulo " + idPantalla + ". Por favor, espera un momento.");
         }
-    </script>
+    }
+
+    // EJEMPLO DE CARGA DE SUB-SCRIPT (Módulo 2)
+    function cargarScriptVenta() {
+        // Esta función borraría el menú actual y pintaría los botones diamante del paso 21, 22...
+        // Lo iremos completando pantalla a pantalla como has pedido.
+        document.getElementById('pantalla-cero').innerHTML = `
+            <div style="grid-column: 1 / 4; text-align: center; padding-top: 100px;">
+                <h1>MÓDULO 2: VENDER PROPIEDAD</h1>
+                <p>Cargando sub-menús 21 al 29...</p>
+                <div class="btn-diamante" style="width: 200px; margin: 20px auto;" onclick="location.reload()">Volver al Inicio</div>
+            </div>
+        `;
+    }
+</script>
+
 </body>
 </html>
