@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>LEVEL-i  - Orbital Office 360</title>
+    <title>LEVEL-i - Orbital Office 360</title>
     <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -55,7 +55,7 @@
 <body>
 
     <div id="pantalla-bloqueo">
-        <h1 style="letter-spacing: 3px; font-size: 2.2rem; margin-bottom: 5px; font-family: 'Orbitron';">LEVEL – i </h1>
+        <h1 style="letter-spacing: 3px; font-size: 2.2rem; margin-bottom: 5px; font-family: 'Orbitron';">LEVEL – i</h1>
         <p style="color: #00f2fe; letter-spacing: 2px; margin-bottom: 40px; font-size: 0.85rem; font-weight: 600;">ORBITAL OFFICE CLIENT EXPERIENCE by Level.immo</p>
         <button class="btn-entrar" onclick="solicitarPermisosYEntrar()">
             Entrar en la Experiencia VR
@@ -63,7 +63,7 @@
         <a class="btn-privacidad-html" href="https://level.immo/politica-de-privacidad/" target="_blank">Política de Privacidad</a>
     </div>
 
-    <a-scene style="display: none;" id="escena-vr" embedded="false" loading-screen="enabled: false">
+    <a-scene loading-screen="enabled: false">
         
         <a-assets>
             <video id="video-tiktok" src="https://level-i.github.io/level-intro.mp4" loop muted playsinline crossorigin="anonymous"></video>
@@ -107,7 +107,7 @@
             <a-plane color="#ffffff" width="0.84" height="1.44" position="0.6 0.1 -0.01" material="opacity: 0.1; transparent: true;"></a-plane>
 
             <a-plane class="clickable" position="0 -0.8 0" width="1.2" height="0.15" color="#0f172a" material="opacity: 0.7; transparent: true;" onclick="window.open('https://level.immo/politica-de-privacidad/', '_blank')">
-                <a-text value="POLITICA DE PRIVACIDAD (LEGAL)" align="center" scale="0.3 0.3 0.3" font="exo2bold" color="#94a3b8"></a-text>
+                <a-text value="POLÍTICA DE PRIVACIDAD (LEGAL)" align="center" scale="0.3 0.3 0.3" font="exo2bold" color="#94a3b8"></a-text>
             </a-plane>
         </a-entity>
 
@@ -131,13 +131,13 @@
                 <a-text value="5) ADVISOR EXCLUSIVO DE ZONA" align="center" scale="0.38 0.38 0.38" font="exo2bold" color="#fff"></a-text>
             </a-plane>
             <a-plane class="clickable" onclick="navegarMódulo(6)" position="0 0.05 0" width="1.4" height="0.25" color="#0f172a" material="opacity: 0.85; transparent: true;">
-                <a-text value="6) ADMINISTRACION" align="center" scale="0.38 0.38 0.38" font="exo2bold" color="#fff"></a-text>
+                <a-text value="6) ADMINISTRACIÓN" align="center" scale="0.38 0.38 0.38" font="exo2bold" color="#fff"></a-text>
             </a-plane>
             <a-plane class="clickable" onclick="navegarMódulo(7)" position="0 -0.4 0" width="1.4" height="0.25" color="#0f172a" material="opacity: 0.85; transparent: true;">
                 <a-text value="7) ENGLISH SPEAKER" align="center" scale="0.38 0.38 0.38" font="exo2bold" color="#fff"></a-text>
             </a-plane>
             <a-plane class="clickable" onclick="navegarMódulo(8)" position="0 -0.85 0" width="1.4" height="0.25" color="#0f172a" material="opacity: 0.85; transparent: true;">
-                <a-text value="8) PARLE FRANÇAISE" align="center" scale="0.38 0.38 0.38" font="exo2bold" color="#fff"></a-text>
+                <a-text value="8) PARLE FRANÇAIS" align="center" scale="0.38 0.38 0.38" font="exo2bold" color="#fff"></a-text>
             </a-plane>
         </a-entity>
 
@@ -154,7 +154,6 @@
         let iaActiva = false;
         let timerInactividad = null;
 
-        // Oído de Susana
         const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
         recognition.lang = 'es-ES';
         recognition.interimResults = false;
@@ -181,7 +180,6 @@
             document.getElementById('texto-estado-vr').setAttribute('value', 'ESCUCHANDO AL CLIENTE...');
 
             timerInactividad = setTimeout(() => {
-                console.log("Bucle de inactividad disparado por silencio.");
                 forzarReinicioCanalVoz();
             }, 8000);
 
@@ -219,30 +217,15 @@
             }
         };
 
-        // GESTIÓN DE ENTRADA DIRECTA ULTRA-RÁPIDA (Arregla la congelación en móviles)
         function solicitarPermisosYEntrar() {
-            // Pasamos la escena de inmediato a visible en el DOM para evitar que el móvil la congele
-            arrancarEntornoVR();
-
-            // Petición asíncrona silenciosa solo aplicable a dispositivos Apple iOS
-            try {
-                if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
-                    DeviceOrientationEvent.requestPermission().catch(err => console.log("Permiso de giroscopio gestionado ordinariamente."));
-                }
-            } catch (e) {
-                console.log("Navegador estándar libre de restricciones de orientación.");
-            }
-        }
-
-        function arrancarEntornoVR() {
+            // REMOCIÓN DEL RETARDO: Desvanecemos la capa HTML de inmediato
             document.getElementById('pantalla-bloqueo').style.display = 'none';
-            document.getElementById('escena-vr').style.display = 'block';
             iaActiva = true;
 
+            // Forzamos el play de audio y TikTok sutil ambiente (10%)
             const video = document.getElementById('video-tiktok');
             video.muted = false;
             video.volume = 0.1;
-            
             let vPromise = video.play();
             if (vPromise !== undefined) {
                 vPromise.catch(error => {});
@@ -250,10 +233,16 @@
 
             document.getElementById('texto-estado-vr').setAttribute('value', 'SUSANA HABLANDO...');
             hablarSusana(welcomeMsg, abrirMicrofonoCliente);
+
+            // Gestión pasiva del giroscopio sólo si es Apple iOS
+            try {
+                if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+                    DeviceOrientationEvent.requestPermission();
+                }
+            } catch (e) {}
         }
 
         function navegarMódulo(id) {
-            console.log("Transición al módulo inmobiliario número:", id);
             document.getElementById('texto-estado-vr').setAttribute('value', 'CARGANDO MÓDULO ' + id + '...');
             hablarSusana("Entendido. Conectando con el submódulo de negocio número " + id + ". Por favor, procesa las nuevas opciones.");
         }
