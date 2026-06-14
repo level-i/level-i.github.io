@@ -35,6 +35,22 @@
         }
         .btn-privacidad-html:hover { color: #00f2fe; }
     </style>
+
+    <script>
+        // REGISTRO OBLIGATORIO DE COMPONENTE 3D ANTES DE CARGAR LA ESCENA
+        AFRAME.registerComponent('componente-enlace-vr', {
+            init: function () {
+                var el = this.el;
+                el.addEventListener('click', function () {
+                    var urlDestino = el.getAttribute('data-url');
+                    if (urlDestino) {
+                        console.log("Despachando visualización externa hacia:", urlDestino);
+                        window.open(urlDestino, '_blank');
+                    }
+                });
+            }
+        });
+    </script>
 </head>
 <body>
 
@@ -126,15 +142,15 @@
         <a-entity position="0 1.6 2.8" rotation="0 180 0">
             <a-text value="GALERIA DE ASSETS INMERSIVOS" color="#00f2fe" align="center" position="0 1.0 0" scale="0.55 0.55 0.55" font="exo2bold"></a-text>
 
-            <a-plane class="clickable" data-url="https://www.youtube.com/watch?v=oTGUy0fR9i4" position="-1.4 0.1 0" rotation="0 -15 0" width="1.2" height="0.7" color="#0f172a" material="opacity: 0.9; border: 2px solid #00f2fe">
+            <a-plane class="clickable" componente-enlace-vr data-url="https://www.youtube.com/watch?v=oTGUy0fR9i4" position="-1.4 0.1 0" rotation="0 -15 0" width="1.2" height="0.7" color="#0f172a" material="opacity: 0.9; border: 2px solid #00f2fe">
                 <a-text value="LA RAPITA\n3 HABITACIONES EXTERIOR\n\n[Toca para reproducir]" align="center" scale="0.32 0.32 0.32" font="exo2bold" color="#00f2fe" position="0 0 0.02"></a-text>
             </a-plane>
 
-            <a-plane class="clickable" data-url="https://www.youtube.com/watch?v=9TTqR1wD3jI" position="0 0.1 0.1" width="1.2" height="0.7" color="#0f172a" material="opacity: 0.9; border: 2px solid #00f2fe">
+            <a-plane class="clickable" componente-enlace-vr data-url="https://www.youtube.com/watch?v=9TTqR1wD3jI" position="0 0.1 0.1" width="1.2" height="0.7" color="#0f172a" material="opacity: 0.9; border: 2px solid #00f2fe">
                 <a-text value="CAMPAÑA EXCLUSIVA\nVENDEMOS SIN HONORARIOS\n\n[Toca para reproducir]" align="center" scale="0.32 0.32 0.32" font="exo2bold" color="#fff" position="0 0 0.02"></a-text>
             </a-plane>
 
-            <a-plane class="clickable" data-url="https://www.youtube.com/watch?v=WFv2xu42U40" position="1.4 0.1 0" rotation="0 15 0" width="1.2" height="0.7" color="#0f172a" material="opacity: 0.9; border: 2px solid #00f2fe">
+            <a-plane class="clickable" componente-enlace-vr data-url="https://www.youtube.com/watch?v=WFv2xu42U40" position="1.4 0.1 0" rotation="0 15 0" width="1.2" height="0.7" color="#0f172a" material="opacity: 0.9; border: 2px solid #00f2fe">
                 <a-text value="VILLA DE LUXE\nL'OASIS LA RAPITA\n\n[Toca para reproducir]" align="center" scale="0.32 0.32 0.32" font="exo2bold" color="#00f2fe" position="0 0 0.02"></a-text>
             </a-plane>
         </a-entity>
@@ -142,7 +158,7 @@
     </a-scene>
 
     <script>
-        const welcomeMsg = "Hola. Te encuentras en una web profesional de servicios de consultoría inmobiliaria y marketing digital, dirigida por el API colegiado número 4351 de Barcelona. Soy Susana, tu Asistente Advisor con ADN LEVEL AI. Nos alegramos de tu visita. Dime cómo te puedo ayudar.";
+        const welcomeMsg = "Hola. Te encuentras en una web profesional de servicios de consultoría inmobiliaria y marketing digital, dirigida por el API colegiado número 4351 de Barcelona. Soy Susana, tu Asistente Advisor con ADN LEVEL AI. Nos alegramos de tu visita. Dime cómo te podemos ayudar.";
         const insisMsg = "Por favor, dime una de las ocho opciones de los paneles flotantes, o di simplemente una palabra clave como comprar, vender o hipoteca para poder guiarte.";
 
         let iaActiva = false;
@@ -174,14 +190,22 @@
             clearTimeout(timerInactividad);
             document.getElementById('texto-estado-vr').setAttribute('value', 'ESCUCHANDO AL CLIENTE...');
 
+            // TEMPORIZADOR DE INACTIVIDAD CORREGIDO DE RAÍZ
             timerInactividad = setTimeout(() => {
-                console.log("Inactividad detectada. Forzando reinicio limpio de canales.");
-                try { recognition.abort(); } catch(e) {}
-                document.getElementById('texto-estado-vr').setAttribute('value', 'RECONECTANDO IA...');
-                hablarSusana(insisMsg, abrirMicrofonoCliente);
+                console.log("Expiración de canal por silencio. Forzando cierre y llamada de voz.");
+                forzarReinicioCanalVoz();
             }, 8000);
 
             try { recognition.start(); } catch(e) {}
+        }
+
+        // FUNCIÓN CLAVE DE INGENIERÍA: Resetea canales hardware de audio para evitar el bloqueo mutuo
+        function forzarReinicioCanalVoz() {
+            try { recognition.abort(); } catch(e) {} // Cierra el micro limpiamente de inmediato
+            document.getElementById('texto-estado-vr').setAttribute('value', 'RECONECTANDO IA...');
+            
+            // Susana habla tranquila y al terminar reabre el micrófono llamando de nuevo al flujo ordinario
+            hablarSusana(insisMsg, abrirMicrofonoCliente);
         }
 
         recognition.onresult = function(event) {
@@ -198,7 +222,7 @@
             else if (comando.includes('english') || comando.includes('siete') || comando.includes('speak')) navegarMódulo(7);
             else if (comando.includes('français') || comando.includes('ocho') || comando.includes('parle')) navegarMódulo(8);
             else {
-                hablarSusana("Disculpa, no disponemos de esa opción. ¿Me repites cuál de los ocho servicios deseas?", abrirMicrofonoCliente);
+                hablarSusana("Disculpa, no disponemos de esa option. ¿Me repites cuál de los servicios deseas?", abrirMicrofonoCliente);
             }
         };
 
@@ -209,30 +233,27 @@
             }
         };
 
-        // ENTRADA MULTIPLATAFORMA SEGURA (PC, ANDROID E IOS)
         function solicitarPermisosYEntrar() {
             try {
-                // Comprobamos de forma segura si el navegador implementa la API de Apple (iOS 13+)
                 if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
                     DeviceOrientationEvent.requestPermission()
                         .then(permissionState => {
                             if (permissionState === 'granted') {
-                                console.log("Sensores desbloqueados en iOS.");
+                                console.log("Sensores habilitados con éxito.");
                                 arrancarEntornoVR();
                             } else {
                                 alert("Es necesario habilitar los sensores para usar la oficina 360.");
                             }
                         })
                         .catch(error => {
-                            console.warn("Fallo controlado en solicitud de sensores, accediendo igual:", error);
+                            console.warn("Error controlado de giroscopio, accediendo de respaldo:", error);
                             arrancarEntornoVR();
                         });
                 } else {
-                    // PC, Android y Oculus entran directamente sin lanzar excepción
                     arrancarEntornoVR();
                 }
             } catch (err) {
-                console.warn("Navegador estándar detectado. Ejecutando arranque directo.", err);
+                console.warn("Excepción controlada de entorno, ejecutando entrada:", err);
                 arrancarEntornoVR();
             }
         }
@@ -248,7 +269,7 @@
             
             let vPromise = video.play();
             if (vPromise !== undefined) {
-                vPromise.catch(error => { console.log("Vídeo requiere interacción previa."); });
+                vPromise.catch(error => { console.log("Permiso de vídeo requerido"); });
             }
 
             document.getElementById('texto-estado-vr').setAttribute('value', 'SUSANA HABLANDO...');
@@ -256,14 +277,6 @@
         }
 
         window.speechSynthesis.onvoiceschanged = () => { window.speechSynthesis.getVoices(); };
-   // Componente de enrutamiento seguro para los enlaces de YouTube traseros en VR
-    document.querySelectorAll('[data-url]').forEach(pantalla => {
-        pantalla.addEventListener('click', function () {
-            const urlDestino = this.getAttribute('data-url');
-            console.log("Abriendo Asset Inmersivo en pestaña externa:", urlDestino);
-            window.open(urlDestino, '_blank');
-        });
-    });
- </script>
+    </script>
 </body>
 </html>
