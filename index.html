@@ -40,7 +40,7 @@
     <div id="pantalla-bloqueo">
         <h1 style="letter-spacing: 3px; font-size: 2.2rem; margin-bottom: 5px; font-family: 'Orbitron';">LEVEL AI</h1>
         <p style="color: #00f2fe; letter-spacing: 2px; margin-bottom: 40px; font-size: 0.85rem; font-weight: 600;">ORBITAL OFFICE CLIENT EXPERIENCE</p>
-        <button class="btn-entrar" onclick="arrancarEntornoVR()">
+        <button class="btn-entrar" onclick="solicitarPermisosYEntrar()">
             Entrar en la Experiencia VR
         </button>
         <a class="btn-privacidad-html" href="https://level.immo/politica-de-privacidad/" target="_blank">Política de Privacidad</a>
@@ -128,3 +128,128 @@
             <a-plane class="clickable" position="-1.4 0.1 0" rotation="0 -15 0" width="1.2" height="0.7" color="#0f172a" material="opacity: 0.9; border: 2px solid #00f2fe" onclick="window.open('https://www.youtube.com/watch?v=oTGUy0fR9i4', '_blank')">
                 <a-text value="LA RAPITA\n3 HABITACIONES EXTERIOR\n\n[Toca para reproducir]" align="center" scale="0.32 0.32 0.32" font="exo2bold" color="#00f2fe" position="0 0 0.02"></a-text>
             </a-plane>
+
+            <a-plane class="clickable" position="0 0.1 0.1" width="1.2" height="0.7" color="#0f172a" material="opacity: 0.9; border: 2px solid #00f2fe" onclick="window.open('https://www.youtube.com/watch?v=9TTqR1wD3jI', '_blank')">
+                <a-text value="CAMPAÑA EXCLUSIVA\nVENDEMOS SIN HONORARIOS\n\n[Toca para reproducir]" align="center" scale="0.32 0.32 0.32" font="exo2bold" color="#fff" position="0 0 0.02"></a-text>
+            </a-plane>
+
+            <a-plane class="clickable" position="1.4 0.1 0" rotation="0 15 0" width="1.2" height="0.7" color="#0f172a" material="opacity: 0.9; border: 2px solid #00f2fe" onclick="window.open('https://www.youtube.com/watch?v=WFv2xu42U40', '_blank')">
+                <a-text value="VILLA DE LUXE\nL'OASIS LA RAPITA\n\n[Toca para reproducir]" align="center" scale="0.32 0.32 0.32" font="exo2bold" color="#00f2fe" position="0 0 0.02"></a-text>
+            </a-plane>
+        </a-entity>
+
+    </a-scene>
+
+    <script>
+        const welcomeMsg = "Hola. Te encuentras en una web profesional de servicios de consultoría inmobiliaria y marketing digital, dirigida por el API colegiado número 4351 de Barcelona. Soy Susana, tu Asistente Advisor con ADN LEVEL AI. Nos alegramos de tu visita. ¿En qué te podemos ayudar?";
+        const insisMsg = "Por favor, dime una de las ocho opciones de los paneles flotantes, o di simplemente una palabra clave como comprar, vender o hipoteca para poder guiarte.";
+
+        let iaActiva = false;
+        let timerInactividad = null;
+
+        // Oído de Susana
+        const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+        recognition.lang = 'es-ES';
+        recognition.interimResults = false;
+
+        function hablarSusana(texto, callback) {
+            clearTimeout(timerInactividad);
+            window.speechSynthesis.cancel();
+
+            const ssu = new SpeechSynthesisUtterance(texto);
+            const voces = window.speechSynthesis.getVoices();
+            
+            let vozFemenina = voces.find(v => v.lang.includes('es') && (v.name.includes('Monica') || v.name.includes('Google') || v.name.includes('Helena')));
+            if (vozFemenina) ssu.voice = vozFemenina;
+            
+            ssu.rate = 0.95; ssu.pitch = 1.05;
+            ssu.onend = () => { if (callback) callback(); };
+            window.speechSynthesis.speak(ssu);
+        }
+
+        function abrirMicrofonoCliente() {
+            if (!iaActiva) return;
+            
+            clearTimeout(timerInactividad);
+            document.getElementById('texto-estado-vr').setAttribute('value', 'ESCUCHANDO AL CLIENTE...');
+
+            timerInactividad = setTimeout(() => {
+                console.log("Inactividad detectada. Forzando reinicio limpio de canales.");
+                try { recognition.abort(); } catch(e) {}
+                document.getElementById('texto-estado-vr').setAttribute('value', 'RECONECTANDO IA...');
+                hablarSusana(insisMsg, abrirMicrofonoCliente);
+            }, 8000);
+
+            try { recognition.start(); } catch(e) {}
+        }
+
+        recognition.onresult = function(event) {
+            clearTimeout(timerInactividad);
+            const comando = event.results[0][0].transcript.toLowerCase().trim();
+            document.getElementById('texto-estado-vr').setAttribute('value', 'PROCESANDO...');
+            
+            if (comando.includes('comprar') || comando.includes('uno') || comando.includes('invertir')) navegarMódulo(1);
+            else if (comando.includes('vender') || comando.includes('dos') || comando.includes('propiedad')) navegarMódulo(2);
+            else if (comando.includes('hipoteca') || comando.includes('tres') || comando.includes('aprobada')) navegarMódulo(3);
+            else if (comando.includes('catastro') || comando.includes('cuatro') || comando.includes('trámite')) navegarMódulo(4);
+            else if (comando.includes('advisor') || comando.includes('cinco') || comando.includes('ser')) navegarMódulo(5);
+            else if (comando.includes('administración') || comando.includes('seis') || comando.includes('contratación')) navegarMódulo(6);
+            else if (comando.includes('english') || comando.includes('siete') || comando.includes('speak')) navegarMódulo(7);
+            else if (comando.includes('français') || comando.includes('ocho') || comando.includes('parle')) navegarMódulo(8);
+            else {
+                hablarSusana("Disculpa, no disponemos de esa opción. ¿Me repites cuál de los ocho servicios deseas?", abrirMicrofonoCliente);
+            }
+        };
+
+        recognition.onerror = function(event) {
+            if (event.error !== 'no-speech') {
+                clearTimeout(timerInactividad);
+                document.getElementById('texto-estado-vr').setAttribute('value', 'IA READY - ELIGE');
+            }
+        };
+
+        // PARCHE DE INGENIERÍA PARA SENSOR MÓVIL (iOS / Android)
+        function solicitarPermisosYEntrar() {
+            // Comprobamos si el navegador móvil exige permisos DeviceOrientation (Caso Apple iOS 13+)
+            if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+                DeviceOrientationEvent.requestPermission()
+                    .then(permissionState => {
+                        if (permissionState === 'granted') {
+                            console.log("Sensores desbloqueados por el usuario en iOS.");
+                            arrancarEntornoVR();
+                        } else {
+                            alert("Para disfrutar de la oficina 360 necesitas habilitar los sensores de movimiento.");
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Error al solicitar sensores:", error);
+                        arrancarEntornoVR(); // Intento de arranque de respaldo
+                    });
+            } else {
+                // Caso Android o PC: Los sensores no requieren autorización explícita API de Apple
+                arrancarEntornoVR();
+            }
+        }
+
+        function arrancarEntornoVR() {
+            document.getElementById('pantalla-bloqueo').style.display = 'none';
+            document.getElementById('escena-vr').style.display = 'block';
+            iaActiva = true;
+
+            const video = document.getElementById('video-tiktok');
+            video.muted = false;
+            video.volume = 0.1;
+            
+            let vPromise = video.play();
+            if (vPromise !== undefined) {
+                vPromise.catch(error => { console.log("Vídeo requiere interacción previa."); });
+            }
+
+            document.getElementById('texto-estado-vr').setAttribute('value', 'SUSANA HABLANDO...');
+            hablarSusana(welcomeMsg, abrirMicrofonoCliente);
+        }
+
+        window.speechSynthesis.onvoiceschanged = () => { window.speechSynthesis.getVoices(); };
+    </script>
+</body>
+</html>
