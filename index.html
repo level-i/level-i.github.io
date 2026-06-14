@@ -1,114 +1,98 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>LEVEL IMMO | Spatial Hub 10.0</title>
-    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+// 1. ESTADO DEL SISTEMA (La memoria del Advisor)
+let leadData = {
+    operacion: '', // Vender / Comprar
+    inmueble: '',  // Chalet / Piso / Villa
+    zona: '',      // La Ràpita / Alcanar
+    telefono: ''   // Contacto final
+};
+
+let pasoActual = 0; // Controla en qué pregunta está el usuario
+
+// 2. CONFIGURACIÓN DE LA VOZ (Buscando el perfil profesional y elegante)
+function hablarAdvisor(texto) {
+    const ssu = new SpeechSynthesisUtterance(texto);
+    const voces = window.speechSynthesis.getVoices();
     
-    <script>
-        // 1. MOTOR DE VOZ DEL AVATAR (Voz robot femenina)
-        AFRAME.registerComponent('avatar-ia', {
-            init: function () {
-                var el = this.el;
-                var textEl = el.querySelector('.status-text');
-                var hablando = false;
+    // Buscamos una voz femenina en español que suene natural (ej: Mónica o Google español hembra)
+    let vozFemenina = voces.find(voz => voz.lang.includes('es') && (voz.name.includes('Google') || voz.name.includes('Monica') || voz.name.includes('Hazel')));
+    
+    if (vozFemenina) ssu.voice = vozFemenina;
+    ssu.rate = 0.95;  // Un punto más pausada para que suene sugerente y profesional
+    ssu.pitch = 1.05; // Ajuste de tono
+    
+    window.speechSynthesis.speak(ssu);
+}
 
-                el.addEventListener('click', function () {
-                    if (hablando) return;
-                    hablando = true;
-                    
-                    textEl.setAttribute('value', 'HABLANDO...');
-                    textEl.setAttribute('color', '#FFCC00');
+// 3. RECEPTOR DE VOZ (El oído del Advisor)
+const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+recognition.lang = 'es-ES';
+recognition.interimResults = false;
 
-                    var mensaje = new SpeechSynthesisUtterance("Bienvenido a LEVEL-ai. Sistema de voz activado. ¿En qué te podemos ayudar?. Si eres comprador, selecciona "Comprar"; Si eres vendedor, selecciona "Vender"; si necesitas una hipoteca pre-aprobada, selecciona "Hipotecas"; Si quieres hablar con Administración, selecciona "Administración"; Si quieres información para ser Advisor en exclusiva, selecciona "Advisors".");
-                    mensaje.lang = 'es-ES';
-                    mensaje.pitch = 1.0; 
-                    mensaje.rate = 1.0;
+function escucharCliente() {
+    document.getElementById('estado-ia').innerText = "ESCUCHANDO...";
+    recognition.start();
+}
 
-                    mensaje.onend = function() {
-                        hablando = false;
-                        textEl.setAttribute('value', 'IA ACTIVA');
-                        textEl.setAttribute('color', '#00d2ff');
-                    };
+recognition.onresult = function(event) {
+    const respuesta = event.results[0][0].transcript.toLowerCase();
+    document.getElementById('estado-ia').innerText = "PROCESANDO...";
+    procesarFlujo(respuesta);
+};
 
-                    window.speechSynthesis.speak(mensaje);
-                });
-            }
-        });
+recognition.onerror = function() {
+    // Si falla la voz por silencio o ruido, el Advisor lo gestiona con elegancia
+    hablarAdvisor("Disculpa, no te he entendido bien. ¿Podrías repetírmelo?");
+    document.getElementById('estado-ia').innerText = "IA ACTIVA";
+};
 
-        // 2. CONTROL DEL VÍDEO (Desbloqueo y reproducción)
-        AFRAME.registerComponent('control-video', {
-            init: function () {
-                var el = this.el;
-                var videoEl = document.querySelector('#video-corp');
-                
-                el.addEventListener('click', function () {
-                    if (!videoEl) return;
-                    
-                    // Le quitamos el silencio de seguridad al hacer clic
-                    videoEl.muted = false;
+// 4. EL CEREBRO DEL CUESTIONARIO (Árbol de decisión paso a paso)
+function iniciarCuestionario(tipo) {
+    leadData.operacion = tipo; // 'Vender'
+    pasoActual = 1;
+    hablarAdvisor("Excelente elección. Para cruzar los datos con nuestra inteligencia artificial, ¿en qué localidad se encuentra tu propiedad? ¿En La Ràpita o en Alcanar?");
+}
 
-                    if (videoEl.paused) {
-                        videoEl.play();
-                        el.querySelector('a-text').setAttribute('visible', 'false');
-                    } else {
-                        videoEl.pause();
-                        el.querySelector('a-text').setAttribute('visible', 'true');
-                    }
-                });
-            }
-        });
-    </script>
-</head>
-<body>
-    <a-scene cursor="rayOrigin: mouse" raycaster="objects: .interactive">
-        <a-assets>
-            <img id="office" src="https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=2000" crossorigin="anonymous">
-            
-            <video id="video-corp" loop="true" src="level-intro.mp4" crossorigin="anonymous" playsinline webkit-playsinline muted></video>
-        </a-assets>
+function procesarFlujo(respuesta) {
+    if (pasoActual === 1) {
+        // Guardamos la zona
+        if (respuesta.includes('rápita') || respuesta.includes('rapita')) leadData.zona = 'La Ràpita';
+        else if (respuesta.includes('alcanar')) leadData.zona = 'Alcanar';
+        else leadData.zona = respuesta; // Por si dice otra
 
-        <a-sky src="#office" rotation="0 -90 0"></a-sky>
-        <a-camera position="0 1.6 0"><a-cursor color="#fff"></a-cursor></a-camera>
+        pasoActual = 2;
+        hablarAdvisor("Entendido. ¿Y de qué tipo de inmueble se trata? ¿Es un piso, un chalet o una villa?");
+        return;
+    }
+    
+    if (pasoActual === 2) {
+        leadData.inmueble = respuesta;
+        pasoActual = 3;
+        hablarAdvisor("Perfecto. Por último, para registrar tu valoración en nuestra base de datos, por favor, dime tu número de teléfono en voz alta.");
+        return;
+    }
+    
+    if (pasoActual === 3) {
+        // Limpiamos el texto por si dice números en letras
+        leadData.telefono = respuesta;
+        hablarAdvisor("Muchas gracias. Estoy transmitiendo los datos a la aplicación central de LEVEL de inmediato. Nos vemos muy pronto.");
+        document.getElementById('estado-ia').innerText = "ENVIANDO DATOS...";
+        enviarDatosALark();
+    }
+}
 
-        <a-text value="LEVEL.IMMO" align="center" position="0 2.6 -2" scale="1.5 1.5 1.5" color="#fff" font="exo2bold"></a-text>
-
-        <a-entity position="0 2.1 -2">
-            <a-entity animation="property: rotation; to: 0 360 0; loop: true; dur: 10000; easing: linear">
-                <a-icosahedron radius="0.2" color="#FFCC00"></a-icosahedron>
-            </a-entity>
-            <a-plane position="0 -0.35 0" width="0.7" height="0.2" color="#000000" opacity="0.8">
-                <a-text value="ADVISORS" align="center" scale="0.4 0.4 0.4" color="#FFCC00" font="exo2bold"></a-text>
-            </a-plane>
-        </a-entity>
-
-        <a-entity id="avatar-container" position="0 1.2 -2" animation="property: position; to: 0 1.25 -2; dir: alternate; loop: true; dur: 2000; easing: easeInOutSine">
-            <a-entity id="avatar-placeholder" class="interactive" avatar-ia geometry="primitive: sphere; radius: 0.3" material="opacity: 0; transparent: true">
-                <a-sphere radius="0.12" color="#00d2ff" material="emissive: #00d2ff; emissiveIntensity: 0.5" position="0 0.15 0" animation="property: material.emissiveIntensity; to: 1; dir: alternate; loop: true; dur: 1000"></a-sphere>
-                <a-cylinder radius="0.06" height="0.3" color="#fff" material="opacity: 0.8; transparent: true"></a-cylinder>
-                <a-text class="status-text" value="TOCA PARA VOZ" align="center" position="0 -0.3 0" scale="0.3 0.3 0.3" color="#00d2ff" font="exo2bold"></a-text>
-            </a-entity>
-        </a-entity>
-
-        <a-entity position="0 0.8 -2">
-            <a-plane class="interactive" position="-0.8 0 0" width="0.7" height="0.2" color="#000" opacity="0.9"><a-text value="COMPRAR" align="center" scale="0.4 0.4 0.4" color="#fff" font="exo2bold"></a-text></a-plane>
-            <a-plane class="interactive" position="0 0 0" width="0.7" height="0.2" color="#000" opacity="0.9"><a-text value="VENDER" align="center" scale="0.4 0.4 0.4" color="#fff" font="exo2bold"></a-text></a-plane>
-            <a-plane class="interactive" position="0.8 0 0" width="0.7" height="0.2" color="#000" opacity="0.9"><a-text value="HIPOTECAS" align="center" scale="0.4 0.4 0.4" color="#fff" font="exo2bold"></a-text></a-plane>
-        </a-entity>
-
-        <a-entity position="0 0.5 -2">
-            <a-plane class="interactive" position="-0.8 0 0" width="0.7" height="0.2" color="#000" opacity="0.9"><a-text value="PISO" align="center" scale="0.4 0.4 0.4" color="#40E0D0" font="exo2bold"></a-text></a-plane>
-            <a-plane class="interactive" position="0 0 0" width="0.7" height="0.2" color="#000" opacity="0.9"><a-text value="CHALET" align="center" scale="0.4 0.4 0.4" color="#40E0D0" font="exo2bold"></a-text></a-plane>
-            <a-plane class="interactive" position="0.8 0 0" width="0.7" height="0.2" color="#000" opacity="0.9"><a-text value="VILLA" align="center" scale="0.4 0.4 0.4" color="#40E0D0" font="exo2bold"></a-text></a-plane>
-        </a-entity>
-
-        <a-entity position="0 1.6 3.5" rotation="0 180 0" class="interactive" control-video>
-            <a-plane width="4" height="2.25" color="#000" position="0 0 -0.01"></a-plane>
-            <a-text value="CLIC PARA REPRODUCIR" align="center" position="0 0 0.01" scale="0.8 0.8 0.8" color="#fff" opacity="0.5"></a-text>
-            
-            <a-video src="#video-corp" width="1.26" height="2.25" position="0 0 0.02"></a-video>
-        </a-entity>
-
-    </a-scene>
-</body>
-</html>
+// 5. EL PUENTE CRÍTICO (Envío directo a tu App de empresa / Lark)
+function enviarDatosALark() {
+    console.log("Inyectando datos en Lark...", leadData);
+    
+    // Aquí conectaremos tu Webhook real de Lark
+    fetch('AQUÍ_PONDREMOS_TU_ENDPOINT_DE_LARK_O_APP', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(leadData)
+    })
+    .then(res => {
+        document.getElementById('estado-ia').innerText = "SISTEMA COMPLETADO";
+        console.log("¡Éxito! Fila creada en Lark.");
+    })
+    .catch(err => console.error("Error de envío:", err));
+}
