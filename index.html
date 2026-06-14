@@ -26,7 +26,6 @@
         }
         .btn-entrar:hover { transform: scale(1.02); }
 
-        /* CORRECCIÓN INTERFAZ: Botón visible por encima del lienzo 3D */
         .btn-desconectar-hub {
             background: transparent; border: 1px solid #334155; color: #94a3b8; 
             padding: 10px 25px; border-radius: 20px; cursor: pointer; 
@@ -221,19 +220,24 @@
         </a-entity>
 
         <a-entity id="panel-rgpd" scale="0 0 0" position="0 1.4 -1.7">
-            <a-plane width="2.2" height="1.3" color="#020617" material="opacity: 0.95; transparent: true; border: 2px solid #00f2fe;">
-                <a-text value="VERIFICACION DE REGISTRO EXCLUSIVO" align="center" position="0 0.52 0.01" scale="0.45 0.45 0.45" font="exo2bold" color="#00f2fe"></a-text>
+            <a-plane width="2.2" height="1.4" color="#020617" material="opacity: 0.95; transparent: true; border: 2px solid #00f2fe;">
+                <a-text value="VERIFICACION DE REGISTRO EXCLUSIVO" align="center" position="0 0.58 0.01" scale="0.45 0.45 0.45" font="exo2bold" color="#00f2fe"></a-text>
                 
-                <a-text id="rgpd-linea-intencion" value="INTENCION: -" align="left" position="-0.95 0.3 0.01" scale="0.35 0.35 0.35" font="exo2bold" color="#fff"></a-text>
-                <a-text id="rgpd-linea-nombre" value="CLIENTE: -" align="left" position="-0.95 0.12 0.01" scale="0.35 0.35 0.35" font="exo2bold" color="#fff"></a-text>
-                <a-text id="rgpd-linea-contacto" value="CONTACTO: -" align="left" position="-0.95 -0.05 0.01" scale="0.35 0.35 0.35" font="exo2bold" color="#fff"></a-text>
-                <a-text id="rgpd-linea-localizacion" value="BUSQUEDA: -" align="left" position="-0.95 -0.22 0.01" scale="0.35 0.35 0.35" font="exo2bold" color="#fff"></a-text>
+                <a-text id="rgpd-linea-intencion" value="INTENCION: -" align="left" position="-0.95 0.34 0.01" scale="0.35 0.35 0.35" font="exo2bold" color="#fff"></a-text>
+                <a-text id="rgpd-linea-nombre" value="CLIENTE: -" align="left" position="-0.95 0.16 0.01" scale="0.35 0.35 0.35" font="exo2bold" color="#fff"></a-text>
+                <a-text id="rgpd-linea-contacto" value="CONTACTO: -" align="left" position="-0.95 -0.02 0.01" scale="0.35 0.35 0.35" font="exo2bold" color="#fff"></a-text>
+                <a-text id="rgpd-linea-localizacion" value="BUSQUEDA: -" align="left" position="-0.95 -0.20 0.01" scale="0.35 0.35 0.35" font="exo2bold" color="#fff"></a-text>
 
-                <a-text value="Al aceptar, autorizas el tratamiento de datos bajo la Ley RGPD de LEVEL.immo" align="center" position="0 -0.42 0.01" scale="0.25 0.25 0.25" font="exo2bold" color="#94a3b8"></a-text>
+                <a-text value="Al aceptar, autorizas el tratamiento de datos bajo la Ley RGPD de LEVEL.immo" align="center" position="0 -0.40 0.01" scale="0.25 0.25 0.25" font="exo2bold" color="#94a3b8"></a-text>
                 
-                <a-plane class="clickable" onclick="confirmarYDespacharLark()" position="0 -0.56 0.02" width="1.4" height="0.16" color="#22c55e" material="opacity: 0.95;">
-                    <a-text value="VALIDAR TRANSACCION Y DAR OK RGPD" align="center" scale="0.3 0.3 0.3" font="exo2bold" color="#fff"></a-text>
-                </a-plane>
+                <a-entity position="0 -0.58 0.02">
+                    <a-plane class="clickable" onclick="confirmarYDespacharLark()" position="0.55 0 0" width="0.95" height="0.18" color="#22c55e" material="opacity: 0.95;">
+                        <a-text value="ACEPTAR Y ENVIAR" align="center" scale="0.28 0.28 0.28" font="exo2bold" color="#fff"></a-text>
+                    </a-plane>
+                    <a-plane class="clickable" onclick="borrarDatosYReiniciar()" position="-0.55 0 0" width="0.95" height="0.18" color="#ef4444" material="opacity: 0.95;">
+                        <a-text value="BORRAR Y REINICIAR" align="center" scale="0.28 0.28 0.28" font="exo2bold" color="#fff"></a-text>
+                    </a-plane>
+                </a-entity>
             </a-plane>
         </a-entity>
 
@@ -261,7 +265,6 @@
         };
         let faseFormulario = 0; 
 
-        // Inicialización nativa estable de Web Speech API
         const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
         recognition.lang = 'es-ES';
         recognition.interimResults = false;
@@ -311,14 +314,11 @@
             }, 300);
         }
 
-        // TAREA 1 CORREGIDA: Desvanecimiento limpio y redirección sin bloquear el DOM
         function desactivarHubSutil() {
             const hub = document.getElementById('pantalla-bloqueo');
             if(hub) {
                 hub.style.opacity = '0';
-                setTimeout(() => {
-                    window.location.href = "https://level.immo";
-                }, 1000);
+                setTimeout(() => { window.location.href = "https://level.immo"; }, 1000);
             } else {
                 window.location.href = "https://level.immo";
             }
@@ -334,15 +334,14 @@
 
         function forzarReinicioCanalVoz() {
             try { recognition.abort(); } catch(e) {}
-            if (faseFormulario > 0) {
+            if (faseFormulario > 0 && faseFormulario !== 3) { // No forzar reinicio oral si estamos retenidos en fase 3 manual
                 abrirMicrofonoCliente();
-            } else {
+            } else if (faseFormulario === 0) {
                 document.getElementById('texto-estado-vr').setAttribute('value', 'RECONECTANDO IA...');
                 hablarSara(insisMsg, abrirMicrofonoCliente);
             }
         }
 
-        // TAREA 3 CORREGIDA: El vídeo se oculta de forma radical usando el contenedor idéntico
         function activarModulo1() {
             document.getElementById('contenedor-video-tiktok').setAttribute('scale', '0 0 0');
             document.getElementById('paleta-principal').setAttribute('scale', '0 0 0');
@@ -367,8 +366,22 @@
                 document.getElementById('texto-estado-vr').setAttribute('value', 'SARA: PREGUNTA TELEFONO');
                 hablarSara("Gracias. Ahora necesito que me facilites tu numero de contacto completo.", abrirMicrofonoCliente);
             } else if (faseFormulario === 3) {
-                document.getElementById('texto-estado-vr').setAttribute('value', 'SARA: PREGUNTA EMAIL');
-                hablarSara("Gracias. Por ultimo, indicame tu correo electronico.", abrirMicrofonoCliente);
+                // OPCIÓN B IMPLEMENTADA: Parar reconocimiento y solicitar vía Prompt manual nativo
+                try { recognition.abort(); } catch(e){}
+                document.getElementById('texto-estado-vr').setAttribute('value', 'TECLADO: ESCRIBIR EMAIL');
+                
+                hablarSara("Gracias. Para asegurar el envio correcto de tu justificante digital, por favor introduce tu correo electronico en la ventana de tu pantalla.", function() {
+                    let emailEntrada = prompt("Introduce tu correo electrónico para el justificante legal:");
+                    if (emailEntrada && emailEntrada.trim() !== "") {
+                        leadData.email = emailEntrada.trim().toLowerCase();
+                        faseFormulario = 4;
+                        ejecutarFlujoFormulario();
+                    } else {
+                        // Si lo deja vacío o cancela, insistir de forma segura para no romper la cadena
+                        faseFormulario = 3;
+                        ejecutarFlujoFormulario();
+                    }
+                });
             } else if (faseFormulario === 4) {
                 document.getElementById('paleta-poblaciones').setAttribute('scale', '1 1 1');
                 document.getElementById('texto-estado-vr').setAttribute('value', 'SELECCIONE POBLACION');
@@ -389,21 +402,17 @@
             hablarSara("Conectando con " + nombrePoblacion + ". Ahora, dime de viva voz el tipo de propiedad y tu presupuesto estimado.", abrirMicrofonoCliente);
         }
 
-        // TAREA 2 CORREGIDA: Transcripción forzada a texto dentro del entorno A-Frame
         function desplegarPantallaRevisionYRGPD() {
             faseFormulario = 6; 
             document.getElementById('texto-estado-vr').setAttribute('value', 'VALIDACION LEGAL RGPD');
             
-            // Forzamos la actualización de atributos de texto plano en los nodos 3D
             document.getElementById('rgpd-linea-intencion').setAttribute('value', "INTENCION: " + leadData.tipoCliente.toUpperCase());
             document.getElementById('rgpd-linea-nombre').setAttribute('value', "CLIENTE: " + leadData.nombre.toUpperCase());
             document.getElementById('rgpd-linea-contacto').setAttribute('value', "TEL: " + leadData.telefono + " | EMAIL: " + leadData.email.toUpperCase());
             document.getElementById('rgpd-linea-localizacion').setAttribute('value', "CIUDAD: " + leadData.poblacion.toUpperCase() + " | NOTAS: " + leadData.detallesFinales.toUpperCase());
             
-            // Mostramos el panel interactivo
             document.getElementById('panel-rgpd').setAttribute('scale', '1 1 1');
-            
-            hablarSara("Hemos procesado tu dictado. Por favor, revisa en el panel central que tus datos son correctos y haz clic en validar para finalizar.");
+            hablarSara("Hemos procesado tu dictado. Por favor, revisa en el panel central que tus datos son correctos. Haz clic en aceptar para procesarlo, o en borrar para reiniciar.");
         }
 
         function confirmarYDespacharLark() {
@@ -412,12 +421,30 @@
             
             console.log("Lead enviado con éxito:", leadData);
             
-            hablarSara("Tratamiento de datos autorizado. Volviendo al panel principal.", function() {
+            hablarSara("Tratamiento de datos autorizado y justificacion enviada. Volviendo al panel principal.", function() {
                 volverAlMenuPrincipal();
             });
         }
 
-        // PROCESADOR DE ENTRADAS ORALES CORREGIDO
+        // FUNCIÓN CRÍTICA: Vacía de forma segura el estado de memoria y devuelve la UI a cero
+        function borrarDatosYReiniciar() {
+            leadData = { tipoCliente: '', nombre: '', telefono: '', email: '', población: '', detallesFinales: '' };
+            faseFormulario = 0;
+            
+            // Limpieza visual de textos del panel holográfico
+            document.getElementById('rgpd-linea-intencion').setAttribute('value', "INTENCION: -");
+            document.getElementById('rgpd-linea-nombre').setAttribute('value', "CLIENTE: -");
+            document.getElementById('rgpd-linea-contacto').setAttribute('value', "CONTACTO: -");
+            document.getElementById('rgpd-linea-localizacion').setAttribute('value', "BUSQUEDA: -");
+            
+            document.getElementById('panel-rgpd').setAttribute('scale', '0 0 0');
+            document.getElementById('texto-estado-vr').setAttribute('value', 'REINICIANDO INTERFAZ...');
+            
+            hablarSara("Datos descartados correctamente. Iniciando sesion limpia.", function() {
+                volverAlMenuPrincipal();
+            });
+        }
+
         recognition.onresult = function(event) {
             clearTimeout(timerInactividad);
             const comando = event.results[0][0].transcript.trim();
@@ -430,10 +457,6 @@
                 } else if (faseFormulario === 2) {
                     leadData.telefono = comando;
                     faseFormulario = 3;
-                    ejecutarFlujoFormulario();
-                } else if (faseFormulario === 3) {
-                    leadData.email = comando.toLowerCase().replace(/ arroba /g, '@').replace(/ punto /g, '.').replace(/\s/g, '');
-                    faseFormulario = 4;
                     ejecutarFlujoFormulario();
                 } else if (faseFormulario === 5) {
                     leadData.detallesFinales = comando;
