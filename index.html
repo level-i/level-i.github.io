@@ -37,7 +37,7 @@
     </style>
 
     <script>
-        // REGISTRO INMEDIATO DE COMPONENTES VR (EVITA CUELGUES EN PC)
+        // REGISTRO INMEDIATO DE COMPONENTES VR (EVITA CUELGUES EN PC Y OCULUS)
         AFRAME.registerComponent('componente-enlace-vr', {
             init: function () {
                 var el = this.el;
@@ -69,8 +69,6 @@
             <img id="thumb-rapita" src="https://img.youtube.com/vi/oTGUy0fR9i4/0.jpg" crossorigin="anonymous">
             <img id="thumb-campana" src="https://img.youtube.com/vi/9TTqR1wD3jI/0.jpg" crossorigin="anonymous">
             <img id="thumb-oasis" src="https://img.youtube.com/vi/NXjj-4OXNmQ/0.jpg" crossorigin="anonymous">
-            
-            <img id="fondo-space" src="" color="#020617">
         </a-assets>
 
         <a-sky id="cielo-entorno" color="#020617"></a-sky>
@@ -102,7 +100,7 @@
             <a-plane color="#ffffff" width="0.84" height="1.44" position="0.6 0.1 -0.01" material="opacity: 0.1; transparent: true;"></a-plane>
         </a-entity>
 
-        <a-entity id="paleta-principal">
+        <a-entity id="paleta-principal" scale="1 1 1">
             <a-entity position="-1.9 1.5 -1.6" rotation="0 35 0">
                 <a-plane class="clickable" onclick="activarModulo1()" position="0 0.5 0" width="1.4" height="0.25" color="#0f172a" material="opacity: 0.85; transparent: true;">
                     <a-text value="1) COMPRAR O INVERTIR" align="center" scale="0.38 0.38 0.38" font="exo2bold" color="#fff"></a-text>
@@ -134,7 +132,7 @@
             </a-entity>
         </a-entity>
 
-        <a-entity id="paleta-subintencion" visible="false">
+        <a-entity id="paleta-subintencion" scale="0 0 0">
             <a-entity position="0 1.5 -1.8">
                 <a-plane class="clickable" onclick="seleccionarIntencion('Uso Propio')" position="-0.7 0.2 0" width="1.3" height="0.3" color="#1e1b4b" material="opacity: 0.9;">
                     <a-text value="USO PROPIO" align="center" scale="0.4 0.4 0.4" font="exo2bold" color="#00f2fe"></a-text>
@@ -148,7 +146,7 @@
             </a-entity>
         </a-entity>
 
-        <a-entity id="paleta-poblaciones" visible="false">
+        <a-entity id="paleta-poblaciones" scale="0 0 0">
             <a-entity position="-1.8 1.5 -1.5" rotation="0 30 0">
                 <a-plane class="clickable" onclick="seleccionarPoblacion('Alcanar', 'https://level-i.github.io/alcanar360.jpg')" position="0 0.6 0" width="1.3" height="0.22" color="#0f172a">
                     <a-text value="ALCANAR" align="center" scale="0.35 0.35 0.35" font="exo2bold" color="#fff"></a-text>
@@ -193,14 +191,13 @@
     </a-scene>
 
     <script>
-        // CONFIGURACIÓN DE DISCURSOS (FASE CERO ACTUALIZADA A API 4173)
         const welcomeMsg = "Hola. Te encuentras en una web profesional de servicios de consultoría inmobiliaria y marketing digital, dirigida por el API colegiado número 4173 de Barcelona. Soy Sara, tu Asistente Advisor con ADN LEVEL AI. Nos alegramos de tu visita. Dime cómo te podemos ayudar.";
         const insisMsg = "Por favor, dime una de las opciones o di palabras clave como comprar o vender.";
 
         let iaActiva = false;
         let timerInactividad = null;
         
-        // VARIABLES DE ESTADO EXCLUSIVAS DE LA SECCIÓN 1 (SARA)
+        // VARIABLES DE CONTROL DE SARA
         let leadData = {
             tipoCliente: '',
             nombre: '',
@@ -228,7 +225,6 @@
             window.speechSynthesis.speak(ssu);
         }
 
-        // CONTROLADOR DE ACCESO PRINCIPAL (FASE CERO)
         function solicitarPermisosYEntrar() {
             const capaBloqueo = document.getElementById('pantalla-bloqueo');
             if (capaBloqueo) capaBloqueo.remove(); 
@@ -265,7 +261,6 @@
         function forzarReinicioCanalVoz() {
             try { recognition.abort(); } catch(e) {}
             if (faseFormulario > 0) {
-                // Si está rellenando datos, el micro vuelve a escuchar la pregunta en curso sin saltar al inicio
                 abrirMicrofonoCliente();
             } else {
                 document.getElementById('texto-estado-vr').setAttribute('value', 'RECONECTANDO IA...');
@@ -273,13 +268,10 @@
             }
         }
 
-        // =========================================================================
-        // =========================================================================
+        // CONTROLADOR DEL MÓDULO 1: INTERCAMBIO POR ESCALA DIMENSIONAL
         function activarModulo1() {
-            // Desvanecer el menú inicial sin colapsar el motor 3D
-            document.getElementById('paleta-principal').setAttribute('visible', 'false');
-            // Mostrar los paneles de la sub-intención
-            document.getElementById('paleta-subintencion').setAttribute('visible', 'true');
+            document.getElementById('paleta-principal').setAttribute('scale', '0 0 0');
+            document.getElementById('paleta-subintencion').setAttribute('scale', '1 1 1');
             
             document.getElementById('texto-estado-vr').setAttribute('value', 'PERFIL DE COMPRA');
             hablarSara("Entendido. Vamos a gestionar tu perfil de adquisicion. Por favor, indicame en los nuevos paneles si buscas una propiedad para uso propio, o si tu objetivo es invertir para alquiler o reventa.");
@@ -287,9 +279,8 @@
 
         function seleccionarIntencion(tipo) {
             leadData.tipoCliente = tipo;
-            document.getElementById('paleta-subintencion').setAttribute('visible', 'false');
+            document.getElementById('paleta-subintencion').setAttribute('scale', '0 0 0');
             
-            // Arranca el formulario conversacional secuencial de Sara
             faseFormulario = 1;
             ejecutarFlujoFormulario();
         }
@@ -305,8 +296,7 @@
                 document.getElementById('texto-estado-vr').setAttribute('value', 'SARA: PREGUNTA EMAIL');
                 hablarSara("Gracias. Ahora tu correo electronico, en el cual recibiras un justificante de esta conversacion.", abrirMicrofonoCliente);
             } else if (faseFormulario === 4) {
-                // Salto visual a la paleta de poblaciones con efecto inmersivo
-                document.getElementById('paleta-poblaciones').setAttribute('visible', 'true');
+                document.getElementById('paleta-poblaciones').setAttribute('scale', '1 1 1');
                 document.getElementById('texto-estado-vr').setAttribute('value', 'SELECCIONE POBLACION');
                 hablarSara("Estupendo " + leadData.nombre + ". Indica en los paneles flotantes en que poblacion o ciudad estas buscando tu inmueble.");
             }
@@ -315,26 +305,22 @@
         function seleccionarPoblacion(nombrePoblacion, urlFondo360) {
             leadData.poblacion = nombrePoblacion;
             
-            // EFECTO STREET VIEW: Cambia el fondo del espacio 3D en caliente
             if(urlFondo360 !== "") {
                 document.getElementById('cielo-entorno').setAttribute('src', urlFondo360);
-                document.getElementById('cielo-entorno').setAttribute('color', '#ffffff'); // Resetea el color plano oscuro
+                document.getElementById('cielo-entorno').setAttribute('color', '#ffffff'); 
             }
             
-            document.getElementById('paleta-poblaciones').setAttribute('visible', 'false');
+            document.getElementById('paleta-poblaciones').setAttribute('scale', '0 0 0');
             
-            // Siguientes preguntas de ubicación y presupuesto (Voz activa)
             faseFormulario = 5;
             document.getElementById('texto-estado-vr').setAttribute('value', 'SARA: DETALLES FINALES');
             hablarSara("Conectando visualmente con " + nombrePoblacion + ". Ahora, por favor, dime de viva voz la zona especifica, el tipo de propiedad y tu presupuesto maximo.", abrirMicrofonoCliente);
         }
 
-        // CAPTURA INTERACTIVA POR VOZ DE SARA
         recognition.onresult = function(event) {
             clearTimeout(timerInactividad);
             const comando = event.results[0][0].transcript.trim();
             
-            // Si el formulario conversacional está activo, procesa las entradas directas
             if (faseFormulario > 0) {
                 if (faseFormulario === 1) {
                     leadData.nombre = comando;
@@ -345,7 +331,6 @@
                     faseFormulario = 3;
                     ejecutarFlujoFormulario();
                 } else if (faseFormulario === 3) {
-                    // Limpieza simple para correos dictados (espacios por puntos/arrobas comunes)
                     leadData.email = comando.toLowerCase().replace(/ arroba /g, '@').replace(/ punto /g, '.').replace(/\s/g, '');
                     faseFormulario = 4;
                     ejecutarFlujoFormulario();
@@ -353,8 +338,7 @@
                     leadData.presupuesto = comando;
                     document.getElementById('texto-estado-vr').setAttribute('value', 'ENVIANDO A LARK...');
                     
-                    // ENVÍO DE DATOS SEGURO ENRIQUECIDO A LARK
-                    console.log("Despachando Lead a la base de datos centralizada de Lark:", leadData);
+                    console.log("Despachando Lead a Lark de forma segura:", leadData);
                     
                     hablarSara("Muchas gracias " + leadData.nombre + ". He registrado tu solicitud para " + leadData.poblacion + " de forma correcta. Tu Advisor asignado se pondra en contacto contigo de inmediato. Volviendo al espacio de control.", function() {
                         volverAlMenuPrincipal();
@@ -363,7 +347,6 @@
                 return;
             }
 
-            // Enrutador global para el menú principal (Fase Cero)
             const comandoMin = comando.toLowerCase();
             if (comandoMin.includes('comprar') || comandoMin.includes('uno') || comandoMin.includes('invertir')) activarModulo1();
             else {
@@ -372,13 +355,11 @@
         };
 
         function volverAlMenuPrincipal() {
-            // Resetear estados e interfaces visuales
             faseFormulario = 0;
-            document.getElementById('paleta-subintencion').setAttribute('visible', 'false');
-            document.getElementById('paleta-poblaciones').setAttribute('visible', 'false');
-            document.getElementById('paleta-principal').setAttribute('visible', 'true');
+            document.getElementById('paleta-subintencion').setAttribute('scale', '0 0 0');
+            document.getElementById('paleta-poblaciones').setAttribute('scale', '0 0 0');
+            document.getElementById('paleta-principal').setAttribute('scale', '1 1 1');
             
-            // Devolver el fondo al espacio sideral original
             document.getElementById('cielo-entorno').removeAttribute('src');
             document.getElementById('cielo-entorno').setAttribute('color', '#020617');
             
