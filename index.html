@@ -139,7 +139,7 @@
                 <a-plane class="clickable" onclick="activarModulo1()" position="0 0.5 0" width="1.4" height="0.25" color="#0f172a" material="opacity: 0.85; transparent: true;">
                     <a-text value="1) COMPRAR O INVERTIR" align="center" scale="0.38 0.38 0.38" font="exo2bold" color="#fff"></a-text>
                 </a-plane>
-                <a-plane class="clickable" onclick="navegarModuloGeneric(2)" position="0 0.05 0" width="1.4" height="0.25" color="#0f172a" material="opacity: 0.85; transparent: true;">
+                <a-plane class="clickable" onclick="activarModulo2()" position="0 0.05 0" width="1.4" height="0.25" color="#0f172a" material="opacity: 0.85; transparent: true;">
                     <a-text value="2) VENDER PROPIEDAD" align="center" scale="0.38 0.38 0.38" font="exo2bold" color="#fff"></a-text>
                 </a-plane>
                 <a-plane class="clickable" onclick="navegarModuloGeneric(3)" position="0 -0.4 0" width="1.4" height="0.25" color="#0f172a" material="opacity: 0.85; transparent: true;">
@@ -255,7 +255,7 @@
         window.saraHablando = false;
         
         let leadData = {
-            tipoCliente: '',
+            tipoCliente: '', // Puede ser 'Uso Propio', 'Inversion' o 'Vender Propiedad'
             nombre: '',
             telefono: '',
             email: '',
@@ -315,7 +315,6 @@
             }, 300);
         }
 
-        // DESCONEXIÓN FINO FILIPINO DESDE EL BOTÓN PANEL DE LA SECCIÓN CERO
         function desactivarHubSutil() {
             const fundido = document.getElementById('capa-fundido-negro');
             if (fundido) {
@@ -349,10 +348,11 @@
             }
         }
 
+        // =========================================================================
+        // LÓGICA MÓDULO 1: COMPRAR O INVERTIR
+        // =========================================================================
         function activarModulo1() {
-            // El botón de salir se apaga mientras rellenan el formulario
             document.getElementById('boton-salir-hub-3d').setAttribute('scale', '0 0 0');
-            
             document.getElementById('contenedor-video-tiktok').setAttribute('scale', '0 0 0');
             document.getElementById('paleta-principal').setAttribute('scale', '0 0 0');
             document.getElementById('paleta-subintencion').setAttribute('scale', '1 1 1');
@@ -368,10 +368,31 @@
             ejecutarFlujoFormulario();
         }
 
+        // =========================================================================
+        // LÓGICA NUEVA MÓDULO 2: VENDER PROPIEDAD
+        // =========================================================================
+        function activarModulo2() {
+            // Limpieza radical de elementos multimedia y de salida
+            document.getElementById('boton-salir-hub-3d').setAttribute('scale', '0 0 0');
+            document.getElementById('contenedor-video-tiktok').setAttribute('scale', '0 0 0');
+            document.getElementById('paleta-principal').setAttribute('scale', '0 0 0');
+            
+            // Asignamos el tipo de operación directa
+            leadData.tipoCliente = 'Vender Propiedad';
+            document.getElementById('texto-estado-vr').setAttribute('value', 'PERFIL DE VENTA');
+            
+            // Salto conversacional directo al formulario de Sara
+            faseFormulario = 1;
+            ejecutarFlujoFormulario();
+        }
+
+        // =========================================================================
+        // ASISTENTE CONVERSACIONAL SECUENCIAL (SARA CORE)
+        // =========================================================================
         function ejecutarFlujoFormulario() {
             if (faseFormulario === 1) {
                 document.getElementById('texto-estado-vr').setAttribute('value', 'SARA: PREGUNTA NOMBRE');
-                hablarSara("Perfecto. Para poder personalizar tu estudio, me puedes facilitar tu nombre?", abrirMicrofonoCliente);
+                hablarSara("Me puedes indicar tu nombre para dirigirme a ti?", abrirMicrofonoCliente);
             } else if (faseFormulario === 2) {
                 document.getElementById('texto-estado-vr').setAttribute('value', 'SARA: PREGUNTA TELEFONO');
                 hablarSara("Gracias. Ahora necesito que me facilites tu numero de contacto completo.", abrirMicrofonoCliente);
@@ -393,9 +414,10 @@
                     }
                 });
             } else if (faseFormulario === 4) {
+                // Se despliega la red de poblaciones común
                 document.getElementById('paleta-poblaciones').setAttribute('scale', '1 1 1');
                 document.getElementById('texto-estado-vr').setAttribute('value', 'SELECCIONE POBLACION');
-                hablarSara("Estupendo " + leadData.nombre + ". Indica en los paneles flotantes en que poblacion estas buscando.");
+                hablarSara("Estupendo " + leadData.nombre + ". Selecciona en los paneles flotantes el municipio donde se encuentra ubicada tu propiedad.");
             }
         }
 
@@ -409,17 +431,29 @@
             
             faseFormulario = 5;
             document.getElementById('texto-estado-vr').setAttribute('value', 'SARA: DETALLES FINALES');
-            hablarSara("Conectando con " + nombrePoblacion + ". Ahora, dime de viva voz el tipo de propiedad y tu presupuesto estimado.", abrirMicrofonoCliente);
+            
+            // Adaptación de locución final según si vende o compra
+            if (leadData.tipoCliente === 'Vender Propiedad') {
+                hablarSara("Conectando con " + nombrePoblacion + ". Ahora, por favor, dime de viva voz el tipo de propiedad que vendes y el valor aproximado que estimas.", abrirMicrofonoCliente);
+            } else {
+                hablarSara("Conectando con " + nombrePoblacion + ". Ahora, dime de viva voz el tipo de propiedad y tu presupuesto estimado.", abrirMicrofonoCliente);
+            }
         }
 
         function despacharPantallaRevisionYRGPD() {
             faseFormulario = 6; 
             document.getElementById('texto-estado-vr').setAttribute('value', 'VALIDACION LEGAL RGPD');
             
-            document.getElementById('rgpd-linea-intencion').setAttribute('value', "INTENCION: " + leadData.tipoCliente.toUpperCase());
+            // Forzado de textos en el panel holográfico central
+            document.getElementById('rgpd-linea-intencion').setAttribute('value', "OPERACION: " + leadData.tipoCliente.toUpperCase());
             document.getElementById('rgpd-linea-nombre').setAttribute('value', "CLIENTE: " + leadData.nombre.toUpperCase());
             document.getElementById('rgpd-linea-contacto').setAttribute('value', "TEL: " + leadData.telefono + " | EMAIL: " + leadData.email.toUpperCase());
-            document.getElementById('rgpd-linea-localizacion').setAttribute('value', "CIUDAD: " + leadData.poblacion.toUpperCase() + " | NOTAS: " + leadData.detallesFinales.toUpperCase());
+            
+            if (leadData.tipoCliente === 'Vender Propiedad') {
+                document.getElementById('rgpd-linea-localizacion').setAttribute('value', "MUNICIPIO: " + leadData.poblacion.toUpperCase() + " | ACTIVO/VALOR: " + leadData.detallesFinales.toUpperCase());
+            } else {
+                document.getElementById('rgpd-linea-localizacion').setAttribute('value', "CIUDAD: " + leadData.poblacion.toUpperCase() + " | NOTAS: " + leadData.detallesFinales.toUpperCase());
+            }
             
             document.getElementById('panel-rgpd').setAttribute('scale', '1 1 1');
             hablarSara("Hemos procesado tu dictado. Por favor, revisa en el panel central que tus datos son correctos. Haz clic en aceptar para procesarlo, o en borrar para reiniciar.");
@@ -431,7 +465,7 @@
             
             console.log("Transmisión de Lead verificada con éxito hacia el Hub de Lark:", leadData);
             
-            hablarSara("Tratamiento de datos autorizado y justificacion enviada. Volviendo al panel principal.", function() {
+            hablarSara("Tratamiento de datos autorizado de forma correcta. Tu Advisor de zona se pondra en contacto contigo de inmediato. Volviendo al panel principal.", function() {
                 volverAlMenuPrincipal();
             });
         }
@@ -453,6 +487,7 @@
             });
         }
 
+        // PROCESADOR DE ENTRADAS ORALES
         recognition.onresult = function(event) {
             clearTimeout(timerInactividad);
             const comando = event.results[0][0].transcript.trim();
@@ -475,6 +510,7 @@
 
             const comandoMin = comando.toLowerCase();
             if (comandoMin.includes('comprar') || comandoMin.includes('uno') || comandoMin.includes('invertir')) activarModulo1();
+            else if (comandoMin.includes('vender') || comandoMin.includes('dos') || comandoMin.includes('propiedad')) activarModulo2();
             else {
                 document.getElementById('texto-estado-vr').setAttribute('value', 'IA READY - ELIGE');
             }
@@ -486,7 +522,6 @@
             document.getElementById('paleta-poblaciones').setAttribute('scale', '0 0 0');
             document.getElementById('panel-rgpd').setAttribute('scale', '0 0 0');
             
-            // Re-activamos el botón en el menú raíz 3D
             document.getElementById('boton-salir-hub-3d').setAttribute('scale', '1 1 1');
             document.getElementById('contenedor-video-tiktok').setAttribute('scale', '1 1 1');
             document.getElementById('paleta-principal').setAttribute('scale', '1 1 1');
