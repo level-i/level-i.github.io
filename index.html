@@ -26,6 +26,13 @@
             position: absolute !important; top: 0 !important; left: 0 !important;
             width: 100% !important; height: 100% !important;
         }
+        /* BOTÓN PRIVACIDAD HTML (PANTALLA INICIAL) */
+        .btn-privacidad-html {
+            position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
+            color: #94a3b8; text-decoration: none; font-family: 'Montserrat', sans-serif;
+            font-size: 0.75rem; letter-spacing: 1px; transition: 0.3s; z-index: 10000;
+        }
+        .btn-privacidad-html:hover { color: #00f2fe; }
     </style>
 </head>
 <body>
@@ -36,6 +43,7 @@
         <button class="btn-entrar" onclick="arrancarEntornoVR()">
             Entrar en la Experiencia VR
         </button>
+        <a class="btn-privacidad-html" href="https://level.immo/politica-de-privacidad/" target="_blank">Política de Privacidad</a>
     </div>
 
     <a-scene style="display: none;" id="escena-vr" embedded="false" loading-screen="enabled: false">
@@ -68,10 +76,8 @@
                 <a-cone color="#00f2fe" radius-bottom="0.16" radius-top="0.08" height="0.5" position="0 0.3 0" material="opacity: 0.4; transparent: true; wireframe: true;"></a-cone>
                 <a-box color="#00f2fe" width="0.32" height="0.1" depth="0.1" position="0 0.5 0" material="opacity: 0.5; transparent: true; wireframe: true;"></a-box>
                 <a-sphere color="#00f2fe" radius="0.08" position="0 0.68 0" material="opacity: 0.6; transparent: true; wireframe: true;"></a-sphere>
-                
                 <a-ring color="#ff007f" radius-inner="0.09" radius-outer="0.1" position="0 0.68 0" rotation="0 90 0" material="opacity: 0.9; shader: flat;"></a-ring>
                 <a-cylinder color="#ff007f" radius="0.006" height="0.07" position="0.06 0.62 0.06" rotation="45 45 0" material="shader: flat;"></a-cylinder>
-                
                 <a-cylinder color="#00f2fe" radius="0.25" height="0.02" position="0 -0.55 0" material="opacity: 0.3; transparent: true;"></a-cylinder>
             </a-entity>
 
@@ -80,6 +86,10 @@
 
             <a-video src="#video-tiktok" width="0.8" height="1.4" position="0.6 0.1 0" material="opacity: 0.95; shader: flat; side: double;"></a-video>
             <a-plane color="#ffffff" width="0.84" height="1.44" position="0.6 0.1 -0.01" material="opacity: 0.1; transparent: true;"></a-plane>
+
+            <a-plane class="clickable" position="0 -0.8 0" width="1.2" height="0.15" color="#0f172a" material="opacity: 0.7; transparent: true;" onclick="window.open('https://level.immo/politica-de-privacidad/', '_blank')">
+                <a-text value="POLITICA DE PRIVACIDAD (LEGAL)" align="center" scale="0.3 0.3 0.3" font="exo2bold" color="#94a3b8"></a-text>
+            </a-plane>
         </a-entity>
 
         <a-entity position="-1.9 1.5 -1.6" rotation="0 35 0">
@@ -132,8 +142,10 @@
 
     <script>
         const welcomeMsg = "Hola. Te encuentras en una web profesional de servicios de consultoría inmobiliaria y marketing digital, dirigida por el API colegiado número 4351 de Barcelona. Soy Susana, tu Asistente Advisor con ADN LEVEL AI. Nos alegramos de tu visita. ¿En qué te podemos ayudar?";
+        const insisMsg = "Por favor, dime una de las ocho opciones de los paneles flotantes, o di simplemente una palabra clave como comprar, vender o hipoteca para poder guiarte.";
 
         let iaActiva = false;
+        let timerInactividad = null;
 
         // Oído de Susana
         const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
@@ -141,6 +153,7 @@
         recognition.interimResults = false;
 
         function hablarSusana(texto, callback) {
+            clearTimeout(timerInactividad); // Paramos cualquier temporizador previo mientras habla
             window.speechSynthesis.cancel();
             const ssu = new SpeechSynthesisUtterance(texto);
             const voces = window.speechSynthesis.getVoices();
@@ -155,10 +168,21 @@
 
         function abrirMicrofonoCliente() {
             document.getElementById('texto-estado-vr').setAttribute('value', 'ESCUCHANDO AL CLIENTE...');
+            
+            // BLINDAJE DE INACTIVIDAD: Si en 8 segundos el cliente no habla, Susana vuelve a insistir
+            clearTimeout(timerInactividad);
+            timerInactividad = setTimeout(() => {
+                console.log("Inactividad detectada: Activando bucle de insistencia verbal.");
+                try { recognition.stop(); } catch(e) {}
+                document.getElementById('texto-estado-vr').setAttribute('value', 'INASISTENCIA DE VOZ...');
+                hablarSusana(insisMsg, abrirMicrofonoCliente);
+            }, 8000);
+
             try { recognition.start(); } catch(e) {}
         }
 
         recognition.onresult = function(event) {
+            clearTimeout(timerInactividad); // Si hay respuesta válida, rompemos la alerta de inactividad
             const comando = event.results[0][0].transcript.toLowerCase();
             document.getElementById('texto-estado-vr').setAttribute('value', 'PROCESANDO...');
             
@@ -175,7 +199,14 @@
             }
         };
 
-        recognition.onerror = () => { document.getElementById('texto-estado-vr').setAttribute('value', 'IA READY - ELIGE'); };
+        // Si el micro se apaga de golpe de forma nativa sin respuesta, reconectamos mediante el bucle
+        recognition.onend = function() {
+            console.log("El canal nativo de Speech se ha cerrado.");
+        };
+
+        recognition.onerror = () => { 
+            document.getElementById('texto-estado-vr').setAttribute('value', 'IA READY - ELIGE'); 
+        };
 
         function arrancarEntornoVR() {
             document.getElementById('pantalla-bloqueo').style.display = 'none';
@@ -184,7 +215,7 @@
 
             const video = document.getElementById('video-tiktok');
             video.muted = false;
-            video.volume = 0.1; // Se clava al 10% sutil ambiente
+            video.volume = 0.1;
             
             let vPromise = video.play();
             if (vPromise !== undefined) {
