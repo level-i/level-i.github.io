@@ -10,7 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Orbitron:wght@700&display=swap" rel="stylesheet">
     
     <style>
-        /* PANTALLA DE ACCESO PROFESIONAL CAPA ABSOLUTA FLOTANTE */
+        /* PANTALLA DE ACCESO PROFESIONAL (FASE CERO) */
         #pantalla-bloqueo {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background: #020617; z-index: 9999; 
@@ -28,7 +28,6 @@
             position: absolute !important; top: 0 !important; left: 0 !important;
             width: 100% !important; height: 100% !important;
         }
-        /* BOTÓN PRIVACIDAD HTML (PANTALLA INICIAL) */
         .btn-privacidad-html {
             position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
             color: #94a3b8; text-decoration: none; font-family: 'Montserrat', sans-serif;
@@ -38,14 +37,13 @@
     </style>
 
     <script>
-        // REGISTRO INMEDIATO DEL COMPONENTE DE ENLACES EXTERNOS EN REALIDAD VIRTUAL
+        // REGISTRO INMEDIATO DE COMPONENTES VR (EVITA CUELGUES EN PC)
         AFRAME.registerComponent('componente-enlace-vr', {
             init: function () {
                 var el = this.el;
                 el.addEventListener('click', function () {
                     var urlDestino = el.getAttribute('data-url');
                     if (urlDestino) {
-                        console.log("Enrutando de forma segura hacia:", urlDestino);
                         window.open(urlDestino, '_blank');
                     }
                 });
@@ -71,9 +69,11 @@
             <img id="thumb-rapita" src="https://img.youtube.com/vi/oTGUy0fR9i4/0.jpg" crossorigin="anonymous">
             <img id="thumb-campana" src="https://img.youtube.com/vi/9TTqR1wD3jI/0.jpg" crossorigin="anonymous">
             <img id="thumb-oasis" src="https://img.youtube.com/vi/NXjj-4OXNmQ/0.jpg" crossorigin="anonymous">
+            
+            <img id="fondo-space" src="" color="#020617">
         </a-assets>
 
-        <a-sky color="#020617"></a-sky>
+        <a-sky id="cielo-entorno" color="#020617"></a-sky>
         <a-stars radius="200" depth="50" count="1500" factor="4" speed="1"></a-stars>
         <a-ring color="#00f2fe" radius-inner="14" radius-outer="14.1" position="0 0 0" rotation="90 0 0" material="opacity: 0.2;"></a-ring>
         <a-grid material="color: #00f2fe; opacity: 0.05;" rotation="90 0 0" position="0 -0.05 0"></a-grid>
@@ -95,45 +95,95 @@
                 <a-cylinder color="#00f2fe" radius="0.25" height="0.02" position="0 -0.55 0" material="opacity: 0.3; transparent: true;"></a-cylinder>
             </a-entity>
 
-            <a-text value="SARA ADVISOR" align="center" position="0 1.1 0" scale="0.9 0.9 0.9" font="exo2bold" color="#00f2fe"></a-text>
+            <a-text id="nombre-advisor" value="SARA ADVISOR" align="center" position="0 1.1 0" scale="0.9 0.9 0.9" font="exo2bold" color="#00f2fe"></a-text>
             <a-text id="texto-estado-vr" value="IA READY" align="center" position="0 0.85 0" scale="0.6 0.6 0.6" font="monoid" color="#fff"></a-text>
 
             <a-video src="#video-tiktok" width="0.8" height="1.4" position="0.6 0.1 0" material="opacity: 0.95; shader: flat; side: double;"></a-video>
             <a-plane color="#ffffff" width="0.84" height="1.44" position="0.6 0.1 -0.01" material="opacity: 0.1; transparent: true;"></a-plane>
-
-            <a-plane class="clickable" position="0 -0.8 0" width="1.2" height="0.15" color="#0f172a" material="opacity: 0.7; transparent: true;" onclick="window.open('https://level.immo/politica-de-privacidad/', '_blank')">
-                <a-text value="POLÍTICA DE PRIVACIDAD (LEGAL)" align="center" scale="0.3 0.3 0.3" font="exo2bold" color="#94a3b8"></a-text>
-            </a-plane>
         </a-entity>
 
-        <a-entity position="-1.9 1.5 -1.6" rotation="0 35 0">
-            <a-plane class="clickable" onclick="navegarMódulo(1)" position="0 0.5 0" width="1.4" height="0.25" color="#0f172a" material="opacity: 0.85; transparent: true;">
-                <a-text value="1) COMPRAR O INVERTIR" align="center" scale="0.38 0.38 0.38" font="exo2bold" color="#fff"></a-text>
-            </a-plane>
-            <a-plane class="clickable" onclick="navegarMódulo(2)" position="0 0.05 0" width="1.4" height="0.25" color="#0f172a" material="opacity: 0.85; transparent: true;">
-                <a-text value="2) VENDER PROPIEDAD" align="center" scale="0.38 0.38 0.38" font="exo2bold" color="#fff"></a-text>
-            </a-plane>
-            <a-plane class="clickable" onclick="navegarMódulo(3)" position="0 -0.4 0" width="1.4" height="0.25" color="#0f172a" material="opacity: 0.85; transparent: true;">
-                <a-text value="3) HIPOTECA PRE-APROBADA" align="center" scale="0.38 0.38 0.38" font="exo2bold" color="#fff"></a-text>
-            </a-plane>
-            <a-plane class="clickable" onclick="navegarMódulo(4)" position="0 -0.85 0" width="1.4" height="0.25" color="#0f172a" material="opacity: 0.85; transparent: true;">
-                <a-text value="4) GESTION CON CATASTRO" align="center" scale="0.38 0.38 0.38" font="exo2bold" color="#fff"></a-text>
-            </a-plane>
+        <a-entity id="paleta-principal">
+            <a-entity position="-1.9 1.5 -1.6" rotation="0 35 0">
+                <a-plane class="clickable" onclick="activarModulo1()" position="0 0.5 0" width="1.4" height="0.25" color="#0f172a" material="opacity: 0.85; transparent: true;">
+                    <a-text value="1) COMPRAR O INVERTIR" align="center" scale="0.38 0.38 0.38" font="exo2bold" color="#fff"></a-text>
+                </a-plane>
+                <a-plane class="clickable" onclick="navegarMóduloGeneric(2)" position="0 0.05 0" width="1.4" height="0.25" color="#0f172a" material="opacity: 0.85; transparent: true;">
+                    <a-text value="2) VENDER PROPIEDAD" align="center" scale="0.38 0.38 0.38" font="exo2bold" color="#fff"></a-text>
+                </a-plane>
+                <a-plane class="clickable" onclick="navegarMóduloGeneric(3)" position="0 -0.4 0" width="1.4" height="0.25" color="#0f172a" material="opacity: 0.85; transparent: true;">
+                    <a-text value="3) HIPOTECA PRE-APROBADA" align="center" scale="0.38 0.38 0.38" font="exo2bold" color="#fff"></a-text>
+                </a-plane>
+                <a-plane class="clickable" onclick="navegarMóduloGeneric(4)" position="0 -0.85 0" width="1.4" height="0.25" color="#0f172a" material="opacity: 0.85; transparent: true;">
+                    <a-text value="4) TRAMITES CATASTRO" align="center" scale="0.38 0.38 0.38" font="exo2bold" color="#fff"></a-text>
+                </a-plane>
+            </a-entity>
+
+            <a-entity position="1.9 1.5 -1.6" rotation="0 -35 0">
+                <a-plane class="clickable" onclick="navegarMóduloGeneric(5)" position="0 0.5 0" width="1.4" height="0.25" color="#0f172a" material="opacity: 0.85; transparent: true;">
+                    <a-text value="5) ADVISOR EXCLUSIVO DE ZONA" align="center" scale="0.38 0.38 0.38" font="exo2bold" color="#fff"></a-text>
+                </a-plane>
+                <a-plane class="clickable" onclick="navegarMóduloGeneric(6)" position="0 0.05 0" width="1.4" height="0.25" color="#0f172a" material="opacity: 0.85; transparent: true;">
+                    <a-text value="6) ADMINISTRACION" align="center" scale="0.38 0.38 0.38" font="exo2bold" color="#fff"></a-text>
+                </a-plane>
+                <a-plane class="clickable" onclick="navegarMóduloGeneric(7)" position="0 -0.4 0" width="1.4" height="0.25" color="#0f172a" material="opacity: 0.85; transparent: true;">
+                    <a-text value="7) ENGLISH SPEAKER" align="center" scale="0.38 0.38 0.38" font="exo2bold" color="#fff"></a-text>
+                </a-plane>
+                <a-plane class="clickable" onclick="navegarMóduloGeneric(8)" position="0 -0.85 0" width="1.4" height="0.25" color="#0f172a" material="opacity: 0.85; transparent: true;">
+                    <a-text value="8) VERSION FRANCAISE" align="center" scale="0.38 0.38 0.38" font="exo2bold" color="#fff"></a-text>
+                </a-plane>
+            </a-entity>
         </a-entity>
 
-        <a-entity position="1.9 1.5 -1.6" rotation="0 -35 0">
-            <a-plane class="clickable" onclick="navegarMódulo(5)" position="0 0.5 0" width="1.4" height="0.25" color="#0f172a" material="opacity: 0.85; transparent: true;">
-                <a-text value="5) ADVISOR EXCLUSIVO DE ZONA" align="center" scale="0.38 0.38 0.38" font="exo2bold" color="#fff"></a-text>
-            </a-plane>
-            <a-plane class="clickable" onclick="navegarMódulo(6)" position="0 0.05 0" width="1.4" height="0.25" color="#0f172a" material="opacity: 0.85; transparent: true;">
-                <a-text value="6) ADMINISTRACION" align="center" scale="0.38 0.38 0.38" font="exo2bold" color="#fff"></a-text>
-            </a-plane>
-            <a-plane class="clickable" onclick="navegarMódulo(7)" position="0 -0.4 0" width="1.4" height="0.25" color="#0f172a" material="opacity: 0.85; transparent: true;">
-                <a-text value="7) ENGLISH VERSION" align="center" scale="0.38 0.38 0.38" font="exo2bold" color="#fff"></a-text>
-            </a-plane>
-            <a-plane class="clickable" onclick="navegarMódulo(8)" position="0 -0.85 0" width="1.4" height="0.25" color="#0f172a" material="opacity: 0.85; transparent: true;">
-                <a-text value="8) FRENCH VERSION" align="center" scale="0.38 0.38 0.38" font="exo2bold" color="#fff"></a-text>
-            </a-plane>
+        <a-entity id="paleta-subintencion" visible="false">
+            <a-entity position="0 1.5 -1.8">
+                <a-plane class="clickable" onclick="seleccionarIntencion('Uso Propio')" position="-0.7 0.2 0" width="1.3" height="0.3" color="#1e1b4b" material="opacity: 0.9;">
+                    <a-text value="USO PROPIO" align="center" scale="0.4 0.4 0.4" font="exo2bold" color="#00f2fe"></a-text>
+                </a-plane>
+                <a-plane class="clickable" onclick="seleccionarIntencion('Inversion')" position="0.7 0.2 0" width="1.3" height="0.3" color="#1e1b4b" material="opacity: 0.9;">
+                    <a-text value="INVERSION" align="center" scale="0.4 0.4 0.4" font="exo2bold" color="#00f2fe"></a-text>
+                </a-plane>
+                <a-plane class="clickable" onclick="volverAlMenuPrincipal()" position="0 -0.3 0" width="1.2" height="0.2" color="#334155" material="opacity: 0.8;">
+                    <a-text value="VOLVER" align="center" scale="0.3 0.3 0.3" font="exo2bold" color="#fff"></a-text>
+                </a-plane>
+            </a-entity>
+        </a-entity>
+
+        <a-entity id="paleta-poblaciones" visible="false">
+            <a-entity position="-1.8 1.5 -1.5" rotation="0 30 0">
+                <a-plane class="clickable" onclick="seleccionarPoblacion('Alcanar', 'https://level-i.github.io/alcanar360.jpg')" position="0 0.6 0" width="1.3" height="0.22" color="#0f172a">
+                    <a-text value="ALCANAR" align="center" scale="0.35 0.35 0.35" font="exo2bold" color="#fff"></a-text>
+                </a-plane>
+                <a-plane class="clickable" onclick="seleccionarPoblacion('La Rapita', 'https://level-i.github.io/larapita360.jpg')" position="0 0.25 0" width="1.3" height="0.22" color="#0f172a">
+                    <a-text value="LA RAPITA" align="center" scale="0.35 0.35 0.35" font="exo2bold" color="#fff"></a-text>
+                </a-plane>
+                <a-plane class="clickable" onclick="seleccionarPoblacion('Barcelona', 'https://level-i.github.io/barcelona360.jpg')" position="0 -0.1 0" width="1.3" height="0.22" color="#0f172a">
+                    <a-text value="BARCELONA" align="center" scale="0.35 0.35 0.35" font="exo2bold" color="#fff"></a-text>
+                </a-plane>
+                <a-plane class="clickable" onclick="seleccionarPoblacion('Matadepera', 'https://level-i.github.io/matadepera360.jpg')" position="0 -0.45 0" width="1.3" height="0.22" color="#0f172a">
+                    <a-text value="MATADEPERA" align="center" scale="0.35 0.35 0.35" font="exo2bold" color="#fff"></a-text>
+                </a-plane>
+            </a-entity>
+
+            <a-entity position="1.8 1.5 -1.5" rotation="0 -30 0">
+                <a-plane class="clickable" onclick="seleccionarPoblacion('Terrassa', 'https://level-i.github.io/terrassa360.jpg')" position="0 0.6 0" width="1.5" height="0.22" color="#0f172a">
+                    <a-text value="TERRASSA" align="center" scale="0.35 0.35 0.35" font="exo2bold" color="#fff"></a-text>
+                </a-plane>
+                <a-plane class="clickable" onclick="seleccionarPoblacion('Sabadell', 'https://level-i.github.io/sabadell360.jpg')" position="0 0.25 0" width="1.5" height="0.22" color="#0f172a">
+                    <a-text value="SABADELL" align="center" scale="0.35 0.35 0.35" font="exo2bold" color="#fff"></a-text>
+                </a-plane>
+                <a-plane class="clickable" onclick="seleccionarPoblacion('Castellar del Valles', 'https://level-i.github.io/castellar360.jpg')" position="0 -0.1 0" width="1.5" height="0.22" color="#0f172a">
+                    <a-text value="CASTELLAR V." align="center" scale="0.32 0.32 0.32" font="exo2bold" color="#fff"></a-text>
+                </a-plane>
+                <a-plane class="clickable" onclick="seleccionarPoblacion('Sant Cugat del Valles', 'https://level-i.github.io/stcugat360.jpg')" position="0 -0.45 0" width="1.5" height="0.22" color="#0f172a">
+                    <a-text value="ST CUGAT V." align="center" scale="0.32 0.32 0.32" font="exo2bold" color="#fff"></a-text>
+                </a-plane>
+            </a-entity>
+
+            <a-entity position="0 0.6 -1.6">
+                <a-plane class="clickable" onclick="volverAlMenuPrincipal()" width="1.0" height="0.18" color="#7f1d1d" material="opacity: 0.9;">
+                    <a-text value="ABORTAR PROCESO" align="center" scale="0.28 0.28 0.28" font="exo2bold" color="#fff"></a-text>
+                </a-plane>
+            </a-entity>
         </a-entity>
 
         <a-plane class="clickable" componente-enlace-vr data-url="https://www.youtube.com/watch?v=oTGUy0fR9i4" position="-1.4 1.5 2.6" rotation="0 155 0" width="1.2" height="0.7" src="#thumb-rapita"></a-plane>
@@ -143,83 +193,47 @@
     </a-scene>
 
     <script>
-        const welcomeMsg = "Bienvenidos a Level Ai. Soy Sara, tu Asistente Virtual Advisor. Nos alegramos de tu visita. Nuestro control de calidad está dirigido por el Agente de la Propiedad Inmobiliaria número 4173 del Colegio API Barcelona. Dime cómo te podemos ayudar.";
-        const insisMsg = "Por favor, dime una de las ocho opciones de los paneles flotantes, o di simplemente una palabra clave como comprar, vender o hipoteca para poder guiarte.";
+        // CONFIGURACIÓN DE DISCURSOS (FASE CERO ACTUALIZADA A API 4173)
+        const welcomeMsg = "Hola. Te encuentras en una web profesional de servicios de consultoría inmobiliaria y marketing digital, dirigida por el API colegiado número 4173 de Barcelona. Soy Sara, tu Asistente Advisor con ADN LEVEL AI. Nos alegramos de tu visita. Dime cómo te podemos ayudar.";
+        const insisMsg = "Por favor, dime una de las opciones o di palabras clave como comprar o vender.";
 
         let iaActiva = false;
         let timerInactividad = null;
+        
+        // VARIABLES DE ESTADO EXCLUSIVAS DE LA SECCIÓN 1 (SARA)
+        let leadData = {
+            tipoCliente: '',
+            nombre: '',
+            telefono: '',
+            email: '',
+            poblacion: '',
+            zona: '',
+            presupuesto: ''
+        };
+        let faseFormulario = 0; 
 
         const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
         recognition.lang = 'es-ES';
         recognition.interimResults = false;
 
-        function hablarSusana(texto, callback) {
+        function hablarSara(texto, callback) {
             clearTimeout(timerInactividad);
             window.speechSynthesis.cancel();
-
             const ssu = new SpeechSynthesisUtterance(texto);
             const voces = window.speechSynthesis.getVoices();
-            
             let vozFemenina = voces.find(v => v.lang.includes('es') && (v.name.includes('Monica') || v.name.includes('Google') || v.name.includes('Helena')));
             if (vozFemenina) ssu.voice = vozFemenina;
-            
             ssu.rate = 0.95; ssu.pitch = 1.05;
             ssu.onend = () => { if (callback) callback(); };
             window.speechSynthesis.speak(ssu);
         }
 
-        function abrirMicrofonoCliente() {
-            if (!iaActiva) return;
-            
-            clearTimeout(timerInactividad);
-            document.getElementById('texto-estado-vr').setAttribute('value', 'ESCUCHANDO AL CLIENTE...');
-
-            timerInactividad = setTimeout(() => {
-                forzarReinicioCanalVoz();
-            }, 8000);
-
-            try { recognition.start(); } catch(e) {}
-        }
-
-        function forzarReinicioCanalVoz() {
-            try { recognition.abort(); } catch(e) {} 
-            document.getElementById('texto-estado-vr').setAttribute('value', 'RECONECTANDO IA...');
-            hablarSusana(insisMsg, abrirMicrofonoCliente);
-        }
-
-        recognition.onresult = function(event) {
-            clearTimeout(timerInactividad);
-            const comando = event.results[0][0].transcript.toLowerCase().trim();
-            document.getElementById('texto-estado-vr').setAttribute('value', 'PROCESANDO...');
-            
-            if (comando.includes('comprar') || comando.includes('uno') || comando.includes('invertir')) navegarMódulo(1);
-            else if (comando.includes('vender') || comando.includes('dos') || comando.includes('propiedad')) navegarMódulo(2);
-            else if (comando.includes('hipoteca') || comando.includes('tres') || comando.includes('aprobada')) navegarMódulo(3);
-            else if (comando.includes('catastro') || comando.includes('cuatro') || comando.includes('trámite')) navegarMódulo(4);
-            else if (comando.includes('advisor') || comando.includes('cinco') || comando.includes('ser')) navegarMódulo(5);
-            else if (comando.includes('administración') || comando.includes('seis') || comando.includes('contratación')) navegarMódulo(6);
-            else if (comando.includes('english') || comando.includes('siete') || comando.includes('speak')) navegarMódulo(7);
-            else if (comando.includes('français') || comando.includes('ocho') || comando.includes('parle')) navegarMódulo(8);
-            else {
-                hablarSusana("Disculpa, no disponemos de esa opción. ¿Me repites cuál de los servicios deseas?", abrirMicrofonoCliente);
-            }
-        };
-
-        recognition.onerror = function(event) {
-            if (event.error !== 'no-speech') {
-                clearTimeout(timerInactividad);
-                document.getElementById('texto-estado-vr').setAttribute('value', 'IA READY - ELIGE');
-            }
-        };
-
+        // CONTROLADOR DE ACCESO PRINCIPAL (FASE CERO)
         function solicitarPermisosYEntrar() {
-            // DESTRUCCIÓN FULMINANTE DE LA CAPA: Desaparece la pantalla azul sin tocar el canvas 3D
             const capaBloqueo = document.getElementById('pantalla-bloqueo');
             if (capaBloqueo) capaBloqueo.remove(); 
-            
             iaActiva = true;
 
-            // INYECCIÓN LIMPIA Y DIRECTA DEL CURSOR
             const camaraContainer = document.getElementById('contenedor-camara');
             const nuevoCursor = document.createElement('a-entity');
             nuevoCursor.setAttribute('cursor', 'fuse: false; rayOrigin: mouse;');
@@ -229,34 +243,158 @@
             nuevoCursor.setAttribute('raycaster', 'objects: .clickable');
             camaraContainer.appendChild(nuevoCursor);
 
-            // Activación inmediata del vídeo vertical al 10% sutil ambiente
             const video = document.getElementById('video-tiktok');
-            video.muted = false;
-            video.volume = 0.1;
-            let vPromise = video.play();
-            if (vPromise !== undefined) {
-                vPromise.catch(error => {});
-            }
+            video.muted = false; video.volume = 0.1;
+            let vPromise = video.play(); if (vPromise !== undefined) { vPromise.catch(e => {}); }
 
-            // Llamada limpia y asíncrona de Susana
             document.getElementById('texto-estado-vr').setAttribute('value', 'INICIALIZANDO VOZ...');
             setTimeout(() => {
                 document.getElementById('texto-estado-vr').setAttribute('value', 'SARA HABLANDO...');
-                hablarSusana(welcomeMsg, abrirMicrofonoCliente);
+                hablarSara(welcomeMsg, abrirMicrofonoCliente);
             }, 300);
+        }
 
-            // Permisos pasivos de giroscopio sólo en terminales iOS
-            try {
-                if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
-                    DeviceOrientationEvent.requestPermission();
+        function abrirMicrofonoCliente() {
+            if (!iaActiva) return;
+            clearTimeout(timerInactividad);
+            document.getElementById('texto-estado-vr').setAttribute('value', 'ESCUCHANDO AL CLIENTE...');
+            timerInactividad = setTimeout(() => { forzarReinicioCanalVoz(); }, 8000);
+            try { recognition.start(); } catch(e) {}
+        }
+
+        function forzarReinicioCanalVoz() {
+            try { recognition.abort(); } catch(e) {}
+            if (faseFormulario > 0) {
+                // Si está rellenando datos, el micro vuelve a escuchar la pregunta en curso sin saltar al inicio
+                abrirMicrofonoCliente();
+            } else {
+                document.getElementById('texto-estado-vr').setAttribute('value', 'RECONECTANDO IA...');
+                hablarSara(insisMsg, abrirMicrofonoCliente);
+            }
+        }
+
+        // =========================================================================
+        // =========================================================================
+        function activarModulo1() {
+            // Desvanecer el menú inicial sin colapsar el motor 3D
+            document.getElementById('paleta-principal').setAttribute('visible', 'false');
+            // Mostrar los paneles de la sub-intención
+            document.getElementById('paleta-subintencion').setAttribute('visible', 'true');
+            
+            document.getElementById('texto-estado-vr').setAttribute('value', 'PERFIL DE COMPRA');
+            hablarSara("Entendido. Vamos a gestionar tu perfil de adquisicion. Por favor, indicame en los nuevos paneles si buscas una propiedad para uso propio, o si tu objetivo es invertir para alquiler o reventa.");
+        }
+
+        function seleccionarIntencion(tipo) {
+            leadData.tipoCliente = tipo;
+            document.getElementById('paleta-subintencion').setAttribute('visible', 'false');
+            
+            // Arranca el formulario conversacional secuencial de Sara
+            faseFormulario = 1;
+            ejecutarFlujoFormulario();
+        }
+
+        function ejecutarFlujoFormulario() {
+            if (faseFormulario === 1) {
+                document.getElementById('texto-estado-vr').setAttribute('value', 'SARA: PREGUNTA NOMBRE');
+                hablarSara("Perfecto. Para poder personalizar tu estudio, me puedes facilitar tu nombre para dirigirme a ti?", abrirMicrofonoCliente);
+            } else if (faseFormulario === 2) {
+                document.getElementById('texto-estado-vr').setAttribute('value', 'SARA: PREGUNTA TELEFONO');
+                hablarSara("Gracias. Ahora, para que tu Advisor de zona pueda contactar contigo, necesito que me facilites tu numero de contacto completo.", abrirMicrofonoCliente);
+            } else if (faseFormulario === 3) {
+                document.getElementById('texto-estado-vr').setAttribute('value', 'SARA: PREGUNTA EMAIL');
+                hablarSara("Gracias. Ahora tu correo electronico, en el cual recibiras un justificante de esta conversacion.", abrirMicrofonoCliente);
+            } else if (faseFormulario === 4) {
+                // Salto visual a la paleta de poblaciones con efecto inmersivo
+                document.getElementById('paleta-poblaciones').setAttribute('visible', 'true');
+                document.getElementById('texto-estado-vr').setAttribute('value', 'SELECCIONE POBLACION');
+                hablarSara("Estupendo " + leadData.nombre + ". Indica en los paneles flotantes en que poblacion o ciudad estas buscando tu inmueble.");
+            }
+        }
+
+        function seleccionarPoblacion(nombrePoblacion, urlFondo360) {
+            leadData.poblacion = nombrePoblacion;
+            
+            // EFECTO STREET VIEW: Cambia el fondo del espacio 3D en caliente
+            if(urlFondo360 !== "") {
+                document.getElementById('cielo-entorno').setAttribute('src', urlFondo360);
+                document.getElementById('cielo-entorno').setAttribute('color', '#ffffff'); // Resetea el color plano oscuro
+            }
+            
+            document.getElementById('paleta-poblaciones').setAttribute('visible', 'false');
+            
+            // Siguientes preguntas de ubicación y presupuesto (Voz activa)
+            faseFormulario = 5;
+            document.getElementById('texto-estado-vr').setAttribute('value', 'SARA: DETALLES FINALES');
+            hablarSara("Conectando visualmente con " + nombrePoblacion + ". Ahora, por favor, dime de viva voz la zona especifica, el tipo de propiedad y tu presupuesto maximo.", abrirMicrofonoCliente);
+        }
+
+        // CAPTURA INTERACTIVA POR VOZ DE SARA
+        recognition.onresult = function(event) {
+            clearTimeout(timerInactividad);
+            const comando = event.results[0][0].transcript.trim();
+            
+            // Si el formulario conversacional está activo, procesa las entradas directas
+            if (faseFormulario > 0) {
+                if (faseFormulario === 1) {
+                    leadData.nombre = comando;
+                    faseFormulario = 2;
+                    ejecutarFlujoFormulario();
+                } else if (faseFormulario === 2) {
+                    leadData.telefono = comando;
+                    faseFormulario = 3;
+                    ejecutarFlujoFormulario();
+                } else if (faseFormulario === 3) {
+                    // Limpieza simple para correos dictados (espacios por puntos/arrobas comunes)
+                    leadData.email = comando.toLowerCase().replace(/ arroba /g, '@').replace(/ punto /g, '.').replace(/\s/g, '');
+                    faseFormulario = 4;
+                    ejecutarFlujoFormulario();
+                } else if (faseFormulario === 5) {
+                    leadData.presupuesto = comando;
+                    document.getElementById('texto-estado-vr').setAttribute('value', 'ENVIANDO A LARK...');
+                    
+                    // ENVÍO DE DATOS SEGURO ENRIQUECIDO A LARK
+                    console.log("Despachando Lead a la base de datos centralizada de Lark:", leadData);
+                    
+                    hablarSara("Muchas gracias " + leadData.nombre + ". He registrado tu solicitud para " + leadData.poblacion + " de forma correcta. Tu Advisor asignado se pondra en contacto contigo de inmediato. Volviendo al espacio de control.", function() {
+                        volverAlMenuPrincipal();
+                    });
                 }
-            } catch (e) {}
+                return;
+            }
+
+            // Enrutador global para el menú principal (Fase Cero)
+            const comandoMin = comando.toLowerCase();
+            if (comandoMin.includes('comprar') || comandoMin.includes('uno') || comandoMin.includes('invertir')) activarModulo1();
+            else {
+                document.getElementById('texto-estado-vr').setAttribute('value', 'IA READY - ELIGE');
+            }
+        };
+
+        function volverAlMenuPrincipal() {
+            // Resetear estados e interfaces visuales
+            faseFormulario = 0;
+            document.getElementById('paleta-subintencion').setAttribute('visible', 'false');
+            document.getElementById('paleta-poblaciones').setAttribute('visible', 'false');
+            document.getElementById('paleta-principal').setAttribute('visible', 'true');
+            
+            // Devolver el fondo al espacio sideral original
+            document.getElementById('cielo-entorno').removeAttribute('src');
+            document.getElementById('cielo-entorno').setAttribute('color', '#020617');
+            
+            document.getElementById('texto-estado-vr').setAttribute('value', 'IA READY');
         }
 
-        function navegarMódulo(id) {
+        function navegarMóduloGeneric(id) {
             document.getElementById('texto-estado-vr').setAttribute('value', 'CARGANDO MÓDULO ' + id + '...');
-            hablarSusana("Entendido. Conectando con el submódulo de negocio número " + id + ". Por favor, procesa las nuevas opciones.");
+            hablarSara("Conectando con el sub modulo de negocio numero " + id + ". Por favor, procesa las nuevas opciones.");
         }
+
+        recognition.onerror = function(event) {
+            if (event.error !== 'no-speech') {
+                document.getElementById('texto-estado-vr').setAttribute('value', 'IA READY - ELIGE');
+            }
+        };
 
         window.speechSynthesis.onvoiceschanged = () => { window.speechSynthesis.getVoices(); };
     </script>
