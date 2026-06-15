@@ -229,7 +229,7 @@
                 <a-plane class="clickable" onclick="activarModulo7EnglishSpeaker()" position="0 -0.4 0" width="1.4" height="0.25" color="#0f172a" material="opacity: 0.85; transparent: true;">
                     <a-text value="7) ENGLISH SPEAKER" align="center" scale="0.38 0.38 0.38" font="exo2bold" color="#fff"></a-text>
                 </a-plane>
-                <a-plane class="clickable" onclick="navegarModuloGeneric(8)" position="0 -0.85 0" width="1.4" height="0.25" color="#0f172a" material="opacity: 0.85; transparent: true;">
+                <a-plane class="clickable" onclick="activarModulo8VersionFrancaise()" position="0 -0.85 0" width="1.4" height="0.25" color="#0f172a" material="opacity: 0.85; transparent: true;">
                     <a-text value="8) VERSION FRANCAISE" align="center" scale="0.38 0.38 0.38" font="exo2bold" color="#fff"></a-text>
                 </a-plane>
             </a-entity>
@@ -290,15 +290,28 @@
         <a-entity id="panel-english-speaker" scale="0 0 0" position="0 1.4 -1.7">
             <a-plane width="2.4" height="1.1" color="#020617" material="opacity: 0.95; transparent: true; border: 2px solid #fbbf24;">
                 <a-text value="INTERNATIONAL DIVISION" align="center" position="0 0.40 0.01" scale="0.45 0.45 0.45" font="exo2bold" color="#fbbf24"></a-text>
-                
                 <a-text value="We are creating this section entirely in English, whether" align="center" position="0 0.15 0.01" scale="0.30 0.30 0.30" font="exo2bold" color="#fff"></a-text>
                 <a-text value="you want to buy, sell, or become one of our Advisors" align="center" position="0 -0.02 0.01" scale="0.30 0.30 0.30" font="exo2bold" color="#fff"></a-text>
                 <a-text value="for English-speaking clients." align="center" position="0 -0.19 0.01" scale="0.30 0.30 0.30" font="exo2bold" color="#fff"></a-text>
-                
                 <a-text value="Please check back in a few days." align="center" position="0 -0.42 0.01" scale="0.32 0.32 0.32" font="exo2bold" color="#00f2fe"></a-text>
-                
                 <a-plane class="clickable" onclick="volverAlMenuPrincipal()" position="0 -0.65 0.02" width="0.8" height="0.16" color="#334155" material="opacity: 0.95;">
                     <a-text value="RETURN TO MAIN MENU" align="center" scale="0.25 0.25 0.25" font="exo2bold" color="#fff"></a-text>
+                </a-plane>
+            </a-plane>
+        </a-entity>
+
+        <a-entity id="panel-version-francaise" scale="0 0 0" position="0 1.4 -1.7">
+            <a-plane width="2.4" height="1.1" color="#020617" material="opacity: 0.95; transparent: true; border: 2px solid #fbbf24;">
+                <a-text value="DIVISION INTERNATIONALE" align="center" position="0 0.40 0.01" scale="0.45 0.45 0.45" font="exo2bold" color="#fbbf24"></a-text>
+                
+                <a-text value="Cette section est entierement en francais, que vous" align="center" position="0 0.15 0.01" scale="0.30 0.30 0.30" font="exo2bold" color="#fff"></a-text>
+                <a-text value="souhaitiez acheter, vendre ou devenir conseiller" align="center" position="0 -0.02 0.01" scale="0.30 0.30 0.30" font="exo2bold" color="#fff"></a-text>
+                <a-text value="aupres de clients francophones." align="center" position="0 -0.19 0.01" scale="0.30 0.30 0.30" font="exo2bold" color="#fff"></a-text>
+                
+                <a-text value="Veuillez consulter cette page ulterieurement." align="center" position="0 -0.42 0.01" scale="0.32 0.32 0.32" font="exo2bold" color="#00f2fe"></a-text>
+                
+                <a-plane class="clickable" onclick="volverAlMenuPrincipal()" position="0 -0.65 0.02" width="0.8" height="0.16" color="#334155" material="opacity: 0.95;">
+                    <a-text value="RETOUR AU MENU PRINCIPAL" align="center" scale="0.23 0.23 0.23" font="exo2bold" color="#fff"></a-text>
                 </a-plane>
             </a-plane>
         </a-entity>
@@ -332,8 +345,9 @@
         const welcomeMsg = "Hola. Te encuentras en una web profesional de servicios de consultoría inmobiliaria y marketing digital, dirigida por el API colegiado número 4173 de Barcelona. Soy Sara, tu Asistente Advisor con ADN LEVEL AI. Nos alegramos de tu visita. Dime cómo te podemos ayudar.";
         const insisMsg = "Por favor, dime una de las opciones o di palabras clave como comprar o vender.";
 
-        // VARIABLE EXCLUSIVA DEL MÓDULO 7
+        // VARIABLES DE LOS ENRUTADORES IDIOMÁTICOS
         const englishMsg = "Hello! We are creating this section entirely in English, whether you want to buy, sell, or become one of our Advisors for English-speaking clients. Please check back in a few days.";
+        const frenchMsg = "Bonjour! Cette section est entierement en francais, que vous souhaitiez acheter, vendre ou devenir conseiller aupres de clients francophones. Veuillez consulter cette page ulterieurement.";
 
         let iaActiva = false;
         let timerInactividad = null;
@@ -364,7 +378,7 @@
                 .trim();
         }
 
-        // MOTOR SINTETIZADOR CON SOPORTE DE CONMUTACIÓN DE ACENTOS INTERNACIONALES
+        // MOTOR SINTETIZADOR DINÁMICO TRILINGÜE PROTEGIDO
         function hablarSara(texto, callback, idiomaForzado = 'es') {
             clearTimeout(timerInactividad);
             window.speechSynthesis.cancel();
@@ -373,9 +387,12 @@
             
             let vozAsignada = null;
             if (idiomaForzado === 'en') {
-                // Inyección de voz nativa inglesa (prioridad Google, Samantha, Helena o Microsoft)
-                vozAsignada = voces.find(v => v.lang.includes('en') && (v.name.includes('Google') || v.name.includes('Samantha') || v.name.includes('Zira') || v.name.includes('Hazel')));
+                vozAsignada = voces.find(v => v.lang.includes('en') && (v.name.includes('Google') || v.name.includes('Samantha') || v.name.includes('Hazel')));
                 ssu.rate = 0.90; ssu.pitch = 1.0;
+            } else if (idiomaForzado === 'fr') {
+                // Inyección de acento nativo francés (Julie, Paul, Thomas o Google français)
+                vozAsignada = voces.find(v => v.lang.includes('fr') && (v.name.includes('Google') || v.name.includes('Julie') || v.name.includes('Paul') || v.name.includes('Bernard')));
+                ssu.rate = 0.92; ssu.pitch = 1.02;
             } else {
                 vozAsignada = voces.find(v => v.lang.includes('es') && (v.name.includes('Monica') || v.name.includes('Google') || v.name.includes('Helena')));
                 ssu.rate = 0.95; ssu.pitch = 1.05;
@@ -432,7 +449,7 @@
         }
 
         function abrirMicrofonoCliente() {
-            if (!iaActiva || faseFormulario === 1 || faseFormulario === 3 || faseFormulario === 77) return; 
+            if (!iaActiva || faseFormulario === 1 || faseFormulario === 3 || faseFormulario === 77 || faseFormulario === 88) return; 
             clearTimeout(timerInactividad);
             document.getElementById('texto-estado-vr').setAttribute('value', 'ESCUCHANDO AL CLIENTE...');
             timerInactividad = setTimeout(() => { forzarReinicioCanalVoz(); }, 8000);
@@ -440,7 +457,7 @@
         }
 
         function forzarReinicioCanalVoz() {
-            if (faseFormulario === 1 || faseFormulario === 3 || faseFormulario === 77) return; 
+            if (faseFormulario === 1 || faseFormulario === 3 || faseFormulario === 77 || faseFormulario === 88) return; 
             try { recognition.abort(); } catch(e) {}
             if (faseFormulario > 0) {
                 abrirMicrofonoCliente();
@@ -494,29 +511,43 @@
             ejecutarFlujoFormulario();
         }
 
-        // =========================================================================
-        // NUEVA LÓGICA MÓDULO 7: ENGLISH SPEAKER (SOPORTE INTERNACIONAL COMPLETADO)
-        // =========================================================================
+        // MÓDULO 7: ENGLISH SPEAKER
         function activarModulo7EnglishSpeaker() {
             try { recognition.abort(); } catch(e){} 
-            faseFormulario = 77; // Congelamos canal oral en español
-
-            // Ocultación total multimedia limpia
+            faseFormulario = 77; 
             document.getElementById('boton-salir-hub-3d').setAttribute('scale', '0 0 0');
             document.getElementById('contenedor-video-tiktok').setAttribute('scale', '0 0 0');
             document.getElementById('paleta-principal').setAttribute('scale', '0 0 0');
-            
             document.getElementById('texto-estado-vr').setAttribute('value', 'ENGLISH DIVISION');
-            
-            // Hacemos brotar el panel holográfico 3D en inglés frente al cliente
             document.getElementById('panel-english-speaker').setAttribute('scale', '1 1 1');
             
-            // Salida de Sara nativa inglesa (parámetro 'en' inyectado)
             let personalizedWelcome = leadData.nombrePila ? "Hello " + leadData.nombrePila + "! " + englishMsg : englishMsg;
             hablarSara(personalizedWelcome, null, 'en');
         }
 
-        // CORE CONVERSACIONAL DE SARA
+        // =========================================================================
+        // NUEVA LÓGICA MÓDULO 8: VERSION FRANCAISE
+        // =========================================================================
+        function activarModulo8VersionFrancaise() {
+            try { recognition.abort(); } catch(e){} 
+            faseFormulario = 88; // Bloqueo de micrófono en español
+
+            // Ocultación limpia de la escudería central
+            document.getElementById('boton-salir-hub-3d').setAttribute('scale', '0 0 0');
+            document.getElementById('contenedor-video-tiktok').setAttribute('scale', '0 0 0');
+            document.getElementById('paleta-principal').setAttribute('scale', '0 0 0');
+            
+            document.getElementById('texto-estado-vr').setAttribute('value', 'DIVISION FRANÇAISE');
+            
+            // Brote del panel holográfico francés
+            document.getElementById('panel-version-francaise').setAttribute('scale', '1 1 1');
+            
+            // Locución de Sara con acento francés nativo calibrado
+            let personalizedWelcomeFr = leadData.nombrePila ? "Bonjour " + leadData.nombrePila + "! " + frenchMsg : frenchMsg;
+            hablarSara(personalizedWelcomeFr, null, 'fr');
+        }
+
+        // CORE CONVERSACIONAL
         function ejecutarFlujoFormulario() {
             if (faseFormulario === 1) {
                 try { recognition.abort(); } catch(e){}
@@ -743,6 +774,7 @@
             else if (comandoMin.includes('advisor') || comandoMin.includes('cinco') || comandoMin.includes('zona')) abrirModulo5AdvisorsHTML();
             else if (comandoMin.includes('administracion') || comandoMin.includes('seis') || comandoMin.includes('gestion')) activarModulo6Administracion();
             else if (comandoMin.includes('english') || comandoMin.includes('siete') || comandoMin.includes('ingles')) activarModulo7EnglishSpeaker();
+            else if (comandoMin.includes('francais') || comandoMin.includes('ocho') || comandoMin.includes('frances')) activarModulo8VersionFrancaise();
             else {
                 document.getElementById('texto-estado-vr').setAttribute('value', 'IA READY - ELIGE');
             }
@@ -753,7 +785,8 @@
             document.getElementById('paleta-subintencion').setAttribute('scale', '0 0 0');
             document.getElementById('paleta-poblaciones').setAttribute('scale', '0 0 0');
             document.getElementById('panel-rgpd').setAttribute('scale', '0 0 0');
-            document.getElementById('panel-english-speaker').setAttribute('scale', '0 0 0'); // Cerramos cartel inglés
+            document.getElementById('panel-english-speaker').setAttribute('scale', '0 0 0'); 
+            document.getElementById('panel-version-francaise').setAttribute('scale', '0 0 0'); // Cerramos panel francés
             
             document.getElementById('boton-salir-hub-3d').setAttribute('scale', '1 1 1');
             document.getElementById('contenedor-video-tiktok').setAttribute('scale', '1 1 1');
@@ -772,7 +805,7 @@
         }
 
         recognition.onerror = function(event) {
-            if (event.error !== 'no-speech' && faseFormulario !== 1 && faseFormulario !== 3 && faseFormulario !== 77) {
+            if (event.error !== 'no-speech' && faseFormulario !== 1 && faseFormulario !== 3 && faseFormulario !== 77 && faseFormulario !== 88) {
                 document.getElementById('texto-estado-vr').setAttribute('value', 'IA READY - ELIGE');
             }
         };
