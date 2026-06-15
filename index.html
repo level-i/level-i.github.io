@@ -10,18 +10,20 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Orbitron:wght@700&display=swap" rel="stylesheet">
     
     <style>
-        /* PANTALLA DE ACCESO PROFESIONAL */
+        /* PANTALLA DE ACCESO PROFESIONAL (FASE INICIAL PROTEGIDA) */
         #pantalla-bloqueo {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: #020617; z-index: 99999; 
+            background: #020617; z-index: 999999 !important; 
             display: flex; flex-direction: column; align-items: center; justify-content: center; 
             font-family: 'Montserrat', sans-serif; color: white; text-align: center;
+            opacity: 1; pointer-events: all;
+            transition: opacity 1.2s ease-in-out;
         }
         .btn-entrar {
             background: linear-gradient(135deg, #00f2fe, #4f46e5); color: white; border: none; 
             padding: 20px 50px; font-size: 1.1rem; font-weight: bold; border-radius: 30px; 
             cursor: pointer; box-shadow: 0 0 30px rgba(0,242,254,0.5); text-transform: uppercase; letter-spacing: 1px;
-            z-index: 100000;
+            z-index: 1000000;
             transition: transform 0.2s;
         }
         .btn-entrar:hover { transform: scale(1.02); }
@@ -29,7 +31,7 @@
         /* CAPA DE FUNDIDO FINO FILIPINO ANTES DE IR A LA WEB */
         #capa-fundido-negro {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #000000; z-index: 9999999 !important;
+            background: #000000; z-index: 99999999 !important;
             opacity: 0; pointer-events: none;
             transition: opacity 1.5s ease-in-out;
         }
@@ -45,7 +47,7 @@
         }
         .btn-privacidad-html:hover { color: #00f2fe; }
 
-        /* ESTILOS DE INTERFAZ HÍBRIDA PARA EL MÓDULO 5 ADVISORS */
+        /* INTERFAZ HÍBRIDA (DOM OVERLAY) PARA EL MÓDULO 5 ADVISORS */
         .contenedor-overlay-advisors {
             position: fixed; top: 5%; left: 50%; transform: translateX(-50%);
             width: 90%; max-width: 1100px; height: 85vh;
@@ -111,6 +113,17 @@
 <body>
 
     <div id="capa-fundido-negro"></div>
+
+    <div id="pantalla-bloqueo">
+        <h1 style="letter-spacing: 3px; font-size: 2.2rem; margin-bottom: 5px; font-family: 'Orbitron';">LEVEL – i</h1>
+        <p style="color: #00f2fe; letter-spacing: 2px; margin-bottom: 40px; font-size: 0.85rem; font-weight: 600;">ORBITAL OFFICE CLIENT EXPERIENCE by Level.immo</p>
+        
+        <button class="btn-entrar" onclick="solicitarPermisosYEntrar()">
+            Entrar en la Experiencia VR
+        </button>
+        
+        <a class="btn-privacidad-html" href="https://level.immo/politica-de-privacidad/" target="_blank">Política de Privacidad</a>
+    </div>
 
     <div id="overlay-advisors" class="contenedor-overlay-advisors">
         <div class="pestanas-menu">
@@ -207,10 +220,10 @@
             </a-entity>
 
             <a-entity position="1.9 1.5 -1.6" rotation="0 -35 0">
-                <a-plane class="clickable" onclick="abrirModulo5AdvisorsHTML()" position="0 0.5 0" width="1.4" height="0.25" color="#1e3a8a" material="opacity: 0.95; transparent: true;">
+                <a-plane class="clickable" onclick="abrirModulo5AdvisorsHTML()" position="0 0.5 0" width="1.4" height="0.25" color="#0f172a" material="opacity: 0.85; transparent: true;">
                     <a-text value="5) ADVISOR EXCLUSIVO DE ZONA" align="center" scale="0.35 0.35 0.35" font="exo2bold" color="#fff"></a-text>
                 </a-plane>
-                <a-plane class="clickable" onclick="activarModulo6Administracion()" position="0 0.05 0" width="1.4" height="0.25" color="#1e3a8a" material="opacity: 0.95; transparent: true;">
+                <a-plane class="clickable" onclick="activarModulo6Administracion()" position="0 0.05 0" width="1.4" height="0.25" color="#0f172a" material="opacity: 0.85; transparent: true;">
                     <a-text value="6) ADMINISTRACION" align="center" scale="0.38 0.38 0.38" font="exo2bold" color="#fff"></a-text>
                 </a-plane>
                 <a-plane class="clickable" onclick="navegarModuloGeneric(7)" position="0 -0.4 0" width="1.4" height="0.25" color="#0f172a" material="opacity: 0.85; transparent: true;">
@@ -285,7 +298,7 @@
 
                 <a-text value="Al aceptar, autorizas el tratamiento de datos bajo la Ley RGPD de LEVEL.immo" align="center" position="0 -0.48 0.01" scale="0.25 0.25 0.25" font="exo2bold" color="#94a3b8"></a-text>
                 
-                <a-entity position="0 -0.65 0.02">
+                <a-entity position="0 -0.58 0.02">
                     <a-plane class="clickable" onclick="confirmarYDespacharLark()" position="0.6 0 0" width="1.0" height="0.18" color="#22c55e" material="opacity: 0.95;">
                         <a-text value="ACEPTAR Y ENVIAR" align="center" scale="0.28 0.28 0.28" font="exo2bold" color="#fff"></a-text>
                     </a-plane>
@@ -442,7 +455,7 @@
             ejecutarFlujoFormulario();
         }
 
-        // CORRECCIÓN FIJA ENRUTADOR MÓDULO 6: ADMINISTRACIÓN
+        // MÓDULO 6: ADMINISTRACIÓN
         function activarModulo6Administracion() {
             document.getElementById('boton-salir-hub-3d').setAttribute('scale', '0 0 0');
             document.getElementById('contenedor-video-tiktok').setAttribute('scale', '0 0 0');
@@ -455,7 +468,7 @@
             ejecutarFlujoFormulario();
         }
 
-        // CORE CONVERSACIONAL DE SARA
+        // CORE CONVERSACIONAL
         function ejecutarFlujoFormulario() {
             if (faseFormulario === 1) {
                 try { recognition.abort(); } catch(e){}
@@ -575,7 +588,7 @@
             });
         }
 
-        // CONTROLADORES EXCLUSIVOS HÍBRIDOS PARA EL MÓDULO 5
+        // CONTROLADORES HÍBRIDOS MÓDULO 5
         function abrirModulo5AdvisorsHTML() {
             try { recognition.abort(); } catch(e){}
             document.getElementById('boton-salir-hub-3d').setAttribute('scale', '0 0 0');
@@ -699,6 +712,13 @@
             document.getElementById('cielo-entorno').removeAttribute('src');
             document.getElementById('cielo-entorno').setAttribute('color', '#020617');
             document.getElementById('texto-estado-vr').setAttribute('value', 'IA READY');
+        }
+
+        function navegarModuloGeneric(id) {
+            document.getElementById('contenedor-video-tiktok').setAttribute('scale', '0 0 0');
+            document.getElementById('boton-salir-hub-3d').setAttribute('scale', '0 0 0');
+            document.getElementById('texto-estado-vr').setAttribute('value', 'CARGANDO MÓDULO ' + id + '...');
+            hablarSara("Conectando con el sub modulo numero " + id);
         }
 
         recognition.onerror = function(event) {
