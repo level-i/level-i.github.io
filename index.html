@@ -219,21 +219,21 @@
         </a-entity>
 
         <a-entity id="panel-rgpd" scale="0 0 0" position="0 1.4 -1.7">
-            <a-plane width="2.2" height="1.4" color="#020617" material="opacity: 0.95; transparent: true; border: 2px solid #00f2fe;">
-                <a-text value="VERIFICACION DE REGISTRO EXCLUSIVO" align="center" position="0 0.58 0.01" scale="0.45 0.45 0.45" font="exo2bold" color="#00f2fe"></a-text>
+            <a-plane width="2.4" height="1.5" color="#020617" material="opacity: 0.95; transparent: true; border: 2px solid #00f2fe;">
+                <a-text value="VERIFICACION DE REGISTRO EXCLUSIVO" align="center" position="0 0.62 0.01" scale="0.45 0.45 0.45" font="exo2bold" color="#00f2fe"></a-text>
                 
-                <a-text id="rgpd-linea-intencion" value="INTENCION: -" align="left" position="-0.95 0.34 0.01" scale="0.35 0.35 0.35" font="exo2bold" color="#fff"></a-text>
-                <a-text id="rgpd-linea-nombre" value="CLIENTE: -" align="left" position="-0.95 0.16 0.01" scale="0.35 0.35 0.35" font="exo2bold" color="#fff"></a-text>
-                <a-text id="rgpd-linea-contacto" value="CONTACTO: -" align="left" position="-0.95 -0.02 0.01" scale="0.35 0.35 0.35" font="exo2bold" color="#fff"></a-text>
-                <a-text id="rgpd-linea-localizacion" value="BUSQUEDA: -" align="left" position="-0.95 -0.20 0.01" scale="0.35 0.35 0.35" font="exo2bold" color="#fff"></a-text>
+                <a-text id="rgpd-linea-intencion" value="INTENCION: -" align="left" position="-1.05 0.38 0.01" scale="0.33 0.35 0.35" font="exo2bold" color="#fff"></a-text>
+                <a-text id="rgpd-linea-nombre" value="CLIENTE: -" align="left" position="-1.05 0.18 0.01" scale="0.33 0.35 0.35" font="exo2bold" color="#fff"></a-text>
+                <a-text id="rgpd-linea-contacto" value="CONTACTO: -" align="left" position="-1.05 -0.04 0.01" scale="0.33 0.35 0.35" font="exo2bold" color="#fff"></a-text>
+                <a-text id="rgpd-linea-localizacion" value="BUSQUEDA: -" align="left" position="-1.05 -0.26 0.01" scale="0.33 0.35 0.35" font="exo2bold" color="#fff"></a-text>
 
-                <a-text value="Al aceptar, autorizas el tratamiento de datos bajo la Ley RGPD de LEVEL.immo" align="center" position="0 -0.40 0.01" scale="0.25 0.25 0.25" font="exo2bold" color="#94a3b8"></a-text>
+                <a-text value="Al aceptar, autorizas el tratamiento de datos bajo la Ley RGPD de LEVEL.immo" align="center" position="0 -0.48 0.01" scale="0.25 0.25 0.25" font="exo2bold" color="#94a3b8"></a-text>
                 
-                <a-entity position="0 -0.58 0.02">
-                    <a-plane class="clickable" onclick="confirmarYDespacharLark()" position="0.55 0 0" width="0.95" height="0.18" color="#22c55e" material="opacity: 0.95;">
+                <a-entity position="0 -0.65 0.02">
+                    <a-plane class="clickable" onclick="confirmarYDespacharLark()" position="0.6 0 0" width="1.0" height="0.18" color="#22c55e" material="opacity: 0.95;">
                         <a-text value="ACEPTAR Y ENVIAR" align="center" scale="0.28 0.28 0.28" font="exo2bold" color="#fff"></a-text>
                     </a-plane>
-                    <a-plane class="clickable" onclick="borrarDatosYReiniciar()" position="-0.55 0 0" width="0.95" height="0.18" color="#ef4444" material="opacity: 0.95;">
+                    <a-plane class="clickable" onclick="borrarDatosYReiniciar()" position="-0.6 0 0" width="1.0" height="0.18" color="#ef4444" material="opacity: 0.95;">
                         <a-text value="BORRAR Y REINICIAR" align="center" scale="0.28 0.28 0.28" font="exo2bold" color="#fff"></a-text>
                     </a-plane>
                 </a-entity>
@@ -257,7 +257,7 @@
         let leadData = {
             tipoCliente: '', 
             nombre: '',
-            nombrePila: '', // Almacenará únicamente el primer nombre para las locuciones de Sara
+            nombrePila: '', 
             telefono: '',
             email: '',
             poblacion: '',
@@ -269,6 +269,16 @@
         recognition.lang = 'es-ES';
         recognition.interimResults = false;
         recognition.maxAlternatives = 1;
+
+        // FUNCIÓN DE SANEAMIENTO PARA EVITAR ERRORES DE RENDIMIENTO DE FUENTES EN A-FRAME
+        function sanearTextoParaAFrame(texto) {
+            if (!texto) return "";
+            return texto.toUpperCase()
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "") // Borra los acentos en caliente de forma limpia
+                .replace(//g, "N")              // Convierte silenciosamente la Ñ en N para el panel 3D
+                .trim();
+        }
 
         function hablarSara(texto, callback) {
             clearTimeout(timerInactividad);
@@ -331,7 +341,7 @@
         }
 
         function abrirMicrofonoCliente() {
-            if (!iaActiva || faseFormulario === 1 || faseFormulario === 3) return; // BLOQUEO MANUAL: El micro se apaga en fase 1 (Nombre) y fase 3 (Email)
+            if (!iaActiva || faseFormulario === 1 || faseFormulario === 3) return; 
             clearTimeout(timerInactividad);
             document.getElementById('texto-estado-vr').setAttribute('value', 'ESCUCHANDO AL CLIENTE...');
             timerInactividad = setTimeout(() => { forzarReinicioCanalVoz(); }, 8000);
@@ -380,27 +390,25 @@
             ejecutarFlujoFormulario();
         }
 
-        // ASISTENTE CONVERSACIONAL INTELIGENTE MODIFICADO (ENTRADAS MANUALES BIEN ENLAZADAS)
+        // CORE CONVERSACIONAL (ADVERTENCIA DE ACENTOS INSTALADA)
         function ejecutarFlujoFormulario() {
             if (faseFormulario === 1) {
-                // CORRECCIÓN PLUMAZO: Nombre manual a través de Prompt limpio
                 try { recognition.abort(); } catch(e){}
                 document.getElementById('texto-estado-vr').setAttribute('value', 'TECLADO: COMPLETAR NOMBRE');
                 
-                hablarSara("Me puedes indicar tu nombre completo para dirigirme a ti?", function() {
-                    let nombreEntrada = prompt("Por favor, introduce tu nombre y apellidos completos:");
+                // ADVERTENCIA SUTIL INTEGRADA PERFECTAMENTE EN EL DISCURSO DE SARA
+                hablarSara("Me puedes indicar tu nombre completo sin acentos para dirigirme a ti?", function() {
+                    let nombreEntrada = prompt("Introduce tu nombre y apellidos completos (por favor, sin tildes ni acentos):");
                     if (nombreEntrada && nombreEntrada.trim() !== "") {
                         leadData.nombre = nombreEntrada.trim();
                         
-                        // FILTRO DE INGENIERÍA: Extraemos la primera palabra de forma segura como nombre de pila
                         let partes = leadData.nombre.split(" ");
                         leadData.nombrePila = partes[0]; 
                         
                         faseFormulario = 2;
                         ejecutarFlujoFormulario();
                     } else {
-                        // Insistencia proactiva de Sara si lo dejan vacío
-                        hablarSara("Necesito registrar tu nombre completo para continuar el expediente. Por favor, escribelo.", function() {
+                        hablarSara("Necesito registrar tu nombre completo sin acentos para continuar. Por favor, escribelo.", function() {
                             faseFormulario = 1;
                             ejecutarFlujoFormulario();
                         });
@@ -429,7 +437,6 @@
             } else if (faseFormulario === 4) {
                 document.getElementById('paleta-poblaciones').setAttribute('scale', '1 1 1');
                 document.getElementById('texto-estado-vr').setAttribute('value', 'SELECCIONE POBLACION');
-                // SARA DICE ÚNICAMENTE EL NOMBRE DE PILA EXCLUSIVO
                 hablarSara("Estupendo " + leadData.nombrePila + ". Selecciona en los paneles flotantes el municipio donde se encuentra ubicada tu propiedad.");
             }
         }
@@ -456,15 +463,20 @@
             faseFormulario = 6; 
             document.getElementById('texto-estado-vr').setAttribute('value', 'VALIDACION LEGAL RGPD');
             
-            document.getElementById('rgpd-linea-intencion').setAttribute('value', "OPERACION: " + leadData.tipoCliente.toUpperCase());
-            // EL PANEL MUESTRA EL NOMBRE COMPLETO FORMAL CON APELLIDOS DE FORMA SERIA
-            document.getElementById('rgpd-linea-nombre').setAttribute('value', "CLIENTE: " + leadData.nombre.toUpperCase());
-            document.getElementById('rgpd-linea-contacto').setAttribute('value', "TEL: " + leadData.telefono + " | EMAIL: " + leadData.email.toUpperCase());
+            let nombreLimpio3D = sanearTextoParaAFrame(leadData.nombre);
+            let intencionLimpia3D = sanearTextoParaAFrame(leadData.tipoCliente);
+            let emailLimpio3D = sanearTextoParaAFrame(leadData.email);
+            let poblacionLimpia3D = sanearTextoParaAFrame(leadData.poblacion);
+            let detallesLimpios3D = sanearTextoParaAFrame(leadData.detallesFinales);
+
+            document.getElementById('rgpd-linea-intencion').setAttribute('value', "OPERACION: " + intencionLimpia3D);
+            document.getElementById('rgpd-linea-nombre').setAttribute('value', "CLIENTE: " + nombreLimpio3D);
+            document.getElementById('rgpd-linea-contacto').setAttribute('value', "TEL: " + leadData.telefono + " | EMAIL: " + emailLimpio3D);
             
             if (leadData.tipoCliente === 'Vender Propiedad') {
-                document.getElementById('rgpd-linea-localizacion').setAttribute('value', "MUNICIPIO: " + leadData.poblacion.toUpperCase() + " | ACTIVO/VALOR: " + leadData.detallesFinales.toUpperCase());
+                document.getElementById('rgpd-linea-localizacion').setAttribute('value', "MUNICIPIO: " + poblacionLimpia3D + " | ACTIVO/VALOR: " + detallesLimpios3D);
             } else {
-                document.getElementById('rgpd-linea-localizacion').setAttribute('value', "CIUDAD: " + leadData.poblacion.toUpperCase() + " | NOTAS: " + leadData.detallesFinales.toUpperCase());
+                document.getElementById('rgpd-linea-localizacion').setAttribute('value', "CIUDAD: " + poblacionLimpia3D + " | REQUISITOS: " + detallesLimpios3D);
             }
             
             document.getElementById('panel-rgpd').setAttribute('scale', '1 1 1');
@@ -475,7 +487,7 @@
             document.getElementById('panel-rgpd').setAttribute('scale', '0 0 0');
             document.getElementById('texto-estado-vr').setAttribute('value', 'DESPACHANDO LEAD...');
             
-            console.log("Transmisión de Lead verificada con éxito hacia el Hub de Lark:", leadData);
+            console.log("Transmisión de Lead verificada con éxito hacia el Hub de Lark con datos íntegros:", leadData);
             
             hablarSara("Tratamiento de datos autorizado de forma correcta. Tu Advisor de zona se pondra en contacto contigo de inmediato. Volviendo al panel principal.", function() {
                 volverAlMenuPrincipal();
