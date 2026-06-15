@@ -120,6 +120,7 @@
     </style>
     
     <script>
+        // COMPONENTE PARA EL PARPADEO TRIDIMENSIONAL DEL ECUALIZADOR AUDIBLE DE SARA
         AFRAME.registerComponent('ondas-voz-sara', {
             tick: function (time, timeDelta) {
                 if (window.saraHablando) {
@@ -280,14 +281,14 @@
                 <a-entity position="0 -0.85 0.01">
                     <a-plane width="1.0" height="0.26" color="#0f172a" material="opacity: 0.9; transparent: true;"></a-plane>
                     <a-image src="#asset-logo" position="-0.38 0 0.02" width="0.11" height="0.11" material="transparent: true; shader: flat;"></a-image>
-                    <a-text value="level.immo" align="left" position="-0.31 -0.08 0.02" scale="0.12 0.12 0.12" font="exo2bold" color="#94a3b8"></a-text>
-                    <a-image src="#asset-api" position="-0.15 0 0.02" width="0.11" height="0.11" material="transparent: true; shader: flat;"></a-image>
-                    <a-image src="#asset-qr" position="0.04 0 0.02" width="0.12" height="0.12" material="shader: flat;"></a-image>
-                    <a-plane class="clickable" onclick="alert('Modo Realidad Aumentada')" position="0.22 0 0.02" width="0.11" height="0.11" color="#1e293b">
-                        <a-text value="AR" align="center" scale="0.21 0.21 0.21" font="exo2bold" color="#fff"></a-text>
+                    <a-text value="level.immo" align="left" position="-0.31 -0.09 0.02" scale="0.13 0.13 0.13" font="exo2bold" color="#94a3b8"></a-text>
+                    <a-image src="#asset-api" position="-0.15 0 0.02" width="0.13" height="0.13" material="transparent: true; shader: flat;"></a-image>
+                    <a-image src="#asset-qr" position="0.04 0 0.02" width="0.14" height="0.14"></a-image>
+                    <a-plane class="clickable" onclick="alert('Modo Realidad Aumentada')" position="0.22 0 0.02" width="0.12" height="0.12" color="#1e293b">
+                        <a-text value="AR" align="center" scale="0.22 0.22 0.22" font="exo2bold" color="#fff"></a-text>
                     </a-plane>
-                    <a-plane class="clickable" onclick="alert('Modo Inmersivo VR')" position="0.36 0 0.02" width="0.11" height="0.11" color="#1e293b">
-                        <a-text value="VR" align="center" scale="0.21 0.21 0.21" font="exo2bold" color="#fff"></a-text>
+                    <a-plane class="clickable" onclick="alert('Modo Inmersivo VR')" position="0.36 0 0.02" width="0.12" height="0.12" color="#1e293b">
+                        <a-text value="VR" align="center" scale="0.22 0.22 0.22" font="exo2bold" color="#fff"></a-text>
                     </a-plane>
                 </a-entity>
 
@@ -370,9 +371,10 @@
     </a-scene>
 
     <script>
+        // PRESENTACIÓN FORMAL CORPORATIVA ACTUALIZADA
         const welcomeMsg = "Hola, Soy Sara, tu asistente Advisor de Level AI. En qué te puedo ayudar?";
         
-        // CORRECCIÓN CLAVE: Mensaje de espera refinado según tus instrucciones exactas
+        // RECORDATORIO DE OPCIONES ACTUALIZADO SEGÚN TUS INSTRUCCIONES
         const insisMsg = "Por favor, selecciona una opción de la consola, o indícame palabras como comprar, vender, servicios, advisor, ..";
 
         let iaActiva = false;
@@ -390,35 +392,12 @@
         };
         let faseFormulario = 0; 
 
+        // Configuración en modo continuo para amortiguar pausas durante los detalles orales largos
         const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
         recognition.lang = 'es-ES';
         recognition.interimResults = false;
         recognition.maxAlternatives = 1;
         recognition.continuous = true; 
-
-        // DICCIONARIO TEXTO-NÚMERO INTEGRADO PARA EVITAR EL TELÉFONO EN LETRAS
-        const mapaNumeros = {
-            'cero': '0', 'uno': '1', 'dos': '2', 'tres': '3', 'cuatro': '4', 'cinco': '5', 'seis': '6', 'siete': '7', 'ocho': '8', 'nueve': '9',
-            'diez': '10', 'once': '11', 'doce': '12', 'trece': '13', 'catorce': '14', 'quince': '15', 'dieciseis': '16', 'diecisiete': '17', 'dieciocho': '18', 'diecinueve': '19', 'veinte': '20',
-            'treinta': '30', 'cuarenta': '40', 'cincuenta': '50', 'sesenta': '60', 'setenta': '70', 'ochenta': '80', 'noventa': '90'
-        };
-
-        function parsearComandoNumerico(texto) {
-            let limpio = texto.toLowerCase().replace(/[\s-]/g, '');
-            // Si ya son números puros, los devolvemos limpios de inmediato
-            if (/^\d+$/.test(limpio)) return limpio;
-            
-            let palabras = texto.toLowerCase().split(/\s+/);
-            let resultado = "";
-            for (let pal of palabras) {
-                if (mapaNumeros[pal] !== undefined) {
-                    resultado += mapaNumeros[pal];
-                } else if (/^\d+$/.test(pal)) {
-                    resultado += pal;
-                }
-            }
-            return resultado !== "" ? resultado : limpio;
-        }
 
         function sanearTextoParaAFrame(texto) {
             if (!texto) return "";
@@ -473,7 +452,7 @@
         }
 
         function abrirMicrofonoCliente() {
-            if (!iaActiva || faseFormulario === 1 || faseFormulario === 3) return; 
+            if (!iaActiva || faseFormulario === 1 || faseFormulario === 2 || faseFormulario === 3) return; 
             clearTimeout(timerInactividad);
             document.getElementById('texto-estado-vr').setAttribute('value', 'ESCUCHANDO AL CLIENTE...');
             timerInactividad = setTimeout(() => { forzarReinicioCanalVoz(); }, 14000);
@@ -481,7 +460,7 @@
         }
 
         function forzarReinicioCanalVoz() {
-            if (faseFormulario === 1 || faseFormulario === 3) return; 
+            if (faseFormulario === 1 || faseFormulario === 2 || faseFormulario === 3) return; 
             try { recognition.abort(); } catch(e) {}
             if (faseFormulario > 0) {
                 abrirMicrofonoCliente();
@@ -543,10 +522,14 @@
             }, 1000);
         }
 
+        // =========================================================================
+        // ARQUITECTURA DIGITAL UNIFICADA: TODO EL EMBUDO CRÍTICO POR PALETA (PROMPTS)
+        // =========================================================================
         function ejecutarFlujoFormulario() {
+            try { recognition.abort(); } catch(e){} // Apagamos micro temporalmente
+
             if (faseFormulario === 1) {
-                try { recognition.abort(); } catch(e){}
-                document.getElementById('texto-estado-vr').setAttribute('value', 'TECLADO: NOMBRE');
+                document.getElementById('texto-estado-vr').setAttribute('value', 'PALETA: NOMBRE');
                 hablarSara("¿Me puedes indicar tu nombre completo para dirigirme a ti?", function() {
                     let nombreEntrada = prompt("Introduce tu nombre y apellidos (sin acentos):");
                     if (nombreEntrada && nombreEntrada.trim() !== "") {
@@ -555,35 +538,60 @@
                         faseFormulario = 2; 
                         ejecutarFlujoFormulario();
                     } else {
-                        faseFormulario = 1; 
-                        ejecutarFlujoFormulario();
+                        faseFormulario = 1; ejecutarFlujoFormulario();
                     }
                 });
             } else if (faseFormulario === 2) {
-                document.getElementById('texto-estado-vr').setAttribute('value', 'SARA: NUMERO');
-                hablarSara("Gracias. Ahora necesito que me facilites tu número de contacto.", abrirMicrofonoCliente);
-            } else if (faseFormulario === 3) {
-                try { recognition.abort(); } catch(e){} 
-                document.getElementById('texto-estado-vr').setAttribute('value', 'TECLADO: EMAIL');
-                hablarSara("Por favor, escribe tu correo electrónico en la pantalla para recibir el justificante.", function() {
-                    let emailEntrada = prompt("Introduce tu correo electrónico:");
-                    if (emailEntrada && emailEntrada.trim() !== "") {
-                        leadData.email = emailEntrada.trim().toLowerCase();
-                        
-                        let fraseAgradecimiento = "Muchas gracias " + leadData.nombrePila + ". ";
-                        
-                        if (leadData.tipoCliente === 'Administracion') {
-                            faseFormulario = 40;
-                            hablarSara(fraseAgradecimiento + "Dime el asunto o motivo corto de tu consulta de gestión.", abrirMicrofonoCliente);
+                document.getElementById('texto-estado-vr').setAttribute('value', 'PALETA: TELEFONO');
+                hablarSara("Gracias. Introduce ahora tu numero de telefono de contacto en la paleta de tu pantalla.", function() {
+                    let telEntrada = prompt("Introduce tu número de teléfono (solo dígitos, sin letras):");
+                    
+                    // VALIDACIÓN REAL NÚMERO DE TELÉFONO
+                    if (telEntrada && telEntrada.trim() !== "") {
+                        let telLimpio = telEntrada.replace(/\s+/g, '');
+                        // Expresión regular: debe contener entre 9 y 13 dígitos numéricos puros
+                        if (/^\d{9,13}$/.test(telLimpio)) {
+                            leadData.telefono = telLimpio;
+                            faseFormulario = 3; 
+                            ejecutarFlujoFormulario();
                         } else {
-                            faseFormulario = 4;
-                            document.getElementById('paleta-poblaciones').setAttribute('scale', '1 1 1');
-                            document.getElementById('texto-estado-vr').setAttribute('value', 'SELECCIONE POBLACION');
-                            hablarSara(fraseAgradecimiento + "Selecciona el municipio donde se encuentra ubicada tu propiedad.");
+                            alert("Error: El telefono introducido no es valido. Asegurate de incluir solo numeros.");
+                            faseFormulario = 2; ejecutarFlujoFormulario();
                         }
                     } else {
-                        faseFormulario = 3; 
-                        ejecutarFlujoFormulario();
+                        faseFormulario = 2; ejecutarFlujoFormulario();
+                    }
+                });
+            } else if (faseFormulario === 3) {
+                document.getElementById('texto-estado-vr').setAttribute('value', 'PALETA: EMAIL');
+                hablarSara("Estupendo. Escribe tu correo electronico para finalizar tu identificacion.", function() {
+                    let emailEntrada = prompt("Introduce tu correo electrónico:");
+                    
+                    // VALIDACIÓN REAL CORREO ELECTRÓNICO (REGEX ESTÁNDAR)
+                    if (emailEntrada && emailEntrada.trim() !== "") {
+                        let emailLimpio = emailEntrada.trim().toLowerCase();
+                        let regexEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                        if (regexEmail.test(emailLimpio)) {
+                            leadData.email = emailLimpio;
+                            
+                            // RESPUESTA EMPÁTICA DINÁMICA CON NOMBRE DE PILA
+                            let fraseAgradecimiento = "Muchas gracias " + leadData.nombrePila + ". ";
+                            
+                            if (leadData.tipoCliente === 'Administracion') {
+                                faseFormulario = 40;
+                                hablarSara(fraseAgradecimiento + "Dime el asunto o motivo corto de tu consulta de gestión.", abrirMicrofonoCliente);
+                            } else {
+                                faseFormulario = 4;
+                                document.getElementById('paleta-poblaciones').setAttribute('scale', '1 1 1');
+                                document.getElementById('texto-estado-vr').setAttribute('value', 'SELECCIONE POBLACION');
+                                hablarSara(fraseAgradecimiento + "Selecciona el municipio donde se encuentra ubicada tu propiedad.");
+                            }
+                        } else {
+                            alert("Error: El formato de correo electronico es incorrecto (Ej: nombre@dominio.com).");
+                            faseFormulario = 3; ejecutarFlujoFormulario();
+                        }
+                    } else {
+                        faseFormulario = 3; ejecutarFlujoFormulario();
                     }
                 });
             }
@@ -597,12 +605,12 @@
             }
             document.getElementById('paleta-poblaciones').setAttribute('scale', '0 0 0');
             faseFormulario = 5;
-            document.getElementById('texto-estado-vr').setAttribute('value', 'SARA: NOTAS FINALES');
+            document.getElementById('texto-estado-vr').setAttribute('value', 'SARA: DICTADO TOTAL');
             
             if (leadData.tipoCliente === 'Vender Propiedad') {
-                hablarSara("Cuéntame de viva voz los detalles, tipo de inmueble y valor aproximado del activo que deseas vender.", abrirMicrofonoCliente);
+                hablarSara("Cuentame de viva voz todos los detalles, tipo de inmueble y valor aproximado del activo que deseas vender.", abrirMicrofonoCliente);
             } else {
-                hablarSara("Cuéntame ahora de viva voz las características y presupuesto estimado de la propiedad que buscas.", abrirMicrofonoCliente);
+                hablarSara("Cuentame de viva voz las caracteristicas detalladas y el presupuesto estimado de la propiedad que buscas.", abrirMicrofonoCliente);
             }
         }
 
@@ -657,7 +665,7 @@
             volverAlMenuPrincipal();
         }
 
-        // PROCESADOR INTEGRADO AVANZADO CON CAPTURA FINAL OBLIGATORIA
+        // RECOLECTOR MULTIMEDIA DE AUDIO: TRANSCRIBE TODO EL DICTADO DE DETALLES INTEGRAL
         recognition.onresult = function(event) {
             clearTimeout(timerInactividad);
             let comando = "";
@@ -668,19 +676,14 @@
             if (comando === "") return;
             
             if (faseFormulario > 0) {
-                if (faseFormulario === 2) {
-                    // CORRECCIÓN CLAVE: Pasamos el dictado por el traductor de letras a números puros
-                    leadData.telefono = parsearComandoNumerico(comando); 
-                    faseFormulario = 3; 
-                    ejecutarFlujoFormulario();
-                } else if (faseFormulario === 40) {
+                if (faseFormulario === 40) {
                     leadData.poblacion = comando; 
                     faseFormulario = 5;
                     hablarSara("Dime ahora la descripción detallada.", abrirMicrofonoCliente);
                 } else if (faseFormulario === 5) {
-                    // CORRECCIÓN CLAVE: Forzamos el volcado total del buffer y cerramos el micro para que grabe todo
+                    // SECCIÓN DETALLES CRÍTICOS: Volcado íntegro del audio a texto corrido
                     leadData.detallesFinales = comando; 
-                    try { recognition.stop(); } catch(e){} 
+                    try { recognition.stop(); } catch(e){} // Forzamos el volcado total inmediato
                     despacharPantallaRevisionYRGPD();
                 }
                 return;
@@ -715,7 +718,7 @@
         }
 
         recognition.onerror = function(event) {
-            if (iaActiva && faseFormulario !== 1 && faseFormulario !== 3) {
+            if (iaActiva && faseFormulario !== 1 && faseFormulario !== 2 && faseFormulario !== 3) {
                 try { recognition.start(); } catch(e){}
             }
         };
