@@ -199,13 +199,14 @@
     <a-scene loading-screen="enabled: false">
         
         <a-assets>
-            <video id="video-tiktok" src="https://level-i.github.io/level-intro.mp4" loop muted playsinline crossorigin="anonymous"></video>
+            <video id="video-tiktok" src="#video-tiktok-src" loop muted playsinline crossorigin="anonymous"></video>
+            <video id="video-tiktok-src" src="https://level-i.github.io/level-intro.mp4" loop muted playsinline crossorigin="anonymous"></video>
             <img id="thumb-rapita" src="https://img.youtube.com/vi/oTGUy0fR9i4/0.jpg" crossorigin="anonymous">
             <img id="thumb-campana" src="https://img.youtube.com/vi/9TTqR1wD3jI/0.jpg" crossorigin="anonymous">
             <img id="thumb-oasis" src="https://img.youtube.com/vi/NXjj-4OXNmQ/0.jpg" crossorigin="anonymous">
-            <img id="asset-logo" src="https://level-i.github.io/favicon-level-fondo-negro-300x300 sin fondo.png" crossorigin="anonymous">
-            <img id="asset-api" src="https://level-i.github.io/logo api sin fondo.png" crossorigin="anonymous">
-            <img id="asset-qr" src="https://level-i.github.io/Captura de pantalla 2026-04-07 233625.png" crossorigin="anonymous">
+            <img id="asset-logo" src="https://level-i.github.io/docs/favicon-level-fondo-negro-300x300 sin fondo.png" crossorigin="anonymous">
+            <img id="asset-api" src="https://level-i.github.io/docs/logo api sin fondo.png" crossorigin="anonymous">
+            <img id="asset-qr" src="https://level-i.github.io/docs/Captura de pantalla 2026-04-07 233625.png" crossorigin="anonymous">
         </a-assets>
 
         <a-sky id="cielo-entorno" color="#020617"></a-sky>
@@ -279,15 +280,19 @@
 
                 <a-entity position="0 -0.85 0.01">
                     <a-plane width="1.0" height="0.26" color="#0f172a" material="opacity: 0.9; transparent: true;"></a-plane>
-                    <a-image src="#asset-logo" position="-0.38 0 0.02" width="0.12" height="0.12" material="transparent: true;"></a-image>
-                    <a-text value="level.immo" align="left" position="-0.31 -0.09 0.02" scale="0.13 0.13 0.13" font="exo2bold" color="#94a3b8"></a-text>
-                    <a-image src="#asset-api" position="-0.15 0 0.02" width="0.13" height="0.13" material="transparent: true;"></a-image>
-                    <a-image src="#asset-qr" position="0.04 0 0.02" width="0.14" height="0.14"></a-image>
-                    <a-plane class="clickable" onclick="alert('Modo Realidad Aumentada')" position="0.22 0 0.02" width="0.12" height="0.12" color="#1e293b">
-                        <a-text value="AR" align="center" scale="0.22 0.22 0.22" font="exo2bold" color="#fff"></a-text>
+                    
+                    <a-image src="#asset-logo" position="-0.38 0 0.02" width="0.11" height="0.11" material="transparent: true; shader: flat;"></a-image>
+                    <a-text value="level.immo" align="left" position="-0.31 -0.08 0.02" scale="0.12 0.12 0.12" font="exo2bold" color="#94a3b8"></a-text>
+                    
+                    <a-image src="#asset-api" position="-0.15 0 0.02" width="0.11" height="0.11" material="transparent: true; shader: flat;"></a-image>
+                    
+                    <a-image src="#asset-qr" position="0.04 0 0.02" width="0.12" height="0.12" material="shader: flat;"></a-image>
+                    
+                    <a-plane class="clickable" onclick="alert('Modo Realidad Aumentada')" position="0.21 0 0.02" width="0.11" height="0.11" color="#1e293b">
+                        <a-text value="AR" align="center" scale="0.21 0.21 0.21" font="exo2bold" color="#fff"></a-text>
                     </a-plane>
-                    <a-plane class="clickable" onclick="alert('Modo Inmersivo VR')" position="0.36 0 0.02" width="0.12" height="0.12" color="#1e293b">
-                        <a-text value="VR" align="center" scale="0.22 0.22 0.22" font="exo2bold" color="#fff"></a-text>
+                    <a-plane class="clickable" onclick="alert('Modo Inmersivo VR')" position="0.35 0 0.02" width="0.11" height="0.11" color="#1e293b">
+                        <a-text value="VR" align="center" scale="0.21 0.21 0.21" font="exo2bold" color="#fff"></a-text>
                     </a-plane>
                 </a-entity>
 
@@ -370,8 +375,11 @@
     </a-scene>
 
     <script>
-        const welcomeMsg = "Hola. Te encuentras en una web profesional de servicios de consultoría inmobiliaria y marketing digital, dirigida por el API de Barcelona. Soy Sara, tu Asistente Advisor con ADN LEVEL AI. Dime cómo te podemos ayudar hoy.";
-        const insisMsg = "Por favor, selecciona una opción de la consola o dime palabras clave como comprar o vender.";
+        // CORRECCIÓN CLAVE: Nueva presentación formal corporativa de Sara inyectada
+        const welcomeMsg = "Hola, Soy Sara, tu asistente Advisor de Level AI. En qué te puedo ayudar?";
+        
+        // CORRECCIÓN CLAVE: Nuevo recordatorio exacto de opciones de la consola inyectado
+        const insisMsg = "Por favor, selecciona una opción de la consola, o indícame palabras como comprar, vender, servicios, advisor, ..";
 
         let iaActiva = false;
         let timerInactividad = null;
@@ -392,7 +400,6 @@
         recognition.lang = 'es-ES';
         recognition.interimResults = false;
         recognition.maxAlternatives = 1;
-        // Mantenemos la escucha continua atenuada para evitar cortes bruscos por silencios en cualquier dictado largo
         recognition.continuous = true; 
 
         function sanearTextoParaAFrame(texto) {
@@ -431,7 +438,7 @@
 
             document.getElementById('texto-estado-vr').setAttribute('value', 'INICIALIZANDO VOZ...');
             setTimeout(() => {
-                document.getElementById('texto-estado-vr').setAttribute('value', 'SARA: BIENVENIDA...');
+                document.getElementById('texto-estado-vr').setAttribute('value', 'SARA HABLANDO...');
                 hablarSara(welcomeMsg, abrirMicrofonoCliente);
             }, 300);
         }
@@ -447,12 +454,11 @@
             }
         }
 
+        // CONTROLADOR ESTABILIZADO INTEGRAL CONTRA CORTES POR SILENCIOS EN LAS LOCUCIONES DE CAPTACIÓN
         function abrirMicrofonoCliente() {
             if (!iaActiva || faseFormulario === 1 || faseFormulario === 3) return; 
             clearTimeout(timerInactividad);
             document.getElementById('texto-estado-vr').setAttribute('value', 'ESCUCHANDO AL CLIENTE...');
-            
-            // Incrementamos la ventana a 14 segundos para blindar descripciones pausadas de inmuebles
             timerInactividad = setTimeout(() => { forzarReinicioCanalVoz(); }, 14000);
             try { recognition.start(); } catch(e) {}
         }
@@ -520,7 +526,7 @@
             }, 1000);
         }
 
-        // CONTROLADOR DE PASOS REPARADO INTEGRAMENTE PARA EVITAR EL BUCLE INFINITO
+        // CAPTURA DE PASOS ESTABILIZADA CONTRA REBOTES DE NAVEGACIÓN
         function ejecutarFlujoFormulario() {
             if (faseFormulario === 1) {
                 try { recognition.abort(); } catch(e){}
@@ -530,7 +536,7 @@
                     if (nombreEntrada && nombreEntrada.trim() !== "") {
                         leadData.nombre = nombreEntrada.trim();
                         leadData.nombrePila = leadData.nombre.split(" ")[0]; 
-                        faseFormulario = 2; // Fijamos paso al número de teléfono sin rebotes
+                        faseFormulario = 2;
                         ejecutarFlujoFormulario();
                     } else {
                         faseFormulario = 1; 
@@ -637,7 +643,6 @@
 
         recognition.onresult = function(event) {
             clearTimeout(timerInactividad);
-            // Captura iterativa combinada para no pisar dictados en modo continuous
             let comando = "";
             for (let i = event.resultIndex; i < event.results.length; ++i) {
                 if (event.results[i].isFinal) comando += event.results[i][0].transcript;
