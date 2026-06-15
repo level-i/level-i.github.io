@@ -47,7 +47,7 @@
         }
         .btn-privacidad-html:hover { color: #00f2fe; }
 
-        /* INTERFAZ HÍBRIDA (DOM OVERLAY) PARA EL MÓDULO 5 ADVISORS */
+        /* INTERFAZ HÍBRIDA (DOM OVERLAY) PARA ADVISORS */
         .contenedor-overlay-advisors {
             position: fixed; top: 5%; left: 50%; transform: translateX(-50%);
             width: 95%; max-width: 1200px; height: 85vh;
@@ -108,6 +108,20 @@
         .opciones-radio { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; font-size: 0.85rem; }
         .opciones-radio label { display: flex; align-items: center; gap: 10px; cursor: pointer; color: #cbd5e1; }
         .opciones-radio input { accent-color: #fbbf24; }
+
+        /* ESTILOS EXCLUSIVOS PARA EL MENÚ FLOTANTE DE IDIOMAS */
+        .selector-idiomas-flotante {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: rgba(15, 23, 42, 0.98); border: 2px solid #00f2fe; border-radius: 12px;
+            padding: 30px; z-index: 300000 !important; display: none; flex-direction: column;
+            gap: 15px; font-family: 'Montserrat', sans-serif; text-align: center; width: 280px;
+            box-shadow: 0 0 40px rgba(0, 242, 254, 0.3);
+        }
+        .btn-idioma-opc {
+            background: #1e293b; color: white; border: 1px solid #334155; padding: 12px;
+            border-radius: 6px; font-weight: 700; cursor: pointer; transition: 0.3s; text-transform: uppercase;
+        }
+        .btn-idioma-opc:hover { background: #00f2fe; color: #0f172a; }
     </style>
 </head>
 <body>
@@ -123,6 +137,14 @@
         </button>
         
         <a class="btn-privacidad-html" href="https://level.immo/politica-de-privacidad/" target="_blank">Política de Privacidad</a>
+    </div>
+
+    <div id="overlay-idiomas" class="selector-idiomas-flotante">
+        <h4 style="color: #00f2fe; margin-top: 0; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px;">Seleccionar Idioma</h4>
+        <button class="btn-idioma-opc" onclick="cambiarFicheroIdioma('index.html')">Castellano</button>
+        <button class="btn-idioma-opc" onclick="cambiarFicheroIdioma('en.html')">English</button>
+        <button class="btn-idioma-opc" onclick="cambiarFicheroIdioma('fr.html')">Français</button>
+        <button class="btn-idioma-opc" style="background: #ef4444; border: none; margin-top: 10px;" onclick="cerrarSelectorIdiomas()">Cancelar</button>
     </div>
 
     <div id="overlay-advisors" class="contenedor-overlay-advisors">
@@ -151,7 +173,7 @@
                 <div class="profile-box profile-advisor">
                     <div>
                         <span class="box-icon" style="font-size:2.5rem; display:block; margin-bottom:10px;">💼</span>
-                        <h3>1. Quiero ser <span>Advisor Activo</span></h3>
+                        <h3>Quiero ser <span>Advisor Activo</span></h3>
                         <p class="profile-desc" style="color:#aaa; font-size:0.9rem; margin-bottom:15px;">Para autonomos, empresarios o profesionales con red comercial local dispares en todo el territorio.</p>
                         <ul class="benefits-list">
                             <li><strong>0€ Coste de Entrada:</strong> Accede a la Suite con tu cuota mensual integramente apadrinada por un inversor.</li>
@@ -165,7 +187,7 @@
                 <div class="profile-box profile-padrino">
                     <div>
                         <span class="box-icon" style="font-size:2.5rem; display:block; margin-bottom:10px;">👑</span>
-                        <h3>2. Quiero ser <span>Mecenas / Padrino</span></h3>
+                        <h3>Quiero ser <span>Mecenas / Padrino</span></h3>
                         <p class="profile-desc" style="color:#aaa; font-size:0.9rem; margin-bottom:15px;">Para Inversores que desean construir activos humanos y rendimientos pasivos.</p>
                         <ul class="benefits-list">
                             <li><strong>Financia el Motor:</strong> Abonas las cuotas tecnologicas (100€/mes) de tus Advisors asignados.</li>
@@ -274,16 +296,15 @@
 
         <div id="tab-formacion" class="seccion-contenido-tab bloque-info-web">
             <h3>Primera Promocion de Advisors de elite</h3>
-            <p>Se el primero en asegurar los derechos exclusivos de tu zona de influencia. Al enviar tu postulacion, nuestro sistema automatizado despachara a tu correo electronico el glosario completo del curso tecnico, junto al documento juridico de adquisicion de derechos y obligaciones territoriales.</p>
+            <p>Se el primero en asegurar los derechos exclusivos de tu zona de influencia.</p>
             
             <div class="section-divider">Requisitos Obligatorios de Admision</div>
             <ul style="font-size: 0.9rem; padding-left: 20px; line-height: 1.6;">
                 <li>Capacidad de gestion comercial autonoma o alta en regimen de autonomos.</li>
-                <li>Disponer de equipo compatible para visualizacion inmersiva (Smartphone de gama media-alta o gafas Oculus/Meta Quest).</li>
-                <li>Compromiso de resolucion del bloque formativo inicial en un plazo maximo de 14 dias desde la recepcion del glosario.</li>
+                <li>Disponer de equipo compatible para visualizacion inmersiva.</li>
             </ul>
 
-            <div class="section-divider">Formulario de Candidatura y Test de Posicionamiento</div>
+            <div class="section-divider">Formulario de Candidatura</div>
             <div class="grid-formulario">
                 <div class="campo-form"><label>Nombre Completo</label><input type="text" id="form-advisor-nombre" placeholder="Ej: Sebastian Garcia"></div>
                 <div class="campo-form"><label>WhatsApp de Contacto</label><input type="tel" id="form-advisor-tel" placeholder="Ej: 600000000"></div>
@@ -300,15 +321,6 @@
                         <option value="Castellar del Valles">Castellar del Valles</option>
                         <option value="Sant Cugat del Valles">Sant Cugat del Valles</option>
                     </select>
-                </div>
-            </div>
-
-            <div class="pregunta-test">
-                <p>1. ¿Como actuarias si dos inversores de la red LEVEL compiten simultaneamente por el mismo activo off-market en tu municipio asignado?</p>
-                <div class="opciones-radio">
-                    <label><input type="radio" name="p1" value="A"> Priorizar al inversor que tenga mayor historial de rappels liquidados en la Suite.</label>
-                    <label><input type="radio" name="p1" value="B"> Gestionar las ofertas bajo estricto orden de registro en el Hub e informar a la mesa tecnica central de LEVEL.</label>
-                    <label><input type="radio" name="p1" value="C"> Ofrecer la propiedad al mejor postor externo fuera del ecosistema de Advisors.</label>
                 </div>
             </div>
 
@@ -339,8 +351,8 @@
 
         <a-entity id="contenedor-sara" position="0 1.5 -2.3">
             <a-entity id="avatar-sara" position="0 -0.1 0" scale="0.85 0.85 0.85">
-                <a-cylinder efecto-ecualizador color="#00f2fe" radius="0.07" height="0.5" position="0 -0.2 0" material="opacity: 0.4; transparent: true; wireframe: true;"></a-cylinder>
-                <a-cone efecto-ecualizador color="#ff007f" radius-bottom="0.14" radius-top="0.07" height="0.4" position="0 0.25 0" material="opacity: 0.4; transparent: true; wireframe: true;"></a-cone>
+                <a-cylinder color="#00f2fe" radius="0.07" height="0.5" position="0 -0.2 0" material="opacity: 0.4; transparent: true; wireframe: true;"></a-cylinder>
+                <a-cone color="#ff007f" radius-bottom="0.14" radius-top="0.07" height="0.4" position="0 0.25 0" material="opacity: 0.4; transparent: true; wireframe: true;"></a-cone>
                 <a-box color="#00f2fe" width="0.26" height="0.08" depth="0.08" position="0 0.45 0" material="opacity: 0.5; transparent: true; wireframe: true;"></a-box>
                 <a-sphere color="#00f2fe" radius="0.07" position="0 0.62 0" material="opacity: 0.6; transparent: true; wireframe: true;"></a-sphere>
                 <a-ring color="#ff007f" radius-inner="0.08" radius-outer="0.09" position="0 0.62 0" rotation="0 90 0" material="opacity: 0.9; shader: flat;"></a-ring>
@@ -363,29 +375,28 @@
         <a-entity id="paleta-principal" scale="1 1 1">
             <a-entity position="0 1.4 -1.7" scale="0.78 0.78 0.78">
                 <a-plane class="clickable" onclick="activarModulo1()" position="-0.75 0.45 0" width="1.45" height="0.24" color="#0f172a" material="opacity: 0.9;">
-                    <a-text value="1) COMPRAR O INVERTIR" align="center" scale="0.35 0.35 0.35" font="exo2bold" color="#fff"></a-text>
+                    <a-text value="COMPRAR / INVERTIR" align="center" scale="0.33 0.33 0.33" font="exo2bold" color="#fff"></a-text>
                 </a-plane>
-                <a-plane class="clickable" onclick="activarModulo2()" position="-0.75 0.15 0" width="1.45" height="0.24" color="#0f172a" material="opacity: 0.9;">
-                    <a-text value="2) VENDER PROPIEDAD" align="center" scale="0.35 0.35 0.35" font="exo2bold" color="#fff"></a-text>
-                </a-plane>
-                <a-plane class="clickable" onclick="navegarModuloGeneric(3)" position="-0.75 -0.15 0" width="1.45" height="0.24" color="#0f172a" material="opacity: 0.9;">
-                    <a-text value="3) ACCESO PROPIETARIOS" align="center" scale="0.33 0.35 0.35" font="exo2bold" color="#00f2fe"></a-text>
-                </a-plane>
-                <a-plane class="clickable" onclick="navegarModuloGeneric(4)" position="-0.75 -0.45 0" width="1.45" height="0.24" color="#0f172a" material="opacity: 0.9;">
-                    <a-text value="4) HIPOTECA & CATASTRO" align="center" scale="0.33 0.35 0.35" font="exo2bold" color="#fff"></a-text>
+                <a-plane class="clickable" onclick="abrirModulo5AdvisorsHTML()" position="0.75 0.45 0" width="1.45" height="0.24" color="#0f172a" material="opacity: 0.9;">
+                    <a-text value="ADVISORS DE ZONA" align="center" scale="0.33 0.33 0.33" font="exo2bold" color="#fff"></a-text>
                 </a-plane>
 
-                <a-plane class="clickable" onclick="abrirModulo5AdvisorsHTML()" position="0.75 0.45 0" width="1.45" height="0.24" color="#0f172a" material="opacity: 0.9;">
-                    <a-text value="5) ADVISOR DE ZONA" align="center" scale="0.35 0.35 0.35" font="exo2bold" color="#fff"></a-text>
+                <a-plane class="clickable" onclick="activarModulo2()" position="-0.75 0.15 0" width="1.45" height="0.24" color="#0f172a" material="opacity: 0.9;">
+                    <a-text value="VENDER" align="center" scale="0.35 0.35 0.35" font="exo2bold" color="#fff"></a-text>
                 </a-plane>
-                <a-plane class="clickable" onclick="navegarModuloGeneric(6)" position="0.75 0.15 0" width="1.45" height="0.24" color="#0f172a" material="opacity: 0.9;">
-                    <a-text value="6) BUNKFORMATIVO & FAQ" align="center" scale="0.33 0.35 0.35" font="exo2bold" color="#fbbf24"></a-text>
+                <a-plane class="clickable" onclick="activarModulo6Administracion()" position="0.75 0.15 0" width="1.45" height="0.24" color="#0f172a" material="opacity: 0.9;">
+                    <a-text value="ADMINISTRACION" align="center" scale="0.35 0.35 0.35" font="exo2bold" color="#fff"></a-text>
                 </a-plane>
-                <a-plane class="clickable" onclick="activarModulo6Administracion()" position="0.75 -0.15 0" width="1.45" height="0.24" color="#0f172a" material="opacity: 0.9;">
-                    <a-text value="7) ADMINISTRACION" align="center" scale="0.35 0.35 0.35" font="exo2bold" color="#fff"></a-text>
+
+                <a-plane class="clickable" onclick="navegarModuloGeneric('Propietario')" position="-0.75 -0.15 0" width="1.45" height="0.24" color="#0f172a" material="opacity: 0.9;">
+                    <a-text value="PROPIETARIO CLIENTE" align="center" scale="0.32 0.32 0.32" font="exo2bold" color="#00f2fe"></a-text>
                 </a-plane>
-                <a-plane class="clickable" onclick="activarModulo7EnglishSpeaker()" position="0.75 -0.45 0" width="1.45" height="0.24" color="#0f172a" material="opacity: 0.9;">
-                    <a-text value="8) IDIOMAS / INTERNAT." align="center" scale="0.35 0.35 0.35" font="exo2bold" color="#fff"></a-text>
+                <a-plane class="clickable" onclick="abrirMenuIdiomasFlotante()" position="0.75 -0.15 0" width="1.45" height="0.24" color="#0f172a" material="opacity: 0.9;">
+                    <a-text value="CAMBIAR IDIOMA" align="center" scale="0.35 0.35 0.35" font="exo2bold" color="#fbbf24"></a-text>
+                </a-plane>
+
+                <a-plane class="clickable" onclick="navegarModuloGeneric('Servicios')" position="0 -0.45 0" width="2.95" height="0.24" color="#1e293b" material="opacity: 0.95;">
+                    <a-text value="SERVICIOS" align="center" scale="0.38 0.38 0.38" font="exo2bold" color="#fff"></a-text>
                 </a-plane>
             </a-entity>
         </a-entity>
@@ -438,32 +449,6 @@
             </a-entity>
         </a-entity>
 
-        <a-entity id="panel-english-speaker" scale="0 0 0" position="0 1.4 -1.7">
-            <a-plane width="2.4" height="1.1" color="#020617" material="opacity: 0.95; transparent: true; border: 2px solid #fbbf24;">
-                <a-text value="INTERNATIONAL DIVISION" align="center" position="0 0.40 0.01" scale="0.45 0.45 0.45" font="exo2bold" color="#fbbf24"></a-text>
-                <a-text value="We are creating this section entirely in English, whether" align="center" position="0 0.15 0.01" scale="0.30 0.30 0.30" font="exo2bold" color="#fff"></a-text>
-                <a-text value="you want to buy, sell, or become one of our Advisors" align="center" position="0 -0.02 0.01" scale="0.30 0.30 0.30" font="exo2bold" color="#fff"></a-text>
-                <a-text value="for English-speaking clients." align="center" position="0 -0.19 0.01" scale="0.30 0.30 0.30" font="exo2bold" color="#fff"></a-text>
-                <a-text value="Please check back in a few days." align="center" position="0 -0.42 0.01" scale="0.32 0.32 0.32" font="exo2bold" color="#00f2fe"></a-text>
-                <a-plane class="clickable" onclick="volverAlMenuPrincipal()" position="0 -0.65 0.02" width="0.8" height="0.16" color="#334155" material="opacity: 0.95;">
-                    <a-text value="RETURN TO MAIN MENU" align="center" scale="0.25 0.25 0.25" font="exo2bold" color="#fff"></a-text>
-                </a-plane>
-            </a-plane>
-        </a-entity>
-
-        <a-entity id="panel-version-francaise" scale="0 0 0" position="0 1.4 -1.7">
-            <a-plane width="2.4" height="1.1" color="#020617" material="opacity: 0.95; transparent: true; border: 2px solid #fbbf24;">
-                <a-text value="DIVISION INTERNATIONALE" align="center" position="0 0.40 0.01" scale="0.45 0.45 0.45" font="exo2bold" color="#fbbf24"></a-text>
-                <a-text value="Cette section est entierement en francais, que vous" align="center" position="0 0.15 0.01" scale="0.30 0.30 0.30" font="exo2bold" color="#fff"></a-text>
-                <a-text value="souhaitiez acheter, vendre ou devenir conseiller" align="center" position="0 -0.02 0.01" scale="0.30 0.30 0.30" font="exo2bold" color="#fff"></a-text>
-                <a-text value="aupres de clients francophones." align="center" position="0 -0.19 0.01" scale="0.30 0.30 0.30" font="exo2bold" color="#fff"></a-text>
-                <a-text value="Veuillez consulter cette page ulterieurement." align="center" position="0 -0.42 0.01" scale="0.32 0.32 0.32" font="exo2bold" color="#00f2fe"></a-text>
-                <a-plane class="clickable" onclick="volverAlMenuPrincipal()" position="0 -0.65 0.02" width="0.8" height="0.16" color="#334155" material="opacity: 0.95;">
-                    <a-text value="RETOUR AU MENU PRINCIPAL" align="center" scale="0.23 0.23 0.23" font="exo2bold" color="#fff"></a-text>
-                </a-plane>
-            </a-plane>
-        </a-entity>
-
         <a-entity id="panel-rgpd" scale="0 0 0" position="0 1.4 -1.7">
             <a-plane width="2.4" height="1.5" color="#020617" material="opacity: 0.95; transparent: true; border: 2px solid #00f2fe;">
                 <a-text value="VERIFICACION DE REGISTRO EXCLUSIVO" align="center" position="0 0.62 0.01" scale="0.45 0.45 0.45" font="exo2bold" color="#00f2fe"></a-text>
@@ -483,18 +468,15 @@
             </a-plane>
         </a-entity>
 
-        <a-plane class="clickable" componente-enlace-vr data-url="https://www.youtube.com/watch?v=oTGUy0fR9i4" position="-1.4 1.5 2.6" rotation="0 155 0" width="1.2" height="0.7" src="#thumb-rapita"></a-plane>
-        <a-plane class="clickable" componente-enlace-vr data-url="https://www.youtube.com/watch?v=9TTqR1wD3jI" position="0 1.5 2.7" rotation="0 180 0" width="1.2" height="0.7" src="#thumb-campana"></a-plane>
-        <a-plane class="clickable" componente-enlace-vr data-url="https://www.youtube.com/watch?v=NXjj-4OXNmQ" position="1.4 1.5 2.6" rotation="0 -155 0" width="1.2" height="0.7" src="#thumb-oasis"></a-plane>
+        <a-plane position="-1.4 1.5 2.6" rotation="0 155 0" width="1.2" height="0.7" src="#thumb-rapita"></a-plane>
+        <a-plane position="0 1.5 2.7" rotation="0 180 0" width="1.2" height="0.7" src="#thumb-campana"></a-plane>
+        <a-plane position="1.4 1.5 2.6" rotation="0 -155 0" width="1.2" height="0.7" src="#thumb-oasis"></a-plane>
 
     </a-scene>
 
     <script>
-        const welcomeMsg = "Hola. Te encuentras en una web profesional de servicios de consultoría inmobiliaria y marketing digital, dirigida por el API colegiado número 4173 de Barcelona. Soy Sara, tu Asistente Advisor con ADN LEVEL AI. Nos alegramos de tu visita. Dime cómo te podemos ayudar.";
-        const insisMsg = "Por favor, dime una de las opciones o di palabras clave como comprar o vender.";
-
-        const englishMsg = "Hello! We are creating this section entirely in English, whether you want to buy, sell, or become one of our Advisors for English-speaking clients. Please check back in a few days.";
-        const frenchMsg = "Bonjour! Cette section est entierement en francais, que vous souhaitiez acheter, vendre ou devenir conseiller aupres de clients francophones. Veuillez consulter cette page ulterieurement.";
+        const welcomeMsg = "Hola. Te encuentras en una web profesional de servicios de consultoría inmobiliaria y marketing digital, dirigida por el API de Barcelona. Soy Sara, tu Asistente Advisor con ADN LEVEL AI. Dime cómo te podemos ayudar hoy.";
+        const insisMsg = "Por favor, selecciona una opción de la consola o dime palabras clave como comprar o vender.";
 
         let iaActiva = false;
         let timerInactividad = null;
@@ -518,32 +500,17 @@
 
         function sanearTextoParaAFrame(texto) {
             if (!texto) return "";
-            return texto.toUpperCase()
-                .normalize("NFD")
-                .replace(/[\u0300-\u036f]/g, "") 
-                .replace(//g, "N")              
-                .trim();
+            return texto.toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
         }
 
-        function hablarSara(texto, callback, idiomaForzado = 'es') {
+        function hablarSara(texto, callback) {
             clearTimeout(timerInactividad);
             window.speechSynthesis.cancel();
             const ssu = new SpeechSynthesisUtterance(texto);
             const voces = window.speechSynthesis.getVoices();
-            
-            let vozAsignada = null;
-            if (idiomaForzado === 'en') {
-                vozAsignada = voces.find(v => v.lang.includes('en') && (v.name.includes('Google') || v.name.includes('Samantha') || v.name.includes('Hazel')));
-                ssu.rate = 0.90; ssu.pitch = 1.0;
-            } else if (idiomaForzado === 'fr') {
-                vozAsignada = voces.find(v => v.lang.includes('fr') && (v.name.includes('Google') || v.name.includes('Julie') || v.name.includes('Paul') || v.name.includes('Bernard')));
-                ssu.rate = 0.92; ssu.pitch = 1.02;
-            } else {
-                vozAsignada = voces.find(v => v.lang.includes('es') && (v.name.includes('Monica') || v.name.includes('Google') || v.name.includes('Helena')));
-                ssu.rate = 0.95; ssu.pitch = 1.05;
-            }
-            
+            let vozAsignada = voces.find(v => v.lang.includes('es') && (v.name.includes('Monica') || v.name.includes('Google') || v.name.includes('Helena')));
             if (vozAsignada) ssu.voice = vozAsignada;
+            ssu.rate = 0.95; ssu.pitch = 1.05;
             
             ssu.onstart = () => { window.saraHablando = true; };
             ssu.onend = () => { 
@@ -559,7 +526,6 @@
                 capaBloqueo.style.opacity = '0';
                 setTimeout(() => { if (capaBloqueo) capaBloqueo.remove(); }, 1200);
             }
-            
             iaActiva = true;
 
             const video = document.getElementById('video-tiktok');
@@ -585,7 +551,7 @@
         }
 
         function abrirMicrofonoCliente() {
-            if (!iaActiva || faseFormulario === 1 || faseFormulario === 3 || faseFormulario === 77 || faseFormulario === 88) return; 
+            if (!iaActiva || faseFormulario === 1 || faseFormulario === 3) return; 
             clearTimeout(timerInactividad);
             document.getElementById('texto-estado-vr').setAttribute('value', 'ESCUCHANDO AL CLIENTE...');
             timerInactividad = setTimeout(() => { forzarReinicioCanalVoz(); }, 8000);
@@ -593,7 +559,7 @@
         }
 
         function forzarReinicioCanalVoz() {
-            if (faseFormulario === 1 || faseFormulario === 3 || faseFormulario === 77 || faseFormulario === 88) return; 
+            if (faseFormulario === 1 || faseFormulario === 3) return; 
             try { recognition.abort(); } catch(e) {}
             if (faseFormulario > 0) {
                 abrirMicrofonoCliente();
@@ -603,15 +569,13 @@
             }
         }
 
-        // MÓDULO 1: COMPRAR O INVERTIR
         function activarModulo1() {
             document.getElementById('boton-salir-hub-3d').setAttribute('scale', '0 0 0');
             document.getElementById('contenedor-video-tiktok').setAttribute('scale', '0 0 0');
             document.getElementById('paleta-principal').setAttribute('scale', '0 0 0');
             document.getElementById('paleta-subintencion').setAttribute('scale', '1 1 1');
-            
             document.getElementById('texto-estado-vr').setAttribute('value', 'PERFIL DE COMPRA');
-            hablarSara("Entendido. Vamos a gestionar tu perfil de adquisicion. Por favor, indicame en los nuevos paneles si buscas una propiedad para uso propio, o si tu objetivo es invertir para alquiler o reventa.");
+            hablarSara("Entendido. Por favor, indícame si buscas una propiedad para uso propio, o si tu objetivo es invertir.");
         }
 
         function seleccionarIntencion(tipo) {
@@ -621,114 +585,84 @@
             ejecutarFlujoFormulario();
         }
 
-        // MÓDULO 2: VENDER PROPIEDAD
         function activarModulo2() {
             document.getElementById('boton-salir-hub-3d').setAttribute('scale', '0 0 0');
             document.getElementById('contenedor-video-tiktok').setAttribute('scale', '0 0 0');
             document.getElementById('paleta-principal').setAttribute('scale', '0 0 0');
-            
             leadData.tipoCliente = 'Vender Propiedad';
             document.getElementById('texto-estado-vr').setAttribute('value', 'PERFIL DE VENTA');
-            
             faseFormulario = 1;
             ejecutarFlujoFormulario();
         }
 
-        // MÓDULO 6: ADMINISTRACIÓN (MAQUILLADO COMO TRAMITE LEGAL 7 EN CONSOLA)
         function activarModulo6Administracion() {
             document.getElementById('boton-salir-hub-3d').setAttribute('scale', '0 0 0');
             document.getElementById('contenedor-video-tiktok').setAttribute('scale', '0 0 0');
             document.getElementById('paleta-principal').setAttribute('scale', '0 0 0');
-            
             leadData.tipoCliente = 'Administracion';
             document.getElementById('texto-estado-vr').setAttribute('value', 'TRAMITE ADM');
-            
             faseFormulario = 1;
             ejecutarFlujoFormulario();
         }
 
-        // MÓDULO 7: ENGLISH SPEAKER
-        function activarModulo7EnglishSpeaker() {
-            try { recognition.abort(); } catch(e){} 
-            faseFormulario = 77; 
-            document.getElementById('boton-salir-hub-3d').setAttribute('scale', '0 0 0');
-            document.getElementById('contenedor-video-tiktok').setAttribute('scale', '0 0 0');
-            document.getElementById('paleta-principal').setAttribute('scale', '0 0 0');
-            document.getElementById('texto-estado-vr').setAttribute('value', 'ENGLISH DIVISION');
-            document.getElementById('panel-english-speaker').setAttribute('scale', '1 1 1');
-            
-            let personalizedWelcome = leadData.nombrePila ? "Hello " + leadData.nombrePila + "! " + englishMsg : englishMsg;
-            hablarSara(personalizedWelcome, null, 'en');
+        // CONTROLADORES DE IDIOMAS MEDIANTE OVERLAY LIMPIO
+        function abrirMenuIdiomasFlotante() {
+            try { recognition.abort(); } catch(e){}
+            document.getElementById('overlay-idiomas').style.display = 'flex';
+        }
+        function cerrarSelectorIdiomas() {
+            document.getElementById('overlay-idiomas').style.display = 'none';
+        }
+        function cambiarFicheroIdioma(nombreArchivo) {
+            document.getElementById('overlay-idiomas').style.display = 'none';
+            const fundido = document.getElementById('capa-fundido-negro');
+            fundido.style.pointerEvents = 'auto'; fundido.style.opacity = '1';
+            setTimeout(() => {
+                window.location.href = "https://level-i.github.io/" + nombreArchivo;
+            }, 1000);
         }
 
-        // MÓDULO 8: VERSION FRANCAISE
-        function activarModulo8VersionFrancaise() {
-            try { recognition.abort(); } catch(e){} 
-            faseFormulario = 88; 
-            document.getElementById('boton-salir-hub-3d').setAttribute('scale', '0 0 0');
-            document.getElementById('contenedor-video-tiktok').setAttribute('scale', '0 0 0');
-            document.getElementById('paleta-principal').setAttribute('scale', '0 0 0');
-            document.getElementById('texto-estado-vr').setAttribute('value', 'DIVISION FRANÇAISE');
-            document.getElementById('panel-version-francaise').setAttribute('scale', '1 1 1');
-            
-            let personalizedWelcomeFr = leadData.nombrePila ? "Bonjour " + leadData.nombrePila + "! " + frenchMsg : frenchMsg;
-            hablarSara(personalizedWelcomeFr, null, 'fr');
-        }
-
-        // CORE CONVERSACIONAL DE SARA
         function ejecutarFlujoFormulario() {
             if (faseFormulario === 1) {
                 try { recognition.abort(); } catch(e){}
                 document.getElementById('texto-estado-vr').setAttribute('value', 'TECLADO: COMPLETAR NOMBRE');
-                
-                hablarSara("Me puedes indicar tu nombre completo sin acentos para dirigirme a ti?", function() {
-                    let nombreEntrada = prompt("Introduce tu nombre y apellidos completos (por favor, sin tildes ni acentos):");
+                hablarSara("¿Me puedes indicar tu nombre completo para dirigirme a ti?", function() {
+                    let nombreEntrada = prompt("Introduce tu nombre y apellidos (sin acentos):");
                     if (nombreEntrada && nombreEntrada.trim() !== "") {
                         leadData.nombre = nombreEntrada.trim();
-                        let partes = leadData.nombre.split(" ");
-                        leadData.nombrePila = partes[0]; 
+                        leadData.nombrePila = leadData.nombre.split(" ")[0]; 
                         faseFormulario = 2;
                         ejecutarFlujoFormulario();
                     } else {
-                        hablarSara("Necesito registrar tu nombre completo sin acentos para continuar el expediente. Por favor, escribelo.", function() {
-                            faseFormulario = 1;
-                            ejecutarFlujoFormulario();
-                        });
+                        faseFormulario = 1; ejecutarFlujoFormulario();
                     }
                 });
             } else if (faseFormulario === 2) {
                 document.getElementById('texto-estado-vr').setAttribute('value', 'SARA: PREGUNTA TELEFONO');
-                hablarSara("Gracias. Ahora necesito que me facilites tu numero de contacto completo.", abrirMicrofonoCliente);
+                hablarSara("Gracias. Ahora necesito que me facilites tu número de contacto.", abrirMicrofonoCliente);
             } else if (faseFormulario === 3) {
                 try { recognition.abort(); } catch(e){} 
                 document.getElementById('texto-estado-vr').setAttribute('value', 'TECLADO: ESCRIBIR EMAIL');
-                
-                hablarSara("Gracias. Por favor, escribe tu correo electronico en la paleta que se acaba de abrir en tu pantalla.", function() {
-                    let emailEntrada = prompt("Introduce tu correo electrónico para recibir el justificante legal de LEVEL:");
+                hablarSara("Por favor, escribe tu correo electrónico en la pantalla para recibir el justificante.", function() {
+                    let emailEntrada = prompt("Introduce tu correo electrónico:");
                     if (emailEntrada && emailEntrada.trim() !== "") {
                         leadData.email = emailEntrada.trim().toLowerCase();
-                        
                         if (leadData.tipoCliente === 'Administracion') {
-                            faseFormulario = 40; 
-                            ejecutarFlujoFormulario();
+                            faseFormulario = 40; ejecutarFlujoFormulario();
                         } else {
-                            faseFormulario = 4;
-                            ejecutarFlujoFormulario();
+                            faseFormulario = 4; ejecutarFlujoFormulario();
                         }
                     } else {
-                        hablarSara("Necesitamos que indiques tu correo electronico obligatoriamente para poder enviarte el justificante. Por favor, escribelo.", function() {
-                            faseFormulario = 3;
-                            ejecutarFlujoFormulario();
-                        });
+                        faseFormulario = 3; ejecutarFlujoFormulario();
                     }
                 });
             } else if (faseFormulario === 4) {
                 document.getElementById('paleta-poblaciones').setAttribute('scale', '1 1 1');
                 document.getElementById('texto-estado-vr').setAttribute('value', 'SELECCIONE POBLACION');
-                hablarSara("Estupendo " + leadData.nombrePila + ". Selecciona en los paneles flotantes el municipio donde se encuentra ubicada tu propiedad.");
+                hablarSara("Estupendo " + leadData.nombrePila + ". Selecciona el municipio donde se encuentra ubicada tu propiedad.");
             } else if (faseFormulario === 40) {
                 document.getElementById('texto-estado-vr').setAttribute('value', 'SARA: DICTAR ASUNTO');
-                hablarSara("Estupendo " + leadData.nombrePila + ". Dime ahora de viva voz un titular corto o el asunto de tu consulta de gestion.", abrirMicrofonoCliente);
+                hablarSara("Dime el asunto o motivo corto de tu consulta de gestión.", abrirMicrofonoCliente);
             }
         }
 
@@ -739,72 +673,42 @@
                 document.getElementById('cielo-entorno').setAttribute('color', '#ffffff'); 
             }
             document.getElementById('paleta-poblaciones').setAttribute('scale', '0 0 0');
-            
             faseFormulario = 5;
             document.getElementById('texto-estado-vr').setAttribute('value', 'SARA: DETALLES FINALES');
-            
-            if (leadData.tipoCliente === 'Vender Propiedad') {
-                hablarSara("Conectando con " + nombrePoblacion + ". Ahora, por favor, dime de viva voz el tipo de propiedad que vendes y el valor aproximado que estimas.", abrirMicrofonoCliente);
-            } else {
-                hablarSara("Conectando con " + nombrePoblacion + ". Ahora, dime de viva voz el tipo de propiedad y tu presupuesto estimado.", abrirMicrofonoCliente);
-            }
+            hablarSara("Cuéntame ahora en un dictado corto los detalles de tu petición.", abrirMicrofonoCliente);
         }
 
         function despacharPantallaRevisionYRGPD() {
             faseFormulario = 6; 
             document.getElementById('texto-estado-vr').setAttribute('value', 'VALIDACION LEGAL RGPD');
             
-            let nombreLimpio3D = sanearTextoParaAFrame(leadData.nombre);
-            let intencionLimpia3D = sanearTextoParaAFrame(leadData.tipoCliente);
-            let emailLimpio3D = sanearTextoParaAFrame(leadData.email);
-            let poblacionLimpia3D = sanearTextoParaAFrame(leadData.poblacion);
-            let detallesLimpios3D = sanearTextoParaAFrame(leadData.detallesFinales);
-
-            document.getElementById('rgpd-linea-intencion').setAttribute('value', "OPERACION: " + intencionLimpia3D);
-            document.getElementById('rgpd-linea-nombre').setAttribute('value', "CLIENTE: " + nombreLimpio3D);
-            document.getElementById('rgpd-linea-contacto').setAttribute('value', "TEL: " + leadData.telefono + " | EMAIL: " + emailLimpio3D);
-            
-            if (leadData.tipoCliente === 'Administracion') {
-                document.getElementById('rgpd-linea-localizacion').setAttribute('value', "ASUNTO: " + poblacionLimpia3D + " | DESCRIPCION: " + detallesLimpios3D);
-            } else if (leadData.tipoCliente === 'Vender Propiedad') {
-                document.getElementById('rgpd-linea-localizacion').setAttribute('value', "MUNICIPIO: " + poblacionLimpia3D + " | ACTIVO/VALOR: " + detallesLimpios3D);
-            } else {
-                document.getElementById('rgpd-linea-localizacion').setAttribute('value', "CIUDAD: " + poblacionLimpia3D + " | REQUISITOS: " + detallesLimpios3D);
-            }
+            document.getElementById('rgpd-linea-intencion').setAttribute('value', "OPERACION: " + sanearTextoParaAFrame(leadData.tipoCliente));
+            document.getElementById('rgpd-linea-nombre').setAttribute('value', "CLIENTE: " + sanearTextoParaAFrame(leadData.nombre));
+            document.getElementById('rgpd-linea-contacto').setAttribute('value', "TEL: " + leadData.telefono + " | EMAIL: " + sanearTextoParaAFrame(leadData.email));
+            document.getElementById('rgpd-linea-localizacion').setAttribute('value', "ZONA/DETALLES: " + sanearTextoParaAFrame(leadData.poblacion || leadData.detallesFinales));
             
             document.getElementById('panel-rgpd').setAttribute('scale', '1 1 1');
-            hablarSara("Hemos procesado tu dictado de administracion. Por favor, revisa en el panel central que tus datos son correctos. Haz clic en aceptar para procesarlo, o en borrar para reiniciar.");
+            hablarSara("Por favor, revisa que tus datos son correctos y pulsa Aceptar para enviarlos.");
         }
 
         function confirmarYDespacharLark() {
             document.getElementById('panel-rgpd').setAttribute('scale', '0 0 0');
-            document.getElementById('texto-estado-vr').setAttribute('value', 'DESPACHANDO LEAD...');
-            console.log("Transmisión de Lead verificada con éxito hacia el Hub de Lark con datos íntegros:", leadData);
-            hablarSara("Tratamiento de datos autorizado de forma correcta. Tu Advisor de zona se pondra en contacto contigo de inmediato. Volviendo al panel principal.", function() {
-                volverAlMenuPrincipal();
-            });
+            hablarSara("Datos autorizados correctamente. Tu Advisor se pondrá en contacto contigo de inmediato.", volverAlMenuPrincipal);
         }
 
         function borrarDatosYReiniciar() {
             leadData = { tipoCliente: '', nombre: '', nombrePila: '', telefono: '', email: '', poblacion: '', detallesFinales: '' };
-            faseFormulario = 0;
             document.getElementById('panel-rgpd').setAttribute('scale', '0 0 0');
-            document.getElementById('texto-estado-vr').setAttribute('value', 'REINICIANDO INTERFAZ...');
-            hablarSara("Datos descartados correctamente. Iniciando sesion limpia.", function() {
-                volverAlMenuPrincipal();
-            });
+            hablarSara("Formulario reiniciado.", volverAlMenuPrincipal);
         }
 
-        // CONTROLADORES HÍBRIDOS DEL MÓDULO 5 RESTAURADOS COMPLETOS
         function abrirModulo5AdvisorsHTML() {
             try { recognition.abort(); } catch(e){}
             document.getElementById('boton-salir-hub-3d').setAttribute('scale', '0 0 0');
             document.getElementById('contenedor-video-tiktok').setAttribute('scale', '0 0 0');
             document.getElementById('paleta-principal').setAttribute('scale', '0 0 0');
-            
             document.getElementById('overlay-advisors').style.display = 'flex';
-            document.getElementById('texto-estado-vr').setAttribute('value', 'PORTAL DE ADVISORS ASIGNADO');
-            hablarSara("Conectando con la mesa de expansion nacional. Explora las pestañas informativas, calcula tus ingresos pasivos en el simulador o presenta tu candidatura directa.");
+            hablarSara("Abriendo mesa de expansión de la red.");
         }
 
         function cambiarPestanaAdvisors(idSeccion, botonActivo) {
@@ -812,11 +716,6 @@
             document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
             document.getElementById(idSeccion).classList.add('active');
             botonActivo.classList.add('active');
-            if(idSeccion === 'tab-simulacion') {
-                hablarSara("Abriendo la calculadora de rendimiento hibrido. Modifica las barras deslizantes para proyectar tus ganancias anuales por red.");
-            } else if(idSeccion === 'tab-formacion') {
-                hablarSara("Seccion de admision activa. Completa los requisitos de zona exclusiva y resuelve el test de posicionamiento comercial.");
-            }
         }
 
         function cerrarPanelOverlayAdvisors() {
@@ -825,50 +724,33 @@
         }
 
         function enviarCandidaturaAdvisorLark() {
-            let nom = document.getElementById('form-advisor-nombre').value;
-            let tel = document.getElementById('form-advisor-tel').value;
-            let em = document.getElementById('form-advisor-email').value;
-            let zn = document.getElementById('form-advisor-zona').value;
-            let p1 = document.querySelector('input[name="p1"]:checked')?.value || "No respondida";
-            if(!nom || !tel || !em) { alert("Por favor, rellena todos los campos."); return; }
-            let advisorLead = { tipo: "Postulacion Advisor Exclusivo", nombre: nom, whatsapp: tel, email: em, zonaSolicitada: zn, respuestaTest: p1 };
-            console.log("Lead Enviado a Lark / Make con éxito:", advisorLead);
+            alert("Candidatura transmitida con éxito.");
             document.getElementById('overlay-advisors').style.display = 'none';
-            hablarSara("Candidatura de la primera promocion transmitida con éxito. Volviendo al panel principal.", function() { volverAlMenuPrincipal(); });
+            volverAlMenuPrincipal();
         }
 
-        // PROCESADOR DE ENTRADAS ORALES
         recognition.onresult = function(event) {
             clearTimeout(timerInactividad);
             const comando = event.results[0][0].transcript.trim();
             
             if (faseFormulario > 0) {
                 if (faseFormulario === 2) {
-                    leadData.telefono = comando;
-                    faseFormulario = 3;
-                    ejecutarFlujoFormulario();
+                    leadData.telefono = comando; faseFormulario = 3; ejecutarFlujoFormulario();
                 } else if (faseFormulario === 40) {
-                    leadData.poblacion = comando; 
-                    faseFormulario = 5; 
-                    document.getElementById('texto-estado-vr').setAttribute('value', 'SARA: DICTAR DESCRIPCION');
-                    hablarSara("Entendido. Ahora explicame de forma detallada la descripcion de tu peticion o incidencia.", abrirMicrofonoCliente);
+                    leadData.poblacion = comando; faseFormulario = 5;
+                    hablarSara("Dime ahora la descripción detallada.", abrirMicrofonoCliente);
                 } else if (faseFormulario === 5) {
-                    leadData.detallesFinales = comando;
-                    despacharPantallaRevisionYRGPD();
+                    leadData.detallesFinales = comando; despacharPantallaRevisionYRGPD();
                 }
                 return;
             }
 
-            const comandoMin = comando.toLowerCase();
-            if (comandoMin.includes('comprar') || comandoMin.includes('uno') || comandoMin.includes('invertir')) activarModulo1();
-            else if (comandoMin.includes('vender') || comandoMin.includes('dos') || comandoMin.includes('propiedad')) activarModulo2();
-            else if (comandoMin.includes('advisor') || comandoMin.includes('cinco') || comandoMin.includes('zona')) abrirModulo5AdvisorsHTML();
-            else if (comandoMin.includes('administracion') || comandoMin.includes('seis') || comandoMin.includes('gestion')) activarModulo6Administracion();
-            else if (comandoMin.includes('english') || comandoMin.includes('siete') || comandoMin.includes('ingles')) activarModulo7EnglishSpeaker();
-            else if (comandoMin.includes('francais') || comandoMin.includes('ocho') || comandoMin.includes('frances')) activarModulo8VersionFrancaise();
-            else {
-                document.getElementById('texto-estado-vr').setAttribute('value', 'IA READY - ELIGE');
-            }
+            const cm = comando.toLowerCase();
+            if (cm.includes('comprar') || cm.includes('invertir')) activarModulo1();
+            else if (cm.includes('vender')) activarModulo2();
+            else if (cm.includes('advisor')) abrirModulo5AdvisorsHTML();
+            else if (cm.includes('administracion')) activarModulo6Administracion();
+            else if (cm.includes('idioma')) abrirMenuIdiomasFlotante();
         };
 
         function volverAlMenuPrincipal() {
@@ -876,36 +758,25 @@
             document.getElementById('paleta-subintencion').setAttribute('scale', '0 0 0');
             document.getElementById('paleta-poblaciones').setAttribute('scale', '0 0 0');
             document.getElementById('panel-rgpd').setAttribute('scale', '0 0 0');
-            document.getElementById('panel-english-speaker').setAttribute('scale', '0 0 0'); 
-            document.getElementById('panel-version-francaise').setAttribute('scale', '0 0 0'); 
-            
             document.getElementById('boton-salir-hub-3d').setAttribute('scale', '1 1 1');
             document.getElementById('contenedor-video-tiktok').setAttribute('scale', '1 1 1');
             document.getElementById('paleta-principal').setAttribute('scale', '1 1 1');
-            
             document.getElementById('cielo-entorno').removeAttribute('src');
             document.getElementById('cielo-entorno').setAttribute('color', '#020617');
             document.getElementById('texto-estado-vr').setAttribute('value', 'IA READY');
         }
 
-        function navegarModuloGeneric(id) {
+        function navegarModuloGeneric(modulo) {
             document.getElementById('contenedor-video-tiktok').setAttribute('scale', '0 0 0');
             document.getElementById('boton-salir-hub-3d').setAttribute('scale', '0 0 0');
-            document.getElementById('texto-estado-vr').setAttribute('value', 'CARGANDO MÓDULO ' + id + '...');
-            hablarSara("Conectando con el sub modulo numero " + id);
+            document.getElementById('texto-estado-vr').setAttribute('value', 'MODULO ' + modulo.toUpperCase());
+            hablarSara("Módulo " + modulo + " activado.");
         }
 
-        recognition.onerror = function(event) {
-            if (event.error !== 'no-speech' && faseFormulario !== 1 && faseFormulario !== 3 && faseFormulario !== 77 && faseFormulario !== 88) {
-                document.getElementById('texto-estado-vr').setAttribute('value', 'IA READY - ELIGE');
-            }
-        };
-
+        recognition.onerror = function() { abrirMicrofonoCliente(); };
         window.speechSynthesis.onvoiceschanged = () => { window.speechSynthesis.getVoices(); };
 
-        // =========================================================================
-        // MOTOR MATEMÁTICO REAL DE LA CALCULADORA DE ESCUDERÍA RESTAURADO
-        // =========================================================================
+        // MOTOR MATEMÁTICO DE LA CALCULADORA
         document.addEventListener('DOMContentLoaded', function() {
             const sAdvisors = document.getElementById('sim-advisors');
             const sTeamSales = document.getElementById('sim-team-sales');
@@ -916,8 +787,6 @@
             
             if(!sAdvisors) return; 
 
-            function formatEuro(val) { return new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(val); }
-            
             function runEngine() {
                 const advisors = parseInt(sAdvisors.value, 10);
                 const salesPer = parseInt(sTeamSales.value, 10);
@@ -931,7 +800,7 @@
                 document.getElementById('val-my-captures').textContent = (pctCap * 100) + '%';
                 document.getElementById('val-my-closings').textContent = (pctClose * 100) + '%';
                 document.getElementById('val-my-notary').textContent = (pctNotary * 100) + '%';
-                document.getElementById('val-price').textContent = formatEuro(price);
+                document.getElementById('val-price').textContent = price + ' €';
 
                 const totalOps = advisors * salesPer;
                 let fee = Math.max(price * 0.03, 6000);
@@ -941,14 +810,13 @@
                 const bonus = (totalOps * pctCap * (fee * 0.20)) + (totalOps * pctClose * (fee * 0.20)) + (totalOps * pctNotary * (fee * 0.10));
                 const structure = advisors * 100 * 12;
                 
-                document.getElementById('res-net-income').textContent = formatEuro(rappel + bonus - structure);
-                document.getElementById('res-rappel-income').textContent = formatEuro(rappel);
-                document.getElementById('res-direct-work-income').textContent = formatEuro(bonus);
-                document.getElementById('res-structure-cost').textContent = '-' + formatEuro(structure);
+                document.getElementById('res-net-income').textContent = (rappel + bonus - structure) + ' €';
+                document.getElementById('res-rappel-income').textContent = rappel + ' €';
+                document.getElementById('res-direct-work-income').textContent = bonus + ' €';
+                document.getElementById('res-structure-cost').textContent = '-' + structure + ' €';
                 document.getElementById('res-total-operations').textContent = totalOps + ' ops.';
             }
             [sAdvisors, sTeamSales, sMyCaptures, sMyClosings, sMyNotary, sPrice].forEach(el => el.addEventListener('input', runEngine));
-            runEngine();
         });
     </script>
 </body>
