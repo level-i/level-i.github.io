@@ -257,6 +257,7 @@
         let leadData = {
             tipoCliente: '', 
             nombre: '',
+            nombrePila: '', // Almacenará únicamente el primer nombre para las locuciones de Sara
             telefono: '',
             email: '',
             poblacion: '',
@@ -330,7 +331,7 @@
         }
 
         function abrirMicrofonoCliente() {
-            if (!iaActiva || faseFormulario === 3) return; 
+            if (!iaActiva || faseFormulario === 1 || faseFormulario === 3) return; // BLOQUEO MANUAL: El micro se apaga en fase 1 (Nombre) y fase 3 (Email)
             clearTimeout(timerInactividad);
             document.getElementById('texto-estado-vr').setAttribute('value', 'ESCUCHANDO AL CLIENTE...');
             timerInactividad = setTimeout(() => { forzarReinicioCanalVoz(); }, 8000);
@@ -338,7 +339,7 @@
         }
 
         function forzarReinicioCanalVoz() {
-            if (faseFormulario === 3) return; 
+            if (faseFormulario === 1 || faseFormulario === 3) return; 
             try { recognition.abort(); } catch(e) {}
             if (faseFormulario > 0) {
                 abrirMicrofonoCliente();
@@ -366,7 +367,7 @@
             ejecutarFlujoFormulario();
         }
 
-        // CORRECCIÓN INTERFAZ MÓDULO 2: VENDER PROPIEDAD ENLAZADO REAL
+        // MÓDULO 2: VENDER PROPIEDAD
         function activarModulo2() {
             document.getElementById('boton-salir-hub-3d').setAttribute('scale', '0 0 0');
             document.getElementById('contenedor-video-tiktok').setAttribute('scale', '0 0 0');
@@ -379,11 +380,32 @@
             ejecutarFlujoFormulario();
         }
 
-        // CORE CONVERSACIONAL UNIFICADO SEGURO
+        // ASISTENTE CONVERSACIONAL INTELIGENTE MODIFICADO (ENTRADAS MANUALES BIEN ENLAZADAS)
         function ejecutarFlujoFormulario() {
             if (faseFormulario === 1) {
-                document.getElementById('texto-estado-vr').setAttribute('value', 'SARA: PREGUNTA NOMBRE');
-                hablarSara("Me puedes indicar tu nombre para dirigirme a ti?", abrirMicrofonoCliente);
+                // CORRECCIÓN PLUMAZO: Nombre manual a través de Prompt limpio
+                try { recognition.abort(); } catch(e){}
+                document.getElementById('texto-estado-vr').setAttribute('value', 'TECLADO: COMPLETAR NOMBRE');
+                
+                hablarSara("Me puedes indicar tu nombre completo para dirigirme a ti?", function() {
+                    let nombreEntrada = prompt("Por favor, introduce tu nombre y apellidos completos:");
+                    if (nombreEntrada && nombreEntrada.trim() !== "") {
+                        leadData.nombre = nombreEntrada.trim();
+                        
+                        // FILTRO DE INGENIERÍA: Extraemos la primera palabra de forma segura como nombre de pila
+                        let partes = leadData.nombre.split(" ");
+                        leadData.nombrePila = partes[0]; 
+                        
+                        faseFormulario = 2;
+                        ejecutarFlujoFormulario();
+                    } else {
+                        // Insistencia proactiva de Sara si lo dejan vacío
+                        hablarSara("Necesito registrar tu nombre completo para continuar el expediente. Por favor, escribelo.", function() {
+                            faseFormulario = 1;
+                            ejecutarFlujoFormulario();
+                        });
+                    }
+                });
             } else if (faseFormulario === 2) {
                 document.getElementById('texto-estado-vr').setAttribute('value', 'SARA: PREGUNTA TELEFONO');
                 hablarSara("Gracias. Ahora necesito que me facilites tu numero de contacto completo.", abrirMicrofonoCliente);
@@ -407,7 +429,8 @@
             } else if (faseFormulario === 4) {
                 document.getElementById('paleta-poblaciones').setAttribute('scale', '1 1 1');
                 document.getElementById('texto-estado-vr').setAttribute('value', 'SELECCIONE POBLACION');
-                hablarSara("Estupendo " + leadData.nombre + ". Selecciona en los paneles flotantes el municipio donde se encuentra ubicada tu propiedad.");
+                // SARA DICE ÚNICAMENTE EL NOMBRE DE PILA EXCLUSIVO
+                hablarSara("Estupendo " + leadData.nombrePila + ". Selecciona en los paneles flotantes el municipio donde se encuentra ubicada tu propiedad.");
             }
         }
 
@@ -434,6 +457,7 @@
             document.getElementById('texto-estado-vr').setAttribute('value', 'VALIDACION LEGAL RGPD');
             
             document.getElementById('rgpd-linea-intencion').setAttribute('value', "OPERACION: " + leadData.tipoCliente.toUpperCase());
+            // EL PANEL MUESTRA EL NOMBRE COMPLETO FORMAL CON APELLIDOS DE FORMA SERIA
             document.getElementById('rgpd-linea-nombre').setAttribute('value', "CLIENTE: " + leadData.nombre.toUpperCase());
             document.getElementById('rgpd-linea-contacto').setAttribute('value', "TEL: " + leadData.telefono + " | EMAIL: " + leadData.email.toUpperCase());
             
@@ -459,7 +483,7 @@
         }
 
         function borrarDatosYReiniciar() {
-            leadData = { tipoCliente: '', nombre: '', telefono: '', email: '', poblacion: '', detallesFinales: '' };
+            leadData = { tipoCliente: '', nombre: '', nombrePila: '', telefono: '', email: '', poblacion: '', detallesFinales: '' };
             faseFormulario = 0;
             
             document.getElementById('rgpd-linea-intencion').setAttribute('value', "INTENCION: -");
@@ -475,17 +499,13 @@
             });
         }
 
-        // ENRUTADOR ORAL DE RECONOCIMIENTO MEJORADO
+        // PROCESADOR DE ENTRADAS ORALES
         recognition.onresult = function(event) {
             clearTimeout(timerInactividad);
             const comando = event.results[0][0].transcript.trim();
             
             if (faseFormulario > 0) {
-                if (faseFormulario === 1) {
-                    leadData.nombre = comando;
-                    faseFormulario = 2;
-                    ejecutarFlujoFormulario();
-                } else if (faseFormulario === 2) {
+                if (faseFormulario === 2) {
                     leadData.telefono = comando;
                     faseFormulario = 3;
                     ejecutarFlujoFormulario();
@@ -527,7 +547,7 @@
         }
 
         recognition.onerror = function(event) {
-            if (event.error !== 'no-speech' && faseFormulario !== 3) {
+            if (event.error !== 'no-speech' && faseFormulario !== 1 && faseFormulario !== 3) {
                 document.getElementById('texto-estado-vr').setAttribute('value', 'IA READY - ELIGE');
             }
         };
