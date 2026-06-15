@@ -255,7 +255,7 @@
         window.saraHablando = false;
         
         let leadData = {
-            tipoCliente: '', // Puede ser 'Uso Propio', 'Inversion' o 'Vender Propiedad'
+            tipoCliente: '', 
             nombre: '',
             telefono: '',
             email: '',
@@ -348,9 +348,7 @@
             }
         }
 
-        // =========================================================================
-        // LÓGICA MÓDULO 1: COMPRAR O INVERTIR
-        // =========================================================================
+        // MÓDULO 1: COMPRAR O INVERTIR
         function activarModulo1() {
             document.getElementById('boton-salir-hub-3d').setAttribute('scale', '0 0 0');
             document.getElementById('contenedor-video-tiktok').setAttribute('scale', '0 0 0');
@@ -368,27 +366,20 @@
             ejecutarFlujoFormulario();
         }
 
-        // =========================================================================
-        // LÓGICA NUEVA MÓDULO 2: VENDER PROPIEDAD
-        // =========================================================================
+        // CORRECCIÓN INTERFAZ MÓDULO 2: VENDER PROPIEDAD ENLAZADO REAL
         function activarModulo2() {
-            // Limpieza radical de elementos multimedia y de salida
             document.getElementById('boton-salir-hub-3d').setAttribute('scale', '0 0 0');
             document.getElementById('contenedor-video-tiktok').setAttribute('scale', '0 0 0');
             document.getElementById('paleta-principal').setAttribute('scale', '0 0 0');
             
-            // Asignamos el tipo de operación directa
             leadData.tipoCliente = 'Vender Propiedad';
             document.getElementById('texto-estado-vr').setAttribute('value', 'PERFIL DE VENTA');
             
-            // Salto conversacional directo al formulario de Sara
             faseFormulario = 1;
             ejecutarFlujoFormulario();
         }
 
-        // =========================================================================
-        // ASISTENTE CONVERSACIONAL SECUENCIAL (SARA CORE)
-        // =========================================================================
+        // CORE CONVERSACIONAL UNIFICADO SEGURO
         function ejecutarFlujoFormulario() {
             if (faseFormulario === 1) {
                 document.getElementById('texto-estado-vr').setAttribute('value', 'SARA: PREGUNTA NOMBRE');
@@ -414,7 +405,6 @@
                     }
                 });
             } else if (faseFormulario === 4) {
-                // Se despliega la red de poblaciones común
                 document.getElementById('paleta-poblaciones').setAttribute('scale', '1 1 1');
                 document.getElementById('texto-estado-vr').setAttribute('value', 'SELECCIONE POBLACION');
                 hablarSara("Estupendo " + leadData.nombre + ". Selecciona en los paneles flotantes el municipio donde se encuentra ubicada tu propiedad.");
@@ -432,7 +422,6 @@
             faseFormulario = 5;
             document.getElementById('texto-estado-vr').setAttribute('value', 'SARA: DETALLES FINALES');
             
-            // Adaptación de locución final según si vende o compra
             if (leadData.tipoCliente === 'Vender Propiedad') {
                 hablarSara("Conectando con " + nombrePoblacion + ". Ahora, por favor, dime de viva voz el tipo de propiedad que vendes y el valor aproximado que estimas.", abrirMicrofonoCliente);
             } else {
@@ -444,7 +433,6 @@
             faseFormulario = 6; 
             document.getElementById('texto-estado-vr').setAttribute('value', 'VALIDACION LEGAL RGPD');
             
-            // Forzado de textos en el panel holográfico central
             document.getElementById('rgpd-linea-intencion').setAttribute('value', "OPERACION: " + leadData.tipoCliente.toUpperCase());
             document.getElementById('rgpd-linea-nombre').setAttribute('value', "CLIENTE: " + leadData.nombre.toUpperCase());
             document.getElementById('rgpd-linea-contacto').setAttribute('value', "TEL: " + leadData.telefono + " | EMAIL: " + leadData.email.toUpperCase());
@@ -487,7 +475,7 @@
             });
         }
 
-        // PROCESADOR DE ENTRADAS ORALES
+        // ENRUTADOR ORAL DE RECONOCIMIENTO MEJORADO
         recognition.onresult = function(event) {
             clearTimeout(timerInactividad);
             const comando = event.results[0][0].transcript.trim();
