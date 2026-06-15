@@ -222,16 +222,16 @@
 
         <a-entity id="chasis-smartphone-virtual" position="0 1.5 -1.6" rotation="0 0 0">
             
-            <a-plane width="1.1" height="2.2" color="#0a0f1d" material="opacity: 0.96; transparent: true; border: 3px solid #1e293b; borderRadius: 0.05;" position="0 0 0">
+            <a-plane class="clickable" width="1.1" height="2.2" color="#0a0f1d" material="opacity: 0.96; transparent: true; border: 3px solid #1e293b; borderRadius: 0.05;" position="0 0 0">
                 
                 <a-text value="SARA ADVISOR" align="center" position="0 0.96 0.01" scale="0.55 0.55 0.55" font="exo2bold" color="#00f2fe"></a-text>
                 
                 <a-plane width="0.92" height="0.26" color="#0f172a" material="opacity: 0.8; transparent: true;" position="0 0.73 0.01">
-                    <a-text id="texto-estado-vr" value="SARA HABLANDO..." align="left" position="-0.42 0.06 0.01" scale="0.24 0.26 0.26" font="monoid" color="#94a3b8"></a-text>
+                    <a-text id="texto-estado-vr" value="SARA BIENVENIDA..." align="left" position="-0.42 0.06 0.01" scale="0.24 0.26 0.26" font="monoid" color="#94a3b8"></a-text>
                     <a-text value="IA CORPORATIVA READY" align="left" position="-0.42 -0.06 0.01" scale="0.20 0.22 0.22" font="exo2bold" color="#22c55e"></a-text>
                     
                     <a-entity position="0.34 0 0.02" scale="0.13 0.14 0.14">
-                        <a sphere color="#00f2fe" radius="0.4" material="wireframe: true; opacity: 0.6;"></a sphere>
+                        <a-sphere color="#00f2fe" radius="0.4" material="wireframe: true; opacity: 0.6;"></a-sphere>
                         <a-cone color="#ff007f" radius-bottom="0.5" radius-top="0.1" height="0.8" position="0 -0.6 0" material="wireframe: true; opacity: 0.4;"></a-cone>
                     </a-entity>
 
@@ -292,6 +292,11 @@
                 </a-entity>
 
             </a-plane>
+
+            <a-entity id="contenedor-video-tiktok" position="0.9 0.25 -0.1" rotation="0 -25 0" scale="0.65 0.65 0.65">
+                <a-video src="#video-tiktok" width="0.75" height="1.3" material="opacity: 0.95; shader: flat; side: double;"></a-video>
+                <a-plane color="#ffffff" width="0.79" height="1.34" position="0 0 -0.01" material="opacity: 0.1; transparent: true;"></a-plane>
+            </a-entity>
 
             <a-entity id="paleta-subintencion" scale="0 0 0" position="0 0 0.02">
                 <a-plane width="1.0" height="1.0" color="#020617" material="opacity: 0.98;">
@@ -383,13 +388,12 @@
         };
         let faseFormulario = 0; 
 
-        // CONFIGURACIÓN AVANZADA DEL MICRÓFONO PARA EVITAR CORTES POR SILENCIOS EN NÚMEROS
         const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
         recognition.lang = 'es-ES';
         recognition.interimResults = false;
         recognition.maxAlternatives = 1;
-        // Forzamos el modo continuo únicamente para evitar hachazos en dictados numéricos o pausas
-        recognition.continuous = false; 
+        // Mantenemos la escucha continua atenuada para evitar cortes bruscos por silencios en cualquier dictado largo
+        recognition.continuous = true; 
 
         function sanearTextoParaAFrame(texto) {
             if (!texto) return "";
@@ -448,8 +452,8 @@
             clearTimeout(timerInactividad);
             document.getElementById('texto-estado-vr').setAttribute('value', 'ESCUCHANDO AL CLIENTE...');
             
-            // Ampliamos el rango de inactividad técnica a 12 segundos para dar colchón total al usuario
-            timerInactividad = setTimeout(() => { forzarReinicioCanalVoz(); }, 12000);
+            // Incrementamos la ventana a 14 segundos para blindar descripciones pausadas de inmuebles
+            timerInactividad = setTimeout(() => { forzarReinicioCanalVoz(); }, 14000);
             try { recognition.start(); } catch(e) {}
         }
 
@@ -466,6 +470,7 @@
 
         function activarModulo1() {
             document.getElementById('boton-salir-hub-3d').setAttribute('scale', '0 0 0');
+            document.getElementById('contenedor-video-tiktok').setAttribute('scale', '0 0 0');
             document.getElementById('paleta-principal').setAttribute('scale', '0 0 0');
             document.getElementById('paleta-subintencion').setAttribute('scale', '1 1 1');
             document.getElementById('texto-estado-vr').setAttribute('value', 'PERFIL DE COMPRA');
@@ -481,6 +486,7 @@
 
         function activarModulo2() {
             document.getElementById('boton-salir-hub-3d').setAttribute('scale', '0 0 0');
+            document.getElementById('contenedor-video-tiktok').setAttribute('scale', '0 0 0');
             document.getElementById('paleta-principal').setAttribute('scale', '0 0 0');
             leadData.tipoCliente = 'Vender Propiedad';
             document.getElementById('texto-estado-vr').setAttribute('value', 'PERFIL DE VENTA');
@@ -488,13 +494,9 @@
             ejecutarFlujoFormulario();
         }
 
-        document.getElementById('chasis-smartphone-virtual').addEventListener('click', function(e) {
-            // Freno de burbujeo para que el chasis base no intercepte los clicks táctiles
-            e.stopPropagation();
-        });
-
         function activarModulo6Administracion() {
             document.getElementById('boton-salir-hub-3d').setAttribute('scale', '0 0 0');
+            document.getElementById('contenedor-video-tiktok').setAttribute('scale', '0 0 0');
             document.getElementById('paleta-principal').setAttribute('scale', '0 0 0');
             leadData.tipoCliente = 'Administracion';
             document.getElementById('texto-estado-vr').setAttribute('value', 'TRAMITE ADM');
@@ -518,38 +520,39 @@
             }, 1000);
         }
 
+        // CONTROLADOR DE PASOS REPARADO INTEGRAMENTE PARA EVITAR EL BUCLE INFINITO
         function ejecutarFlujoFormulario() {
             if (faseFormulario === 1) {
                 try { recognition.abort(); } catch(e){}
                 document.getElementById('texto-estado-vr').setAttribute('value', 'TECLADO: NOMBRE');
-                hablarSara("Me puedes indicar tu nombre completo sin acentos para dirigirme a ti?", function() {
+                hablarSara("¿Me puedes indicar tu nombre completo para dirigirme a ti?", function() {
                     let nombreEntrada = prompt("Introduce tu nombre y apellidos (sin acentos):");
                     if (nombreEntrada && nombreEntrada.trim() !== "") {
                         leadData.nombre = nombreEntrada.trim();
                         leadData.nombrePila = leadData.nombre.split(" ")[0]; 
-                        faseFormulario = 2;
+                        faseFormulario = 2; // Fijamos paso al número de teléfono sin rebotes
                         ejecutarFlujoFormulario();
                     } else {
-                        faseFormulario = 1; ejecutarFlujoFormulario();
+                        faseFormulario = 1; 
+                        ejecutarFlujoFormulario();
                     }
                 });
             } else if (faseFormulario === 2) {
                 document.getElementById('texto-estado-vr').setAttribute('value', 'SARA: NUMERO');
-                hablarSara("Gracias. Ahora necesito que me facilites tu numero de contacto completo.", abrirMicrofonoCliente);
+                hablarSara("Gracias. Ahora necesito que me facilites tu número de contacto.", abrirMicrofonoCliente);
             } else if (faseFormulario === 3) {
                 try { recognition.abort(); } catch(e){} 
                 document.getElementById('texto-estado-vr').setAttribute('value', 'TECLADO: EMAIL');
-                hablarSara("Por favor, escribe tu correo electronico en la pantalla para recibir el justificante.", function() {
-                    let emailEntrada = prompt("Introduce tu correo electronico:");
+                hablarSara("Por favor, escribe tu correo electrónico en la pantalla para recibir el justificante.", function() {
+                    let emailEntrada = prompt("Introduce tu correo electrónico:");
                     if (emailEntrada && emailEntrada.trim() !== "") {
                         leadData.email = emailEntrada.trim().toLowerCase();
                         
-                        // CORRECCIÓN CLAVE: Inyección empática y personalizada del nombre tras rellenar el correo
                         let fraseAgradecimiento = "Muchas gracias " + leadData.nombrePila + ". ";
                         
                         if (leadData.tipoCliente === 'Administracion') {
                             faseFormulario = 40;
-                            hablarSara(fraseAgradecimiento + "Dime el asunto o motivo corto de tu consulta de gestion.", abrirMicrofonoCliente);
+                            hablarSara(fraseAgradecimiento + "Dime el asunto o motivo corto de tu consulta de gestión.", abrirMicrofonoCliente);
                         } else {
                             faseFormulario = 4;
                             document.getElementById('paleta-poblaciones').setAttribute('scale', '1 1 1');
@@ -557,7 +560,8 @@
                             hablarSara(fraseAgradecimiento + "Selecciona el municipio donde se encuentra ubicada tu propiedad.");
                         }
                     } else {
-                        faseFormulario = 3; ejecutarFlujoFormulario();
+                        faseFormulario = 3; 
+                        ejecutarFlujoFormulario();
                     }
                 });
             }
@@ -572,7 +576,12 @@
             document.getElementById('paleta-poblaciones').setAttribute('scale', '0 0 0');
             faseFormulario = 5;
             document.getElementById('texto-estado-vr').setAttribute('value', 'SARA: NOTAS FINALES');
-            hablarSara("Cuentame ahora en un dictado corto los detalles de tu peticion.", abrirMicrofonoCliente);
+            
+            if (leadData.tipoCliente === 'Vender Propiedad') {
+                hablarSara("Cuéntame de viva voz los detalles, tipo de inmueble y valor aproximado del activo que deseas vender.", abrirMicrofonoCliente);
+            } else {
+                hablarSara("Cuéntame ahora de viva voz las características y presupuesto estimado de la propiedad que buscas.", abrirMicrofonoCliente);
+            }
         }
 
         function despacharPantallaRevisionYRGPD() {
@@ -590,7 +599,7 @@
 
         function confirmarYDespacharLark() {
             document.getElementById('panel-rgpd').setAttribute('scale', '0 0 0');
-            hablarSara("Datos autorizados correctamente. Tu Advisor se pondra en contacto contigo de inmediato.", volverAlMenuPrincipal);
+            hablarSara("Datos autorizados correctamente. Tu Advisor se pondrá en contacto contigo de inmediato.", volverAlMenuPrincipal);
         }
 
         function borrarDatosYReiniciar() {
@@ -602,9 +611,10 @@
         function abrirModulo5AdvisorsHTML() {
             try { recognition.abort(); } catch(e){}
             document.getElementById('boton-salir-hub-3d').setAttribute('scale', '0 0 0');
+            document.getElementById('contenedor-video-tiktok').setAttribute('scale', '0 0 0');
             document.getElementById('paleta-principal').setAttribute('scale', '0 0 0');
             document.getElementById('overlay-advisors').style.display = 'flex';
-            hablarSara("Abriendo mesa de expansion de la red.");
+            hablarSara("Abriendo mesa de expansión de la red.");
         }
 
         function cambiarPestanaAdvisors(idSeccion, botonActivo) {
@@ -625,22 +635,28 @@
             volverAlMenuPrincipal();
         }
 
-        // MOTOR INTEGRADO RECOLECTOR DE DATOS ORALES CON FILTRO DE SILENCIOS
         recognition.onresult = function(event) {
             clearTimeout(timerInactividad);
-            const comando = event.results[0][0].transcript.trim();
+            // Captura iterativa combinada para no pisar dictados en modo continuous
+            let comando = "";
+            for (let i = event.resultIndex; i < event.results.length; ++i) {
+                if (event.results[i].isFinal) comando += event.results[i][0].transcript;
+            }
+            comando = comando.trim();
+            if (comando === "") return;
             
             if (faseFormulario > 0) {
                 if (faseFormulario === 2) {
-                    // Evitamos el salto prematuro por silencios: acumulamos los números orales
-                    leadData.telefono = comando.replace(/\s+/g, ''); // Limpiamos espacios intermedios
+                    leadData.telefono = comando.replace(/\s+/g, ''); 
                     faseFormulario = 3; 
                     ejecutarFlujoFormulario();
                 } else if (faseFormulario === 40) {
-                    leadData.poblacion = comando; faseFormulario = 5;
-                    hablarSara("Dime ahora la descripcion detallada.", abrirMicrofonoCliente);
+                    leadData.poblacion = comando; 
+                    faseFormulario = 5;
+                    hablarSara("Dime ahora la descripción detallada.", abrirMicrofonoCliente);
                 } else if (faseFormulario === 5) {
-                    leadData.detallesFinales = comando; despacharPantallaRevisionYRGPD();
+                    leadData.detallesFinales = comando; 
+                    despacharPantallaRevisionYRGPD();
                 }
                 return;
             }
@@ -659,6 +675,7 @@
             document.getElementById('paleta-poblaciones').setAttribute('scale', '0 0 0');
             document.getElementById('panel-rgpd').setAttribute('scale', '0 0 0');
             document.getElementById('boton-salir-hub-3d').setAttribute('scale', '1 1 1');
+            document.getElementById('contenedor-video-tiktok').setAttribute('scale', '1 1 1');
             document.getElementById('paleta-principal').setAttribute('scale', '1 1 1');
             document.getElementById('cielo-entorno').removeAttribute('src');
             document.getElementById('cielo-entorno').setAttribute('color', '#020617');
@@ -667,12 +684,12 @@
 
         function navegarModuloGeneric(modulo) {
             document.getElementById('boton-salir-hub-3d').setAttribute('scale', '0 0 0');
+            document.getElementById('contenedor-video-tiktok').setAttribute('scale', '0 0 0');
             document.getElementById('texto-estado-vr').setAttribute('value', 'MODULO ' + modulo.toUpperCase());
-            hablarSara("Modulo " + modulo + " activado.");
+            hablarSara("Módulo " + modulo + " activado.");
         }
 
-        recognition.onerror = function(event) { 
-            // Manejador reactivo seguro: si el micro da error de stop prematuro, se reabre inmediatamente sin romper fase
+        recognition.onerror = function(event) {
             if (iaActiva && faseFormulario !== 1 && faseFormulario !== 3) {
                 try { recognition.start(); } catch(e){}
             }
