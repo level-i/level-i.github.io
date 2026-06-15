@@ -316,8 +316,8 @@
             nombrePila: '', 
             telefono: '',
             email: '',
-            poblacion: '', // Se sobreescribe como "ASUNTO" en el Módulo 6 para reciclar estructura limpia
-            detallesFinales: '' // Almacenará la descripción extendida del asunto
+            poblacion: '', 
+            detallesFinales: '' 
         };
         let faseFormulario = 0; 
 
@@ -442,9 +442,7 @@
             ejecutarFlujoFormulario();
         }
 
-        // =========================================================================
-        // NUEVA LÓGICA ESTRATEGICA MÓDULO 6: ADMINISTRACIÓN
-        // =========================================================================
+        // CORRECCIÓN FIJA ENRUTADOR MÓDULO 6: ADMINISTRACIÓN
         function activarModulo6Administracion() {
             document.getElementById('boton-salir-hub-3d').setAttribute('scale', '0 0 0');
             document.getElementById('contenedor-video-tiktok').setAttribute('scale', '0 0 0');
@@ -457,7 +455,7 @@
             ejecutarFlujoFormulario();
         }
 
-        // CORE CONVERSACIONAL DE SARA (CON RUTA ADM INTEGRADA)
+        // CORE CONVERSACIONAL DE SARA
         function ejecutarFlujoFormulario() {
             if (faseFormulario === 1) {
                 try { recognition.abort(); } catch(e){}
@@ -490,9 +488,8 @@
                     if (emailEntrada && emailEntrada.trim() !== "") {
                         leadData.email = emailEntrada.trim().toLowerCase();
                         
-                        // Bifurcación del Módulo 6: Si es Administración, saltamos directo al Asunto oral sin pasar por poblaciones
                         if (leadData.tipoCliente === 'Administracion') {
-                            faseFormulario = 40; // Código interno de Fase Asunto
+                            faseFormulario = 40; 
                             ejecutarFlujoFormulario();
                         } else {
                             faseFormulario = 4;
@@ -510,7 +507,6 @@
                 document.getElementById('texto-estado-vr').setAttribute('value', 'SELECCIONE POBLACION');
                 hablarSara("Estupendo " + leadData.nombrePila + ". Selecciona en los paneles flotantes el municipio donde se encuentra ubicada tu propiedad.");
             } else if (faseFormulario === 40) {
-                // Captura oral del Asunto exclusiva de Administración
                 document.getElementById('texto-estado-vr').setAttribute('value', 'SARA: DICTAR ASUNTO');
                 hablarSara("Estupendo " + leadData.nombrePila + ". Dime ahora de viva voz un titular corto o el asunto de tu consulta de gestion.", abrirMicrofonoCliente);
             }
@@ -548,7 +544,6 @@
             document.getElementById('rgpd-linea-nombre').setAttribute('value', "CLIENTE: " + nombreLimpio3D);
             document.getElementById('rgpd-linea-contacto').setAttribute('value', "TEL: " + leadData.telefono + " | EMAIL: " + emailLimpio3D);
             
-            // Personalización de la última línea del panel en base al módulo activo
             if (leadData.tipoCliente === 'Administracion') {
                 document.getElementById('rgpd-linea-localizacion').setAttribute('value', "ASUNTO: " + poblacionLimpia3D + " | DESCRIPCION: " + detallesLimpios3D);
             } else if (leadData.tipoCliente === 'Vender Propiedad') {
@@ -580,7 +575,7 @@
             });
         }
 
-        // CONTROLADORES EXCLUSIVOS HÍBRIDOS PARA EL MÓDULO 5 (ADVISORS OVERLAY)
+        // CONTROLADORES EXCLUSIVOS HÍBRIDOS PARA EL MÓDULO 5
         function abrirModulo5AdvisorsHTML() {
             try { recognition.abort(); } catch(e){}
             document.getElementById('boton-salir-hub-3d').setAttribute('scale', '0 0 0');
@@ -670,8 +665,8 @@
                     faseFormulario = 3;
                     ejecutarFlujoFormulario();
                 } else if (faseFormulario === 40) {
-                    leadData.poblacion = comando; // Guardamos el asunto dictado
-                    faseFormulario = 5; // Saltamos a la fase de descripción final
+                    leadData.poblacion = comando; 
+                    faseFormulario = 5; 
                     document.getElementById('texto-estado-vr').setAttribute('value', 'SARA: DICTAR DESCRIPCION');
                     hablarSara("Entendido. Ahora explicame de forma detallada la descripcion de tu peticion o incidencia.", abrirMicrofonoCliente);
                 } else if (faseFormulario === 5) {
@@ -704,13 +699,6 @@
             document.getElementById('cielo-entorno').removeAttribute('src');
             document.getElementById('cielo-entorno').setAttribute('color', '#020617');
             document.getElementById('texto-estado-vr').setAttribute('value', 'IA READY');
-        }
-
-        function navegarModuloGeneric(id) {
-            document.getElementById('contenedor-video-tiktok').setAttribute('scale', '0 0 0');
-            document.getElementById('boton-salir-hub-3d').setAttribute('scale', '0 0 0');
-            document.getElementById('texto-estado-vr').setAttribute('value', 'CARGANDO MÓDULO ' + id + '...');
-            hablarSara("Conectando con el sub modulo numero " + id);
         }
 
         recognition.onerror = function(event) {
