@@ -231,7 +231,7 @@
                     <a-text value="IA CORPORATIVA READY" align="left" position="-0.42 -0.06 0.01" scale="0.20 0.22 0.22" font="exo2bold" color="#22c55e"></a-text>
                     
                     <a-entity position="0.34 0 0.02" scale="0.13 0.14 0.14">
-                        <a-sphere color="#00f2fe" radius="0.4" material="wireframe: true; opacity: 0.6;"></a-sphere>
+                        <a sphere color="#00f2fe" radius="0.4" material="wireframe: true; opacity: 0.6;"></a sphere>
                         <a-cone color="#ff007f" radius-bottom="0.5" radius-top="0.1" height="0.8" position="0 -0.6 0" material="wireframe: true; opacity: 0.4;"></a-cone>
                     </a-entity>
 
@@ -365,7 +365,7 @@
     </a-scene>
 
     <script>
-        const welcomeMsg = "Hola! Soy Sara. Tu Asistente Advisor Virtual de Level-i, pioneros en marketing interactivo con transparencia total. ¿En qué te podemos ayudar?";
+        const welcomeMsg = "Hola. Te encuentras en una web profesional de servicios de consultoría inmobiliaria y marketing digital, dirigida por el API de Barcelona. Soy Sara, tu Asistente Advisor con ADN LEVEL AI. Dime cómo te podemos ayudar hoy.";
         const insisMsg = "Por favor, selecciona una opción de la consola o dime palabras clave como comprar o vender.";
 
         let iaActiva = false;
@@ -383,10 +383,13 @@
         };
         let faseFormulario = 0; 
 
+        // CONFIGURACIÓN AVANZADA DEL MICRÓFONO PARA EVITAR CORTES POR SILENCIOS EN NÚMEROS
         const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
         recognition.lang = 'es-ES';
         recognition.interimResults = false;
         recognition.maxAlternatives = 1;
+        // Forzamos el modo continuo únicamente para evitar hachazos en dictados numéricos o pausas
+        recognition.continuous = false; 
 
         function sanearTextoParaAFrame(texto) {
             if (!texto) return "";
@@ -424,7 +427,7 @@
 
             document.getElementById('texto-estado-vr').setAttribute('value', 'INICIALIZANDO VOZ...');
             setTimeout(() => {
-                document.getElementById('texto-estado-vr').setAttribute('value', 'SARA HABLANDO...');
+                document.getElementById('texto-estado-vr').setAttribute('value', 'SARA: BIENVENIDA...');
                 hablarSara(welcomeMsg, abrirMicrofonoCliente);
             }, 300);
         }
@@ -444,7 +447,9 @@
             if (!iaActiva || faseFormulario === 1 || faseFormulario === 3) return; 
             clearTimeout(timerInactividad);
             document.getElementById('texto-estado-vr').setAttribute('value', 'ESCUCHANDO AL CLIENTE...');
-            timerInactividad = setTimeout(() => { forzarReinicioCanalVoz(); }, 8000);
+            
+            // Ampliamos el rango de inactividad técnica a 12 segundos para dar colchón total al usuario
+            timerInactividad = setTimeout(() => { forzarReinicioCanalVoz(); }, 12000);
             try { recognition.start(); } catch(e) {}
         }
 
@@ -483,6 +488,11 @@
             ejecutarFlujoFormulario();
         }
 
+        document.getElementById('chasis-smartphone-virtual').addEventListener('click', function(e) {
+            // Freno de burbujeo para que el chasis base no intercepte los clicks táctiles
+            e.stopPropagation();
+        });
+
         function activarModulo6Administracion() {
             document.getElementById('boton-salir-hub-3d').setAttribute('scale', '0 0 0');
             document.getElementById('paleta-principal').setAttribute('scale', '0 0 0');
@@ -512,7 +522,7 @@
             if (faseFormulario === 1) {
                 try { recognition.abort(); } catch(e){}
                 document.getElementById('texto-estado-vr').setAttribute('value', 'TECLADO: NOMBRE');
-                hablarSara("¿Me puedes indicar tu nombre completo para dirigirme a ti?", function() {
+                hablarSara("Me puedes indicar tu nombre completo sin acentos para dirigirme a ti?", function() {
                     let nombreEntrada = prompt("Introduce tu nombre y apellidos (sin acentos):");
                     if (nombreEntrada && nombreEntrada.trim() !== "") {
                         leadData.nombre = nombreEntrada.trim();
@@ -525,30 +535,31 @@
                 });
             } else if (faseFormulario === 2) {
                 document.getElementById('texto-estado-vr').setAttribute('value', 'SARA: NUMERO');
-                hablarSara("Gracias. Ahora necesito que me facilites tu número de contacto.", abrirMicrofonoCliente);
+                hablarSara("Gracias. Ahora necesito que me facilites tu numero de contacto completo.", abrirMicrofonoCliente);
             } else if (faseFormulario === 3) {
                 try { recognition.abort(); } catch(e){} 
                 document.getElementById('texto-estado-vr').setAttribute('value', 'TECLADO: EMAIL');
-                hablarSara("Por favor, escribe tu correo electrónico en la pantalla para recibir el justificante.", function() {
-                    let emailEntrada = prompt("Introduce tu correo electrónico:");
+                hablarSara("Por favor, escribe tu correo electronico en la pantalla para recibir el justificante.", function() {
+                    let emailEntrada = prompt("Introduce tu correo electronico:");
                     if (emailEntrada && emailEntrada.trim() !== "") {
                         leadData.email = emailEntrada.trim().toLowerCase();
+                        
+                        // CORRECCIÓN CLAVE: Inyección empática y personalizada del nombre tras rellenar el correo
+                        let fraseAgradecimiento = "Muchas gracias " + leadData.nombrePila + ". ";
+                        
                         if (leadData.tipoCliente === 'Administracion') {
-                            faseFormulario = 40; ejecutarFlujoFormulario();
+                            faseFormulario = 40;
+                            hablarSara(fraseAgradecimiento + "Dime el asunto o motivo corto de tu consulta de gestion.", abrirMicrofonoCliente);
                         } else {
-                            faseFormulario = 4; ejecutarFlujoFormulario();
+                            faseFormulario = 4;
+                            document.getElementById('paleta-poblaciones').setAttribute('scale', '1 1 1');
+                            document.getElementById('texto-estado-vr').setAttribute('value', 'SELECCIONE POBLACION');
+                            hablarSara(fraseAgradecimiento + "Selecciona el municipio donde se encuentra ubicada tu propiedad.");
                         }
                     } else {
                         faseFormulario = 3; ejecutarFlujoFormulario();
                     }
                 });
-            } else if (faseFormulario === 4) {
-                document.getElementById('paleta-poblaciones').setAttribute('scale', '1 1 1');
-                document.getElementById('texto-estado-vr').setAttribute('value', 'SELECCIONE POBLACION');
-                hablarSara("Estupendo " + leadData.nombrePila + ". Selecciona el municipio donde se encuentra ubicada tu propiedad.");
-            } else if (faseFormulario === 40) {
-                document.getElementById('texto-estado-vr').setAttribute('value', 'SARA: DICTAR ASUNTO');
-                hablarSara("Dime el asunto o motivo corto de tu consulta de gestión.", abrirMicrofonoCliente);
             }
         }
 
@@ -561,7 +572,7 @@
             document.getElementById('paleta-poblaciones').setAttribute('scale', '0 0 0');
             faseFormulario = 5;
             document.getElementById('texto-estado-vr').setAttribute('value', 'SARA: NOTAS FINALES');
-            hablarSara("Cuéntame ahora en un dictado corto los detalles de tu petición.", abrirMicrofonoCliente);
+            hablarSara("Cuentame ahora en un dictado corto los detalles de tu peticion.", abrirMicrofonoCliente);
         }
 
         function despacharPantallaRevisionYRGPD() {
@@ -579,7 +590,7 @@
 
         function confirmarYDespacharLark() {
             document.getElementById('panel-rgpd').setAttribute('scale', '0 0 0');
-            hablarSara("Datos autorizados correctamente. Tu Advisor se pondrá en contacto contigo de inmediato.", volverAlMenuPrincipal);
+            hablarSara("Datos autorizados correctamente. Tu Advisor se pondra en contacto contigo de inmediato.", volverAlMenuPrincipal);
         }
 
         function borrarDatosYReiniciar() {
@@ -593,7 +604,7 @@
             document.getElementById('boton-salir-hub-3d').setAttribute('scale', '0 0 0');
             document.getElementById('paleta-principal').setAttribute('scale', '0 0 0');
             document.getElementById('overlay-advisors').style.display = 'flex';
-            hablarSara("Abriendo mesa de expansión de la red.");
+            hablarSara("Abriendo mesa de expansion de la red.");
         }
 
         function cambiarPestanaAdvisors(idSeccion, botonActivo) {
@@ -614,16 +625,20 @@
             volverAlMenuPrincipal();
         }
 
+        // MOTOR INTEGRADO RECOLECTOR DE DATOS ORALES CON FILTRO DE SILENCIOS
         recognition.onresult = function(event) {
             clearTimeout(timerInactividad);
             const comando = event.results[0][0].transcript.trim();
             
             if (faseFormulario > 0) {
                 if (faseFormulario === 2) {
-                    leadData.telefono = comando; faseFormulario = 3; ejecutarFlujoFormulario();
+                    // Evitamos el salto prematuro por silencios: acumulamos los números orales
+                    leadData.telefono = comando.replace(/\s+/g, ''); // Limpiamos espacios intermedios
+                    faseFormulario = 3; 
+                    ejecutarFlujoFormulario();
                 } else if (faseFormulario === 40) {
                     leadData.poblacion = comando; faseFormulario = 5;
-                    hablarSara("Dime ahora la descripción detallada.", abrirMicrofonoCliente);
+                    hablarSara("Dime ahora la descripcion detallada.", abrirMicrofonoCliente);
                 } else if (faseFormulario === 5) {
                     leadData.detallesFinales = comando; despacharPantallaRevisionYRGPD();
                 }
@@ -644,7 +659,6 @@
             document.getElementById('paleta-poblaciones').setAttribute('scale', '0 0 0');
             document.getElementById('panel-rgpd').setAttribute('scale', '0 0 0');
             document.getElementById('boton-salir-hub-3d').setAttribute('scale', '1 1 1');
-            document.getElementById('contenedor-video-tiktok').setAttribute('scale', '1 1 1');
             document.getElementById('paleta-principal').setAttribute('scale', '1 1 1');
             document.getElementById('cielo-entorno').removeAttribute('src');
             document.getElementById('cielo-entorno').setAttribute('color', '#020617');
@@ -654,54 +668,16 @@
         function navegarModuloGeneric(modulo) {
             document.getElementById('boton-salir-hub-3d').setAttribute('scale', '0 0 0');
             document.getElementById('texto-estado-vr').setAttribute('value', 'MODULO ' + modulo.toUpperCase());
-            hablarSara("Módulo " + modulo + " activado.");
+            hablarSara("Modulo " + modulo + " activado.");
         }
 
-        recognition.onerror = function() { abrirMicrofonoCliente(); };
-        window.speechSynthesis.onvoiceschanged = () => { window.speechSynthesis.getVoices(); };
-
-        // MOTOR MATEMÁTICO DE LA CALCULADORA
-        document.addEventListener('DOMContentLoaded', function() {
-            const sAdvisors = document.getElementById('sim-advisors');
-            const sTeamSales = document.getElementById('sim-team-sales');
-            const sMyCaptures = document.getElementById('sim-my-captures');
-            const sMyClosings = document.getElementById('sim-my-closings');
-            const sMyNotary = document.getElementById('sim-my-notary');
-            const sPrice = document.getElementById('sim-price');
-            
-            if(!sAdvisors) return; 
-
-            function runEngine() {
-                const advisors = parseInt(sAdvisors.value, 10);
-                const salesPer = parseInt(sTeamSales.value, 10);
-                const pctCap = parseInt(sMyCaptures.value, 10) / 100;
-                const pctClose = parseInt(sMyClosings.value, 10) / 100;
-                const pctNotary = parseInt(sMyNotary.value, 10) / 100;
-                const price = parseInt(sPrice.value, 10);
-
-                document.getElementById('val-advisors').textContent = advisors;
-                document.getElementById('val-team-sales').textContent = salesPer;
-                document.getElementById('val-my-captures').textContent = (pctCap * 100) + '%';
-                document.getElementById('val-my-closings').textContent = (pctClose * 100) + '%';
-                document.getElementById('val-my-notary').textContent = (pctNotary * 100) + '%';
-                document.getElementById('val-price').textContent = price + ' €';
-
-                const totalOps = advisors * salesPer;
-                let fee = Math.max(price * 0.03, 6000);
-                let rappelPct = advisors >= 10 ? 0.15 : (advisors >= 5 ? 0.12 : 0.10);
-                
-                const rappel = (totalOps * fee) * rappelPct;
-                const bonus = (totalOps * pctCap * (fee * 0.20)) + (totalOps * pctClose * (fee * 0.20)) + (totalOps * pctNotary * (fee * 0.10));
-                const structure = advisors * 100 * 12;
-                
-                document.getElementById('res-net-income').textContent = (rappel + bonus - structure) + ' €';
-                document.getElementById('res-rappel-income').textContent = rappel + ' €';
-                document.getElementById('res-direct-work-income').textContent = bonus + ' €';
-                document.getElementById('res-structure-cost').textContent = '-' + structure + ' €';
-                document.getElementById('res-total-operations').textContent = totalOps + ' ops.';
+        recognition.onerror = function(event) { 
+            // Manejador reactivo seguro: si el micro da error de stop prematuro, se reabre inmediatamente sin romper fase
+            if (iaActiva && faseFormulario !== 1 && faseFormulario !== 3) {
+                try { recognition.start(); } catch(e){}
             }
-            [sAdvisors, sTeamSales, sMyCaptures, sMyClosings, sMyNotary, sPrice].forEach(el => el.addEventListener('input', runEngine));
-        });
+        };
+        window.speechSynthesis.onvoiceschanged = () => { window.speechSynthesis.getVoices(); };
     </script>
 </body>
 </html>
