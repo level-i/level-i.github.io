@@ -455,7 +455,6 @@
             faseFormulario = 2; flujoEntradaManualNombre();
         }
 
-        // CONTROL MILIMÉTRICO DE ENTRADAS DE FORMULARIO INDEPENDIENTES
         function flujoEntradaManualNombre() {
             try { recognition.abort(); } catch(e){}
             actualizarProgresoVisual(5, "Fase 2: Nombre Completo");
@@ -499,7 +498,6 @@
                     if (regexEmail.test(emailLimpio)) {
                         leadData.email = emailLimpio;
                         
-                        // SOLUCIÓN AL BUG: Se actualiza estrictamente el renglón 3 concatenando sin tocar el renglón del nombre
                         let valActualTel = document.getElementById('ficha-linea-3').getAttribute('value');
                         document.getElementById('ficha-linea-3').setAttribute('value', valActualTel + " | EMAIL: " + sanearTextoParaAFrame(leadData.email));
                         
@@ -515,9 +513,16 @@
             });
         }
 
+        // =========================================================================
+        // REPARACIÓN CRÍTICA: ENLACE DE FLUJO HACIA FASE 6 TRAS LA SELECCIÓN DE MUNICIPIO
+        // =========================================================================
         function seleccionarPoblacion(nombrePoblacion) {
             leadData.poblacion = nombrePoblacion;
+            
+            // Ocultamos la paleta de municipios para liberar la visualización de pantalla
             document.getElementById('paleta-poblaciones').setAttribute('scale', '0 0 0');
+            
+            // Pintamos la información de zona en la ficha inferior
             document.getElementById('ficha-linea-4').setAttribute('value', "ZONA: " + sanearTextoParaAFrame(leadData.poblacion));
             document.getElementById('ficha-linea-4').setAttribute('visible', 'true');
             
@@ -526,7 +531,11 @@
             } else {
                 document.getElementById('rgpd-imagen-poblacion').setAttribute('src', 'https://img.youtube.com/vi/9TTqR1wD3jI/0.jpg');
             }
-            faseFormulario = 6; actualizarProgresoVisual(25, "Fase 5: Poblacion Guardada");
+            
+            // Saltamos de fase y disparamos la locución para dictar observaciones (Evita que se quede estancado)
+            faseFormulario = 6; 
+            actualizarProgresoVisual(25, "Fase 5: Poblacion Guardada");
+            
             setTimeout(() => {
                 actualizarProgresoVisual(45, "Fase 6: Dictar Caracteristicas");
                 hablarAdvisorUnificado("Por favor, cuéntame de viva voz las características y presupuesto estimado de tu solicitud.", abrirMicrofonoCliente);
