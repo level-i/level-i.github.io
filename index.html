@@ -244,16 +244,14 @@
                     </a-plane>
                 </a-entity>
 
-                <!-- ========================================================================= -->
-                <!-- SECCIÓN REUBICADA Y OPTIMIZADA: EL RESUMEN SUBE DE FORMA NATURAL AL PIE DE LA REVISIÓN -->
-                <!-- ========================================================================= -->
+                <!-- RESUMEN COMPACTADO AL PIE DE LA REVISIÓN -->
                 <a-plane id="panel-datos-acumulados" width="0.94" height="0.48" color="#030712" material="opacity: 0.98; border: 1px solid #1f2937;" position="0 -0.62 0.01">
                     <a-text value="FICHA HOLOGRAFICA DE SOLICITUD" align="center" position="0 0.20 0.01" scale="0.16 0.16 0.16" font="orbitron" color="#00f2fe"></a-text>
                     
-                    <a-text id="ficha-linea-1" value="OP: COMPRAR" align="left" position="-0.44 0.10 0.01" scale="0.18 0.18 0.18" font="exo2bold" color="#fff" visible="false"></a-text>
-                    <a-text id="ficha-linea-2" value="USO: -" align="left" position="-0.44 0.02 0.01" scale="0.18 0.18 0.18" font="exo2bold" color="#fff" visible="false"></a-text>
-                    <a-text id="ficha-linea-3" value="CONTACTO: -" align="left" position="-0.44 -0.06 0.01" scale="0.16 0.16 0.16" font="exo2bold" color="#fff" visible="false"></a-text>
-                    <a-text id="ficha-linea-4" value="ZONA/CONSULTA: -" align="left" position="-0.44 -0.15 0.01" scale="0.15 0.15 0.15" wrapCount="46" font="exo2bold" color="#fff" visible="false"></a-text>
+                    <a-text id="ficha-linea-1" value="OP: COMPRAR" align="left" position="-0.44 0.10 0.01" scale="0.18 0.18 0.18" font="exo2bold" color="#fff" material="shader: flat;" visible="false"></a-text>
+                    <a-text id="ficha-linea-2" value="USO: -" align="left" position="-0.44 0.02 0.01" scale="0.18 0.18 0.18" font="exo2bold" color="#fff" material="shader: flat;" visible="false"></a-text>
+                    <a-text id="ficha-linea-3" value="CONTACTO: -" align="left" position="-0.44 -0.06 0.01" scale="0.16 0.16 0.16" font="exo2bold" color="#fff" material="shader: flat;" visible="false"></a-text>
+                    <a-text id="ficha-linea-4" value="ZONA/CONSULTA: -" align="left" position="-0.44 -0.15 0.01" scale="0.15 0.15 0.15" wrapCount="46" font="exo2bold" color="#fff" material="shader: flat;" visible="false"></a-text>
                 </a-plane>
 
             </a-plane>
@@ -322,7 +320,7 @@
                     <a-plane class="clickable" onclick="seleccionarServicioServi('Bancario')" position="0 -0.12 0.01" width="0.86" height="0.16" color="#0f172a">
                         <a-text value="PRODUCTOS BANCARIOS Y/O JUDICIALES" align="center" scale="0.17 0.17 0.17" font="exo2bold" color="#fff"></a-text>
                     </a-plane>
-                    <a-plane class="clickable" onclick="volverAlMenuPrincipal()" position="0 -0.28 0.01" width="0.86" height="11" color="#334155">
+                    <a-plane class="clickable" onclick="volverAlMenuPrincipal()" position="0 -0.28 0.01" width="0.86" height="0.11" color="#334155">
                         <a-text value="CANCELAR" align="center" scale="0.18 0.18 0.18" font="exo2bold" color="#fff"></a-text>
                     </a-plane>
                 </a-plane>
@@ -436,7 +434,7 @@
             leadData.tipoCliente = "Comprar / " + tipo;
             document.getElementById('paleta-subintencion').setAttribute('scale', '0 0 0');
             document.getElementById('ficha-linea-1').setAttribute('value', "COMPRAR / TIPO DE USO: " + tipo.toUpperCase());
-            faseFormulario = 2; ejecutarFlujoFormulario();
+            faseFormulario = 2; flujoEntradaManualNombre();
         }
 
         function activarModulo2() {
@@ -445,7 +443,7 @@
             leadData.tipoCliente = 'Vender Propiedad';
             document.getElementById('ficha-linea-1').setAttribute('value', "OP: VENDER PROPIEDAD");
             document.getElementById('ficha-linea-1').setAttribute('visible', 'true');
-            faseFormulario = 2; ejecutarFlujoFormulario();
+            faseFormulario = 2; flujoEntradaManualNombre();
         }
 
         function activarModulo6Administracion() {
@@ -454,60 +452,67 @@
             leadData.tipoCliente = 'Administracion';
             document.getElementById('ficha-linea-1').setAttribute('value', "OP: ADMINISTRACION");
             document.getElementById('ficha-linea-1').setAttribute('visible', 'true');
-            faseFormulario = 2; ejecutarFlujoFormulario();
+            faseFormulario = 2; flujoEntradaManualNombre();
         }
 
-        function ejecutarFlujoFormulario() {
-            try { recognition.abort(); } catch(e){} 
+        // CONTROL MILIMÉTRICO DE ENTRADAS DE FORMULARIO INDEPENDIENTES
+        function flujoEntradaManualNombre() {
+            try { recognition.abort(); } catch(e){}
+            actualizarProgresoVisual(5, "Fase 2: Nombre Completo");
+            hablarAdvisorUnificado("¿Me puedes indicar tu nombre completo para dirigirme a ti?", function() {
+                let nombreEntrada = prompt("Introduce tu nombre y apellidos:");
+                if (nombreEntrada && nombreEntrada.trim() !== "") {
+                    leadData.nombre = nombreEntrada.trim(); 
+                    leadData.nombrePila = leadData.nombre.split(" ")[0]; 
+                    document.getElementById('ficha-linea-2').setAttribute('value', "CLIENTE: " + sanearTextoParaAFrame(leadData.nombre));
+                    document.getElementById('ficha-linea-2').setAttribute('visible', 'true');
+                    faseFormulario = 3; flujoEntradaManualTelefono();
+                } else { flujoEntradaManualNombre(); }
+            });
+        }
 
-            if (faseFormulario === 2) {
-                actualizarProgresoVisual(5, "Fase 2: Nombre Completo");
-                hablarAdvisorUnificado("¿Me puedes indicar tu nombre completo para dirigirme a ti?", function() {
-                    let nombreEntrada = prompt("Introduce tu nombre y apellidos:");
-                    if (nombreEntrada && nombreEntrada.trim() !== "") {
-                        leadData.nombre = nombreEntrada.trim(); leadData.nombrePila = leadData.nombre.split(" ")[0]; 
-                        document.getElementById('ficha-linea-2').setAttribute('value', "CLIENTE: " + sanearTextoParaAFrame(leadData.nombre));
-                        document.getElementById('ficha-linea-2').setAttribute('visible', 'true');
-                        faseFormulario = 3; ejecutarFlujoFormulario();
-                    } else { faseFormulario = 2; ejecutarFlujoFormulario(); }
-                });
-            } else if (faseFormulario === 3) {
-                actualizarProgresoVisual(10, "Fase 3: Telefono");
-                hablarAdvisorUnificado("Introduce tu telefono de contacto en la paleta de la pantalla.", function() {
-                    let telEntrada = prompt("Introduce tu número (Se admite + para prefijos):");
-                    if (telEntrada && telEntrada.trim() !== "") {
-                        let telLimpio = telEntrada.replace(/\s+/g, '');
-                        if (/^\+?\d{9,15}$/.test(telLimpio)) {
-                            leadData.telefono = telLimpio;
-                            document.getElementById('ficha-linea-3').setAttribute('value', "TEL: " + leadData.telefono);
-                            document.getElementById('ficha-linea-3').setAttribute('visible', 'true');
-                            faseFormulario = 4; ejecutarFlujoFormulario();
-                        } else { alert("Teléfono no válido."); faseFormulario = 3; ejecutarFlujoFormulario(); }
-                    } else { faseFormulario = 3; ejecutarFlujoFormulario(); }
-                });
-            } else if (faseFormulario === 4) {
-                actualizarProgresoVisual(15, "Fase 4: Correo Electronico");
-                hablarAdvisorUnificado("Introduce tu correo electronico para finalizar tu identificacion.", function() {
-                    let emailEntrada = prompt("Introduce tu correo electrónico:");
-                    if (emailEntrada && emailEntrada.trim() !== "") {
-                        let emailLimpio = emailEntrada.trim().toLowerCase();
-                        let regexEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                        if (regexEmail.test(emailLimpio)) {
-                            leadData.email = emailLimpio;
-                            let valActualTel = document.getElementById('ficha-linea-3').getAttribute('value');
-                            document.getElementById('ficha-linea-3').setAttribute('value', valActualTel + " | EMAIL: " + sanearTextoParaAFrame(leadData.email));
-                            
-                            let fraseAgradecimiento = "Muchas gracias " + leadData.nombrePila + ". ";
-                            if (leadData.tipoCliente === 'Administracion') {
-                                faseFormulario = 40; hablarAdvisorUnificado(fraseAgradecimiento + "Dime el asunto o motivo de tu consulta.", abrirMicrofonoCliente);
-                            } else {
-                                faseFormulario = 5; document.getElementById('paleta-poblaciones').setAttribute('scale', '1 1 1');
-                                hablarAdvisorUnificado(fraseAgradecimiento + "Selecciona el municipio de tu interés.");
-                            }
-                        } else { alert("Email incorrecto."); faseFormulario = 4; ejecutarFlujoFormulario(); }
-                    } else { faseFormulario = 4; ejecutarFlujoFormulario(); }
-                });
-            }
+        function flujoEntradaManualTelefono() {
+            try { recognition.abort(); } catch(e){}
+            actualizarProgresoVisual(10, "Fase 3: Telefono");
+            hablarAdvisorUnificado("Introduce tu telefono de contacto en la paleta de la pantalla.", function() {
+                let telEntrada = prompt("Introduce tu número:");
+                if (telEntrada && telEntrada.trim() !== "") {
+                    let telLimpio = telEntrada.replace(/\s+/g, '');
+                    if (/^\+?\d{9,15}$/.test(telLimpio)) {
+                        leadData.telefono = telLimpio;
+                        document.getElementById('ficha-linea-3').setAttribute('value', "TEL: " + leadData.telefono);
+                        document.getElementById('ficha-linea-3').setAttribute('visible', 'true');
+                        faseFormulario = 4; flujoEntradaManualEmail();
+                    } else { alert("Teléfono no válido."); flujoEntradaManualTelefono(); }
+                } else { flujoEntradaManualTelefono(); }
+            });
+        }
+
+        function flujoEntradaManualEmail() {
+            try { recognition.abort(); } catch(e){}
+            actualizarProgresoVisual(15, "Fase 4: Correo Electronico");
+            hablarAdvisorUnificado("Introduce tu correo electronico para finalizar tu identificacion.", function() {
+                let emailEntrada = prompt("Introduce tu correo electrónico:");
+                if (emailEntrada && emailEntrada.trim() !== "") {
+                    let emailLimpio = emailEntrada.trim().toLowerCase();
+                    let regexEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    if (regexEmail.test(emailLimpio)) {
+                        leadData.email = emailLimpio;
+                        
+                        // SOLUCIÓN AL BUG: Se actualiza estrictamente el renglón 3 concatenando sin tocar el renglón del nombre
+                        let valActualTel = document.getElementById('ficha-linea-3').getAttribute('value');
+                        document.getElementById('ficha-linea-3').setAttribute('value', valActualTel + " | EMAIL: " + sanearTextoParaAFrame(leadData.email));
+                        
+                        let fraseAgradecimiento = "Muchas gracias " + leadData.nombrePila + ". ";
+                        if (leadData.tipoCliente === 'Administracion') {
+                            faseFormulario = 40; hablarAdvisorUnificado(fraseAgradecimiento + "Dime el asunto o motivo de tu consulta.", abrirMicrofonoCliente);
+                        } else {
+                            faseFormulario = 5; document.getElementById('paleta-poblaciones').setAttribute('scale', '1 1 1');
+                            hablarAdvisorUnificado(fraseAgradecimiento + "Selecciona el municipio de tu interés.");
+                        }
+                    } else { alert("Email incorrecto."); flujoEntradaManualEmail(); }
+                } else { flujoEntradaManualEmail(); }
+            });
         }
 
         function seleccionarPoblacion(nombrePoblacion) {
