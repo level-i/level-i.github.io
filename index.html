@@ -52,7 +52,7 @@
         }
         .btn-privacidad-html:hover { color: #00f2fe; }
 
-        /* INTERFAZ HÍBRIDA (DOM OVERLAY) PARA ADVISORS */
+        /* INTERFAZ HÍBRIDA ADVISORS HTML */
         .contenedor-overlay-advisors {
             position: fixed; top: 5%; left: 50%; transform: translateX(-50%);
             width: 95%; max-width: 1200px; height: 85vh;
@@ -69,9 +69,22 @@
         }
         .tab-btn.active, .tab-btn:hover { background: #fbbf24; color: #000; border-color: #fbbf24; box-shadow: 0 0 15px rgba(251,191,36,0.3); }
         .btn-cerrar-overlay { background: #ef4444; color: white; border: none; padding: 12px 25px; border-radius: 8px; cursor: pointer; font-weight: 700; margin-left: auto; text-transform: uppercase;}
-        
         .seccion-contenido-tab { display: none; }
         .seccion-contenido-tab.active { display: block; }
+
+        /* ESTILOS DEL MENÚ FLOTANTE DE IDIOMAS */
+        .selector-idiomas-flotante {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: rgba(15, 23, 42, 0.98); border: 2px solid #00f2fe; border-radius: 12px;
+            padding: 30px; z-index: 300000 !important; display: none; flex-direction: column;
+            gap: 15px; font-family: 'Montserrat', sans-serif; text-align: center; width: 280px;
+            box-shadow: 0 0 40px rgba(0, 242, 254, 0.3);
+        }
+        .btn-idioma-opc {
+            background: #1e293b; color: white; border: 1px solid #334155; padding: 12px;
+            border-radius: 6px; font-weight: 700; cursor: pointer; transition: 0.3s; text-transform: uppercase;
+        }
+        .btn-idioma-opc:hover { background: #00f2fe; color: #0f172a; }
     </style>
     
     <script>
@@ -110,7 +123,6 @@
         <a class="btn-privacidad-html" href="https://level.immo/politica-de-privacidad/" target="_blank">Política de Privacidad</a>
     </div>
 
-    <!-- MENÚ FLOTANTE DE IDIOMAS -->
     <div id="overlay-idiomas" class="selector-idiomas-flotante">
         <h4 style="color: #00f2fe; margin-top: 0; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px;">Seleccionar Idioma</h4>
         <button class="btn-idioma-opc" onclick="cambiarFicheroIdioma('index.html')">Castellano</button>
@@ -120,13 +132,11 @@
         <button class="btn-idioma-opc" style="background: #ef4444; border: none; margin-top: 10px;" onclick="cerrarSelectorIdiomas()">Cancelar</button>
     </div>
 
-    <!-- OVERLAY ADVISORS HTML -->
     <div id="overlay-advisors" class="contenedor-overlay-advisors">
         <div class="pestanas-menu">
             <button class="tab-btn active" onclick="cambiarPestanaAdvisors('tab-informacion', this)">Informacion</button>
             <button class="tab-btn" onclick="cambiarPestanaAdvisors('tab-simulacion', this)">Simulacion Red</button>
-            <button class="tab-btn" onclick="cambiarPestanaAdvisors('tab-formacion', this)">Formacion y Test</button>
-            <button class="btn-cerrar-overlay" onclick="cerrarPanelOverlayAdvisors()">X Cerrar</button>
+            <button class="tab-btn" onclick="cerrarPanelOverlayAdvisors()">X Cerrar</button>
         </div>
         <div id="tab-informacion" class="seccion-contenido-tab active bloque-info-web">
             <h3>Ecosistema de Expansion para Advisors</h3>
@@ -134,7 +144,6 @@
         </div>
     </div>
 
-    <!-- ESCENA COMPU-ESPACIAL -->
     <a-scene loading-screen="enabled: false">
         
         <a-assets>
@@ -155,10 +164,11 @@
             <a-entity cursor="fuse: false; rayOrigin: mouse;" position="0 0 -1" geometry="primitive: ring; radiusInner: 0.007; radiusOuter: 0.014" material="color: #00f2fe; shader: flat; opacity: 0.8;" raycaster="objects: .clickable"></a-entity>
         </a-entity>
 
-        <!-- SMARTPHONE VIRTUAL -->
+        <!-- SMARTPHONE VIRTUAL RECONFIGURADO DESDE EL PLANO DE ALTURA VERTICAL -->
         <a-entity id="chasis-smartphone-virtual" position="0 1.5 -1.6" rotation="0 0 0">
             <a-plane class="clickable" width="1.0" height="2.4" color="#0a0f1d" material="opacity: 0.96; transparent: true; border: 3px solid #1e293b; borderRadius: 0.05;" position="0 0 0">
                 
+                <!-- CABECERA SARA ADVISOR COMPLETA -->
                 <a-text value="SARA ADVISOR" align="left" position="-0.44 1.12 0.01" scale="0.44 0.44 0.44" font="exo2bold" color="#00f2fe"></a-text>
                 
                 <a-entity id="burbuja-rostro-sara" position="0.34 1.12 0.01">
@@ -166,17 +176,11 @@
                     <a-image src="#asset-sara-face" position="0 0 0.01" width="0.13" height="0.13" material="transparent: true; shader: flat;"></a-image>
                 </a-entity>
 
-                <!-- FICHA DE LEAD CON ALTURAS REPARADAS (SIN SOLAPAMIENTO) -->
-                <a-plane width="0.88" height="0.52" color="#0f172a" material="opacity: 0.85; transparent: true;" position="0 0.76 0.01">
-                    <a-text id="texto-estado-vr" value="SARA BIENVENIDA..." align="left" position="-0.44 0.18 0.01" scale="0.21 0.22 0.24" font="monoid" color="#94a3b8"></a-text>
+                <!-- CAJA SUPERIOR EXCLUSIVA PARA DIÁLOGO DIRECTO DE SARA (NUNCA SE SOLAPA) -->
+                <a-plane width="0.88" height="0.18" color="#0f172a" material="opacity: 0.85; transparent: true;" position="0 0.92 0.01">
+                    <a-text id="texto-estado-vr" value="SARA BIENVENIDA..." align="left" position="-0.44 0.02 0.01" scale="0.21 0.22 0.24" font="monoid" color="#94a3b8"></a-text>
                     
-                    <a-text id="ficha-linea-1" value="OP: COMPRAR" align="left" position="-0.44 0.06 0.01" scale="0.20 0.20 0.20" font="exo2bold" color="#fff" visible="false"></a-text>
-                    <a-text id="ficha-linea-2" value="USO: -" align="left" position="-0.44 -0.04 0.01" scale="0.20 0.20 0.20" font="exo2bold" color="#fff" visible="false"></a-text>
-                    <a-text id="ficha-linea-3" value="CONTACTO: -" align="left" position="-0.44 -0.14 0.01" scale="0.18 0.18 0.18" font="exo2bold" color="#fff" visible="false"></a-text>
-                    <a-text id="ficha-linea-4" value="ZONA/CONSULTA: -" align="left" position="-0.44 -0.24 0.01" scale="0.17 0.17 0.17" wrapCount="42" font="exo2bold" color="#fff" visible="false"></a-text>
-
-                    <!-- ECUALIZADOR AUDIBLE -->
-                    <a-entity ondas-voz-sara position="0.32 -0.21 0.02">
+                    <a-entity ondas-voz-sara position="0.32 0.02 0.02">
                         <a-box id="barra-audio-1" width="0.01" height="0.03" depth="0.01" color="#00f2fe" position="0.01 0 0"></a-box>
                         <a-box id="barra-audio-2" width="0.01" height="0.03" depth="0.01" color="#ff007f" position="0.02 0 0"></a-box>
                         <a-box id="barra-audio-3" width="0.01" height="0.03" depth="0.01" color="#00f2fe" position="0.03 0 0"></a-box>
@@ -184,144 +188,159 @@
                 </a-plane>
 
                 <!-- BARRA DE PROGRESO EN EL MEDIO (DÓNDE REPOSA EL CÍRCULO AZUL) -->
-                <a-plane id="contenedor-barra-progreso" width="0.88" height="0.05" color="#0f172a" position="0 0.44 0.01">
+                <a-plane id="contenedor-barra-progreso" width="0.88" height="0.05" color="#0f172a" position="0 0.74 0.01">
                     <a-plane id="relleno-barra-progreso" width="0.01" height="0.05" color="#00f2fe" position="-0.44 0 0.01" material="shader: flat;"></a-plane>
                     <a-text id="texto-porcentaje-progreso" value="0%" align="center" position="0 0 0.02" scale="0.18 0.18 0.18" font="orbitron" color="#fff"></a-text>
                 </a-plane>
 
-                <!-- MENÚ EN CASCADA VERTICAL -->
-                <a-entity id="paleta-principal" position="0 0.02 0.01">
-                    <a-plane id="btn-modulo-idioma" class="clickable" onclick="abrirMenuIdiomasFlotante()" position="0 0.29 0" width="0.86" height="0.09" color="#1e293b" material="opacity: 0.95;">
+                <!-- MENÚ EN CASCADA VERTICAL PRINCIPAL -->
+                <a-entity id="paleta-principal" position="0 0.32 0.01">
+                    <a-plane id="btn-modulo-idioma" class="clickable" onclick="abrirMenuIdiomasFlotante()" position="0 0 0" width="0.86" height="0.09" color="#1e293b" material="opacity: 0.95;">
                         <a-text value="CAMBIAR IDIOMA" align="center" scale="0.20 0.20 0.20" font="exo2bold" color="#fbbf24"></a-text>
                     </a-plane>
-                    <a-plane id="btn-modulo-comprar" class="clickable" onclick="activarModulo1()" position="0 0.18 0" width="0.86" height="0.09" color="#1e293b" material="opacity: 0.95;">
+                    <a-plane id="btn-modulo-comprar" class="clickable" onclick="activarModulo1()" position="0 -0.11 0" width="0.86" height="0.09" color="#1e293b" material="opacity: 0.95;">
                         <a-text value="COMPRAR" align="center" scale="0.20 0.20 0.20" font="exo2bold" color="#fff"></a-text>
                     </a-plane>
-                    <a-plane id="btn-modulo-vender" class="clickable" onclick="activarModulo2()" position="0 0.07 0" width="0.86" height="0.09" color="#1e293b" material="opacity: 0.95;">
+                    <a-plane id="btn-modulo-vender" class="clickable" onclick="activarModulo2()" position="0 -0.22 0" width="0.86" height="0.09" color="#1e293b" material="opacity: 0.95;">
                         <a-text value="VENDER" align="center" scale="0.20 0.20 0.20" font="exo2bold" color="#fff"></a-text>
                     </a-plane>
-                    <a-plane id="btn-modulo-advisors" class="clickable" onclick="abrirModulo5AdvisorsHTML()" position="0 -0.04 0" width="0.86" height="0.09" color="#1e293b" material="opacity: 0.95;">
+                    <a-plane id="btn-modulo-advisors" class="clickable" onclick="abrirModulo5AdvisorsHTML()" position="0 -0.33 0" width="0.86" height="0.09" color="#1e293b" material="opacity: 0.95;">
                         <a-text value="ADVISORS DE ZONA" align="center" scale="0.20 0.20 0.20" font="exo2bold" color="#fff"></a-text>
                     </a-plane>
-                    <a-plane id="btn-modulo-admin" class="clickable" onclick="activarModulo6Administracion()" position="0 -0.15 0" width="0.86" height="0.09" color="#1e293b" material="opacity: 0.95;">
+                    <a-plane id="btn-modulo-admin" class="clickable" onclick="activarModulo6Administracion()" position="0 -0.44 0" width="0.86" height="0.09" color="#1e293b" material="opacity: 0.95;">
                         <a-text value="ADMINISTRACION" align="center" scale="0.20 0.20 0.20" font="exo2bold" color="#fff"></a-text>
                     </a-plane>
-                    <a-plane id="btn-modulo-propietario" class="clickable" onclick="navegarmoduloGeneric('Propietario')" position="0 -0.26 0" width="0.86" height="0.09" color="#1e293b" material="opacity: 0.95;">
+                    <a-plane id="btn-modulo-propietario" class="clickable" onclick="navegarModuloGeneric('Propietario')" position="0 -0.55 0" width="0.86" height="0.09" color="#1e293b" material="opacity: 0.95;">
                         <a-text value="PROPIETARIO / CLIENTE" align="center" scale="0.20 0.20 0.20" font="exo2bold" color="#00f2fe"></a-text>
                     </a-plane>
-                    <a-plane id="btn-modulo-servicios" class="clickable" onclick="navegarModuloGeneric('Servicios')" position="0 -0.37 0" width="0.86" height="0.09" color="#0f172a" material="opacity: 0.98; border: 1px solid #334155;">
+                    <a-plane id="btn-modulo-servicios" class="clickable" onclick="navegarModuloGeneric('Servicios')" position="0 -0.66 0" width="0.86" height="0.09" color="#0f172a" material="opacity: 0.98; border: 1px solid #334155;">
                         <a-text value="SERVICIOS" align="center" scale="0.20 0.20 0.20" font="exo2bold" color="#fff"></a-text>
                     </a-plane>
                 </a-entity>
 
-                <a-plane id="boton-salir-hub-3d" class="clickable" onclick="desactivarHubSutil()" position="0 -0.49 0.01" width="0.86" height="0.09" color="#581c87" material="opacity: 0.9;">
+                <a-plane id="boton-salir-hub-3d" class="clickable" onclick="desactivarHubSutil()" position="0 -0.42 0.01" width="0.86" height="0.09" color="#581c87" material="opacity: 0.9;">
                     <a-text value="SALIR DE LA CONEXION HUBS" align="center" scale="0.17 0.17 0.17" font="exo2bold" color="#f5f3ff"></a-text>
                 </a-plane>
 
-                <!-- PIE CORPORATIVO -->
-                <a-entity position="0 -0.88 0.01">
-                    <a-plane width="0.94" height="0.40" color="#070a14" material="opacity: 0.95; transparent: true;"></a-plane>
-                    <a-image src="#asset-logo" position="-0.24 0.05 0.02" width="0.22" height="0.22" material="transparent: true; shader: flat;"></a-image>
-                    <a-text value="level.immo" align="center" position="-0.24 -0.12 0.02" scale="0.16 0.16 0.16" font="exo2bold" color="#fff"></a-text>
-                    <a-image src="#asset-api" position="0.24 0.02 0.02" width="0.24" height="0.24" material="transparent: true; shader: flat;"></a-image>
-                    <a-text value="API CERTIFIED" align="center" position="0.24 -0.12 0.02" scale="0.14 0.14 0.14" font="exo2bold" color="#fbbf24"></a-text>
+                <!-- SUB-PANEL: REVISIÓN / VERIFICACIÓN / RGPD MATCH CENTRAL -->
+                <a-entity id="panel-rgpd" scale="0 0 0" position="0 0.15 0.02">
+                    <a-plane width="0.94" height="0.95" color="#020617" material="border: 2px solid #00f2fe;">
+                        <a-text value="REVISION GENERAL" align="center" position="0 0.40 0.01" scale="0.26 0.26 0.26" font="exo2bold" color="#00f2fe"></a-text>
+                        <a-text value="Por favor autoriza el tratamiento legal" align="center" position="0 0.32 0.01" scale="0.16 0.16 0.16" font="exo2bold" color="#94a3b8"></a-text>
+                        
+                        <a-plane position="0 0.04 0.01" width="0.65" height="0.38" color="#070a14">
+                            <img id="preview-poblacion-src" src="">
+                            <a-image id="rgpd-imagen-poblacion" position="0 0 0.01" width="0.63" height="0.36" src="#thumb-campana" material="shader: flat;"></a-image>
+                        </a-plane>
+                        
+                        <a-text id="txt-advertencia-match-dinamico" value="Al aceptar, autorizas bajo la Ley RGPD" align="center" position="0 -0.22 0.01" scale="0.15 0.15 0.15" font="exo2bold" color="#64748b"></a-text>
+                        
+                        <a-plane class="clickable" onclick="confirmarYDespacharLark()" position="0.23 -0.38 0.02" width="0.38" height="0.12" color="#22c55e">
+                            <a-text value="ACEPTAR" align="center" scale="0.20 0.20 0.20" font="exo2bold" color="#fff"></a-text>
+                        </a-plane>
+                        <a-plane class="clickable" onclick="borrarDatosYReiniciar()" position="-0.23 -0.38 0.02" width="0.38" height="0.12" color="#b91c1c">
+                            <a-text value="REINICIAR" align="center" scale="0.20 0.20 0.20" font="exo2bold" color="#fff"></a-text>
+                        </a-plane>
+                    </a-plane>
                 </a-entity>
+
+                <!-- PIE CORPORATIVO DE LOGOS SEGURO -->
+                <a-entity id="pie-logos-api" position="0 -0.56 0.01">
+                    <a-plane width="0.94" height="0.30" color="#070a14" material="opacity: 0.95; transparent: true;"></a-plane>
+                    <a-image src="#asset-logo" position="-0.24 0.02 0.02" width="0.20" height="0.20" material="transparent: true; shader: flat;"></a-image>
+                    <a-text value="level.immo" align="center" position="-0.24 -0.11 0.02" scale="0.15 0.15 0.15" font="exo2bold" color="#fff"></a-text>
+                    <a-image src="#asset-api" position="0.24 0.00 0.02" width="0.22" height="0.22" material="transparent: true; shader: flat;"></a-image>
+                    <a-text value="API CERTIFIED" align="center" position="0.24 -0.11 0.02" scale="0.13 0.14 0.14" font="exo2bold" color="#fbbf24"></a-text>
+                </a-entity>
+
+                <!-- ========================================================================= -->
+                <!-- SOLUCIÓN FINAL: EL CAMPO DE VOLCADO DE DATOS ABAJO DE TODO (BAJO LOS LOGOS) -->
+                <!-- NUNCA SE COMPRIME NI EXPANDE HACIA ARRIBA, DISEÑO 100% PROTEGIDO -->
+                <!-- ========================================================================= -->
+                <a-plane id="panel-datos-acumulados" width="0.94" height="0.44" color="#030712" material="opacity: 0.98; border: 1px solid #1f2937;" position="0 -0.95 0.01">
+                    <a-text value="FICHA HOLOGRAFICA DE SOLICITUD" align="center" position="0 0.18 0.01" scale="0.16 0.16 0.16" font="orbitron" color="#00f2fe"></a-text>
+                    
+                    <a-text id="ficha-linea-1" value="OP: COMPRAR" align="left" position="-0.44 0.09 0.01" scale="0.18 0.18 0.18" font="exo2bold" color="#fff" visible="false"></a-text>
+                    <a-text id="ficha-linea-2" value="USO: -" align="left" position="-0.44 0.01 0.01" scale="0.18 0.18 0.18" font="exo2bold" color="#fff" visible="false"></a-text>
+                    <a-text id="ficha-linea-3" value="CONTACTO: -" align="left" position="-0.44 -0.07 0.01" scale="0.16 0.16 0.16" font="exo2bold" color="#fff" visible="false"></a-text>
+                    <a-text id="ficha-linea-4" value="ZONA/CONSULTA: -" align="left" position="-0.44 -0.16 0.01" scale="0.15 0.15 0.15" wrapCount="46" font="exo2bold" color="#fff" visible="false"></a-text>
+                </a-plane>
+
             </a-plane>
 
-            <!-- SUB-PANEL: FASE 1 -->
-            <a-entity id="paleta-subintencion" scale="0 0 0" position="0 -0.05 0.02">
-                <a-plane width="0.94" height="0.90" color="#020617" material="opacity: 0.98; border: 2px solid #00f2fe;">
-                    <a-plane class="clickable" onclick="seleccionarIntencion('Uso Propio')" position="0 0.18 0.01" width="0.75" height="0.18" color="#1e1b4b">
+            <!-- SUB-PANEL: FASE 1 USO/INVERSION -->
+            <a-entity id="paleta-subintencion" scale="0 0 0" position="0 0.10 0.02">
+                <a-plane width="0.94" height="0.75" color="#020617" material="opacity: 0.98; border: 2px solid #00f2fe;">
+                    <a-plane class="clickable" onclick="seleccionarIntencion('Uso Propio')" position="0 0.15 0.01" width="0.75" height="0.16" color="#1e1b4b">
                         <a-text value="USO PROPIO" align="center" scale="0.24 0.26 0.26" font="exo2bold" color="#00f2fe"></a-text>
                     </a-plane>
-                    <a-plane class="clickable" onclick="seleccionarIntencion('Inversion')" position="0 -0.06 0.01" width="0.75" height="0.18" color="#1e1b4b">
+                    <a-plane class="clickable" onclick="seleccionarIntencion('Inversion')" position="0 -0.06 0.01" width="0.75" height="0.16" color="#1e1b4b">
                         <a-text value="INVERSION" align="center" scale="0.24 0.26 0.26" font="exo2bold" color="#00f2fe"></a-text>
                     </a-plane>
-                    <a-plane class="clickable" onclick="volverAlMenuPrincipal()" position="0 -0.30 0.01" width="0.75" height="0.14" color="#334155">
+                    <a-plane class="clickable" onclick="volverAlMenuPrincipal()" position="0 -0.26 0.01" width="0.75" height="0.12" color="#334155">
                         <a-text value="ABORTAR" align="center" scale="0.21 0.21 0.21" font="exo2bold" color="#fff"></a-text>
                     </a-plane>
                 </a-plane>
             </a-entity>
 
             <!-- SUB-PANEL: FASE 5 POBLACIONES -->
-            <a-entity id="paleta-poblaciones" scale="0 0 0" position="0 -0.15 0.02">
-                <a-plane width="0.96" height="1.25" color="#020617" material="opacity: 0.98; border: 2px solid #00f2fe;">
-                    <a-plane class="clickable" onclick="seleccionarPoblacion('Alcanar')" position="-0.22 0.44 0.01" width="0.40" height="0.13" color="#0f172a">
+            <a-entity id="paleta-poblaciones" scale="0 0 0" position="0 0.15 0.02">
+                <a-plane width="0.96" height="1.15" color="#020617" material="opacity: 0.98; border: 2px solid #00f2fe;">
+                    <a-plane class="clickable" onclick="seleccionarPoblacion('Alcanar')" position="-0.22 0.40 0.01" width="0.40" height="0.12" color="#0f172a">
                         <a-text value="ALCANAR" align="center" scale="0.18 0.18 0.18" font="exo2bold" color="#fff"></a-text>
                     </a-plane>
-                    <a-plane class="clickable" onclick="seleccionarPoblacion('Barcelona')" position="-0.22 0.28 0.01" width="0.40" height="0.13" color="#0f172a">
+                    <a-plane class="clickable" onclick="seleccionarPoblacion('Barcelona')" position="-0.22 0.25 0.01" width="0.40" height="0.12" color="#0f172a">
                         <a-text value="BARCELONA" align="center" scale="0.18 0.18 0.18" font="exo2bold" color="#fff"></a-text>
                     </a-plane>
-                    <a-plane class="clickable" onclick="seleccionarPoblacion('Castellar del Valles')" position="-0.22 0.12 0.01" width="0.40" height="0.13" color="#0f172a">
-                        <a-text value="CASTELLAR V." align="center" scale="0.17 0.17 0.17" font="exo2bold" color="#fff"></a-text>
+                    <a-plane class="clickable" onclick="seleccionarPoblacion('Castellar del Valles')" position="-0.22 0.10 0.01" width="0.40" height="0.12" color="#0f172a">
+                        <a-text value="CASTELLAR V." align="center" scale="0.16 0.16 0.16" font="exo2bold" color="#fff"></a-text>
                     </a-plane>
-                    <a-plane class="clickable" onclick="seleccionarPoblacion('La Rapita')" position="-0.22 -0.04 0.01" width="0.40" height="0.13" color="#0f172a">
+                    <a-plane class="clickable" onclick="seleccionarPoblacion('La Rapita')" position="-0.22 -0.05 0.01" width="0.40" height="0.12" color="#0f172a">
                         <a-text value="LA RAPITA" align="center" scale="0.18 0.18 0.18" font="exo2bold" color="#fff"></a-text>
                     </a-plane>
-                    <a-plane class="clickable" onclick="seleccionarPoblacion('Matadepera')" position="-0.22 -0.20 0.01" width="0.40" height="0.13" color="#0f172a">
+                    <a-plane class="clickable" onclick="seleccionarPoblacion('Matadepera')" position="-0.22 -0.20 0.01" width="0.40" height="0.12" color="#0f172a">
                         <a-text value="MATADEPERA" align="center" scale="0.18 0.18 0.18" font="exo2bold" color="#fff"></a-text>
                     </a-plane>
-                    <a-plane class="clickable" onclick="seleccionarPoblacion('Sabadell')" position="0.22 0.44 0.01" width="0.40" height="0.13" color="#0f172a">
+                    <a-plane class="clickable" onclick="seleccionarPoblacion('Sabadell')" position="0.22 0.40 0.01" width="0.40" height="0.12" color="#0f172a">
                         <a-text value="SABADELL" align="center" scale="0.18 0.18 0.18" font="exo2bold" color="#fff"></a-text>
                     </a-plane>
-                    <a-plane class="clickable" onclick="seleccionarPoblacion('Sant Cugat del Valles')" position="0.22 0.28 0.01" width="0.40" height="0.13" color="#0f172a">
-                        <a-text value="ST CUGAT V." align="center" scale="0.17 0.17 0.17" font="exo2bold" color="#fff"></a-text>
+                    <a-plane class="clickable" onclick="seleccionarPoblacion('Sant Cugat del Valles')" position="0.22 0.25 0.01" width="0.40" height="0.12" color="#0f172a">
+                        <a-text value="ST CUGAT V." align="center" scale="0.16 0.16 0.16" font="exo2bold" color="#fff"></a-text>
                     </a-plane>
-                    <a-plane class="clickable" onclick="seleccionarPoblacion('Sant Quirze del Valles')" position="0.22 0.12 0.01" width="0.40" height="0.13" color="#0f172a">
-                        <a-text value="ST QUIRZE V." align="center" scale="0.17 0.17 0.17" font="exo2bold" color="#fff"></a-text>
+                    <a-plane class="clickable" onclick="seleccionarPoblacion('Sant Quirze del Valles')" position="0.22 0.10 0.01" width="0.40" height="0.12" color="#0f172a">
+                        <a-text value="ST QUIRZE V." align="center" scale="0.16 0.16 0.16" font="exo2bold" color="#fff"></a-text>
                     </a-plane>
-                    <a-plane class="clickable" onclick="seleccionarPoblacion('Terrassa')" position="0.22 -0.04 0.01" width="0.40" height="0.13" color="#0f172a">
+                    <a-plane class="clickable" onclick="seleccionarPoblacion('Terrassa')" position="0.22 -0.05 0.01" width="0.40" height="0.12" color="#0f172a">
                         <a-text value="TERRASSA" align="center" scale="0.18 0.18 0.18" font="exo2bold" color="#fff"></a-text>
                     </a-plane>
-                    <a-plane class="clickable" onclick="seleccionarPoblacion('Otras Poblaciones')" position="0.22 -0.20 0.01" width="0.40" height="0.13" color="#1e293b">
-                        <a-text value="OTRAS ZONAS" align="center" scale="0.17 0.17 0.17" font="exo2bold" color="#fbbf24"></a-text>
+                    <a-plane class="clickable" onclick="seleccionarPoblacion('Otras Poblaciones')" position="0.22 -0.20 0.01" width="0.40" height="0.12" color="#1e293b">
+                        <a-text value="OTRAS ZONAS" align="center" scale="0.16 0.16 0.16" font="exo2bold" color="#fbbf24"></a-text>
                     </a-plane>
-                    <a-plane class="clickable" onclick="volverAlMenuPrincipal()" position="0 -0.45 0.01" width="0.84" height="0.12" color="#7f1d1d">
+                    <a-plane class="clickable" onclick="volverAlMenuPrincipal()" position="0 -0.42 0.01" width="0.84" height="0.11" color="#7f1d1d">
                         <a-text value="ABORTAR PROCESO" align="center" scale="0.18 0.18 0.18" font="exo2bold" color="#fff"></a-text>
                     </a-plane>
                 </a-plane>
             </a-entity>
 
             <!-- SUB-PANEL: FASE 8 BINARIA -->
-            <a-entity id="paleta-tipo-compra" scale="0 0 0" position="0 -0.05 0.02">
-                <a-plane width="0.94" height="0.90" color="#020617" material="opacity: 0.98; border: 2px solid #00f2fe;">
-                    <a-text value="SELECCIONE SERVICIO" align="center" position="0 0.35 0.01" scale="0.26 0.26 0.26" font="exo2bold" color="#fbbf24"></a-text>
-                    <a-plane class="clickable" onclick="seleccionarServicioServi('Particular')" position="0 0.12 0.01" width="0.86" height="0.18" color="#0f172a">
+            <a-entity id="paleta-tipo-compra" scale="0 0 0" position="0 0.10 0.02">
+                <a-plane width="0.94" height="0.75" color="#020617" material="opacity: 0.98; border: 2px solid #00f2fe;">
+                    <a-text value="SELECCIONE SERVICIO" align="center" position="0 0.28 0.01" scale="0.24 0.26 0.26" font="exo2bold" color="#fbbf24"></a-text>
+                    <a-plane class="clickable" onclick="seleccionarServicioServi('Particular')" position="0 0.08 0.01" width="0.86" height="0.16" color="#0f172a">
                         <a-text value="CAMPAÑA CAPTACION / PARTICULAR" align="center" scale="0.17 0.17 0.17" font="exo2bold" color="#fff"></a-text>
                     </a-plane>
-                    <a-plane class="clickable" onclick="seleccionarServicioServi('Bancario')" position="0 -0.12 0.01" width="0.86" height="0.18" color="#0f172a">
+                    <a-plane class="clickable" onclick="seleccionarServicioServi('Bancario')" position="0 -0.12 0.01" width="0.86" height="0.16" color="#0f172a">
                         <a-text value="PRODUCTOS BANCARIOS Y/O JUDICIALES" align="center" scale="0.17 0.17 0.17" font="exo2bold" color="#fff"></a-text>
                     </a-plane>
-                    <a-plane class="clickable" onclick="volverAlMenuPrincipal()" position="0 -0.34 0.01" width="0.86" height="0.12" color="#334155">
+                    <a-plane class="clickable" onclick="volverAlMenuPrincipal()" position="0 -0.28 0.01" width="0.86" height="0.11" color="#334155">
                         <a-text value="CANCELAR" align="center" scale="0.18 0.18 0.18" font="exo2bold" color="#fff"></a-text>
-                    </a-plane>
-                </a-plane>
-            </a-entity>
-
-            <!-- SUB-PANEL: REVISIÓN / VERIFICACIÓN RECONFIGURADO DENTRO DEL MOTOR INTERNO -->
-            <a-entity id="panel-rgpd" scale="0 0 0" position="0 -0.05 0.02">
-                <a-plane width="0.94" height="1.1" color="#020617" material="border: 2px solid #00f2fe;">
-                    <a-text value="REVISION GENERAL" align="center" position="0 0.44 0.01" scale="0.26 0.26 0.26" font="exo2bold" color="#00f2fe"></a-text>
-                    <a-text value="Por favor autoriza el tratamiento legal" align="center" position="0 0.36 0.01" scale="0.16 0.16 0.16" font="exo2bold" color="#94a3b8"></a-text>
-                    
-                    <a-plane position="0 0.05 0.01" width="0.65" height="0.38" color="#070a14">
-                        <a-image id="rgpd-imagen-poblacion" position="0 0 0.01" width="0.63" height="0.36" src="#thumb-campana" material="shader: flat;"></a-image>
-                    </a-plane>
-                    
-                    <!-- TEXTO DE ALERTA DE LA INYECCIÓN DINÁMICA DE LA ZONA MATCH ADYACENTE -->
-                    <a-text id="txt-advertencia-match-dinamico" value="Al aceptar, autorizas bajo la Ley RGPD" align="center" position="0 -0.24 0.01" scale="0.15 0.15 0.15" font="exo2bold" color="#64748b"></a-text>
-                    
-                    <a-plane class="clickable" onclick="confirmarYDespacharLark()" position="0.23 -0.42 0.02" width="0.38" height="0.12" color="#22c55e">
-                        <a-text value="ACEPTAR" align="center" scale="0.20 0.20 0.20" font="exo2bold" color="#fff"></a-text>
-                    </a-plane>
-                    <a-plane class="clickable" onclick="borrarDatosYReiniciar()" position="-0.23 -0.42 0.02" width="0.38" height="0.12" color="#b91c1c">
-                        <a-text value="REINICIAR" align="center" scale="0.20 0.20 0.20" font="exo2bold" color="#fff"></a-text>
                     </a-plane>
                 </a-plane>
             </a-entity>
 
         </a-entity>
 
+        <!-- ENTORNO HUBS -->
         <a-entity id="contenedor-video-tiktok" position="0.9 0.25 -0.1" rotation="0 -25 0" scale="0.65 0.65 0.65">
             <a-video src="#video-tiktok" width="0.75" height="1.3" material="opacity: 0.95; shader: flat; side: double;"></a-video>
         </a-entity>
@@ -532,13 +551,11 @@
             document.getElementById('paleta-tipo-compra').setAttribute('scale', '0 0 0');
             faseFormulario = 8; actualizarProgresoVisual(95, "Fase 8: Tipo de Compra Seleccionado");
             
-            // =========================================================================
-            // LÓGICA DINÁMICA SMART-MATCH: ADVERTENCIA EN PANTALLA EXCLUSIVA USO PROPIO
-            // =========================================================================
+            // ADVERTENCIA SMART-MATCH EN PANTALLA
             let compAdvertencia = document.getElementById('txt-advertencia-match-dinamico');
             if (leadData.tipoCliente.includes("Uso Propio")) {
                 compAdvertencia.setAttribute('value', "PETICION APTA PARA LA ZONA MATCH - SE PUBLICARA TU DEMANDA");
-                compAdvertencia.setAttribute('color', '#fbbf24'); // Color Oro Tecnológico
+                compAdvertencia.setAttribute('color', '#fbbf24');
             } else {
                 compAdvertencia.setAttribute('value', "Al aceptar, autorizas bajo la Ley RGPD");
                 compAdvertencia.setAttribute('color', '#64748b');
@@ -546,11 +563,14 @@
 
             setTimeout(() => {
                 actualizarProgresoVisual(100, "Completado 100%");
+                document.getElementById('pie-logos-api').setAttribute('scale', '0 0 0'); // Ocultamos logos de pie para que entre la ficha limpia
                 document.getElementById('panel-rgpd').setAttribute('scale', '1 1 1');
                 
-                // DISCURSO DINÁMICO DE SARA INFORMANDO DE LA PUBLICACIÓN AUTOMÁTICA EN MATCH
+                // =========================================================================
+                // CORRECCIÓN COHERENTE DE LOCUCIÓN VERTICAL: "SE PUBLICARÁ" (FUTURO)
+                // =========================================================================
                 if (leadData.tipoCliente.includes("Uso Propio")) {
-                    hablarSara("Proceso completado al cien por cien. Tu petición se ha publicado además en nuestra zona MATCH para cruzarla con propietarios directos.");
+                    hablarSara("Proceso completado al cien por cien. Tu petición se publicará además en nuestra zona MATCH para cruzarla con propietarios directos.");
                 } else {
                     hablarSara("Proceso completado al cien por cien. Tu Advisor exclusivo contactará contigo de inmediato.");
                 }
@@ -559,8 +579,8 @@
 
         function confirmarYDespacharLark() {
             document.getElementById('panel-rgpd').setAttribute('scale', '0 0 0');
+            document.getElementById('pie-logos-api').setAttribute('scale', '1 1 1');
             
-            // SIMULACIÓN DE DATA-FLAG PARA EL WEBHOOK DE LARK
             let objetoEnvioLark = {
                 operacion: leadData.tipoCliente,
                 nombrePila: leadData.nombrePila,
@@ -570,18 +590,17 @@
                 zona: leadData.poblacion,
                 descripcion: leadData.detallesFinales,
                 servicio: leadData.servicioDeseado,
-                // Si es para uso propio, inyectamos la orden de match automatizado en la base de datos
                 publicarEnZonaMatch: leadData.tipoCliente.includes("Uso Propio") ? true : false,
                 urlRedireccionMatchVendedores: "https://level.immo/formulario-vendedores/"
             };
-            
-            console.log("Despachando paquete a Lark con protocolo MATCH:", objetoEnvioLark);
+            console.log("Despachando paquete con protocolo MATCH:", objetoEnvioLark);
             volverAlMenuPrincipal();
         }
 
         function borrarDatosYReiniciar() {
             leadData = { tipoCliente: '', nombre: '', nombrePila: '', telefono: '', email: '', poblacion: '', detallesFinales: '', servicioDeseado: '' };
             document.getElementById('panel-rgpd').setAttribute('scale', '0 0 0');
+            document.getElementById('pie-logos-api').setAttribute('scale', '1 1 1');
             for(let i=1; i<=4; i++) document.getElementById('ficha-linea-'+i).setAttribute('visible', 'false');
             actualizarProgresoVisual(0, "Fase 0: Reiniciado"); volverAlMenuPrincipal();
         }
@@ -591,11 +610,6 @@
             document.getElementById('boton-salir-hub-3d').setAttribute('scale', '0 0 0');
             document.getElementById('paleta-principal').setAttribute('scale', '0 0 0');
             document.getElementById('overlay-advisors').style.display = 'flex';
-        }
-        function cambiarPestanaAdvisors(idSeccion, botonActivo) {
-            document.querySelectorAll('.seccion-contenido-tab').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-            document.getElementById(idSeccion).classList.add('active'); botonActivo.classList.add('active');
         }
         function cerrarPanelOverlayAdvisors() { document.getElementById('overlay-advisors').style.display = 'none'; volverAlMenuPrincipal(); }
         function abrirMenuIdiomasFlotante() { try { recognition.abort(); } catch(e){} document.getElementById('overlay-idiomas').style.display = 'flex'; }
@@ -631,6 +645,7 @@
             document.getElementById('paleta-poblaciones').setAttribute('scale', '0 0 0');
             document.getElementById('paleta-tipo-compra').setAttribute('scale', '0 0 0');
             document.getElementById('panel-rgpd').setAttribute('scale', '0 0 0');
+            document.getElementById('pie-logos-api').setAttribute('scale', '1 1 1');
             document.getElementById('boton-salir-hub-3d').setAttribute('scale', '1 1 1');
             document.getElementById('paleta-principal').setAttribute('scale', '1 1 1');
             document.getElementById('texto-estado-vr').setAttribute('value', 'SARA: BIENVENIDA...');
