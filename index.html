@@ -173,9 +173,7 @@
                     <a-image src="#asset-logo" position="0 0 0.01" width="0.13" height="0.13" material="transparent: true; alphaTest: 0.3; shader: flat;"></a-image>
                 </a-entity>
 
-                <!-- ========================================================================= -->
-                <!-- REPARACIÓN APLICADA: SE ELIMINÓ EL LOGO API SUPERIOR Y SE SUBIÓ EL TEXTO -->
-                <!-- ========================================================================= -->
+                <!-- CAJA DE MENSAJES DEL TEXTO GUÍA -->
                 <a-plane width="0.88" height="0.16" color="#0f172a" material="opacity: 0.85; transparent: true;" position="0 0.98 0.01">
                     <a-text id="texto-estado-vr" value="INITIALIZING ADVISOR SUITE..." align="left" position="-0.44 0.02 0.01" scale="0.21 0.22 0.24" font="monoid" color="#94a3b8"></a-text>
                     
@@ -186,7 +184,7 @@
                     </a-entity>
                 </a-plane>
 
-                <!-- BARRA DE PROGRESO DESPLAZADA HACIA ARRIBA PROPORCIONALMENTE -->
+                <!-- BARRA DE PROGRESO CENTRAL -->
                 <a-plane id="contenedor-barra-progreso" width="0.88" height="0.05" color="#0f172a" position="0 0.84 0.01">
                     <a-plane id="relleno-barra-progreso" width="0.01" height="0.05" color="#00f2fe" position="-0.44 0 0.01" material="shader: flat;"></a-plane>
                     <a-text id="texto-porcentaje-progreso" value="0%" align="center" position="0 0 0.02" scale="0.18 0.18 0.18" font="orbitron" color="#fff"></a-text>
@@ -221,14 +219,17 @@
                     <a-text value="SALIR DE LA CONEXION HUBS" align="center" scale="0.17 0.17 0.17" font="exo2bold" color="#f5f3ff"></a-text>
                 </a-plane>
 
-                <!-- SUB-PANEL CENTRAL DE CONTROL: REVISIÓN / FOTO / RGPD MATCH -->
+                <!-- SUB-PANEL CENTRAL DE CONTROL: REVISIÓN / VIDEO "MATCH" INTERACTIVO / RGPD -->
                 <a-entity id="panel-rgpd" scale="0 0 0" position="0 0.15 0.02">
                     <a-plane width="0.94" height="0.95" color="#020617" material="border: 2px solid #00f2fe;">
                         <a-text value="REVISION GENERAL" align="center" position="0 0.40 0.01" scale="0.26 0.26 0.26" font="exo2bold" color="#00f2fe"></a-text>
                         <a-text value="Por favor autoriza el tratamiento legal" align="center" position="0 0.32 0.01" scale="0.16 0.16 0.16" font="exo2bold" color="#94a3b8"></a-text>
                         
+                        <!-- ========================================================================= -->
+                        <!-- REPARACIÓN: SE SUSTITUYE LA IMAGEN POR UN REPRODUCTOR DE VIDEO EN BUCLE -->
+                        <!-- ========================================================================= -->
                         <a-plane position="0 0.04 0.01" width="0.65" height="0.38" color="#070a14">
-                            <a-image id="rgpd-imagen-poblacion" position="0 0 0.01" width="0.63" height="0.36" src="#thumb-campana" material="shader: flat;"></a-image>
+                            <a-video id="rgpd-video-match" position="0 0 0.01" width="0.63" height="0.36" src="#video-tiktok" material="shader: flat; side: double;"></a-video>
                         </a-plane>
                         
                         <a-text id="txt-advertencia-match-dinamico" value="Al aceptar, autorizas bajo la Ley RGPD" align="center" position="0 -0.22 0.01" scale="0.15 0.15 0.15" font="exo2bold" color="#64748b"></a-text>
@@ -352,14 +353,6 @@
 
         const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
         recognition.lang = 'es-ES'; recognition.interimResults = false; recognition.maxAlternatives = 1; recognition.continuous = true; 
-
-        const miniaturasPoblaciones = {
-            'Alcanar': 'https://img.youtube.com/vi/oTGUy0fR9i4/0.jpg',
-            'La Rapita': 'https://img.youtube.com/vi/oTGUy0fR9i4/0.jpg',
-            'Barcelona': 'https://img.youtube.com/vi/NXjj-4OXNmQ/0.jpg',
-            'Sabadell': 'https://img.youtube.com/vi/9TTqR1wD3jI/0.jpg',
-            'Terrassa': 'https://img.youtube.com/vi/9TTqR1wD3jI/0.jpg'
-        };
 
         function sanearTextoParaAFrame(texto) {
             if (!texto) return "";
@@ -518,12 +511,6 @@
             document.getElementById('paleta-poblaciones').setAttribute('scale', '0 0 0');
             document.getElementById('ficha-linea-4').setAttribute('value', "ZONA: " + sanearTextoParaAFrame(leadData.poblacion));
             document.getElementById('ficha-linea-4').setAttribute('visible', 'true');
-            
-            if (miniaturasPoblaciones[nombrePoblacion]) {
-                document.getElementById('rgpd-imagen-poblacion').setAttribute('src', miniaturasPoblaciones[nombrePoblacion]);
-            } else {
-                document.getElementById('rgpd-imagen-poblacion').setAttribute('src', 'https://img.youtube.com/vi/9TTqR1wD3jI/0.jpg');
-            }
             faseFormulario = 6; actualizarProgresoVisual(25, "Fase 5: Poblacion Guardada");
             setTimeout(() => {
                 actualizarProgresoVisual(45, "Fase 6: Dictar Caracteristicas");
