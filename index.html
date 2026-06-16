@@ -1,689 +1,1793 @@
 <!DOCTYPE html>
+
 <html lang="es">
+
 <head>
+
     <meta charset="UTF-8">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+
     <title>LEVEL-i - Orbital Office 360</title>
+
     <!-- Motores nativos de Realidad Virtual y Computación Espacial -->
+
     <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
+
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Orbitron:wght@700&display=swap" rel="stylesheet">
+
     
+
     <style>
+
         /* PANTALLA DE ACCESO PROFESIONAL */
+
         #pantalla-bloqueo {
+
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+
             background: #020617; z-index: 999999 !important; 
+
             display: flex; flex-direction: column; align-items: center; justify-content: center; 
+
             font-family: 'Montserrat', sans-serif; color: white; text-align: center;
+
             opacity: 1; pointer-events: all;
+
             transition: opacity 1.2s ease-in-out;
+
         }
+
         .btn-entrar {
+
             background: linear-gradient(135deg, #00f2fe, #4f46e5); color: white; border: none; 
+
             padding: 20px 50px; font-size: 1.1rem; font-weight: bold; border-radius: 30px; 
+
             cursor: pointer; box-shadow: 0 0 30px rgba(0,242,254,0.5); text-transform: uppercase; letter-spacing: 1px;
+
             z-index: 1000000; transition: transform 0.2s;
+
         }
+
         .btn-entrar:hover { transform: scale(1.02); }
+
         .txt-copyright-inicial {
+
             position: absolute; bottom: 55px; left: 50%; transform: translateX(-50%);
+
             color: #64748b; font-size: 0.7rem; font-weight: 600; letter-spacing: 1px; width: 90%; text-transform: uppercase;
+
         }
+
+
 
         /* CAPA DE FUNDIDO FINO */
+
         #capa-fundido-negro {
+
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+
             background: #000000; z-index: 99999999 !important;
+
             opacity: 0; pointer-events: none;
+
             transition: opacity 1.5s ease-in-out;
+
         }
+
         
+
         .a-canvas {
+
             position: absolute !important; top: 0 !important; left: 0 !important;
+
             width: 100% !important; height: 100% !important;
+
         }
+
         .btn-privacidad-html {
+
             position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
+
             color: #94a3b8; text-decoration: none; font-family: 'Montserrat', sans-serif;
+
             font-size: 0.75rem; letter-spacing: 1px; transition: 0.3s; z-index: 10000;
+
         }
+
         .btn-privacidad-html:hover { color: #00f2fe; }
 
+
+
         /* INTERFAZ HÍBRIDA ADVISORS HTML */
+
         .contenedor-overlay-advisors {
+
             position: fixed; top: 5%; left: 50%; transform: translateX(-50%);
+
             width: 95%; max-width: 1200px; height: 85vh;
+
             background: rgba(10, 10, 10, 0.98); border: 1px solid #1f1f1f; border-radius: 16px;
+
             z-index: 200000 !important; display: none; flex-direction: column;
+
             font-family: 'Montserrat', sans-serif; color: #f8fafc; padding: 30px;
+
             overflow-y: auto; box-shadow: 0 0 50px rgba(0, 242, 254, 0.15);
+
         }
+
         .pestanas-menu { display: flex; gap: 15px; margin-bottom: 25px; border-bottom: 1px solid #222; padding-bottom: 15px; }
+
         .tab-btn {
+
             background: #111; color: #94a3b8; border: 1px solid #333; padding: 12px 25px;
+
             border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 0.9rem; text-transform: uppercase;
+
             transition: all 0.3s;
+
         }
+
         .tab-btn.active, .tab-btn:hover { background: #fbbf24; color: #000; border-color: #fbbf24; box-shadow: 0 0 15px rgba(251,191,36,0.3); }
+
         .seccion-contenido-tab { display: none; }
+
         .seccion-contenido-tab.active { display: block; }
 
+
+
         /* ESTILOS DEL MENÚ FLOTANTE DE IDIOMAS */
+
         .selector-idiomas-flotante {
+
             position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+
             background: rgba(15, 23, 42, 0.98); border: 2px solid #00f2fe; border-radius: 12px;
+
             padding: 30px; z-index: 300000 !important; display: none; flex-direction: column;
+
             gap: 15px; font-family: 'Montserrat', sans-serif; text-align: center; width: 280px;
+
             box-shadow: 0 0 40px rgba(0, 242, 254, 0.3);
+
         }
+
         .btn-idioma-opc {
+
             background: #1e293b; color: white; border: 1px solid #334155; padding: 12px;
+
             border-radius: 6px; font-weight: 700; cursor: pointer; transition: 0.3s; text-transform: uppercase;
+
         }
+
         .btn-idioma-opc:hover { background: #00f2fe; color: #0f172a; }
+
     </style>
+
     
+
     <script>
+
         AFRAME.registerComponent('ondas-voz-sara', {
+
             tick: function (time, timeDelta) {
+
                 if (window.advisorsVoiceActive) {
+
                     let s1 = 0.4 + Math.sin(time * 0.05) * 0.4;
+
                     let s2 = 0.4 + Math.cos(time * 0.03) * 0.4;
+
                     let s3 = 0.4 + Math.sin(time * 0.07) * 0.4;
+
                     document.getElementById('barra-audio-1').setAttribute('scale', {x: 1, y: s1, z: 1});
+
                     document.getElementById('barra-audio-2').setAttribute('scale', {x: 1, y: s2, z: 1});
+
                     document.getElementById('barra-audio-3').setAttribute('scale', {x: 1, y: s3, z: 1});
+
                 } else {
+
                     document.getElementById('barra-audio-1').setAttribute('scale', {x: 1, y: 0.1, z: 1});
+
                     document.getElementById('barra-audio-2').setAttribute('scale', {x: 1, y: 0.1, z: 1});
+
                     document.getElementById('barra-audio-3').setAttribute('scale', {x: 1, y: 0.1, z: 1});
+
                 }
+
             }
+
         });
+
     </script>
+
 </head>
+
 <body>
+
+
 
     <div id="capa-fundido-negro"></div>
 
+
+
     <div id="pantalla-bloqueo">
+
         <h1 style="letter-spacing: 3px; font-size: 2.2rem; margin-bottom: 5px; font-family: 'Orbitron';">LEVEL – i</h1>
+
         <p style="color: #00f2fe; letter-spacing: 2px; margin-bottom: 40px; font-size: 0.85rem; font-weight: 600;">ORBITAL OFFICE CLIENT EXPERIENCE by Level.immo</p>
+
         
+
         <button class="btn-entrar" onclick="solicitarPermisosYEntrar()">
+
             Entrar en la Experiencia VR
+
         </button>
+
         
+
         <p class="txt-copyright-inicial">(c) 2026 LEVEL.IMMO SUITE SPATIAL OFFICE - AIC 234365.<br>Todos los derechos reservados</p>
+
         
+
         <a class="btn-privacidad-html" href="https://level.immo/politica-de-privacidad/" target="_blank">Política de Privacidad</a>
+
     </div>
+
+
 
     <div id="overlay-idiomas" class="selector-idiomas-flotante">
+
         <h4 style="color: #00f2fe; margin-top: 0; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px;">Seleccionar Idioma</h4>
+
         <button class="btn-idioma-opc" onclick="cambiarFicheroIdioma('index.html')">Castellano</button>
+
         <button class="btn-idioma-opc" onclick="cambiarFicheroIdioma('ca.html')">Català</button>
+
         <button class="btn-idioma-opc" onclick="cambiarFicheroIdioma('en.html')">English</button>
+
         <button class="btn-idioma-opc" onclick="cambiarFicheroIdioma('fr.html')">Français</button>
+
         <button class="btn-idioma-opc" style="background: #ef4444; border: none; margin-top: 10px;" onclick="cerrarSelectorIdiomas()">Cancelar</button>
+
     </div>
+
+
 
     <div id="overlay-advisors" class="contenedor-overlay-advisors">
+
         <div class="pestanas-menu">
+
             <button class="tab-btn active" onclick="cambiarPestanaAdvisors('tab-informacion', this)">Informacion</button>
+
             <button class="tab-btn" onclick="cerrarPanelOverlayAdvisors()">X Cerrar</button>
+
         </div>
+
         <div id="tab-informacion" class="seccion-contenido-tab active bloque-info-web">
+
             <h3>Ecosistema de Expansion para Advisors</h3>
+
             <p>Convertirse en Advisor de LEVEL es acceder a la primera red inmobiliaria descentralizada de España respaldada por computacion espacial y Realidad Virtual.</p>
+
         </div>
+
     </div>
 
+
+
     <!-- ESCENA COMPU-ESPACIAL -->
+
     <a-scene loading-screen="enabled: false">
+
         
+
         <a-assets>
+
             <video id="video-tiktok" src="#video-tiktok-src" loop muted playsinline crossorigin="anonymous"></video>
+
             <video id="video-tiktok-src" src="https://level-i.github.io/level-intro.mp4" loop muted playsinline crossorigin="anonymous"></video>
+
             <img id="thumb-campana" src="https://img.youtube.com/vi/9TTqR1wD3jI/0.jpg" crossorigin="anonymous">
+
             <img id="asset-logo" src="https://level-i.github.io/docs/favicon-level-fondo-negro-300x300 sin fondo.png" crossorigin="anonymous">
+
             <img id="asset-api" src="https://level-i.github.io/docs/logo api sin fondo.png" crossorigin="anonymous">
+
         </a-assets>
 
+
+
         <a-sky id="cielo-entorno" color="#020617"></a-sky>
+
         <a-stars radius="200" depth="50" count="1500" factor="4" speed="1"></a-stars>
 
+
+
         <a-entity id="contenedor-camara" camera look-controls="magicWindowTrackingEnabled: true; touchEnabled: true;" position="0 1.6 0">
+
             <a-entity cursor="fuse: false; rayOrigin: mouse;" position="0 0 -1" geometry="primitive: ring; radiusInner: 0.007; radiusOuter: 0.014" material="color: #00f2fe; shader: flat; opacity: 0.8;" raycaster="objects: .clickable"></a-entity>
+
         </a-entity>
 
+
+
         <!-- SMARTPHONE VIRTUAL -->
+
         <a-entity id="chasis-smartphone-virtual" position="0 1.5 -1.6" rotation="0 0 0">
+
             <a-plane class="clickable" width="1.0" height="2.4" color="#0a0f1d" material="opacity: 0.96; transparent: true; border: 3px solid #1e293b; borderRadius: 0.05;" position="0 0 0">
+
                 
+
                 <!-- TITULO PRINCIPAL DEL SISTEMA -->
+
                 <a-text value="LEVEL-i ADVISOR" align="left" position="-0.44 1.12 0.01" scale="0.42 0.44 0.44" font="exo2bold" color="#00f2fe"></a-text>
+
                 
+
                 <!-- BURBUJA SUPERIOR CON LOGO LEVEL -->
+
                 <a-entity position="0.34 1.12 0.01">
+
                     <a-image src="#asset-logo" position="0 0 0.01" width="0.13" height="0.13" material="transparent: true; alphaTest: 0.3; shader: flat;"></a-image>
+
                 </a-entity>
+
+
 
                 <!-- CORRECCIÓN LOGO API: INDEPENDIENTE CON PROFUNDIDAD Z DESTACADA PARA EVITAR MÁSCARAS NEGRAS -->
+
                 <a-image src="#asset-api" position="0.38 1.12 0.03" width="0.12" height="0.12" material="transparent: true; alphaTest: 0.1; shader: flat;"></a-image>
 
+
+
                 <!-- TEXTO GUÍA FLOTANTE -->
+
                 <a-plane width="0.88" height="0.16" color="#0f172a" material="opacity: 0; transparent: true;" position="0 0.96 0.01">
+
                     <a-text id="texto-estado-vr" value="INITIALIZING ADVISOR SUITE..." align="left" position="-0.44 0.02 0.01" scale="0.21 0.22 0.24" font="monoid" color="#94a3b8"></a-text>
+
                     
+
                     <a-entity ondas-voz-sara position="0.32 0.02 0.02">
+
                         <a-box id="barra-audio-1" width="0.01" height="0.03" depth="0.01" color="#00f2fe" position="0.01 0 0"></a-box>
+
                         <a-box id="barra-audio-2" width="0.01" height="0.03" depth="0.01" color="#ff007f" position="0.02 0 0"></a-box>
+
                         <a-box id="barra-audio-3" width="0.01" height="0.03" depth="0.01" color="#00f2fe" position="0.03 0 0"></a-box>
+
                     </a-entity>
+
                 </a-plane>
+
+
 
                 <!-- BARRA DE PROGRESO CENTRAL -->
+
                 <a-plane id="contenedor-barra-progreso" width="0.88" height="0.05" color="#0a0f1d" material="opacity: 0; transparent: true;" position="0 0.82 0.01">
+
                     <a-plane id="relleno-barra-progreso" width="0.01" height="0.05" color="#00f2fe" position="-0.44 0 0.01" material="shader: flat;"></a-plane>
+
                     <a-text id="texto-porcentaje-progreso" value="0%" align="center" position="0 0 0.02" scale="0.18 0.18 0.18" font="orbitron" color="#fff"></a-text>
+
                 </a-plane>
+
+
 
                 <!-- CASCADA VERTICAL DEL MENÚ PRINCIPAL -->
+
                 <a-entity id="paleta-principal" position="0 0.32 0.01">
+
                     <a-plane id="btn-modulo-idioma" class="clickable" onclick="abrirMenuIdiomasFlotante()" position="0 0 0" width="0.86" height="0.09" color="#1e293b" material="opacity: 0.95;">
+
                         <a-text value="CAMBIAR IDIOMA" align="center" scale="0.20 0.20 0.20" font="exo2bold" color="#fbbf24"></a-text>
+
                     </a-plane>
+
                     <a-plane id="btn-modulo-comprar" class="clickable" onclick="activarModulo1()" position="0 -0.11 0" width="0.86" height="0.09" color="#1e293b" material="opacity: 0.95;">
+
                         <a-text value="COMPRAR" align="center" scale="0.20 0.20 0.20" font="exo2bold" color="#fff"></a-text>
+
                     </a-plane>
+
                     <a-plane id="btn-modulo-vender" class="clickable" onclick="activarModulo2()" position="0 -0.22 0" width="0.86" height="0.09" color="#1e293b" material="opacity: 0.95;">
+
                         <a-text value="VENDER" align="center" scale="0.20 0.20 0.20" font="exo2bold" color="#fff"></a-text>
+
                     </a-plane>
+
                     <a-plane id="btn-modulo-advisors" class="clickable" onclick="abrirModulo5AdvisorsHTML()" position="0 -0.33 0" width="0.86" height="0.09" color="#1e293b" material="opacity: 0.95;">
+
                         <a-text value="ADVISORS DE ZONA" align="center" scale="0.20 0.20 0.20" font="exo2bold" color="#fff"></a-text>
+
                     </a-plane>
+
                     <a-plane id="btn-modulo-admin" class="clickable" onclick="activarModulo6Administracion()" position="0 -0.44 0" width="0.86" height="0.09" color="#1e293b" material="opacity: 0.95;">
+
                         <a-text value="ADMINISTRACION" align="center" scale="0.20 0.20 0.20" font="exo2bold" color="#fff"></a-text>
+
                     </a-plane>
+
                     <a-plane id="btn-modulo-propietario" class="clickable" onclick="navegarModuloGeneric('Propietario')" position="0 -0.55 0" width="0.86" height="0.09" color="#1e293b" material="opacity: 0.95;">
+
                         <a-text value="PROPIETARIO / CLIENTE" align="center" scale="0.20 0.20 0.20" font="exo2bold" color="#00f2fe"></a-text>
+
                     </a-plane>
+
                     <a-plane id="btn-modulo-servicios" class="clickable" onclick="navegarModuloGeneric('Servicios')" position="0 -0.66 0" width="0.86" height="0.09" color="#0f172a" material="opacity: 0.98; border: 1px solid #334155;">
+
                         <a-text value="SERVICIOS" align="center" scale="0.20 0.20 0.20" font="exo2bold" color="#fff"></a-text>
+
                     </a-plane>
+
                 </a-entity>
+
+
 
                 <a-plane id="boton-salir-hub-3d" class="clickable" onclick="desactivarHubSutil()" position="0 -0.42 0.01" width="0.86" height="0.09" color="#581c87" material="opacity: 0.9;">
+
                     <a-text value="SALIR DE LA CONEXION HUBS" align="center" scale="0.17 0.17 0.17" font="exo2bold" color="#f5f3ff"></a-text>
+
                 </a-plane>
+
+
 
                 <!-- SUB-PANEL CENTRAL DE CONTROL: REVISIÓN GENERAL -->
+
                 <a-entity id="panel-rgpd" scale="0 0 0" position="0 0.15 0.02">
+
                     <a-plane width="0.94" height="0.95" color="#020617" material="border: 2px solid #00f2fe;">
+
                         <a-text value="REVISION GENERAL" align="center" position="0 0.40 0.01" scale="0.26 0.26 0.26" font="exo2bold" color="#00f2fe"></a-text>
+
                         <a-text value="Por favor autoriza el tratamiento legal" align="center" position="0 0.32 0.01" scale="0.16 0.16 0.16" font="exo2bold" color="#94a3b8"></a-text>
+
                         
+
                         <!-- ========================================================================= -->
+
                         <!-- SOLUCIÓN DEFINITIVA DE CAPAS SEPARADAS PARA EVITAR CUADROS NEGROS EN VR -->
+
                         <!-- ========================================================================= -->
+
                         <a-plane position="0 0.04 0.01" width="0.65" height="0.38" color="#070a14">
+
                             <!-- Capa de Video -->
+
                             <a-video id="rgpd-video-match" position="0 0 0.01" width="0.63" height="0.36" src="#video-tiktok" material="shader: flat; side: double;"></a-video>
+
                             <!-- Capa de Imagen Independiente con profundidad Z adelantada (0.02) y alphaTest reforzado -->
+
                             <a-image id="rgpd-foto-match" position="0 0 0.02" width="0.63" height="0.36" src="" material="shader: flat; transparent: true; alphaTest: 0.5;" visible="false"></a-image>
+
                         </a-plane>
+
                         
+
                         <a-text id="txt-advertencia-match-dinamico" value="Al aceptar, autorizas bajo la Ley RGPD" align="center" position="0 -0.22 0.01" scale="0.15 0.15 0.15" font="exo2bold" color="#64748b"></a-text>
+
                         
+
                         <a-plane class="clickable" onclick="confirmarYDespacharLark()" position="0.23 -0.38 0.02" width="0.38" height="0.12" color="#22c55e">
+
                             <a-text value="ACEPTAR" align="center" scale="0.20 0.20 0.20" font="exo2bold" color="#fff"></a-text>
+
                         </a-plane>
+
                         <a-plane class="clickable" onclick="borrarDatosYReiniciar()" position="-0.23 -0.38 0.02" width="0.38" height="0.12" color="#b91c1c">
+
                             <a-text value="REINICIAR" align="center" scale="0.20 0.20 0.20" font="exo2bold" color="#fff"></a-text>
+
                         </a-plane>
+
                     </a-plane>
+
                 </a-entity>
 
+
+
                 <!-- RESUMEN COMPACTADO AL PIE DE LA REVISIÓN -->
+
                 <a-plane id="panel-datos-acumulados" width="0.94" height="0.48" color="#030712" material="opacity: 0.98; border: 1px solid #1f2937;" position="0 -0.62 0.01">
+
                     <a-text value="FICHA HOLOGRAFICA DE SOLICITUD" align="center" position="0 0.20 0.01" scale="0.16 0.16 0.16" font="orbitron" color="#00f2fe"></a-text>
+
                     
+
                     <a-text id="ficha-linea-1" value="OP: COMPRAR" align="left" position="-0.44 0.10 0.01" scale="0.18 0.18 0.18" font="exo2bold" color="#fff" material="shader: flat;" visible="false"></a-text>
+
                     <a-text id="ficha-linea-2" value="USO: -" align="left" position="-0.44 0.02 0.01" scale="0.18 0.18 0.18" font="exo2bold" color="#fff" material="shader: flat;" visible="false"></a-text>
+
                     <a-text id="ficha-linea-3" value="CONTACTO: -" align="left" position="-0.44 -0.06 0.01" scale="0.16 0.16 0.16" font="exo2bold" color="#fff" material="shader: flat;" visible="false"></a-text>
+
                     <a-text id="ficha-linea-4" value="ZONA/CONSULTA: -" align="left" position="-0.44 -0.15 0.01" scale="0.15 0.15 0.15" wrapCount="46" font="exo2bold" color="#fff" material="shader: flat;" visible="false"></a-text>
+
                 </a-plane>
+
+
 
             </a-plane>
 
+
+
             <!-- SUB-PANEL: FASE 1 -->
+
             <a-entity id="paleta-subintencion" scale="0 0 0" position="0 0.10 0.02">
+
                 <a-plane width="0.94" height="0.75" color="#020617" material="opacity: 0.98; border: 2px solid #00f2fe;">
+
                     <a-plane class="clickable" onclick="seleccionarIntencion('Uso Propio')" position="0 0.15 0.01" width="0.75" height="0.16" color="#1e1b4b">
+
                         <a-text value="USO PROPIO" align="center" scale="0.24 0.26 0.26" font="exo2bold" color="#00f2fe"></a-text>
+
                     </a-plane>
+
                     <a-plane class="clickable" onclick="seleccionarIntencion('Inversion')" position="0 -0.06 0.01" width="0.75" height="0.16" color="#1e1b4b">
+
                         <a-text value="INVERSION" align="center" scale="0.24 0.26 0.26" font="exo2bold" color="#00f2fe"></a-text>
+
                     </a-plane>
+
                     <a-plane class="clickable" onclick="volverAlMenuPrincipal()" position="0 -0.26 0.01" width="0.75" height="0.12" color="#334155">
+
                         <a-text value="ABORTAR" align="center" scale="0.21 0.21 0.21" font="exo2bold" color="#fff"></a-text>
+
                     </a-plane>
+
                 </a-plane>
+
             </a-entity>
+
+
 
             <!-- SUB-PANEL: FASE 5 POBLACIONES -->
+
             <a-entity id="paleta-poblaciones" scale="0 0 0" position="0 0.15 0.02">
+
                 <a-plane width="0.96" height="1.15" color="#020617" material="opacity: 0.98; border: 2px solid #00f2fe;">
+
                     <a-plane class="clickable" onclick="seleccionarPoblacion('Alcanar')" position="-0.22 0.40 0.01" width="0.40" height="0.12" color="#0f172a">
+
                         <a-text value="ALCANAR" align="center" scale="0.18 0.18 0.18" font="exo2bold" color="#fff"></a-text>
+
                     </a-plane>
+
                     <a-plane class="clickable" onclick="seleccionarPoblacion('Barcelona')" position="-0.22 0.25 0.01" width="0.40" height="0.12" color="#0f172a">
+
                         <a-text value="BARCELONA" align="center" scale="0.18 0.18 0.18" font="exo2bold" color="#fff"></a-text>
+
                     </a-plane>
+
                     <a-plane class="clickable" onclick="seleccionarPoblacion('Castellar del Valles')" position="-0.22 0.10 0.01" width="0.40" height="0.12" color="#0f172a">
+
                         <a-text value="CASTELLAR V." align="center" scale="0.16 0.16 0.16" font="exo2bold" color="#fff"></a-text>
+
                     </a-plane>
+
                     <a-plane class="clickable" onclick="seleccionarPoblacion('La Rapita')" position="-0.22 -0.05 0.01" width="0.40" height="0.12" color="#0f172a">
+
                         <a-text value="LA RAPITA" align="center" scale="0.18 0.18 0.18" font="exo2bold" color="#fff"></a-text>
+
                     </a-plane>
+
                     <a-plane class="clickable" onclick="seleccionarPoblacion('Matadepera')" position="-0.22 -0.20 0.01" width="0.40" height="0.12" color="#0f172a">
+
                         <a-text value="MATADEPERA" align="center" scale="0.18 0.18 0.18" font="exo2bold" color="#fff"></a-text>
+
                     </a-plane>
+
                     <a-plane class="clickable" onclick="seleccionarPoblacion('Sabadell')" position="0.22 0.40 0.01" width="0.40" height="0.12" color="#0f172a">
+
                         <a-text value="SABADELL" align="center" scale="0.18 0.18 0.18" font="exo2bold" color="#fff"></a-text>
+
                     </a-plane>
+
                     <a-plane class="clickable" onclick="seleccionarPoblacion('Sant Cugat del Valles')" position="0.22 0.25 0.01" width="0.40" height="0.12" color="#0f172a">
+
                         <a-text value="ST CUGAT V." align="center" scale="0.16 0.16 0.16" font="exo2bold" color="#fff"></a-text>
+
                     </a-plane>
+
                     <a-plane class="clickable" onclick="seleccionarPoblacion('Sant Quirze del Valles')" position="0.22 0.10 0.01" width="0.40" height="0.12" color="#0f172a">
+
                         <a-text value="ST QUIRZE V." align="center" scale="0.16 0.16 0.16" font="exo2bold" color="#fff"></a-text>
+
                     </a-plane>
+
                     <a-plane class="clickable" onclick="seleccionarPoblacion('Terrassa')" position="0.22 -0.05 0.01" width="0.40" height="0.12" color="#0f172a">
+
                         <a-text value="TERRASSA" align="center" scale="0.18 0.18 0.18" font="exo2bold" color="#fff"></a-text>
+
                     </a-plane>
+
                     <a-plane class="clickable" onclick="OtrasPoblaciones()" position="0.22 -0.20 0.01" width="0.40" height="0.12" color="#1e293b">
+
                         <a-text value="OTRAS ZONAS" align="center" scale="0.16 0.16 0.16" font="exo2bold" color="#fbbf24"></a-text>
+
                     </a-plane>
+
                     <a-plane class="clickable" onclick="volverAlMenuPrincipal()" position="0 -0.42 0.01" width="0.84" height="0.11" color="#7f1d1d">
+
                         <a-text value="ABORTAR PROCESO" align="center" scale="0.18 0.18 0.18" font="exo2bold" color="#fff"></a-text>
+
                     </a-plane>
+
                 </a-plane>
+
             </a-entity>
+
+
 
             <!-- SUB-PANEL: FASE 8 BINARIA -->
+
             <a-entity id="paleta-tipo-compra" scale="0 0 0" position="0 0.10 0.02">
+
                 <a-plane width="0.94" height="0.75" color="#020617" material="opacity: 0.98; border: 2px solid #00f2fe;">
+
                     <a-text value="SELECCIONE SERVICIO" align="center" position="0 0.28 0.01" scale="0.24 0.26 0.26" font="exo2bold" color="#fbbf24"></a-text>
+
                     <a-plane class="clickable" onclick="seleccionarServicioServi('Particular')" position="0 0.08 0.01" width="0.86" height="0.16" color="#0f172a">
+
                         <a-text value="CAMPAÑA CAPTACION / PARTICULAR" align="center" scale="0.17 0.17 0.17" font="exo2bold" color="#fff"></a-text>
+
                     </a-plane>
+
                     <a-plane class="clickable" onclick="seleccionarServicioServi('Bancario')" position="0 -0.12 0.01" width="0.86" height="0.16" color="#0f172a">
+
                         <a-text value="PRODUCTOS BANCARIOS Y/O JUDICIALES" align="center" scale="0.17 0.17 0.17" font="exo2bold" color="#fff"></a-text>
+
                     </a-plane>
+
                     <a-plane class="clickable" onclick="volverAlMenuPrincipal()" position="0 -0.28 0.01" width="0.86" height="0.11" color="#334155">
+
                         <a-text value="CANCELAR" align="center" scale="0.18 0.18 0.18" font="exo2bold" color="#fff"></a-text>
+
                     </a-plane>
+
                 </a-plane>
+
             </a-entity>
 
+
+
         </a-entity>
+
+
 
         <!-- ENTORNO HUBS -->
+
         <a-entity id="contenedor-video-tiktok" position="0.9 0.25 -0.1" rotation="0 -25 0" scale="0.65 0.65 0.65">
+
             <a-video src="#video-tiktok" width="0.75" height="1.3" material="opacity: 0.95; shader: flat; side: double;"></a-video>
+
         </a-entity>
+
     </a-scene>
 
+
+
     <script>
+
         const welcomeMsg = "Hola. Soy tu asistente de Level AI Advisor. En qué te puedo ayudar?";
+
         const insisMsg = "Por favor, selecciona una opción de la consola, o indícame palabras como comprar, vender, servicios, advisor, ..";
 
+
+
         let iaActiva = false;
+
         let timerInactividad = null;
+
         window.advisorsVoiceActive = false;
+
         
+
         let leadData = { tipoCliente: '', nombre: '', nombrePila: '', telefono: '', email: '', poblacion: '', detallesFinales: '', servicioDeseado: '' };
+
         let faseFormulario = 0; 
 
+
+
         const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+
         recognition.lang = 'es-ES'; recognition.interimResults = false; recognition.maxAlternatives = 1; recognition.continuous = true; 
 
+
+
         const miniaturasPoblaciones = {
+
             'Alcanar': 'https://level-i.github.io/docs/alcanar.png',
+
             'Barcelona': 'https://level-i.github.io/docs/barcelona.png',
+
             'Castellar del Valles': 'https://level-i.github.io/docs/castellar.png',
+
             'La Rapita': 'https://level-i.github.io/docs/larapita.png',
+
             'Matadepera': 'https://level-i.github.io/docs/matadepera.png',
+
             'Sabadell': 'https://level-i.github.io/docs/sabadell.png',
+
             'Sant Cugat del Valles': 'https://level-i.github.io/docs/santcugat.png',
+
             'Sant Quirze del Valles': 'https://level-i.github.io/docs/santquirze.png',
+
             'Terrassa': 'https://level-i.github.io/docs/terrassa.png'
+
         };
+
+
 
         function sanearTextoParaAFrame(texto) {
+
             if (!texto) return "";
+
             return texto.toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
+
         }
+
+
 
         function actualizarProgresoVisual(porcentaje, estadoTexto) {
+
             let relleno = document.getElementById('relleno-barra-progreso');
+
             let txtPorc = document.getElementById('texto-porcentaje-progreso');
+
             let txtEst = document.getElementById('texto-estado-vr');
+
             
+
             let anchoCalculado = (porcentaje / 100) * 0.88;
+
             relleno.setAttribute('width', anchoCalculado);
+
             let posX = -0.44 + (anchoCalculado / 2);
+
             relleno.setAttribute('position', {x: posX, y: 0, z: 0.01});
+
             
+
             txtPorc.setAttribute('value', porcentaje + "%");
+
             txtEst.setAttribute('value', "ADVISOR: " + estadoTexto.toUpperCase());
+
         }
+
+
 
         function hablarAdvisorUnificado(texto, callback) {
+
             clearTimeout(timerInactividad); 
+
             window.speechSynthesis.cancel();
+
             const ssu = new SpeechSynthesisUtterance(texto);
+
             const voces = window.speechSynthesis.getVoices();
+
             let vozAsignada = voces.find(v => v.lang.includes('es') && (v.name.includes('Monica') || v.name.includes('Google') || v.name.includes('Helena')));
+
             if (vozAsignada) ssu.voice = vozAsignada;
+
             ssu.rate = 0.95; ssu.pitch = 1.02;
+
             ssu.onstart = () => { window.advisorsVoiceActive = true; };
+
             ssu.onend = () => { window.advisorsVoiceActive = false; if (callback) callback(); };
+
             window.speechSynthesis.speak(ssu);
+
         }
+
+
 
         function solicitarPermisosYEntrar() {
+
             const capaBloqueo = document.getElementById('pantalla-bloqueo');
+
             if (capaBloqueo) { capaBloqueo.style.opacity = '0'; setTimeout(() => { capaBloqueo.remove(); }, 1200); }
+
             iaActiva = true;
+
             const video = document.getElementById('video-tiktok');
+
             video.muted = false; video.volume = 0.1;
+
             try { video.play(); } catch(e){}
+
             setTimeout(() => { hablarAdvisorUnificado(welcomeMsg, abrirMicrofonoCliente); }, 300);
+
         }
+
+
 
         function desactivarHubSutil() {
+
             const fundido = document.getElementById('capa-fundido-negro');
+
             if (fundido) {
+
                 fundido.style.pointerEvents = 'auto'; fundido.style.opacity = '1';          
+
                 setTimeout(() => { window.location.href = "https://level.immo"; }, 1500); 
+
             } else { window.location.href = "https://level.immo"; }
+
         }
+
+
 
         function abrirMicrofonoCliente() {
+
             if (!iaActiva || [1,2,3,4].includes(faseFormulario)) return; 
+
             clearTimeout(timerInactividad);
+
             timerInactividad = setTimeout(() => { forzarReinicioCanalVoz(); }, 14000);
+
             try { recognition.start(); } catch(e) {}
+
         }
+
+
 
         function forzarReinicioCanalVoz() {
+
             if ([1,2,3,4].includes(faseFormulario)) return; 
+
             try { recognition.abort(); } catch(e) {}
+
             if (faseFormulario > 0) { abrirMicrofonoCliente(); } 
+
             else { hablarAdvisorUnificado(insisMsg, abrirMicrofonoCliente); }
+
         }
+
+
 
         function activarModulo1() {
+
             document.getElementById('boton-salir-hub-3d').setAttribute('scale', '0 0 0');
+
             document.getElementById('paleta-principal').setAttribute('scale', '0 0 0');
+
             document.getElementById('paleta-subintencion').setAttribute('scale', '1 1 1');
+
             document.getElementById('ficha-linea-1').setAttribute('value', "OP: COMPRAR");
+
             document.getElementById('ficha-linea-1').setAttribute('visible', 'true');
+
             actualizarProgresoVisual(0, "Fase 1: Tipo de Uso");
+
             hablarAdvisorUnificado("Entendido. Por favor, indícame si buscas una propiedad para uso propio, o si tu objetivo es invertir.");
+
         }
+
+
 
         function seleccionarIntencion(tipo) {
+
             leadData.tipoCliente = "Comprar / " + tipo;
+
             document.getElementById('paleta-subintencion').setAttribute('scale', '0 0 0');
+
             document.getElementById('ficha-linea-1').setAttribute('value', "COMPRAR / TIPO DE USO: " + tipo.toUpperCase());
+
             faseFormulario = 2; flujoEntradaManualNombre();
+
         }
+
+
 
         function activarModulo2() {
+
             document.getElementById('boton-salir-hub-3d').setAttribute('scale', '0 0 0');
+
             document.getElementById('paleta-principal').setAttribute('scale', '0 0 0');
+
             leadData.tipoCliente = 'Vender Propiedad';
+
             document.getElementById('ficha-linea-1').setAttribute('value', "OP: VENDER PROPIEDAD");
+
             document.getElementById('ficha-linea-1').setAttribute('visible', 'true');
+
             faseFormulario = 2; flujoEntradaManualNombre();
+
         }
+
+
 
         function activarModulo6Administracion() {
+
             document.getElementById('boton-salir-hub-3d').setAttribute('scale', '0 0 0');
+
             document.getElementById('paleta-principal').setAttribute('scale', '0 0 0');
+
             leadData.tipoCliente = 'Administracion';
+
             document.getElementById('ficha-linea-1').setAttribute('value', "OP: ADMINISTRACION");
+
             document.getElementById('ficha-linea-1').setAttribute('visible', 'true');
+
             faseFormulario = 2; flujoEntradaManualNombre();
+
         }
+
+
 
         function flujoEntradaManualNombre() {
+
             try { recognition.abort(); } catch(e){}
+
             actualizarProgresoVisual(5, "Fase 2: Nombre Completo");
+
             hablarAdvisorUnificado("¿Me puedes indicar tu nombre completo para dirigirme a ti?", function() {
+
                 let nombreEntrada = prompt("Introduce tu nombre y apellidos:");
+
                 if (nombreEntrada && nombreEntrada.trim() !== "") {
+
                     leadData.nombre = nombreEntrada.trim(); 
+
                     leadData.nombrePila = leadData.nombre.split(" ")[0]; 
+
                     document.getElementById('ficha-linea-2').setAttribute('value', "CLIENTE: " + sanearTextoParaAFrame(leadData.nombre));
+
                     document.getElementById('ficha-linea-2').setAttribute('visible', 'true');
+
                     faseFormulario = 3; flujoEntradaManualTelefono();
+
                 } else { flujoEntradaManualNombre(); }
+
             });
+
         }
+
+
 
         function flujoEntradaManualTelefono() {
+
             try { recognition.abort(); } catch(e){}
+
             actualizarProgresoVisual(10, "Fase 3: Telefono");
+
             hablarAdvisorUnificado("Introduce tu telefono de contacto en la paleta de la pantalla.", function() {
+
                 let telEntrada = prompt("Introduce tu número:");
+
                 if (telEntrada && telEntrada.trim() !== "") {
+
                     let telLimpio = telEntrada.replace(/\s+/g, '');
+
                     if (/^\+?\d{9,15}$/.test(telLimpio)) {
+
                         leadData.telefono = telLimpio;
+
                         document.getElementById('ficha-linea-3').setAttribute('value', "TEL: " + leadData.telefono);
+
                         document.getElementById('ficha-linea-3').setAttribute('visible', 'true');
+
                         faseFormulario = 4; flujoEntradaManualEmail();
+
                     } else { alert("Teléfono no válido."); flujoEntradaManualTelefono(); }
+
                 } else { flujoEntradaManualTelefono(); }
+
             });
+
         }
+
+
 
         function flujoEntradaManualEmail() {
+
             try { recognition.abort(); } catch(e){}
+
             actualizarProgresoVisual(15, "Fase 4: Correo Electronico");
+
             hablarAdvisorUnificado("Introduce tu correo electronico para finalizar tu identificacion.", function() {
+
                 let emailEntrada = prompt("Introduce tu correo electrónico:");
+
                 if (emailEntrada && emailEntrada.trim() !== "") {
+
                     let emailLimpio = emailEntrada.trim().toLowerCase();
+
                     let regexEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
                     if (regexEmail.test(emailLimpio)) {
+
                         leadData.email = emailLimpio;
+
                         
+
                         let valActualTel = document.getElementById('ficha-linea-3').getAttribute('value');
+
                         document.getElementById('ficha-linea-3').setAttribute('value', valActualTel + " | EMAIL: " + sanearTextoParaAFrame(leadData.email));
+
                         
+
                         let fraseAgradecimiento = "Muchas gracias " + leadData.nombrePila + ". ";
+
                         if (leadData.tipoCliente === 'Administracion') {
+
                             faseFormulario = 40; hablarAdvisorUnificado(fraseAgradecimiento + "Dime el asunto o motivo de tu consulta.", abrirMicrofonoCliente);
+
                         } else {
+
                             faseFormulario = 5; document.getElementById('paleta-poblaciones').setAttribute('scale', '1 1 1');
+
                             hablarAdvisorUnificado(fraseAgradecimiento + "Selecciona el municipio de tu interés.");
+
                         }
+
                     } else { alert("Email incorrecto."); flujoEntradaManualEmail(); }
+
                 } else { flujoEntradaManualEmail(); }
+
             });
+
         }
+
+
 
         function seleccionarPoblacion(nombrePoblacion) {
+
             leadData.poblacion = nombrePoblacion;
+
             document.getElementById('paleta-poblaciones').setAttribute('scale', '0 0 0');
+
             
+
             document.getElementById('ficha-linea-4').setAttribute('value', "ZONA: " + sanearTextoParaAFrame(leadData.poblacion));
+
             document.getElementById('ficha-linea-4').setAttribute('visible', 'true');
+
             
+
             // PREPARACIÓN DE LA CAPA EXCLUSIVA DE IMAGEN EN LA FICHA DE ASSETS
+
             let imagenAsignar = miniaturasPoblaciones[nombrePoblacion] ? miniaturasPoblaciones[nombrePoblacion] : 'https://img.youtube.com/vi/9TTqR1wD3jI/0.jpg';
+
             document.getElementById('rgpd-foto-match').setAttribute('src', imagenAsignar);
+
             
+
             faseFormulario = 6; 
+
             actualizarProgresoVisual(25, "Fase 5: Poblacion Guardada");
+
             
+
             setTimeout(() => {
+
                 actualizarProgresoVisual(45, "Fase 6: Dictar Caracteristicas");
+
                 hablarAdvisorUnificado("Por favor, cuéntame de viva voz las características y presupuesto estimado de tu solicitud.", abrirMicrofonoCliente);
+
             }, 800);
+
         }
+
+
 
         function OtrasPoblaciones() {
+
             let otraZonaInput = prompt("Introduce la población o zona de interés:");
+
             if (otraZonaInput && otraZonaInput.trim() !== "") {
+
                 seleccionarPoblacion(otraZonaInput.trim());
+
             }
+
         }
+
+
 
         function despacharPantallaRevisionYRGPD() {
+
             faseFormulario = 7; actualizarProgresoVisual(75, "Fase 7: Verificacion");
+
             let valActualZona = document.getElementById('ficha-linea-4').getAttribute('value');
+
             document.getElementById('ficha-linea-4').setAttribute('value', valActualZona + " | REM: " + sanearTextoParaAFrame(leadData.detallesFinales));
+
             hablarAdvisorUnificado("Datos procesados. Selecciona en la pantalla el tipo de servicio que deseas contratar.", function() {
+
                 document.getElementById('paleta-tipo-compra').setAttribute('scale', '1 1 1');
+
             });
+
         }
+
+
 
         function seleccionarServicioServi(tipoServicio) {
+
             leadData.servicioDeseado = tipoServicio;
+
             document.getElementById('paleta-tipo-compra').setAttribute('scale', '0 0 0');
+
             faseFormulario = 8; actualizarProgresoVisual(95, "Fase 8: Tipo de Compra Seleccionado");
+
             
+
             let compAdvertencia = document.getElementById('txt-advertencia-match-dinamico');
 
+
+
             // =========================================================================
+
             // REPARACIÓN CRÍTICA: VISIBILIDAD DE CANALES INDEPENDIENTES SANEADOS
+
             // =========================================================================
+
             if (leadData.tipoCliente.includes("Uso Propio")) {
+
                 compAdvertencia.setAttribute('value', "PETICION APTA PARA LA ZONA MATCH - SE PUBLICARA TU DEMANDA");
+
                 compAdvertencia.setAttribute('color', '#fbbf24');
+
                 
+
                 // Conmutación limpia sin heredar parches negros de memoria de vídeo
+
                 document.getElementById('rgpd-video-match').setAttribute('visible', 'false');
+
                 document.getElementById('rgpd-foto-match').setAttribute('visible', 'true');
+
             } else {
+
                 compAdvertencia.setAttribute('value', "Al aceptar, autorizas bajo la Ley RGPD");
+
                 compAdvertencia.setAttribute('color', '#64748b');
+
                 
+
                 document.getElementById('rgpd-video-match').setAttribute('visible', 'true');
+
                 document.getElementById('rgpd-foto-match').setAttribute('visible', 'false');
+
             }
+
+
 
             setTimeout(() => {
+
                 actualizarProgresoVisual(100, "Completado 100%");
+
                 document.getElementById('panel-rgpd').setAttribute('scale', '1 1 1');
+
                 
+
                 if (leadData.tipoCliente.includes("Uso Propio")) {
+
                     hablarAdvisorUnificado("Proceso completado al cien por cien. Tu petición se publicará además en nuestra zona MATCH para cruzarla con propietarios directos.");
+
                 } else {
+
                     hablarAdvisorUnificado("Proceso completado al cien por cien. Tu Advisor exclusivo contactará contigo de inmediato.");
+
                 }
+
             }, 800);
+
         }
+
+
 
         function confirmarYDespacharLark() {
+
             document.getElementById('panel-rgpd').setAttribute('scale', '0 0 0');
+
             
+
             let objetoEnvioLark = {
+
                 operacion: leadData.tipoCliente,
+
                 nombrePila: leadData.nombrePila,
+
                 nombreCompleto: leadData.nombre,
+
                 telefono: leadData.telefono,
+
                 email: leadData.email,
+
                 zona: leadData.poblacion,
+
                 descripcion: leadData.detallesFinales,
+
                 servicio: leadData.servicioDeseado,
+
                 publicarEnZonaMatch: leadData.tipoCliente.includes("Uso Propio") ? true : false,
+
                 urlRedireccionMatchVendedores: "https://level.immo/formulario-vendedores/"
+
             };
+
             console.log("Despachando paquete con protocolo MATCH:", objetoEnvioLark);
+
             volverAlMenuPrincipal();
+
         }
+
+
 
         function borrarDatosYReiniciar() {
+
             leadData = { tipoCliente: '', nombre: '', nombrePila: '', telefono: '', email: '', poblacion: '', detallesFinales: '', servicioDeseado: '' };
+
             document.getElementById('panel-rgpd').setAttribute('scale', '0 0 0');
+
             document.getElementById('rgpd-video-match').setAttribute('visible', 'true');
+
             document.getElementById('rgpd-foto-match').setAttribute('visible', 'false');
+
             for(let i=1; i<=4; i++) document.getElementById('ficha-linea-'+i).setAttribute('visible', 'false');
+
             actualizarProgresoVisual(0, "Fase 0: Reiniciado"); volverAlMenuPrincipal();
+
         }
+
+
 
         function abrirModulo5AdvisorsHTML() {
+
             try { recognition.abort(); } catch(e){}
+
             document.getElementById('boton-salir-hub-3d').setAttribute('scale', '0 0 0');
+
             document.getElementById('paleta-principal').setAttribute('scale', '0 0 0');
+
             document.getElementById('overlay-advisors').style.display = 'flex';
+
         }
+
         function cerrarPanelOverlayAdvisors() { document.getElementById('overlay-advisors').style.display = 'none'; volverAlMenuPrincipal(); }
+
         function abrirMenuIdiomasFlotante() { try { recognition.abort(); } catch(e){} document.getElementById('overlay-idiomas').style.display = 'flex'; }
+
         function cerrarSelectorIdiomas() { document.getElementById('overlay-idiomas').style.display = 'none'; }
+
         function cambiarFicheroIdioma(nombreArchivo) { window.location.href = "https://level-i.github.io/" + nombreArchivo; }
 
+
+
         recognition.onresult = function(event) {
+
             clearTimeout(timerInactividad); let comando = "";
+
             for (let i = event.resultIndex; i < event.results.length; ++i) { if (event.results[i].isFinal) comando += event.results[i][0].transcript; }
+
             comando = comando.trim(); if (comando === "") return;
+
             
+
             const cm = comando.toLowerCase();
 
+
+
             if (cm.includes('alquiler') || cm.includes('alquilar')) {
+
                 try { recognition.abort(); } catch(e){}
+
                 document.getElementById('texto-estado-vr').setAttribute('value', 'AVISO: ALQUILER NO GESTIONADO');
+
                 hablarAdvisorUnificado("Nuestra plataforma no gestiona alquileres en este momento, pero puedes utilizar la suite para vender, comprar o tramitar gestiones oficiales de tu hipoteca o catastro.", abrirMicrofonoCliente);
+
                 return;
+
             }
+
+
 
             if (faseFormulario > 0) {
+
                 if (faseFormulario === 40) {
+
                     leadData.poblacion = comando; faseFormulario = 5;
+
                     hablarAdvisorUnificado("Dime ahora la descripción detallada.", abrirMicrofonoCliente);
+
                 } else if (faseFormulario === 6) {
+
                     leadData.detallesFinales = comando; try { recognition.stop(); } catch(e){}
+
                     despacharPantallaRevisionYRGPD();
+
                 }
+
                 return;
+
             }
 
+
+
             if (cm.includes('comprar') || cm.includes('invertir')) activarModulo1();
+
             else if (cm.includes('vender')) activarModulo2();
+
             else if (cm.includes('advisor')) abrirModulo5AdvisorsHTML();
+
             else if (cm.includes('administracion')) activarModulo6Administracion();
+
             else if (cm.includes('idioma')) abrirMenuIdiomasFlotante();
+
         };
+
+
 
         function volverAlMenuPrincipal() {
+
             faseFormulario = 0;
+
             document.getElementById('paleta-subintencion').setAttribute('scale', '0 0 0');
+
             document.getElementById('paleta-poblaciones').setAttribute('scale', '0 0 0');
+
             document.getElementById('paleta-tipo-compra').setAttribute('scale', '0 0 0');
+
             document.getElementById('panel-rgpd').setAttribute('scale', '0 0 0');
+
             document.getElementById('boton-salir-hub-3d').setAttribute('scale', '1 1 1');
+
             document.getElementById('paleta-principal').setAttribute('scale', '1 1 1');
+
             document.getElementById('texto-estado-vr').setAttribute('value', 'LEVEL-i: BIENVENIDO...');
+
         }
+
+
 
         function navegarModuloGeneric(modulo) {
+
             document.getElementById('boton-salir-hub-3d').setAttribute('scale', '0 0 0');
+
             document.getElementById('texto-estado-vr').setAttribute('value', 'MODULO ' + modulo.toUpperCase());
+
             hablarAdvisorUnificado("Módulo " + modulo + " activado.");
+
         }
 
+
+
         recognition.onerror = function(event) {
+
             if (iaActiva && !window.advisorsVoiceActive && ![1,2,3,4].includes(faseFormulario)) { try { recognition.start(); } catch(e){} }
+
         };
+
     </script>
+
 </body>
-</html>
+
+</html> EN ESTE SCRIPT tenemos que modificar y aplicar este otro en la zona ADVISORS: <div id="level-home-master-suite">
+
+    
+
+    <div class="hunt-header">
+
+        <span class="hunt-badge">Programa de Alianzas Avanzado</span>
+
+        <h2>Mesa de Expansión Nacional: <span>Dos Perfiles, Un Solo Objetivo</span></h2>
+
+        <p class="hunt-subtitle">Desplegamos el ecosistema tecnológico Level-I en cualquier municipio. Elige tu modalidad de entrada y activa tu flujo de ingresos.</p>
+
+    </div>
+
+
+
+    <div class="hunt-grid">
+
+        <div class="profile-box profile-advisor">
+
+            <div>
+
+                <span class="box-icon">💼</span>
+
+                <h3>1. Quiero ser <span>Advisor Activo</span></h3>
+
+                <p class="profile-desc">Para autónomos, empresarios o profesionales con red comercial local dispares en todo el territorio.</p>
+
+                <ul class="benefits-list">
+
+                    <li><strong>0€ Coste de Entrada:</strong> Accede a la Suite con tu cuota mensual íntegramente apadrinada por un inversor.</li>
+
+                    <li><strong>Soporte Legal Incluido:</strong> Gestoría corporativa a tu servicio sin coste para tu alta.</li>
+
+                    <li><strong>Herramientas Élite:</strong> Modelos Oculus VR, mandatos directos off-market y formación.</li>
+
+                </ul>
+
+            </div>
+
+            <a href="https://wa.me/34641451736?text=QUIERO%20SER%20ADVISOR%20APADRINADO%20-%20SOLICITO%20MESA%20TECNICA" class="btn-home btn-gold" target="_blank">Postular como Advisor</a>
+
+        </div>
+
+
+
+        <div class="profile-box profile-padrino">
+
+            <div>
+
+                <span class="box-icon">👑</span>
+
+                <h3>2. Quiero ser <span>Mecenas / Padrino</span></h3>
+
+                <p class="profile-desc">Para Inversores que desean construir activos humanos y rendimientos pasivos.</p>
+
+                <ul class="benefits-list">
+
+                    <li><strong>Financia el Motor:</strong> Abonas las cuotas tecnológicas (100€/mes) de tus Advisors asignados.</li>
+
+                    <li><strong>Rappel del 10% al 15%:</strong> Obtienes por contrato un porcentaje sobre los honorarios generados por tu escudería.</li>
+
+                    <li><strong>Control Absoluto:</strong> Monitoriza el rendimiento, captaciones e hipotecas desde tu entorno privado.</li>
+
+                </ul>
+
+            </div>
+
+            <a href="https://wa.me/34641451736?text=QUIERO%20APADRINAR%20ADVISORS%20-%20SOLICITO%20RESERVA%20DE%20ZONA" class="btn-home btn-outline" target="_blank">Apadrinar Equipo</a>
+
+        </div>
+
+    </div>
+
+
+
+    <hr class="suite-divider">
+
+
+
+    <div class="sim-header">
+
+        <span class="sim-badge">Simulador Híbrido</span>
+
+        <h2>Calculadora de Rendimiento: <span>Red + Operaciones Propias</span></h2>
+
+    </div>
+
+
+
+    <div class="sim-grid">
+
+        <div class="control-card">
+
+            
+
+            <div class="section-divider">Configuración de tu Escudería</div>
+
+            <div class="slider-group">
+
+                <div class="slider-label-row">
+
+                    <label>Advisors Apadrinados en tu Red:</label>
+
+                    <span class="val" id="val-advisors">0</span>
+
+                </div>
+
+                <input type="range" id="sim-advisors" min="0" max="20" value="0">
+
+            </div>
+
+            <div class="slider-group">
+
+                <div class="slider-label-row">
+
+                    <label>Ventas anuales firmadas por cada Advisor:</label>
+
+                    <span class="val" id="val-team-sales">0</span>
+
+                </div>
+
+                <input type="range" id="sim-team-sales" min="0" max="15" value="0">
+
+            </div>
+
+
+
+            <div class="section-divider">Tus Operaciones Directas (En las ventas de tu Red)</div>
+
+            <div class="slider-group">
+
+                <div class="slider-label-row">
+
+                    <label>Tú aportas la Captación (+20%):</label>
+
+                    <span class="val" id="val-my-captures">0%</span>
+
+                </div>
+
+                <input type="range" id="sim-my-captures" min="0" max="100" step="5" value="0">
+
+            </div>
+
+            <div class="slider-group">
+
+                <div class="slider-label-row">
+
+                    <label>Tú haces el Cierre Directo (+20%):</label>
+
+                    <span class="val" id="val-my-closings">0%</span>
+
+                </div>
+
+                <input type="range" id="sim-my-closings" min="0" max="100" step="5" value="0">
+
+            </div>
+
+            <div class="slider-group">
+
+                <div class="slider-label-row">
+
+                    <label>Tú tramitas la Notaría (+10%):</label>
+
+                    <span class="val" id="val-my-notary">0%</span>
+
+                </div>
+
+                <input type="range" id="sim-my-notary" min="0" max="100" step="5" value="0">
+
+            </div>
+
+
+
+            <div class="section-divider">Valor de Finca Promedio</div>
+
+            <div class="slider-group" style="margin-bottom: 0;">
+
+                <div class="slider-label-row">
+
+                    <label>Precio Medio de la Zona (€):</label>
+
+                    <span class="val" id="val-price">150.000 €</span>
+
+                </div>
+
+                <input type="range" id="sim-price" min="70000" max="800000" step="5000" value="150000">
+
+            </div>
+
+        </div>
+
+
+
+        <div class="results-card">
+
+            <div>
+
+                <h3>Tu Retribución Anual Combinada</h3>
+
+                <p>Cálculo de ingresos netos sumando tu Red y tu Implicación Operativa</p>
+
+            </div>
+
+
+
+            <div class="main-metric">
+
+                <div class="label">Ingresos Totales Estimados</div>
+
+                <div class="value" id="res-net-income">0 €</div>
+
+            </div>
+
+
+
+            <div>
+
+                <div class="sub-metrics-grid">
+
+                    <div class="sub-metric">
+
+                        <div class="sm-label">Rappel Neto por Red</div>
+
+                        <div class="sm-value" id="res-rappel-income" style="color: #fbbf24;">0 €</div>
+
+                    </div>
+
+                    <div class="sub-metric">
+
+                        <div class="sm-label">Bonus por Intervención</div>
+
+                        <div class="sm-value" id="res-direct-work-income" style="color: #ffffff;">0 €</div>
+
+                    </div>
+
+                    <div class="sub-metric">
+
+                        <div class="sm-label">Coste Estructura Red</div>
+
+                        <div class="sm-value" id="res-structure-cost" style="color: #ef4444;">0 €</div>
+
+                    </div>
+
+                    <div class="sub-metric">
+
+                        <div class="sm-label">Total Operaciones Red</div>
+
+                        <div class="sm-value" id="res-total-operations">0 ops.</div>
+
+                    </div>
+
+                </div>
+
+
+
+                <a href="https://level.immo/admision-advisors/" class="btn-join-bunker">ACTIVAR MI LICENCIA AHORA</a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<style>
+
+    #level-home-master-suite, #level-home-master-suite * { box-sizing: border-box; font-family: 'Montserrat', sans-serif !important; }
+
+    #level-home-master-suite { background-color: #0a0a0a; color: #f8fafc; padding: 4rem 2rem; border-radius: 16px; max-width: 1200px; margin: 3rem auto; border: 1px solid #1f1f1f; }
+
+    .hunt-header, .sim-header { text-align: center; margin-bottom: 3.5rem; }
+
+    .hunt-badge, .sim-badge { background: rgba(251, 191, 36, 0.1); color: #fbbf24; padding: 0.5rem 1.5rem; border-radius: 9999px; font-size: 0.85rem; font-weight: 800; text-transform: uppercase; border: 1px solid rgba(251, 191, 36, 0.3); }
+
+    #level-home-master-suite h2 { font-size: 2.5rem; font-weight: 800; color: #ffffff; margin: 1rem 0; }
+
+    #level-home-master-suite h2 span { color: #fbbf24; }
+
+    .hunt-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; }
+
+    .profile-box { background: #111; border: 1px solid #222; border-radius: 12px; padding: 2.5rem; }
+
+    .profile-advisor { border-top: 4px solid #fbbf24; }
+
+    .profile-padrino { border-top: 4px solid #d97706; }
+
+    .benefits-list { list-style: none; padding: 0; }
+
+    .benefits-list li { margin-bottom: 10px; }
+
+    .btn-home { display: block; text-align: center; padding: 1rem; border-radius: 8px; font-weight: 800; text-decoration: none; margin-top: 20px; }
+
+    .btn-gold { background: #fbbf24; color: #000; }
+
+    .btn-outline { border: 2px solid #333; color: #fff; }
+
+    .sim-grid { display: grid; grid-template-columns: 1.2fr 1fr; gap: 3rem; }
+
+    .control-card { background: #111; padding: 2.5rem; border-radius: 12px; }
+
+    .section-divider { font-size: 0.9rem; color: #888; text-transform: uppercase; border-bottom: 1px solid #222; padding-bottom: 0.5rem; margin-top: 20px; }
+
+    .slider-group { margin-top: 15px; }
+
+    .slider-label-row { display: flex; justify-content: space-between; margin-bottom: 5px; }
+
+    .val { color: #fbbf24; font-weight: 800; }
+
+    .results-card { background: #000; padding: 3rem; border: 1px solid #333; border-radius: 12px; text-align: center; }
+
+    .main-metric .value { font-size: 3.5rem; font-weight: 900; color: #fbbf24; margin: 1rem 0; }
+
+    .sub-metrics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+    .sub-metric { background: #111; padding: 10px; border-radius: 8px; }
+
+    .btn-join-bunker { display: block; background: #fbbf24; color: #000; padding: 1.2rem; border-radius: 8px; font-weight: 900; text-decoration: none; margin-top: 2rem; }
+
+</style>
+
+
+
+<script>
+
+document.addEventListener('DOMContentLoaded', function() {
+
+    const sAdvisors = document.getElementById('sim-advisors');
+
+    const sTeamSales = document.getElementById('sim-team-sales');
+
+    const sMyCaptures = document.getElementById('sim-my-captures');
+
+    const sMyClosings = document.getElementById('sim-my-closings');
+
+    const sMyNotary = document.getElementById('sim-my-notary');
+
+    const sPrice = document.getElementById('sim-price');
+
+
+
+    function formatEuro(val) { return new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(val); }
+
+
+
+    function runEngine() {
+
+        const advisors = parseInt(sAdvisors.value, 10);
+
+        const salesPer = parseInt(sTeamSales.value, 10);
+
+        const pctCap = parseInt(sMyCaptures.value, 10) / 100;
+
+        const pctClose = parseInt(sMyClosings.value, 10) / 100;
+
+        const pctNotary = parseInt(sMyNotary.value, 10) / 100;
+
+        const price = parseInt(sPrice.value, 10);
+
+
+
+        document.getElementById('val-advisors').textContent = advisors;
+
+        document.getElementById('val-team-sales').textContent = salesPer;
+
+        document.getElementById('val-my-captures').textContent = (pctCap * 100) + '%';
+
+        document.getElementById('val-my-closings').textContent = (pctClose * 100) + '%';
+
+        document.getElementById('val-my-notary').textContent = (pctNotary * 100) + '%';
+
+        document.getElementById('val-price').textContent = formatEuro(price);
+
+
+
+        const totalOps = advisors * salesPer;
+
+        let fee = Math.max(price * 0.03, 6000);
+
+        
+
+        let rappelPct = advisors >= 10 ? 0.15 : (advisors >= 5 ? 0.12 : 0.10);
+
+        const rappel = (totalOps * fee) * rappelPct;
+
+        const bonus = (totalOps * pctCap * (fee * 0.20)) + (totalOps * pctClose * (fee * 0.20)) + (totalOps * pctNotary * (fee * 0.10));
+
+        const structure = advisors * 100 * 12;
+
+        
+
+        document.getElementById('res-net-income').textContent = formatEuro(rappel + bonus - structure);
+
+        document.getElementById('res-rappel-income').textContent = formatEuro(rappel);
+
+        document.getElementById('res-direct-work-income').textContent = formatEuro(bonus);
+
+        document.getElementById('res-structure-cost').textContent = '-' + formatEuro(structure);
+
+        document.getElementById('res-total-operations').textContent = totalOps + ' ops.';
+
+    }
+
+
+
+    [sAdvisors, sTeamSales, sMyCaptures, sMyClosings, sMyNotary, sPrice].forEach(el => el.addEventListener('input', runEngine));
+
+    runEngine();
+
+});
+
+</script>  
+
+
