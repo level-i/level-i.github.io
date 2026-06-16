@@ -69,6 +69,20 @@
         .tab-btn.active, .tab-btn:hover { background: #fbbf24; color: #000; border-color: #fbbf24; box-shadow: 0 0 15px rgba(251,191,36,0.3); }
         .seccion-contenido-tab { display: none; }
         .seccion-contenido-tab.active { display: block; }
+
+        /* ESTILOS DEL MENÚ FLOTANTE DE IDIOMAS */
+        .selector-idiomas-flotante {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: rgba(15, 23, 42, 0.98); border: 2px solid #00f2fe; border-radius: 12px;
+            padding: 30px; z-index: 300000 !important; display: none; flex-direction: column;
+            gap: 15px; font-family: 'Montserrat', sans-serif; text-align: center; width: 280px;
+            box-shadow: 0 0 40px rgba(0, 242, 254, 0.3);
+        }
+        .btn-idioma-opc {
+            background: #1e293b; color: white; border: 1px solid #334155; padding: 12px;
+            border-radius: 6px; font-weight: 700; cursor: pointer; transition: 0.3s; text-transform: uppercase;
+        }
+        .btn-idioma-opc:hover { background: #00f2fe; color: #0f172a; }
     </style>
     
     <script>
@@ -127,7 +141,7 @@
         </div>
     </div>
 
-    <!-- ESCENA COMPU-ESPACIAL COMPATIBLE CON OCULUS QUEST VR -->
+    <!-- ESCENA COMPU-ESPACIAL -->
     <a-scene loading-screen="enabled: false">
         
         <a-assets>
@@ -152,25 +166,27 @@
                 <!-- TITULO PRINCIPAL DEL SISTEMA -->
                 <a-text value="LEVEL-i ADVISOR" align="left" position="-0.44 1.12 0.01" scale="0.42 0.44 0.44" font="exo2bold" color="#00f2fe"></a-text>
                 
-                <!-- BURBUJA SUPERIOR CON LOGO LEVEL FLOTANDO SIN RECUADROS -->
+                <!-- BURBUJA SUPERIOR CON LOGO LEVEL -->
                 <a-entity position="0.34 1.12 0.01">
-                    <a-image src="#asset-logo" position="0 0 0.01" width="0.13" height="0.13" material="transparent: true; alphaTest: 0.1; shader: flat;"></a-image>
+                    <a-image src="#asset-logo" position="0 0 0.01" width="0.13" height="0.13" material="transparent: true; alphaTest: 0.3; shader: flat;"></a-image>
                 </a-entity>
 
-                <!-- CORRECCIÓN DE PEGOTE: SE ABRE EL CANAL DEL LOGO API ARRIBA A LA DERECHA SIN MARCO PLANO -->
-                <a-image src="#asset-api" position="0.18 1.12 0.01" width="0.11" height="0.11" material="transparent: true; alphaTest: 0.1; shader: flat;"></a-image>
+                <!-- CORRECCIÓN LOGO API: INDEPENDIENTE CON PROFUNDIDAD Z DESTACADA PARA EVITAR MÁSCARAS NEGRAS -->
+                <a-image src="#asset-api" position="0.38 1.12 0.03" width="0.12" height="0.12" material="transparent: true; alphaTest: 0.1; shader: flat;"></a-image>
 
-                <!-- TEXTO DE ESTADO FLOTANTE SIN CAJA OPACA (SANEADO TOTAL DE PEGOTES DE CABECERA) -->
-                <a-text id="texto-estado-vr" value="INITIALIZING ADVISOR SUITE..." align="left" position="-0.44 0.98 0.01" scale="0.21 0.22 0.24" font="monoid" color="#94a3b8"></a-text>
-                
-                <a-entity ondas-voz-sara position="0.08 0.98 0.02">
-                    <a-box id="barra-audio-1" width="0.01" height="0.03" depth="0.01" color="#00f2fe" position="0.01 0 0"></a-box>
-                    <a-box id="barra-audio-2" width="0.01" height="0.03" depth="0.01" color="#ff007f" position="0.02 0 0"></a-box>
-                    <a-box id="barra-audio-3" width="0.01" height="0.03" depth="0.01" color="#00f2fe" position="0.03 0 0"></a-box>
-                </a-entity>
+                <!-- TEXTO GUÍA FLOTANTE -->
+                <a-plane width="0.88" height="0.16" color="#0f172a" material="opacity: 0; transparent: true;" position="0 0.96 0.01">
+                    <a-text id="texto-estado-vr" value="INITIALIZING ADVISOR SUITE..." align="left" position="-0.44 0.02 0.01" scale="0.21 0.22 0.24" font="monoid" color="#94a3b8"></a-text>
+                    
+                    <a-entity ondas-voz-sara position="0.32 0.02 0.02">
+                        <a-box id="barra-audio-1" width="0.01" height="0.03" depth="0.01" color="#00f2fe" position="0.01 0 0"></a-box>
+                        <a-box id="barra-audio-2" width="0.01" height="0.03" depth="0.01" color="#ff007f" position="0.02 0 0"></a-box>
+                        <a-box id="barra-audio-3" width="0.01" height="0.03" depth="0.01" color="#00f2fe" position="0.03 0 0"></a-box>
+                    </a-entity>
+                </a-plane>
 
                 <!-- BARRA DE PROGRESO CENTRAL -->
-                <a-plane id="contenedor-barra-progreso" width="0.88" height="0.05" color="#0f172a" position="0 0.84 0.01">
+                <a-plane id="contenedor-barra-progreso" width="0.88" height="0.05" color="#0a0f1d" material="opacity: 0; transparent: true;" position="0 0.82 0.01">
                     <a-plane id="relleno-barra-progreso" width="0.01" height="0.05" color="#00f2fe" position="-0.44 0 0.01" material="shader: flat;"></a-plane>
                     <a-text id="texto-porcentaje-progreso" value="0%" align="center" position="0 0 0.02" scale="0.18 0.18 0.18" font="orbitron" color="#fff"></a-text>
                 </a-plane>
@@ -204,15 +220,20 @@
                     <a-text value="SALIR DE LA CONEXION HUBS" align="center" scale="0.17 0.17 0.17" font="exo2bold" color="#f5f3ff"></a-text>
                 </a-plane>
 
-                <!-- SUB-PANEL CENTRAL DE CONTROL REVISIÓN (CANAL ÚNICO COMPATIBLE CON GAFAS VR) -->
+                <!-- SUB-PANEL CENTRAL DE CONTROL: REVISIÓN GENERAL -->
                 <a-entity id="panel-rgpd" scale="0 0 0" position="0 0.15 0.02">
                     <a-plane width="0.94" height="0.95" color="#020617" material="border: 2px solid #00f2fe;">
                         <a-text value="REVISION GENERAL" align="center" position="0 0.40 0.01" scale="0.26 0.26 0.26" font="exo2bold" color="#00f2fe"></a-text>
                         <a-text value="Por favor autoriza el tratamiento legal" align="center" position="0 0.32 0.01" scale="0.16 0.16 0.16" font="exo2bold" color="#94a3b8"></a-text>
                         
-                        <!-- REPARACIÓN: UN SOLO CANAL DE MEDIOS PARA OCULUS. CONMUTA DE VIDEO A FOTO PNG DINÁMICAMENTE SIN SOLAPAR EN NEGRO -->
+                        <!-- ========================================================================= -->
+                        <!-- SOLUCIÓN DEFINITIVA DE CAPAS SEPARADAS PARA EVITAR CUADROS NEGROS EN VR -->
+                        <!-- ========================================================================= -->
                         <a-plane position="0 0.04 0.01" width="0.65" height="0.38" color="#070a14">
-                            <a-video id="rgpd-media-match" position="0 0 0.01" width="0.63" height="0.36" src="#video-tiktok" material="shader: flat; side: double; transparent: true;"></a-video>
+                            <!-- Capa de Video -->
+                            <a-video id="rgpd-video-match" position="0 0 0.01" width="0.63" height="0.36" src="#video-tiktok" material="shader: flat; side: double;"></a-video>
+                            <!-- Capa de Imagen Independiente con profundidad Z adelantada (0.02) y alphaTest reforzado -->
+                            <a-image id="rgpd-foto-match" position="0 0 0.02" width="0.63" height="0.36" src="" material="shader: flat; transparent: true; alphaTest: 0.5;" visible="false"></a-image>
                         </a-plane>
                         
                         <a-text id="txt-advertencia-match-dinamico" value="Al aceptar, autorizas bajo la Ley RGPD" align="center" position="0 -0.22 0.01" scale="0.15 0.15 0.15" font="exo2bold" color="#64748b"></a-text>
@@ -506,6 +527,10 @@
             document.getElementById('ficha-linea-4').setAttribute('value', "ZONA: " + sanearTextoParaAFrame(leadData.poblacion));
             document.getElementById('ficha-linea-4').setAttribute('visible', 'true');
             
+            // PREPARACIÓN DE LA CAPA EXCLUSIVA DE IMAGEN EN LA FICHA DE ASSETS
+            let imagenAsignar = miniaturasPoblaciones[nombrePoblacion] ? miniaturasPoblaciones[nombrePoblacion] : 'https://img.youtube.com/vi/9TTqR1wD3jI/0.jpg';
+            document.getElementById('rgpd-foto-match').setAttribute('src', imagenAsignar);
+            
             faseFormulario = 6; 
             actualizarProgresoVisual(25, "Fase 5: Poblacion Guardada");
             
@@ -537,19 +562,23 @@
             faseFormulario = 8; actualizarProgresoVisual(95, "Fase 8: Tipo de Compra Seleccionado");
             
             let compAdvertencia = document.getElementById('txt-advertencia-match-dinamico');
-            let medioVisual = document.getElementById('rgpd-media-match');
 
+            // =========================================================================
+            // REPARACIÓN CRÍTICA: VISIBILIDAD DE CANALES INDEPENDIENTES SANEADOS
+            // =========================================================================
             if (leadData.tipoCliente.includes("Uso Propio")) {
                 compAdvertencia.setAttribute('value', "PETICION APTA PARA LA ZONA MATCH - SE PUBLICARA TU DEMANDA");
                 compAdvertencia.setAttribute('color', '#fbbf24');
                 
-                // REPARACIÓN OCULUS: CONMUTACIÓN LIMPIA DE FUENTE EN UN SOLO PLANO (EVITA LA CAPA NEGRA)
-                let rutaMapaPng = miniaturasPoblaciones[leadData.poblacion] ? miniaturasPoblaciones[leadData.poblacion] : 'https://img.youtube.com/vi/9TTqR1wD3jI/0.jpg';
-                medioVisual.setAttribute('src', rutaMapaPng);
+                // Conmutación limpia sin heredar parches negros de memoria de vídeo
+                document.getElementById('rgpd-video-match').setAttribute('visible', 'false');
+                document.getElementById('rgpd-foto-match').setAttribute('visible', 'true');
             } else {
                 compAdvertencia.setAttribute('value', "Al aceptar, autorizas bajo la Ley RGPD");
                 compAdvertencia.setAttribute('color', '#64748b');
-                medioVisual.setAttribute('src', '#video-tiktok');
+                
+                document.getElementById('rgpd-video-match').setAttribute('visible', 'true');
+                document.getElementById('rgpd-foto-match').setAttribute('visible', 'false');
             }
 
             setTimeout(() => {
@@ -586,7 +615,8 @@
         function borrarDatosYReiniciar() {
             leadData = { tipoCliente: '', nombre: '', nombrePila: '', telefono: '', email: '', poblacion: '', detallesFinales: '', servicioDeseado: '' };
             document.getElementById('panel-rgpd').setAttribute('scale', '0 0 0');
-            document.getElementById('rgpd-media-match').setAttribute('src', '#video-tiktok');
+            document.getElementById('rgpd-video-match').setAttribute('visible', 'true');
+            document.getElementById('rgpd-foto-match').setAttribute('visible', 'false');
             for(let i=1; i<=4; i++) document.getElementById('ficha-linea-'+i).setAttribute('visible', 'false');
             actualizarProgresoVisual(0, "Fase 0: Reiniciado"); volverAlMenuPrincipal();
         }
