@@ -446,7 +446,7 @@
         function flujoEntradaManualNombre() {
             try { recognition.abort(); } catch(e){}
             actualizarProgresoVisual(5, "Fase 2: Nombre Completo");
-            hablarAdvisorUnificado("¿Me puedes indicar tu nombre completo para dirigirme a ti?", function() {
+            hablarAdvisorUnificado("¿Me puede indicar su nombre completo para dirigirme a usted?", function() {
                 let nombreEntrada = prompt("Introduce tu nombre y apellidos:");
                 if (nombreEntrada && nombreEntrada.trim() !== "") {
                     leadData.nombre = nombreEntrada.trim(); 
@@ -460,7 +460,7 @@
         function flujoEntradaManualTelefono() {
             try { recognition.abort(); } catch(e){}
             actualizarProgresoVisual(10, "Fase 3: Telefono");
-            hablarAdvisorUnificado("Introduce tu telefono de contacto en la paleta de la pantalla.", function() {
+            hablarAdvisorUnificado("¿Sería tan amable de introducir su teléfono de contacto en la paleta de la pantalla?.", function() {
                 let telEntrada = prompt("Introduce tu número:");
                 if (telEntrada && telEntrada.trim() !== "") {
                     let telLimpio = telEntrada.replace(/\s+/g, '');
@@ -476,8 +476,8 @@
         function flujoEntradaManualEmail() {
             try { recognition.abort(); } catch(e){}
             actualizarProgresoVisual(15, "Fase 4: Correo Electronico");
-            hablarAdvisorUnificado("Introduce tu correo electronico para finalizar tu identificacion.", function() {
-                let emailEntrada = prompt("Introduce tu correo electrónico:");
+            hablarAdvisorUnificado("Perfecto. Ahora, y para finalizar su identificacion, díganos cual es su dirección de correo electrónico.", function() {
+                let emailEntrada = prompt("Email:");
                 if (emailEntrada && emailEntrada.trim() !== "") {
                     let emailLimpio = emailEntrada.trim().toLowerCase();
                     let regexEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -487,10 +487,10 @@
                         document.getElementById('ficha-linea-3').setAttribute('value', valActualTel + " | EMAIL: " + sanearTextoParaAFrame(leadData.email));
                         let fraseAgradecimiento = "Muchas gracias " + leadData.nombrePila + ". ";
                         if (leadData.tipoCliente === 'Administracion') {
-                            faseFormulario = 40; hablarAdvisorUnificado(fraseAgradecimiento + "Dime el asunto o motivo de tu consulta.", abrirMicrofonoCliente);
+                            faseFormulario = 40; hablarAdvisorUnificado(fraseAgradecimiento + "Díganos el motivo de su consulta.", abrirMicrofonoCliente);
                         } else {
                             faseFormulario = 5; document.getElementById('paleta-poblaciones').setAttribute('scale', '1 1 1');
-                            hablarAdvisorUnificado(fraseAgradecimiento + "Selecciona el municipio de tu interés.");
+                            hablarAdvisorUnificado(fraseAgradecimiento + "Indíquenos en cual de estas poblaciones se encuentra su propiedad en venta.");
                         }
                     } else { alert("Email incorrecto."); flujoEntradaManualEmail(); }
                 } else { flujoEntradaManualEmail(); }
