@@ -125,6 +125,7 @@
     </style>
     
     <script>
+        // COMPONENTE PARA EL PARPADEO TRIDIMENSIONAL DEL ECUALIZADOR AUDIBLE DE SARA
         AFRAME.registerComponent('ondas-voz-sara', {
             tick: function (time, timeDelta) {
                 if (window.saraHablando) {
@@ -168,7 +169,7 @@
         <button class="btn-idioma-opc" style="background: #ef4444; border: none; margin-top: 10px;" onclick="cerrarSelectorIdiomas()">Cancelar</button>
     </div>
 
-    <!-- OVERLAY HÍBRIDO MÓDULO ADVISORS -->
+    <!-- OVERLAY HÍBRIDA ADVISORS -->
     <div id="overlay-advisors" class="contenedor-overlay-advisors">
         <div class="pestanas-menu">
             <button class="tab-btn active" onclick="cambiarPestanaAdvisors('tab-informacion', this)">Informacion</button>
@@ -214,6 +215,7 @@
             <img id="thumb-oasis" src="https://img.youtube.com/vi/NXjj-4OXNmQ/0.jpg" crossorigin="anonymous">
             <img id="asset-logo" src="https://level-i.github.io/docs/favicon-level-fondo-negro-300x300 sin fondo.png" crossorigin="anonymous">
             <img id="asset-api" src="https://level-i.github.io/docs/logo api sin fondo.png" crossorigin="anonymous">
+            <img id="asset-sara-face" src="https://level-i.github.io/docs/sara-advisor-face.png" crossorigin="anonymous">
         </a-assets>
 
         <a-sky id="cielo-entorno" color="#020617"></a-sky>
@@ -228,75 +230,81 @@
             <a-entity cursor="fuse: false; rayOrigin: mouse;" position="0 0 -1" geometry="primitive: ring; radiusInner: 0.007; radiusOuter: 0.014" material="color: #00f2fe; shader: flat; opacity: 0.8;" raycaster="objects: .clickable"></a-entity>
         </a-entity>
 
-        <!-- CONSOLA TIPO MÓVIL ESTIRADA EN VERTICAL (Chasis Móvil) -->
+        <!-- ENFOQUE PANTALLA EXCLUSIVA VERTICAL SMARTPHONE INTEGRADO EN EL MOTOR 3D -->
         <a-entity id="chasis-smartphone-virtual" position="0 1.5 -1.6" rotation="0 0 0">
             
             <a-plane class="clickable" width="1.0" height="2.4" color="#0a0f1d" material="opacity: 0.96; transparent: true; border: 3px solid #1e293b; borderRadius: 0.05;" position="0 0 0">
                 
-                <a-text value="SARA ADVISOR" align="center" position="0 1.08 0.01" scale="0.55 0.55 0.55" font="exo2bold" color="#00f2fe"></a-text>
+                <a-text value="SARA ADVISOR" align="left" position="-0.44 1.08 0.01" scale="0.55 0.55 0.55" font="exo2bold" color="#00f2fe"></a-text>
                 
+                <!-- ROSTRO DE MUJER VIRTUAL AISLADO -->
+                <a-entity id="burbuja-rostro-sara" position="0.32 1.08 0.01">
+                    <a-circle radius="0.09" color="#0f172a" material="border: 2px solid #00f2fe;"></a-circle>
+                    <a-image src="#asset-sara-face" position="0 0 0.01" width="0.17" height="0.17" material="transparent: true; shader: flat; borderRadius: 50;"></a-image>
+                </a-entity>
+
                 <!-- BARRA DE PROGRESO HOLOGRÁFICA DINÁMICA -->
-                <a-plane id="contenedor-barra-progreso" width="0.85" height="0.04" color="#0f172a" position="0 0.98 0.01">
-                    <a-plane id="relleno-barra-progreso" width="0.01" height="0.04" color="#00f2fe" position="-0.425 0 0.01" material="shader: flat;"></a-plane>
+                <a-plane id="contenedor-barra-progreso" width="0.88" height="0.04" color="#0f172a" position="0 0.94 0.01">
+                    <a-plane id="relleno-barra-progreso" width="0.01" height="0.04" color="#00f2fe" position="-0.44 0 0.01" material="shader: flat;"></a-plane>
                     <a-text id="texto-porcentaje-progreso" value="0%" align="center" position="0 0 0.02" scale="0.18 0.18 0.18" font="orbitron" color="#fff"></a-text>
                 </a-plane>
 
                 <!-- FICHA DE LEAD CON MEMORIA ACUMULATIVA -->
-                <a-plane width="0.88" height="0.45" color="#0f172a" material="opacity: 0.85; transparent: true;" position="0 0.70 0.01">
-                    <a-text id="texto-estado-vr" value="SARA BIENVENIDA..." align="left" position="-0.42 0.16 0.01" scale="0.22 0.24 0.26" font="monoid" color="#94a3b8"></a-text>
-                    <a-text id="ficha-linea-1" value="OP: COMPRAR" align="left" position="-0.42 0.04 0.01" scale="0.21 0.21 0.21" font="exo2bold" color="#fff" visible="false"></a-text>
-                    <a-text id="ficha-linea-2" value="USO: -" align="left" position="-0.42 -0.04 0.01" scale="0.21 0.21 0.21" font="exo2bold" color="#fff" visible="false"></a-text>
-                    <a-text id="ficha-linea-3" value="CONTACTO: -" align="left" position="-0.42 -0.12 0.01" scale="0.18 0.18 0.18" font="exo2bold" color="#fff" visible="false"></a-text>
-                    <a-text id="ficha-linea-4" value="ZONA/CONSULTA: -" align="left" position="-0.42 -0.20 0.01" scale="0.18 0.18 0.18" font="exo2bold" color="#fff" visible="false"></a-text>
-                    
-                    <a-entity position="0.34 0.12 0.02" scale="0.10 0.11 0.11">
-                        <a-sphere color="#00f2fe" radius="0.4" material="wireframe: true; opacity: 0.6;"></a-sphere>
-                        <a-cone color="#ff007f" radius-bottom="0.5" radius-top="0.1" height="0.8" position="0 -0.6 0" material="wireframe: true; opacity: 0.4;"></a-cone>
-                    </a-entity>
+                <a-plane width="0.88" height="0.45" color="#0f172a" material="opacity: 0.85; transparent: true;" position="0 0.68 0.01">
+                    <a-text id="texto-estado-vr" value="SARA BIENVENIDA..." align="left" position="-0.44 0.16 0.01" scale="0.22 0.24 0.26" font="monoid" color="#94a3b8"></a-text>
+                    <a-text id="ficha-linea-1" value="OP: COMPRAR" align="left" position="-0.44 0.04 0.01" scale="0.21 0.21 0.21" font="exo2bold" color="#fff" visible="false"></a-text>
+                    <a-text id="ficha-linea-2" value="USO: -" align="left" position="-0.44 -0.04 0.01" scale="0.21 0.21 0.21" font="exo2bold" color="#fff" visible="false"></a-text>
+                    <a-text id="ficha-linea-3" value="CONTACTO: -" align="left" position="-0.44 -0.12 0.01" scale="0.18 0.18 0.18" font="exo2bold" color="#fff" visible="false"></a-text>
+                    <a-text id="ficha-linea-4" value="ZONA/CONSULTA: -" align="left" position="-0.44 -0.20 0.01" scale="0.18 0.18 0.18" font="exo2bold" color="#fff" visible="false"></a-text>
 
-                    <a-entity ondas-voz-sara position="0.26 0.12 0.02">
-                        <a-box id="barra-audio-1" width="0.01" height="0.05" depth="0.01" color="#00f2fe" position="0.02 0 0"></a-box>
-                        <a-box id="barra-audio-2" width="0.01" height="0.05" depth="0.01" color="#ff007f" position="0.04 0 0"></a-box>
-                        <a-box id="barra-audio-3" width="0.01" height="0.05" depth="0.01" color="#00f2fe" position="0.06 0 0"></a-box>
+                    <!-- ECUALIZADOR AUDIBLE SARA -->
+                    <a-entity ondas-voz-sara position="0.30 -0.18 0.02">
+                        <a-box id="barra-audio-1" width="0.01" height="0.04" depth="0.01" color="#00f2fe" position="0.02 0 0"></a-box>
+                        <a-box id="barra-audio-2" width="0.01" height="0.04" depth="0.01" color="#ff007f" position="0.04 0 0"></a-box>
+                        <a-box id="barra-audio-3" width="0.01" height="0.04" depth="0.01" color="#00f2fe" position="0.06 0 0"></a-box>
                     </a-entity>
                 </a-plane>
 
-                <!-- BOTONERA CENTRAL -->
-                <a-entity id="paleta-principal" position="0 0.05 0.01">
-                    <a-plane id="btn-modulo-comprar" class="clickable" onclick="activarModulo1()" position="-0.22 0.32 0" width="0.42" height="0.18" color="#1e293b" material="opacity: 0.95;">
-                        <a-text value="COMPRAR" align="center" scale="0.24 0.24 0.24" font="exo2bold" color="#fff"></a-text>
+                <!-- ========================================================================= -->
+                <!-- NUEVO MENÚ EN CASCADA VERTICAL (8 BOTONES ESTIRADOS) -->
+                <!-- ========================================================================= -->
+                <a-entity id="paleta-principal" position="0 0.02 0.01">
+                    
+                    <a-plane id="btn-modulo-idioma" class="clickable" onclick="abrirMenuIdiomasFlotante()" position="0 0.36 0" width="0.86" height="0.11" color="#1e293b" material="opacity: 0.95;">
+                        <a-text value="CAMBIAR IDIOMA" align="center" scale="0.22 0.22 0.22" font="exo2bold" color="#fbbf24"></a-text>
                     </a-plane>
-                    <a-plane id="btn-modulo-advisors" class="clickable" onclick="abrirModulo5AdvisorsHTML()" position="0.22 0.32 0" width="0.42" height="0.18" color="#1e293b" material="opacity: 0.95;">
-                        <a-text value="ADVISORS" align="center" position="0 0.03 0.01" scale="0.21 0.21 0.21" font="exo2bold" color="#fff"></a-text>
-                        <a-text value="DE ZONA" align="center" position="0 -0.03 0.01" scale="0.21 0.21 0.21" font="exo2bold" color="#fff"></a-text>
+                    
+                    <a-plane id="btn-modulo-comprar" class="clickable" onclick="activarModulo1()" position="0 0.23 0" width="0.86" height="0.11" color="#1e293b" material="opacity: 0.95;">
+                        <a-text value="COMPRAR" align="center" scale="0.22 0.22 0.22" font="exo2bold" color="#fff"></a-text>
                     </a-plane>
-
-                    <a-plane id="btn-modulo-vender" class="clickable" onclick="activarModulo2()" position="-0.22 0.10 0" width="0.42" height="0.18" color="#1e293b" material="opacity: 0.95;">
-                        <a-text value="VENDER" align="center" scale="0.24 0.24 0.24" font="exo2bold" color="#fff"></a-text>
+                    
+                    <a-plane id="btn-modulo-vender" class="clickable" onclick="activarModulo2()" position="0 0.10 0" width="0.86" height="0.11" color="#1e293b" material="opacity: 0.95;">
+                        <a-text value="VENDER" align="center" scale="0.22 0.22 0.22" font="exo2bold" color="#fff"></a-text>
                     </a-plane>
-                    <a-plane id="btn-modulo-admin" class="clickable" onclick="activarModulo6Administracion()" position="0.22 0.10 0" width="0.42" height="0.18" color="#1e293b" material="opacity: 0.95;">
-                        <a-text value="ADMINISTRACION" align="center" scale="0.18 0.18 0.18" font="exo2bold" color="#fff"></a-text>
+                    
+                    <a-plane id="btn-modulo-advisors" class="clickable" onclick="abrirModulo5AdvisorsHTML()" position="0 -0.03 0" width="0.86" height="0.11" color="#1e293b" material="opacity: 0.95;">
+                        <a-text value="ADVISORS DE ZONA" align="center" scale="0.22 0.22 0.22" font="exo2bold" color="#fff"></a-text>
                     </a-plane>
-
-                    <a-plane id="btn-modulo-propietario" class="clickable" onclick="navegarModuloGeneric('Propietario')" position="-0.22 -0.12 0" width="0.42" height="0.18" color="#1e293b" material="opacity: 0.95;">
-                        <a-text value="PROPIETARIO" align="center" position="0 0.03 0.01" scale="0.18 0.18 0.18" font="exo2bold" color="#00f2fe"></a-text>
-                        <a-text value="CLIENTE" align="center" position="0 -0.03 0.01" scale="0.18 0.18 0.18" font="exo2bold" color="#00f2fe"></a-text>
+                    
+                    <a-plane id="btn-modulo-admin" class="clickable" onclick="activarModulo6Administracion()" position="0 -0.16 0" width="0.86" height="0.11" color="#1e293b" material="opacity: 0.95;">
+                        <a-text value="ADMINISTRACION" align="center" scale="0.22 0.22 0.22" font="exo2bold" color="#fff"></a-text>
                     </a-plane>
-                    <a-plane id="btn-modulo-idioma" class="clickable" onclick="abrirMenuIdiomasFlotante()" position="0.22 -0.12 0" width="0.42" height="0.18" color="#1e293b" material="opacity: 0.95;">
-                        <a-text value="CAMBIAR" align="center" position="0 0.03 0.01" scale="0.21 0.21 0.21" font="exo2bold" color="#fbbf24"></a-text>
-                        <a-text value="IDIOMA" align="center" position="0 -0.03 0.01" scale="0.21 0.21 0.21" font="exo2bold" color="#fbbf24"></a-text>
+                    
+                    <a-plane id="btn-modulo-propietario" class="clickable" onclick="navegarModuloGeneric('Propietario')" position="0 -0.29 0" width="0.86" height="0.11" color="#1e293b" material="opacity: 0.95;">
+                        <a-text value="PROPIETARIO / CLIENTE" align="center" scale="0.22 0.22 0.22" font="exo2bold" color="#00f2fe"></a-text>
                     </a-plane>
-
-                    <a-plane id="btn-modulo-servicios" class="clickable" onclick="navegarModuloGeneric('Servicios')" position="0 -0.34 0" width="0.86" height="0.16" color="#0f172a" material="opacity: 0.98; border: 1px solid #334155;">
-                        <a-text value="SERVICIOS" align="center" scale="0.23 0.23 0.23" font="exo2bold" color="#fff"></a-text>
+                    
+                    <a-plane id="btn-modulo-servicios" class="clickable" onclick="navegarModuloGeneric('Servicios')" position="0 -0.42 0" width="0.86" height="0.11" color="#0f172a" material="opacity: 0.98; border: 1px solid #334155;">
+                        <a-text value="SERVICIOS" align="center" scale="0.22 0.22 0.22" font="exo2bold" color="#fff"></a-text>
                     </a-plane>
+                    
                 </a-entity>
 
-                <a-plane id="boton-salir-hub-3d" class="clickable" onclick="desactivarHubSutil()" position="0 -0.48 0.01" width="0.86" height="0.13" color="#581c87" material="opacity: 0.9;">
+                <a-plane id="boton-salir-hub-3d" class="clickable" onclick="desactivarHubSutil()" position="0 -0.53 0.01" width="0.86" height="0.11" color="#581c87" material="opacity: 0.9;">
                     <a-text value="SALIR DE LA CONEXION HUBS" align="center" scale="0.18 0.18 0.18" font="exo2bold" color="#f5f3ff"></a-text>
                 </a-plane>
 
-                <!-- PIE CORPORATIVO LIMPIO CON ESPACIOS AGRANDADOS (REQUISITO 2) -->
+                <!-- PIE CORPORATIVO LIMPIO -->
                 <a-entity position="0 -0.88 0.01">
                     <a-plane width="0.94" height="0.40" color="#070a14" material="opacity: 0.95; transparent: true;"></a-plane>
                     <a-image src="#asset-logo" position="-0.24 0.05 0.02" width="0.22" height="0.22" material="transparent: true; shader: flat;"></a-image>
@@ -364,7 +372,7 @@
                 </a-plane>
             </a-entity>
 
-            <!-- SUB-PANEL: FASE 8 BINARIO SANEADO (SITUADO SIN AMBAS A LA VEZ) -->
+            <!-- SUB-PANEL: FASE 8 BINARIA COMPACTA -->
             <a-entity id="paleta-tipo-compra" scale="0 0 0" position="0 -0.05 0.02">
                 <a-plane width="0.94" height="0.90" color="#020617" material="opacity: 0.98; border: 2px solid #00f2fe;">
                     <a-text value="SELECCIONE SERVICIO" align="center" position="0 0.35 0.01" scale="0.26 0.26 0.26" font="exo2bold" color="#fbbf24"></a-text>
@@ -382,24 +390,19 @@
                 </a-plane>
             </a-entity>
 
-            <!-- ========================================================================= -->
-            <!-- SUB-PANEL: FASE FINAL DE REVISIÓN Y RGPD (NIVELACIÓN Y SIMETRÍA 100%) -->
-            <!-- ========================================================================= -->
+            <!-- SUB-PANEL: FASE FINAL DE REVISIÓN -->
             <a-entity id="panel-rgpd" scale="0 0 0" position="0 -0.05 0.02">
                 <a-plane width="0.94" height="1.1" color="#020617" material="border: 2px solid #00f2fe;">
                     
-                    <!-- TEXTOS ESTILIZADOS CON FUENTE PREMIUM MONTSERRAT SANEADOS -->
                     <a-text value="REVISION GENERAL" align="center" position="0 0.44 0.01" scale="0.26 0.26 0.26" font="exo2bold" color="#00f2fe"></a-text>
                     <a-text value="Por favor autoriza el tratamiento legal" align="center" position="0 0.36 0.01" scale="0.16 0.16 0.16" font="exo2bold" color="#94a3b8"></a-text>
                     
-                    <!-- MARCO FOTOGRÁFICO DINÁMICO DE LA POBLACIÓN DE BÚSQUEDA -->
                     <a-plane position="0 0.05 0.01" width="0.65" height="0.38" color="#070a14">
                         <a-image id="rgpd-imagen-poblacion" position="0 0 0.01" width="0.63" height="0.36" src="#thumb-campana" material="shader: flat;"></a-image>
                     </a-plane>
                     
                     <a-text value="Al aceptar, autorizas bajo la Ley RGPD" align="center" position="0 -0.24 0.01" scale="0.17 0.17 0.17" font="exo2bold" color="#64748b"></a-text>
                     
-                    <!-- CORRECCIÓN DE ALTURA EN EJE Y Y SIMETRÍA CRÍTICA DE BOTONERAS -->
                     <a-plane class="clickable" onclick="confirmarYDespacharLark()" position="0.23 -0.42 0.02" width="0.38" height="0.12" color="#22c55e">
                         <a-text value="ACEPTAR" align="center" scale="0.20 0.20 0.20" font="exo2bold" color="#fff"></a-text>
                     </a-plane>
@@ -451,7 +454,6 @@
         recognition.maxAlternatives = 1;
         recognition.continuous = true; 
 
-        // MAPEO DE IMÁGENES DE POBLACIONES PARA LA FICHA DE REVISIÓN DINÁMICA
         const miniaturasPoblaciones = {
             'Alcanar': 'https://img.youtube.com/vi/oTGUy0fR9i4/0.jpg',
             'La Rapita': 'https://img.youtube.com/vi/oTGUy0fR9i4/0.jpg',
@@ -472,7 +474,7 @@
             
             let anchoCalculado = (porcentaje / 100) * 0.85;
             relleno.setAttribute('width', anchoCalculado);
-            let posX = -0.425 + (anchoCalculado / 2);
+            let posX = -0.44 + (anchoCalculado / 2);
             relleno.setAttribute('position', {x: posX, y: 0, z: 0.01});
             
             txtPorc.setAttribute('value', porcentaje + "%");
@@ -587,7 +589,7 @@
 
             if (faseFormulario === 2) {
                 actualizarProgresoVisual(5, "Fase 2: Nombre Completo");
-                hablarSara("¿Me puedes indicar tu nombre completo para dirigirme a ti?", function() {
+                hablarSara("Me puedes indicar tu nombre completo para dirigirme a ti?", function() {
                     let nombreEntrada = prompt("Introduce tu nombre y apellidos:");
                     if (nombreEntrada && nombreEntrada.trim() !== "") {
                         leadData.nombre = nombreEntrada.trim();
@@ -664,11 +666,9 @@
             document.getElementById('ficha-linea-4').setAttribute('value', "ZONA: " + sanearTextoParaAFrame(leadData.poblacion));
             document.getElementById('ficha-linea-4').setAttribute('visible', 'true');
             
-            // INYECCIÓN DE IMAGEN ASOCIADA EN EL COMPONENTE RGPD
             if (miniaturasPoblaciones[nombrePoblacion]) {
                 document.getElementById('rgpd-imagen-poblacion').setAttribute('src', miniaturasPoblaciones[nombrePoblacion]);
             } else {
-                // Imagen por defecto (Campana) si es una de las otras zonas
                 document.getElementById('rgpd-imagen-poblacion').setAttribute('src', 'https://img.youtube.com/vi/9TTqR1wD3jI/0.jpg');
             }
 
@@ -739,10 +739,18 @@
             volverAlMenuPrincipal();
         }
 
-        function enviarCandidaturaAdvisorLark() {
-            alert("Candidatura transmitida con éxito.");
-            document.getElementById('overlay-advisors').style.display = 'none';
-            volverAlMenuPrincipal();
+        function abrirMenuIdiomasFlotante() {
+            try { recognition.abort(); } catch(e){}
+            document.getElementById('overlay-idiomas').style.display = 'flex';
+        }
+
+        function cambiarFicheroIdioma(nombreArchivo) {
+            document.getElementById('overlay-idiomas').style.display = 'none';
+            const fundido = document.getElementById('capa-fundido-negro');
+            fundido.style.pointerEvents = 'auto'; fundido.style.opacity = '1';
+            setTimeout(() => {
+                window.location.href = "https://level-i.github.io/" + nombreArchivo;
+            }, 1000);
         }
 
         recognition.onresult = function(event) {
@@ -781,6 +789,8 @@
             document.getElementById('paleta-poblaciones').setAttribute('scale', '0 0 0');
             document.getElementById('paleta-tipo-compra').setAttribute('scale', '0 0 0');
             document.getElementById('panel-rgpd').setAttribute('scale', '0 0 0');
+            
+            // Aseguramos que el botón SALIR vuelva a aparecer junto con el menú principal
             document.getElementById('boton-salir-hub-3d').setAttribute('scale', '1 1 1');
             document.getElementById('paleta-principal').setAttribute('scale', '1 1 1');
             document.getElementById('texto-estado-vr').setAttribute('value', 'SARA: BIENVENIDA...');
@@ -793,7 +803,7 @@
         }
 
         recognition.onerror = function(event) {
-            if (iaActiva && ![1,2,3,4].includes(faseFormulario)) {
+            if (iaActiva && !window.saraHablando && ![1,2,3,4].includes(faseFormulario)) {
                 try { recognition.start(); } catch(e){}
             }
         };
