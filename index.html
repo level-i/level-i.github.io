@@ -150,9 +150,7 @@
             <img id="thumb-rapita" src="https://img.youtube.com/vi/oTGUy0fR9i4/0.jpg" crossorigin="anonymous">
             <img id="thumb-campana" src="https://img.youtube.com/vi/9TTqR1wD3jI/0.jpg" crossorigin="anonymous">
             <img id="thumb-oasis" src="https://img.youtube.com/vi/NXjj-4OXNmQ/0.jpg" crossorigin="anonymous">
-            
-            <!-- ENLAZADO DIRECTO DE TUS ARCHIVOS TRANSPARENTES -->
-            <img id="asset-logo" src="https://level-i.github.io/docs/favicon-level-fondo-negro-300x300 sin fondo sin fondo.png" crossorigin="anonymous">
+            <img id="asset-logo" src="https://level-i.github.io/docs/favicon-level-fondo-negro-300x300 sin fondo.png" crossorigin="anonymous">
             <img id="asset-api" src="https://level-i.github.io/docs/logo api sin fondo.png" crossorigin="anonymous">
         </a-assets>
 
@@ -163,14 +161,20 @@
             <a-entity cursor="fuse: false; rayOrigin: mouse;" position="0 0 -1" geometry="primitive: ring; radiusInner: 0.007; radiusOuter: 0.014" material="color: #00f2fe; shader: flat; opacity: 0.8;" raycaster="objects: .clickable"></a-entity>
         </a-entity>
 
-        <!-- SMARTPHONE VIRTUAL RECONFIGURADO -->
+        <!-- SMARTPHONE VIRTUAL -->
         <a-entity id="chasis-smartphone-virtual" position="0 1.5 -1.6" rotation="0 0 0">
             <a-plane class="clickable" width="1.0" height="2.4" color="#0a0f1d" material="opacity: 0.96; transparent: true; border: 3px solid #1e293b; borderRadius: 0.05;" position="0 0 0">
                 
                 <!-- TITULO PRINCIPAL DEL SISTEMA -->
                 <a-text value="LEVEL-i ADVISOR" align="left" position="-0.44 1.12 0.01" scale="0.42 0.44 0.44" font="exo2bold" color="#00f2fe"></a-text>
                 
-                <!-- CORRECCIÓN DE LOGO API: UBICADO ARRIBA A LA DERECHA CON TRANSPARENCIA TRANSPARENT Y ALPHATEST PARA BORRAR EL PEGOTE NEGRO -->
+                <!-- BURBUJA SUPERIOR CON LOGO LEVEL -->
+                <a-entity id="burbuja-rostro-sara" position="0.34 1.12 0.01">
+                    <a-circle radius="0.07" color="#0f172a" material="opacity: 0;"></a-circle>
+                    <a-image src="#asset-logo" position="0 0 0.01" width="0.13" height="0.13" material="transparent: true; alphaTest: 0.3; shader: flat;"></a-image>
+                </a-entity>
+
+                <!-- LOGO API CERTIFIED SUPERIOR CON TRANSPARENCIA -->
                 <a-image src="#asset-api" position="0.36 1.12 0.01" width="0.12" height="0.12" material="transparent: true; alphaTest: 0.5; shader: flat;"></a-image>
 
                 <!-- CAJA DE MENSAJES DEL TEXTO GUÍA -->
@@ -240,15 +244,10 @@
                     </a-plane>
                 </a-entity>
 
-                <!-- PIE DE LOGO LEVEL.IMMO CON ALPHATEST INDEPENDIENTE PARA TRANSPARENTAR EL FONDO -->
-                <a-entity id="pie-logos-api" position="0 -0.56 0.01">
-                    <a-plane width="0.94" height="0.22" color="#070a14" material="opacity: 0; transparent: true;"></a-plane>
-                    <a-image src="#asset-logo" position="0 0.04 0.02" width="0.13" height="0.13" material="transparent: true; alphaTest: 0.5; shader: flat;"></a-image>
-                    <a-text value="level.immo" align="center" position="0 -0.06 0.02" scale="0.14 0.14 0.14" font="exo2bold" color="#64748b"></a-text>
-                </a-entity>
-
-                <!-- CONTENEDOR EXCLUSIVO: VOLCADO DE TEXTO FACILITADO AL FINAL DE TODO -->
-                <a-plane id="panel-datos-acumulados" width="0.94" height="0.48" color="#030712" material="opacity: 0.98; border: 1px solid #1f2937;" position="0 -1.05 0.01">
+                <!-- ========================================================================= -->
+                <!-- SECCIÓN REUBICADA Y OPTIMIZADA: EL RESUMEN SUBE DE FORMA NATURAL AL PIE DE LA REVISIÓN -->
+                <!-- ========================================================================= -->
+                <a-plane id="panel-datos-acumulados" width="0.94" height="0.48" color="#030712" material="opacity: 0.98; border: 1px solid #1f2937;" position="0 -0.62 0.01">
                     <a-text value="FICHA HOLOGRAFICA DE SOLICITUD" align="center" position="0 0.20 0.01" scale="0.16 0.16 0.16" font="orbitron" color="#00f2fe"></a-text>
                     
                     <a-text id="ficha-linea-1" value="OP: COMPRAR" align="left" position="-0.44 0.10 0.01" scale="0.18 0.18 0.18" font="exo2bold" color="#fff" visible="false"></a-text>
@@ -323,7 +322,7 @@
                     <a-plane class="clickable" onclick="seleccionarServicioServi('Bancario')" position="0 -0.12 0.01" width="0.86" height="0.16" color="#0f172a">
                         <a-text value="PRODUCTOS BANCARIOS Y/O JUDICIALES" align="center" scale="0.17 0.17 0.17" font="exo2bold" color="#fff"></a-text>
                     </a-plane>
-                    <a-plane class="clickable" onclick="volverAlMenuPrincipal()" position="0 -0.28 0.01" width="0.86" height="0.11" color="#334155">
+                    <a-plane class="clickable" onclick="volverAlMenuPrincipal()" position="0 -0.28 0.01" width="0.86" height="11" color="#334155">
                         <a-text value="CANCELAR" align="center" scale="0.18 0.18 0.18" font="exo2bold" color="#fff"></a-text>
                     </a-plane>
                 </a-plane>
@@ -350,6 +349,14 @@
 
         const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
         recognition.lang = 'es-ES'; recognition.interimResults = false; recognition.maxAlternatives = 1; recognition.continuous = true; 
+
+        const miniaturasPoblaciones = {
+            'Alcanar': 'https://img.youtube.com/vi/oTGUy0fR9i4/0.jpg',
+            'La Rapita': 'https://img.youtube.com/vi/oTGUy0fR9i4/0.jpg',
+            'Barcelona': 'https://img.youtube.com/vi/NXjj-4OXNmQ/0.jpg',
+            'Sabadell': 'https://img.youtube.com/vi/9TTqR1wD3jI/0.jpg',
+            'Terrassa': 'https://img.youtube.com/vi/9TTqR1wD3jI/0.jpg'
+        };
 
         function sanearTextoParaAFrame(texto) {
             if (!texto) return "";
@@ -508,6 +515,12 @@
             document.getElementById('paleta-poblaciones').setAttribute('scale', '0 0 0');
             document.getElementById('ficha-linea-4').setAttribute('value', "ZONA: " + sanearTextoParaAFrame(leadData.poblacion));
             document.getElementById('ficha-linea-4').setAttribute('visible', 'true');
+            
+            if (miniaturasPoblaciones[nombrePoblacion]) {
+                document.getElementById('rgpd-imagen-poblacion').setAttribute('src', miniaturasPoblaciones[nombrePoblacion]);
+            } else {
+                document.getElementById('rgpd-imagen-poblacion').setAttribute('src', 'https://img.youtube.com/vi/9TTqR1wD3jI/0.jpg');
+            }
             faseFormulario = 6; actualizarProgresoVisual(25, "Fase 5: Poblacion Guardada");
             setTimeout(() => {
                 actualizarProgresoVisual(45, "Fase 6: Dictar Caracteristicas");
