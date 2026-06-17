@@ -7,64 +7,84 @@
     <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Orbitron:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
     <style>
         /* PANTALLA DE ACCESO PROFESIONAL */
-        #pantalla-bloqueo { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #020617; z-index: 999999 !important; display: flex; flex-direction: column; align-items: center; justify-content: center; font-family: 'Montserrat', sans-serif; color: white; text-align: center; opacity: 1; pointer-events: all; transition: opacity 1.2s ease-in-out; }
-        .btn-entrar { background: linear-gradient(135deg, #00f2fe, #4f46e5); color: white; border: none; padding: 20px 50px; font-size: 1.1rem; font-weight: bold; border-radius: 30px; cursor: pointer; box-shadow: 0 0 30px rgba(0,242,254,0.5); text-transform: uppercase; letter-spacing: 1px; z-index: 1000000; transition: transform 0.2s; }
-        .btn-entrar:hover { transform: scale(1.02); box-shadow: 0 0 45px rgba(0,242,254,0.8); }
-        .txt-copyright-inicial { position: absolute; bottom: 55px; left: 50%; transform: translateX(-50%); color: #64748b; font-size: 0.7rem; font-weight: 600; letter-spacing: 1px; width: 90%; text-transform: uppercase; }
+        #pantalla-bloqueo { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at center, #0f172a 0%, #020617 100%); z-index: 999999 !important; display: flex; flex-direction: column; align-items: center; justify-content: center; font-family: 'Montserrat', sans-serif; color: white; text-align: center; opacity: 1; pointer-events: all; transition: opacity 1.2s ease-in-out; }
+        .logo-orbital { font-family: 'Orbitron', sans-serif; font-size: 3rem; font-weight: 900; letter-spacing: 5px; margin-bottom: 5px; background: linear-gradient(135deg, #fff, #00f2fe); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 0 30px rgba(0,242,254,0.3); }
+        .sub-orbital { color: #00f2fe; letter-spacing: 3px; margin-bottom: 50px; font-size: 0.85rem; font-weight: 700; text-transform: uppercase; }
+        
+        /* Botón con efecto pulso neón */
+        .btn-entrar { background: linear-gradient(135deg, #00f2fe, #3b82f6); color: #020617; border: none; padding: 18px 45px; font-size: 1.1rem; font-weight: 800; border-radius: 50px; cursor: pointer; box-shadow: 0 0 20px rgba(0,242,254,0.4); text-transform: uppercase; letter-spacing: 1.5px; z-index: 1000000; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); animation: pulse-glow 2s infinite alternate; }
+        .btn-entrar:hover { transform: scale(1.05) translateY(-2px); box-shadow: 0 10px 40px rgba(0,242,254,0.8); background: linear-gradient(135deg, #ffffff, #00f2fe); }
+        @keyframes pulse-glow { 0% { box-shadow: 0 0 15px rgba(0,242,254,0.4); } 100% { box-shadow: 0 0 35px rgba(0,242,254,0.8); } }
+        
+        .txt-copyright-inicial { position: absolute; bottom: 55px; left: 50%; transform: translateX(-50%); color: #475569; font-size: 0.7rem; font-weight: 600; letter-spacing: 2px; width: 90%; text-transform: uppercase; }
         
         /* CAPA DE FUNDIDO FINO */
         #capa-fundido-negro { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000000; z-index: 99999999 !important; opacity: 0; pointer-events: none; transition: opacity 1.5s ease-in-out; }
         .a-canvas { position: absolute !important; top: 0 !important; left: 0 !important; width: 100% !important; height: 100% !important; }
-        .btn-privacidad-html { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); color: #94a3b8; text-decoration: none; font-family: 'Montserrat', sans-serif; font-size: 0.75rem; letter-spacing: 1px; transition: 0.3s; z-index: 10000; }
+        .btn-privacidad-html { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); color: #64748b; text-decoration: none; font-family: 'Montserrat', sans-serif; font-size: 0.75rem; letter-spacing: 1px; transition: 0.3s; z-index: 10000; }
         .btn-privacidad-html:hover { color: #00f2fe; }
         
-        /* INTERFAZ HÍBRIDA ADVISORS HTML - ESTILO CRISTAL HOLOGRÁFICO */
-        .contenedor-overlay-advisors { position: fixed; top: 5%; left: 50%; transform: translateX(-50%); width: 95%; max-width: 1200px; height: 85vh; background: rgba(2, 6, 23, 0.75); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(0, 242, 254, 0.3); border-radius: 16px; z-index: 200000 !important; display: none; flex-direction: column; font-family: 'Montserrat', sans-serif; color: #f8fafc; padding: 30px; overflow-y: auto; box-shadow: 0 0 50px rgba(0, 242, 254, 0.15); }
+        /* INTERFAZ HÍBRIDA ADVISORS HTML - ESTILO CRISTAL HOLOGRÁFICO PREMIUM */
+        .contenedor-overlay-advisors { position: fixed; top: 5%; left: 50%; transform: translateX(-50%); width: 95%; max-width: 1200px; height: 85vh; background: rgba(2, 6, 23, 0.65); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid rgba(0, 242, 254, 0.4); border-radius: 20px; z-index: 200000 !important; display: none; flex-direction: column; font-family: 'Montserrat', sans-serif; color: #f8fafc; padding: 35px; overflow-y: auto; box-shadow: inset 0 0 40px rgba(0, 242, 254, 0.05), 0 20px 50px rgba(0,0,0,0.5); }
+        .contenedor-overlay-advisors::-webkit-scrollbar { width: 8px; }
+        .contenedor-overlay-advisors::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.5); border-radius: 4px; }
+        .contenedor-overlay-advisors::-webkit-scrollbar-thumb { background: #00f2fe; border-radius: 4px; }
+        
         .pestanas-menu { display: flex; gap: 15px; margin-bottom: 25px; border-bottom: 1px solid rgba(0, 242, 254, 0.2); padding-bottom: 15px; }
-        .tab-btn { background: rgba(15, 23, 42, 0.6); color: #00f2fe; border: 1px solid rgba(0, 242, 254, 0.4); padding: 12px 25px; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 0.9rem; text-transform: uppercase; transition: all 0.3s; }
-        .tab-btn.active, .tab-btn:hover { background: rgba(0, 242, 254, 0.15); color: #fff; border-color: #00f2fe; box-shadow: 0 0 20px rgba(0, 242, 254, 0.4); }
-        .seccion-contenido-tab { display: none; }
+        .tab-btn { background: rgba(15, 23, 42, 0.6); color: #00f2fe; border: 1px solid rgba(0, 242, 254, 0.4); padding: 12px 25px; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 0.9rem; text-transform: uppercase; transition: all 0.3s ease; }
+        .tab-btn.active, .tab-btn:hover { background: rgba(0, 242, 254, 0.2); color: #fff; border-color: #00f2fe; box-shadow: 0 0 20px rgba(0, 242, 254, 0.4); transform: translateY(-2px); }
+        .seccion-contenido-tab { display: none; animation: fadeIn 0.4s ease-in-out; }
         .seccion-contenido-tab.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         
         /* ESTILOS DEL MENÚ FLOTANTE DE IDIOMAS */
-        .selector-idiomas-flotante { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(2, 6, 23, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 2px solid #00f2fe; border-radius: 12px; padding: 30px; z-index: 300000 !important; display: none; flex-direction: column; gap: 15px; font-family: 'Montserrat', sans-serif; text-align: center; width: 280px; box-shadow: 0 0 40px rgba(0, 242, 254, 0.3); }
-        .btn-idioma-opc { background: rgba(30, 41, 59, 0.7); color: white; border: 1px solid rgba(0, 242, 254, 0.3); padding: 12px; border-radius: 6px; font-weight: 700; cursor: pointer; transition: 0.3s; text-transform: uppercase; }
-        .btn-idioma-opc:hover { background: #00f2fe; color: #0f172a; box-shadow: 0 0 15px rgba(0, 242, 254, 0.5); }
+        .selector-idiomas-flotante { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(2, 6, 23, 0.85); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 2px solid #00f2fe; border-radius: 16px; padding: 35px; z-index: 300000 !important; display: none; flex-direction: column; gap: 15px; font-family: 'Montserrat', sans-serif; text-align: center; width: 300px; box-shadow: 0 20px 60px rgba(0, 242, 254, 0.25); }
+        .btn-idioma-opc { background: rgba(30, 41, 59, 0.7); color: white; border: 1px solid rgba(0, 242, 254, 0.3); padding: 14px; border-radius: 8px; font-weight: 700; cursor: pointer; transition: all 0.3s; text-transform: uppercase; letter-spacing: 1px; }
+        .btn-idioma-opc:hover { background: #00f2fe; color: #020617; box-shadow: 0 0 20px rgba(0, 242, 254, 0.6); transform: translateY(-2px); }
         
         /* ESTILOS AÑADIDOS SUITE ADVISORS */
         #level-home-master-suite, #level-home-master-suite * { box-sizing: border-box; font-family: 'Montserrat', sans-serif !important; }
-        #level-home-master-suite { background-color: transparent; color: #f8fafc; padding: 1rem 0; width: 100%; border-radius: 16px; margin: 0 auto; }
+        #level-home-master-suite { background-color: transparent; color: #f8fafc; padding: 1rem 0; width: 100%; margin: 0 auto; }
         .hunt-header, .sim-header { text-align: center; margin-bottom: 3.5rem; }
-        .hunt-badge, .sim-badge { background: rgba(0, 242, 254, 0.1); color: #00f2fe; padding: 0.5rem 1.5rem; border-radius: 9999px; font-size: 0.85rem; font-weight: 800; text-transform: uppercase; border: 1px solid rgba(0, 242, 254, 0.3); }
-        #level-home-master-suite h2 { font-size: 2.5rem; font-weight: 800; color: #ffffff; margin: 1rem 0; text-shadow: 0 0 10px rgba(0, 242, 254, 0.2); }
+        .hunt-badge, .sim-badge { background: rgba(0, 242, 254, 0.1); color: #00f2fe; padding: 0.6rem 2rem; border-radius: 50px; font-size: 0.85rem; font-weight: 800; text-transform: uppercase; border: 1px solid rgba(0, 242, 254, 0.4); box-shadow: 0 0 15px rgba(0, 242, 254, 0.15); }
+        #level-home-master-suite h2 { font-size: 2.5rem; font-weight: 800; color: #ffffff; margin: 1.5rem 0 1rem 0; text-shadow: 0 0 15px rgba(0, 242, 254, 0.3); }
         #level-home-master-suite h2 span { color: #00f2fe; }
         .hunt-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; }
-        .profile-box { background: rgba(15, 23, 42, 0.5); border: 1px solid rgba(0, 242, 254, 0.2); border-radius: 12px; padding: 2.5rem; backdrop-filter: blur(5px); }
-        .profile-advisor { border-top: 4px solid #00f2fe; }
-        .profile-padrino { border-top: 4px solid #fbbf24; }
-        .benefits-list { list-style: none; padding: 0; }
-        .benefits-list li { margin-bottom: 10px; color: #cbd5e1; }
-        .btn-home { display: block; text-align: center; padding: 1rem; border-radius: 8px; font-weight: 800; text-decoration: none; margin-top: 20px; transition: 0.3s; }
+        .profile-box { background: rgba(15, 23, 42, 0.4); border: 1px solid rgba(0, 242, 254, 0.2); border-radius: 16px; padding: 2.5rem; backdrop-filter: blur(10px); transition: transform 0.3s; }
+        .profile-box:hover { transform: translateY(-5px); border-color: rgba(0, 242, 254, 0.6); box-shadow: 0 15px 30px rgba(0,0,0,0.4); }
+        .profile-advisor { border-top: 5px solid #00f2fe; }
+        .profile-padrino { border-top: 5px solid #fbbf24; }
+        .benefits-list { list-style: none; padding: 0; margin-top: 20px; }
+        .benefits-list li { margin-bottom: 12px; color: #e2e8f0; line-height: 1.5; font-size: 0.95rem; }
+        .btn-home { display: block; text-align: center; padding: 1.2rem; border-radius: 8px; font-weight: 800; text-decoration: none; margin-top: 25px; transition: all 0.3s; text-transform: uppercase; letter-spacing: 1px; }
         .btn-gold { background: #00f2fe; color: #020617; }
-        .btn-gold:hover { background: #fff; box-shadow: 0 0 20px rgba(0, 242, 254, 0.6); }
-        .btn-outline { border: 2px solid #fbbf24; color: #fbbf24; }
-        .btn-outline:hover { background: #fbbf24; color: #020617; }
-        .suite-divider { border: 0; height: 1px; background: rgba(0, 242, 254, 0.2); margin: 3rem 0; }
+        .btn-gold:hover { background: #fff; box-shadow: 0 0 25px rgba(0, 242, 254, 0.8); }
+        .btn-outline { border: 2px solid #fbbf24; color: #fbbf24; background: rgba(251, 191, 36, 0.05); }
+        .btn-outline:hover { background: #fbbf24; color: #020617; box-shadow: 0 0 25px rgba(251, 191, 36, 0.6); }
+        .suite-divider { border: 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(0, 242, 254, 0.4), transparent); margin: 4rem 0; }
         .sim-grid { display: grid; grid-template-columns: 1.2fr 1fr; gap: 3rem; }
-        .control-card { background: rgba(15, 23, 42, 0.5); padding: 2.5rem; border-radius: 12px; border: 1px solid rgba(0, 242, 254, 0.2); }
-        .section-divider { font-size: 0.9rem; color: #00f2fe; text-transform: uppercase; border-bottom: 1px solid rgba(0, 242, 254, 0.2); padding-bottom: 0.5rem; margin-top: 20px; }
-        .slider-group { margin-top: 15px; }
-        .slider-label-row { display: flex; justify-content: space-between; margin-bottom: 5px; }
-        .val { color: #00f2fe; font-weight: 800; }
-        .results-card { background: rgba(2, 6, 23, 0.8); padding: 3rem; border: 1px solid rgba(0, 242, 254, 0.4); border-radius: 12px; text-align: center; box-shadow: inset 0 0 30px rgba(0, 242, 254, 0.05); }
-        .main-metric .value { font-size: 3.5rem; font-weight: 900; color: #00f2fe; margin: 1rem 0; text-shadow: 0 0 20px rgba(0, 242, 254, 0.4); }
-        .sub-metrics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .sub-metric { background: rgba(15, 23, 42, 0.6); padding: 10px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.05); }
-        .btn-join-bunker { display: block; background: #00f2fe; color: #020617; padding: 1.2rem; border-radius: 8px; font-weight: 900; text-decoration: none; margin-top: 2rem; transition: 0.3s; }
-        .btn-join-bunker:hover { background: #fff; box-shadow: 0 0 25px rgba(0, 242, 254, 0.8); }
+        .control-card { background: rgba(15, 23, 42, 0.4); padding: 2.5rem; border-radius: 16px; border: 1px solid rgba(0, 242, 254, 0.2); backdrop-filter: blur(10px); }
+        .section-divider { font-size: 0.9rem; color: #00f2fe; text-transform: uppercase; border-bottom: 1px solid rgba(0, 242, 254, 0.3); padding-bottom: 0.5rem; margin-top: 20px; margin-bottom: 15px; font-weight: 700; }
+        .slider-group { margin-bottom: 20px; }
+        .slider-label-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.95rem; }
+        .val { color: #00f2fe; font-weight: 800; font-size: 1.1rem; }
+        input[type=range] { accent-color: #00f2fe; cursor: pointer; }
+        
+        .results-card { background: rgba(2, 6, 23, 0.8); padding: 3rem; border: 1px solid rgba(0, 242, 254, 0.4); border-radius: 16px; text-align: center; box-shadow: inset 0 0 40px rgba(0, 242, 254, 0.08); display: flex; flex-direction: column; justify-content: center; }
+        .main-metric .value { font-size: 3.8rem; font-weight: 900; color: #00f2fe; margin: 1.5rem 0; text-shadow: 0 0 25px rgba(0, 242, 254, 0.5); font-family: 'Orbitron', sans-serif; }
+        .sub-metrics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 15px; }
+        .sub-metric { background: rgba(15, 23, 42, 0.6); padding: 15px; border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.05); }
+        .btn-join-bunker { display: block; background: linear-gradient(135deg, #00f2fe, #3b82f6); color: #020617; padding: 1.2rem; border-radius: 8px; font-weight: 900; text-decoration: none; margin-top: 2.5rem; transition: all 0.3s; letter-spacing: 1.5px; }
+        .btn-join-bunker:hover { background: linear-gradient(135deg, #ffffff, #00f2fe); box-shadow: 0 10px 30px rgba(0, 242, 254, 0.6); transform: translateY(-3px); }
+        
+        @media (max-width: 900px) {
+            .hunt-grid, .sim-grid { grid-template-columns: 1fr; }
+            .logo-orbital { font-size: 2.2rem; }
+            #level-home-master-suite h2 { font-size: 1.8rem; }
+        }
     </style>
     <script>
         AFRAME.registerComponent('ondas-voz-sara', {
@@ -88,56 +108,56 @@
 <body>
     <div id="capa-fundido-negro"></div>
     <div id="pantalla-bloqueo">
-        <h1 style="letter-spacing: 3px; font-size: 2.2rem; margin-bottom: 5px; font-family: 'Orbitron';">LEVEL – i</h1>
-        <p style="color: #00f2fe; letter-spacing: 2px; margin-bottom: 40px; font-size: 0.85rem; font-weight: 600;">ORBITAL OFFICE CLIENT EXPERIENCE by Level.immo</p>
-        <button class="btn-entrar" onclick="solicitarPermisosYEntrar()">Entrar en la Experiencia VR</button>
+        <h1 class="logo-orbital">LEVEL – i</h1>
+        <p class="sub-orbital">ORBITAL OFFICE CLIENT EXPERIENCE</p>
+        <button class="btn-entrar" onclick="solicitarPermisosYEntrar()">Iniciar Conexión VR</button>
         <p class="txt-copyright-inicial">(c) 2026 LEVEL.IMMO SUITE 24365 OFFICE.<br>Todos los derechos reservados</p>
         <a class="btn-privacidad-html" href="https://level.immo/politica-de-privacidad/" target="_blank">Política de Privacidad</a>
     </div>
     
     <div id="overlay-idiomas" class="selector-idiomas-flotante">
-        <h4 style="color: #00f2fe; margin-top: 0; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px;">Seleccionar Idioma</h4>
+        <h4 style="color: #00f2fe; margin-top: 0; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; font-weight: 800;">Seleccionar Idioma</h4>
         <button class="btn-idioma-opc" onclick="cambiarFicheroIdioma('index.html')">Castellano</button>
         <button class="btn-idioma-opc" onclick="cambiarFicheroIdioma('ca.html')">Català</button>
         <button class="btn-idioma-opc" onclick="cambiarFicheroIdioma('en.html')">English</button>
         <button class="btn-idioma-opc" onclick="cambiarFicheroIdioma('fr.html')">Français</button>
-        <button class="btn-idioma-opc" style="background: rgba(239, 68, 68, 0.7); border: 1px solid #ef4444; margin-top: 10px;" onclick="cerrarSelectorIdiomas()">Cancelar</button>
+        <button class="btn-idioma-opc" style="background: rgba(239, 68, 68, 0.8); border: 1px solid #ef4444; margin-top: 15px;" onclick="cerrarSelectorIdiomas()">Cancelar</button>
     </div>
     
     <div id="overlay-advisors" class="contenedor-overlay-advisors">
         <div class="pestanas-menu">
-            <button class="tab-btn active" onclick="cambiarPestanaAdvisors('tab-informacion', this)">Información</button>
-            <button class="tab-btn" onclick="cerrarPanelOverlayAdvisors()">X Cerrar Suite</button>
+            <button class="tab-btn active" onclick="cambiarPestanaAdvisors('tab-informacion', this)">Dashboard Principal</button>
+            <button class="tab-btn" onclick="cerrarPanelOverlayAdvisors()" style="background: rgba(220, 38, 38, 0.2); border-color: #ef4444; color: #fca5a5;">X Cerrar Suite</button>
         </div>
         <div id="tab-informacion" class="seccion-contenido-tab active bloque-info-web">
             <div id="level-home-master-suite">
                 <div class="hunt-header">
                     <span class="hunt-badge">Programa de Alianzas Avanzado</span>
                     <h2>Mesa de Expansión Nacional: <span>Dos Perfiles, Un Solo Objetivo</span></h2>
-                    <p class="hunt-subtitle" style="color:#94a3b8;">Desplegamos el ecosistema tecnológico Level-I en cualquier municipio. Elige tu modalidad de entrada y activa tu flujo de ingresos.</p>
+                    <p class="hunt-subtitle" style="color:#94a3b8; max-width: 700px; margin: 0 auto; font-size: 1.1rem;">Desplegamos el ecosistema tecnológico Level-I en cualquier municipio. Elige tu modalidad de entrada y activa tu flujo de ingresos.</p>
                 </div>
                 <div class="hunt-grid">
                     <div class="profile-box profile-advisor">
                         <div>
-                            <span class="box-icon" style="font-size:2rem;">💼</span>
+                            <span class="box-icon" style="font-size:2.5rem; margin-bottom: 10px; display: inline-block;">💼</span>
                             <h3>1. Quiero ser <span>Advisor Activo</span></h3>
-                            <p class="profile-desc">Para autónomos, empresarios o profesionales con red comercial local dispares en todo el territorio.</p>
+                            <p class="profile-desc" style="color: #cbd5e1; font-weight: 600;">Para autónomos, empresarios o profesionales con red comercial local dispares en todo el territorio.</p>
                             <ul class="benefits-list">
                                 <li><strong>0€ Coste de Entrada:</strong> Accede a la Suite con tu cuota mensual íntegramente apadrinada.</li>
-                                <li><strong>Soporte Legal Included:</strong> Gestoría corporativa a tu servicio sin coste.</li>
-                                <li><strong>Herramientas Élite:</strong> Modelos Oculus VR, mandatos directos off-market y formación.</li>
+                                <li><strong>Soporte Legal Incluido:</strong> Gestoría corporativa a tu servicio sin coste.</li>
+                                <li><strong>Herramientas Élite:</strong> Modelos Oculus VR, mandatos directos off-market y formación continua.</li>
                             </ul>
                         </div>
                         <a href="https://wa.me/34641451736?text=QUIERO%20SER%20ADVISOR%20APADRINADO%20-%20SOLICITO%20MESA%20TECNICA" class="btn-home btn-gold" target="_blank">Postular como Advisor</a>
                     </div>
                     <div class="profile-box profile-padrino">
                         <div>
-                            <span class="box-icon" style="font-size:2rem;">👑</span>
+                            <span class="box-icon" style="font-size:2.5rem; margin-bottom: 10px; display: inline-block;">👑</span>
                             <h3>2. Quiero ser <span style="color:#fbbf24;">Mecenas / Padrino</span></h3>
-                            <p class="profile-desc">Para Inversores que desean construir activos humanos y rendimientos pasivos.</p>
+                            <p class="profile-desc" style="color: #cbd5e1; font-weight: 600;">Para Inversores que desean construir activos humanos y rendimientos pasivos.</p>
                             <ul class="benefits-list">
                                 <li><strong>Financia el Motor:</strong> Abonas las cuotas tecnológicas de tus Advisors asignados.</li>
-                                <li><strong>Rappel del 10% al 15%:</strong> Obtienes un porcentaje sobre los honorarios generados.</li>
+                                <li><strong>Rappel del 10% al 15%:</strong> Obtienes un porcentaje directo sobre los honorarios generados.</li>
                                 <li><strong>Control Absoluto:</strong> Monitoriza el rendimiento y captaciones desde tu entorno privado.</li>
                             </ul>
                         </div>
@@ -200,32 +220,31 @@
                     <div class="results-card">
                         <div>
                             <h3>Tu Retribución Anual Combinada</h3>
-                            <p style="color:#94a3b8; font-size:0.85rem;">Cálculo sumando tu Red y tu Implicación Operativa</p>
+                            <p style="color:#94a3b8; font-size:0.9rem; margin-top: 5px;">Cálculo sumando tu Red y tu Implicación Operativa</p>
                         </div>
                         <div class="main-metric">
-                            <div class="label">Ingresos Totales Estimados</div>
                             <div class="value" id="res-net-income">0 €</div>
                         </div>
                         <div>
                             <div class="sub-metrics-grid">
                                 <div class="sub-metric">
-                                    <div class="sm-label" style="font-size:0.8rem;">Rappel Neto por Red</div>
-                                    <div class="sm-value" id="res-rappel-income" style="color: #00f2fe; font-weight:bold;">0 €</div>
+                                    <div class="sm-label" style="font-size:0.8rem; color: #cbd5e1;">Rappel Neto por Red</div>
+                                    <div class="sm-value" id="res-rappel-income" style="color: #00f2fe; font-weight:bold; font-size: 1.1rem; margin-top: 5px;">0 €</div>
                                 </div>
                                 <div class="sub-metric">
-                                    <div class="sm-label" style="font-size:0.8rem;">Bonus Intervención</div>
-                                    <div class="sm-value" id="res-direct-work-income" style="color: #ffffff; font-weight:bold;">0 €</div>
+                                    <div class="sm-label" style="font-size:0.8rem; color: #cbd5e1;">Bonus Intervención</div>
+                                    <div class="sm-value" id="res-direct-work-income" style="color: #ffffff; font-weight:bold; font-size: 1.1rem; margin-top: 5px;">0 €</div>
                                 </div>
                                 <div class="sub-metric">
-                                    <div class="sm-label" style="font-size:0.8rem;">Coste Estructura</div>
-                                    <div class="sm-value" id="res-structure-cost" style="color: #ef4444; font-weight:bold;">0 €</div>
+                                    <div class="sm-label" style="font-size:0.8rem; color: #cbd5e1;">Coste Estructura</div>
+                                    <div class="sm-value" id="res-structure-cost" style="color: #ef4444; font-weight:bold; font-size: 1.1rem; margin-top: 5px;">0 €</div>
                                 </div>
                                 <div class="sub-metric">
-                                    <div class="sm-label" style="font-size:0.8rem;">Total Ops. Red</div>
-                                    <div class="sm-value" id="res-total-operations" style="font-weight:bold;">0 ops.</div>
+                                    <div class="sm-label" style="font-size:0.8rem; color: #cbd5e1;">Total Ops. Red</div>
+                                    <div class="sm-value" id="res-total-operations" style="font-weight:bold; font-size: 1.1rem; margin-top: 5px;">0 ops.</div>
                                 </div>
                             </div>
-                            <a href="https://level.immo/admision-advisors/" class="btn-join-bunker">ACTIVAR MI LICENCIA AHORA</a>
+                            <a href="https://level.immo/admision-advisors/" class="btn-join-bunker" target="_blank">ACTIVAR MI LICENCIA AHORA</a>
                         </div>
                     </div>
                 </div>
@@ -233,14 +252,15 @@
         </div>
     </div>
 
-    <a-scene loading-screen="enabled: false">
+    <a-scene loading-screen="enabled: false" cursor="rayOrigin: mouse">
         <a-assets>
             <video id="video-tiktok-src" src="https://level-i.github.io/level-intro.mp4" autoplay loop muted playsinline webkit-playsinline preload="auto" crossorigin="anonymous"></video>
             <video id="video-derecha-src" src="https://level-i.github.io/docs/radarchaletsalcanarlarapita.mp4" autoplay loop muted playsinline webkit-playsinline preload="auto" crossorigin="anonymous"></video>
             
             <video id="video-far-right-src" src="https://level-i.github.io/docs/sueloresidenciallarapitavinaros.mp4" autoplay loop muted playsinline webkit-playsinline preload="auto" crossorigin="anonymous"></video>
             
-            <video id="video-tancat-src" src="https://level-i.github.io/docs/oasisoportunidad.mp4" autoplay loop muted playsinline webkit-playsinline preload="auto" crossorigin="anonymous"></video>
+            <video id="video-oportunidad-rapita" src="pisofinaok.mp4" autoplay loop muted playsinline webkit-playsinline preload="auto" crossorigin="anonymous"></video>
+            
             <video id="video-izq2-src" src="https://level-i.github.io/docs/radarchaletsalcanarlarapita.mp4" autoplay loop muted playsinline webkit-playsinline preload="auto" crossorigin="anonymous"></video>
             <video id="video-izq3-src" src="https://level-i.github.io/docs/oasisoportunidad.mp4" autoplay loop muted playsinline webkit-playsinline preload="auto" crossorigin="anonymous"></video>
             <video id="video-back-src" src="https://level-i.github.io/level-intro.mp4" autoplay loop muted playsinline webkit-playsinline preload="auto" crossorigin="anonymous"></video>
@@ -251,7 +271,7 @@
         </a-assets>
 
         <a-sky id="cielo-entorno" color="#020617"></a-sky>
-        <a-stars radius="200" depth="50" count="1500" factor="4" speed="1"></a-stars>
+        <a-stars radius="200" depth="50" count="2000" factor="4" speed="1"></a-stars>
 
         <a-entity id="cam-rig" rotation="0 0 0">
             <a-entity id="contenedor-camara" camera look-controls="magicWindowTrackingEnabled: true; touchEnabled: true;" position="0 1.6 0">
@@ -260,13 +280,15 @@
         </a-entity>
 
         <a-entity id="chasis-smartphone-virtual" position="0 1.6 -1.35" scale="1.15 1.15 1.15" rotation="0 0 0">
-            <a-plane class="clickable" width="1.0" height="1.95" color="#020617" material="opacity: 0.7; transparent: true; shader: flat;" position="0 0 0">
+            <a-plane class="clickable" width="1.0" height="1.95" color="#020617" material="opacity: 0.75; transparent: true; shader: flat;" position="0 0 0">
+                <a-plane width="1.0" height="1.95" position="0 0 0.005" material="color: #00f2fe; opacity: 0.05; transparent: true; wireframe: true; wireframeLinewidth: 1;"></a-plane>
+                
                 <a-text value="LEVEL-i ADVISOR" align="left" position="-0.44 0.88 0.01" scale="0.42 0.44 0.44" font="exo2bold" color="#00f2fe"></a-text>
                 <a-entity position="0.34 0.88 0.01">
                     <a-image src="#asset-logo" position="0 0 0.01" width="0.13" height="0.13" material="transparent: true; alphaTest: 0.3; shader: flat;"></a-image>
                 </a-entity>
                 <a-image src="#asset-api" position="0.38 0.88 0.03" width="0.12" height="0.12" material="transparent: true; alphaTest: 0.1; shader: flat;"></a-image>
-                <a-plane width="0.88" height="0.16" color="#0284c7" material="opacity: 0.1; transparent: true; shader: flat;" position="0 0.74 0.01">
+                <a-plane width="0.88" height="0.16" color="#0284c7" material="opacity: 0.15; transparent: true; shader: flat;" position="0 0.74 0.01">
                     <a-text id="texto-estado-vr" value="INITIALIZING ADVISOR SUITE..." align="left" position="-0.44 0.02 0.01" scale="0.21 0.22 0.24" font="monoid" color="#00f2fe"></a-text>
                     <a-entity ondas-voz-sara position="0.32 0.02 0.02">
                         <a-box id="barra-audio-1" width="0.01" height="0.03" depth="0.01" color="#00f2fe" position="0.01 0 0"></a-box>
@@ -280,35 +302,35 @@
                 </a-plane>
                 
                 <a-entity id="paleta-principal" position="0 0.15 0.01">
-                    <a-plane id="btn-modulo-idioma" class="clickable" onclick="abrirMenuIdiomasFlotante()" position="0 0 0" width="0.86" height="0.09" color="#0284c7" material="opacity: 0.3; transparent: true; shader: flat;">
+                    <a-plane id="btn-modulo-idioma" class="clickable" onclick="abrirMenuIdiomasFlotante()" position="0 0 0" width="0.86" height="0.09" color="#0284c7" material="opacity: 0.3; transparent: true; shader: flat;" animation__mouseenter="property: scale; to: 1.05 1.05 1.05; dur: 200; easing: easeOutQuad; startEvents: mouseenter" animation__mouseleave="property: scale; to: 1 1 1; dur: 200; easing: easeOutQuad; startEvents: mouseleave">
                         <a-text value="CAMBIAR IDIOMA" align="center" scale="0.20 0.20 0.20" font="exo2bold" color="#fbbf24"></a-text>
                     </a-plane>
-                    <a-plane id="btn-modulo-comprar" class="clickable" onclick="activarModulo1()" position="0 -0.11 0" width="0.86" height="0.09" color="#0284c7" material="opacity: 0.3; transparent: true; shader: flat;">
+                    <a-plane id="btn-modulo-comprar" class="clickable" onclick="activarModulo1()" position="0 -0.11 0" width="0.86" height="0.09" color="#0284c7" material="opacity: 0.3; transparent: true; shader: flat;" animation__mouseenter="property: scale; to: 1.05 1.05 1.05; dur: 200; easing: easeOutQuad; startEvents: mouseenter" animation__mouseleave="property: scale; to: 1 1 1; dur: 200; easing: easeOutQuad; startEvents: mouseleave">
                         <a-text value="COMPRAR" align="center" scale="0.20 0.20 0.20" font="exo2bold" color="#fff"></a-text>
                     </a-plane>
-                    <a-plane id="btn-modulo-vender" class="clickable" onclick="activarModulo2()" position="0 -0.22 0" width="0.86" height="0.09" color="#0284c7" material="opacity: 0.3; transparent: true; shader: flat;">
+                    <a-plane id="btn-modulo-vender" class="clickable" onclick="activarModulo2()" position="0 -0.22 0" width="0.86" height="0.09" color="#0284c7" material="opacity: 0.3; transparent: true; shader: flat;" animation__mouseenter="property: scale; to: 1.05 1.05 1.05; dur: 200; easing: easeOutQuad; startEvents: mouseenter" animation__mouseleave="property: scale; to: 1 1 1; dur: 200; easing: easeOutQuad; startEvents: mouseleave">
                         <a-text value="VENDER" align="center" scale="0.20 0.20 0.20" font="exo2bold" color="#fff"></a-text>
                     </a-plane>
-                    <a-plane id="btn-modulo-advisors" class="clickable" onclick="abrirModulo5AdvisorsHTML()" position="0 -0.33 0" width="0.86" height="0.09" color="#0284c7" material="opacity: 0.3; transparent: true; shader: flat;">
+                    <a-plane id="btn-modulo-advisors" class="clickable" onclick="abrirModulo5AdvisorsHTML()" position="0 -0.33 0" width="0.86" height="0.09" color="#0284c7" material="opacity: 0.3; transparent: true; shader: flat;" animation__mouseenter="property: scale; to: 1.05 1.05 1.05; dur: 200; easing: easeOutQuad; startEvents: mouseenter" animation__mouseleave="property: scale; to: 1 1 1; dur: 200; easing: easeOutQuad; startEvents: mouseleave">
                         <a-text value="ADVISORS DE ZONA" align="center" scale="0.20 0.20 0.20" font="exo2bold" color="#00f2fe"></a-text>
                     </a-plane>
-                    <a-plane id="btn-modulo-admin" class="clickable" onclick="activarModulo6Administracion()" position="0 -0.44 0" width="0.86" height="0.09" color="#0284c7" material="opacity: 0.3; transparent: true; shader: flat;">
+                    <a-plane id="btn-modulo-admin" class="clickable" onclick="activarModulo6Administracion()" position="0 -0.44 0" width="0.86" height="0.09" color="#0284c7" material="opacity: 0.3; transparent: true; shader: flat;" animation__mouseenter="property: scale; to: 1.05 1.05 1.05; dur: 200; easing: easeOutQuad; startEvents: mouseenter" animation__mouseleave="property: scale; to: 1 1 1; dur: 200; easing: easeOutQuad; startEvents: mouseleave">
                         <a-text value="ADMINISTRACION" align="center" scale="0.20 0.20 0.20" font="exo2bold" color="#fff"></a-text>
                     </a-plane>
-                    <a-plane id="btn-modulo-propietario" class="clickable" onclick="navegarModuloGeneric('Propietario')" position="0 -0.55 0" width="0.86" height="0.09" color="#0284c7" material="opacity: 0.3; transparent: true; shader: flat;">
+                    <a-plane id="btn-modulo-propietario" class="clickable" onclick="navegarModuloGeneric('Propietario')" position="0 -0.55 0" width="0.86" height="0.09" color="#0284c7" material="opacity: 0.3; transparent: true; shader: flat;" animation__mouseenter="property: scale; to: 1.05 1.05 1.05; dur: 200; easing: easeOutQuad; startEvents: mouseenter" animation__mouseleave="property: scale; to: 1 1 1; dur: 200; easing: easeOutQuad; startEvents: mouseleave">
                         <a-text value="PROPIETARIO / CLIENTE" align="center" scale="0.20 0.20 0.20" font="exo2bold" color="#fbbf24"></a-text>
                     </a-plane>
-                    <a-plane id="btn-modulo-servicios" class="clickable" onclick="navegarModuloGeneric('Servicios')" position="0 -0.66 0" width="0.86" height="0.09" color="#0284c7" material="opacity: 0.15; transparent: true; shader: flat;">
+                    <a-plane id="btn-modulo-servicios" class="clickable" onclick="navegarModuloGeneric('Servicios')" position="0 -0.66 0" width="0.86" height="0.09" color="#0284c7" material="opacity: 0.15; transparent: true; shader: flat;" animation__mouseenter="property: scale; to: 1.05 1.05 1.05; dur: 200; easing: easeOutQuad; startEvents: mouseenter" animation__mouseleave="property: scale; to: 1 1 1; dur: 200; easing: easeOutQuad; startEvents: mouseleave">
                         <a-text value="SERVICIOS" align="center" scale="0.20 0.20 0.20" font="exo2bold" color="#94a3b8"></a-text>
                     </a-plane>
                 </a-entity>
                 
-                <a-plane id="boton-salir-hub-3d" class="clickable" onclick="desactivarHubSutil()" position="0 -0.65 0.01" width="0.86" height="0.09" color="#9f1239" material="opacity: 0.7; transparent: true; shader: flat;">
+                <a-plane id="boton-salir-hub-3d" class="clickable" onclick="desactivarHubSutil()" position="0 -0.65 0.01" width="0.86" height="0.09" color="#9f1239" material="opacity: 0.8; transparent: true; shader: flat;" animation__mouseenter="property: scale; to: 1.05 1.05 1.05; dur: 200; startEvents: mouseenter" animation__mouseleave="property: scale; to: 1 1 1; dur: 200; startEvents: mouseleave">
                     <a-text value="SALIR DE LA CONEXION HUBS" align="center" scale="0.17 0.17 0.17" font="exo2bold" color="#fff"></a-text>
                 </a-plane>
                 
                 <a-entity id="panel-rgpd" scale="0 0 0" position="0 -0.05 0.02">
-                    <a-plane width="0.94" height="0.95" color="#020617" material="opacity: 0.9; shader: flat;">
+                    <a-plane width="0.94" height="0.95" color="#020617" material="opacity: 0.95; shader: flat;">
                         <a-text value="REVISION GENERAL" align="center" position="0 0.40 0.01" scale="0.26 0.26 0.26" font="exo2bold" color="#00f2fe"></a-text>
                         <a-text value="Por favor autoriza el tratamiento legal" align="center" position="0 0.32 0.01" scale="0.16 0.16 0.16" font="exo2bold" color="#94a3b8"></a-text>
                         <a-plane position="0 0.04 0.01" width="0.65" height="0.38" color="#070a14">
@@ -316,16 +338,16 @@
                             <a-image id="rgpd-foto-match" position="0 0.02" width="0.63" height="0.36" src="" material="shader: flat; transparent: true; alphaTest: 0.5;" visible="false"></a-image>
                         </a-plane>
                         <a-text id="txt-advertencia-match-dinamico" value="Al aceptar, autorizas el tratamiento de datos" align="center" position="0 -0.22 0.01" scale="0.15 0.15 0.15" font="exo2bold" color="#64748b"></a-text>
-                        <a-plane class="clickable" onclick="confirmarYDespacharLark()" position="0.23 -0.38 0.02" width="0.38" height="0.12" color="#16a34a">
+                        <a-plane class="clickable" onclick="confirmarYDespacharSistema()" position="0.23 -0.38 0.02" width="0.38" height="0.12" color="#16a34a" animation__mouseenter="property: scale; to: 1.05 1.05 1.05; dur: 200; startEvents: mouseenter" animation__mouseleave="property: scale; to: 1 1 1; dur: 200; startEvents: mouseleave">
                             <a-text value="ACEPTAR" align="center" scale="0.20 0.20 0.20" font="exo2bold" color="#fff"></a-text>
                         </a-plane>
-                        <a-plane class="clickable" onclick="borrarDatosYReiniciar()" position="-0.23 -0.38 0.02" width="0.38" height="0.12" color="#dc2626">
+                        <a-plane class="clickable" onclick="borrarDatosYReiniciar()" position="-0.23 -0.38 0.02" width="0.38" height="0.12" color="#dc2626" animation__mouseenter="property: scale; to: 1.05 1.05 1.05; dur: 200; startEvents: mouseenter" animation__mouseleave="property: scale; to: 1 1 1; dur: 200; startEvents: mouseleave">
                             <a-text value="REINICIAR" align="center" scale="0.20 0.20 0.20" font="exo2bold" color="#fff"></a-text>
                         </a-plane>
                     </a-plane>
                 </a-entity>
                 
-                <a-plane id="panel-datos-acumulados" width="0.94" height="0.42" color="#0284c7" material="opacity: 0.15; transparent: true; shader: flat;" position="0 -0.72 0.01">
+                <a-plane id="panel-datos-acumulados" width="0.94" height="0.42" color="#0284c7" material="opacity: 0.2; transparent: true; shader: flat;" position="0 -0.72 0.01">
                     <a-text value="FICHA HOLOGRAFICA DE SOLICITUD" align="center" position="0 0.17 0.01" scale="0.16 0.16 0.16" font="orbitron" color="#00f2fe"></a-text>
                     <a-text id="ficha-linea-1" value="OP: COMPRAR" align="left" position="-0.44 0.08 0.01" scale="0.18 0.18 0.18" font="exo2bold" color="#fff" material="shader: flat;" visible="false"></a-text>
                     <a-text id="ficha-linea-2" value="USO: -" align="left" position="-0.44 0.01 0.01" scale="0.18 0.18 0.18" font="exo2bold" color="#fff" material="shader: flat;" visible="false"></a-text>
@@ -336,86 +358,88 @@
             
             <a-entity id="paleta-subintencion" scale="0 0 0" position="0 -0.05 0.02">
                 <a-plane width="0.94" height="0.75" color="#020617" material="opacity: 0.95; shader: flat;">
-                    <a-plane class="clickable" onclick="seleccionarIntencion('Uso Propio')" position="0 0.15 0.01" width="0.75" height="0.16" color="#0284c7" material="opacity: 0.4;">
+                    <a-plane class="clickable" onclick="seleccionarIntencion('Uso Propio')" position="0 0.15 0.01" width="0.75" height="0.16" color="#0284c7" material="opacity: 0.5;" animation__mouseenter="property: scale; to: 1.05 1.05 1.05; dur: 200; startEvents: mouseenter" animation__mouseleave="property: scale; to: 1 1 1; dur: 200; startEvents: mouseleave">
                         <a-text value="USO PROPIO" align="center" scale="0.24 0.26 0.26" font="exo2bold" color="#00f2fe"></a-text>
                     </a-plane>
-                    <a-plane class="clickable" onclick="seleccionarIntencion('Inversion')" position="0 -0.06 0.01" width="0.75" height="0.16" color="#0284c7" material="opacity: 0.4;">
+                    <a-plane class="clickable" onclick="seleccionarIntencion('Inversion')" position="0 -0.06 0.01" width="0.75" height="0.16" color="#0284c7" material="opacity: 0.5;" animation__mouseenter="property: scale; to: 1.05 1.05 1.05; dur: 200; startEvents: mouseenter" animation__mouseleave="property: scale; to: 1 1 1; dur: 200; startEvents: mouseleave">
                         <a-text value="INVERSION" align="center" scale="0.24 0.26 0.26" font="exo2bold" color="#00f2fe"></a-text>
                     </a-plane>
-                    <a-plane class="clickable" onclick="volverAlMenuPrincipal()" position="0 -0.26 0.01" width="0.75" height="0.12" color="#334155">
+                    <a-plane class="clickable" onclick="volverAlMenuPrincipal()" position="0 -0.26 0.01" width="0.75" height="0.12" color="#334155" animation__mouseenter="property: scale; to: 1.05 1.05 1.05; dur: 200; startEvents: mouseenter" animation__mouseleave="property: scale; to: 1 1 1; dur: 200; startEvents: mouseleave">
                         <a-text value="ABORTAR" align="center" scale="0.21 0.21 0.21" font="exo2bold" color="#fff"></a-text>
                     </a-plane>
                 </a-plane>
             </a-entity>
             <a-entity id="paleta-poblaciones" scale="0 0 0" position="0 -0.05 0.02">
                 <a-plane width="0.96" height="1.05" color="#020617" material="opacity: 0.95; shader: flat;">
-                    <a-plane class="clickable" onclick="seleccionarPoblacion('Alcanar')" position="-0.22 0.40 0.01" width="0.40" height="0.12" color="#0f172a"><a-text value="ALCANAR" align="center" scale="0.18 0.18 0.18" font="exo2bold" color="#fff"></a-text></a-plane>
-                    <a-plane class="clickable" onclick="seleccionarPoblacion('Barcelona')" position="-0.22 0.25 0.01" width="0.40" height="0.12" color="#0f172a"><a-text value="BARCELONA" align="center" scale="0.18 0.18 0.18" font="exo2bold" color="#fff"></a-text></a-plane>
-                    <a-plane class="clickable" onclick="seleccionarPoblacion('Castellar del Valles')" position="-0.22 0.10 0.01" width="0.40" height="0.12" color="#0f172a"><a-text value="CASTELLAR V." align="center" scale="0.16 0.16 0.16" font="exo2bold" color="#fff"></a-text></a-plane>
-                    <a-plane class="clickable" onclick="seleccionarPoblacion('La Rapita')" position="-0.22 -0.05 0.01" width="0.40" height="0.12" color="#0f172a"><a-text value="LA RAPITA" align="center" scale="0.18 0.18 0.18" font="exo2bold" color="#fff"></a-text></a-plane>
-                    <a-plane class="clickable" onclick="seleccionarPoblacion('Matadepera')" position="-0.22 -0.20 0.01" width="0.40" height="0.12" color="#0f172a"><a-text value="MATADEPERA" align="center" scale="0.18 0.18 0.18" font="exo2bold" color="#fff"></a-text></a-plane>
-                    <a-plane class="clickable" onclick="seleccionarPoblacion('Sabadell')" position="0.22 0.40 0.01" width="0.40" height="0.12" color="#0f172a"><a-text value="SABADELL" align="center" scale="0.18 0.18 0.18" font="exo2bold" color="#fff"></a-text></a-plane>
-                    <a-plane class="clickable" onclick="seleccionarPoblacion('Sant Cugat del Valles')" position="0.22 0.25 0.01" width="0.40" height="0.12" color="#0f172a"><a-text value="ST CUGAT V." align="center" scale="0.16 0.16 0.16" font="exo2bold" color="#fff"></a-text></a-plane>
-                    <a-plane class="clickable" onclick="seleccionarPoblacion('Sant Quirze del Valles')" position="0.22 0.10 0.01" width="0.40" height="0.12" color="#0f172a"><a-text value="ST QUIRZE V." align="center" scale="0.16 0.16 0.16" font="exo2bold" color="#fff"></a-text></a-plane>
-                    <a-plane class="clickable" onclick="OtrasPoblaciones()" position="0.22 -0.05 0.01" width="0.40" height="0.12" color="#0f172a"><a-text value="TERRASSA" align="center" scale="0.18 0.18 0.18" font="exo2bold" color="#fff"></a-text></a-plane>
-                    <a-plane class="clickable" onclick="volverAlMenuPrincipal()" position="0 -0.40 0.01" width="0.84" height="0.11" color="#7f1d1d"><a-text value="ABORTAR PROCESO" align="center" scale="0.18 0.18 0.18" font="exo2bold" color="#fff"></a-text></a-plane>
+                    <a-plane class="clickable" onclick="seleccionarPoblacion('Alcanar')" position="-0.22 0.40 0.01" width="0.40" height="0.12" color="#0f172a" animation__mouseenter="property: scale; to: 1.05 1.05 1.05; dur: 200; startEvents: mouseenter" animation__mouseleave="property: scale; to: 1 1 1; dur: 200; startEvents: mouseleave"><a-text value="ALCANAR" align="center" scale="0.18 0.18 0.18" font="exo2bold" color="#fff"></a-text></a-plane>
+                    <a-plane class="clickable" onclick="seleccionarPoblacion('Barcelona')" position="-0.22 0.25 0.01" width="0.40" height="0.12" color="#0f172a" animation__mouseenter="property: scale; to: 1.05 1.05 1.05; dur: 200; startEvents: mouseenter" animation__mouseleave="property: scale; to: 1 1 1; dur: 200; startEvents: mouseleave"><a-text value="BARCELONA" align="center" scale="0.18 0.18 0.18" font="exo2bold" color="#fff"></a-text></a-plane>
+                    <a-plane class="clickable" onclick="seleccionarPoblacion('Castellar del Valles')" position="-0.22 0.10 0.01" width="0.40" height="0.12" color="#0f172a" animation__mouseenter="property: scale; to: 1.05 1.05 1.05; dur: 200; startEvents: mouseenter" animation__mouseleave="property: scale; to: 1 1 1; dur: 200; startEvents: mouseleave"><a-text value="CASTELLAR V." align="center" scale="0.16 0.16 0.16" font="exo2bold" color="#fff"></a-text></a-plane>
+                    <a-plane class="clickable" onclick="seleccionarPoblacion('La Rapita')" position="-0.22 -0.05 0.01" width="0.40" height="0.12" color="#0f172a" animation__mouseenter="property: scale; to: 1.05 1.05 1.05; dur: 200; startEvents: mouseenter" animation__mouseleave="property: scale; to: 1 1 1; dur: 200; startEvents: mouseleave"><a-text value="LA RAPITA" align="center" scale="0.18 0.18 0.18" font="exo2bold" color="#fff"></a-text></a-plane>
+                    <a-plane class="clickable" onclick="seleccionarPoblacion('Matadepera')" position="-0.22 -0.20 0.01" width="0.40" height="0.12" color="#0f172a" animation__mouseenter="property: scale; to: 1.05 1.05 1.05; dur: 200; startEvents: mouseenter" animation__mouseleave="property: scale; to: 1 1 1; dur: 200; startEvents: mouseleave"><a-text value="MATADEPERA" align="center" scale="0.18 0.18 0.18" font="exo2bold" color="#fff"></a-text></a-plane>
+                    <a-plane class="clickable" onclick="seleccionarPoblacion('Sabadell')" position="0.22 0.40 0.01" width="0.40" height="0.12" color="#0f172a" animation__mouseenter="property: scale; to: 1.05 1.05 1.05; dur: 200; startEvents: mouseenter" animation__mouseleave="property: scale; to: 1 1 1; dur: 200; startEvents: mouseleave"><a-text value="SABADELL" align="center" scale="0.18 0.18 0.18" font="exo2bold" color="#fff"></a-text></a-plane>
+                    <a-plane class="clickable" onclick="seleccionarPoblacion('Sant Cugat del Valles')" position="0.22 0.25 0.01" width="0.40" height="0.12" color="#0f172a" animation__mouseenter="property: scale; to: 1.05 1.05 1.05; dur: 200; startEvents: mouseenter" animation__mouseleave="property: scale; to: 1 1 1; dur: 200; startEvents: mouseleave"><a-text value="ST CUGAT V." align="center" scale="0.16 0.16 0.16" font="exo2bold" color="#fff"></a-text></a-plane>
+                    <a-plane class="clickable" onclick="seleccionarPoblacion('Sant Quirze del Valles')" position="0.22 0.10 0.01" width="0.40" height="0.12" color="#0f172a" animation__mouseenter="property: scale; to: 1.05 1.05 1.05; dur: 200; startEvents: mouseenter" animation__mouseleave="property: scale; to: 1 1 1; dur: 200; startEvents: mouseleave"><a-text value="ST QUIRZE V." align="center" scale="0.16 0.16 0.16" font="exo2bold" color="#fff"></a-text></a-plane>
+                    
+                    <a-plane class="clickable" onclick="OtrasPoblaciones()" position="0.22 -0.05 0.01" width="0.40" height="0.12" color="#0f172a" animation__mouseenter="property: scale; to: 1.05 1.05 1.05; dur: 200; startEvents: mouseenter" animation__mouseleave="property: scale; to: 1 1 1; dur: 200; startEvents: mouseleave"><a-text value="OTRA POBLACION" align="center" scale="0.16 0.16 0.16" font="exo2bold" color="#fff"></a-text></a-plane>
+                    
+                    <a-plane class="clickable" onclick="volverAlMenuPrincipal()" position="0 -0.40 0.01" width="0.84" height="0.11" color="#7f1d1d" animation__mouseenter="property: scale; to: 1.05 1.05 1.05; dur: 200; startEvents: mouseenter" animation__mouseleave="property: scale; to: 1 1 1; dur: 200; startEvents: mouseleave"><a-text value="ABORTAR PROCESO" align="center" scale="0.18 0.18 0.18" font="exo2bold" color="#fff"></a-text></a-plane>
                 </a-plane>
             </a-entity>
             <a-entity id="paleta-tipo-compra" scale="0 0 0" position="0 -0.05 0.02">
                 <a-plane width="0.94" height="0.75" color="#020617" material="opacity: 0.95; shader: flat;">
                     <a-text value="SELECCIONE SERVICIO" align="center" position="0 0.28 0.01" scale="0.24 0.26 0.26" font="exo2bold" color="#fbbf24"></a-text>
-                    <a-plane class="clickable" onclick="seleccionarServicioServi('Particular')" position="0 0.08 0.01" width="0.86" height="0.16" color="#0284c7" material="opacity: 0.4;"><a-text value="CAMPAÑA CAPTACION / PARTICULAR" align="center" scale="0.17 0.17 0.17" font="exo2bold" color="#fff"></a-text></a-plane>
-                    <a-plane class="clickable" onclick="seleccionarServicioServi('Bancario')" position="0 -0.12 0.01" width="0.86" height="0.16" color="#0284c7" material="opacity: 0.4;"><a-text value="PRODUCTOS BANCARIOS Y/O JUDICIALES" align="center" scale="0.17 0.17 0.17" font="exo2bold" color="#fff"></a-text></a-plane>
-                    <a-plane class="clickable" onclick="volverAlMenuPrincipal()" position="0 -0.28 0.01" width="0.86" height="0.11" color="#334155"><a-text value="CANCELAR" align="center" scale="0.18 0.18 0.18" font="exo2bold" color="#fff"></a-text></a-plane>
+                    <a-plane class="clickable" onclick="seleccionarServicioServi('Particular')" position="0 0.08 0.01" width="0.86" height="0.16" color="#0284c7" material="opacity: 0.5;" animation__mouseenter="property: scale; to: 1.05 1.05 1.05; dur: 200; startEvents: mouseenter" animation__mouseleave="property: scale; to: 1 1 1; dur: 200; startEvents: mouseleave"><a-text value="CAMPAÑA CAPTACION / PARTICULAR" align="center" scale="0.17 0.17 0.17" font="exo2bold" color="#fff"></a-text></a-plane>
+                    <a-plane class="clickable" onclick="seleccionarServicioServi('Bancario')" position="0 -0.12 0.01" width="0.86" height="0.16" color="#0284c7" material="opacity: 0.5;" animation__mouseenter="property: scale; to: 1.05 1.05 1.05; dur: 200; startEvents: mouseenter" animation__mouseleave="property: scale; to: 1 1 1; dur: 200; startEvents: mouseleave"><a-text value="PRODUCTOS BANCARIOS Y/O JUDICIALES" align="center" scale="0.17 0.17 0.17" font="exo2bold" color="#fff"></a-text></a-plane>
+                    <a-plane class="clickable" onclick="volverAlMenuPrincipal()" position="0 -0.28 0.01" width="0.86" height="0.11" color="#334155" animation__mouseenter="property: scale; to: 1.05 1.05 1.05; dur: 200; startEvents: mouseenter" animation__mouseleave="property: scale; to: 1 1 1; dur: 200; startEvents: mouseleave"><a-text value="CANCELAR" align="center" scale="0.18 0.18 0.18" font="exo2bold" color="#fff"></a-text></a-plane>
                 </a-plane>
             </a-entity>
         </a-entity>
 
         <a-entity position="0.95 1.6 -0.95" rotation="0 -45 0" scale="1.15 1.15 1.15">
             <a-video src="#video-derecha-src" width="0.75" height="1.33" position="0 0.1 0" material="opacity: 0.95; shader: flat; side: double;"></a-video>
-            <a-plane class="clickable" onclick="window.open('https://level.immo/vende-sin-pagar-honorarios-ni-gastos/', '_blank')" position="0 -0.65 0.02" width="0.75" height="0.12" color="#00f2fe" material="shader: flat;">
+            <a-plane class="clickable" onclick="window.open('https://level.immo/vende-sin-pagar-honorarios-ni-gastos/', '_blank')" position="0 -0.65 0.02" width="0.75" height="0.12" color="#00f2fe" material="shader: flat;" animation__mouseenter="property: scale; to: 1.05 1.05 1.05; dur: 200; startEvents: mouseenter" animation__mouseleave="property: scale; to: 1 1 1; dur: 200; startEvents: mouseleave">
                 <a-text value="VENDE SIN HONORARIOS" align="center" position="0 0 0.01" scale="0.16 0.16 0.16" font="exo2bold" color="#020617"></a-text>
             </a-plane>
         </a-entity>
 
         <a-entity position="1.35 1.6 0" rotation="0 -90 0" scale="1.15 1.15 1.15">
             <a-video src="#video-far-right-src" width="0.75" height="1.33" position="0 0.1 0" material="opacity: 0.95; shader: flat; side: double;"></a-video>
-            <a-plane class="clickable" onclick="window.open('https://level.immo/formulario-compradores-a-la-carta/', '_blank')" position="0 -0.65 0.02" width="0.75" height="0.12" color="#fbbf24" material="shader: flat;">
+            <a-plane class="clickable" onclick="window.open('https://level.immo/formulario-compradores-a-la-carta/', '_blank')" position="0 -0.65 0.02" width="0.75" height="0.12" color="#fbbf24" material="shader: flat;" animation__mouseenter="property: scale; to: 1.05 1.05 1.05; dur: 200; startEvents: mouseenter" animation__mouseleave="property: scale; to: 1 1 1; dur: 200; startEvents: mouseleave">
                 <a-text value="ACCESO ZONA HUNTER" align="center" position="0 0 0.01" scale="0.16 0.16 0.16" font="exo2bold" color="#020617"></a-text>
             </a-plane>
         </a-entity>
 
         <a-entity position="0.95 1.6 0.95" rotation="0 -135 0" scale="1.15 1.15 1.15">
-            <a-video src="#video-tancat-src" width="0.75" height="1.33" position="0 0.1 0" material="opacity: 0.95; shader: flat; side: double;"></a-video>
-            <a-plane class="clickable" onclick="window.open('https://level.immo/', '_blank')" position="0 -0.65 0.02" width="0.75" height="0.12" color="#00f2fe" material="shader: flat;">
-                <a-text value="HABLAR CON UN ADVISOR" align="center" position="0 0 0.01" scale="0.16 0.16 0.16" font="exo2bold" color="#020617"></a-text>
+            <a-video src="#video-oportunidad-rapita" width="0.75" height="1.33" position="0 0.1 0" material="opacity: 0.95; shader: flat; side: double;"></a-video>
+            <a-plane class="clickable" onclick="window.open('https://level.immo/oportunidad-piso-vistas-la-rapita-89m/', '_blank')" position="0 -0.65 0.02" width="0.75" height="0.12" color="#ef4444" material="shader: flat;" animation__mouseenter="property: scale; to: 1.05 1.05 1.05; dur: 200; startEvents: mouseenter" animation__mouseleave="property: scale; to: 1 1 1; dur: 200; startEvents: mouseleave">
+                <a-text value="VER PISO LA RAPITA" align="center" position="0 0 0.01" scale="0.16 0.16 0.16" font="exo2bold" color="#ffffff"></a-text>
             </a-plane>
         </a-entity>
 
         <a-entity position="0 1.6 1.35" rotation="0 180 0" scale="1.15 1.15 1.15">
             <a-video src="#video-back-src" width="0.75" height="1.33" position="0 0.1 0" material="opacity: 0.95; shader: flat; side: double;"></a-video>
-            <a-plane class="clickable" onclick="window.open('https://level.immo/', '_blank')" position="0 -0.65 0.02" width="0.75" height="0.12" color="#00f2fe" material="shader: flat;">
+            <a-plane class="clickable" onclick="window.open('https://level.immo/', '_blank')" position="0 -0.65 0.02" width="0.75" height="0.12" color="#00f2fe" material="shader: flat;" animation__mouseenter="property: scale; to: 1.05 1.05 1.05; dur: 200; startEvents: mouseenter" animation__mouseleave="property: scale; to: 1 1 1; dur: 200; startEvents: mouseleave">
                 <a-text value="VER OPORTUNIDADES" align="center" position="0 0 0.01" scale="0.16 0.16 0.16" font="exo2bold" color="#020617"></a-text>
             </a-plane>
         </a-entity>
 
         <a-entity position="-0.95 1.6 0.95" rotation="0 135 0" scale="1.15 1.15 1.15">
             <a-video src="#video-izq3-src" width="0.75" height="1.33" position="0 0.1 0" material="opacity: 0.95; shader: flat; side: double;"></a-video>
-            <a-plane class="clickable" onclick="window.open('https://level.immo/', '_blank')" position="0 -0.65 0.02" width="0.75" height="0.12" color="#fbbf24" material="shader: flat;">
+            <a-plane class="clickable" onclick="window.open('https://level.immo/', '_blank')" position="0 -0.65 0.02" width="0.75" height="0.12" color="#fbbf24" material="shader: flat;" animation__mouseenter="property: scale; to: 1.05 1.05 1.05; dur: 200; startEvents: mouseenter" animation__mouseleave="property: scale; to: 1 1 1; dur: 200; startEvents: mouseleave">
                 <a-text value="MAS INFORMACION" align="center" position="0 0 0.01" scale="0.16 0.16 0.16" font="exo2bold" color="#020617"></a-text>
             </a-plane>
         </a-entity>
 
         <a-entity position="-1.35 1.6 0" rotation="0 90 0" scale="1.15 1.15 1.15">
             <a-video src="#video-izq2-src" width="0.75" height="1.33" position="0 0.1 0" material="opacity: 0.95; shader: flat; side: double;"></a-video>
-            <a-plane class="clickable" onclick="window.open('https://level.immo/', '_blank')" position="0 -0.65 0.02" width="0.75" height="0.12" color="#00f2fe" material="shader: flat;">
+            <a-plane class="clickable" onclick="window.open('https://level.immo/', '_blank')" position="0 -0.65 0.02" width="0.75" height="0.12" color="#00f2fe" material="shader: flat;" animation__mouseenter="property: scale; to: 1.05 1.05 1.05; dur: 200; startEvents: mouseenter" animation__mouseleave="property: scale; to: 1 1 1; dur: 200; startEvents: mouseleave">
                 <a-text value="INVIERTA AHORA" align="center" position="0 0 0.01" scale="0.16 0.16 0.16" font="exo2bold" color="#020617"></a-text>
             </a-plane>
         </a-entity>
 
         <a-entity position="-0.95 1.6 -0.95" rotation="0 45 0" scale="1.15 1.15 1.15">
             <a-video src="#video-tiktok-src" width="0.75" height="1.33" position="0 0.1 0" material="opacity: 0.95; shader: flat; side: double;"></a-video>
-            <a-plane class="clickable" onclick="window.open('https://level.immo/formulario-vendedores/', '_blank')" position="0 -0.65 0.02" width="0.75" height="0.12" color="#fbbf24" material="shader: flat;">
+            <a-plane class="clickable" onclick="window.open('https://level.immo/formulario-vendedores/', '_blank')" position="0 -0.65 0.02" width="0.75" height="0.12" color="#fbbf24" material="shader: flat;" animation__mouseenter="property: scale; to: 1.05 1.05 1.05; dur: 200; startEvents: mouseenter" animation__mouseleave="property: scale; to: 1 1 1; dur: 200; startEvents: mouseleave">
                 <a-text value="RELLENAR FORMULARIO" align="center" position="0 0 0.01" scale="0.16 0.16 0.16" font="exo2bold" color="#020617"></a-text>
             </a-plane>
         </a-entity>
@@ -465,7 +489,7 @@
             
             const videosEsfera = [
                 'video-tiktok-src', 'video-derecha-src', 'video-far-right-src', 
-                'video-tancat-src', 'video-izq2-src', 'video-izq3-src', 'video-back-src'
+                'video-oportunidad-rapita', 'video-izq2-src', 'video-izq3-src', 'video-back-src'
             ];
             
             videosEsfera.forEach(id => {
@@ -649,7 +673,7 @@
                 }
             }, 800);
         }
-        function confirmarYDespacharLark() {
+        function confirmarYDespacharSistema() {
             document.getElementById('panel-rgpd').setAttribute('scale', '0 0 0');
             let objetoEnvio = {
                 operacion: leadData.tipoCliente, nombrePila: leadData.nombrePila, nombreCompleto: leadData.nombre,
@@ -679,6 +703,7 @@
         function abrirMenuIdiomasFlotante() { try { recognition.abort(); } catch(e){} document.getElementById('overlay-idiomas').style.display = 'flex'; }
         function cerrarSelectorIdiomas() { document.getElementById('overlay-idiomas').style.display = 'none'; }
         function cambiarFicheroIdioma(nombreArchivo) { window.location.href = "https://level-i.github.io/" + nombreArchivo; }
+        
         recognition.onresult = function(event) {
             clearTimeout(timerInactividad); let comando = "";
             for (let i = event.resultIndex; i < event.results.length; ++i) { if (event.results[i].isFinal) comando += event.results[i][0].transcript; }
@@ -704,6 +729,7 @@
             else if (cm.includes('administracion')) activarModulo6Administracion();
             else if (cm.includes('idioma')) abrirMenuIdiomasFlotante();
         };
+        
         function volverAlMenuPrincipal() {
             faseFormulario = 0;
             document.getElementById('paleta-subintencion').setAttribute('scale', '0 0 0');
@@ -722,6 +748,7 @@
         recognition.onerror = function(event) {
             if (iaActiva && !window.advisorsVoiceActive && ![1,2,3,4].includes(faseFormulario)) { try { recognition.start(); } catch(e){} }
         };
+
         // Lógica del simulador inyectado
         document.addEventListener('DOMContentLoaded', function() {
             const sAdvisors = document.getElementById('sim-advisors');
