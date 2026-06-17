@@ -227,16 +227,23 @@
         <a-assets>
             <video id="video-tiktok" src="#video-tiktok-src" loop muted playsinline crossorigin="anonymous"></video>
             <video id="video-tiktok-src" src="https://level-i.github.io/level-intro.mp4" loop muted playsinline crossorigin="anonymous"></video>
+            <video id="video-derecha-src" src="https://level-i.github.io/docs/vendemos%20tu%20chalet%20en%20alcanar%20les%20cases%20la%20rapita%20sin%20cobrarte%20comisiones%20level%20immo%20v.mp4" loop muted playsinline crossorigin="anonymous"></video>
             <img id="thumb-campana" src="https://img.youtube.com/vi/9TTqR1wD3jI/0.jpg" crossorigin="anonymous">
             <img id="asset-logo" src="https://level-i.github.io/docs/favicon-level-fondo-negro-300x300 sin fondo.png" crossorigin="anonymous">
             <img id="asset-api" src="https://level-i.github.io/docs/logo api sin fondo.png" crossorigin="anonymous">
         </a-assets>
+        
         <a-sky id="cielo-entorno" color="#020617"></a-sky>
         <a-stars radius="200" depth="50" count="1500" factor="4" speed="1"></a-stars>
+        
         <a-entity id="contenedor-camara" camera look-controls="magicWindowTrackingEnabled: true; touchEnabled: true;" position="0 1.6 0">
             <a-entity cursor="fuse: false; rayOrigin: mouse;" position="0 0 -1" geometry="primitive: ring; radiusInner: 0.007; radiusOuter: 0.014" material="color: #00f2fe; shader: flat; opacity: 0.8;" raycaster="objects: .clickable"></a-entity>
         </a-entity>
-        
+
+        <a-entity position="-0.95 1.6 -1.1" rotation="0 35 0" scale="1.15 1.15 1.15">
+            <a-video src="#video-tiktok-src" width="0.75" height="1.33" material="opacity: 0.95; shader: flat; side: double;"></a-video>
+        </a-entity>
+
         <a-entity id="chasis-smartphone-virtual" position="0 1.6 -1.35" scale="1.15 1.15 1.15" rotation="0 0 0">
             <a-plane class="clickable" width="1.0" height="1.95" color="#0a0f1d" material="opacity: 0.96; transparent: true; border: 3px solid #1e293b; borderRadius: 0.05;" position="0 0 0">
                 <a-text value="LEVEL-i ADVISOR" align="left" position="-0.44 0.88 0.01" scale="0.42 0.44 0.44" font="exo2bold" color="#00f2fe"></a-text>
@@ -344,8 +351,9 @@
                 </a-plane>
             </a-entity>
         </a-entity>
-        <a-entity id="contenedor-video-tiktok" position="0.9 0.25 -0.1" rotation="0 -25 0" scale="0.65 0.65 0.65">
-            <a-video src="#video-tiktok" width="0.75" height="1.3" material="opacity: 0.95; shader: flat; side: double;"></a-video>
+
+        <a-entity position="0.95 1.6 -1.1" rotation="0 -35 0" scale="1.15 1.15 1.15">
+            <a-video src="#video-derecha-src" width="0.75" height="1.33" material="opacity: 0.95; shader: flat; side: double;"></a-video>
         </a-entity>
     </a-scene>
     <script>
@@ -389,9 +397,13 @@
             const capaBloqueo = document.getElementById('pantalla-bloqueo');
             if (capaBloqueo) { capaBloqueo.style.opacity = '0'; setTimeout(() => { capaBloqueo.remove(); }, 1200); }
             iaActiva = true;
-            const video = document.getElementById('video-tiktok');
-            video.muted = false; video.volume = 0.1;
-            try { video.play(); } catch(e){}
+            
+            // Auto-reproducción de todos los videos de la escena
+            ['video-tiktok', 'video-tiktok-src', 'video-derecha-src'].forEach(id => {
+                let v = document.getElementById(id);
+                if(v) { v.muted = true; try{ v.play(); }catch(e){} }
+            });
+
             setTimeout(() => { hablarAdvisorUnificado(welcomeMsg, abrirMicrofonoCliente); }, 300);
         }
         function desactivarHubSutil() {
@@ -491,7 +503,7 @@
                             faseFormulario = 40; hablarAdvisorUnificado(fraseAgradecimiento + "Díganos el motivo de su consulta.", abrirMicrofonoCliente);
                         } else {
                             faseFormulario = 5; document.getElementById('paleta-poblaciones').setAttribute('scale', '1 1 1');
-                            hablarAdvisorUnificado(fraseAgradecimiento + "Indíquenos en cual de estas poblaciones se encuentra su propiedad en venta.");
+                            hablarAdvisorUnificado(fraseAgradecimiento + "Indíquenos en cual de estas poblaciones se encuentra su propiedad.");
                         }
                     } else { alert("Email incorrecto."); flujoEntradaManualEmail(); }
                 } else { flujoEntradaManualEmail(); }
@@ -508,20 +520,35 @@
             actualizarProgresoVisual(25, "Fase 5: Poblacion Guardada");
             setTimeout(() => {
                 actualizarProgresoVisual(45, "Fase 6: Dictar Caracteristicas");
-                hablarAdvisorUnificado("Por favor, cuéntame de viva voz las características y valor estimado de la propiedad que quieres vender.", abrirMicrofonoCliente);
+                hablarAdvisorUnificado("Por favor, cuéntame de viva voz las características principales y el valor estimado que buscas.", abrirMicrofonoCliente);
             }, 800);
         }
         function OtrasPoblaciones() {
-            let otraZonaInput = prompt("Introduce la población donde se encuentra tu propiedad.");
+            let otraZonaInput = prompt("Introduce la población principal:");
             if (otraZonaInput && otraZonaInput.trim() !== "") { seleccionarPoblacion(otraZonaInput.trim()); }
         }
         function despacharPantallaRevisionYRGPD() {
             faseFormulario = 7; actualizarProgresoVisual(75, "Fase 7: Verificacion");
             let valActualZona = document.getElementById('ficha-linea-4').getAttribute('value');
             document.getElementById('ficha-linea-4').setAttribute('value', valActualZona + " | REM: " + sanearTextoParaAFrame(leadData.detallesFinales));
-            hablarAdvisorUnificado("Datos procesados. Selecciona en la pantalla el tipo de servicio que te gustaría realizar.", function() {
-                document.getElementById('paleta-tipo-compra').setAttribute('scale', '1 1 1');
-            });
+            
+            // ELIMINADO EL CRUCE DE CABLES: Bifurcación directa para Vendedores
+            if (leadData.tipoCliente === 'Vender Propiedad') {
+                document.getElementById('panel-rgpd').setAttribute('scale', '1 1 1');
+                let compAdvertencia = document.getElementById('txt-advertencia-match-dinamico');
+                compAdvertencia.setAttribute('value', "Al aceptar, validas la venta de tu propiedad");
+                compAdvertencia.setAttribute('color', '#fbbf24');
+                document.getElementById('rgpd-video-match').setAttribute('visible', 'false');
+                document.getElementById('rgpd-foto-match').setAttribute('visible', 'true');
+                
+                actualizarProgresoVisual(100, "Completado 100%");
+                hablarAdvisorUnificado("Gracias " + leadData.nombrePila + ". En breve te contactará nuestro experto advisor en tu zona. Tenemos compradores verificados que están buscando una vivienda como la tuya. Pulsa en ACEPTAR en la consola para finalizar y enviarnos la ficha.");
+            } else {
+                // Si está COMPRANDO, sí le preguntamos el tipo de servicio que busca.
+                hablarAdvisorUnificado("Datos procesados. Selecciona en la pantalla el tipo de servicio que te gustaría realizar.", function() {
+                    document.getElementById('paleta-tipo-compra').setAttribute('scale', '1 1 1');
+                });
+            }
         }
         function seleccionarServicioServi(tipoServicio) {
             leadData.servicioDeseado = tipoServicio;
@@ -529,7 +556,7 @@
             faseFormulario = 8; actualizarProgresoVisual(95, "Fase 8: Tipo de Compra Seleccionado");
             let compAdvertencia = document.getElementById('txt-advertencia-match-dinamico');
             if (leadData.tipoCliente.includes("Uso Propio")) {
-                compAdvertencia.setAttribute('value', "PETICION APTA PARA HACER MATCH - VAMOS A BUSCARTE PROPIETARIOS INTERESADOS EN TU PROPIEDAD. TU ASESOR ADVISOR MÁS CERCANO SE PONDRÁ EN CONTACTO CONTIGO EN BREVE. GRACIAS POR VISITARNOS.");
+                compAdvertencia.setAttribute('value', "PETICION APTA PARA HACER MATCH - VAMOS A BUSCARTE PROPIETARIOS");
                 compAdvertencia.setAttribute('color', '#fbbf24');
                 document.getElementById('rgpd-video-match').setAttribute('visible', 'false');
                 document.getElementById('rgpd-foto-match').setAttribute('visible', 'true');
@@ -543,9 +570,9 @@
                 actualizarProgresoVisual(100, "Completado 100%");
                 document.getElementById('panel-rgpd').setAttribute('scale', '1 1 1');
                 if (leadData.tipoCliente.includes("Uso Propio")) {
-                    hablarAdvisorUnificado("Proceso completado al cien por cien. Tu ADVAISOR más cercano contactará contigo en breve, y te explicará cómo publicar tu inmueble en nuestra zona MATCH para compradores con solvencia verificada.");
+                    hablarAdvisorUnificado("Proceso completado al cien por cien. Tu ADVAISOR más cercano contactará contigo en breve, y te explicará cómo publicar tu demanda en nuestra zona MATCH.");
                 } else {
-                    hablarAdvisorUnificado("Proceso completado al cien por cien. En breve contactaremos contigo y obtén extractos del boletín oficial del estado de acuerdo con tus intereses y requisitos de inversión.");
+                    hablarAdvisorUnificado("Proceso completado al cien por cien. En breve contactaremos contigo para tus requisitos de inversión.");
                 }
             }, 800);
         }
@@ -573,6 +600,9 @@
             document.getElementById('boton-salir-hub-3d').setAttribute('scale', '0 0 0');
             document.getElementById('paleta-principal').setAttribute('scale', '0 0 0');
             document.getElementById('overlay-advisors').style.display = 'flex';
+            
+            // LOCUCIÓN DE ADVISOR AL ABRIR LA SECCIÓN
+            hablarAdvisorUnificado("Bienvenido al Programa de Alianzas Avanzado. En esta pantalla puedes explorar nuestras dos modalidades principales: unirte como Advisor Activo o convertirte en Mecenas Padrino para financiar equipos. Además, puedes utilizar el simulador híbrido de la parte inferior para calcular tus ingresos combinados anuales.");
         }
         function cerrarPanelOverlayAdvisors() { document.getElementById('overlay-advisors').style.display = 'none'; volverAlMenuPrincipal(); }
         function abrirMenuIdiomasFlotante() { try { recognition.abort(); } catch(e){} document.getElementById('overlay-idiomas').style.display = 'flex'; }
