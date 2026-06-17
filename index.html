@@ -398,11 +398,20 @@
             if (capaBloqueo) { capaBloqueo.style.opacity = '0'; setTimeout(() => { capaBloqueo.remove(); }, 1200); }
             iaActiva = true;
             
-            // Auto-reproducción de todos los videos de la escena
-            ['video-tiktok', 'video-tiktok-src', 'video-derecha-src'].forEach(id => {
-                let v = document.getElementById(id);
-                if(v) { v.muted = true; try{ v.play(); }catch(e){} }
-            });
+            // 1. Configurar Video de TikTok (Sonido activado al 10%)
+            let vTiktok = document.getElementById('video-tiktok-src');
+            if (vTiktok) { 
+                vTiktok.muted = false; 
+                vTiktok.volume = 0.1; 
+                try { vTiktok.play(); } catch(e){} 
+            }
+
+            // 2. Configurar Video Derecha (Se mantiene silenciado para no hacer ruido cruzado)
+            let vDerecha = document.getElementById('video-derecha-src');
+            if (vDerecha) { 
+                vDerecha.muted = true; 
+                try { vDerecha.play(); } catch(e){} 
+            }
 
             setTimeout(() => { hablarAdvisorUnificado(welcomeMsg, abrirMicrofonoCliente); }, 300);
         }
