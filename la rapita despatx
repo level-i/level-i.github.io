@@ -1,1 +1,254 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Level-i | Oficina Virtual Interactiva</title>
+    <style>
+        :root {
+            --verde-oscuro: #1b4332;
+            --verde-clar: #2d6a4f;
+            --dorado: #d4af37;
+            --blanco: #ffffff;
+            --glass: rgba(27, 67, 50, 0.9);
+        }
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; font-family: 'Segoe UI', sans-serif; background: #000; }
+        
+        .fullscreen-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
+        #floorplanner-container { display: none; }
 
+        /* HUD Interactiu amb l'avatar tridimensional integrat */
+        .hud-overlay {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            z-index: 10; width: 92%; max-width: 550px;
+            background: var(--glass); backdrop-filter: blur(12px);
+            border: 2px solid var(--dorado); border-radius: 15px;
+            padding: 30px; text-align: center; color: var(--blanco);
+            box-shadow: 0 0 35px rgba(212, 175, 55, 0.25);
+            display: none; box-sizing: border-box;
+        }
+        
+        /* Posicionament de l'avatar dins de la paleta */
+        .avatar-container {
+            width: 120px; height: 120px; margin: 0 auto 15px auto;
+            border-radius: 50%; border: 3px solid var(--dorado);
+            overflow: hidden; background: #000;
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
+        }
+        .avatar-img { width: 100%; height: 100%; object-fit: cover; }
+
+        .hud-title { color: var(--dorado); font-size: 24px; margin-bottom: 15px; font-weight: bold; letter-spacing: 1px; }
+        .hud-text { font-size: 17px; line-height: 1.6; margin-bottom: 25px; text-align: left; }
+        
+        .btn-hud {
+            background: transparent; color: var(--blanco); border: 2px solid var(--blanco);
+            padding: 12px 24px; font-size: 15px; font-weight: bold; border-radius: 5px;
+            cursor: pointer; margin: 8px; transition: 0.3s;
+        }
+        .btn-hud:hover { background: var(--dorado); color: #000; border-color: var(--dorado); }
+        
+        input[type="text"], input[type="email"], input[type="tel"] {
+            width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 5px;
+            border: 1px solid var(--dorado); background: rgba(0,0,0,0.6); color: #fff; font-size: 16px; box-sizing: border-box;
+        }
+    </style>
+    <script src="https://www.youtube.com/iframe_api"></script>
+</head>
+<body>
+
+    <div id="player" class="fullscreen-bg"></div>
+
+    <div id="floorplanner-container" class="fullscreen-bg">
+        <iframe src="https://floorplanner.com/360vr/161201146-1784390472" width="100%" height="100%" style="border:none;"></iframe>
+    </div>
+
+    <div id="avatar-hud" class="hud-overlay">
+        <div class="avatar-container">
+            <img src="foto-actual1.jpg" alt="Level AI Advisor" class="avatar-img" id="avatar-view">
+        </div>
+        <div class="hud-title" id="hud-header">LEVEL AI ADVISORS</div>
+        <div class="hud-text" id="hud-speech">Carregant assistent...</div>
+        <div id="hud-actions"></div>
+    </div>
+
+<script>
+    let player;
+    let usuariDades = { idioma: 'ca', nom: '', email: '', mobil: '', nomBot: '' };
+
+    function onYouTubeIframeAPIReady() {
+        player = new YT.Player('player', {
+            videoId: 'rx-Fz4qeNoo',
+            playerVars: { 'autoplay': 1, 'controls': 0, 'rel': 0, 'showinfo': 0, 'modestbranding': 1, 'iv_load_policy': 3 },
+            events: { 'onStateChange': onPlayerStateChange }
+        });
+    }
+
+    function onPlayerStateChange(event) {
+        if (event.data === YT.PlayerState.ENDED) {
+            document.getElementById('player').style.display = 'none';
+            document.getElementById('floorplanner-container').style.display = 'block';
+            document.getElementById('avatar-hud').style.display = 'block';
+            triaIdioma();
+        }
+    }
+
+    function parlar(text, idioma) {
+        window.speechSynthesis.cancel();
+        const iaspeech = new SpeechSynthesisUtterance(text);
+        iaspeech.lang = idioma === 'ca' ? 'ca-ES' : 'es-ES';
+        window.speechSynthesis.speak(iaspeech);
+    }
+
+    // PAS 0: Selecció d'idioma inicial
+    function triaIdioma() {
+        document.getElementById('hud-speech').innerHTML = "Vols que parlem en català o prefieres en castellano?";
+        document.getElementById('hud-actions').innerHTML = `
+            <button class="btn-hud" onclick="iniciarAdvisor('ca')">Català</button>
+            <button class="btn-hud" onclick="iniciarAdvisor('es')">Castellano</button>
+        `;
+    }
+
+    // PAS 1: Presentació del Bot i Bateig
+    function iniciarAdvisor(idioma) {
+        usuariDades.idioma = idioma;
+        const text = idioma === 'ca' 
+            ? "Hola. Sóc la teva Assistenta Virtual de Level AI Advisors. Encara no m'han posat nom. Em vols batejar tu?"
+            : "Hola. Soy tu Asistenta Virtual de Level AI Advisors. Todavía no me han puesto nombre. ¿Quieres bautizarme tú?";
+        
+        document.getElementById('hud-speech').innerText = text;
+        parlar(text, idioma);
+
+        document.getElementById('hud-actions').innerHTML = `
+            <button class="btn-hud" onclick="mostrarBateig(true)">${idioma === 'ca' ? 'Sí' : 'Sí'}</button>
+            <button class="btn-hud" onclick="mostrarBateig(false)">${idioma === 'ca' ? 'No, després' : 'No, luego'}</button>
+        `;
+    }
+
+    function mostrarBateig(volBatejar) {
+        const idioma = usuariDades.idioma;
+        if(volBatejar) {
+            document.getElementById('hud-speech').innerText = idioma === 'ca' ? "Grava o escriu el nom que em vols posar:" : "Graba o escribe el nombre que me quieres poner:";
+            document.getElementById('hud-actions').innerHTML = `
+                <input type="text" id="botname-input" placeholder="${idioma === 'ca' ? 'Nom per a la IA...' : 'Nombre para la IA...'}">
+                <button class="btn-hud" onclick="guardarNomBot()">Ok</button>
+            `;
+        } else {
+            preguntarNomUsuari();
+        }
+    }
+
+    function guardarNomBot() {
+        let nomProvisional = document.getElementById('botname-input').value || "Advisor";
+        usuariDades.nomBot = nomProvisional;
+        const idioma = usuariDades.idioma;
+        
+        const textPensar = idioma === 'ca' 
+            ? `"${nomProvisional}"... m'ho pensaré.` 
+            : `"${nomProvisional}"... me lo pensaré.`;
+            
+        document.getElementById('hud-speech').innerText = textPensar;
+        parlar(textPensar, idioma);
+        
+        setTimeout(preguntarNomUsuari, 2500);
+    }
+
+    // PAS 2: Nom de l'usuari
+    function preguntarNomUsuari() {
+        const idioma = usuariDades.idioma;
+        const text = idioma === 'ca' ? "Com et dius tu?" : "¿Cómo te llamas tú?";
+        document.getElementById('hud-speech').innerText = text;
+        parlar(text, idioma);
+
+        document.getElementById('hud-actions').innerHTML = `
+            <input type="text" id="username-input" placeholder="${idioma === 'ca' ? 'El teu nom...' : 'Tu nombre...'}">
+            <button class="btn-hud" onclick="guardarNomUsuari()">Continuar</button>
+        `;
+    }
+
+    function guardarNomUsuari() {
+        let nom = document.getElementById('username-input').value || "Inversor";
+        usuariDades.nom = nom;
+        const idioma = usuariDades.idioma;
+        
+        const text = idioma === 'ca'
+            ? `Encantada, ${nom}. És un plaer informar-te a prop d'aquesta inversió. Però abans digues-me: T'interessa adquirir aquesta propietat per reformar-la per a la seva primera activitat, i llogar-la a una marca amb futur?`
+            : `Encantada, ${nom}. Es un placer informarte acerca de esta inversión. Pero antes dime: ¿Te interesa adquirir esta propiedad para reformarla para su primera actividad, y alquilarla a una marca con futuro?`;
+            
+        document.getElementById('hud-speech').innerText = text;
+        parlar(text, idioma);
+
+        document.getElementById('hud-actions').innerHTML = `
+            <button class="btn-hud" onclick="interesaPropietat(true)">${idioma === 'ca' ? 'Sí, m\'interessa' : 'Sí, me interesa'}</button>
+            <button class="btn-hud" onclick="interesaPropietat(false)">${idioma === 'ca' ? 'No' : 'No'}</button>
+        `;
+    }
+
+    // PAS 3: Filtre d'interès
+    function interesaPropietat(interesa) {
+        const idioma = usuariDades.idioma;
+        if(!interesa) {
+            const textNo = idioma === 'ca'
+                ? `D'acord, ${usuariDades.nom}. Espero poder ajudar-te en una altra ocasió. Que tinguis un bon dia.`
+                : `De acuerdo, ${usuariDades.nom}. Espero poder ayudarte en otra ocasión. Que tengas un buen día.`;
+            document.getElementById('hud-speech').innerText = textNo;
+            parlar(textNo, idioma);
+            document.getElementById('hud-actions').innerHTML = "";
+            return;
+        }
+
+        // Si diu que sí, llancem la descripció tècnica
+        const textSi = idioma === 'ca'
+            ? "Aquesta inversió consisteix en l'adquisició d'un local comercial per a la seva primera ocupació. L'edifici data de l'any 2007, disposa d'ascensor. Està en ple centre de la Ràpita, a prop de totes parts. La superfície és de 85 metres quadrats, i disposa de lavabo i pati de llums. Té dos grans finestrals a l'Avinguda dels Esports, juntament amb el supermercat Condis. Segons els nostres tècnics, hi ha possibilitat de sol·licitar canvi d'ús en un futur immediat o a mitjà termini. No obstant això, el nostre objectiu és vendre a inversor que vulgui un arrendament estable i amb una rentabilitat més que notable. El preu de venda és de 42.000€, i requereix una inversió de 20.000€, clau en mà, per a la seva conversió en despatx, amb la seva respectiva llicència d'activitat. Li pot interessar?"
+            : "Esta inversión consiste en la adquisición de un local comercial para su primera ocupación. El edificio data del año 2007, dispone de ascensor. Está en pleno centro de la Rápita, cerca de todas partes. La superficie es de 85 metros cuadrados, y dispone de lavabo y patio de luces. Tiene dos ventanales a l’Avinguda dels Esports, junto el supermercado Condis. Según nuestros técnicos, existe posibilidad de solicitar cambio de uso en un futuro inmediato o a medio plazo. No obstante, nuestro objetivo es vender a inversor que quiera un arriendo estable y con una rentabilidad más que notable. El precio de venta es de 42.000€, y requiere una inversión de 20.000€, llave en mano, para su conversión en despacho, con su respectiva licencia de actividad. ¿Le puede interesar?";
+
+        document.getElementById('hud-speech').innerText = textSi;
+        parlar(textSi, idioma);
+
+        document.getElementById('hud-actions').innerHTML = `
+            <button class="btn-hud" onclick="tancamentComercial(true)">${idioma === 'ca' ? 'Sí, em pot interessar' : 'Sí, me puede interesar'}</button>
+            <button class="btn-hud" onclick="interesaPropietat(false)">${idioma === 'ca' ? 'No' : 'No'}</button>
+        `;
+    }
+
+    // PAS 4: Tancament i captura final
+    function tancamentComercial(avanca) {
+        const idioma = usuariDades.idioma;
+        const textForm = idioma === 'ca'
+            ? "Perfecte! Per deixar-te reservada la propietat 24h sense compromís i gestionar l'entrevista amb el Director de Vendes, deixa'ns el teu contacte:"
+            : "¡Perfecto! Para dejarte reservada la propiedad 24h sin compromiso y gestionar la entrevista con el Director de Ventas, déjanos tu contacto:";
+            
+        document.getElementById('hud-speech').innerText = textForm;
+        
+        document.getElementById('hud-actions').innerHTML = `
+            <input type="email" id="final-email" placeholder="Correu electrònic..." required>
+            <input type="tel" id="final-tel" placeholder="Telèfon mòbil..." required>
+            <br>
+            <button class="btn-hud" onclick="enviarFinal(true)">${idioma === 'ca' ? 'Reservar 24h i Agendar Entrevista' : 'Reservar 24h y Agendar Entrevista'}</button>
+            <button class="btn-hud" onclick="enviarFinal(false)">${idioma === 'ca' ? 'No, finalitzar' : 'No, finalizar'}</button>
+        `;
+    }
+
+    function enviarFinal(acceptaReserva) {
+        const idioma = usuariDades.idioma;
+        let mail = document.getElementById('final-email').value;
+        let telf = document.getElementById('final-tel').value;
+        if(mail === "" || telf === "") return;
+
+        if(acceptaReserva) {
+            const textFiSi = idioma === 'ca'
+                ? `Perfecte, ${usuariDades.nom}. Hem reservat l'immoble al teu nom. El nostre Director de Vendes es posarà en contacte amb tu de forma immediata. Salutacions i feliç dia!`
+                : `Perfecto, ${usuariDades.nom}. Hemos reservado el inmueble a tu nombre. Nuestro Director de Ventas se pondrá en contacto contigo de forma inmediata. ¡Saludos y feliz día!`;
+            document.getElementById('hud-speech').innerText = textFiSi;
+            parlar(textFiSi, idioma);
+        } else {
+            const textFiNo = idioma === 'ca'
+                ? `Perfecte, ${usuariDades.nom}. Si t'ho penses i estàs a temps, ja saps com trobar-nos. Esperem veure't aviat. Salutacions i feliç dia.`
+                : `Perfecto, ${usuariDades.nom}. Si te lo piensas y estás a tiempo, ya sabes cómo encontrarnos. Esperamos verte pronto. Saludos y feliz día.`;
+            document.getElementById('hud-speech').innerText = textFiNo;
+            parlar(textFiNo, idioma);
+        }
+        document.getElementById('hud-actions').innerHTML = "";
+    }
+</script>
+</body>
+</html>
