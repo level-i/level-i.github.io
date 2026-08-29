@@ -1,1 +1,343 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Level-I Command Center | Compras La Ràpita</title>
+    <style>
+        :root {
+            --bg-base: #090d16;
+            --bg-panel: #111827;
+            --bg-card: #1f2937;
+            --accent-green: #10b981;
+            --accent-blue: #3b82f6;
+            --text-main: #f9fafb;
+            --text-muted: #9ca3af;
+            --border-color: #374151;
+        }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            height: 100vh;
+            display: flex;
+            overflow: hidden;
+        }
+        /* Sidebar Consola */
+        sidebar {
+            width: 260px;
+            background-color: var(--bg-panel);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 20px;
+        }
+        .brand {
+            font-size: 18px;
+            font-weight: 900;
+            letter-spacing: 1px;
+            color: var(--accent-green);
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .nav-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            overflow-y: auto;
+            max-height: calc(100vh - 150px);
+        }
+        .nav-item {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            text-align: left;
+            padding: 9px 12px;
+            border-radius: 8px;
+            font-size: 12.5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .nav-item:hover {
+            background-color: var(--bg-card);
+            color: var(--text-main);
+        }
+        .nav-item.active {
+            background-color: var(--bg-card);
+            color: var(--text-main);
+            border-left: 3px solid var(--accent-green);
+        }
+        /* Layout Principal */
+        main {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            grid-template-rows: 60px 1fr;
+            height: 100vh;
+            overflow: hidden;
+        }
+        header {
+            grid-column: 1 / -1;
+            background-color: var(--bg-panel);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 30px;
+        }
+        .header-title {
+            font-size: 13.5px;
+            color: var(--text-muted);
+        }
+        .lang-selector {
+            display: flex;
+            gap: 6px;
+        }
+        .lang-btn {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .lang-btn.active {
+            background: var(--accent-green);
+            color: #fff;
+            border-color: var(--accent-green);
+        }
+        /* Pantalla Central */
+        .content-area {
+            padding: 25px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .video-screen {
+            width: 100%;
+            height: 200px;
+            background: #000;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+        }
+        .video-screen video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.85;
+        }
+        .video-overlay-badge {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            background: rgba(0,0,0,0.75);
+            backdrop-filter: blur(4px);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: bold;
+            color: var(--accent-green);
+            border: 1px solid var(--border-color);
+        }
+        .card-main {
+            background-color: var(--bg-panel);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 24px;
+        }
+        .card-main h2 {
+            font-size: 18px;
+            margin-bottom: 12px;
+            color: var(--text-main);
+            line-height: 1.4;
+        }
+        .card-main p {
+            font-size: 13.5px;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+        .highlight {
+            color: var(--text-main);
+            font-weight: 600;
+        }
+        /* Panel Lateral Derecho */
+        .right-panel {
+            background-color: var(--bg-panel);
+            border-left: 1px solid var(--border-color);
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .victoria-box {
+            text-align: center;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+        }
+        .victoria-avatar {
+            width: 55px;
+            height: 55px;
+            background: linear-gradient(135deg, #3b82f6, #10b981);
+            border-radius: 50%;
+            margin: 0 auto 12px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+        }
+        .btn-action {
+            display: block;
+            width: 100%;
+            background-color: var(--accent-green);
+            color: #fff;
+            text-align: center;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: bold;
+            text-decoration: none;
+            margin-top: 15px;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+            transition: opacity 0.2s;
+        }
+        .btn-action:hover {
+            opacity: 0.9;
+        }
+        .partner-promo {
+            background: linear-gradient(135deg, rgba(59,130,246,0.1), rgba(16,185,129,0.1));
+            border: 1px dashed var(--accent-blue);
+            border-radius: 10px;
+            padding: 15px;
+            font-size: 12px;
+            color: var(--text-muted);
+            text-align: center;
+        }
+        .partner-promo span {
+            color: var(--text-main);
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
 
+    <sidebar>
+        <div>
+            <div class="brand">
+                <span>⚡</span> LEVEL-I.COM
+            </div>
+            <div class="nav-menu">
+                <button class="nav-item active">🎯 Captación La Ràpita</button>
+                <button class="nav-item" onclick="alert('Módulo disponible próximamente')">🏠 Comprar Inmuebles</button>
+                <button class="nav-item" onclick="alert('Módulo disponible próximamente')">🏷️ Venta General</button>
+                <button class="nav-item" onclick="alert('Módulo disponible próximamente')">⚙️ Gestión Integral</button>
+                <button class="nav-item" onclick="alert('Módulo disponible próximamente')">🔑 App Alquileres</button>
+                <button class="nav-item" onclick="alert('Módulo disponible próximamente')">🏢 App Comunidades</button>
+                <button class="nav-item" onclick="alert('Módulo disponible próximamente')">💶 Hipotecas & Financiación</button>
+                <button class="nav-item" onclick="alert('Módulo disponible próximamente')">📈 Club Inversores</button>
+                <button class="nav-item" onclick="alert('Módulo disponible próximamente')">🛡️ Advisors & Red</button>
+                <button class="nav-item" onclick="alert('Módulo disponible próximamente')">🎁 Colaboradores (600€)</button>
+            </div>
+        </div>
+        <div style="font-size: 11px; color: var(--text-muted); text-align: center; border-top: 1px solid var(--border-color); padding-top: 12px;">
+            API 4173 · AICAT 14200
+        </div>
+    </sidebar>
+
+    <main>
+        <header>
+            <div class="header-title">Consola Central PropTech · Módulo Activo: La Ràpita</div>
+            <div class="lang-selector">
+                <button class="lang-btn active" onclick="setLanguage('esp')">ESP</button>
+                <button class="lang-btn" onclick="setLanguage('ca')">CAT</button>
+                <button class="lang-btn" onclick="setLanguage('fra')">FRA</button>
+            </div>
+        </header>
+
+        <div class="content-area">
+            <div class="video-screen">
+                <div class="video-overlay-badge">🔴 LIVE FEED // LA RÀPITA SECTOR</div>
+                <video autoplay muted loop playsinline>
+                    <source src="https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-a-coastal-city-and-beach-41580-large.mp4" type="video/mp4">
+                </video>
+            </div>
+
+            <div class="card-main">
+                <h2 id="main-title">¿Vendes tu piso o planta baja en La Ràpita? Tenemos al comprador ideal.</h2>
+                <p id="main-desc">
+                    Hola,<br><br>
+                    Te escribo de manera directa y personal. Represento a una clienta particular que acaba de vender su vivienda y necesita comprar con urgencia una propiedad pequeña <span class="highlight">(tipo estudio o 1 habitación)</span>, que sea planta baja o disponga de ascensor, obligatoriamente en la zona de <span class="highlight">La Ràpita</span>.<br><br>
+                    Nos da exactamente igual el estado: si necesita reformas integrales, si lleva años cerrada o si está llena de enseres. Nosotros nos encargamos absolutamente de todo <span class="highlight">(vaciado, papeleo, licencias y trámites notariales)</span>.<br><br>
+                    Buscamos un trato directo, ágil, sin aguantar visitas innecesarias y con la máxima discreción.
+                </p>
+            </div>
+        </div>
+
+        <div class="right-panel">
+            <div class="victoria-box">
+                <div class="victoria-avatar">🎙️</div>
+                <h3 style="font-size: 15px; margin-bottom: 6px;">Victoria Advisor</h3>
+                <p style="font-size: 12px; color: var(--text-muted);">Asistente políglota lista para validar el inmueble.</p>
+                <a id="wa-button" href="https://wa.me/34641451736?text=Hola,%20estoy%20interesado%20TENGO%20APARTAMENTO%20O%20ESTUDI%20EN%20LA%20RAPITA" class="btn-action">
+                    <span id="btn-text">🎙️ Hablar por voz o chat</span>
+                </a>
+            </div>
+
+            <div class="partner-promo">
+                🎁 <b>Chivatazos Nacionales:</b> Gana una tarjeta regalo de <b>600 €</b> por cada propiedad vendida que nos traigas.
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function setLanguage(lang) {
+            const title = document.getElementById('main-title');
+            const desc = document.getElementById('main-desc');
+            const button = document.getElementById('wa-button');
+            const btnText = document.getElementById('btn-text');
+            const buttons = document.querySelectorAll('.lang-btn');
+
+            buttons.forEach(b => b.classList.remove('active'));
+
+            if (lang === 'ca') {
+                buttons[1].classList.add('active');
+                title.innerText = "Vens el teu pis o planta baixa a La Ràpita? Tenim el comprador ideal.";
+                desc.innerHTML = `Hola,<br><br>T'escric de manera directa i personal. Represento a una clienta particular que acaba de vendre el seu habitatge i necessita comprar amb urgència una propietat petita <span class="highlight">(tipus estudi o 1 habitació)</span>, que sigui planta baixa o disposi d'ascensor, obligatòriament a la zona de <span class="highlight">La Ràpita</span>.<br><br>Ens dóna exactament igual l'estat: si necessita reformes integrals, si porta anys tancada o si està ple d'estris. Nosaltres ens encarreguem absolutament de tot <span class="highlight">(buidatge, paperassa, llicències i tràmits notarials)</span>.<br><br>Busquem un tracte directe, àgil, sense aguantar visites innecessàries i amb la màxima discreció.`;
+                btnText.innerText = "🎙️ Parlar per veu o xat";
+                button.href = "https://wa.me/34641451736?text=Hola,%20estic%20interessat%20TINC%20APARTAMENT%20O%20ESTUDI%20A%20LA%20RAPITA";
+            } else if (lang === 'fra') {
+                buttons[2].classList.add('active');
+                title.innerText = "Vous vendez votre appartement ou rez-de-chaussée à La Ràpita ? Nous avons l'acheteur idéal.";
+                desc.innerHTML = `Bonjour,<br><br>Je vous écris de manière directe et personnelle. Je représente une cliente particulière qui vient de vendre son bien et cherche d'urgence une petite propriété <span class="highlight">(type studio ou 1 chambre)</span>, en rez-de-chaussée ou avec ascenseur, obligatoirement dans la zone de <span class="highlight">La Ràpita</span>.<br><br>L'état nous importe peu : qu'il s'agisse de rénovations, d'un bien fermé ou encombré. Nous nous occupons absolument de tout <span class="highlight">(débarras, formalités et notaire)</span>.<br><br>Nous recherchons un contact direct, rapide, sans visites inutiles et en toute discrétion.`;
+                btnText.innerText = "🎙️ Parler par voix ou chat";
+                button.href = "https://wa.me/34641451736?text=Bonjour,%20je%20suis%20intéressé,%20J'AI%20UN%20STUDIO%20OU%20APPARTEMENT%20À%20LA%20RÀPITA";
+            } else {
+                buttons[0].classList.add('active');
+                title.innerText = "¿Vendes tu piso o planta baja en La Ràpita? Tenemos al comprador ideal.";
+                desc.innerHTML = `Hola,<br><br>Te escribo de manera directa y personal. Represento a una clienta particular que acaba de vender su vivienda y necesita comprar con urgencia una propiedad pequeña <span class="highlight">(tipo estudio o 1 habitación)</span>, que sea planta baja o disponga de ascensor, obligatoriamente en la zona de <span class="highlight">La Ràpita</span>.<br><br>Nos da exactamente igual el estado: si necesita reformas integrales, si lleva años cerrada o si está llena de enseres. Nosotros nos encargamos absolutamente de todo <span class="highlight">(vaciado, papeleo, licencias y trámites notariales)</span>.<br><br>Buscamos un trato directo, ágil, sin aguantar visitas innecesarias y con la máxima discreción.`;
+                btnText.innerText = "🎙️ Hablar por voz o chat";
+                button.href = "https://wa.me/34641451736?text=Hola,%20estoy%20interesado%20TENGO%20APARTAMENTO%20O%20ESTUDI%20EN%20LA%20RAPITA";
+            }
+        }
+    </script>
+</body>
+</html>
