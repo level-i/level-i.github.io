@@ -1,381 +1,351 @@
 <!DOCTYPE html>
-<html lang="ca">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Level-i | Oficina Virtual Interactiva i Simulador</title>
+    <title>Level-I | Command Center & PropTech</title>
     <style>
         :root {
-            --verde-oscuro: #1b4332;
-            --verde-clar: #2d6a4f;
-            --dorado: #d4af37;
-            --blanco: #ffffff;
-            --gris-claro: #f4f4f9;
-            --glass: rgba(27, 67, 50, 0.95);
+            --bg-base: #090d16;
+            --bg-panel: #111827;
+            --bg-card: #1f2937;
+            --accent-green: #10b981;
+            --accent-blue: #3b82f6;
+            --text-main: #f9fafb;
+            --text-muted: #9ca3af;
+            --border-color: #374151;
         }
-        body, html { margin: 0; padding: 0; width: 100%; height: 100%; font-family: 'Segoe UI', sans-serif; background: #000; color: #fff; }
-        
-        .fullscreen-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
-        #main-layout { display: none; width: 100%; height: 100%; position: relative; overflow-y: auto; background: var(--verde-oscuro); }
-
-        /* Estructura split (VR dalt, dades baix si s'activa) */
-        .split-vr { width: 100%; height: 100vh; position: relative; background: #000; }
-
-        /* HUD de l'Advisor Virtual */
-        .hud-overlay {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            z-index: 10; width: 92%; max-width: 550px;
-            background: var(--glass); backdrop-filter: blur(12px);
-            border: 2px solid var(--dorado); border-radius: 15px;
-            padding: 30px; text-align: center; color: var(--blanco);
-            box-shadow: 0 0 35px rgba(212, 175, 55, 0.3);
+        * {
             box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         }
-        
-        .avatar-container {
-            width: 120px; height: 120px; margin: 0 auto 15px auto;
-            border-radius: 50%; border: 3px solid var(--dorado);
-            overflow: hidden; background: #000; box-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            height: 100vh;
+            display: flex;
+            overflow: hidden;
         }
-        .avatar-img { width: 100%; height: 100%; object-fit: cover; }
-        .hud-title { color: var(--dorado); font-size: 24px; margin-bottom: 15px; font-weight: bold; letter-spacing: 1px; }
-        .hud-text { font-size: 16px; line-height: 1.6; margin-bottom: 25px; text-align: left; }
-        
-        .btn-hud, button, .btn-link {
-            background: transparent; color: var(--blanco); border: 2px solid var(--blanco);
-            padding: 12px 24px; font-size: 15px; font-weight: bold; border-radius: 5px;
-            cursor: pointer; margin: 8px; transition: 0.3s; text-decoration: none; display: inline-block;
+        /* Sidebar de Consola */
+        sidebar {
+            width: 260px;
+            background-color: var(--bg-panel);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 20px;
         }
-        .btn-hud:hover, button:hover, .btn-link:hover { background: var(--dorado); color: #000; border-color: var(--dorado); }
-        
-        input[type="text"], input[type="email"], input[type="tel"], input[type="number"] {
-            width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 5px;
-            border: 1px solid var(--dorado); background: rgba(0,0,0,0.6); color: #fff; font-size: 16px; box-sizing: border-box;
+        .brand {
+            font-size: 20px;
+            font-weight: 900;
+            letter-spacing: 1px;
+            color: var(--accent-green);
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
-
-        /* Secció Financera (S'activa al final) */
-        .financial-section { display: none; padding: 40px 20px; max-width: 1100px; margin: 0 auto; }
-        .section { background: rgba(255, 255, 255, 0.05); padding: 25px; border-radius: 10px; margin-bottom: 25px; }
-        
-        /* Galeria */
-        .tab-container { display: flex; gap: 10px; margin-bottom: 15px; }
-        .tab-btn { background: rgba(255,255,255,0.1); color: #fff; border: 1px solid rgba(255,255,255,0.2); padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; }
-        .tab-btn.active { background: var(--verde-clar); border-color: var(--dorado); }
-        .gallery-pane { display: none; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; }
-        .gallery-pane.active { display: grid; }
-        .gallery-item { width: 100%; border-radius: 6px; aspect-ratio: 4/3; object-fit: cover; border: 1px solid rgba(255,255,255,0.1); }
-
-        /* Taula */
-        .table-responsive { width: 100%; overflow-x: auto; margin-top: 15px; border-radius: 5px; }
-        table { width: 100%; border-collapse: collapse; background: #fff; color: #333; min-width: 900px; font-size: 14px; }
-        th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid #ddd; }
-        th { background-color: var(--verde-clar); color: #fff; }
-        tr:nth-child(even) { background-color: var(--gris-claro); }
-        .flex-inputs { display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
-
-        /* Modal final */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--verde-oscuro); z-index: 9999; overflow-y: auto; }
-        .modal-content { max-width: 800px; margin: 0 auto; padding: 60px 20px; text-align: center; }
+        .nav-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            overflow-y: auto;
+        }
+        .nav-item {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            text-align: left;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .nav-item:hover, .nav-item.active {
+            background-color: var(--bg-card);
+            color: var(--text-main);
+            border-left: 3px solid var(--accent-green);
+        }
+        /* Contenido Principal */
+        main {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            grid-template-rows: 60px 1fr;
+            height: 100vh;
+            overflow: hidden;
+        }
+        header {
+            grid-column: 1 / -1;
+            background-color: var(--bg-panel);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 30px;
+        }
+        .header-title {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+        .lang-selector {
+            display: flex;
+            gap: 6px;
+        }
+        .lang-btn {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .lang-btn.active {
+            background: var(--accent-green);
+            color: #fff;
+            border-color: var(--accent-green);
+        }
+        /* Pantalla Central y Vídeo en Off */
+        .content-area {
+            padding: 25px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .video-screen {
+            width: 100%;
+            height: 220px;
+            background: #000;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+        }
+        .video-screen video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.85;
+        }
+        .video-overlay-badge {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(4px);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: bold;
+            color: var(--accent-green);
+            border: 1px solid var(--border-color);
+        }
+        .card-main {
+            background-color: var(--bg-panel);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 24px;
+        }
+        .card-main h2 {
+            font-size: 18px;
+            margin-bottom: 12px;
+            color: var(--text-main);
+        }
+        .card-main p {
+            font-size: 13.5px;
+            color: var(--text-muted);
+            line-height: 1.5;
+            margin-bottom: 16px;
+        }
+        .highlight {
+            color: var(--text-main);
+            font-weight: 600;
+        }
+        /* Panel Lateral Derecho (Acción de Victoria & Leads) */
+        .right-panel {
+            background-color: var(--bg-panel);
+            border-left: 1px solid var(--border-color);
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .victoria-box {
+            text-align: center;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+        }
+        .victoria-avatar {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #3b82f6, #10b981);
+            border-radius: 50%;
+            margin: 0 auto 12px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+        .btn-action {
+            display: block;
+            width: 100%;
+            background-color: var(--accent-green);
+            color: #fff;
+            text-align: center;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: bold;
+            text-decoration: none;
+            margin-top: 15px;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+            transition: opacity 0.2s;
+        }
+        .btn-action:hover {
+            opacity: 0.9;
+        }
+        .partner-promo {
+            background: linear-gradient(135deg, rgba(59,130,246,0.1), rgba(16,185,129,0.1));
+            border: 1px dashed var(--accent-blue);
+            border-radius: 10px;
+            padding: 15px;
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 20px;
+            text-align: center;
+        }
+        .partner-promo span {
+            color: var(--text-main);
+            font-weight: bold;
+        }
     </style>
-    <script src="https://www.youtube.com/iframe_api"></script>
 </head>
 <body>
 
-    <div id="player" class="fullscreen-bg"></div>
+    <!-- SIDEBAR DE CONSOLA FUTURISTA -->
+    <sidebar>
+        <div>
+            <div class="brand">
+                <span>⚡</span> LEVEL-I.COM
+            </div>
+            <div class="nav-menu">
+                <button class="nav-item active" onclick="switchTab('captacion')">🎯 Captación La Ràpita</button>
+                <button class="nav-item" onclick="switchTab('comprar')">🏠 Comprar Inmuebles</button>
+                <button class="nav-item" onclick="switchTab('vender')">🏷️ Venta General</button>
+                <button class="nav-item" onclick="switchTab('gestion')">⚙️ Gestión Integral</button>
+                <button class="nav-item" onclick="switchTab('alquileres')">🔑 App Alquileres</button>
+                <button class="nav-item" onclick="switchTab('comunidades')">🏢 App Comunidades</button>
+                <button class="nav-item" onclick="switchTab('hipotecas')">💶 Hipotecas & Financiación</button>
+                <button class="nav-item" onclick="switchTab('inversores')">📈 Club Inversores</button>
+                <button class="nav-item" onclick="switchTab('advisors')">🛡️ Advisors & Red</button>
+                <button class="nav-item" onclick="switchTab('partners')">🎁 Colaboradores (600€)</button>
+            </div>
+        </div>
+        <div style="font-size: 11px; color: var(--text-muted); text-align: center; border-top: 1px solid var(--border-color); pt: 10px;">
+            API 4173 · AICAT 14200
+        </div>
+    </sidebar>
 
-    <div id="main-layout">
-        
-        <div class="split-vr">
-            <iframe src="https://floorplanner.com/360vr/161201146-1784390472" width="100%" height="100%" style="border:none;"></iframe>
-            
-            <div id="avatar-hud" class="hud-overlay">
-                <div class="avatar-container">
-                    <img src="foto-actual1.jpg" alt="Level AI Advisor" class="avatar-img" id="avatar-view">
-                </div>
-                <div class="hud-title">LEVEL AI ADVISORS</div>
-                <div class="hud-text" id="hud-speech">Configurant connexió...</div>
-                <div id="hud-actions"></div>
+    <!-- MAIN DASHBOARD -->
+    <main>
+        <!-- HEADER -->
+        <header>
+            <div class="header-title" id="header-subtitle">Consola Central PropTech · Módulo Activo: La Ràpita</div>
+            <div class="lang-selector">
+                <button class="lang-btn active" onclick="setLanguage('esp')">ESP</button>
+                <button class="lang-btn" onclick="setLanguage('ca')">CAT</button>
+                <button class="lang-btn" onclick="setLanguage('fra')">FRA</button>
+            </div>
+        </header>
+
+        <!-- CONTENIDO CENTRAL (VÍDEO EN OFF + CASO) -->
+        <div class="content-area">
+            <!-- Pantalla fija de vídeos en off -->
+            <div class="video-screen">
+                <div class="video-overlay-badge">🔴 LIVE FEED // ZONA DELTA</div>
+                <video autoplay muted loop playsinline>
+                    <!-- Aquí pones el enlace de tu vídeo corto del piso o de la zona alojado en GitHub / CDN -->
+                    <source src="https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-a-coastal-city-and-beach-41580-large.mp4" type="video/mp4">
+                </video>
+            </div>
+
+            <!-- Caso Principal de Captación -->
+            <div class="card-main">
+                <h2 id="main-title">¿Vendes tu piso o planta baja en La Ràpita? Tenemos al comprador ideal.</h2>
+                <p id="main-desc">
+                    Te escribo de manera directa y personal. Represento a una clienta particular que acaba de vender su vivienda y necesita comprar con urgencia una propiedad pequeña <span class="highlight">(tipo estudio o 1 habitación)</span>, que sea planta baja o disponga de ascensor, obligatoriamente en la zona de <span class="highlight">La Ràpita</span>.<br><br>
+                    Nos da exactamente igual el estado: si necesita reformas integrales, si lleva años cerrada o si está llena de enseres. Nosotros nos encargamos absolutamente de todo <span class="highlight">(vaciado, papeleo, licencias y trámites notarials)</span> con total discreción.
+                </p>
             </div>
         </div>
 
-        <div id="financial-module" class="financial-section">
-            
-            <div class="section" style="border: 1px solid var(--dorado); background: rgba(212, 175, 55, 0.05);">
-                <h2 style="margin-top:0;" id="txt-eco-title">Ecosistema Level-i: L'Avantatge de ser Partner Local</h2>
-                <p id="txt-eco-p">L'empresa propietària d'aquest espai té la capacitat d'actuar simultàniament com a <strong>Advisor i Partner Local</strong> de la xarxa, fet que multiplica exponencialment el retorn de la inversió:</p>
-                <ul style="line-height: 1.6;" id="txt-eco-list">
-                    <li><strong>Accés Preferent (Off-Market):</strong> Detecció d'actius exclusius abans de la seva publicació general.</li>
-                    <li><strong>Senyalització Immediata:</strong> Capacitat de bloquejar operacions de forma àgil.</li>
-                    <li><strong>Passi a Tercers:</strong> Generació d'ingressos addicionals cedint oportunitats calentes a la comunitat.</li>
-                </ul>
+        <!-- PANEL LATERAL DE ACCIÓN CON VICTORIA -->
+        <div class="right-panel">
+            <div class="victoria-box">
+                <div class="victoria-avatar">🎙️</div>
+                <h3 id="vic-title" style="font-size: 15px; margin-bottom: 6px;">Victoria Advisor</h3>
+                <p id="vic-desc" style="font-size: 12px; color: var(--text-muted);">Asistente de voz políglota lista para validar tu inmueble en segundos.</p>
+                <a id="wa-button" href="https://wa.me/34641451736?text=Hola,%20estoy%20interesado%20TENGO%20APARTAMENTO%20O%20ESTUDIO%20EN%20LA%20RAPITA" class="btn-action">
+                    <span id="btn-text">🎙️ Iniciar Asistente de Voz</span>
+                </a>
             </div>
 
-            <div class="section">
-                <h2 id="txt-gal-title">Evolució Visual del Projecte</h2>
-                <div class="tab-container">
-                    <button class="tab-btn active" onclick="switchGallery('actuals', this)">Estat Actual</button>
-                    <button class="tab-btn" onclick="switchGallery('renders', this)">Projecte (Renders 3D)</button>
-                </div>
-                <div id="gallery-actuals" class="gallery-pane active">
-                    <img src="foto-actual1.jpg" class="gallery-item">
-                    <img src="foto-actual2.jpg" class="gallery-item">
-                    <img src="foto-actual3.jpg" class="gallery-item">
-                    <img src="foto-actual4.jpg" class="gallery-item">
-                    <img src="foto-actual5.jpg" class="gallery-item">
-                </div>
-                <div id="gallery-renders" class="gallery-pane">
-                    <img src="render1.jpg" class="gallery-item">
-                    <img src="render2.jpg" class="gallery-item">
-                    <img src="render3.jpg" class="gallery-item">
-                    <img src="render4.jpg" class="gallery-item">
-                    <img src="render5.jpg" class="gallery-item">
-                </div>
-            </div>
-
-            <div class="section">
-                <h2 id="txt-calc-title">Estudi Econòmic i Amortització Real (A 10 anys)</h2>
-                <div style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 8px; margin-bottom: 20px;">
-                    <h3 id="txt-sim-title">Simulador de Palanquejament Financer</h3>
-                    <div class="flex-inputs">
-                        <label id="txt-sim-munt">Import a finançar (€): <input type="number" id="input-hipoteca" value="0" min="0" max="22150" oninput="calcularFinances()"></label>
-                        <label id="txt-sim-int">Interès Fixe (%): <input type="number" id="input-interes" value="3.5" step="0.1" oninput="calcularFinances()"></label>
-                    </div>
-                </div>
-
-                <h3 id="txt-desglos-title">Desglòs Inicial i Fons Propis</h3>
-                <ul style="line-height: 1.6;" id="txt-desglos-list">
-                    <li>Valor Compravenda: 35.000 €</li>
-                    <li>Honoraris Level.immo: 7.000 €</li>
-                    <li>IVA (21% s/ 35k): 7.350 €</li>
-                    <li>Notaria i Registre (Estimat): 1.500 €</li>
-                    <li>Reforma Integral (Claus en mà, inclou permisos): 20.000 €</li>
-                </ul>
-                <p style="font-size:1.2rem; color:var(--dorado);">Capital Propi Real Aportat: <span id="capital-propi-real">70.850</span> €</p>
-
-                <div class="table-responsive">
-                    <table>
-                        <thead>
-                            <tr id="table-head">
-                                <th>Concepte</th><th>Any 1</th><th>Any 2</th><th>Any 3</th><th>Any 4</th><th>Any 5</th><th>Any 6</th><th>Any 7</th><th>Any 8</th><th>Any 9</th><th>Any 10</th>
-                            </tr>
-                        </thead>
-                        <tbody id="table-body">
-                            </tbody>
-                    </table>
-                </div>
-
-                <div style="text-align: center; margin-top: 40px;">
-                    <button style="font-size: 18px;" onclick="obrirModal()" id="btn-modal-trigger">Què passarà en 5 anys? Descobreix el valor futur</button>
-                </div>
+            <div class="partner-promo">
+                💡 <b>¿Tienes un chivatazo?</b><br>Gana una tarjeta regalo de <b>600 €</b> por cada propiedad vendida en territorio nacional a través de nuestra red de partners.
             </div>
         </div>
-    </div>
+    </main>
 
-    <div id="modal-futur" class="modal">
-        <div class="modal-content">
-            <h2 id="txt-m-title">Potencial de Revalorització a 5 Anys</h2>
-            <p id="txt-m-p1">Donat que actualment hi ha una manca absoluta de construcció d'obra nova i una altíssima demanda d'habitatge a La Ràpita, aquest immoble té un as a la màniga.</p>
-            <p id="txt-m-p2">Aquest local de <strong>95m² edificats del 2008</strong>, cèntric, amb pati de llums, ascensor i sol de tarda, compleix els requisits tècnics per a un <strong>hipotètic canvi d'ús a vivenda</strong>.</p>
-            <p id="txt-m-p3">Un cop transformat en un impressionant loft de disseny, el valor de mercat estimat en 5 anys podria superar fàcilment els <strong>110.000€ - 120.000€</strong>, multiplicant el retorn de la teva inversió inicial.</p>
-            <div style="margin-top: 40px;">
-                <a href="https://level-i.github.io/" target="_blank" class="btn-link" style="background-color: var(--blanco); color:#000;">Consultar Assistenta VR</a>
-                <button onclick="tancarModal()" style="background:transparent; border:2px solid #fff;">Tornar enrere</button>
-            </div>
-        </div>
-    </div>
+    <script>
+        function setLanguage(lang) {
+            const title = document.getElementById('main-title');
+            const desc = document.getElementById('main-desc');
+            const button = document.getElementById('wa-button');
+            const btnText = document.getElementById('btn-text');
+            const buttons = document.querySelectorAll('.lang-btn');
 
-<script>
-    let player;
-    let usuariDades = { idioma: 'ca', nom: '', email: '', mobil: '', nomBot: '' };
+            buttons.forEach(b => b.classList.remove('active'));
 
-    function onYouTubeIframeAPIReady() {
-        player = new YT.Player('player', {
-            videoId: 'rx-Fz4qeNoo',
-            playerVars: { 'autoplay': 1, 'controls': 0, 'rel': 0, 'showinfo': 0, 'modestbranding': 1, 'iv_load_policy': 3 },
-            events: { 'onStateChange': onPlayerStateChange }
-        });
-    }
-
-    function onPlayerStateChange(event) {
-        if (event.data === YT.PlayerState.ENDED) {
-            document.getElementById('player').style.display = 'none';
-            document.getElementById('main-layout').style.display = 'block';
-            triaIdioma();
+            if (lang === 'ca') {
+                buttons[1].classList.add('active');
+                title.innerText = "Vens el teu pis o planta baixa a La Ràpita? Tenim el comprador ideal.";
+                desc.innerHTML = `T'escric de manera directa i personal. Represento a una clienta particular que acaba de vendre el seu habitatge i necessita comprar amb urgència una propietat petita <span class="highlight">(tipus estudi o 1 habitació)</span>, que sigui planta baixa o disposi d'ascensor, obligatòriament a la zona de <span class="highlight">La Ràpita</span>.<br><br>Ens dóna exactament igual l'estat: reformes, tancada o amb estris. Ens encarreguem de tot <span class="highlight">(buidatge, paperassa i notaria)</span> amb màxima discreció.`;
+                btnText.innerText = "🎙️ Parlar amb l'Assistent";
+                button.href = "https://wa.me/34641451736?text=Hola,%20estic%20interessat%20TINC%20APARTAMENT%20O%20ESTUDI%20A%20LA%20RAPITA";
+            } else if (lang === 'fra') {
+                buttons[2].classList.add('active');
+                title.innerText = "Vous vendez votre appartement ou rez-de-chaussée à La Ràpita ? Nous avons l'acheteur idéal.";
+                desc.innerHTML = `Je représente une cliente particulière qui cherche d'urgence une petite propriété <span class="highlight">(studio ou 1 chambre)</span>, en rez-de-chaussée ou avec ascenseur, obligatoirement à <span class="highlight">La Ràpita</span>.<br><br>L'état importe peu. Nous nous occupons de tout <span class="highlight">(débarras, notaire)</span> en toute discrétion.`;
+                btnText.innerText = "🎙️ Parler avec l'Assistant";
+                button.href = "https://wa.me/34641451736?text=Bonjour,%20je%20suis%20intéressé,%20J'AI%20UN%20STUDIO%20OU%20APPARTEMENT%20À%20LA%20RÀPITA";
+            } else {
+                buttons[0].classList.add('active');
+                title.innerText = "¿Vendes tu piso o planta baja en La Ràpita? Tenemos al comprador ideal.";
+                desc.innerHTML = `Te escribo de manera directa y personal. Represento a una clienta particular que acaba de vender su vivienda y necesita comprar con urgencia una propiedad pequeña <span class="highlight">(tipo estudio o 1 habitación)</span>, que sea planta baja o disponga de ascensor, obligatoriamente en la zona de <span class="highlight">La Ràpita</span>.<br><br>Nos da exactamente igual el estado: si necesita reformas integrales, si lleva años cerrada o si está llena de enseres. Nosotros nos encargamos absolutamente de todo <span class="highlight">(vaciado, papeleo, licencias y trámites notariales)</span> con total discreción.`;
+                btnText.innerText = "🎙️ Iniciar Asistente de Voz";
+                button.href = "https://wa.me/34641451736?text=Hola,%20estoy%20interesado%20TENGO%20APARTAMENTO%20O%20ESTUDI%20EN%20LA%20RAPITA";
+            }
         }
-    }
 
-    function parlar(text, idioma) {
-        window.speechSynthesis.cancel();
-        const iaspeech = new SpeechSynthesisUtterance(text);
-        iaspeech.lang = idioma === 'ca' ? 'ca-ES' : 'es-ES';
-        window.speechSynthesis.speak(iaspeech);
-    }
-
-    function triaIdioma() {
-        document.getElementById('hud-speech').innerText = "Vols que parlem en català o prefieres en castellano?";
-        document.getElementById('hud-actions').innerHTML = `
-            <button class="btn-hud" onclick="iniciarAdvisor('ca')">Català</button>
-            <button class="btn-hud" onclick="iniciarAdvisor('es')">Castellano</button>
-        `;
-    }
-
-    function iniciarAdvisor(idioma) {
-        usuariDades.idioma = idioma;
-        traduirInterficie(idioma);
-        const text = idioma === 'ca' 
-            ? "Hola. Sóc la teva Assistenta Virtual de Level AI Advisors. Encara no m'han posat nom. Em vols batejar tu?"
-            : "Hola. Soy tu Asistenta Virtual de Level AI Advisors. Todavía no me han puesto nombre. ¿Quieres bautizarme tú?";
-        document.getElementById('hud-speech').innerText = text;
-        parlar(text, idioma);
-        document.getElementById('hud-actions').innerHTML = `
-            <button class="btn-hud" onclick="mostrarBateig(true)">Sí</button>
-            <button class="btn-hud" onclick="mostrarBateig(false)">No</button>
-        `;
-    }
-
-    function mostrarBateig(volBatejar) {
-        const idioma = usuariDades.idioma;
-        if(volBatejar) {
-            document.getElementById('hud-speech').innerText = idioma === 'ca' ? "Escriu el nom que em vols posar:" : "Escribe el nombre que me quieres poner:";
-            document.getElementById('hud-actions').innerHTML = `
-                <input type="text" id="botname-input" placeholder="Nom...">
-                <button class="btn-hud" onclick="guardarNomBot()">Ok</button>
-            `;
-        } else { preguntarNomUsuari(); }
-    }
-
-    function guardarNomBot() {
-        let nomProvisional = document.getElementById('botname-input').value || "Advisor";
-        usuariDades.nomBot = nomProvisional;
-        const idioma = usuariDades.idioma;
-        const text = idioma === 'ca' ? `"${nomProvisional}"... m'ho pensaré.` : `"${nomProvisional}"... me lo pensaré.`;
-        document.getElementById('hud-speech').innerText = text;
-        parlar(text, idioma);
-        setTimeout(preguntarNomUsuari, 2200);
-    }
-
-    function preguntarNomUsuari() {
-        const idioma = usuariDades.idioma;
-        const text = idioma === 'ca' ? "Com et dius tu?" : "¿Cómo te llamas tú?";
-        document.getElementById('hud-speech').innerText = text;
-        parlar(text, idioma);
-        document.getElementById('hud-actions').innerHTML = `
-            <input type="text" id="username-input" placeholder="Nom...">
-            <button class="btn-hud" onclick="guardarNomUsuari()">Continuar</button>
-        `;
-    }
-
-    function guardarNomUsuari() {
-        let nom = document.getElementById('username-input').value || "Inversor";
-        usuariDades.nom = nom;
-        const idioma = usuariDades.idioma;
-        const text = idioma === 'ca'
-            ? `Encantada, ${nom}. És un plaer informar-te a prop d'aquesta inversió. Però abans digues-me: T'interessa adquirir aquesta propietat per reformar-la per a la seva primera activitat, i llogar-la a una marca amb futur?`
-            : `Encantada, ${nom}. Es un placer informarte acerca de esta inversión. Pero antes dime: ¿Te interesa adquirir esta propiedad para reformarla para su primera actividad, y alquilarla a una marca con futuro?`;
-        document.getElementById('hud-speech').innerText = text;
-        parlar(text, idioma);
-        document.getElementById('hud-actions').innerHTML = `
-            <button class="btn-hud" onclick="interesaPropietat(true)">Sí</button>
-            <button class="btn-hud" onclick="interesaPropietat(false)">No</button>
-        `;
-    }
-
-    function interesaPropietat(interesa) {
-        const idioma = usuariDades.idioma;
-        if(!interesa) {
-            const textNo = idioma === 'ca' ? `D'acord, ${usuariDades.nom}. Que tinguis un bon dia.` : `De acuerdo, ${usuariDades.nom}. Que tengas un buen día.`;
-            document.getElementById('hud-speech').innerText = textNo;
-            parlar(textNo, idioma);
-            document.getElementById('hud-actions').innerHTML = "";
-            return;
+        function switchTab(tab) {
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+            document.getElementById('header-subtitle').innerText = "Consola Central PropTech · Módulo Activo: " + tab.toUpperCase();
         }
-        const textSi = idioma === 'ca'
-            ? "Aquesta inversió consisteix en l'adquisició d'un local comercial per a la seva primera ocupació. L'edifici data de l'any 2007, disposa d'ascensor. Està en ple centre de la Ràpita. La superfície és de 85 metres quadrats, i disposa de lavabo i pati de llums. Té dos grans finestrals a l'Avinguda dels Esports, juntament amb el supermercat Condis. Segons els nostres tècnics, hi ha possibilitat de sol·licitar canvi d'ús en un futur immediat. El preu de venda és de 42.000€, i requereix una inversió de 20.000€, clau en mà. Li pot interessar?"
-            : "Esta inversión consiste en la adquisición de un local comercial para su primera ocupación. El edificio data del año 2007, dispone de ascensor. Está en pleno centro de la Rápita. La superficie es de 85 metros cuadrados, y dispone de lavabo y patio de luces. Tiene dos ventanales a l’Avinguda dels Esports, junto el supermercado Condis. Según nuestros técnicos, existe posibilidad de solicitar cambio de uso en un futuro inmediato. El precio de venta es de 42.000€, y requiere una inversión de 20.000€, llave en mano. ¿Le puede interesar?";
-        document.getElementById('hud-speech').innerText = textSi;
-        parlar(textSi, idioma);
-        document.getElementById('hud-actions').innerHTML = `
-            <button class="btn-hud" onclick="tancamentComercial()">Sí</button>
-            <button class="btn-hud" onclick="interesaPropietat(false)">No</button>
-        `;
-    }
-
-    function tancamentComercial() {
-        const idioma = usuariDades.idioma;
-        document.getElementById('hud-speech').innerText = idioma === 'ca' ? "Perfecte! Deixa'ns el teu contacte per bloquejar la propietat 24h sense compromís i veure el mòdul financer complet:" : "¡Perfecto! Déjanos tu contacto para bloquear la propiedad 24h sin compromiso y ver el módulo financiero completo:";
-        document.getElementById('hud-actions').innerHTML = `
-            <input type="email" id="final-email" placeholder="Email..." required>
-            <input type="tel" id="final-tel" placeholder="Mòbil..." required>
-            <button class="btn-hud" onclick="activarSimulador()">Desbloquejar Estudi Financer</button>
-        `;
-    }
-
-    function activarSimulador() {
-        let mail = document.getElementById('final-email').value;
-        let telf = document.getElementById('final-tel').value;
-        if(mail === "" || telf === "") return;
-        
-        document.getElementById('avatar-hud').style.display = 'none';
-        document.getElementById('financial-module').style.display = 'block';
-        calcularFinances();
-        
-        document.getElementById('main-layout').scrollTo({ top: window.innerHeight, behavior: 'smooth' });
-    }
-
-    function calcularFinances() {
-        const costTotalProjecte = 70850;
-        let hipoteca = parseFloat(document.getElementById('input-hipoteca').value) || 0;
-        let interes = parseFloat(document.getElementById('input-interes').value) || 0;
-        
-        if (hipoteca > 22150) { hipoteca = 22150; document.getElementById('input-hipoteca').value = 22150; }
-        let fonsPropisReals = costTotalProjecte - hipoteca;
-        document.getElementById('capital-propi-real').innerText = fonsPropisReals.toLocaleString('ca-ES');
-        
-        let quotaMensual = 0;
-        if (hipoteca > 0 && interes > 0) {
-            let i = (interes / 100) / 12;
-            quotaMensual = hipoteca * (i * Math.pow(1 + i, 180)) / (Math.pow(1 + i, 180) - 1);
-        }
-        let quotaAnual = quotaMensual * 12;
-        let ingressos = [4800, 6000, 7200, 7344, 7488, 7632, 7788, 7944, 8100, 8268];
-        
-        let htmlRows = `
-            <tr><td><strong>${usuariDades.idioma==='ca'?'Lloguer Mensual':'Alquiler Mensual'}</strong></td>${ingressos.map((ing, idx)=>`<td>${idx===0?400:idx===1?500:idx===2?600:400+Math.round((ing-4800)/12)}€</td>`).join('')}</tr>
-            <tr><td><strong>${usuariDades.idioma==='ca'?'Ingressos Bruts':'Ingresos Brutos'}</strong></td>${ingressos.map(ing=>`<td>${ing}€</td>`).join('')}</tr>
-            <tr><td><strong>${usuariDades.idioma==='ca'?'Despeses (IBI)':'Gastos (IBI)'}</strong></td>${ingressos.map(()=>`<td>-700€</td>`).join('')}</tr>
-            <tr><td><strong>${usuariDades.idioma==='ca'?'Quota Bancària':'Cuota Bancaria'}</strong></td>${ingressos.map(()=>`<td>-${Math.round(quotaAnual)}€</td>`).join('')}</tr>
-            <tr style="background-color: #e2ece9; font-weight: bold;"><td>Cash-Flow Net</td>${ingressos.map(ing=>`<td>${Math.round(ing - 700 - quotaAnual)}€</td>`).join('')}</tr>
-            <tr style="background-color: #fff3cd; font-weight: bold; color: #000;"><td>ROI s/ Fons Propis</td>${ingressos.map(ing=>{ let net = ing - 700 - quotaAnual; return `<td>${((net/fonsPropisReals)*100).toFixed(2)}%</td>`; }).join('')}</tr>
-        `;
-        document.getElementById('table-body').innerHTML = htmlRows;
-    }
-
-    function switchGallery(type, btn) {
-        document.getElementById('gallery-actuals').classList.remove('active');
-        document.getElementById('gallery-renders').classList.remove('active');
-        const buttons = document.getElementsByClassName('tab-btn');
-        for(let i=0; i<buttons.length; i++) { buttons[i].classList.remove('active'); }
-        document.getElementById('gallery-' + type).classList.add('active');
-        btn.classList.add('active');
-    }
-
-    function traduirInterficie(idioma) {
-        if(idioma === 'es') {
-            document.getElementById('txt-eco-title').innerText = "Ecosistema Level-i: La Ventaja de ser Partner Local";
-            document.getElementById('txt-eco-p').innerHTML = "La empresa propietaria de este espacio tiene la capacidad de actuar del modelo online:";
-            document.getElementById('txt-eco-list').innerHTML = "<li><strong>Acceso Preferente (Off-Market):</strong> Detección de activos exclusivos antes de su publicación general.</li><li><strong>Señalización Inmediata:</strong> Capacidad de bloquear operaciones de forma ágil.</li><li><strong>Pase a Terceros:</strong> Ingresos adicionales cediendo oportunidades a la comunidad.</li>";
-            document.getElementById('txt-gal-title').innerText = "Evolución Visual del Proyecto";
-            document.getElementById('txt-calc-title').innerText = "Estudio Económico y Amortización Real (A 10 años)";
-            document.getElementById('txt-sim-title').innerText = "Simulador de Apalancamiento Financiero";
-            document.getElementById('txt-sim-munt').innerHTML = "Importe a financiar (€): <input type='number' id='input-hipoteca' value='0' oninput='calcularFinances()'>";
-            document.getElementById('txt-sim-int').innerHTML = "Interés Fijo (%): <input type='number' id='input-interes' value='3.5' step='0.1' oninput='calcularFinances()'>";
-            document.getElementById('txt-desglos-title').innerText = "Desglose Inicial y Capital Propio";
-            document.getElementById('btn-modal-trigger').innerText = "¿Qué pasará en 5 años? Descubre el valor futuro";
-        }
-    }
-
-    function obrirModal() { document.getElementById('modal-futur').style.display = 'block'; }
-    function tancarModal() { document.getElementById('modal-futur').style.display = 'none'; }
-</script>
+    </script>
 </body>
 </html>
