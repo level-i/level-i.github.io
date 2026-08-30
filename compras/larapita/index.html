@@ -503,6 +503,7 @@
 </head>
 <body>
 
+    <!-- SIDEBAR DE CONSOLA -->
     <aside>
         <div class="brand">
             <span>⚡</span> <span class="text">LEVEL-<span class="lowercase-i">i</span>.COM</span>
@@ -519,7 +520,9 @@
         </div>
     </aside>
 
+    <!-- MAIN DASHBOARD -->
     <main>
+        <!-- HEADER -->
         <header>
             <div class="header-title">Consola Central PropTech · Módulo: La Ràpita</div>
             <div class="lang-selector">
@@ -529,16 +532,19 @@
             </div>
         </header>
 
+        <!-- CONTENIDO CENTRAL -->
         <div class="content-area">
             
+            <!-- VÍDEO PRINCIPAL HORIZONTAL (LIVE FEED) -->
             <div class="video-screen">
                 <div class="video-overlay-badge">🔴 LIVE FEED // LA RÀPITA SECTOR</div>
                 <video id="main-video-player" autoplay muted playsinline controls>
-                    <source src="nivel immo terres de l ebre properament.mp4" type="video/mp4">
+                    <source src="portada-horizontal.mp4" type="video/mp4">
                     Tu navegador no soporta la reproducción de video.
                 </video>
             </div>
 
+            <!-- TARJETA DE CAPTACIÓN -->
             <div class="card-main">
                 <h2 id="main-title">¿Vendes tu piso o planta baja en La Ràpita? Tenemos al comprador ideal.</h2>
                 <p id="main-desc">
@@ -549,6 +555,7 @@
                 </p>
             </div>
 
+            <!-- VÍDEO VERTICAL -->
             <div class="vertical-video-section">
                 <div class="vertical-video-wrapper">
                     <video autoplay muted loop playsinline controls>
@@ -557,6 +564,7 @@
                 </div>
             </div>
 
+            <!-- GANCHO TRANSPARENCIA PROPIETARIOS -->
             <div class="owner-banner">
                 <div class="owner-banner-text">
                     <h4>✨ ANUNCIA AQUÍ TU PROPIEDAD</h4>
@@ -565,6 +573,7 @@
                 <div class="owner-banner-tag">Sin sorpresas</div>
             </div>
 
+            <!-- SECCIÓN LEGAL (ACORDEONES) -->
             <div class="legal-accordion-container">
                 <details>
                     <summary>⚖️ Aviso Legal</summary>
@@ -617,6 +626,7 @@
 
         </div>
 
+        <!-- PANEL LATERAL DE ACCIÓN -->
         <div class="right-panel">
             <div class="right-panel-content">
                 <div class="victoria-box">
@@ -628,6 +638,7 @@
                     </a>
                 </div>
 
+                <!-- CHIVATAZOS NACIONALES -->
                 <div class="partner-promo">
                     🎁 <b>Chivatazos Nacionales:</b> Gana premio valorado en <b>600 €</b> por cada propiedad vendida que nos traigas.
                     <div class="promo-legal-details">
@@ -635,6 +646,7 @@
                     </div>
                 </div>
 
+                <!-- CAPTACIÓN PROFESIONALES / EMPRENDEDORES -->
                 <div class="pro-partner-promo">
                     🚀 <b>Alianza Profesional:</b> Gana hasta el <b>60% por operación</b>, más incentivos de equipo. Te preparamos con la tecnología inmobiliaria más sofisticada. 
                     <div style="margin-top: 6px; font-size: 10px; color: var(--text-muted); border-top: 1px dashed rgba(255,255,255,0.1); pt: 4px;">
@@ -675,23 +687,30 @@
             } else {
                 buttons[0].classList.add('active');
                 title.innerText = "¿Vendes tu piso o planta baja en La Ràpita? Tenemos al comprador ideal.";
-                desc.innerHTML = `Hola,<br><br>Te escribo de manera directa y personal. Represento a una clienta particular que acaba de vender su vivienda y necesita comprar con urgencia una propiedad pequeña <span class="highlight">(tipo estudio o 1 habitación)</span>, que sea planta baja o disponga de ascensor, obligatoriamente en la zona de <span class="highlight">La Ràpita</span>.<br><br>Nos da exactamente igual el estado: si necesita reformas integrales, si lleva años cerrada o si está llena de enseres. Nosotros nos encargamos absolutamente de todo <span class="highlight">(vaciado, papeleo, licencias y trámites notariales)</span>.<br><br>Buscamos un trato directo, ágil, sin aguantar visitas innecesarias y con la máxima discreción.`;
+                desc.innerHTML = `Hola,<br><br>Te escribo de manera directa y personal. Represento a una clienta particular que acaba de vender su vivienda y necesita comprar con urgencia una propiedad pequeña <span class="highlight">(tipo estudio o 1 habitación)</span>, que sea planta baja o disponga de ascensor, obligatoriamente en la zona de <span class="highlight">La Ràpita</span>.<br><br>Nos da exactamente igual el estado: si necesita reformas integrales, si lleva años cerrada o si está llena de enseres. Nosotros nos encargamos absolutamente de todo <span class="highlight">(vaciado, papeleo, licencias y trámites notarials)</span>.<br><br>Buscamos un trato directo, ágil, sin aguantar visitas innecesarias y con la máxima discreción.`;
                 btnText.innerText = "🎙️ Hablar por voz o chat";
                 button.href = "https://app.level-i.com/compras/larapita";
             }
         }
 
-        // CONTROL DE REPRODUCCIÓN Y DEPURACIÓN DEL VÍDEO PRINCIPAL
+        // MOTOR DE LISTA DE REPRODUCCIÓN VÍDEO PRINCIPAL
         const mainVideoPlayer = document.getElementById('main-video-player');
         
-        // Forzar la carga y reproducción
-        mainVideoPlayer.load();
-        mainVideoPlayer.play().catch(error => {
-            console.log("El navegador requiere interacción para reproducir el vídeo automáticamente:", error);
+        const playlist = [
+            "portada-horizontal.mp4"
+        ];
+        
+        let currentVideoIndex = 0;
+
+        mainVideoPlayer.addEventListener('ended', () => {
+            currentVideoIndex = (currentVideoIndex + 1) % playlist.length;
+            mainVideoPlayer.src = playlist[currentVideoIndex];
+            mainVideoPlayer.play();
         });
 
-        mainVideoPlayer.addEventListener('error', (e) => {
-            console.error("Error al cargar el vídeo horizontal principal:", mainVideoPlayer.error);
+        // Forzar reproducción inicial
+        mainVideoPlayer.play().catch(error => {
+            console.log("Autoplay con restricciones del navegador:", error);
         });
     </script>
 </body>
