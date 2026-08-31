@@ -708,6 +708,45 @@
             mainVideoPlayer.play();
         });
 
+        // Forzar reproducción inicial (por si acaso el navegador bloquea el autoplay mudo)
+        mainVideoPlayer.play().catch(error => {
+            console.log("Autoplay con restricciones del navegador:", error);
+        });
+
+        // --- NUEVO: CONEXIÓN CON MAKE Y CAPTURA DE QR ---
+        document.getElementById('wa-button').addEventListener('click', function(event) {
+            event.preventDefault(); // Evita que recargue la página o salte al enlace
+
+            // 1. Capturar parámetros de la URL (si viene de un QR)
+            const urlParams = new URLSearchParams(window.location.search);
+            const origenQR = urlParams.get('origen') || 'web_directa';
+            const userId = urlParams.get('id') || 'usuario_anonimo';
+
+            // 2. Enviar el pulso invisible al Webhook de Make
+            // ⚠️ IMPORTANTE: Sustituye esta URL por la que te dé tu módulo HTTP inicial en Make
+            const webhookMake = "https://hook.eu1.make.com/TU_URL_DE_MAKE_AQUI"; 
+            
+            fetch(webhookMake, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    evento: "inicio_chat_web",
+                    origen: origenQR,
+                    id_sesion: userId,
+                    landing: "La Rapita"
+                })
+            }).then(response => {
+                console.log("Pulso enviado a Victoria en Make");
+                
+                // 3. Ocultamos el botón para dar paso al chat
+                this.style.display = 'none';
+                
+                // (Temporal) Aviso para confirmar que funciona el clic
+                alert("Conectando con la consola de Victoria Advisor..."); 
+                
+            }).catch(error => console.error("Error conectando con IA:", error));
+        });
+
         // Forzar reproducción inicial
         mainVideoPlayer.play().catch(error => {
             console.log("Autoplay con restricciones del navegador:", error);
