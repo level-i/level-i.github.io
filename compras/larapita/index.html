@@ -308,7 +308,7 @@
         const subtitle = document.getElementById('victoria-subtitle');
 
         let sessionId = "";
-        let modoAcceso = "nuevo"; // "nuevo" o "login"
+        let modoAcceso = "nuevo";
 
         function iniciarChat(modo) {
             modoAcceso = modo;
@@ -322,7 +322,6 @@
             
             typingIndicator.style.display = 'block';
 
-            // Disparo inicial según el carril elegido
             const payload = {
                 evento: modo === 'login' ? "solicitud_login_pin" : "inicio_chat_web",
                 id_sesion: sessionId,
@@ -362,9 +361,9 @@
             if (message === "") return;
 
             appendMessage("Tú", message, 'user');
-            inputField.value = "";
             typingIndicator.style.display = 'block';
 
+            // 1. Enviamos los datos seguros al Webhook de Make antes de vaciar el input
             fetch(webhookMake, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -384,6 +383,9 @@
                 console.error("Error:", err);
                 typingIndicator.style.display = 'none';
             });
+
+            // 2. Limpiamos el campo de texto de forma segura tras despachar la petición
+            inputField.value = "";
         }
 
         function appendMessage(sender, text, type) {
@@ -396,7 +398,6 @@
         }
 
         function setLanguage(lang) {
-            // Traductor estético de cabecera que ya tenías
             const title = document.getElementById('main-title');
             const desc = document.getElementById('main-desc');
             const buttons = document.querySelectorAll('.lang-btn');
