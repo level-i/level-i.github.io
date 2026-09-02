@@ -296,7 +296,7 @@
         </div>
     </main>
 
-   <script>
+    <script>
         const webhookMake = "https://hook.eu1.make.com/8xd81xb9t3mg2ycwez1czd3quwhf2nef"; 
         
         const btnInicio = document.getElementById('wa-button');
@@ -320,36 +320,12 @@
             const urlParams = new URLSearchParams(window.location.search);
             sessionId = urlParams.get('id') || 'usr_' + Math.random().toString(36).substr(2, 9);
             
-            if (typingIndicator) typingIndicator.style.display = 'block';
-
-            const payload = {
-                evento: modo === 'login' ? "solicitud_login_pin" : "inicio_chat_web",
-                id_sesion: sessionId,
-                landing: "La Rapita",
-                mensaje: ""
-            };
-
-            fetch(webhookMake, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            })
-            .then(response => response.text())
-            .then(data => {
-                if (typingIndicator) typingIndicator.style.display = 'none';
-                let saludoInicial = data ? data.trim() : "";
-                if (!saludoInicial) {
-                    saludoInicial = modo === 'login' 
-                        ? "Hola de nuevo. Soy Victoria. Para acceder a su panel de cliente seguro, por favor indíquenos su número de teléfono móvil."
-                        : "Hola. Soy Victoria Advisor de Level-i. Para dirigirme a usted con la distinción que merece, ¿cómo se complace en que le llame?";
-                }
-                appendMessage("Victoria", saludoInicial, 'bot');
-            })
-            .catch(err => {
-                console.error("Error:", err);
-                if (typingIndicator) typingIndicator.style.display = 'none';
-                appendMessage("Victoria", "Disculpe, tenemos una ligera interrupción. Por favor, intente escribir de nuevo.", 'bot');
-            });
+            // Saludo inicial local directo (Evita disparar un webhook vacío a Make al abrir)
+            const saludoInicial = modo === 'login' 
+                ? "Hola de nuevo. Soy Victoria. Para acceder a su panel de cliente seguro, por favor indíquenos su número de teléfono móvil."
+                : "Hola. Soy Victoria Advisor de Level-i. Para dirigirme a usted con la distinción que merece, ¿cómo se complace en que le llame?";
+            
+            appendMessage("Victoria", saludoInicial, 'bot');
         }
 
         function handleKeyPress(e) {
@@ -362,14 +338,19 @@
         function sendChatMessage() {
             if (!inputField) return;
             const message = inputField.value.trim();
-            if (message === "") return;
+            
+            // STEP DE SEGURIDAD ABSOLUTA: Si está vacío, no se envía nada al webhook
+            if (message === "") {
+                console.warn("Envío cancelado: el mensaje está vacío.");
+                return;
+            }
 
-            // Limpiamos el input inmediatamente para que la UX sea fluida
+            // Limpiamos el input y mostramos el mensaje en pantalla de inmediato
             inputField.value = "";
-
             appendMessage("Tú", message, 'user');
             if (typingIndicator) typingIndicator.style.display = 'block';
 
+            // El webhook de Make solo se ejecuta cuando hay texto real
             fetch(webhookMake, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -388,8 +369,9 @@
                 }
             })
             .catch(err => {
-                console.error("Error:", err);
+                console.error("Error en la conexión:", err);
                 if (typingIndicator) typingIndicator.style.display = 'none';
+                appendMessage("Victoria", "Disculpe, ha ocurrido un error de conexión.", 'bot');
             });
         }
 
@@ -420,3 +402,5 @@
             }
         }
     </script>
+</body>
+</html>
