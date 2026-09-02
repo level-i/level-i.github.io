@@ -296,7 +296,7 @@
         </div>
     </main>
 
-    <script>
+   <script>
         const webhookMake = "https://hook.eu1.make.com/8xd81xb9t3mg2ycwez1czd3quwhf2nef"; 
         
         const btnInicio = document.getElementById('wa-button');
@@ -312,15 +312,15 @@
 
         function iniciarChat(modo) {
             modoAcceso = modo;
-            btnInicio.style.display = 'none';
-            btnLoginToggle.style.display = 'none';
-            subtitle.style.display = 'none';
-            interfaceChat.style.display = 'flex';
+            if (btnInicio) btnInicio.style.display = 'none';
+            if (btnLoginToggle) btnLoginToggle.style.display = 'none';
+            if (subtitle) subtitle.style.display = 'none';
+            if (interfaceChat) interfaceChat.style.display = 'flex';
 
             const urlParams = new URLSearchParams(window.location.search);
             sessionId = urlParams.get('id') || 'usr_' + Math.random().toString(36).substr(2, 9);
             
-            typingIndicator.style.display = 'block';
+            if (typingIndicator) typingIndicator.style.display = 'block';
 
             const payload = {
                 evento: modo === 'login' ? "solicitud_login_pin" : "inicio_chat_web",
@@ -336,8 +336,8 @@
             })
             .then(response => response.text())
             .then(data => {
-                typingIndicator.style.display = 'none';
-                let saludoInicial = data;
+                if (typingIndicator) typingIndicator.style.display = 'none';
+                let saludoInicial = data ? data.trim() : "";
                 if (!saludoInicial) {
                     saludoInicial = modo === 'login' 
                         ? "Hola de nuevo. Soy Victoria. Para acceder a su panel de cliente seguro, por favor indíquenos su número de teléfono móvil."
@@ -347,23 +347,29 @@
             })
             .catch(err => {
                 console.error("Error:", err);
-                typingIndicator.style.display = 'none';
+                if (typingIndicator) typingIndicator.style.display = 'none';
                 appendMessage("Victoria", "Disculpe, tenemos una ligera interrupción. Por favor, intente escribir de nuevo.", 'bot');
             });
         }
 
         function handleKeyPress(e) {
-            if (e.key === 'Enter') sendChatMessage();
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                sendChatMessage();
+            }
         }
 
         function sendChatMessage() {
+            if (!inputField) return;
             const message = inputField.value.trim();
             if (message === "") return;
 
-            appendMessage("Tú", message, 'user');
-            typingIndicator.style.display = 'block';
+            // Limpiamos el input inmediatamente para que la UX sea fluida
+            inputField.value = "";
 
-            // 1. Enviamos los datos seguros al Webhook de Make antes de vaciar el input
+            appendMessage("Tú", message, 'user');
+            if (typingIndicator) typingIndicator.style.display = 'block';
+
             fetch(webhookMake, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -376,19 +382,19 @@
             })
             .then(response => response.text())
             .then(data => {
-                typingIndicator.style.display = 'none';
-                if(data) appendMessage("Victoria", data, 'bot');
+                if (typingIndicator) typingIndicator.style.display = 'none';
+                if (data && data.trim() !== "") {
+                    appendMessage("Victoria", data.trim(), 'bot');
+                }
             })
             .catch(err => {
                 console.error("Error:", err);
-                typingIndicator.style.display = 'none';
+                if (typingIndicator) typingIndicator.style.display = 'none';
             });
-
-            // 2. Limpiamos el campo de texto de forma segura tras despachar la petición
-            inputField.value = "";
         }
 
         function appendMessage(sender, text, type) {
+            if (!chatMessages) return;
             const msgDiv = document.createElement('div');
             msgDiv.classList.add('chat-bubble');
             msgDiv.classList.add(type === 'bot' ? 'bot-message' : 'user-message');
@@ -403,16 +409,14 @@
             const buttons = document.querySelectorAll('.lang-btn');
             buttons.forEach(b => b.classList.remove('active'));
             if (lang === 'ca') {
-                buttons[1].classList.add('active');
-                title.innerText = "Vens el teu pis o planta baixa a La Ràpita? Tenim el comprador ideal.";
+                if (buttons[1]) buttons[1].classList.add('active');
+                if (title) title.innerText = "Vens el teu pis o planta baixa a La Ràpita? Tenim el comprador ideal.";
             } else if (lang === 'fra') {
-                buttons[2].classList.add('active');
-                title.innerText = "Vous vendez votre appartement ou rez-de-chaussée à La Ràpita ?";
+                if (buttons[2]) buttons[2].classList.add('active');
+                if (title) title.innerText = "Vous vendez votre appartement ou rez-de-chaussée à La Ràpita ?";
             } else {
-                buttons[0].classList.add('active');
-                title.innerText = "¿Vendes tu piso o planta baja en La Ràpita? Tenemos al comprador ideal.";
+                if (buttons[0]) buttons[0].classList.add('active');
+                if (title) title.innerText = "¿Vendes tu piso o planta baja en La Ràpita? Tenemos al comprador ideal.";
             }
         }
     </script>
-</body>
-</html>
