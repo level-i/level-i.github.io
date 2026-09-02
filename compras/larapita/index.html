@@ -320,10 +320,10 @@
             const urlParams = new URLSearchParams(window.location.search);
             sessionId = urlParams.get('id') || 'usr_' + Math.random().toString(36).substr(2, 9);
             
-            // Saludo inicial local directo (Evita disparar un webhook vacío a Make al abrir)
+            // Saludo inicial adaptado: Pide nombre y teléfono (si es nuevo) o teléfono para PIN (si es login)
             const saludoInicial = modo === 'login' 
-                ? "Hola de nuevo. Soy Victoria. Para acceder a su panel de cliente seguro, por favor indíquenos su número de teléfono móvil."
-                : "Hola. Soy Victoria Advisor de Level-i. Para dirigirme a usted con la distinción que merece, ¿cómo se complace en que le llame?";
+                ? "Hola de nuevo. Soy Victoria Advisor. Por favor, indíquenos su número de teléfono móvil registrado para enviarle su código PIN de acceso por WhatsApp."
+                : "Hola. Soy Victoria Advisor de Level-i. Para dirigirnos a usted con la distinción que merece y gestionar su propiedad, ¿cómo se complace en que le llame y cuál es su número de teléfono de contacto?";
             
             appendMessage("Victoria", saludoInicial, 'bot');
         }
@@ -350,7 +350,7 @@
             appendMessage("Tú", message, 'user');
             if (typingIndicator) typingIndicator.style.display = 'block';
 
-            // El webhook de Make solo se ejecuta cuando hay texto real
+            // El webhook de Make recibe el mensaje, el modo y la sesión para procesarlo en Lark
             fetch(webhookMake, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -371,7 +371,7 @@
             .catch(err => {
                 console.error("Error en la conexión:", err);
                 if (typingIndicator) typingIndicator.style.display = 'none';
-                appendMessage("Victoria", "Disculpe, ha ocurrido un error de conexión.", 'bot');
+                appendMessage("Victoria", "Disculpe, ha ocurrido un error de conexión con el sistema.", 'bot');
             });
         }
 
