@@ -97,7 +97,6 @@
         .card-main p { font-size: 14px; color: var(--text-muted); line-height: 1.6; }
         .highlight { color: var(--text-main); font-weight: 600; }
 
-        /* Contenedor Vídeo Vertical y PVP */
         .vertical-video-section { display: flex; flex-direction: column; align-items: center; margin-top: 10px; width: 100%; gap: 8px; }
         .vertical-video-wrapper { width: 100%; max-width: 360px; border-radius: 12px; overflow: hidden; border: 1px solid var(--border-color); box-shadow: 0 8px 24px rgba(0,0,0,0.5); background: #000; }
         .vertical-video-wrapper video { width: 100%; height: auto; display: block; }
@@ -105,15 +104,12 @@
         .pvp-badge { font-size: 13px; font-weight: bold; color: var(--accent-green); background: rgba(16,185,129,0.1); padding: 6px 12px; border-radius: 6px; border: 1px dashed var(--accent-green); text-align: center; }
         .pvp-small { font-size: 10.5px; color: var(--text-muted); font-weight: normal; display: block; margin-top: 2px; }
 
-        /* EFECTO DESTELLO / LÁSER EN PANTALLA (PAM) */
         @keyframes flashLaser {
             0% { box-shadow: inset 0 0 0 0 rgba(16, 185, 129, 0); }
             50% { box-shadow: inset 0 0 50px 10px rgba(16, 185, 129, 0.4); border-color: var(--accent-green); }
             100% { box-shadow: inset 0 0 0 0 rgba(16, 185, 129, 0); }
         }
-        .flash-active {
-            animation: flashLaser 0.5s ease-out;
-        }
+        .flash-active { animation: flashLaser 0.5s ease-out; }
 
         .legal-accordion-container { margin-top: 20px; border-top: 1px solid var(--border-color); padding-top: 20px; }
         details { background-color: var(--bg-panel); border: 1px solid var(--border-color); border-radius: 8px; margin-bottom: 10px; overflow: hidden; }
@@ -208,7 +204,6 @@
                 </video>
             </div>
 
-            <!-- TARJETA PRINCIPAL CON BOTÓN 1 -->
             <div class="card-main">
                 <h2 id="main-title" class="laser-title">¿Vendes tu piso o planta baja en La Ràpita? Tenemos al comprador ideal.</h2>
                 <p id="main-desc">
@@ -222,7 +217,6 @@
                 </button>
             </div>
 
-            <!-- VÍDEO VERTICAL CON PVP Y BOTÓN 2 -->
             <div class="vertical-video-section">
                 <div class="vertical-video-wrapper">
                     <video autoplay muted loop playsinline controls>
@@ -238,7 +232,6 @@
                 </button>
             </div>
 
-            <!-- BANNER DE ANUNCIANTES CON BOTÓN 3 -->
             <div class="owner-banner">
                 <div class="owner-banner-text">
                     <h4>✨ ANUNCIA AQUÍ TU PROPIEDAD</h4>
@@ -282,14 +275,14 @@
                         <span id="btn-text">🎙️ Hablar con Victoria</span>
                     </button>
                     <button id="btn-login-toggle" class="btn-action btn-secondary" onclick="iniciarChat('login')">
-                        🔐 Acceso Clientes Registrados
+                        🔐 Acceso Clientes y Inquilinos
                     </button>
 
                     <div id="chat-interface" class="chat-interface">
                         <div id="chat-messages" class="chat-messages"></div>
                         <div id="typing-indicator" class="typing-indicator">Victoria está escribiendo...</div>
                         <div class="chat-input-area">
-                            <input type="text" id="chat-input" placeholder="Escribe tu mensaje..." onkeypress="handleKeyPress(event)">
+                            <input type="text" id="chat-input" placeholder="Escribe tu número de teléfono..." onkeypress="handleKeyPress(event)">
                             <button onclick="sendChatMessage()">Enviar</button>
                         </div>
                         <div class="chat-legal-notice">Al continuar, aceptas la <a href="#" style="color:var(--accent-green);">Política de Privacidad</a>.</div>
@@ -349,18 +342,15 @@
             const urlParams = new URLSearchParams(window.location.search);
             sessionId = urlParams.get('id') || 'usr_' + Math.random().toString(36).substr(2, 9);
             
-            // Intros personalizadas según el botón que se haya pulsado
-            let saludoInicial = "";
-            if (modo === 'login') {
-                saludoInicial = "Hola de nuevo. Soy Victoria Advisor. Por favor, indíquenos su número de teléfono móvil registrado para enviarle su código PIN de acceso por WhatsApp.";
-            } else if (modo === 'rapita') {
-                saludoInicial = "Hola. Soy Victoria Advisor de Level-i. Veo que le interesa la captación en La Ràpita. Para dirigirnos a usted con la distinción que merece, ¿cómo se complace en que le llame y cuál es su teléfono de contacto?";
+            // Saludo inicial obligatorio pidiendo el teléfono para identificar al cliente o inquilino
+            let saludoInicial = "Hola. Soy Victoria Advisor de Level-i. Para atenderle con absoluta seguridad y acceder a su expediente (sea propietario, inquilino o cliente), por favor indíquenos su **número de teléfono móvil**.";
+            
+            if (modo === 'rapita') {
+                saludoInicial = "Hola. Soy Victoria Advisor. Para gestionar su inmueble en La Ràpita y consultar sus datos, por favor indíquenos primero su **número de teléfono móvil** de contacto.";
             } else if (modo === 'precio_312k') {
-                saludoInicial = "Hola. Soy Victoria Advisor de Level-i. Le informo sobre esta propiedad valorada en 312.000 € (gastos no incluidos). ¿Le gustaría que le detalle las condiciones o registrar su contacto?";
+                saludoInicial = "Hola. Soy Victoria Advisor. Sobre esta propiedad de 312.000 €, para enviarle el dosier privado y verificar su acceso, indíquenos su **número de teléfono móvil**.";
             } else if (modo === 'anunciar') {
-                saludoInicial = "Hola. Soy Victoria Advisor de Level-i. Estupendo, vamos a configurar el anuncio de su propiedad con honorarios máximos de 7.500 €. ¿Cómo se llama y cuál es su teléfono?";
-            } else {
-                saludoInicial = "Hola. Soy Victoria Advisor de Level-i. Para dirigirnos a usted con la distinción que merece y gestionar su propiedad, ¿cómo se complace en que le llame y cuál es su teléfono de contacto?";
+                saludoInicial = "Hola. Soy Victoria Advisor. Para configurar su anuncio con honorarios máximos de 7.500 €, indíquenos su **número de teléfono móvil**.";
             }
             
             appendMessage("Victoria", saludoInicial, 'bot');
@@ -386,6 +376,7 @@
             appendMessage("Tú", message, 'user');
             if (typingIndicator) typingIndicator.style.display = 'block';
 
+            // Enviamos a Make el teléfono / mensaje junto con el contexto
             fetch(webhookMake, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
