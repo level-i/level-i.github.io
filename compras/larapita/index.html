@@ -309,6 +309,7 @@
         let sessionId = "";
         let modoAcceso = "nuevo";
         let telefonoCliente = ""; 
+        let nombreCliente = ""; // <-- NUEVA VARIABLE PARA SEPARAR EL NOMBRE DE PILA
         
         let captchaRespuesta = 0;
         let modoPendiente = "";
@@ -410,8 +411,12 @@
             appendMessage("Tú", message, 'user');
             if (typingIndicator) typingIndicator.style.display = 'block';
 
+            // SECUENCIA DE CAPTURA LIMPIA: 1º Teléfono, 2º Nombre de pila, 3º Mensajes normales
             if (telefonoCliente === "") {
                 telefonoCliente = message;
+                document.getElementById('chat-input').placeholder = "Indíquenos su nombre de pila...";
+            } else if (nombreCliente === "") {
+                nombreCliente = message;
                 document.getElementById('chat-input').placeholder = "Escribe tu mensaje...";
             }
 
@@ -423,10 +428,11 @@
                     modo: modoAcceso,
                     id_sesion: sessionId,
                     telefono: telefonoCliente,
+                    nombre: nombreCliente, // <-- ENVIAMOS EL NOMBRE SEPARADO
                     mensaje: message
                 })
             })
-            .then(response => response.json()) // <-- MODIFICADO AQUÍ PARA LEER EL JSON DE MAKE
+            .then(response => response.json())
             .then(data => {
                 if (typingIndicator) typingIndicator.style.display = 'none';
                 
