@@ -409,38 +409,62 @@
 
             inputField.value = "";
             appendMessage("Tú", message, 'user');
-            if (typingIndicator) typingIndicator.style.display = 'block';
 
-            // ESTRUCTURA DE CONTROL DE LEAD
-            let payloadData = {
-                evento: "nuevo_mensaje",
-                modo: modoAcceso,
-                id_sesion: sessionId
-            };
-
+            // PASO 1: Capturar el teléfono localmente sin llamar a Make todavía
             if (telefonoCliente === "") {
                 telefonoCliente = message;
-                payloadData.telefono = telefonoCliente;
-                payloadData.nombre_cliente = "";
-                payloadData.mensaje = "Inicio lead"; // Marcador limpio para el primer paso
                 document.getElementById('chat-input').placeholder = "Indíquenos su nombre de pila...";
-            } else if (nombreCliente === "") {
+                appendMessage("Elena María", "Perfecto. ¿Cómo se complace en que le llame?", 'bot');
+                return; 
+            } 
+            
+            // PASO 2: Capturar el nombre y lanzar la petición unificada a Make
+            if (nombreCliente === "") {
                 nombreCliente = message;
-                payloadData.telefono = telefonoCliente;
-                payloadData.nombre_cliente = nombreCliente;
-                payloadData.mensaje = "Inicio lead"; // Marcador limpio para el segundo paso
                 document.getElementById('chat-input').placeholder = "Escribe tu mensaje...";
-            } else {
-                // A partir de aquí, mensajes normales del usuario
-                payloadData.telefono = telefonoCliente;
-                payloadData.nombre_cliente = nombreCliente;
-                payloadData.mensaje = message;
+                
+                if (typingIndicator) typingIndicator.style.display = 'block';
+
+                fetch(webhookMake, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        evento: "nuevo_mensaje",
+                        modo: modoAcceso,
+                        id_sesion: sessionId,
+                        telefono: telefonoCliente,
+                        nombre_cliente: nombreCliente,
+                        mensaje: "Inicio de sesión completado"
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (typingIndicator) typingIndicator.style.display = 'none';
+                    const textoBot = data.respuesta_bot || data.message || (typeof data === 'string' ? data : "Encantada. ¿En qué puedo ayudarle respecto a su propiedad?");
+                    appendMessage("Elena María", textoBot.trim(), 'bot');
+                })
+                .catch(err => {
+                    console.error("Error en la conexión:", err);
+                    if (typingIndicator) typingIndicator.style.display = 'none';
+                    appendMessage("Elena María", `Encantada, ${nombreCliente}. ¿Qué nos puede contar de su inmueble?`, 'bot');
+                });
+                return;
             }
+
+            // PASO 3 en adelante: Conversación normal con IA a través de Make
+            if (typingIndicator) typingIndicator.style.display = 'block';
 
             fetch(webhookMake, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payloadData)
+                body: JSON.stringify({
+                    evento: "nuevo_mensaje",
+                    modo: modoAcceso,
+                    id_sesion: sessionId,
+                    telefono: telefonoCliente,
+                    nombre_cliente: nombreCliente,
+                    mensaje: message
+                })
             })
             .then(response => response.json())
             .then(data => {
