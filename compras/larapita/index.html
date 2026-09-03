@@ -411,25 +411,36 @@
             appendMessage("Tú", message, 'user');
             if (typingIndicator) typingIndicator.style.display = 'block';
 
+            // ESTRUCTURA DE CONTROL DE LEAD
+            let payloadData = {
+                evento: "nuevo_mensaje",
+                modo: modoAcceso,
+                id_sesion: sessionId
+            };
+
             if (telefonoCliente === "") {
                 telefonoCliente = message;
+                payloadData.telefono = telefonoCliente;
+                payloadData.nombre_cliente = "";
+                payloadData.mensaje = "Inicio lead"; // Marcador limpio para el primer paso
                 document.getElementById('chat-input').placeholder = "Indíquenos su nombre de pila...";
             } else if (nombreCliente === "") {
                 nombreCliente = message;
+                payloadData.telefono = telefonoCliente;
+                payloadData.nombre_cliente = nombreCliente;
+                payloadData.mensaje = "Inicio lead"; // Marcador limpio para el segundo paso
                 document.getElementById('chat-input').placeholder = "Escribe tu mensaje...";
+            } else {
+                // A partir de aquí, mensajes normales del usuario
+                payloadData.telefono = telefonoCliente;
+                payloadData.nombre_cliente = nombreCliente;
+                payloadData.mensaje = message;
             }
 
             fetch(webhookMake, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    evento: "nuevo_mensaje",
-                    modo: modoAcceso,
-                    id_sesion: sessionId,
-                    telefono: telefonoCliente,
-                    nombre_cliente: nombreCliente, // <-- CLAVE CORREGIDA PARA MAKE
-                    mensaje: message
-                })
+                body: JSON.stringify(payloadData)
             })
             .then(response => response.json())
             .then(data => {
