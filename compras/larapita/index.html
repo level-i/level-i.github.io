@@ -98,7 +98,7 @@
         .btn-secondary { background-color: transparent; border: 1px solid var(--border-color); color: var(--text-muted); margin-top: 8px; box-shadow: none; font-size: 12.5px; }
         .btn-secondary:hover { border-color: var(--accent-green); color: var(--text-main); background: var(--bg-base); }
 
-        /* --- ESTILOS DEL CAPTCHA (NUEVO) --- */
+        /* --- ESTILOS DEL CAPTCHA --- */
         .captcha-container { display: none; background: var(--bg-panel); border: 1px dashed var(--border-color); border-radius: 8px; padding: 15px; margin-top: 15px; animation: fadeIn 0.3s ease; text-align: left; }
         .captcha-text { font-size: 12.5px; color: var(--text-muted); margin-bottom: 12px; }
         .captcha-input-group { display: flex; gap: 10px; }
@@ -193,7 +193,6 @@
                     Nos da exactamente igual el estado: si necesita reformas integrales, si lleva años cerrada o si está llena de enseres. Nosotros nos encargamos absolutamente de todo <span class="highlight">(vaciado, papeleo, licencias y trámites notariales)</span>.<br><br>
                     Buscamos un trato directo, ágil, sin aguantar visitas innecesarias y con la máxima discreción.
                 </p>
-                <!-- CAMBIO AQUÍ: Ahora llama a pedirSeguridad() -->
                 <button class="btn-action" style="margin-top: 15px;" onclick="pedirSeguridad('rapita')">
                     🎯 Hablar con Elena María sobre mi inmueble en La Ràpita
                 </button>
@@ -209,7 +208,6 @@
                     PVP: 312.000 €
                     <span class="pvp-small">* Gastos de compraventa y registro no incluidos.</span>
                 </div>
-                <!-- CAMBIO AQUÍ: Ahora llama a pedirSeguridad() -->
                 <button class="btn-action" style="max-width: 360px; width: 100%; margin-top: 5px;" onclick="pedirSeguridad('precio_312k')">
                     💬 Consultar detalles de esta propiedad
                 </button>
@@ -220,7 +218,6 @@
                     <h4>✨ ANUNCIA AQUÍ TU PROPIEDAD</h4>
                     <p>Gestión 100% digital y transparente. Honorarios fijos o cero, con un <b>máximo de 7.500 € IVA incluido</b> para propiedades de hasta 400.000 €.</p>
                 </div>
-                <!-- CAMBIO AQUÍ: Ahora llama a pedirSeguridad() -->
                 <button class="owner-banner-tag" onclick="pedirSeguridad('anunciar')">
                     Anunciar aquí ⚡
                 </button>
@@ -255,15 +252,14 @@
                     <h3 style="font-size: 15px; margin-bottom: 6px;">Elena María Casamayor</h3>
                     <p style="font-size: 12px; color: var(--text-muted);" id="victoria-subtitle">Asesoría Inmobiliaria y Gestión Ejecutiva.</p>
                     
-                    <!-- CAMBIO AQUÍ: Ahora llaman a pedirSeguridad() -->
                     <button id="wa-button" class="btn-action" onclick="pedirSeguridad('nuevo')">
                         <span id="btn-text">🎙️ Hablar con Elena María</span>
                     </button>
                     <button id="btn-login-toggle" class="btn-action btn-secondary" onclick="alert('Módulo disponible próximamente')">
-    🔐 Acceso Usuarios Registrados
-</button>
+                        🔐 Acceso Usuarios Registrados
+                    </button>
 
-                    <!-- CAPTCHA DE SEGURIDAD (NUEVO) -->
+                    <!-- CAPTCHA DE SEGURIDAD -->
                     <div id="captcha-container" class="captcha-container">
                         <div class="captcha-text">🛡️ <b>Verificación de seguridad:</b> ¿Cuánto es <span id="captcha-question" style="color:var(--text-main); font-weight:bold; font-size:14px;"></span>?</div>
                         <div class="captcha-input-group">
@@ -314,7 +310,6 @@
         let modoAcceso = "nuevo";
         let telefonoCliente = ""; 
         
-        // VARIABLES DEL CAPTCHA
         let captchaRespuesta = 0;
         let modoPendiente = "";
 
@@ -327,18 +322,14 @@
             }
         }
 
-        // NUEVAS FUNCIONES DE SEGURIDAD
         function pedirSeguridad(modo) {
             modoPendiente = modo;
             
-            // Ocultamos los botones de inicio
             if (btnInicio) btnInicio.style.display = 'none';
             if (btnLoginToggle) btnLoginToggle.style.display = 'none';
             
-            // Hacemos scroll hacia el panel derecho en móviles
             document.getElementById('victoria-box-panel').scrollIntoView({ behavior: 'smooth', block: 'center' });
 
-            // Mostramos el Captcha
             const captchaContainer = document.getElementById('captcha-container');
             if (captchaContainer) captchaContainer.style.display = 'block';
 
@@ -365,18 +356,15 @@
         function verificarCaptcha() {
             const input = document.getElementById('captcha-input');
             if (parseInt(input.value) === captchaRespuesta) {
-                // Éxito: Ocultar captcha y lanzar el chat
                 document.getElementById('captcha-container').style.display = 'none';
                 iniciarChat(modoPendiente);
             } else {
-                // Fallo: Efecto vibración y nueva suma
                 input.classList.add('captcha-error');
                 setTimeout(() => input.classList.remove('captcha-error'), 400);
                 generarNuevaSuma();
             }
         }
 
-        // INICIO DEL CHAT (Modificado para integrarse tras el Captcha)
         function iniciarChat(modo) {
             modoAcceso = modo;
             
@@ -399,8 +387,6 @@
             }
             
             appendMessage("Elena María", saludoInicial, 'bot');
-            
-            // Poner foco en el input del chat automáticamente
             document.getElementById('chat-input').focus();
         }
 
@@ -440,11 +426,14 @@
                     mensaje: message
                 })
             })
-            .then(response => response.text())
+            .then(response => response.json()) // <-- MODIFICADO AQUÍ PARA LEER EL JSON DE MAKE
             .then(data => {
                 if (typingIndicator) typingIndicator.style.display = 'none';
-                if (data && data.trim() !== "") {
-                    appendMessage("Elena María", data.trim(), 'bot');
+                
+                const textoBot = data.respuesta_bot || data.message || (typeof data === 'string' ? data : "Disculpe, ha ocurrido un error.");
+                
+                if (textoBot && textoBot.trim() !== "") {
+                    appendMessage("Elena María", textoBot.trim(), 'bot');
                 }
             })
             .catch(err => {
