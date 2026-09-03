@@ -318,6 +318,7 @@
 
         let sessionId = "";
         let modoAcceso = "nuevo";
+        let telefonoCliente = ""; // NUEVA VARIABLE PARA RECORDAR EL TELÉFONO EN LA SESIÓN
 
         function dispararEfectoLaser() {
             if (mainContainer) {
@@ -341,7 +342,6 @@
             const urlParams = new URLSearchParams(window.location.search);
             sessionId = urlParams.get('id') || 'usr_' + Math.random().toString(36).substr(2, 9);
             
-            // Saludos iniciales actualizados con la identidad de Elena María Casamayor
             let saludoInicial = "Hola. Soy Elena María Casamayor, asesora experta en Level-i. Para atenderle con absoluta seguridad y acceder a su expediente, por favor indíquenos su **número de teléfono móvil**.";
             
             if (modo === 'rapita') {
@@ -375,6 +375,14 @@
             appendMessage("Tú", message, 'user');
             if (typingIndicator) typingIndicator.style.display = 'block';
 
+            // LÓGICA DE CAPTURA DE TELÉFONO
+            if (telefonoCliente === "") {
+                // Si la variable está vacía, asumimos que este primer texto es el teléfono
+                telefonoCliente = message;
+                // Cambiamos el texto de fondo de la caja para los siguientes mensajes
+                document.getElementById('chat-input').placeholder = "Escribe tu mensaje...";
+            }
+
             fetch(webhookMake, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -382,8 +390,8 @@
                     evento: "nuevo_mensaje",
                     modo: modoAcceso,
                     id_sesion: sessionId,
-                    mensaje: message,
-                    telefono: message // <-- MAGIA AÑADIDA AQUÍ
+                    telefono: telefonoCliente, // Enviamos siempre el teléfono recordado
+                    mensaje: message // Enviamos siempre el mensaje actual
                 })
             })
             .then(response => response.text())
