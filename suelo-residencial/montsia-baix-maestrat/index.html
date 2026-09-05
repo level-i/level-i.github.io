@@ -1,1 +1,442 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Level-I Command Center | Montsià i Baix Maestrat</title>
+    <style>
+        :root {
+            --bg-base: #090d16;
+            --bg-panel: #111827;
+            --bg-card: #1f2937;
+            --accent-green: #10b981;
+            --accent-blue: #3b82f6;
+            --accent-gold: #C5A059;
+            --text-main: #f9fafb;
+            --text-muted: #9ca3af;
+            --border-color: #374151;
+        }
+        
+        html, body { margin: 0; padding: 0; height: 100%; width: 100%; }
+        * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; scrollbar-width: thin; scrollbar-color: var(--border-color) var(--bg-panel); }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg-panel); border-left: 1px solid var(--border-color); }
+        ::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--accent-green); }
 
+        body { background-color: var(--bg-base); color: var(--text-main); display: flex; overflow: hidden; }
+        
+        aside { width: 260px; background-color: var(--bg-panel); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; padding: 20px; flex-shrink: 0; }
+        .brand { font-size: 18px; font-weight: 900; letter-spacing: 1px; color: var(--accent-green); margin-bottom: 25px; display: flex; align-items: center; gap: 10px; }
+        .brand span.text { color: var(--accent-green); }
+        .lowercase-i { text-transform: lowercase; }
+        .nav-menu { display: flex; flex-direction: column; gap: 6px; overflow-y: auto; max-height: calc(100vh - 100px); }
+        .nav-item { background: transparent; border: none; color: var(--text-muted); text-align: left; padding: 9px 12px; border-radius: 8px; font-size: 12.5px; font-weight: 600; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 10px; text-decoration: none; }
+        .nav-item:hover { background-color: var(--bg-card); color: var(--text-main); }
+        .nav-item.active { background-color: var(--bg-card); color: var(--text-main); border-left: 3px solid var(--accent-green); }
+        .nav-item.gold-link { color: var(--accent-gold); border: 1px dashed rgba(197, 160, 89, 0.4); margin-top: 10px; }
+        .nav-item.gold-link:hover { background-color: rgba(197, 160, 89, 0.1); color: var(--accent-gold); }
+        
+        main { flex: 1; display: grid; grid-template-columns: 1fr 380px; grid-template-rows: 60px 1fr; height: 100vh; overflow: hidden; }
+        header { grid-column: 1 / -1; background-color: var(--bg-panel); border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; padding: 0 30px; }
+        .header-title { font-size: 13.5px; color: var(--text-muted); }
+        .lang-selector { display: flex; gap: 6px; }
+        .lang-btn { background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-muted); padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; cursor: pointer; }
+        .lang-btn.active { background: var(--accent-green); color: #fff; border-color: var(--accent-green); }
+        
+        .content-area { padding: 25px; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; }
+        
+        /* Vídeo en off (muted) por defecto */
+        .video-screen-horizontal { width: 100%; aspect-ratio: 16/9; background: #000; border-radius: 8px; border: 1px solid var(--border-color); position: relative; overflow: hidden; margin-bottom: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.6); }
+        .video-screen-horizontal video { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+        /* Estilo de la tarjeta de Suelo Residencial */
+        .montsia-section { background: linear-gradient(145deg, #121212, #070707); border: 1px solid rgba(197, 160, 89, 0.3); border-radius: 12px; padding: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .montsia-header-tag { display: flex; align-items: center; margin-bottom: 12px; font-size: 11px; color: var(--accent-gold); text-transform: uppercase; letter-spacing: 2px; font-weight: 700; }
+        .gold-pulse-dot { width: 8px; height: 8px; background-color: var(--accent-gold); border-radius: 50%; margin-right: 10px; animation: pulse-gold 2s infinite; }
+        .montsia-title { font-size: 19px; line-height: 1.3; margin: 0 0 10px 0; color: #fff; font-weight: 700; }
+
+        .montsia-tech-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 12px; padding: 15px 0; border-top: 1px solid #222; border-bottom: 1px solid #222; margin-bottom: 15px; }
+        .tech-card { background: #161616; border: 1px solid #222; padding: 10px; border-radius: 6px; text-align: center; }
+        .tech-label { font-size: 10px; color: #777; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+        .tech-value { font-size: 18px; font-weight: 700; color: var(--accent-gold); }
+        .tech-sub { font-size: 10px; color: var(--text-muted); margin-top: 2px; }
+
+        .partner-architecture { display: flex; align-items: center; justify-content: space-between; background: rgba(197, 160, 89, 0.05); border: 1px solid rgba(197, 160, 89, 0.2); border-radius: 8px; padding: 12px 15px; }
+        .partner-architecture p { margin: 0; font-size: 12px; color: var(--text-muted); line-height: 1.4; }
+        .partner-architecture a { color: var(--accent-gold); font-weight: 600; text-decoration: none; border-bottom: 1px dashed var(--accent-gold); }
+
+        /* --- SIMULADOR DE COSTES --- */
+        .simulator-box { background: linear-gradient(145deg, #161b22, #0d1117); border: 1px solid rgba(197, 160, 89, 0.3); border-radius: 12px; padding: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .sim-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .sim-label { font-size: 13px; color: var(--text-muted); font-weight: 600; }
+        .sim-value-display { font-size: 16px; font-weight: bold; color: var(--accent-green); background: rgba(16,185,129,0.1); padding: 4px 10px; border-radius: 6px; border: 1px dashed var(--accent-green); }
+        .slider { -webkit-appearance: none; width: 100%; height: 6px; border-radius: 5px; background: var(--bg-panel); border: 1px solid var(--border-color); outline: none; margin-top: 10px; }
+        .slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 18px; height: 18px; border-radius: 50%; background: var(--accent-gold); cursor: pointer; }
+        
+        .result-box { margin-top: 20px; padding-top: 15px; border-top: 1px dashed var(--border-color); }
+        .result-line { display: flex; justify-content: space-between; font-size: 13px; color: var(--text-muted); margin-bottom: 8px; }
+        .result-total { display: flex; justify-content: space-between; font-size: 18px; font-weight: bold; color: #fff; margin-top: 12px; padding-top: 12px; border-top: 1px solid #333; }
+
+        @keyframes flashLaser { 0% { box-shadow: inset 0 0 0 0 rgba(16, 185, 129, 0); } 50% { box-shadow: inset 0 0 50px 10px rgba(16, 185, 129, 0.4); border-color: var(--accent-green); } 100% { box-shadow: inset 0 0 0 0 rgba(16, 185, 129, 0); } }
+        .flash-active { animation: flashLaser 0.5s ease-out; }
+
+        .right-panel { background-color: var(--bg-panel); border-left: 1px solid var(--border-color); padding: 25px; display: flex; flex-direction: column; overflow-y: auto; }
+        .right-panel-content { display: flex; flex-direction: column; gap: 16px; }
+        .victoria-box { text-align: center; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; transition: all 0.3s ease; }
+        .victoria-avatar { width: 55px; height: 55px; background: linear-gradient(135deg, #3b82f6, #10b981); border-radius: 50%; margin: 0 auto 12px auto; display: flex; align-items: center; justify-content: center; font-size: 22px; }
+        
+        .btn-action { display: block; width: 100%; background-color: var(--accent-green); color: #fff; text-align: center; padding: 12px; border-radius: 8px; font-size: 14px; font-weight: bold; text-decoration: none; margin-top: 15px; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); transition: opacity 0.2s; cursor: pointer; border: none;}
+        .btn-action:hover { opacity: 0.9; }
+
+        /* --- ESTILOS DEL CAPTCHA Y CHAT --- */
+        .captcha-container { display: none; background: var(--bg-panel); border: 1px dashed var(--border-color); border-radius: 8px; padding: 15px; margin-top: 15px; animation: fadeIn 0.3s ease; text-align: left; }
+        .captcha-text { font-size: 12.5px; color: var(--text-muted); margin-bottom: 12px; }
+        .captcha-input-group { display: flex; gap: 10px; }
+        .captcha-input-group input { flex: 1; background: var(--bg-base); border: 1px solid var(--border-color); color: var(--text-main); padding: 10px; border-radius: 6px; font-size: 14px; text-align: center; outline: none; }
+        .captcha-input-group input:focus { border-color: var(--accent-green); }
+        .captcha-input-group button { background: var(--accent-green); color: #fff; border: none; padding: 0 15px; border-radius: 6px; font-weight: bold; cursor: pointer; }
+        .captcha-error { border-color: #ef4444 !important; animation: shake 0.4s; }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+
+        .chat-interface { display: none; flex-direction: column; height: 320px; background: var(--bg-base); border-radius: 8px; border: 1px solid var(--border-color); margin-top: 15px; overflow: hidden; text-align: left;}
+        .chat-messages { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+        .chat-bubble { max-width: 85%; padding: 10px 14px; border-radius: 8px; font-size: 13px; line-height: 1.4; word-wrap: break-word; }
+        .bot-message { background: var(--bg-panel); border: 1px solid var(--border-color); color: var(--text-main); align-self: flex-start; border-bottom-left-radius: 2px; }
+        .user-message { background: var(--accent-green); color: #fff; align-self: flex-end; border-bottom-right-radius: 2px; }
+        .typing-indicator { font-size: 12px; color: var(--text-muted); font-style: italic; display: none; margin-left: 10px; padding: 5px 15px; }
+        .chat-input-area { display: flex; border-top: 1px solid var(--border-color); background: var(--bg-panel); }
+        .chat-input-area input { flex: 1; background: transparent; border: none; padding: 12px 15px; color: var(--text-main); font-size: 13px; outline: none; }
+        .chat-input-area input::placeholder { color: var(--text-muted); }
+        .chat-input-area button { background: transparent; border: none; color: var(--accent-green); font-weight: bold; padding: 0 15px; cursor: pointer; }
+        .chat-legal-notice { font-size: 10px; color: var(--text-muted); padding: 4px 15px 8px 15px; text-align: center; border-top: 1px solid rgba(255,255,255,0.03); }
+
+        .partner-promo { background: linear-gradient(135deg, rgba(59,130,246,0.1), rgba(16,185,129,0.1)); border: 1px dashed var(--accent-blue); border-radius: 10px; padding: 12px 15px; font-size: 12px; color: var(--text-muted); text-align: left; }
+        .api-badge { margin-top: auto; padding-top: 20px; text-align: center; font-size: 11px; color: var(--text-muted); }
+
+        @keyframes pulse-gold {
+            0% { opacity: 1; box-shadow: 0 0 8px var(--accent-gold); }
+            50% { opacity: 0.4; box-shadow: 0 0 0 transparent; }
+            100% { opacity: 1; box-shadow: 0 0 8px var(--accent-gold); }
+        }
+    </style>
+</head>
+<body>
+
+    <aside>
+        <div class="brand">
+            <span>⚡</span> <span class="text">LEVEL-<span class="lowercase-i">i</span>.COM</span>
+        </div>
+        <div class="nav-menu">
+            <button class="nav-item active">🎯 Montsià i Baix Maestrat</button>
+            <button class="nav-item" onclick="alert('Módulo disponible próximamente')">🏠 Comprar Inmuebles</button>
+            <button class="nav-item" onclick="alert('Módulo disponible próximamente')">🏷️ Venta General</button>
+            <button class="nav-item" onclick="alert('Módulo disponible próximamente')">⚙️ Gestión Integral</button>
+            
+            <!-- ENLACE DE RETORNO A LA RÀPITA -->
+            <a href="/" class="nav-item gold-link">
+                🎯 Volver a Captación La Ràpita
+            </a>
+        </div>
+    </aside>
+
+    <main id="main-container">
+        <header>
+            <div class="header-title">Consola Central PropTech · Módulo Activo: Montsià i Baix Maestrat</div>
+            <div class="lang-selector">
+                <button class="lang-btn active">ESP</button>
+                <button class="lang-btn">CAT</button>
+                <button class="lang-btn">FRA</button>
+            </div>
+        </header>
+
+        <div class="content-area">
+            
+            <!-- TARJETA INFORMATIVA Y VÍDEO -->
+            <div class="montsia-section">
+                <div class="montsia-header-tag">
+                    <span class="gold-pulse-dot"></span> Dossier de Inversión | Suelo Urbano
+                </div>
+
+                <div class="video-screen-horizontal">
+                    <video autoplay muted loop playsinline controls>
+                        <source src="../../espot marjal les cases alcanar en off.mp4" type="video/mp4">
+                        Tu navegador no soporta la reproducción de video.
+                    </video>
+                </div>
+
+                <h3 class="montsia-title">
+                    Suelo Residencial Premium en Les Cases d'Alcanar <br>
+                    <span style="color: var(--text-muted); font-weight: 400; font-size: 14px;">Entorno consolidado de Ciudad Jardín a 300m del mar. Dos parcelas independientes disponibles.</span>
+                </h3>
+
+                <div class="montsia-tech-grid">
+                    <div class="tech-card">
+                        <div class="tech-label">Sup. Neta</div>
+                        <div class="tech-value">460 m²</div>
+                        <div class="tech-sub">Por parcela</div>
+                    </div>
+                    <div class="tech-card">
+                        <div class="tech-label">Techo Máx.</div>
+                        <div class="tech-value">335 m²</div>
+                        <div class="tech-sub">Edificabilidad</div>
+                    </div>
+                    <div class="tech-card">
+                        <div class="tech-label">Parcela P1</div>
+                        <div class="tech-value">160.000 €</div>
+                    </div>
+                    <div class="tech-card">
+                        <div class="tech-label">Parcela P2</div>
+                        <div class="tech-value">170.000 €</div>
+                    </div>
+                </div>
+
+                <div class="partner-architecture">
+                    <p>Diseño de anteproyecto, proyecto de obra y dirección técnica respaldados por nuestro estudio colaborador.</p>
+                    <a href="https://www.arquitecturaecologicavinaros.com/" target="_blank" rel="noopener">Arquitectura Ecológica Vinaròs ↗</a>
+                </div>
+            </div>
+
+            <!-- SIMULADOR DE COSTES LLAVES EN MANO -->
+            <div class="simulator-box">
+                <h3 style="font-size: 15px; margin-bottom: 15px; color: var(--text-main);">📊 Simulador de Inversión Llaves en Mano (Suelo + Obra)</h3>
+                
+                <div style="margin-bottom: 20px;">
+                    <div class="sim-row">
+                        <span class="sim-label">Superficie a Edificar</span>
+                        <span class="sim-value-display" id="m2-val">200 m²</span>
+                    </div>
+                    <input type="range" id="m2-slider" class="slider" min="100" max="335" value="200" step="5" oninput="calculateTotal()">
+                </div>
+
+                <div>
+                    <div class="sim-row">
+                        <span class="sim-label">Calidad / Coste Construcción (m²)</span>
+                        <span class="sim-value-display" id="cost-val" style="color: var(--accent-gold);">1.500 €</span>
+                    </div>
+                    <input type="range" id="cost-slider" class="slider" min="1200" max="2500" value="1500" step="50" oninput="calculateTotal()">
+                </div>
+
+                <div class="result-box">
+                    <div class="result-line"><span>Terreno (Parcela P1)</span> <span>160.000 €</span></div>
+                    <div class="result-line"><span>Ejecución Material de Obra</span> <span id="res-build">300.000 €</span></div>
+                    <div class="result-line"><span>Honorarios, Licencias e Impuestos (15%)</span> <span id="res-fees">45.000 €</span></div>
+                    <div class="result-total"><span>INVERSIÓN TOTAL ESTIMADA</span> <span id="res-total" style="color: var(--accent-gold);">505.000 €</span></div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="right-panel">
+            <div class="right-panel-content">
+                <div class="victoria-box" id="victoria-box-panel">
+                    <div class="victoria-avatar">👑</div>
+                    <h3 style="font-size: 15px; margin-bottom: 6px;">Elena María Casamayor</h3>
+                    <p style="font-size: 12px; color: var(--text-muted);" id="victoria-subtitle">Asesoría Inmobiliaria y Gestión Ejecutiva.</p>
+                    
+                    <button id="wa-button" class="btn-action" onclick="pedirSeguridad('montsia_suelo')">
+                        <span id="btn-text">🎙️ Solicitar Dossier de Suelo</span>
+                    </button>
+
+                    <div id="captcha-container" class="captcha-container">
+                        <div class="captcha-text">🛡️ <b>Verificación de seguridad:</b> ¿Cuánto es <span id="captcha-question" style="color:var(--text-main); font-weight:bold; font-size:14px;"></span>?</div>
+                        <div class="captcha-input-group">
+                            <input type="number" id="captcha-input" placeholder="Respuesta" onkeypress="handleCaptchaKeyPress(event)">
+                            <button onclick="verificarCaptcha()">Verificar</button>
+                        </div>
+                    </div>
+
+                    <div id="chat-interface" class="chat-interface">
+                        <div id="chat-messages" class="chat-messages"></div>
+                        <div id="typing-indicator" class="typing-indicator">Elena María está escribiendo...</div>
+                        <div class="chat-input-area">
+                            <input type="text" id="chat-input" placeholder="Escribe tu número de teléfono..." onkeypress="handleKeyPress(event)">
+                            <button onclick="sendChatMessage()">Enviar</button>
+                        </div>
+                        <div class="chat-legal-notice">Al continuar, aceptas la <a href="#" style="color:var(--accent-green);">Política de Privacidad</a>.</div>
+                    </div>
+                </div>
+
+                <div class="partner-promo">
+                    🎁 <b>Chivatazos Nacionales:</b> Gana premio valorado en <b>600 €</b> por cada propiedad vendida.
+                </div>
+            </div>
+
+            <div class="api-badge">
+                API 4173 · AICAT 14200
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // --- 1. LÓGICA DEL SIMULADOR DE COSTES ---
+        const formatEur = (num) => new Intl.NumberFormat('es-ES').format(Math.round(num)) + ' €';
+
+        function calculateTotal() {
+            const m2Input = document.getElementById('m2-slider');
+            const costM2Input = document.getElementById('cost-slider');
+            
+            if (!m2Input || !costM2Input) return;
+
+            const m2 = m2Input.value;
+            const costM2 = costM2Input.value;
+            const landCost = 160000; // Parcela P1 fijada
+            
+            document.getElementById('m2-val').innerText = m2 + ' m²';
+            document.getElementById('cost-val').innerText = formatEur(costM2);
+
+            const buildCost = m2 * costM2;
+            const feesAndTaxes = buildCost * 0.15; // 15% de gastos de obra y licencias
+            const total = landCost + buildCost + feesAndTaxes;
+
+            document.getElementById('res-build').innerText = formatEur(buildCost);
+            document.getElementById('res-fees').innerText = formatEur(feesAndTaxes);
+            document.getElementById('res-total').innerText = formatEur(total);
+        }
+
+        window.onload = function() {
+            calculateTotal();
+        };
+
+        // --- 2. LÓGICA DEL CHAT Y MAKE.COM (ELENA MARÍA) ---
+        const webhookMake = "https://hook.eu1.make.com/8xd81xb9t3mg2ycwez1czd3quwhf2nef"; 
+        
+        const btnInicio = document.getElementById('wa-button');
+        const interfaceChat = document.getElementById('chat-interface');
+        const chatMessages = document.getElementById('chat-messages');
+        const inputField = document.getElementById('chat-input');
+        const typingIndicator = document.getElementById('typing-indicator');
+        const subtitle = document.getElementById('victoria-subtitle');
+        const mainContainer = document.getElementById('main-container');
+
+        let sessionId = "";
+        let modoAcceso = "montsia_suelo";
+        let telefonoCliente = ""; 
+        let nombreCliente = ""; 
+        let captchaRespuesta = 0;
+
+        function dispararEfectoLaser() {
+            if (mainContainer) {
+                mainContainer.classList.add('flash-active');
+                setTimeout(() => { mainContainer.classList.remove('flash-active'); }, 500);
+            }
+        }
+
+        function pedirSeguridad(modo) {
+            modoAcceso = modo;
+            if (btnInicio) btnInicio.style.display = 'none';
+            document.getElementById('victoria-box-panel').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            document.getElementById('captcha-container').style.display = 'block';
+            generarNuevaSuma();
+        }
+
+        function generarNuevaSuma() {
+            const n1 = Math.floor(Math.random() * 9) + 1;
+            const n2 = Math.floor(Math.random() * 9) + 1;
+            captchaRespuesta = n1 + n2;
+            document.getElementById('captcha-question').innerText = `${n1} + ${n2}`;
+            const input = document.getElementById('captcha-input');
+            input.value = "";
+            input.focus();
+        }
+
+        function handleCaptchaKeyPress(e) {
+            if (e.key === 'Enter') { e.preventDefault(); verificarCaptcha(); }
+        }
+
+        function verificarCaptcha() {
+            const input = document.getElementById('captcha-input');
+            if (parseInt(input.value) === captchaRespuesta) {
+                document.getElementById('captcha-container').style.display = 'none';
+                iniciarChat();
+            } else {
+                input.classList.add('captcha-error');
+                setTimeout(() => input.classList.remove('captcha-error'), 400);
+                generarNuevaSuma();
+            }
+        }
+
+        function iniciarChat() {
+            dispararEfectoLaser();
+            if (subtitle) subtitle.style.display = 'none';
+            if (interfaceChat) interfaceChat.style.display = 'flex';
+
+            sessionId = 'usr_' + Math.random().toString(36).substr(2, 9);
+            let saludoInicial = "Hola. Soy Elena María Casamayor. Para enviarle el dosier privado y el estudio de costes del suelo urbano en Les Cases d'Alcanar, indíquenos primero su **número de teléfono móvil**.";
+            
+            appendMessage("Elena María", saludoInicial, 'bot');
+            document.getElementById('chat-input').focus();
+        }
+
+        function handleKeyPress(e) {
+            if (e.key === 'Enter') { e.preventDefault(); sendChatMessage(); }
+        }
+
+        function sendChatMessage() {
+            if (!inputField) return;
+            const message = inputField.value.trim();
+            if (message === "") return;
+
+            inputField.value = "";
+            appendMessage("Tú", message, 'user');
+
+            if (telefonoCliente === "") {
+                telefonoCliente = message;
+                document.getElementById('chat-input').placeholder = "Indíquenos su nombre de pila...";
+                appendMessage("Elena María", "Perfecto. ¿Cómo se complace en que le llame?", 'bot');
+                return; 
+            } 
+            
+            if (nombreCliente === "") {
+                nombreCliente = message;
+                document.getElementById('chat-input').placeholder = "Escribe tu mensaje...";
+                enviarAMake("Inicio de sesión completado");
+                return;
+            }
+
+            enviarAMake(message);
+        }
+
+        function enviarAMake(mensajeUsuario) {
+            if (typingIndicator) typingIndicator.style.display = 'block';
+
+            fetch(webhookMake, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    evento: "nuevo_mensaje",
+                    modo: modoAcceso,
+                    id_sesion: sessionId,
+                    telefono: telefonoCliente,
+                    nombre_cliente: nombreCliente,
+                    mensaje: mensajeUsuario
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (typingIndicator) typingIndicator.style.display = 'none';
+                const textoBot = data.respuesta_bot || data.message || (typeof data === 'string' ? data : "Encantada. ¿En qué puedo ayudarle?");
+                if (textoBot && textoBot.trim() !== "") {
+                    appendMessage("Elena María", textoBot.trim(), 'bot');
+                }
+            })
+            .catch(err => {
+                console.error("Error en la conexión:", err);
+                if (typingIndicator) typingIndicator.style.display = 'none';
+                appendMessage("Elena María", "Disculpe, ha ocurrido un error de conexión con el sistema.", 'bot');
+            });
+        }
+
+        function appendMessage(sender, text, type) {
+            if (!chatMessages) return;
+            const msgDiv = document.createElement('div');
+            msgDiv.classList.add('chat-bubble');
+            msgDiv.classList.add(type === 'bot' ? 'bot-message' : 'user-message');
+            msgDiv.innerHTML = text;
+            chatMessages.appendChild(msgDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+    </script>
+</body>
+</html>
