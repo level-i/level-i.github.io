@@ -204,11 +204,11 @@
         .partner-architecture p { margin: 0; font-size: 12px; color: var(--text-muted); line-height: 1.4; }
         .partner-architecture a { color: var(--accent-gold); font-weight: 600; text-decoration: none; border-bottom: 1px dashed var(--accent-gold); }
 
-        /* GALERÍA DE RENDERS */
-        .renders-gallery-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-top: 15px; }
-        .render-card { background: #000; border-radius: 8px; overflow: hidden; border: 1px solid var(--border-color); transition: transform 0.2s ease, border-color 0.2s ease; cursor: pointer; }
-        .render-card:hover { transform: translateY(-3px); border-color: var(--accent-gold); }
-        .render-card img { width: 100%; height: 140px; object-fit: cover; display: block; }
+        /* GALERÍA DE RENDERS A PANTALLA COMPLETA (UNA BAJO OTRA) */
+        .renders-gallery-grid { display: flex; flex-direction: column; gap: 15px; margin-top: 15px; width: 100%; }
+        .render-card { background: #000; border-radius: 8px; overflow: hidden; border: 1px solid var(--border-color); width: 100%; transition: border-color 0.2s ease; }
+        .render-card:hover { border-color: var(--accent-gold); }
+        .render-card img { width: 100%; height: auto; aspect-ratio: 16/9; object-fit: cover; display: block; }
 
         /* SIMULADOR DE COSTES */
         .simulator-box { background: linear-gradient(145deg, #161b22, #0d1117); border: 1px solid rgba(197, 160, 89, 0.3); border-radius: 12px; padding: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
@@ -282,6 +282,9 @@
             font-size: 12px;
             color: var(--text-muted);
             text-align: center;
+            margin-bottom: 10px;
+            text-decoration: none;
+            display: block;
         }
         .partner-promo span {
             color: var(--text-main);
@@ -331,14 +334,6 @@
 
         <div class="content-area">
             
-            <div class="video-screen">
-                <div class="video-overlay-badge">🔴 EXPERIENCIA LEVEL-I VR</div>
-                <video autoplay muted loop playsinline controls>
-                    <source src="https://level-i.github.io/suelo-residencial/montsia-baix-maestrat/les-cases 4-alcanar-chalet-xalet-obra-nueva_exterior-simulacion-fondo-real_62vnw5wnhg_sd.mp4" type="video/mp4">
-                    Tu navegador no soporta la reproducción de video.
-                </video>
-            </div>
-
             <!-- ANUNCIO DE CAPTACIÓN EN LA RÀPITA CON CTA PARA HABLAR CON ELENA -->
             <div class="card-main">
                 <h2 id="main-title">¿Vendes tu piso o planta baja en La Ràpita? Tenemos al comprador ideal.</h2>
@@ -353,6 +348,7 @@
                 </a>
             </div>
 
+            <!-- DOSSIER DE INVERSIÓN Y VÍDEO PRINCIPAL -->
             <div class="montsia-section">
                 <div class="montsia-header-tag">
                     <span class="gold-pulse-dot"></span> Dossier de Inversión | Suelo Urbano
@@ -383,6 +379,16 @@
                     </div>
                 </div>
 
+                <!-- VÍDEO PRINCIPAL (les-cases 4) -->
+                <div class="video-screen" style="margin-top: 15px;">
+                    <div class="video-overlay-badge">🔴 EXPERIENCIA LEVEL-I VR</div>
+                    <video autoplay muted loop playsinline controls>
+                        <source src="https://level-i.github.io/suelo-residencial/montsia-baix-maestrat/les-cases 4-alcanar-chalet-xalet-obra-nueva_exterior-simulacion-fondo-real_62vnw5wnhg_sd.mp4" type="video/mp4">
+                        Tu navegador no soporta la reproducción de video.
+                    </video>
+                </div>
+
+                <!-- IMÁGENES UNA BAJO OTRA A ANCHO COMPLETO -->
                 <div class="renders-gallery-grid">
                     <div class="render-card"><img src="https://level-i.github.io/suelo-residencial/montsia-baix-maestrat/les-cases 0-alcanar-chalet-xalet-obra-nueva_exterior-simulacion-fondo-real_62vnw5wnhg_sd.jpg" alt="Render Villa Exterior"></div>
                     <div class="render-card"><img src="https://level-i.github.io/suelo-residencial/montsia-baix-maestrat/les-cases 1-alcanar-chalet-xalet-obra-nueva_exterior-simulacion-fondo-real_62vnw5wnhg_sd.jpg" alt="Render Interior Salón"></div>
@@ -390,6 +396,7 @@
                 </div>
             </div>
 
+            <!-- SIMULADOR DE COSTES -->
             <div class="simulator-box">
                 <h3 style="font-size: 15px; margin-bottom: 15px; color: var(--text-main);">📊 Simulador de Inversión Llaves en Mano (Suelo + Obra)</h3>
                 
@@ -436,8 +443,14 @@
                 </a>
             </div>
 
-            <div class="partner-promo">
-                🎁 <b>Chivatazos Nacionales:</b> Gana una tarjeta regalo de <b>600 €</b> por cada propiedad vendida que nos traigas.
+            <!-- CTAS INFERIORES: ANUNCIAR Y COLABORADORES -->
+            <div>
+                <a href="#victoria-box-panel" class="partner-promo">
+                    ✨ <b>Anuncia aquí tu propiedad:</b> Gestión digital y transparente. Honorarios máximos de <b>7.500 € IVA incl.</b>
+                </a>
+                <a href="#victoria-box-panel" class="partner-promo" style="border-color: var(--accent-green);">
+                    🎁 <b>Chivatazos / Colaboradores:</b> Gana una tarjeta regalo de <b>600 €</b> por cada propiedad vendida.
+                </a>
             </div>
         </div>
     </main>
@@ -515,7 +528,7 @@
             } else {
                 buttons[0].classList.add('active');
                 title.innerText = "¿Vendes tu piso o planta baja en La Ràpita? Tenemos al comprador ideal.";
-                desc.innerHTML = `Hola,<br><br>Te escribo de manera directa y personal. Represento a una clienta particular que acaba de vender su vivienda y necesita comprar con urgencia una propiedad pequeña <span class="highlight">(tipo estudio o 1 habitación)</span>, que sea planta baja o disponga de ascensor, obligatoriamente en la zona de <span class="highlight">La Ràpita</span>.<br><br>Nos da exactamente igual el estado: si necesita reformas integrales, si lleva años cerrada o si está llena de enseres. Nosotros nos encargamos absolutamente de todo <span class="highlight">(vaciado, papeleo, licencias y trámites notariales)</span>.<br><br>Buscamos un trato directo, ágil, sin aguantar visitas innecesarias y con la máxima discreción.`;
+                desc.innerHTML = `Hola,<br><br>Te escribo de manera directa y personal. Represento a una clienta particular que acaba de vender su vivienda y necesita comprar con urgencia una propiedad pequeña <span class="highlight">(tipo estudio o 1 habitación)</span>, que sea planta baja o disponga de ascensor, obligatoriamente en la zona de <span class="highlight">La Ràpita</span>.<br><br>Nos da exactamente igual el estado: si necesita reformas integrales, si lleva años cerrada o si está llena de enseres. Nosotros nos encargamos absolutamente de todo <span class="highlight">(vaciado, papeleo, licencias y trámites notarials)</span>.<br><br>Buscamos un trato directo, ágil, sin aguantar visitas innecesarias y con la máxima discreción.`;
                 btnText.innerText = "🎙️ Hablar por voz o chat";
                 button.href = "https://wa.me/34641451736?text=Hola,%20estoy%20interesado%20TENGO%20APARTAMENTO%20O%20ESTUDI%20EN%20LA%20RAPITA";
             }
