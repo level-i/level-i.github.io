@@ -103,9 +103,26 @@
 
         .partner-promo { background: linear-gradient(135deg, rgba(59,130,246,0.1), rgba(16,185,129,0.1)); border: 1px dashed var(--accent-blue); border-radius: 10px; padding: 15px; font-size: 12px; color: var(--text-muted); text-align: center; margin-bottom: 10px; text-decoration: none; display: block; }
         .partner-promo span { color: var(--text-main); font-weight: bold; }
+
+        /* ====== ADAPTACIÓN RESPONSIVA (MÓVILES) ====== */
+        @media (max-width: 900px) {
+            body { flex-direction: column; overflow-y: auto; overflow-x: hidden; }
+            aside { width: 100%; border-right: none; border-bottom: 1px solid var(--border-color); padding: 15px; height: auto; flex-shrink: 0; }
+            .brand-container { margin-bottom: 15px; align-items: center; border-bottom: none; padding-bottom: 5px; }
+            .nav-menu { flex-direction: row; overflow-x: auto; max-height: none; padding-bottom: 10px; }
+            .nav-item { white-space: nowrap; border-left: none; border-bottom: 3px solid transparent; border-radius: 0; }
+            .nav-item.active { background: transparent; border-left: none; border-bottom: 3px solid var(--accent-green); }
+            main { display: flex; flex-direction: column; height: auto; overflow: visible; }
+            header { flex-direction: column; padding: 15px; gap: 15px; height: auto; text-align: center; }
+            .content-area { padding: 15px; overflow: visible; height: auto; }
+            .right-panel { border-left: none; border-top: 1px solid var(--border-color); padding: 15px; overflow: visible; height: auto; }
+            .chat-interface { height: 350px; } 
+            .video-screen { aspect-ratio: 16/9; border-radius: 8px; }
+        }
     </style>
 </head>
 <body>
+
     <aside>
         <div>
             <div class="brand-container">
@@ -147,9 +164,11 @@
                     Nos da exactamente igual el estado: si necesita reformas integrales, si lleva años cerrada o si está llena de enseres. Nosotros nos encargamos absolutamente de todo <span class="highlight">(vaciado, papeleo, licencias y trámites notariales)</span>.<br><br>
                     Buscamos un trato directo, ágil, sin aguantar visitas innecesarias y con la máxima discreción.
                 </p>
-                <button class="btn-action" style="max-width: 380px; margin-top: 15px;" onclick="pedirSeguridad('rapita')">
-                    🎯 Hablar con Elena María sobre mi inmueble en La Ràpita
-                </button>
+                <div style="margin-top: 20px;">
+                    <a href="#victoria-box-panel" style="color: var(--accent-green); font-size: 14.5px; font-weight: 600; text-decoration: none; border-bottom: 1px dashed var(--accent-green); display: inline-flex; align-items: center; gap: 6px; transition: opacity 0.2s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'" onclick="pedirSeguridad('rapita')">
+                        🎯 Hablar con Elena María sobre mi inmueble ↗
+                    </a>
+                </div>
             </div>
 
             <div class="montsia-section">
@@ -166,17 +185,19 @@
                     <div class="tech-card"><div class="tech-label">Parcela P2</div><div class="tech-value">170.000 €</div></div>
                 </div>
 
+                <!-- VÍDEO CON RUTA RELATIVA -->
                 <div class="video-screen">
                     <div class="video-overlay-badge">🔴 EXPERIENCIA LEVEL-I VR</div>
                     <video autoplay muted loop playsinline controls>
-                        <source src="https://level-i.github.io/suelo-residencial/montsia-baix-maestrat/les-cases-video.mp4" type="video/mp4">
+                        <source src="les-cases-video.mp4" type="video/mp4">
                     </video>
                 </div>
 
+                <!-- IMÁGENES CON RUTAS RELATIVAS -->
                 <div class="renders-gallery-grid">
-                    <div class="render-card"><img src="https://level-i.github.io/suelo-residencial/montsia-baix-maestrat/les-cases-0.jpg" alt="Render Villa Exterior"></div>
-                    <div class="render-card"><img src="https://level-i.github.io/suelo-residencial/montsia-baix-maestrat/les-cases-1.jpg" alt="Render Interior Salón"></div>
-                    <div class="render-card"><img src="https://level-i.github.io/suelo-residencial/montsia-baix-maestrat/les-cases-2.jpg" alt="Render Sala de Billar"></div>
+                    <div class="render-card"><img src="les-cases-0.jpg" alt="Render Villa Exterior"></div>
+                    <div class="render-card"><img src="les-cases-1.jpg" alt="Render Interior Salón"></div>
+                    <div class="render-card"><img src="les-cases-2.jpg" alt="Render Sala de Billar"></div>
                 </div>
             </div>
 
@@ -385,14 +406,6 @@
                 if (typingIndicator) typingIndicator.style.display = 'none';
                 appendMessage("Elena María", "Disculpe, ha ocurrido un error de conexión con el sistema.", 'bot');
             });
-        }
-
-        function appendMessage(sender, text, type) {
-            const msgDiv = document.createElement('div');
-            msgDiv.classList.add('chat-bubble', type === 'bot' ? 'bot-message' : 'user-message');
-            msgDiv.innerHTML = text;
-            chatMessages.appendChild(msgDiv);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
         }
 
         function setLanguage(lang) {
