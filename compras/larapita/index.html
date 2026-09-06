@@ -44,7 +44,6 @@
         
         .content-area { padding: 25px; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; }
         
-        /* --- SECCIÓN DE VÍDEO HORIZONTAL Y DOSSIER LES CASES D'ALCANAR --- */
         .montsia-section { background: linear-gradient(145deg, #121212, #070707); border: 1px solid rgba(197, 160, 89, 0.3); border-radius: 12px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         .montsia-header-tag { display: flex; align-items: center; margin-bottom: 15px; font-size: 11px; color: var(--accent-gold); text-transform: uppercase; letter-spacing: 2px; font-weight: 700; }
         .gold-pulse-dot { width: 8px; height: 8px; background-color: var(--accent-gold); border-radius: 50%; margin-right: 10px; animation: pulse-gold 2s infinite; }
@@ -56,7 +55,6 @@
         .montsia-desc { font-size: 14px; color: var(--text-muted); line-height: 1.6; margin-bottom: 20px; }
         .montsia-desc strong { color: var(--accent-gold); }
 
-        /* Grid técnico compacto */
         .montsia-tech-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 12px; padding: 15px 0; border-top: 1px solid #222; border-bottom: 1px solid #222; margin-bottom: 15px; }
         .tech-card { background: #161616; border: 1px solid #222; padding: 10px; border-radius: 6px; text-align: center; }
         .tech-label { font-size: 10px; color: #777; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
@@ -114,15 +112,20 @@
         .btn-secondary { background-color: transparent; border: 1px solid var(--border-color); color: var(--text-muted); margin-top: 8px; box-shadow: none; font-size: 12.5px; }
         .btn-secondary:hover { border-color: var(--accent-green); color: var(--text-main); background: var(--bg-base); }
 
-        /* --- ESTILOS DEL CAPTCHA --- */
+        /* --- ESTILOS DEL CAPTCHA Y AVISO LEGAL --- */
         .captcha-container { display: none; background: var(--bg-panel); border: 1px dashed var(--border-color); border-radius: 8px; padding: 15px; margin-top: 15px; animation: fadeIn 0.3s ease; text-align: left; }
         .captcha-text { font-size: 12.5px; color: var(--text-muted); margin-bottom: 12px; }
-        .captcha-input-group { display: flex; gap: 10px; }
+        .captcha-input-group { display: flex; gap: 10px; margin-top: 12px;}
         .captcha-input-group input { flex: 1; background: var(--bg-base); border: 1px solid var(--border-color); color: var(--text-main); padding: 10px; border-radius: 6px; font-size: 14px; text-align: center; outline: none; transition: border-color 0.2s; }
         .captcha-input-group input:focus { border-color: var(--accent-green); }
         .captcha-input-group button { background: var(--accent-green); color: #fff; border: none; padding: 0 15px; border-radius: 6px; font-weight: bold; cursor: pointer; transition: opacity 0.2s; }
         .captcha-input-group button:hover { opacity: 0.9; }
         .captcha-error { border-color: #ef4444 !important; animation: shake 0.4s; }
+        
+        .legal-checkbox-container { font-size: 11px; color: var(--text-muted); display: flex; align-items: flex-start; gap: 8px; margin-top: 15px; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.05); }
+        .legal-checkbox-container input[type="checkbox"] { margin-top: 2px; cursor: pointer; }
+        .legal-checkbox-container label { line-height: 1.4; cursor: pointer; }
+
         @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
 
@@ -330,6 +333,14 @@
 
                     <div id="captcha-container" class="captcha-container">
                         <div class="captcha-text">🛡️ <b>Verificación de seguridad:</b> ¿Cuánto es <span id="captcha-question" style="color:var(--text-main); font-weight:bold; font-size:14px;"></span>?</div>
+                        
+                        <div class="legal-checkbox-container">
+                            <input type="checkbox" id="legal-consent">
+                            <label for="legal-consent">
+                                He leído y acepto la <a href="#" style="color: var(--accent-green);">Política de Privacidad</a> y el Aviso Legal. Entiendo y consiento que seré atendido por un sistema automatizado de <b>Inteligencia Artificial</b>.
+                            </label>
+                        </div>
+
                         <div class="captcha-input-group">
                             <input type="number" id="captcha-input" placeholder="Respuesta" onkeypress="handleCaptchaKeyPress(event)">
                             <button onclick="verificarCaptcha()">Verificar</button>
@@ -412,6 +423,10 @@
             document.getElementById('captcha-question').innerText = `${n1} + ${n2}`;
             const input = document.getElementById('captcha-input');
             input.value = "";
+            
+            // Reiniciar checkbox legal al generar nuevo captcha
+            document.getElementById('legal-consent').checked = false;
+            
             input.focus();
         }
 
@@ -423,6 +438,12 @@
         }
 
         function verificarCaptcha() {
+            const consentCheckbox = document.getElementById('legal-consent');
+            if (!consentCheckbox.checked) {
+                alert("⚠️ Para continuar, debes marcar la casilla confirmando que has leído y aceptas la Política de Privacidad y el uso de IA.");
+                return;
+            }
+
             const input = document.getElementById('captcha-input');
             if (parseInt(input.value) === captchaRespuesta) {
                 document.getElementById('captcha-container').style.display = 'none';
@@ -445,16 +466,17 @@
             const urlParams = new URLSearchParams(window.location.search);
             sessionId = urlParams.get('id') || 'usr_' + Math.random().toString(36).substr(2, 9);
             
-            let saludoInicial = "Hola. Soy Elena María Casamayor, asesora experta en Level-i. Para atenderle con absoluta seguridad y acceder a su expediente, por favor indíquenos su **número de teléfono móvil**.";
+            // TEXTOS MODIFICADOS PARA CUMPLIR CON LA LEY DE TRANSPARENCIA IA
+            let saludoInicial = "Hola. Soy Elena María Casamayor, asesora virtual de **Inteligencia Artificial** en Level-i. Para atenderle con absoluta seguridad y acceder a su expediente, por favor indíquenos su **número de teléfono móvil**.";
             
             if (modo === 'alcanar_suelo') {
-                saludoInicial = "Hola. Soy Elena María Casamayor. Para enviarle el dosier privado del suelo urbano en Les Cases d'Alcanar y gestionar su interés, indíquenos su **número de teléfono móvil**.";
+                saludoInicial = "Hola. Soy Elena María Casamayor, tu asesora virtual de **Inteligencia Artificial**. Para enviarle el dosier privado del suelo urbano en Les Cases d'Alcanar y gestionar su interés, indíquenos su **número de teléfono móvil**.";
             } else if (modo === 'rapita') {
-                saludoInicial = "Hola. Soy Elena María Casamayor. Para gestionar su inmueble en La Ràpita con total discreción, por favor indíquenos primero su **número de teléfono móvil** de contacto.";
+                saludoInicial = "Hola. Soy Elena María Casamayor, asesora virtual de **Inteligencia Artificial**. Para gestionar su inmueble en La Ràpita con total discreción, por favor indíquenos primero su **número de teléfono móvil** de contacto.";
             } else if (modo === 'precio_312k') {
-                saludoInicial = "Hola. Soy Elena María Casamayor. Sobre esta propiedad de 312.000 €, para enviarle el dosier privado y verificar su acceso, indíquenos su **número de teléfono móvil**.";
+                saludoInicial = "Hola. Soy Elena María Casamayor, asesora virtual de **Inteligencia Artificial**. Sobre esta propiedad de 312.000 €, para enviarle el dosier privado y verificar su acceso, indíquenos su **número de teléfono móvil**.";
             } else if (modo === 'anunciar') {
-                saludoInicial = "Hola. Soy Elena María Casamayor. Para configurar su anuncio con honorarios máximos de 7.500 €, indíquenos su **número de teléfono móvil**.";
+                saludoInicial = "Hola. Soy Elena María Casamayor, asesora virtual de **Inteligencia Artificial**. Para configurar su anuncio con honorarios máximos de 7.500 €, indíquenos su **número de teléfono móvil**.";
             }
             
             appendMessage("Elena María", saludoInicial, 'bot');
@@ -528,24 +550,24 @@
                     evento: "nuevo_mensaje",
                     modo: modoAcceso,
                     id_sesion: sessionId,
-                        telefono: telefonoCliente,
-                        nombre_cliente: nombreCliente,
-                        mensaje: message
-                    })
+                    telefono: telefonoCliente,
+                    nombre_cliente: nombreCliente,
+                    mensaje: message
                 })
-                .then(response => response.json())
-                .then(data => {
-                    if (typingIndicator) typingIndicator.style.display = 'none';
-                    const textoBot = data.respuesta_bot || data.message || (typeof data === 'string' ? data : "Disculpe, ha ocurrido un error.");
-                    if (textoBot && textoBot.trim() !== "") {
-                        appendMessage("Elena María", textoBot.trim(), 'bot');
-                    }
-                })
-                .catch(err => {
-                    console.error("Error en la conexión:", err);
-                    if (typingIndicator) typingIndicator.style.display = 'none';
-                    appendMessage("Elena María", "Disculpe, ha ocurrido un error de conexión con el sistema.", 'bot');
-                });
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (typingIndicator) typingIndicator.style.display = 'none';
+                const textoBot = data.respuesta_bot || data.message || (typeof data === 'string' ? data : "Disculpe, ha ocurrido un error.");
+                if (textoBot && textoBot.trim() !== "") {
+                    appendMessage("Elena María", textoBot.trim(), 'bot');
+                }
+            })
+            .catch(err => {
+                console.error("Error en la conexión:", err);
+                if (typingIndicator) typingIndicator.style.display = 'none';
+                appendMessage("Elena María", "Disculpe, ha ocurrido un error de conexión con el sistema.", 'bot');
+            });
         }
 
         function appendMessage(sender, text, type) {
@@ -577,5 +599,4 @@
     </script>
 </body>
 </html>
-
 
