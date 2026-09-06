@@ -28,7 +28,7 @@
         
         aside { width: 260px; background-color: var(--bg-panel); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; padding: 20px; flex-shrink: 0; }
         
-        /* --- NUEVO ESTILO DEL LOGO Y RELOJ --- */
+        /* --- BLOQUE DE LOGO Y RELOJ --- */
         .brand-container { margin-bottom: 25px; display: flex; flex-direction: column; gap: 8px; }
         .brand-logo { display: flex; align-items: baseline; color: #ffffff; }
         .l-letter { font-size: 32px; font-weight: 900; line-height: 1; }
@@ -91,9 +91,24 @@
         .card-main p { font-size: 14px; color: var(--text-muted); line-height: 1.6; }
         .highlight { color: var(--text-main); font-weight: 600; }
 
+        /* --- CLASES DE VÍDEO VERTICAL CORREGIDAS --- */
         .vertical-video-section { display: flex; flex-direction: column; align-items: center; margin-top: 10px; width: 100%; gap: 8px; }
-        .vertical-video-wrapper { width: 100%; max-width: 360px; border-radius: 12px; overflow: hidden; border: 1px solid var(--border-color); box-shadow: 0 8px 24px rgba(0,0,0,0.5); background: #000; }
-        .vertical-video-wrapper video { width: 100%; height: auto; display: block; }
+        .vertical-video-wrapper { 
+            width: 100%; 
+            max-width: 320px; 
+            aspect-ratio: 9 / 16; 
+            border-radius: 12px; 
+            overflow: hidden; 
+            border: 1px solid var(--border-color); 
+            box-shadow: 0 8px 24px rgba(0,0,0,0.5); 
+            background: #000; 
+        }
+        .vertical-video-wrapper video { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; 
+            display: block; 
+        }
         
         .pvp-badge { font-size: 13px; font-weight: bold; color: var(--accent-green); background: rgba(16,185,129,0.1); padding: 6px 12px; border-radius: 6px; border: 1px dashed var(--accent-green); text-align: center; }
         .pvp-small { font-size: 10.5px; color: var(--text-muted); font-weight: normal; display: block; margin-top: 2px; }
@@ -174,8 +189,23 @@
             .right-panel { border-left: none; border-top: 1px solid var(--border-color); padding: 15px; overflow: visible; height: auto; }
             .video-screen-horizontal { aspect-ratio: 16/9; border-radius: 8px; }
             .vertical-video-section { width: 100%; margin: 0; padding: 0; }
-            .vertical-video-wrapper { width: 100vw; max-width: 100vw; border-radius: 0; border-left: none; border-right: none; }
-            .vertical-video-wrapper video { width: 100%; height: auto; max-height: 85vh; object-fit: cover; display: block; }
+            
+            /* Ajuste vertical en móvil */
+            .vertical-video-wrapper { 
+                width: 100vw; 
+                max-width: 100vw; 
+                height: 85vh; 
+                aspect-ratio: auto; 
+                border-radius: 0; 
+                border-left: none; 
+                border-right: none; 
+            }
+            .vertical-video-wrapper video { 
+                width: 100%; 
+                height: 100%; 
+                object-fit: cover; 
+                display: block; 
+            }
             .chat-interface { height: 350px; } 
         }
     </style>
@@ -214,6 +244,7 @@
 
         <div class="content-area">
             
+            <!-- BLOQUE 1: VÍDEO COWORKING INMOBILIARIO -->
             <div class="montsia-section" style="padding-bottom: 15px; border-color: rgba(16, 185, 129, 0.3);">
                 <div class="montsia-header-tag" style="color: var(--accent-green);">
                     <span class="gold-pulse-dot" style="background-color: var(--accent-green);"></span> PRÓXIMAMENTE · COWORKING INMOBILIARIO EN LA RÀPITA
@@ -227,6 +258,7 @@
                 </div>
             </div>
 
+            <!-- BLOQUE 2: CAPTACIÓN LA RÀPITA -->
             <div class="card-main">
                 <h2 id="main-title" class="laser-title">¿Vendes tu piso o planta baja en La Ràpita? Tenemos al comprador ideal.</h2>
                 <p id="main-desc">
@@ -239,6 +271,7 @@
                 </button>
             </div>
 
+            <!-- BLOQUE 3: SUELO RESIDENCIAL EN LES CASES D'ALCANAR -->
             <div class="montsia-section">
                 <div class="montsia-header-tag">
                     <span class="gold-pulse-dot"></span> Dossier de Inversión | Suelo Urbano · Les Cases d'Alcanar
@@ -295,10 +328,12 @@
                 </button>
             </div>
 
+            <!-- VÍDEO VERTICAL DE BAJOS -->
             <div class="vertical-video-section">
                 <div class="vertical-video-wrapper">
+                    <!-- URL absoluta corregida a la ruta de "compras/larapita" -->
                     <video autoplay muted loop playsinline controls>
-                        <source src="https://level-i.github.io/bajos%20con%20jardin%20la%20rapita.mp4" type="video/mp4">
+                        <source src="https://level-i.github.io/compras/larapita/bajos%20con%20jardin%20la%20rapita.mp4" type="video/mp4">
                     </video>
                 </div>
                 <div class="pvp-badge">
@@ -320,6 +355,7 @@
                 </button>
             </div>
 
+            <!-- ACORDEÓN LEGAL ACTUALIZADO -->
             <div class="legal-accordion-container">
                 <details>
                     <summary>⚖️ Aviso Legal</summary>
@@ -440,7 +476,6 @@
     </main>
 
     <script>
-        // SCRIPT PARA EL RELOJ EN TIEMPO REAL
         function updateClock() {
             const now = new Date();
             const day = String(now.getDate()).padStart(2, '0');
@@ -452,12 +487,11 @@
             
             const clockEl = document.getElementById('live-clock');
             if(clockEl) {
-                // Formato MM/YYYY | HH:MM:SS (como en el vídeo)
-                clockEl.innerText = `${month}/${year} | ${hours}:${minutes}:${seconds}`;
+                clockEl.innerText = `${day}/${month}/${year} | ${hours}:${minutes}:${seconds}`;
             }
         }
         setInterval(updateClock, 1000);
-        updateClock(); // Llamada inicial para que no parpadee al cargar
+        updateClock(); 
 
         const webhookMake = "https://hook.eu1.make.com/8xd81xb9t3mg2ycwez1czd3quwhf2nef"; 
         
