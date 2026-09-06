@@ -227,7 +227,6 @@
             <div class="brand-logo">
                 <span class="l-letter">L</span><span class="brand-dot"></span> <span class="logo-text">Level.immo</span>
             </div>
-            <!-- RELOJ CORREGIDO CON TAMAÑO DE FUENTE APTO -->
             <div class="brand-clock" id="live-clock">--/---- | --:--:--</div>
         </div>
 
@@ -331,7 +330,6 @@
                     Ref. Catastral: <a href="https://www1.sedecatastro.gob.es/CYCBienInmueble/OVCListaBienes.aspx?rc1=0217325&amp;rc2=BE9901G" target="_blank" rel="noopener" style="color: #666; text-decoration: none; border-bottom: 1px dashed #444;">0217325BE9901G0001ID</a> ↗
                 </div>
 
-                <!-- CORRECCIÓN 2: CTA de Les Cases redirige a la subcarpeta correcta -->
                 <a href="/suelo-residencial/montsia-baix-maestrat/" class="btn-action" style="text-decoration: none; text-align: center; display: block;" target="_blank">
                     ⚡ Solicitar Dossier y Bloquear Parcela en Les Cases d'Alcanar
                 </a>
@@ -362,7 +360,6 @@
                 </button>
             </div>
 
-            <!-- ACORDEONES LEGALES -->
             <div class="legal-accordion-container" id="seccion-legal">
                 <details id="acordeon-privacidad">
                     <summary>🔒 Política de Privacidad</summary>
@@ -421,7 +418,6 @@
                         <div class="legal-checkbox-container">
                             <input type="checkbox" id="legal-consent">
                             <label for="legal-consent">
-                                <!-- CORRECCIÓN 3: Enlace funcional que abre el acordeón de privacidad -->
                                 He leído y acepto la <a href="#acordeon-privacidad" onclick="abrirPrivacidad()" style="color: var(--accent-green); text-decoration: underline;">Política de Privacidad</a> y el Aviso Legal. Entiendo y consiento que seré atendido por un sistema automatizado de <b>Inteligencia Artificial</b>.
                             </label>
                         </div>
@@ -436,10 +432,9 @@
                         <div id="chat-messages" class="chat-messages"></div>
                         <div id="typing-indicator" class="typing-indicator">Elena María está escribiendo...</div>
                         <div class="chat-input-area">
-                            <input type="text" id="chat-input" placeholder="Escribe tu número de teléfono..." onkeypress="handleKeyPress(event)">
+                            <input type="tel" id="chat-input" placeholder="Escribe tu número de teléfono..." onkeypress="handleKeyPress(event)">
                             <button onclick="sendChatMessage()">Enviar</button>
                         </div>
-                        <!-- NUEVA OPCIÓN DE BAJA INCLUIDA EN EL CHET -->
                         <div class="chat-legal-notice">
                             ¿Desea <a href="mailto:level@level.immo?subject=Baja%20de%20Suscripcion" style="color:var(--accent-green);">darse de baja</a>? Envíenos un email a level@level.immo.
                         </div>
@@ -616,8 +611,19 @@
             appendMessage("Tú", message, 'user');
 
             if (telefonoCliente === "") {
-                telefonoCliente = message;
-                document.getElementById('chat-input').placeholder = "Indíquenos su nombre de pila...";
+                // FILTRO DE TELÉFONO: Limpia todo lo que no sean números
+                const telefonoLimpio = message.replace(/\D/g, ''); 
+                
+                // Valida que al menos tenga 9 dígitos
+                if (telefonoLimpio.length < 9) {
+                    appendMessage("Elena María", "Por favor, indíquenos un **número de teléfono móvil válido** (mínimo 9 dígitos) para poder atenderle con la seguridad requerida.", 'bot');
+                    return; 
+                }
+
+                telefonoCliente = telefonoLimpio; 
+                const inputEl = document.getElementById('chat-input');
+                inputEl.type = "text"; // Volvemos a modo texto para el nombre
+                inputEl.placeholder = "Indíquenos su nombre de pila...";
                 appendMessage("Elena María", "Perfecto. ¿Cómo se complace en que le llame?", 'bot');
                 return; 
             } 
@@ -637,6 +643,7 @@
                         id_sesion: sessionId,
                         telefono: telefonoCliente,
                         nombre_cliente: nombreCliente,
+                        Origen: "CHATBOT", // INYECTAMOS EL ORIGEN PARA LARK
                         mensaje: "Inicio de sesión completado"
                     })
                 })
@@ -665,6 +672,7 @@
                     id_sesion: sessionId,
                     telefono: telefonoCliente,
                     nombre_cliente: nombreCliente,
+                    Origen: "CHATBOT", // INYECTAMOS EL ORIGEN PARA LARK
                     mensaje: message
                 })
             })
@@ -712,4 +720,3 @@
     </script>
 </body>
 </html>
-
