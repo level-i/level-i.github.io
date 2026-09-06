@@ -1,9 +1,10 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Level-I Command Center | Compras La Ràpita</title>
+    <title>Level-I Command Center | Principal</title>
     <style>
         :root {
             --bg-base: #090d16;
@@ -11,6 +12,7 @@
             --bg-card: #1f2937;
             --accent-green: #10b981;
             --accent-blue: #3b82f6;
+            --accent-gold: #C5A059;
             --text-main: #f9fafb;
             --text-muted: #9ca3af;
             --border-color: #374151;
@@ -37,6 +39,7 @@
             flex-direction: column;
             justify-content: space-between;
             padding: 20px;
+            flex-shrink: 0;
         }
         .brand {
             font-size: 18px;
@@ -126,11 +129,12 @@
             overflow-y: auto;
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 25px; /* Separación entre bloques */
         }
         .video-screen {
             width: 100%;
-            height: 200px;
+            height: auto;
+            aspect-ratio: 16/9;
             background: #000;
             border-radius: 12px;
             border: 1px solid var(--border-color);
@@ -142,7 +146,8 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            opacity: 0.85;
+            opacity: 0.95;
+            display: block;
         }
         .video-overlay-badge {
             position: absolute;
@@ -156,6 +161,7 @@
             font-weight: bold;
             color: var(--accent-green);
             border: 1px solid var(--border-color);
+            z-index: 10;
         }
         .card-main {
             background-color: var(--bg-panel);
@@ -178,6 +184,46 @@
             color: var(--text-main);
             font-weight: 600;
         }
+
+        /* --- NUEVOS ESTILOS: MONTSIÀ I BAIX MAESTRAT --- */
+        .montsia-section { background: linear-gradient(145deg, #121212, #070707); border: 1px solid rgba(197, 160, 89, 0.3); border-radius: 12px; padding: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .montsia-header-tag { display: flex; align-items: center; margin-bottom: 12px; font-size: 11px; color: var(--accent-gold); text-transform: uppercase; letter-spacing: 2px; font-weight: 700; }
+        .gold-pulse-dot { width: 8px; height: 8px; background-color: var(--accent-gold); border-radius: 50%; margin-right: 10px; animation: pulse-gold 2s infinite; }
+        .montsia-title { font-size: 19px; line-height: 1.3; margin: 0 0 10px 0; color: #fff; font-weight: 700; }
+
+        .montsia-tech-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 12px; padding: 15px 0; border-top: 1px solid #222; border-bottom: 1px solid #222; margin-bottom: 15px; }
+        .tech-card { background: #161616; border: 1px solid #222; padding: 10px; border-radius: 6px; text-align: center; }
+        .tech-label { font-size: 10px; color: #777; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+        .tech-value { font-size: 18px; font-weight: 700; color: var(--accent-gold); }
+        .tech-sub { font-size: 10px; color: var(--text-muted); margin-top: 2px; }
+
+        .partner-architecture { display: flex; align-items: center; justify-content: space-between; background: rgba(197, 160, 89, 0.05); border: 1px solid rgba(197, 160, 89, 0.2); border-radius: 8px; padding: 12px 15px; }
+        .partner-architecture p { margin: 0; font-size: 12px; color: var(--text-muted); line-height: 1.4; }
+        .partner-architecture a { color: var(--accent-gold); font-weight: 600; text-decoration: none; border-bottom: 1px dashed var(--accent-gold); }
+
+        /* GALERÍA DE RENDERS */
+        .renders-gallery-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-top: 15px; }
+        .render-card { background: #000; border-radius: 8px; overflow: hidden; border: 1px solid var(--border-color); transition: transform 0.2s ease, border-color 0.2s ease; cursor: pointer; }
+        .render-card:hover { transform: translateY(-3px); border-color: var(--accent-gold); }
+        .render-card img { width: 100%; height: 140px; object-fit: cover; display: block; }
+
+        /* SIMULADOR DE COSTES */
+        .simulator-box { background: linear-gradient(145deg, #161b22, #0d1117); border: 1px solid rgba(197, 160, 89, 0.3); border-radius: 12px; padding: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .sim-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .sim-label { font-size: 13px; color: var(--text-muted); font-weight: 600; }
+        .sim-value-display { font-size: 16px; font-weight: bold; color: var(--accent-green); background: rgba(16,185,129,0.1); padding: 4px 10px; border-radius: 6px; border: 1px dashed var(--accent-green); }
+        .slider { -webkit-appearance: none; width: 100%; height: 6px; border-radius: 5px; background: var(--bg-panel); border: 1px solid var(--border-color); outline: none; margin-top: 10px; }
+        .slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 18px; height: 18px; border-radius: 50%; background: var(--accent-gold); cursor: pointer; }
+        .result-box { margin-top: 20px; padding-top: 15px; border-top: 1px dashed var(--border-color); }
+        .result-line { display: flex; justify-content: space-between; font-size: 13px; color: var(--text-muted); margin-bottom: 8px; }
+        .result-total { display: flex; justify-content: space-between; font-size: 18px; font-weight: bold; color: #fff; margin-top: 12px; padding-top: 12px; border-top: 1px solid #333; }
+
+        @keyframes pulse-gold {
+            0% { opacity: 1; box-shadow: 0 0 8px var(--accent-gold); }
+            50% { opacity: 0.4; box-shadow: 0 0 0 transparent; }
+            100% { opacity: 1; box-shadow: 0 0 8px var(--accent-gold); }
+        }
+
         /* Panel Lateral Derecho */
         .right-panel {
             background-color: var(--bg-panel);
@@ -246,7 +292,7 @@
                 <span>⚡</span> LEVEL-I.COM
             </div>
             <div class="nav-menu">
-                <button class="nav-item active">🎯 Captación La Ràpita</button>
+                <button class="nav-item active">🎯 Consola Principal</button>
                 <button class="nav-item" onclick="alert('Módulo disponible próximamente')">🏠 Comprar Inmuebles</button>
                 <button class="nav-item" onclick="alert('Módulo disponible próximamente')">🏷️ Venta General</button>
                 <button class="nav-item" onclick="alert('Módulo disponible próximamente')">⚙️ Gestión Integral</button>
@@ -265,7 +311,7 @@
 
     <main>
         <header>
-            <div class="header-title">Consola Central PropTech · Módulo Activo: La Ràpita</div>
+            <div class="header-title">Consola Central PropTech · Vista General</div>
             <div class="lang-selector">
                 <button class="lang-btn active" onclick="setLanguage('esp')">ESP</button>
                 <button class="lang-btn" onclick="setLanguage('ca')">CAT</button>
@@ -274,10 +320,12 @@
         </header>
 
         <div class="content-area">
+            
             <div class="video-screen">
-                <div class="video-overlay-badge">🔴 LIVE FEED // LA RÀPITA SECTOR</div>
-                <video autoplay muted loop playsinline>
-                    <source src="https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-a-coastal-city-and-beach-41580-large.mp4" type="video/mp4">
+                <div class="video-overlay-badge">🔴 EXPERIENCIA LEVEL-I VR</div>
+                <video autoplay muted loop playsinline controls>
+                    <source src="URL_DEL_VIDEO_DE_LA_CHICA_VR.mp4" type="video/mp4">
+                    Tu navegador no soporta la reproducción de video.
                 </video>
             </div>
 
@@ -290,14 +338,89 @@
                     Buscamos un trato directo, ágil, sin aguantar visitas innecesarias y con la máxima discreción.
                 </p>
             </div>
+
+            <div class="montsia-section">
+                <div class="montsia-header-tag">
+                    <span class="gold-pulse-dot"></span> Dossier de Inversión | Suelo Urbano
+                </div>
+                <h3 class="montsia-title">
+                    Suelo Residencial Premium en Les Cases d'Alcanar <br>
+                    <span style="color: var(--text-muted); font-weight: 400; font-size: 14px;">Entorno consolidado de Ciudad Jardín a 300m del mar. Dos parcelas independientes disponibles.</span>
+                </h3>
+
+                <div class="montsia-tech-grid">
+                    <div class="tech-card">
+                        <div class="tech-label">Sup. Neta</div>
+                        <div class="tech-value">460 m²</div>
+                        <div class="tech-sub">Por parcela</div>
+                    </div>
+                    <div class="tech-card">
+                        <div class="tech-label">Techo Máx.</div>
+                        <div class="tech-value">335 m²</div>
+                        <div class="tech-sub">Edificabilidad</div>
+                    </div>
+                    <div class="tech-card">
+                        <div class="tech-label">Parcela P1</div>
+                        <div class="tech-value">160.000 €</div>
+                    </div>
+                    <div class="tech-card">
+                        <div class="tech-label">Parcela P2</div>
+                        <div class="tech-value">170.000 €</div>
+                    </div>
+                </div>
+
+                <div class="renders-gallery-grid">
+                    <div class="render-card"><img src="https://raw.githubusercontent.com/level-i/level-i.github.io/main/151451619-246038661-photo-111078165-1722195272171_us65jiglkl_8k.jpg" alt="Render Villa Exterior"></div>
+                    <div class="render-card"><img src="https://raw.githubusercontent.com/level-i/level-i.github.io/main/154769295-250788513-photo-105964134-1714573730478_g4aj56iap_8k.jpg" alt="Render Interior Salón"></div>
+                    <div class="render-card"><img src="https://raw.githubusercontent.com/level-i/level-i.github.io/main/154769295-250788513-photo-110187843-1720684358622_22n815c4u_8k.jpg" alt="Render Sala de Billar"></div>
+                    <div class="render-card"><img src="https://raw.githubusercontent.com/level-i/level-i.github.io/main/154769295-250788513-photo-110773566-1721686130784_ebbw62lbcj_8k.jpg" alt="Render Estancia Interior"></div>
+                    <div class="render-card"><img src="https://raw.githubusercontent.com/level-i/level-i.github.io/main/154769295-250788513-photo-111080838-1722198979211_hqn6cama3_8k.jpg" alt="Render Piscina"></div>
+                    <div class="render-card"><img src="https://raw.githubusercontent.com/level-i/level-i.github.io/main/154769295-250788513-photo-111081057-1722199241008_hqhpfr6oqg_8k.jpg" alt="Render Jardín Exterior"></div>
+                </div>
+            </div>
+
+            <div class="simulator-box">
+                <h3 style="font-size: 15px; margin-bottom: 15px; color: var(--text-main);">📊 Simulador de Inversión Llaves en Mano (Suelo + Obra)</h3>
+                
+                <div style="margin-bottom: 20px;">
+                    <div class="sim-row">
+                        <span class="sim-label">Superficie a Edificar</span>
+                        <span class="sim-value-display" id="m2-val">200 m²</span>
+                    </div>
+                    <input type="range" id="m2-slider" class="slider" min="100" max="335" value="200" step="5" oninput="calculateTotal()">
+                </div>
+
+                <div>
+                    <div class="sim-row">
+                        <span class="sim-label">Calidad / Coste Construcción (m²)</span>
+                        <span class="sim-value-display" id="cost-val" style="color: var(--accent-gold);">1.500 €</span>
+                    </div>
+                    <input type="range" id="cost-slider" class="slider" min="1200" max="2500" value="1500" step="50" oninput="calculateTotal()">
+                </div>
+
+                <div class="result-box">
+                    <div class="result-line"><span>Terreno (Parcela P1)</span> <span>160.000 €</span></div>
+                    <div class="result-line"><span>Ejecución Material de Obra</span> <span id="res-build">300.000 €</span></div>
+                    <div class="result-line"><span>Honorarios, Licencias e Impuestos (15%)</span> <span id="res-fees">45.000 €</span></div>
+                    <div class="result-total"><span>INVERSIÓN TOTAL ESTIMADA</span> <span id="res-total" style="color: var(--accent-gold);">505.000 €</span></div>
+                </div>
+            </div>
+
+            <div class="card-main" style="border-color: var(--accent-gold);">
+                <h2 style="color: var(--accent-gold);">🌴 El Oasis La Ràpita</h2>
+                <p>
+                    Aquí va el contenido exclusivo de tu proyecto Oasis La Ràpita. Inserta tu texto, imágenes o descripciones en este bloque para cerrar la página.
+                </p>
+            </div>
+
         </div>
 
         <div class="right-panel">
             <div class="victoria-box">
                 <div class="victoria-avatar">🎙️</div>
                 <h3 style="font-size: 15px; margin-bottom: 6px;">Victoria Advisor</h3>
-                <p style="font-size: 12px; color: var(--text-muted);">Asistente políglota lista para validar el inmueble.</p>
-                <a id="wa-button" href="https://wa.me/34641451736?text=Hola,%20estoy%20interesado%20TENGO%20APARTAMENTO%20O%20ESTUDI%20EN%20LA%20RAPITA" class="btn-action">
+                <p style="font-size: 12px; color: var(--text-muted);">Asistente políglota lista para gestionar su consulta.</p>
+                <a id="wa-button" href="https://wa.me/34641451736?text=Hola,%20estoy%20interesado%20en%20los%20servicios%20de%20Level-I" class="btn-action">
                     <span id="btn-text">🎙️ Hablar por voz o chat</span>
                 </a>
             </div>
@@ -309,6 +432,36 @@
     </main>
 
     <script>
+        // Lógica del Simulador
+        const formatEur = (num) => new Intl.NumberFormat('es-ES').format(Math.round(num)) + ' €';
+
+        function calculateTotal() {
+            const m2Input = document.getElementById('m2-slider');
+            const costM2Input = document.getElementById('cost-slider');
+            
+            if (!m2Input || !costM2Input) return;
+
+            const m2 = m2Input.value;
+            const costM2 = costM2Input.value;
+            const landCost = 160000; // Parcela P1 fijada
+            
+            document.getElementById('m2-val').innerText = m2 + ' m²';
+            document.getElementById('cost-val').innerText = formatEur(costM2);
+
+            const buildCost = m2 * costM2;
+            const feesAndTaxes = buildCost * 0.15;
+            const total = landCost + buildCost + feesAndTaxes;
+
+            document.getElementById('res-build').innerText = formatEur(buildCost);
+            document.getElementById('res-fees').innerText = formatEur(feesAndTaxes);
+            document.getElementById('res-total').innerText = formatEur(total);
+        }
+
+        window.onload = function() {
+            calculateTotal();
+        };
+
+        // Traducción Básica (Aplica al anuncio superior)
         function setLanguage(lang) {
             const title = document.getElementById('main-title');
             const desc = document.getElementById('main-desc');
