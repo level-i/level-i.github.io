@@ -203,8 +203,6 @@
         .details-content { padding: 15px; font-size: 12px; color: var(--text-muted); line-height: 1.6; border-top: 1px solid var(--border-color); background-color: var(--bg-base); }
         .details-content strong { color: var(--text-main); display: block; margin-top: 10px; margin-bottom: 4px; }
         
-        .unsubscribe-section { text-align: center; margin-top: 25px; padding: 20px; border-top: 1px dashed var(--border-color); }
-
         /* MAGIA RESPONSIVE: VÍDEOS VERTICALES EDGE-TO-EDGE EN MÓVIL */
         @media (max-width: 900px) {
             body { flex-direction: column; overflow-y: auto; overflow-x: hidden; }
@@ -340,7 +338,7 @@
                     <span class="pvp-small">* Gastos de compraventa y registro no incluidos.</span>
                 </div>
                 
-                <button class="btn-action" style="margin-top: 10px;" onclick="pedirSeguridad('precio_312k')">
+                <button class="btn-action" style="max-width: 400px; width: 100%; margin-top: 10px;" onclick="pedirSeguridad('precio_312k')">
                     💬 Consultar detalles con IAdvisor Level-i
                 </button>
 
@@ -356,7 +354,7 @@
                         <source src="https://app.level-i.com/docs/radarchaletsalcanarlarapita.mp4" type="video/mp4">
                     </video>
                 </div>
-                <button class="btn-action" style="margin-top: 10px;" onclick="pedirSeguridad('radar_chalets')">
+                <button class="btn-action" style="max-width: 400px; width: 100%; margin-top: 10px;" onclick="pedirSeguridad('radar_chalets')">
                     💬 Iniciar IAdvisor Level-i
                 </button>
             </div>
@@ -395,11 +393,20 @@
                 </details>
             </div>
 
+            <!-- SECCIÓN DARME DE BAJA CON CAPTCHA -->
             <div class="unsubscribe-section">
                 <p style="font-size: 12.5px; color: var(--text-muted); margin-bottom: 12px; font-weight: 500;">¿Ya no deseas recibir nuestras comunicaciones o quieres eliminar tus datos?</p>
-                <a href="mailto:level@level.immo?subject=Baja%20de%20Suscripcion" class="btn-secondary" style="display: inline-block; max-width: 250px; margin: 0 auto;">
+                <button id="btn-show-baja" class="btn-secondary" style="display: inline-block; max-width: 250px; margin: 0 auto; width: 100%;" onclick="mostrarCaptchaBaja()">
                     🛑 Solicitar la baja
-                </a>
+                </button>
+                
+                <div id="captcha-baja-container" style="display: none; margin-top: 15px; background: rgba(0,0,0,0.2); padding: 15px; border-radius: 8px; border: 1px dashed var(--border-color); max-width: 300px; margin-left: auto; margin-right: auto;">
+                    <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 10px;">Para continuar, resuelve esta prueba de seguridad: <b id="captcha-baja-q" style="color: var(--text-main); font-size: 14px;"></b></div>
+                    <div style="display: flex; gap: 10px; justify-content: center;">
+                        <input type="number" id="captcha-baja-input" style="width: 80px; background: var(--bg-base); border: 1px solid var(--border-color); color: #fff; text-align: center; border-radius: 6px; outline: none; font-size: 14px;" placeholder="?" onkeypress="if(event.key === 'Enter') verificarBaja()">
+                        <button class="btn-action" style="margin: 0; padding: 8px 15px; width: auto;" onclick="verificarBaja()">Confirmar</button>
+                    </div>
+                </div>
             </div>
 
         </div>
@@ -640,6 +647,36 @@
             } else {
                 document.querySelectorAll('.lang-btn')[0].classList.add('active');
                 if (title) title.innerText = "¿Vendes tu piso o planta baja en La Ràpita? Tenemos al comprador ideal.";
+            }
+        }
+
+        /* LÓGICA CAPTCHA PARA BAJAS */
+        let captchaBajaRespuesta = 0;
+        function mostrarCaptchaBaja() {
+            document.getElementById('btn-show-baja').style.display = 'none';
+            document.getElementById('captcha-baja-container').style.display = 'block';
+            generarSumaBaja();
+        }
+
+        function generarSumaBaja() {
+            const n1 = Math.floor(Math.random() * 9) + 1;
+            const n2 = Math.floor(Math.random() * 9) + 1;
+            captchaBajaRespuesta = n1 + n2;
+            document.getElementById('captcha-baja-q').innerText = `${n1} + ${n2}`;
+            const input = document.getElementById('captcha-baja-input');
+            input.value = "";
+            input.focus();
+        }
+
+        function verificarBaja() {
+            const input = document.getElementById('captcha-baja-input');
+            if (parseInt(input.value) === captchaBajaRespuesta) {
+                document.getElementById('captcha-baja-container').innerHTML = "<span style='color: var(--accent-green); font-weight: bold; font-size: 13px;'>Redirigiendo a su gestor de correo...</span>";
+                window.location.href = "mailto:level@level.immo?subject=Baja%20de%20Suscripcion";
+            } else {
+                input.style.borderColor = "#ef4444";
+                setTimeout(() => input.style.borderColor = "var(--border-color)", 400);
+                generarSumaBaja();
             }
         }
     </script>
