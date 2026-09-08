@@ -197,9 +197,9 @@
             <div class="video-screen-horizontal" style="border-color: rgba(16, 185, 129, 0.4);">
                 <div class="video-overlay-badge" style="background: rgba(16,185,129,0.9); color:#fff; border:none;">🔴 EXPERIENCIA LEVEL-I VR</div>
                 <video autoplay="autoplay" loop="loop" muted="muted" playsinline="playsinline" webkit-playsinline="webkit-playsinline" controls="controls" preload="auto" poster="https://app.level-i.com/suelo-residencial/montsia-baix-maestrat/les-cases-0.jpg">
-                    <!-- He añadido GitHub como plan B si tu servidor va lento -->
-                    <source src="https://app.level-i.com/les-cases-04.mp4" type="video/mp4">
-                    <source src="https://level-i.github.io/les-cases-04.mp4" type="video/mp4">
+                    <!-- Ruta corregida a "les-cases-4.mp4" -->
+                    <source src="https://app.level-i.com/les-cases-4.mp4" type="video/mp4">
+                    <source src="https://level-i.github.io/les-cases-4.mp4" type="video/mp4">
                     Tu navegador no soporta la reproducción de video.
                 </video>
             </div>
@@ -243,11 +243,10 @@
                 </div>
             </div>
 
-            <!-- 3. NUEVA SECCIÓN DE VÍDEO ANIMACIÓN MYARQUITEC (Reemplaza las fotos) -->
+            <!-- 3. NUEVA SECCIÓN DE VÍDEO ANIMACIÓN MYARQUITEC -->
             <div class="video-screen-horizontal" style="margin-bottom: 20px; border-color: rgba(59, 130, 246, 0.4);">
                 <div class="video-overlay-badge" style="background: rgba(59,130,246,0.9); color:#fff; border:none;">📐 ANIMACIÓN MYARQUITEC</div>
                 <video autoplay="autoplay" loop="loop" muted="muted" playsinline="playsinline" webkit-playsinline="webkit-playsinline" controls="controls" preload="auto" poster="https://app.level-i.com/suelo-residencial/montsia-baix-maestrat/les-cases-0.jpg">
-                    <!-- He colocado el spot de La Rapita TEMPORALMENTE para que veas que funciona y arranca. ¡Cámbialo por tu animación final! -->
                     <source src="https://app.level-i.com/suelo-residencial/montsia-baix-maestrat/espot%20marjal%20les%20cases%20alcanar%20en%20off%20IA.mp4" type="video/mp4">
                     Tu navegador no soporta la reproducción de video.
                 </video>
@@ -282,6 +281,12 @@
                     <div style="display:flex; justify-content:space-between; font-size:18px; font-weight:bold; color:#fff; margin-top:15px; padding-top:15px; border-top:1px solid #333;">
                         <span>INVERSIÓN TOTAL</span> <span id="res-total" style="color: var(--accent-gold);">406.200 €</span>
                     </div>
+                </div>
+
+                <!-- BOTÓN CONTACTO PARCELA LIBRE (PANTALLITA NARANJA CON LÍNEA FINA) -->
+                <div style="margin-top: 25px; border: 1px solid rgba(197, 160, 89, 0.3); border-left: 3px solid var(--accent-gold); background: rgba(197, 160, 89, 0.05); padding: 15px; border-radius: 6px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 10px;" onclick="pedirSeguridad('comprar_parcela')" onmouseover="this.style.background='rgba(197, 160, 89, 0.1)'" onmouseout="this.style.background='rgba(197, 160, 89, 0.05)'">
+                    <span style="font-size: 18px;">✨</span>
+                    <span style="font-size: 13.5px; color: var(--text-main); font-weight: 500;">Me interesa este terreno. Quiero hablar con Elena.</span>
                 </div>
             </div>
 
@@ -450,6 +455,9 @@
         let captchaRespuesta = 0;
         let modoPendiente = "";
 
+        // LA VARIABLE MÁGICA PARA AUTO-ENVIAR MENSAJES
+        let intencionGuardada = "";
+
         /* LÓGICA DE VOZ PARA ELENA */
         let vozActivada = true;
         function toggleVoz() {
@@ -487,6 +495,16 @@
 
         function pedirSeguridad(modo) {
             modoPendiente = modo;
+            
+            // Asignación de intención según el botón pulsado
+            if (modo === 'vender_propiedad') {
+                intencionGuardada = "Hola, tengo una propiedad en venta.";
+            } else if (modo === 'comprar_parcela') {
+                intencionGuardada = "Hola, estoy interesado en adquirir la Parcela P1 (libre) en Les Cases d'Alcanar y conocer los detalles del proyecto llaves en mano.";
+            } else {
+                intencionGuardada = ""; 
+            }
+
             if (btnInicio) btnInicio.style.display = 'none';
             if (btnLoginToggle) btnLoginToggle.style.display = 'none';
             document.getElementById('victoria-box-panel').scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -540,6 +558,8 @@
             
             if (modo === 'alcanar_suelo') {
                 saludoInicial = "Hola. Soy Elena. Para enviarte el dosier privado del suelo urbano en Les Cases d'Alcanar, indícame tu **número de teléfono móvil**.";
+            } else if (modo === 'comprar_parcela') {
+                saludoInicial = "Hola. Soy Elena. Excelente elección, la Parcela P1 en Les Cases d'Alcanar es una oportunidad única. Para enviarte el dossier completo, indícame tu **número de teléfono móvil**.";
             } else if (modo === 'anunciar') {
                 saludoInicial = "Hola. Soy Elena. Para configurar tu anuncio con honorarios máximos de 7.500 €, indícame tu **número de teléfono móvil**.";
             }
@@ -584,6 +604,25 @@
                 }).then(r => r.json()).then(data => {
                     if (typingIndicator) typingIndicator.style.display = 'none';
                     appendMessage("Elena", (data.respuesta_bot || data.message || "Comprendido. ¿En qué te puedo ayudar?").trim(), 'bot');
+                    
+                    // 🚀 ENVÍO AUTOMÁTICO DE LA INTENCIÓN PRECARGADA
+                    if (intencionGuardada !== "") {
+                        setTimeout(() => {
+                            appendMessage("Tú", intencionGuardada, 'user');
+                            document.getElementById('typing-indicator').style.display = 'block';
+                            
+                            fetch(webhookMake, {
+                                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ evento: "nuevo_mensaje", modo: modoAcceso, id_sesion: sessionId, telefono: telefonoCliente, nombre_cliente: nombreCliente, Origen: "CHATBOT", mensaje: intencionGuardada })
+                            }).then(r2 => r2.json()).then(data2 => {
+                                document.getElementById('typing-indicator').style.display = 'none';
+                                if (data2.respuesta_bot && data2.respuesta_bot.trim() !== "") appendMessage("Elena", data2.respuesta_bot.trim(), 'bot');
+                            }).catch(e => { document.getElementById('typing-indicator').style.display = 'none'; });
+                            
+                            intencionGuardada = ""; // Limpiamos la memoria
+                        }, 1500); 
+                    }
+
                 }).catch(err => {
                     if (typingIndicator) typingIndicator.style.display = 'none';
                     appendMessage("Elena", `Entendido, ${nombreCliente}. ¿Qué información puedes proporcionarme sobre tu caso?`, 'bot');
@@ -662,10 +701,10 @@
             }
         }
 
-        // RED DE SEGURIDAD EXTREMA PARA AUTOPLAY EN MÓVILES (Fuerza bruta con JS)
+        // RED DE SEGURIDAD EXTREMA PARA AUTOPLAY EN MÓVILES
         const playAllVideos = () => {
             document.querySelectorAll('video[autoplay]').forEach(vid => {
-                vid.muted = true; // El silencio es innegociable para los móviles
+                vid.muted = true;
                 let promise = vid.play();
                 if(promise !== undefined) {
                     promise.catch(e => console.log('Bloqueado preventivamente por ahorro de batería'));
@@ -673,7 +712,6 @@
             });
         };
         
-        // Lo disparamos al cargar, y si falla, en cuanto el usuario roce la pantalla o haga scroll
         window.addEventListener('load', playAllVideos);
         document.addEventListener('touchstart', playAllVideos, { once: true });
         document.addEventListener('scroll', playAllVideos, { once: true });
