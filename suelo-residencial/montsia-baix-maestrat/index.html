@@ -573,7 +573,7 @@
             const urlParams = new URLSearchParams(window.location.search);
             sessionId = urlParams.get('id') || 'usr_' + Math.random().toString(36).substr(2, 9);
             
-            let saludoInicial = "Hola. Soy Elena. Para enviarte el dossier del suelo urbano en Les Cases d'Alcanar, indícame tu **número de teléfono móvil**.";
+            let saludoInicial = "Hola. Soy Elena. Para informarte sobre el suelo urbano en Les Cases d'Alcanar, indícame tu **número de teléfono móvil**.";
             appendMessage("Elena", saludoInicial, 'bot');
             document.getElementById('chat-input').focus();
         }
@@ -604,24 +604,25 @@
                 return; 
             } 
             
-            // 2. Recoge el nombre, empaqueta los datos con el mensaje exacto para Lark, y muestra el PDF
+            // 2. Recoge el nombre, empaqueta los datos con la intención de compra (SÍ) y los manda a Make para el IACHAT
             if (nombreCliente === "") {
                 nombreCliente = message;
-                document.getElementById('chat-input').placeholder = "Proceso completado";
+                document.getElementById('chat-input').placeholder = "Conectando con Ventas...";
                 document.getElementById('chat-input').disabled = true;
 
-                // Mensaje de voz personalizado de espera
-                appendMessage("Elena", `Un momento ${nombreCliente}, no te retires.`, 'bot');
+                // Frase exacta solicitada que dirá Elena por voz
+                const textoSalida = `Un momento por favor, no te retires. Te paso con Ventas.`;
+                appendMessage("Elena", textoSalida, 'bot');
                 if (typingIndicator) typingIndicator.style.display = 'block';
 
-                const textoMensajeLark = `Quiere que le mandemos el dossier / enlace informativo de la Parcela P1 en Les Cases d'Alcanar.`;
+                const textoMensajeLark = `SI, estoy interesado en la adquisición del solar.`;
 
-                // Envío directo a Make (Departamento de Compradores) con los datos y el mensaje integrado
+                // Envío directo al webhook para que lo reciba la IACHAT en Make
                 fetch(webhookMake, {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ 
-                        departamento: "COMPRAS",
-                        accion: "entrada_lead_compradores",
+                        departamento: "VENTAS",
+                        evento: "lead_interesado_solar",
                         id_sesion: sessionId, 
                         telefono: telefonoCliente, 
                         nombre_cliente: nombreCliente, 
@@ -630,16 +631,12 @@
                     })
                 }).then(r => r.json()).then(data => {
                     if (typingIndicator) typingIndicator.style.display = 'none';
-                    
-                    const pdfUrl = data.pdf_url || "https://app.level-i.com/suelo-residencial/montsia-baix-maestrat/dossier.pdf";
-                    const mensajeFinal = `Aquí tiene el dossier informativo, ${nombreCliente}. <br><br><a href="${pdfUrl}" target="_blank" style="color: var(--accent-green); font-weight: bold; text-decoration: underline;">📥 Descargar Dossier PDF del Inmueble</a><br><br><span style="font-size:11px; color:var(--text-muted);">¿Desea compartirlo con alguien? Puede copiar el enlace superior y enviarlo libremente.</span>`;
-                    
-                    appendMessage("Elena", mensajeFinal, 'bot');
+                    // Aquí Make puede devolver opcionalmente la respuesta de la IA de Ventas si ya está conectada
+                    if (data.respuesta_bot && data.respuesta_bot.trim() !== "") {
+                        appendMessage("Ventas", data.respuesta_bot.trim(), 'bot');
+                    }
                 }).catch(err => {
                     if (typingIndicator) typingIndicator.style.display = 'none';
-                    const pdfFallback = "https://app.level-i.com/suelo-residencial/montsia-baix-maestrat/dossier.pdf";
-                    const mensajeFinal = `Aquí tiene el dossier informativo, ${nombreCliente}. <br><br><a href="${pdfFallback}" target="_blank" style="color: var(--accent-green); font-weight: bold; text-decoration: underline;">📥 Descargar Dossier PDF del Inmueble</a><br><br><span style="font-size:11px; color:var(--text-muted);">¿Desea compartirlo con alguien? Puede copiar el enlace superior y enviarlo libremente.</span>`;
-                    appendMessage("Elena", mensajeFinal, 'bot');
                 });
                 return;
             }
@@ -650,12 +647,8 @@
             const msgDiv = document.createElement('div');
             msgDiv.classList.add('chat-bubble', type === 'bot' ? 'bot-message' : 'user-message');
             
-            if (text.includes('<a href=')) {
-                msgDiv.innerHTML = text;
-            } else {
-                let htmlText = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-                msgDiv.innerHTML = htmlText;
-            }
+            let htmlText = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            msgDiv.innerHTML = htmlText;
             
             chatMessages.appendChild(msgDiv);
             chatMessages.scrollTop = chatMessages.scrollHeight;
