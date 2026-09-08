@@ -137,11 +137,11 @@
         .api-badge { margin-top: auto; padding-top: 20px; text-align: center; font-size: 11px; color: var(--text-muted); }
 
         .legal-accordion-container { margin-top: 20px; border-top: 1px solid var(--border-color); padding-top: 20px; }
-        .details-content { padding: 15px; font-size: 12px; color: var(--text-muted); line-height: 1.6; border-top: 1px solid var(--border-color); background-color: var(--bg-base); }
-        .details-content strong { color: var(--text-main); display: block; margin-top: 10px; margin-bottom: 4px; }
         details { background-color: var(--bg-panel); border: 1px solid var(--border-color); border-radius: 8px; margin-bottom: 10px; overflow: hidden; }
         summary { padding: 15px; font-size: 13px; font-weight: bold; color: var(--text-muted); cursor: pointer; outline: none; user-select: none; transition: background 0.2s, color 0.2s; }
         summary:hover { background-color: var(--bg-card); color: var(--text-main); }
+        .details-content { padding: 15px; font-size: 12px; color: var(--text-muted); line-height: 1.6; border-top: 1px solid var(--border-color); background-color: var(--bg-base); }
+        .details-content strong { color: var(--text-main); display: block; margin-top: 10px; margin-bottom: 4px; }
         
         .unsubscribe-section { text-align: center; margin-top: 25px; padding: 20px; border-top: 1px dashed var(--border-color); }
 
@@ -435,8 +435,8 @@
 
         const webhookMake = "https://hook.eu1.make.com/8xd81xb9t3mg2ycwez1czd3quwhf2nef"; 
         
-        // --- NUEVA CONFIGURACIÓN DE ELEVENLABS ---
-        const ELEVENLABS_API_KEY = "sk_e96c2cff1eafa13341f0a7dab440dd984c2991df82ab7d91"; 
+        // --- CONFIGURACIÓN DE ELEVENLABS ---
+        const ELEVENLABS_API_KEY = "TU_CLAVE_LEVEL_I_WEB_AQUI"; 
         const VOICE_ID_ELENA = "gJlzF5JxsCvM5hQAoRyD"; 
         let currentAudio = null;
 
@@ -456,10 +456,7 @@
         let captchaRespuesta = 0;
         let modoPendiente = "";
 
-        // LA VARIABLE MÁGICA PARA AUTO-ENVIAR MENSAJES
-        let intencionGuardada = "";
-
-        /* NUEVA LÓGICA DE VOZ CON ELEVENLABS */
+        /* LÓGICA DE VOZ CON ELEVENLABS */
         let vozActivada = true;
         function toggleVoz() {
             vozActivada = !vozActivada;
@@ -527,15 +524,6 @@
 
         function pedirSeguridad(modo) {
             modoPendiente = modo;
-            
-            if (modo === 'vender_propiedad') {
-                intencionGuardada = "Hola, tengo una propiedad en venta.";
-            } else if (modo === 'comprar_parcela') {
-                intencionGuardada = "Hola, estoy interesado en adquirir la Parcela P1 (libre) en Les Cases d'Alcanar y conocer los detalles del proyecto llaves en mano.";
-            } else {
-                intencionGuardada = ""; 
-            }
-
             if (btnInicio) btnInicio.style.display = 'none';
             if (btnLoginToggle) btnLoginToggle.style.display = 'none';
             document.getElementById('victoria-box-panel').scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -585,16 +573,7 @@
             const urlParams = new URLSearchParams(window.location.search);
             sessionId = urlParams.get('id') || 'usr_' + Math.random().toString(36).substr(2, 9);
             
-            let saludoInicial = "Hola. Soy Elena, tu asistente. Para atenderte con absoluta seguridad y acceder a tu expediente, por favor indícame tu **número de teléfono móvil**.";
-            
-            if (modo === 'alcanar_suelo') {
-                saludoInicial = "Hola. Soy Elena. Para enviarte el dosier privado del suelo urbano en Les Cases d'Alcanar, indícame tu **número de teléfono móvil**.";
-            } else if (modo === 'comprar_parcela') {
-                saludoInicial = "Hola. Soy Elena. Excelente elección, la Parcela P1 en Les Cases d'Alcanar es una oportunidad única. Para enviarte el dossier completo, indícame tu **número de teléfono móvil**.";
-            } else if (modo === 'anunciar') {
-                saludoInicial = "Hola. Soy Elena. Para configurar tu anuncio con honorarios máximos de 7.500 €, indícame tu **número de teléfono móvil**.";
-            }
-            
+            let saludoInicial = "Hola. Soy Elena. Para enviarte el dossier del suelo urbano en Les Cases d'Alcanar, indícame tu **número de teléfono móvil**.";
             appendMessage("Elena", saludoInicial, 'bot');
             document.getElementById('chat-input').focus();
         }
@@ -610,10 +589,11 @@
             inputField.value = "";
             appendMessage("Tú", message, 'user');
 
+            // 1. Recoge y valida el teléfono
             if (telefonoCliente === "") {
                 const telefonoLimpio = message.replace(/\D/g, ''); 
                 if (telefonoLimpio.length < 9) {
-                    appendMessage("Elena", "Por favor, indícame un **número de teléfono móvil válido** (mínimo 9 dígitos) para poder atenderte con seguridad.", 'bot');
+                    appendMessage("Elena", "Por favor, indícame un **número de teléfono móvil válido** (mínimo 9 dígitos).", 'bot');
                     return; 
                 }
                 telefonoCliente = telefonoLimpio; 
@@ -624,53 +604,45 @@
                 return; 
             } 
             
+            // 2. Recoge el nombre, empaqueta los datos con el mensaje exacto para Lark, y muestra el PDF
             if (nombreCliente === "") {
                 nombreCliente = message;
-                document.getElementById('chat-input').placeholder = "Escribe tu mensaje...";
+                document.getElementById('chat-input').placeholder = "Proceso completado";
+                document.getElementById('chat-input').disabled = true;
+
+                // Mensaje de voz personalizado de espera
+                appendMessage("Elena", `Un momento ${nombreCliente}, no te retires.`, 'bot');
                 if (typingIndicator) typingIndicator.style.display = 'block';
 
+                const textoMensajeLark = `Quiere que le mandemos el dossier / enlace informativo de la Parcela P1 en Les Cases d'Alcanar.`;
+
+                // Envío directo a Make (Departamento de Compradores) con los datos y el mensaje integrado
                 fetch(webhookMake, {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ evento: "nuevo_mensaje", modo: modoAcceso, id_sesion: sessionId, telefono: telefonoCliente, nombre_cliente: nombreCliente, Origen: "CHATBOT", mensaje: "Inicio de sesión completado" })
+                    body: JSON.stringify({ 
+                        departamento: "COMPRAS",
+                        accion: "entrada_lead_compradores",
+                        id_sesion: sessionId, 
+                        telefono: telefonoCliente, 
+                        nombre_cliente: nombreCliente, 
+                        mensaje: textoMensajeLark,
+                        modo: modoAcceso 
+                    })
                 }).then(r => r.json()).then(data => {
                     if (typingIndicator) typingIndicator.style.display = 'none';
-                    appendMessage("Elena", (data.respuesta_bot || data.message || "Comprendido. ¿En qué te puedo ayudar?").trim(), 'bot');
                     
-                    if (intencionGuardada !== "") {
-                        setTimeout(() => {
-                            appendMessage("Tú", intencionGuardada, 'user');
-                            document.getElementById('typing-indicator').style.display = 'block';
-                            
-                            fetch(webhookMake, {
-                                method: 'POST', headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({ evento: "nuevo_mensaje", modo: modoAcceso, id_sesion: sessionId, telefono: telefonoCliente, nombre_cliente: nombreCliente, Origen: "CHATBOT", mensaje: intencionGuardada })
-                            }).then(r2 => r2.json()).then(data2 => {
-                                document.getElementById('typing-indicator').style.display = 'none';
-                                if (data2.respuesta_bot && data2.respuesta_bot.trim() !== "") appendMessage("Elena", data2.respuesta_bot.trim(), 'bot');
-                            }).catch(e => { document.getElementById('typing-indicator').style.display = 'none'; });
-                            
-                            intencionGuardada = ""; 
-                        }, 1500); 
-                    }
-
+                    const pdfUrl = data.pdf_url || "https://app.level-i.com/suelo-residencial/montsia-baix-maestrat/dossier.pdf";
+                    const mensajeFinal = `Aquí tiene el dossier informativo, ${nombreCliente}. <br><br><a href="${pdfUrl}" target="_blank" style="color: var(--accent-green); font-weight: bold; text-decoration: underline;">📥 Descargar Dossier PDF del Inmueble</a><br><br><span style="font-size:11px; color:var(--text-muted);">¿Desea compartirlo con alguien? Puede copiar el enlace superior y enviarlo libremente.</span>`;
+                    
+                    appendMessage("Elena", mensajeFinal, 'bot');
                 }).catch(err => {
                     if (typingIndicator) typingIndicator.style.display = 'none';
-                    appendMessage("Elena", `Entendido, ${nombreCliente}. ¿Qué información puedes proporcionarme sobre tu caso?`, 'bot');
+                    const pdfFallback = "https://app.level-i.com/suelo-residencial/montsia-baix-maestrat/dossier.pdf";
+                    const mensajeFinal = `Aquí tiene el dossier informativo, ${nombreCliente}. <br><br><a href="${pdfFallback}" target="_blank" style="color: var(--accent-green); font-weight: bold; text-decoration: underline;">📥 Descargar Dossier PDF del Inmueble</a><br><br><span style="font-size:11px; color:var(--text-muted);">¿Desea compartirlo con alguien? Puede copiar el enlace superior y enviarlo libremente.</span>`;
+                    appendMessage("Elena", mensajeFinal, 'bot');
                 });
                 return;
             }
-
-            if (typingIndicator) typingIndicator.style.display = 'block';
-            fetch(webhookMake, {
-                method: 'POST', headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ evento: "nuevo_mensaje", modo: modoAcceso, id_sesion: sessionId, telefono: telefonoCliente, nombre_cliente: nombreCliente, Origen: "CHATBOT", mensaje: message })
-            }).then(r => r.json()).then(data => {
-                if (typingIndicator) typingIndicator.style.display = 'none';
-                if (data.respuesta_bot && data.respuesta_bot.trim() !== "") appendMessage("Elena", data.respuesta_bot.trim(), 'bot');
-            }).catch(err => {
-                if (typingIndicator) typingIndicator.style.display = 'none';
-                appendMessage("Elena", "Disculpa, ha ocurrido un error de conexión con nuestros sistemas centrales.", 'bot');
-            });
         }
 
         function appendMessage(sender, text, type) {
@@ -678,19 +650,23 @@
             const msgDiv = document.createElement('div');
             msgDiv.classList.add('chat-bubble', type === 'bot' ? 'bot-message' : 'user-message');
             
-            let htmlText = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-            msgDiv.innerHTML = htmlText;
+            if (text.includes('<a href=')) {
+                msgDiv.innerHTML = text;
+            } else {
+                let htmlText = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                msgDiv.innerHTML = htmlText;
+            }
             
             chatMessages.appendChild(msgDiv);
             chatMessages.scrollTop = chatMessages.scrollHeight;
 
             if (type === 'bot') {
-                hablarTexto(text);
+                const textParaVoz = text.replace(/<[^>]*>/g, '');
+                hablarTexto(textParaVoz);
             }
         }
 
         function setLanguage(lang) {
-            const title = document.getElementById('main-title');
             document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
             if (lang === 'ca') {
                 document.querySelectorAll('.lang-btn')[1].classList.add('active');
@@ -731,7 +707,6 @@
             }
         }
 
-        // RED DE SEGURIDAD SILENCIOSA PARA VÍDEOS EN MÓVIL
         document.addEventListener("DOMContentLoaded", function() {
             const videos = document.querySelectorAll('video');
             videos.forEach(v => {
