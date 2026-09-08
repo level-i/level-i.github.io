@@ -1,4 +1,4 @@
-..<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -76,7 +76,6 @@
         .tech-value { font-size: 18px; font-weight: 700; color: var(--accent-gold); }
         .tech-sub { font-size: 10px; color: var(--text-muted); margin-top: 2px; }
 
-        /* CINTA AZUL LEVEL-I PARA RESERVAS */
         .tag-reservado-leveli { 
             position: absolute; 
             top: 12px; 
@@ -92,7 +91,6 @@
             z-index: 10; 
         }
 
-        /* ESTILOS SIMULADOR */
         .slider { -webkit-appearance: none; width: 100%; height: 6px; border-radius: 5px; background: var(--bg-panel); border: 1px solid var(--border-color); outline: none; margin-top: 8px; }
         .slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 18px; height: 18px; border-radius: 50%; background: var(--accent-gold); cursor: pointer; transition: transform 0.2s; }
         .slider::-webkit-slider-thumb:hover { transform: scale(1.2); }
@@ -198,8 +196,10 @@
             <!-- 1. VÍDEO PORTADA HORIZONTAL (CHICA VR) -->
             <div class="video-screen-horizontal" style="border-color: rgba(16, 185, 129, 0.4);">
                 <div class="video-overlay-badge" style="background: rgba(16,185,129,0.9); color:#fff; border:none;">🔴 EXPERIENCIA LEVEL-I VR</div>
-                <video autoplay loop muted playsinline webkit-playsinline controls preload="auto" poster="https://app.level-i.com/suelo-residencial/montsia-baix-maestrat/les-cases-0.jpg">
+                <video autoplay="autoplay" loop="loop" muted="muted" playsinline="playsinline" webkit-playsinline="webkit-playsinline" controls="controls" preload="auto" poster="https://app.level-i.com/suelo-residencial/montsia-baix-maestrat/les-cases-0.jpg">
+                    <!-- He añadido GitHub como plan B si tu servidor va lento -->
                     <source src="https://app.level-i.com/les-cases-04.mp4" type="video/mp4">
+                    <source src="https://level-i.github.io/les-cases-04.mp4" type="video/mp4">
                     Tu navegador no soporta la reproducción de video.
                 </video>
             </div>
@@ -210,7 +210,7 @@
                 
                 <div class="video-screen-horizontal" style="margin-bottom: 15px; width: 100%; margin-left: 0;">
                     <div class="video-overlay-badge">🎬 SPOT PROMOCIONAL</div>
-                    <video autoplay muted loop playsinline controls preload="auto">
+                    <video autoplay="autoplay" muted="muted" loop="loop" playsinline="playsinline" webkit-playsinline="webkit-playsinline" controls="controls" preload="auto">
                         <source src="https://app.level-i.com/suelo-residencial/montsia-baix-maestrat/espot%20marjal%20les%20cases%20alcanar%20en%20off%20IA.mp4" type="video/mp4">
                     </video>
                 </div>
@@ -246,9 +246,9 @@
             <!-- 3. NUEVA SECCIÓN DE VÍDEO ANIMACIÓN MYARQUITEC (Reemplaza las fotos) -->
             <div class="video-screen-horizontal" style="margin-bottom: 20px; border-color: rgba(59, 130, 246, 0.4);">
                 <div class="video-overlay-badge" style="background: rgba(59,130,246,0.9); color:#fff; border:none;">📐 ANIMACIÓN MYARQUITEC</div>
-                <video autoplay loop muted playsinline webkit-playsinline controls preload="auto" poster="https://app.level-i.com/suelo-residencial/montsia-baix-maestrat/les-cases-0.jpg">
-                    <!-- Placeholder: Cambia el src por la URL de tu vídeo de animación cuando esté listo -->
-                    <source src="" type="video/mp4">
+                <video autoplay="autoplay" loop="loop" muted="muted" playsinline="playsinline" webkit-playsinline="webkit-playsinline" controls="controls" preload="auto" poster="https://app.level-i.com/suelo-residencial/montsia-baix-maestrat/les-cases-0.jpg">
+                    <!-- He colocado el spot de La Rapita TEMPORALMENTE para que veas que funciona y arranca. ¡Cámbialo por tu animación final! -->
+                    <source src="https://app.level-i.com/suelo-residencial/montsia-baix-maestrat/espot%20marjal%20les%20cases%20alcanar%20en%20off%20IA.mp4" type="video/mp4">
                     Tu navegador no soporta la reproducción de video.
                 </video>
             </div>
@@ -662,26 +662,22 @@
             }
         }
 
-        // RED DE SEGURIDAD ABSOLUTA PARA EL AUTOPLAY (MÚLTIPLES TRIGGERS)
-        function forceAutoplay() {
-            var videos = document.querySelectorAll('video[autoplay]');
-            videos.forEach(function(vid) {
-                vid.muted = true;
-                vid.defaultMuted = true;
-                vid.playsInline = true;
-                var promise = vid.play();
-                if (promise !== undefined) {
-                    promise.catch(function(error) {
-                        console.log("Autoplay bloqueado preventivamente. Esperando toque del usuario.");
-                        document.body.addEventListener('click', function() { vid.play(); }, {once:true});
-                        document.body.addEventListener('touchstart', function() { vid.play(); }, {once:true});
-                    });
+        // RED DE SEGURIDAD EXTREMA PARA AUTOPLAY EN MÓVILES (Fuerza bruta con JS)
+        const playAllVideos = () => {
+            document.querySelectorAll('video[autoplay]').forEach(vid => {
+                vid.muted = true; // El silencio es innegociable para los móviles
+                let promise = vid.play();
+                if(promise !== undefined) {
+                    promise.catch(e => console.log('Bloqueado preventivamente por ahorro de batería'));
                 }
             });
-        }
+        };
         
-        window.addEventListener('load', forceAutoplay);
-        document.addEventListener('DOMContentLoaded', forceAutoplay);
+        // Lo disparamos al cargar, y si falla, en cuanto el usuario roce la pantalla o haga scroll
+        window.addEventListener('load', playAllVideos);
+        document.addEventListener('touchstart', playAllVideos, { once: true });
+        document.addEventListener('scroll', playAllVideos, { once: true });
+        document.addEventListener('click', playAllVideos, { once: true });
     </script>
 </body>
 </html>
