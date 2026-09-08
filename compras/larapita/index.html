@@ -89,7 +89,7 @@
         .gold-pulse-dot { width: 8px; height: 8px; background-color: var(--accent-gold); border-radius: 50%; margin-right: 10px; animation: pulse-gold 2s infinite; }
         .montsia-title { font-size: 18px; line-height: 1.3; margin: 0 0 10px 0; color: #fff; font-weight: 700; }
 
-        /* VÍDEOS VERTICALES */
+        /* VÍDEOS VERTICALES (Estilo base para PC) */
         .vertical-video-section { display: flex; flex-direction: column; align-items: center; width: 100%; gap: 8px; margin-top: 20px; margin-bottom: 30px; }
         .vertical-video-wrapper { 
             position: relative;
@@ -204,7 +204,7 @@
         
         .unsubscribe-section { text-align: center; margin-top: 25px; padding: 20px; border-top: 1px dashed var(--border-color); }
 
-        /* MAGIA RESPONSIVE: VÍDEOS VERTICALES Y LAYOUT SEGURO EN MÓVIL */
+        /* MAGIA RESPONSIVE: VÍDEOS VERTICALES EDGE-TO-EDGE EN MÓVIL */
         @media (max-width: 900px) {
             body { flex-direction: column; overflow-y: auto; overflow-x: hidden; }
             aside { width: 100%; border-right: none; border-bottom: 1px solid var(--border-color); padding: 15px; flex-shrink: 0; }
@@ -212,23 +212,25 @@
             main { display: flex; flex-direction: column; height: auto; overflow: visible; }
             header { flex-direction: column; padding: 15px; gap: 15px; height: auto; text-align: center; }
             
-            /* Contenedor principal con overflow controlado para evitar bloqueos negros */
-            .content-area { padding: 15px 10px; overflow-x: hidden; height: auto; }
+            /* Ajuste del contenedor principal para móviles */
+            .content-area { padding: 15px 0; overflow-x: hidden; height: auto; }
             
-            /* PANTALLA COMPLETA VERTICAL SEGURA (Evita el hack de 100vw) */
+            /* TRUCO CSS INFALIBLE PARA PANTALLA COMPLETA VERTICAL (Edge-to-Edge) */
             .vertical-video-section { 
-                margin-left: -10px !important; 
-                margin-right: -10px !important; 
-                width: calc(100% + 20px) !important; 
-                max-width: none !important; 
+                width: 100vw !important; 
+                max-width: 100vw !important;
+                margin-left: 50% !important;
+                transform: translateX(-50%) !important;
+                border-radius: 0 !important;
+                background: #000;
+                padding-bottom: 15px;
             }
             .vertical-video-wrapper { 
-                width: 100% !important; 
-                max-width: 100% !important; 
+                width: 100vw !important; 
+                max-width: 100vw !important; 
                 height: 85vh !important; 
                 border-radius: 0 !important; 
-                border-left: none !important; 
-                border-right: none !important; 
+                border: none !important; 
             }
             .vertical-video-wrapper video { 
                 object-fit: cover !important; 
@@ -236,12 +238,24 @@
                 height: 100% !important;
             }
 
+            /* Los botones de debajo del video se ajustan con márgenes internos */
             .vertical-video-section .pvp-badge, 
             .vertical-video-section .btn-action, 
             .vertical-video-section .laser-link-btn {
-                width: calc(100% - 30px) !important;
+                width: calc(100vw - 40px) !important;
                 margin-left: auto !important;
                 margin-right: auto !important;
+            }
+
+            /* Mantener padding solo en las tarjetas para que no se peguen a los bordes */
+            .card-main, .montsia-section, .unsubscribe-section, .legal-accordion-container {
+                margin-left: 15px;
+                margin-right: 15px;
+            }
+
+            .video-screen-horizontal {
+                width: calc(100% - 30px);
+                margin-left: 15px;
             }
 
             .right-panel { border-left: none; border-top: 1px solid var(--border-color); padding: 15px; overflow: visible; height: auto; }
@@ -283,11 +297,14 @@
 
         <div class="content-area">
 
-            <!-- 1. VÍDEO PORTADA HORIZONTAL (CHICA VR) - CONTROLES RESTAURADOS Y AUTOPLAY SEGURO -->
+            <!-- 1. VÍDEO PORTADA HORIZONTAL (CHICA VR) -->
+            <!-- He puesto un póster temporal por si el vídeo tarda, para que NO se vea negro -->
             <div class="video-screen-horizontal" style="border-color: rgba(16, 185, 129, 0.4);">
                 <div class="video-overlay-badge" style="background: rgba(16,185,129,0.9); color:#fff; border:none;">🔴 EXPERIENCIA LEVEL-I VR</div>
-                <video id="vid-vr" autoplay muted loop playsinline controls>
+                <video autoplay loop muted playsinline webkit-playsinline poster="https://app.level-i.com/suelo-residencial/montsia-baix-maestrat/les-cases-0.jpg">
+                    <!-- Añadidas dobles rutas para evitar el error 404 -->
                     <source src="https://app.level-i.com/les-cases-04.mp4" type="video/mp4">
+                    <source src="https://level-i.github.io/les-cases-04.mp4" type="video/mp4">
                     Tu navegador no soporta la reproducción de video.
                 </video>
             </div>
@@ -305,7 +322,7 @@
                 </button>
             </div>
 
-            <div class="partner-promo" style="border-color: var(--accent-green); cursor: pointer; margin-bottom: 5px;" onclick="pedirSeguridad('anunciar')">
+            <div class="partner-promo" style="border-color: var(--accent-green); cursor: pointer; margin-bottom: 5px; margin-left: 15px; margin-right: 15px;" onclick="pedirSeguridad('anunciar')">
                 🎁 <b>Chivatazos / Colaboradores:</b> Gana una tarjeta regalo de <b>500 €</b> por cada propiedad vendida.
             </div>
 
@@ -313,9 +330,9 @@
             <div class="montsia-section">
                 <div class="montsia-header-tag"><span class="gold-pulse-dot"></span> Dossier de Inversión | Suelo Urbano</div>
                 
-                <div class="video-screen-horizontal" style="margin-bottom: 15px;">
+                <div class="video-screen-horizontal" style="margin-bottom: 15px; width: 100%; margin-left: 0;">
                     <div class="video-overlay-badge">🎬 SPOT PROMOCIONAL</div>
-                    <video autoplay muted loop playsinline controls>
+                    <video autoplay muted loop playsinline>
                         <source src="https://app.level-i.com/suelo-residencial/montsia-baix-maestrat/espot%20marjal%20les%20cases%20alcanar%20en%20off%20IA.mp4" type="video/mp4">
                     </video>
                 </div>
@@ -333,7 +350,7 @@
             <!-- 4. VÍDEO VERTICAL PANTALLA COMPLETA (BAJOS JARDÍN - VÍDEO 3) -->
             <div class="vertical-video-section">
                 <div class="vertical-video-wrapper">
-                    <video autoplay muted loop playsinline controls>
+                    <video autoplay loop muted playsinline webkit-playsinline controls>
                         <source src="https://app.level-i.com/compras/larapita/bajos%20con%20jardin%20la%20rapita.mp4" type="video/mp4">
                     </video>
                 </div>
@@ -356,7 +373,7 @@
             <div class="vertical-video-section">
                 <div class="vertical-video-wrapper">
                     <div class="video-overlay-badge" style="background: rgba(16,185,129,0.9); color:#fff; border:none;">🔴 RADAR CHALETS LA RÀPITA</div>
-                    <video autoplay muted loop playsinline controls>
+                    <video autoplay loop muted playsinline webkit-playsinline controls>
                         <source src="https://app.level-i.com/docs/radarchaletsalcanarlarapita.mp4" type="video/mp4">
                     </video>
                 </div>
@@ -507,7 +524,6 @@
         let captchaRespuesta = 0;
         let modoPendiente = "";
 
-        /* LÓGICA DE VOZ PARA ELENA */
         let vozActivada = true;
         function toggleVoz() {
             vozActivada = !vozActivada;
