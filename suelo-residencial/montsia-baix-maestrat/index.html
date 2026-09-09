@@ -407,8 +407,8 @@
         const webhookMake = "https://hook.eu1.make.com/8xd81xb9t3mg2ycwez1czd3quwhf2nef"; 
         
         // --- VOZ ELEVENLABS ---
-        const ELEVENLABS_API_KEY = "sk_e96c2cff1eafa13341f0a7dab440dd984c2991df82ab7d91"; 
-        const VOICE_ID_ELENA = "4wDRKlxcHNOFO5kBvE81"; // <-- PON AQUÍ LA ID DE TU VOZ ARGENTINA
+        const ELEVENLABS_API_KEY = "TU_CLAVE_LEVEL_I_WEB_AQUI"; 
+        const VOICE_ID_ELENA = "TU_VOICE_ID_AQUI"; // <-- PON AQUÍ LA ID DE TU VOZ ARGENTINA
         let currentAudio = null;
 
         const btnInicio = document.getElementById('wa-button');
@@ -577,13 +577,39 @@
                 return; 
             } 
             
-            // 2. Recoge el nombre, empaqueta los datos con la intención de compra y manda la frase exacta
+            // 2. Recoge el nombre, filtra palabras obscenas y manda a Ventas
             if (nombreCliente === "") {
+                const textoLimpio = message.toLowerCase().trim();
+                
+                // Muro de contención anti-vulgaridades
+                const palabrasProhibidas = [
+                    "puta", "puto", "putas", "putos", "mierda", "mierdas", "cabron", "cabrona", "cabrones", 
+                    "gilipollas", "idiota", "tonto", "tonta", "polla", "cojon", "cojones", "culo", "feo",
+                    "joder", "hostia", "ostia", "capullo", "zorra", "follar", "chingar", "chingada",
+                    "pendejo", "pendeja", "boludo", "boluda", "pelotudo", "pelotuda", "conchatumadre",
+                    "hijodeputa", "hdp", "weon", "huevon", "verga", "mamada", "culeado", "culero",
+                    "malparido", "soplapollas", "tontopolla", "caraculo", "lameculos", "comemierda",
+                    "subnormal", "retrasado", "mongolo", "tarado", "inutil", "asqueroso", "bastardo",
+                    "baboso", "pajero", "pajera", "chupapollas", "chupala", "mamaguevo", "gonorrea",
+                    "pirobo", "cabro", "putazo", "pinga", "choto", "chota", "caca", "pito", "nepe",
+                    "ano", "semen", "perra", "zorron", "guarra", "guarro", "cerdo", "cerda", "maricon", 
+                    "marica", "maricón", "putón", "puton", "putilla", "putillo", "folla", "follador",
+                    "folladora", "cagon", "cagón", "meon", "meón", "mierdoso", "mierdosa", "cabronazo"
+                ]; 
+                
+                const regexProhibidas = new RegExp(`\\b(${palabrasProhibidas.join('|')})\\b`, 'i');
+                const esInvalido = regexProhibidas.test(textoLimpio);
+
+                if (esInvalido || textoLimpio.length < 2 || !isNaN(textoLimpio)) {
+                    appendMessage("Elena", "Disculpa, necesito un nombre válido para poder dirigirme a ti de forma adecuada.", 'bot');
+                    return; 
+                }
+
                 nombreCliente = message;
                 document.getElementById('chat-input').placeholder = "Conectando con Ventas...";
                 document.getElementById('chat-input').disabled = true;
 
-                // Frase dinámica personalizada con el nombre del cliente (con template literals)
+                // Frase dinámica personalizada
                 const textoSalida = `Encantada de saludarte, ${nombreCliente}. Por favor, no te retires.`;
                 appendMessage("Elena", textoSalida, 'bot');
                 
@@ -602,7 +628,7 @@
                         nombre_cliente: nombreCliente, 
                         mensaje: textoMensajeLark,
                         modo: modoAcceso,
-                        ID_Inmueble: "REF202606200009" // ID exacto del inmueble
+                        ID_Inmueble: "REF202606200009"
                     })
                 }).then(r => r.json()).then(data => {
                     if (typingIndicator) typingIndicator.style.display = 'none';
