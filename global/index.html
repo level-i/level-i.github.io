@@ -198,7 +198,19 @@
         </div>
     </main>
 
+    <!-- CONEXIÓN A LA CAJA FUERTE SEGURA -->
+    <script src="config.js"></script>
+
     <script>
+        // DESBLOQUEADOR GLOBAL DE AUDIO PARA ELEVENLABS
+        let audioDesbloqueado = false;
+        document.addEventListener('click', () => {
+            if (!audioDesbloqueado) {
+                const dummy = new Audio();
+                dummy.play().then(() => { audioDesbloqueado = true; }).catch(e => {});
+            }
+        }, { once: true });
+
         // RELOJ GLOBAL
         function updateClock() {
             const now = new Date();
@@ -207,9 +219,11 @@
         }
         setInterval(updateClock, 1000); updateClock();
 
-        const webhookMake = "https://hook.eu1.make.com/8xd81xb9t3mg2ycwez1czd3quwhf2nef";
-        const ELEVENLABS_API_KEY = "sk_e96c2cff1eafa13341f0a7dab440dd984c2991df82ab7d91";
-        const VOICE_ID_ELENA = "4wDRKlxcHNOFO5kBvE81";
+        // LEYENDO LAS CLAVES DESDE LA CAJA FUERTE CONFIG.JS
+        const webhookMake = window.ENV.MAKE_WEBHOOK;
+        const ELEVENLABS_API_KEY = window.ENV.ELEVENLABS_API_KEY;
+        const VOICE_ID_ELENA = window.ENV.VOICE_ID_ELENA;
+        
         let currentAudio = null;
 
         let sessionId = "";
@@ -222,20 +236,18 @@
         let captchaRespuesta = 0;
         let modoPendiente = "";
 
-        // LISTA DINÁMICA DE INMUEBLES (TRAÍDA DESDE LARK / MAKE)
+        // LISTA DINÁMICA DE INMUEBLES
         let listaInmuebles = [];
 
-        // CARGA AUTOMÁTICA DE DATOS DESDE LARK MEDIANTE MAKE
+        // CARGA AUTOMÁTICA DE DATOS
         async function cargarDatosLark() {
             try {
-                // Hacemos una petición GET o POST a tu webhook de Make para obtener el JSON maestro de Lark
                 const response = await fetch(webhookMake, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ accion: "obtener_inmuebles_global" })
                 });
                 
-                // Si Make devuelve los datos en formato JSON, los cargamos. Si no, usamos datos de respaldo locales.
                 const data = await response.json();
                 if (Array.isArray(data) && data.length > 0) {
                     listaInmuebles = data;
@@ -244,7 +256,6 @@
                 }
             } catch (error) {
                 console.log("Cargando matriz con nodos predeterminados de respaldo sincronizados...");
-                // Datos iniciales estructurados con las coordenadas exactas que me pasaste de Lark
                 listaInmuebles = [
                     {
                         id: "REF202606200009",
@@ -269,7 +280,6 @@
                 ];
             }
 
-            // Renderizamos el Ticker y el Catálogo Grid con los datos reales
             renderizarMatrizGlobal();
         }
 
@@ -281,13 +291,11 @@
             catalogoGrid.innerHTML = "";
 
             listaInmuebles.forEach((inm, index) => {
-                // 1. Poblar Ticker
                 const tickerSpan = document.createElement('span');
                 tickerSpan.innerHTML = `📈 [${inm.id}] ${inm.titulo} — ${inm.precio} (Lat: ${inm.lat}, Lon: ${inm.lon})`;
                 tickerSpan.onclick = () => seleccionarActivoPorId(inm.id);
                 tickerContainer.appendChild(tickerSpan);
 
-                // 2. Poblar Grid de Activos
                 const card = document.createElement('div');
                 card.className = `asset-card ${index === 0 ? 'active-node' : ''}`;
                 card.id = `card-${inm.id}`;
@@ -303,13 +311,11 @@
                 catalogoGrid.appendChild(card);
             });
 
-            // Seleccionamos el primero por defecto
             if (listaInmuebles.length > 0) {
                 seleccionarActivoPorId(listaInmuebles[0].id);
             }
         }
 
-        // MOTOR DE VUELO INTERACTIVO Y SELECCIÓN DE ACTIVOS VÍA COORDENADAS
         function seleccionarActivoPorId(idInmueble) {
             const inm = listaInmuebles.find(item => item.id === idInmueble);
             if (!inm) return;
@@ -321,7 +327,6 @@
             const hudPrice = document.getElementById('hud-price');
             const banner = document.getElementById('instruccion-banner');
 
-            // Efecto visual de vuelo cinemático
             viewport.classList.add('flying');
 
             setTimeout(() => {
@@ -336,7 +341,6 @@
                 hudPrice.innerText = inm.precio;
                 banner.innerHTML = `🎯 <b>Nodo Activo:</b> ${inm.titulo} (Lat: ${inm.lat}, Lon: ${inm.lon})`;
 
-                // Actualizar clases activas en las tarjetas
                 listaInmuebles.forEach(item => {
                     const elCard = document.getElementById(`card-${item.id}`);
                     if (elCard) {
@@ -349,12 +353,11 @@
             }, 600);
         }
 
-        // Lanzar carga inicial al abrir la página
         document.addEventListener("DOMContentLoaded", () => {
             cargarDatosLark();
         });
 
-        // CONTROL DE VOZ Y ELEVENLABS
+        // CONTROL DE VOZ (ELEVENLABS)
         let vozActivada = true;
         function toggleVoz() {
             vozActivada = !vozActivada;
@@ -381,7 +384,6 @@
             } catch (error) { console.error("Error de voz:", error); }
         }
 
-        // FLUJO DE SEGURIDAD Y CHAT CON ELENA
         function pedirSeguridad(modo, btnElement) {
             modoPendiente = modo;
             if (btnElement) {
