@@ -348,7 +348,7 @@
 
             <div class="vertical-video-section">
                 <div class="vertical-video-wrapper">
-                    <video autoplay loop muted playsinline webkit-playsinline controls>
+                    <video autoplay loop muted playsinline webkit-playsinline controls preload="auto">
                         <source src="https://app.level-i.com/compras/larapita/bajos%20con%20jardin%20la%20rapita.mp4" type="video/mp4">
                     </video>
                 </div>
@@ -370,7 +370,7 @@
             <div class="vertical-video-section">
                 <div class="vertical-video-wrapper">
                     <div class="video-overlay-badge" style="background: rgba(16,185,129,0.9); color:#fff; border:none;">🔴 RADAR CHALETS LA RÀPITA</div>
-                    <video autoplay loop muted playsinline webkit-playsinline controls>
+                    <video autoplay loop muted playsinline webkit-playsinline controls preload="auto">
                         <source src="https://app.level-i.com/docs/radarchaletsalcanarlarapita.mp4" type="video/mp4">
                     </video>
                 </div>
@@ -386,7 +386,6 @@
                 </button>
             </div>
 
-            <!-- ACORDEONES LEGALES COMPLETOS -->
             <div class="legal-accordion-container" id="seccion-legal">
                 <details id="acordeon-privacidad">
                     <summary>🔒 Política de Privacidad</summary>
@@ -517,7 +516,6 @@
         </div>
     </main>
 
-    <!-- CAJA FUERTE SEGURO -->
     <script src="config.js"></script>
 
     <script>
@@ -561,6 +559,7 @@
             }
         }
 
+        // --- SOLUCIÓN SCROLL EN MÓVIL AL HACER CLIC EN BOTONES ---
         function pedirSeguridad(modo) {
             modoPendiente = modo;
             
@@ -572,9 +571,18 @@
 
             if (btnInicio) btnInicio.style.display = 'none';
             if (btnLoginToggle) btnLoginToggle.style.display = 'none';
-            document.getElementById('victoria-box-panel').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            
             const captchaContainer = document.getElementById('captcha-container');
-            if (captchaContainer) captchaContainer.style.display = 'block';
+            if (captchaContainer) {
+                captchaContainer.style.display = 'block';
+                // Añadimos un pequeño retraso para asegurar que el navegador ha renderizado la caja antes del scroll
+                setTimeout(() => {
+                    captchaContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    // Hacemos focus directo en el input del captcha
+                    document.getElementById('captcha-input').focus();
+                }, 100);
+            }
+            
             generarNuevaSuma();
         }
 
@@ -586,7 +594,6 @@
             const input = document.getElementById('captcha-input');
             input.value = "";
             document.getElementById('legal-consent').checked = false;
-            input.focus();
         }
 
         function handleCaptchaKeyPress(e) {
@@ -671,7 +678,7 @@
 
                 fetch(webhookMake, {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ evento: "nuevo_mensaje", modo: modoAcceso, id_sesion: sessionId, telefono: telefonoCliente, nombre_cliente: nombreCliente, Origen: "CHATBOT", mensaje: "Inicio de sesión completado" })
+                    body: JSON.stringify({ evento: "nuevo_mensaje", modo: modoAcceso, id_sesion: sessionId, telefono: telefonoCliente, nombre_cliente: nombreCliente, Origen: "Level-i chat bot", mensaje: "Inicio de sesión completado" })
                 }).then(r => r.json()).then(data => {
                     if (typingIndicator) typingIndicator.style.display = 'none';
                     
@@ -684,7 +691,7 @@
                             
                             fetch(webhookMake, {
                                 method: 'POST', headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({ evento: "nuevo_mensaje", modo: modoAcceso, id_sesion: sessionId, telefono: telefonoCliente, nombre_cliente: nombreCliente, Origen: "CHATBOT", mensaje: intencionGuardada })
+                                body: JSON.stringify({ evento: "nuevo_mensaje", modo: modoAcceso, id_sesion: sessionId, telefono: telefonoCliente, nombre_cliente: nombreCliente, Origen: "Level-i chat bot", mensaje: intencionGuardada })
                             }).then(r2 => r2.json()).then(data2 => {
                                 document.getElementById('typing-indicator').style.display = 'none';
                                 if (data2.respuesta_bot && data2.respuesta_bot.trim() !== "") appendMessage("Elena", data2.respuesta_bot.trim(), 'bot');
@@ -704,7 +711,7 @@
             if (typingIndicator) typingIndicator.style.display = 'block';
             fetch(webhookMake, {
                 method: 'POST', headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ evento: "nuevo_mensaje", modo: modoAcceso, id_sesion: sessionId, telefono: telefonoCliente, nombre_cliente: nombreCliente, Origen: "CHATBOT", mensaje: message })
+                body: JSON.stringify({ evento: "nuevo_mensaje", modo: modoAcceso, id_sesion: sessionId, telefono: telefonoCliente, nombre_cliente: nombreCliente, Origen: "Level-i chat bot", mensaje: message })
             }).then(r => r.json()).then(data => {
                 if (typingIndicator) typingIndicator.style.display = 'none';
                 if (data.respuesta_bot && data.respuesta_bot.trim() !== "") appendMessage("Elena", data.respuesta_bot.trim(), 'bot');
