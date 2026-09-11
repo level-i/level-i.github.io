@@ -172,19 +172,14 @@
         .btn-secondary { background-color: transparent; border: 1px solid var(--border-color); color: var(--text-muted); margin-top: 8px; box-shadow: none; font-size: 12.5px; display: block; text-align: center; text-decoration: none; padding: 10px; border-radius: 6px; cursor: pointer; transition: all 0.2s;}
         .btn-secondary:hover { border-color: var(--accent-green); color: var(--text-main); background: var(--bg-base); }
 
-        .captcha-container { display: none; background: var(--bg-panel); border: 1px dashed var(--border-color); border-radius: 8px; padding: 15px; margin-top: 15px; animation: fadeIn 0.3s ease; text-align: left; }
-        .captcha-text { font-size: 12.5px; color: var(--text-muted); margin-bottom: 12px; }
-        .captcha-input-group { display: flex; gap: 10px; margin-top: 12px;}
-        .captcha-input-group input { flex: 1; background: var(--bg-base); border: 1px solid var(--border-color); color: var(--text-main); padding: 10px; border-radius: 6px; font-size: 14px; text-align: center; outline: none; transition: border-color 0.2s; }
-        .captcha-input-group input:focus { border-color: var(--accent-green); }
-        .captcha-input-group button { background: var(--accent-green); color: #fff; border: none; padding: 0 15px; border-radius: 6px; font-weight: bold; cursor: pointer; transition: opacity 0.2s; }
-        
-        .legal-checkbox-container { font-size: 11px; color: var(--text-muted); display: flex; align-items: flex-start; gap: 8px; margin-top: 15px; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.05); }
-        .legal-checkbox-container input[type="checkbox"] { margin-top: 2px; cursor: pointer; }
+        /* CONTENEDOR LOGIN REGISTRADOS */
+        .login-box { display: none; text-align: left; margin-top: 15px; padding: 15px; background: var(--bg-base); border-radius: 8px; border: 1px solid var(--accent-gold); animation: fadeIn 0.3s ease; }
+        .login-box input { width: 100%; background: var(--bg-panel); border: 1px solid var(--border-color); color: #fff; padding: 10px; border-radius: 6px; outline: none; margin-bottom: 10px; font-size: 14px; }
+        .login-box button { width: 100%; background: var(--accent-gold); color: #000; border: none; padding: 10px; border-radius: 6px; font-weight: bold; cursor: pointer; transition: opacity 0.2s; }
+        .login-box button:hover { opacity: 0.9; }
+        .login-msg { font-size: 12px; margin-top: 8px; min-height: 15px; font-weight: 500;}
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
-
-        .chat-interface { display: none; flex-direction: column; height: 320px; background: var(--bg-base); border-radius: 8px; border: 1px solid var(--border-color); margin-top: 15px; overflow: hidden; text-align: left;}
+        .chat-interface { display: none; flex-direction: column; height: 350px; background: var(--bg-base); border-radius: 8px; border: 1px solid var(--border-color); margin-top: 15px; overflow: hidden; text-align: left;}
         .chat-messages { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
         .chat-bubble { max-width: 85%; padding: 10px 14px; border-radius: 8px; font-size: 13px; line-height: 1.4; word-wrap: break-word; }
         .bot-message { background: var(--bg-panel); border: 1px solid var(--border-color); color: var(--text-main); align-self: flex-start; border-bottom-left-radius: 2px; }
@@ -264,7 +259,6 @@
             }
 
             .right-panel { border-left: none; border-top: 1px solid var(--border-color); padding: 15px; overflow: visible; height: auto; }
-            .chat-interface { height: 350px; } 
         }
     </style>
 </head>
@@ -317,12 +311,12 @@
                     Te escribo de manera directa y personal. Represento a una clienta particular que acaba de vender su vivienda y necesita comprar con urgencia una propiedad pequeña <span class="highlight">(tipo estudio o 1 habitación)</span>, planta baja o con ascensor, obligatoriamente en <span class="highlight">La Ràpita</span>.<br><br>
                     Nos da igual el estado (reformas integrales, cerrada o con enseres). Nos encargamos absolutamente de todo <span class="highlight">(vaciado, papeleo, licencias y trámites notariales)</span> de forma ágil y discreta.
                 </p>
-                <button class="btn-action" style="margin-top: 15px;" onclick="pedirSeguridad('rapita')">
+                <button class="btn-action" style="margin-top: 15px;" onclick="iniciarFlujo('rapita')">
                     🎯 Iniciar IAdvisor Level-i sobre mi inmueble
                 </button>
             </div>
 
-            <div class="partner-promo" style="border-color: var(--accent-green); cursor: pointer; margin-bottom: 5px; margin-left: 15px; margin-right: 15px;" onclick="pedirSeguridad('anunciar')">
+            <div class="partner-promo" style="border-color: var(--accent-green); cursor: pointer; margin-bottom: 5px; margin-left: 15px; margin-right: 15px;" onclick="iniciarFlujo('anunciar')">
                 🎁 <b>Chivatazos / Colaboradores:</b> Gana una tarjeta regalo de <b>500 €</b> por cada propiedad vendida.
             </div>
 
@@ -331,7 +325,7 @@
                 
                 <div class="video-screen-horizontal" style="margin-bottom: 15px; width: 100%; margin-left: 0;">
                     <div class="video-overlay-badge">🎬 SPOT PROMOCIONAL</div>
-                    <video autoplay loop muted playsinline>
+                    <video autoplay loop muted playsinline preload="auto">
                         <source src="https://app.level-i.com/suelo-residencial/montsia-baix-maestrat/espot%20marjal%20les%20cases%20alcanar%20en%20off%20IA.mp4" type="video/mp4">
                     </video>
                 </div>
@@ -358,7 +352,7 @@
                     <span class="pvp-small">* Gastos de compraventa y registro no incluidos.</span>
                 </div>
                 
-                <button class="btn-action" style="max-width: 400px; width: 100%; margin-top: 10px;" onclick="pedirSeguridad('precio_312k')">
+                <button class="btn-action" style="max-width: 400px; width: 100%; margin-top: 10px;" onclick="iniciarFlujo('precio_312k')">
                     💬 Consultar detalles con IAdvisor Level-i
                 </button>
 
@@ -381,7 +375,7 @@
                     <span style="font-size: 11.5px; color: var(--text-muted); display: block; margin-top: 4px;">Honorarios máximos: 7.500 € (IVA incl.)</span>
                 </div>
 
-                <button class="btn-action" style="max-width: 400px; width: 100%; margin-top: 10px; background-color: var(--accent-gold); color: #000;" onclick="pedirSeguridad('vender_propiedad')">
+                <button class="btn-action" style="max-width: 400px; width: 100%; margin-top: 10px; background-color: var(--accent-gold); color: #000;" onclick="iniciarFlujo('vender_propiedad')">
                     🏠 Iniciar Gestión de Venta con Elena
                 </button>
             </div>
@@ -467,47 +461,42 @@
                 <div class="victoria-box" id="victoria-box-panel">
                     <div class="victoria-avatar" style="background: linear-gradient(135deg, #C5A059, #10b981);">E</div>
                     <h3 style="font-size: 15px; margin-bottom: 6px;">Elena | AI Advisor Level-i</h3>
-                    <p style="font-size: 12px; color: var(--text-muted);" id="victoria-subtitle">Atención Personalizada y Gestión Ejecutiva.</p>
+                    <p style="font-size: 12px; color: var(--text-muted);" id="victoria-subtitle">Selecciona tu método de acceso:</p>
                     
-                    <button id="wa-button" class="btn-action" onclick="pedirSeguridad('nuevo')">
-                        <span id="btn-text">🎙️ Iniciar Atención Personalizada</span>
-                    </button>
-                    <button id="btn-login-toggle" class="btn-action btn-secondary" onclick="alert('Módulo disponible próximamente')">
-                        🔐 Acceso Usuarios Registrados
-                    </button>
-
-                    <div id="captcha-container" class="captcha-container">
-                        <div class="captcha-text">🛡️ <b>Verificación de seguridad:</b> ¿Cuánto es <span id="captcha-question" style="color:var(--text-main); font-weight:bold; font-size:14px;"></span>?</div>
+                    <div id="botones-acceso">
+                        <button class="btn-action" style="background-color: var(--accent-gold); color: #000;" onclick="mostrarLoginRegistrados()">
+                            🔐 Acceso Usuarios Registrados
+                        </button>
                         
-                        <div class="legal-checkbox-container">
-                            <input type="checkbox" id="legal-consent">
-                            <label for="legal-consent">
-                                He leído y acepto la Política de Privacidad y el Aviso Legal. Entiendo y consiento que seré atendido por un sistema automatizado de <b>Inteligencia Artificial</b>.
-                            </label>
-                        </div>
+                        <button class="btn-action btn-secondary" style="border: 1px solid var(--accent-green); color: var(--accent-green);" onclick="iniciarChatbotDirecto('nuevo')">
+                            🎙️ Soy nuevo (Hablar con Recepcionista AI)
+                        </button>
+                    </div>
 
-                        <div class="captcha-input-group">
-                            <input type="number" id="captcha-input" placeholder="Respuesta" onkeypress="handleCaptchaKeyPress(event)">
-                            <button onclick="verificarCaptcha()">Verificar</button>
-                        </div>
+                    <div id="login-container" class="login-box">
+                        <p style="font-size:12px; color:var(--accent-gold); margin-top:0; margin-bottom:10px;">Introduce tu teléfono vinculado:</p>
+                        <input type="tel" id="login-input" placeholder="Tu número (Ej. 600123456)" onkeypress="if(event.key === 'Enter') verificarUsuarioRegistrado()">
+                        <button onclick="verificarUsuarioRegistrado()">Verificar Acceso</button>
+                        <div id="login-msg" class="login-msg"></div>
                     </div>
 
                     <div id="chat-interface" class="chat-interface">
                         <div style="background: var(--bg-panel); padding: 8px 15px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
-                            <span style="font-size: 11px; color: var(--text-muted); font-weight: bold; text-transform: uppercase;">Asistente Virtual</span>
+                            <span style="font-size: 11px; color: var(--text-muted); font-weight: bold; text-transform: uppercase;">Recepción Level-i</span>
                         </div>
                         <div id="chat-messages" class="chat-messages"></div>
                         <div id="typing-indicator" class="typing-indicator">Elena está escribiendo...</div>
                         <div class="chat-input-area">
-                            <input type="tel" id="chat-input" placeholder="Escribe tu número de teléfono..." onkeypress="handleKeyPress(event)">
+                            <input type="tel" id="chat-input" placeholder="Escribe tu número de teléfono..." onkeypress="if(event.key === 'Enter') sendChatMessage()">
                             <button onclick="sendChatMessage()">Enviar</button>
                         </div>
                     </div>
-                </div>
 
-                <div class="pro-partner-promo">
-                    🚀 <b>Alianza Profesional:</b> Gana hasta el <b>60% por operación</b> con nuestra tecnología.
                 </div>
+            </div>
+
+            <div class="pro-partner-promo" style="margin-top: 15px;">
+                🚀 <b>Alianza Profesional:</b> Gana hasta el <b>60% por operación</b> con nuestra tecnología.
             </div>
 
             <div class="api-badge">
@@ -516,9 +505,17 @@
         </div>
     </main>
 
-    <script src="config.js"></script>
+    <script>
+        // SUSTITUYE ESTA URL POR LA DE TU WEBHOOK REAL DE MAKE
+        const webhookMake = "AQUI_TU_ENLACE_DE_MAKE"; 
+    </script>
 
     <script>
+        let sessionId = 'usr_' + Math.random().toString(36).substr(2, 9);
+        let telefonoCliente = ""; 
+        let nombreCliente = ""; 
+        let intencionGuardada = "";
+
         function updateClock() {
             const now = new Date();
             const day = String(now.getDate()).padStart(2, '0');
@@ -532,203 +529,182 @@
         }
         setInterval(updateClock, 1000); updateClock(); 
 
-        const webhookMake = window.ENV.MAKE_WEBHOOK; 
-        
-        const btnInicio = document.getElementById('wa-button');
-        const btnLoginToggle = document.getElementById('btn-login-toggle');
-        const interfaceChat = document.getElementById('chat-interface');
-        const chatMessages = document.getElementById('chat-messages');
-        const inputField = document.getElementById('chat-input');
-        const typingIndicator = document.getElementById('typing-indicator');
-        const subtitle = document.getElementById('victoria-subtitle');
-        const mainContainer = document.getElementById('main-container');
-
-        let sessionId = "";
-        let modoAcceso = "nuevo";
-        let telefonoCliente = ""; 
-        let nombreCliente = ""; 
-        let captchaRespuesta = 0;
-        let modoPendiente = "";
-        
-        let intencionGuardada = "";
-
-        function dispararEfectoLaser() {
-            if (mainContainer) {
-                mainContainer.classList.add('flash-active');
-                setTimeout(() => mainContainer.classList.remove('flash-active'), 500);
-            }
+        // Funciones de interfaz
+        function ocultarBotones() {
+            const btnContainer = document.getElementById('botones-acceso');
+            if(btnContainer) btnContainer.style.display = 'none';
+            document.getElementById('victoria-subtitle').style.display = 'none';
         }
 
-        // --- SOLUCIÓN SCROLL EN MÓVIL AL HACER CLIC EN BOTONES ---
-        function pedirSeguridad(modo) {
-            modoPendiente = modo;
+        // FLUJO 1: BOTÓN DEL MENÚ (Abre panel y marca intención)
+        function iniciarFlujo(intencion) {
+            intencionGuardada = intencion;
+            document.getElementById('victoria-box-panel').scrollIntoView({ behavior: 'smooth', block: 'center' });
             
-            if (modo === 'vender_propiedad') {
-                intencionGuardada = "Hola, tengo una propiedad en venta.";
-            } else {
-                intencionGuardada = ""; 
-            }
-
-            if (btnInicio) btnInicio.style.display = 'none';
-            if (btnLoginToggle) btnLoginToggle.style.display = 'none';
-            
-            const captchaContainer = document.getElementById('captcha-container');
-            if (captchaContainer) {
-                captchaContainer.style.display = 'block';
-                // Añadimos un pequeño retraso para asegurar que el navegador ha renderizado la caja antes del scroll
-                setTimeout(() => {
-                    captchaContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    // Hacemos focus directo en el input del captcha
-                    document.getElementById('captcha-input').focus();
-                }, 100);
-            }
-            
-            generarNuevaSuma();
+            // Efecto visual
+            const mainCont = document.getElementById('main-container');
+            mainCont.classList.add('flash-active');
+            setTimeout(() => mainCont.classList.remove('flash-active'), 500);
         }
 
-        function generarNuevaSuma() {
-            const n1 = Math.floor(Math.random() * 9) + 1;
-            const n2 = Math.floor(Math.random() * 9) + 1;
-            captchaRespuesta = n1 + n2;
-            document.getElementById('captcha-question').innerText = `${n1} + ${n2}`;
-            const input = document.getElementById('captcha-input');
-            input.value = "";
-            document.getElementById('legal-consent').checked = false;
+        // FLUJO 2: LOGIN USUARIOS REGISTRADOS
+        function mostrarLoginRegistrados() {
+            ocultarBotones();
+            document.getElementById('login-container').style.display = 'block';
+            document.getElementById('login-input').focus();
         }
 
-        function handleCaptchaKeyPress(e) {
-            if (e.key === 'Enter') { e.preventDefault(); verificarCaptcha(); }
-        }
+        function verificarUsuarioRegistrado() {
+            const telInput = document.getElementById('login-input');
+            const msgEl = document.getElementById('login-msg');
+            const telLimpio = telInput.value.replace(/\D/g, '');
 
-        function verificarCaptcha() {
-            const consentCheckbox = document.getElementById('legal-consent');
-            if (!consentCheckbox.checked) {
-                alert("⚠️ Para continuar, debes marcar la casilla confirmando que has leído y aceptas la Política de Privacidad y el uso de IA.");
+            if (telLimpio.length < 9) {
+                msgEl.style.color = "var(--accent-red)";
+                msgEl.innerText = "Error: Introduce un teléfono válido.";
                 return;
             }
-            const input = document.getElementById('captcha-input');
-            if (parseInt(input.value) === captchaRespuesta) {
-                document.getElementById('captcha-container').style.display = 'none';
-                iniciarChat(modoPendiente);
-            } else {
-                input.classList.add('captcha-error');
-                setTimeout(() => input.classList.remove('captcha-error'), 400);
-                generarNuevaSuma();
-            }
+
+            msgEl.style.color = "var(--accent-gold)";
+            msgEl.innerText = "⏳ Verificando credenciales en base de datos...";
+
+            // Petición a Make para verificar si existe
+            fetch(webhookMake, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    evento: "verificar_registro", 
+                    telefono: telLimpio, 
+                    Origen: "Level-i chat bot" 
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if(data.registrado === true || data.registrado === "true") {
+                    msgEl.style.color = "var(--accent-green)";
+                    msgEl.innerText = "✅ Acceso concedido. Bienvenido.";
+                    setTimeout(() => { alert("Cargando perfil VIP de " + telLimpio); }, 1000);
+                } else {
+                    msgEl.style.color = "var(--accent-red)";
+                    msgEl.innerText = "❌ Usuario no registrado. Le pasamos con nuestra Recepcionista AI 'Elena'.";
+                    
+                    setTimeout(() => {
+                        document.getElementById('login-container').style.display = 'none';
+                        telefonoCliente = telLimpio; 
+                        iniciarChatbotDirecto('rechazado_login');
+                    }, 2500);
+                }
+            })
+            .catch(err => {
+                msgEl.style.color = "var(--text-muted)";
+                msgEl.innerText = "Error de conexión. Pasando con Recepción...";
+                setTimeout(() => {
+                    document.getElementById('login-container').style.display = 'none';
+                    iniciarChatbotDirecto('error_login');
+                }, 1500);
+            });
         }
 
-        function iniciarChat(modo) {
-            modoAcceso = modo;
-            dispararEfectoLaser();
-            if (subtitle) subtitle.style.display = 'none';
-            if (interfaceChat) interfaceChat.style.display = 'flex';
-
-            const urlParams = new URLSearchParams(window.location.search);
-            sessionId = urlParams.get('id') || 'usr_' + Math.random().toString(36).substr(2, 9);
+        // FLUJO 3: CHATBOT ELENA (Recepción)
+        function iniciarChatbotDirecto(origen) {
+            ocultarBotones();
+            document.getElementById('chat-interface').style.display = 'flex';
             
-            let saludoInicial = "Hola. Soy Elena, tu asistente. Para atenderte con absoluta seguridad y acceder a tu expediente, por favor indícame tu **número de teléfono móvil**.";
+            let saludoInicial = "";
             
-            if (modo === 'vender_propiedad') {
-                saludoInicial = "Hola. Soy Elena. Veo que te interesa vender una propiedad y conocer nuestra estrategia. Para empezar, por favor indícame tu **número de teléfono móvil**.";
-            } else if (modo === 'alcanar_suelo') {
-                saludoInicial = "Hola. Soy Elena. Para enviarte el dosier privado del suelo urbano en Les Cases d'Alcanar, indícame tu **número de teléfono móvil**.";
-            } else if (modo === 'rapita') {
-                saludoInicial = "Hola. Soy Elena. Para gestionar tu inmueble en La Ràpita con total discreción, por favor indícame tu **número de teléfono móvil** de contacto.";
-            } else if (modo === 'precio_312k') {
-                saludoInicial = "Hola. Soy Elena. Sobre esta propiedad de 312.000 €, para verificar tu acceso, indícame tu **número de teléfono móvil**.";
-            } else if (modo === 'anunciar') {
-                saludoInicial = "Hola. Soy Elena. Para configurar tu anuncio con honorarios máximos de 7.500 €, indícame tu **número de teléfono móvil**.";
-            } else if (modo === 'radar_chalets') {
-                saludoInicial = "Hola. Soy Elena. Para enviarte la información completa sobre el Radar de Chalets, indícame tu **número de teléfono móvil**.";
+            if (telefonoCliente !== "") {
+                saludoInicial = "Hola. Soy Elena, recepcionista virtual. Veo que tu número **" + telefonoCliente + "** no consta en nuestra base de datos VIP. ¿Cómo deseas que me dirija a ti?";
+                document.getElementById('chat-input').type = "text";
+                document.getElementById('chat-input').placeholder = "Indícame tu nombre...";
+            } else {
+                saludoInicial = "Hola. Soy Elena, la recepcionista. Para poder atenderte y abrirte una ficha, por favor indícame tu **número de teléfono móvil**.";
+                document.getElementById('chat-input').type = "tel";
             }
             
             appendMessage("Elena", saludoInicial, 'bot');
             document.getElementById('chat-input').focus();
         }
 
-        function handleKeyPress(e) {
-            if (e.key === 'Enter') { e.preventDefault(); sendChatMessage(); }
-        }
-
         function sendChatMessage() {
-            if (!inputField) return;
+            const inputField = document.getElementById('chat-input');
             const message = inputField.value.trim();
             if (message === "") return;
+            
             inputField.value = "";
             appendMessage("Tú", message, 'user');
 
             if (telefonoCliente === "") {
-                const telefonoLimpio = message.replace(/\D/g, ''); 
-                if (telefonoLimpio.length < 9) {
-                    appendMessage("Elena", "Por favor, indícame un **número de teléfono móvil válido** (mínimo 9 dígitos) para poder atenderte con seguridad.", 'bot');
+                const telLimpio = message.replace(/\D/g, ''); 
+                if (telLimpio.length < 9) {
+                    appendMessage("Elena", "Por favor, indícame un **número de móvil válido**.", 'bot');
                     return; 
                 }
-                telefonoCliente = telefonoLimpio; 
-                const inputEl = document.getElementById('chat-input');
-                inputEl.type = "text"; 
-                inputEl.placeholder = "Indícame tu nombre de pila...";
+                telefonoCliente = telLimpio; 
+                inputField.type = "text"; 
+                inputField.placeholder = "Indícame tu nombre de pila...";
                 appendMessage("Elena", "Perfecto. ¿Cómo deseas que me dirija a ti?", 'bot');
                 return; 
             } 
             
             if (nombreCliente === "") {
                 nombreCliente = message;
-                document.getElementById('chat-input').placeholder = "Escribe tu mensaje...";
-                if (typingIndicator) typingIndicator.style.display = 'block';
+                inputField.placeholder = "Escribe tu mensaje...";
+                document.getElementById('typing-indicator').style.display = 'block';
 
                 fetch(webhookMake, {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ evento: "nuevo_mensaje", modo: modoAcceso, id_sesion: sessionId, telefono: telefonoCliente, nombre_cliente: nombreCliente, Origen: "Level-i chat bot", mensaje: "Inicio de sesión completado" })
+                    body: JSON.stringify({ evento: "nuevo_mensaje", id_sesion: sessionId, telefono: telefonoCliente, nombre_cliente: nombreCliente, Origen: "Level-i chat bot", mensaje: "Inicio de sesión completado" })
                 }).then(r => r.json()).then(data => {
-                    if (typingIndicator) typingIndicator.style.display = 'none';
-                    
-                    appendMessage("Elena", (data.respuesta_bot || data.message || `Encantada, ${nombreCliente}. ¿En qué te puedo ayudar?`).trim(), 'bot');
+                    document.getElementById('typing-indicator').style.display = 'none';
+                    appendMessage("Elena", (data.respuesta_bot || `Encantada, ${nombreCliente}. ¿En qué te puedo ayudar?`).trim(), 'bot');
                     
                     if (intencionGuardada !== "") {
                         setTimeout(() => {
-                            appendMessage("Tú", intencionGuardada, 'user');
+                            let textoIntencion = "Me interesa obtener información sobre la referencia seleccionada.";
+                            if(intencionGuardada === 'rapita') textoIntencion = "Quiero vender mi propiedad en La Ràpita.";
+                            if(intencionGuardada === 'alcanar_suelo') textoIntencion = "Solicito dossier del suelo en Alcanar.";
+                            if(intencionGuardada === 'precio_312k') textoIntencion = "Solicito detalles de la propiedad de 312k.";
+                            if(intencionGuardada === 'vender_propiedad') textoIntencion = "Quiero valoración gratuita para vender mi propiedad.";
+                            
+                            appendMessage("Tú", textoIntencion, 'user');
                             document.getElementById('typing-indicator').style.display = 'block';
                             
                             fetch(webhookMake, {
                                 method: 'POST', headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({ evento: "nuevo_mensaje", modo: modoAcceso, id_sesion: sessionId, telefono: telefonoCliente, nombre_cliente: nombreCliente, Origen: "Level-i chat bot", mensaje: intencionGuardada })
+                                body: JSON.stringify({ evento: "nuevo_mensaje", id_sesion: sessionId, telefono: telefonoCliente, nombre_cliente: nombreCliente, Origen: "Level-i chat bot", mensaje: textoIntencion })
                             }).then(r2 => r2.json()).then(data2 => {
                                 document.getElementById('typing-indicator').style.display = 'none';
-                                if (data2.respuesta_bot && data2.respuesta_bot.trim() !== "") appendMessage("Elena", data2.respuesta_bot.trim(), 'bot');
+                                if (data2.respuesta_bot) appendMessage("Elena", data2.respuesta_bot.trim(), 'bot');
                             }).catch(e => { document.getElementById('typing-indicator').style.display = 'none'; });
                             
                             intencionGuardada = "";
                         }, 1500); 
                     }
-
                 }).catch(err => {
-                    if (typingIndicator) typingIndicator.style.display = 'none';
-                    appendMessage("Elena", `Entendido, ${nombreCliente}. ¿Qué información puedes proporcionarme sobre tu caso?`, 'bot');
+                    document.getElementById('typing-indicator').style.display = 'none';
+                    appendMessage("Elena", `Entendido, ${nombreCliente}. ¿Qué información necesitas?`, 'bot');
                 });
                 return;
             }
 
-            if (typingIndicator) typingIndicator.style.display = 'block';
+            document.getElementById('typing-indicator').style.display = 'block';
             fetch(webhookMake, {
                 method: 'POST', headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ evento: "nuevo_mensaje", modo: modoAcceso, id_sesion: sessionId, telefono: telefonoCliente, nombre_cliente: nombreCliente, Origen: "Level-i chat bot", mensaje: message })
+                body: JSON.stringify({ evento: "nuevo_mensaje", id_sesion: sessionId, telefono: telefonoCliente, nombre_cliente: nombreCliente, Origen: "Level-i chat bot", mensaje: message })
             }).then(r => r.json()).then(data => {
-                if (typingIndicator) typingIndicator.style.display = 'none';
-                if (data.respuesta_bot && data.respuesta_bot.trim() !== "") appendMessage("Elena", data.respuesta_bot.trim(), 'bot');
+                document.getElementById('typing-indicator').style.display = 'none';
+                if (data.respuesta_bot) appendMessage("Elena", data.respuesta_bot.trim(), 'bot');
             }).catch(err => {
-                if (typingIndicator) typingIndicator.style.display = 'none';
-                appendMessage("Elena", "Disculpa, ha ocurrido un error de conexión con nuestros sistemas centrales.", 'bot');
+                document.getElementById('typing-indicator').style.display = 'none';
+                appendMessage("Elena", "Disculpa, hay un error de conexión con nuestros sistemas.", 'bot');
             });
         }
 
         function appendMessage(sender, text, type) {
-            if (!chatMessages) return;
+            const chatMessages = document.getElementById('chat-messages');
             const msgDiv = document.createElement('div');
             msgDiv.classList.add('chat-bubble', type === 'bot' ? 'bot-message' : 'user-message');
-            
-            let htmlText = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-            msgDiv.innerHTML = htmlText;
-            
+            msgDiv.innerHTML = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
             chatMessages.appendChild(msgDiv);
             chatMessages.scrollTop = chatMessages.scrollHeight;
         }
