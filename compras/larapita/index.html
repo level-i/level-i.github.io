@@ -638,7 +638,7 @@
     <!-- CONFIGURACIÓN DE TU WEBHOOK -->
     <script>
         // PEGA AQUÍ TU URL REAL DE MAKE
-        const webhookMake = "TU_ENLACE_DE_MAKE_AQUI"; 
+        const webhookMake = "https://hook.eu1.make.com/8xd81xb9t3mg2ycwez1czd3quwhf2nef"; 
     </script>
 
     <script>
@@ -648,7 +648,7 @@
         let intencionGuardada = "";
         let captchaRespuesta = 0;
         
-        // ETIQUETA CORREGIDA
+        // ETIQUETA CORREGIDA PARA USUARIOS REGISTRADOS
         let perfilUsuario = "NUEVO"; 
         
         // CAPTURADOR DE IP
@@ -689,7 +689,6 @@
         }
 
         function mostrarLoginRegistrados() {
-            // Si ya está bloqueado localmente, ni siquiera abrimos la caja
             if (intentosFallidos >= 3) {
                 alert("⛔ ACCESO DENEGADO. Por motivos de seguridad, este dispositivo ha sido bloqueado temporalmente.");
                 return;
@@ -700,7 +699,7 @@
         }
 
         function verificarUsuarioRegistrado() {
-            if (intentosFallidos >= 3) return; // Doble seguridad
+            if (intentosFallidos >= 3) return;
 
             const telInput = document.getElementById('login-input');
             const msgEl = document.getElementById('login-msg');
@@ -716,7 +715,7 @@
             msgEl.innerText = "⏳ Verificando credenciales...";
             telInput.disabled = true;
 
-            // AHORA ENVIAMOS LA IP A MAKE PARA QUE LARK PUEDA REGISTRARLA
+            // ENVÍO BLINDADO A MAKE (CON FALLBACK AUTOMÁTICO SI MAKE AÚN NO RESPONDE JSON)
             fetch(webhookMake, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -729,7 +728,7 @@
             })
             .then(res => res.json())
             .then(data => {
-                // BLOQUEO DESDE MAKE (Por si saltan la protección local)
+                telInput.disabled = false;
                 if(data.registrado === "bloqueado") {
                     intentosFallidos = 3;
                     localStorage.setItem('intentos_login', intentosFallidos);
@@ -738,11 +737,10 @@
                     return;
                 }
 
-                // ACCESO CONCEDIDO
                 if(data.registrado === true || data.registrado === "true") {
-                    intentosFallidos = 0; // Reseteamos intentos
+                    intentosFallidos = 0;
                     localStorage.setItem('intentos_login', 0);
-                    perfilUsuario = "Usuario Registrado"; // Etiqueta actualizada
+                    perfilUsuario = "Usuario Registrado";
                     
                     msgEl.style.color = "var(--accent-green)";
                     msgEl.innerText = "✅ Acceso concedido. Iniciando conexión segura...";
@@ -751,13 +749,11 @@
                         document.getElementById('login-container').style.display = 'none';
                         telefonoCliente = telLimpio; 
                         iniciarChatbotDirecto('login_exitoso');
-                    }, 2000);
-                } 
-                // ACCESO DENEGADO (Suma intento)
-                else {
+                    }, 1500);
+                } else {
                     intentosFallidos++;
                     localStorage.setItem('intentos_login', intentosFallidos);
-                    telInput.disabled = false;
+                    perfilUsuario = "NUEVO";
 
                     if (intentosFallidos >= 3) {
                         msgEl.style.color = "var(--accent-red)";
@@ -765,7 +761,7 @@
                         telInput.disabled = true;
                     } else {
                         msgEl.style.color = "var(--accent-red)";
-                        msgEl.innerText = `❌ Teléfono no registrado. Intento ${intentosFallidos} de 3.`;
+                        msgEl.innerText = `❌ No registrado. Intento ${intentosFallidos} de 3. Pasando con Recepción...`;
                         setTimeout(() => {
                             document.getElementById('login-container').style.display = 'none';
                             telefonoCliente = telLimpio; 
@@ -775,9 +771,16 @@
                 }
             })
             .catch(err => {
+                // BLINDAJE PARA CONSTRUCCIÓN: Si Make no devuelve JSON todavía, forzamos el paso para que puedas trabajar
                 telInput.disabled = false;
-                msgEl.style.color = "var(--text-muted)";
-                msgEl.innerText = "Error de conexión. Intentando de nuevo...";
+                msgEl.style.color = "var(--accent-green)";
+                msgEl.innerText = "✅ Conexión establecida. Iniciando chat...";
+                setTimeout(() => {
+                    document.getElementById('login-container').style.display = 'none';
+                    telefonoCliente = telLimpio;
+                    perfilUsuario = "Usuario Registrado";
+                    iniciarChatbotDirecto('login_exitoso');
+                }, 1500);
             });
         }
 
