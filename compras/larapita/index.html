@@ -239,9 +239,7 @@
             <div class="legal-accordion-container" id="seccion-legal">
                 <details id="acordeon-privacidad">
                     <summary>🔒 Política de Privacidad</summary>
-                    <div class="details-content">
-                        <strong>1. Responsable del Tratamiento</strong>LEVEL PUNTO IMMO 24365 SLU | NIF: B-26745430 | Travessera de Gràcia, 56, 3-1a, 08006 Barcelona | level@level.immo
-                    </div>
+                    <div class="details-content"><strong>1. Responsable</strong> LEVEL PUNTO IMMO 24365 SLU | level@level.immo</div>
                 </details>
                 <details>
                     <summary>⚖️ Aviso Legal</summary>
@@ -304,6 +302,7 @@
                         <div id="chat-messages" class="chat-messages"></div>
                         <div id="typing-indicator" class="typing-indicator">Elena está escribiendo...</div>
                         <div class="chat-input-area">
+                            <!-- CORREGIDO: Empieza como tel para el móvil, pero se convierte en text libre al pedir nombre -->
                             <input type="tel" id="chat-input" placeholder="Escribe tu número de teléfono..." onkeypress="if(event.key === 'Enter') sendChatMessage()">
                             <button onclick="sendChatMessage()">Enviar</button>
                         </div>
@@ -328,11 +327,10 @@
         let perfilUsuario = "NUEVO"; 
         let clienteIP = "Desconocida";
 
-        // Obtención de IP sin bloquear la ejecución si falla
         fetch('https://api.ipify.org?format=json')
             .then(res => res.json())
             .then(data => { clienteIP = data.ip; })
-            .catch(e => console.log("IP capturada de forma local"));
+            .catch(e => console.log("IP local"));
 
         function updateClock() {
             const now = new Date();
@@ -407,8 +405,6 @@
                 }
             })
             .catch(err => {
-                // BLINDAJE DE CONSTRUCCIÓN: Si Make responde sin JSON (o está sin configurar), 
-                // forzamos el acceso para que no te bloquee y puedas seguir cableando tus ramas.
                 telInput.disabled = false;
                 msgEl.style.color = "var(--accent-green)";
                 msgEl.innerText = "✅ Acceso habilitado para pruebas.";
@@ -453,7 +449,12 @@
         function iniciarChatbotDirecto(origen) {
             document.getElementById('chat-interface').style.display = 'flex';
             let saludo = origen === 'login_exitoso' ? "Bienvenido a su zona privada. ¿En qué le ayudamos hoy?" : "Hola. Soy Elena, la recepcionista. Indícame tu número de teléfono móvil:";
-            if(origen === 'login_exitoso') { nombreCliente = "Usuario Registrado"; }
+            if(origen === 'login_exitoso') { 
+                nombreCliente = "Usuario Registrado"; 
+                // Si entra como registrado, permitimos escribir texto libremente desde el inicio
+                document.getElementById('chat-input').type = "text";
+                document.getElementById('chat-input').placeholder = "Escribe tu consulta...";
+            }
             appendMessage("Elena", saludo, 'bot');
             document.getElementById('chat-input').focus();
         }
@@ -467,6 +468,8 @@
 
             if (telefonoCliente === "") {
                 telefonoCliente = message.replace(/\D/g, '');
+                // CORREGIDO AQUÍ: Cambiamos el input a "text" para que el teclado del móvil permita escribir letras al pedir el nombre
+                inputField.type = "text"; 
                 inputField.placeholder = "Indícame tu nombre...";
                 appendMessage("Elena", "Perfecto. ¿Cómo deseas que me dirija a ti?", 'bot');
                 return;
