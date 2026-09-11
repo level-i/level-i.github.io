@@ -5,126 +5,855 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Level-i Command Center | NetWorking Montsià - Suelo Residencial</title>
     <style>
-        :root { --bg-base: #090d16; --bg-panel: #111827; --bg-card: #1f2937; --accent-green: #10b981; --accent-blue: #3b82f6; --accent-gold: #C5A059; --text-main: #f9fafb; --text-muted: #9ca3af; --border-color: #374151; }
-        html, body { margin: 0; padding: 0; height: 100%; width: 100%; }
-        * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; scrollbar-width: thin; scrollbar-color: var(--border-color) var(--bg-panel); }
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: var(--bg-panel); border-left: 1px solid var(--border-color); }
-        ::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--accent-green); }
+        :root {
+            --bg-base: #090d16;
+            --bg-panel: #111827;
+            --bg-card: #1f2937;
+            --accent-green: #10b981;
+            --accent-blue: #3b82f6;
+            --accent-gold: #C5A059;
+            --accent-red: #ef4444;
+            --text-main: #f9fafb;
+            --text-muted: #9ca3af;
+            --border-color: #374151;
+        }
 
-        body { background-color: var(--bg-base); color: var(--text-main); display: flex; overflow: hidden; }
-        aside { width: 260px; background-color: var(--bg-panel); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; padding: 20px; flex-shrink: 0; }
-        
-        .brand-container { display: flex; flex-direction: column; gap: 8px; padding-bottom: 20px; margin-bottom: 20px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
-        .brand-logo { display: flex; align-items: baseline; color: #ffffff; }
-        .l-letter { font-size: 32px; font-weight: 900; line-height: 1; }
-        .brand-dot { width: 9px; height: 9px; background-color: var(--accent-green); border-radius: 50%; margin: 0 6px 0 2px; box-shadow: 0 0 10px rgba(16, 185, 129, 0.6); }
-        .logo-text { font-size: 22px; font-weight: 700; letter-spacing: 0.5px; }
-        .brand-clock { font-family: 'Courier New', Courier, monospace; font-size: 11px; color: var(--accent-green); font-weight: bold; letter-spacing: 0.5px; text-shadow: 0 0 5px rgba(16, 185, 129, 0.4); margin-top: 4px; white-space: nowrap; }
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+        }
 
-        .nav-menu { display: flex; flex-direction: column; gap: 6px; overflow-y: auto; max-height: calc(100vh - 120px); }
-        .nav-item { background: transparent; border: none; color: var(--text-muted); text-align: left; padding: 10px 14px; border-radius: 6px; font-size: 12.5px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; gap: 10px; border-left: 3px solid transparent; }
-        .nav-item:hover { background-color: rgba(255, 255, 255, 0.03); color: var(--text-main); }
-        .nav-item.active { background: linear-gradient(90deg, rgba(16, 185, 129, 0.1) 0%, transparent 100%); color: var(--text-main); border-left: 3px solid var(--accent-green); }
-        
-        main { flex: 1; display: grid; grid-template-columns: 1fr 380px; grid-template-rows: 60px 1fr; height: 100vh; overflow: hidden; }
-        header { grid-column: 1 / -1; background-color: var(--bg-panel); border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; padding: 0 30px; }
-        .header-title { font-size: 13.5px; color: var(--text-muted); }
-        .lang-selector { display: flex; gap: 6px; }
-        .lang-btn { background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-muted); padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; cursor: pointer; }
-        .lang-btn.active { background: var(--accent-green); color: #fff; border-color: var(--accent-green); }
-        
-        .content-area { padding: 25px; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; overflow-x: hidden; }
-        
-        .video-screen-horizontal { width: 100%; aspect-ratio: 16/9; background: #000; border-radius: 8px; border: 1px solid var(--border-color); position: relative; overflow: hidden; margin-bottom: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.6); }
-        .video-screen-horizontal video { width: 100%; height: 100%; object-fit: cover; display: block; }
-        .video-overlay-badge { position: absolute; top: 12px; left: 12px; background: rgba(0,0,0,0.75); backdrop-filter: blur(4px); padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: bold; color: var(--accent-green); border: 1px solid var(--border-color); z-index: 10; }
-        
-        .montsia-section { background: linear-gradient(145deg, #121212, #070707); border: 1px solid rgba(197, 160, 89, 0.3); border-radius: 12px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .montsia-header-tag { display: flex; align-items: center; margin-bottom: 15px; font-size: 11px; color: var(--accent-gold); text-transform: uppercase; letter-spacing: 2px; font-weight: 700; }
-        .gold-pulse-dot { width: 8px; height: 8px; background-color: var(--accent-gold); border-radius: 50%; margin-right: 10px; animation: pulse-gold 2s infinite; }
-        @keyframes pulse-gold { 0% { box-shadow: 0 0 0 0 rgba(197, 160, 89, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(197, 160, 89, 0); } 100% { box-shadow: 0 0 0 0 rgba(197, 160, 89, 0); } }
-        .montsia-title { font-size: 18px; line-height: 1.3; margin: 0 0 10px 0; color: #fff; font-weight: 700; }
+        * {
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            scrollbar-width: thin;
+            scrollbar-color: var(--border-color) var(--bg-panel);
+        }
 
-        .montsia-tech-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 12px; padding: 15px 0; border-top: 1px solid #222; border-bottom: 1px solid #222; margin-bottom: 15px; }
-        .tech-card { background: #161616; border: 1px solid #222; padding: 10px; border-radius: 6px; text-align: center; position: relative; overflow: hidden; }
-        .tech-label { font-size: 10px; color: #777; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
-        .tech-value { font-size: 18px; font-weight: 700; color: var(--accent-gold); }
-        .tech-sub { font-size: 10px; color: var(--text-muted); margin-top: 2px; }
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
 
-        .tag-reservado-leveli { position: absolute; top: 12px; right: -30px; background: linear-gradient(90deg, var(--accent-blue), #1e3a8a); color: #fff; font-size: 9px; font-weight: 900; padding: 4px 30px; transform: rotate(45deg); letter-spacing: 2px; box-shadow: 0 4px 10px rgba(0,0,0,0.5); z-index: 10; }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-panel);
+            border-left: 1px solid var(--border-color);
+        }
 
-        .slider { -webkit-appearance: none; width: 100%; height: 6px; border-radius: 5px; background: var(--bg-panel); border: 1px solid var(--border-color); outline: none; margin-top: 8px; }
-        .slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 18px; height: 18px; border-radius: 50%; background: var(--accent-gold); cursor: pointer; transition: transform 0.2s; }
-        .slider::-webkit-slider-thumb:hover { transform: scale(1.2); }
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 10px;
+        }
 
-        .btn-laser-futurista { position: relative; display: block; width: 100%; padding: 14px; margin-top: 25px; background: rgba(10, 15, 25, 0.8); color: var(--accent-gold); font-size: 13.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; border: 1px solid rgba(197, 160, 89, 0.3); border-radius: 8px; cursor: pointer; overflow: hidden; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6); }
-        .btn-laser-futurista:hover { border-color: var(--accent-gold); text-shadow: 0 0 10px rgba(197, 160, 89, 0.5); box-shadow: 0 0 20px rgba(197, 160, 89, 0.15); }
-        .btn-laser-futurista::before { content: ""; position: absolute; top: 0; left: -150%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(197, 160, 89, 0.4), transparent); transform: skewX(-25deg); animation: radar-sweep 3.5s infinite; }
-        @keyframes radar-sweep { 0% { left: -150%; } 40% { left: 200%; } 100% { left: 200%; } }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-green);
+        }
 
-        @keyframes flashButtonLaser { 0% { box-shadow: 0 0 0 0 rgba(197, 160, 89, 0); } 50% { box-shadow: 0 0 40px 15px rgba(197, 160, 89, 0.6); } 100% { box-shadow: 0 0 0 0 rgba(197, 160, 89, 0); } }
-        .flash-btn-active { animation: flashButtonLaser 0.8s ease-out; }
-        
-        .right-panel { background-color: var(--bg-panel); border-left: 1px solid var(--border-color); padding: 25px; display: flex; flex-direction: column; overflow-y: auto; }
-        .right-panel-content { display: flex; flex-direction: column; gap: 16px; }
-        .victoria-box { text-align: center; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; transition: all 0.3s ease; }
-        .victoria-avatar { width: 55px; height: 55px; background: linear-gradient(135deg, #C5A059, #10b981); border-radius: 50%; margin: 0 auto 12px auto; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: bold; color: #fff; letter-spacing: 1px; }
-        
-        .btn-action { display: block; width: 100%; background-color: var(--accent-green); color: #fff; text-align: center; padding: 12px; border-radius: 8px; font-size: 14px; font-weight: bold; text-decoration: none; margin-top: 15px; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); transition: opacity 0.2s; cursor: pointer; border: none;}
-        .btn-action:hover { opacity: 0.9; }
-        
-        .btn-secondary { background-color: transparent; border: 1px solid var(--border-color); color: var(--text-muted); margin-top: 8px; box-shadow: none; font-size: 12.5px; display: block; text-align: center; text-decoration: none; padding: 10px; border-radius: 6px; cursor: pointer; transition: all 0.2s;}
-        .btn-secondary:hover { border-color: var(--accent-green); color: var(--text-main); background: var(--bg-base); }
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            display: flex;
+            overflow: hidden;
+        }
 
-        .captcha-container { display: none; background: var(--bg-panel); border: 1px dashed var(--border-color); border-radius: 8px; padding: 15px; margin-top: 15px; animation: fadeIn 0.3s ease; text-align: left; }
-        .captcha-text { font-size: 12.5px; color: var(--text-muted); margin-bottom: 12px; }
-        .captcha-input-group { display: flex; gap: 10px; margin-top: 12px;}
-        .captcha-input-group input { flex: 1; background: var(--bg-base); border: 1px solid var(--border-color); color: var(--text-main); padding: 10px; border-radius: 6px; font-size: 14px; text-align: center; outline: none; transition: border-color 0.2s; }
-        .captcha-input-group input:focus { border-color: var(--accent-green); }
-        .captcha-input-group button { background: var(--accent-green); color: #fff; border: none; padding: 0 15px; border-radius: 6px; font-weight: bold; cursor: pointer; transition: opacity 0.2s; }
-        
-        .legal-checkbox-container { font-size: 11px; color: var(--text-muted); display: flex; align-items: flex-start; gap: 8px; margin-top: 15px; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.05); }
-        .legal-checkbox-container input[type="checkbox"] { margin-top: 2px; cursor: pointer; }
+        aside {
+            width: 260px;
+            background-color: var(--bg-panel);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            flex-shrink: 0;
+        }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+        .brand-container {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
 
-        .chat-interface { display: none; flex-direction: column; height: 320px; background: var(--bg-base); border-radius: 8px; border: 1px solid var(--border-color); margin-top: 15px; overflow: hidden; text-align: left;}
-        .chat-messages { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
-        .chat-bubble { max-width: 85%; padding: 10px 14px; border-radius: 8px; font-size: 13px; line-height: 1.4; word-wrap: break-word; }
-        .bot-message { background: var(--bg-panel); border: 1px solid var(--border-color); color: var(--text-main); align-self: flex-start; border-bottom-left-radius: 2px; }
-        .user-message { background: var(--accent-green); color: #fff; align-self: flex-end; border-bottom-right-radius: 2px; }
-        .typing-indicator { font-size: 12px; color: var(--text-muted); font-style: italic; display: none; margin-left: 10px; padding: 5px 15px; }
-        .chat-input-area { display: flex; border-top: 1px solid var(--border-color); background: var(--bg-panel); }
-        .chat-input-area input { flex: 1; background: transparent; border: none; padding: 12px 15px; color: var(--text-main); font-size: 13px; outline: none; }
-        .chat-input-area button { background: transparent; border: none; color: var(--accent-green); font-weight: bold; padding: 0 15px; cursor: pointer; transition: color 0.2s; }
-        .chat-input-area button:hover { color: #fff; }
+        .brand-logo {
+            display: flex;
+            align-items: baseline;
+            color: #ffffff;
+        }
 
-        .partner-promo { background: linear-gradient(135deg, rgba(59,130,246,0.1), rgba(16,185,129,0.1)); border: 1px dashed var(--accent-blue); border-radius: 10px; padding: 12px 15px; font-size: 12px; color: var(--text-muted); text-align: left; text-decoration: none; display: block; margin-bottom: 5px; }
-        .pro-partner-promo { background: linear-gradient(135deg, rgba(16,185,129,0.1), rgba(59,130,246,0.1)); border: 1px dashed var(--accent-green); border-radius: 10px; padding: 12px 15px; font-size: 12px; color: var(--text-muted); text-align: left; }
-        .api-badge { margin-top: auto; padding-top: 20px; text-align: center; font-size: 11px; color: var(--text-muted); }
+        .l-letter {
+            font-size: 32px;
+            font-weight: 900;
+            line-height: 1;
+        }
 
-        .legal-accordion-container { margin-top: 20px; border-top: 1px solid var(--border-color); padding-top: 20px; }
-        details { background-color: var(--bg-panel); border: 1px solid var(--border-color); border-radius: 8px; margin-bottom: 10px; overflow: hidden; }
-        summary { padding: 15px; font-size: 13px; font-weight: bold; color: var(--text-muted); cursor: pointer; outline: none; user-select: none; transition: background 0.2s, color 0.2s; }
-        summary:hover { background-color: var(--bg-card); color: var(--text-main); }
-        .details-content { padding: 15px; font-size: 12px; color: var(--text-muted); line-height: 1.6; border-top: 1px solid var(--border-color); background-color: var(--bg-base); }
-        .details-content strong { color: var(--text-main); display: block; margin-top: 10px; margin-bottom: 4px; }
-        
-        .unsubscribe-section { text-align: center; margin-top: 25px; padding: 20px; border-top: 1px dashed var(--border-color); }
+        .brand-dot {
+            width: 9px;
+            height: 9px;
+            background-color: var(--accent-green);
+            border-radius: 50%;
+            margin: 0 6px 0 2px;
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.6);
+        }
+
+        .logo-text {
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .brand-clock {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 11px;
+            color: var(--accent-green);
+            font-weight: bold;
+            letter-spacing: 0.5px;
+            text-shadow: 0 0 5px rgba(16, 185, 129, 0.4);
+            margin-top: 4px;
+            white-space: nowrap;
+        }
+
+        .nav-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            overflow-y: auto;
+            max-height: calc(100vh - 120px);
+        }
+
+        .nav-item {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            text-align: left;
+            padding: 10px 14px;
+            border-radius: 6px;
+            font-size: 12.5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-left: 3px solid transparent;
+        }
+
+        .nav-item:hover {
+            background-color: rgba(255, 255, 255, 0.03);
+            color: var(--text-main);
+        }
+
+        .nav-item.active {
+            background: linear-gradient(90deg, rgba(16, 185, 129, 0.1) 0%, transparent 100%);
+            color: var(--text-main);
+            border-left: 3px solid var(--accent-green);
+        }
+
+        main {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            grid-template-rows: 60px 1fr;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        header {
+            grid-column: 1 / -1;
+            background-color: var(--bg-panel);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 30px;
+        }
+
+        .header-title {
+            font-size: 13.5px;
+            color: var(--text-muted);
+        }
+
+        .lang-selector {
+            display: flex;
+            gap: 6px;
+        }
+
+        .lang-btn {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .lang-btn.active {
+            background: var(--accent-green);
+            color: #fff;
+            border-color: var(--accent-green);
+        }
+
+        .content-area {
+            padding: 25px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            overflow-x: hidden;
+        }
+
+        .video-screen-horizontal {
+            width: 100%;
+            aspect-ratio: 16/9;
+            background: #000;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 10px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+        }
+
+        .video-screen-horizontal video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .video-overlay-badge {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            background: rgba(0,0,0,0.75);
+            backdrop-filter: blur(4px);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: bold;
+            color: var(--accent-green);
+            border: 1px solid var(--border-color);
+            z-index: 10;
+        }
+
+        .montsia-section {
+            background: linear-gradient(145deg, #121212, #070707);
+            border: 1px solid rgba(197, 160, 89, 0.3);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .montsia-header-tag {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            font-size: 11px;
+            color: var(--accent-gold);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 700;
+        }
+
+        .gold-pulse-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--accent-gold);
+            border-radius: 50%;
+            margin-right: 10px;
+            animation: pulse-gold 2s infinite;
+        }
+
+        @keyframes pulse-gold {
+            0% { box-shadow: 0 0 0 0 rgba(197, 160, 89, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(197, 160, 89, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(197, 160, 89, 0); }
+        }
+
+        .montsia-title {
+            font-size: 18px;
+            line-height: 1.3;
+            margin: 0 0 10px 0;
+            color: #fff;
+            font-weight: 700;
+        }
+
+        .montsia-tech-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+            gap: 12px;
+            padding: 15px 0;
+            border-top: 1px solid #222;
+            border-bottom: 1px solid #222;
+            margin-bottom: 15px;
+        }
+
+        .tech-card {
+            background: #161616;
+            border: 1px solid #222;
+            padding: 10px;
+            border-radius: 6px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tech-label {
+            font-size: 10px;
+            color: #777;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+
+        .tech-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--accent-gold);
+        }
+
+        .tech-sub {
+            font-size: 10px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .tag-reservado-leveli {
+            position: absolute;
+            top: 12px;
+            right: -30px;
+            background: linear-gradient(90deg, var(--accent-blue), #1e3a8a);
+            color: #fff;
+            font-size: 9px;
+            font-weight: 900;
+            padding: 4px 30px;
+            transform: rotate(45deg);
+            letter-spacing: 2px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            z-index: 10;
+        }
+
+        .slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 6px;
+            border-radius: 5px;
+            background: var(--bg-panel);
+            border: 1px solid var(--border-color);
+            outline: none;
+            margin-top: 8px;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--accent-gold);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .slider::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+        }
+
+        .btn-laser-futurista {
+            position: relative;
+            display: block;
+            width: 100%;
+            padding: 14px;
+            margin-top: 25px;
+            background: rgba(10, 15, 25, 0.8);
+            color: var(--accent-gold);
+            font-size: 13.5px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border: 1px solid rgba(197, 160, 89, 0.3);
+            border-radius: 8px;
+            cursor: pointer;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
+        }
+
+        .btn-laser-futurista:hover {
+            border-color: var(--accent-gold);
+            text-shadow: 0 0 10px rgba(197, 160, 89, 0.5);
+            box-shadow: 0 0 20px rgba(197, 160, 89, 0.15);
+        }
+
+        .btn-laser-futurista::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -150%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(197, 160, 89, 0.4), transparent);
+            transform: skewX(-25deg);
+            animation: radar-sweep 3.5s infinite;
+        }
+
+        @keyframes radar-sweep {
+            0% { left: -150%; }
+            40% { left: 200%; }
+            100% { left: 200%; }
+        }
+
+        @keyframes flashButtonLaser {
+            0% { box-shadow: 0 0 0 0 rgba(197, 160, 89, 0); }
+            50% { box-shadow: 0 0 40px 15px rgba(197, 160, 89, 0.6); }
+            100% { box-shadow: 0 0 0 0 rgba(197, 160, 89, 0); }
+        }
+
+        .flash-btn-active {
+            animation: flashButtonLaser 0.8s ease-out;
+        }
+
+        .right-panel {
+            background-color: var(--bg-panel);
+            border-left: 1px solid var(--border-color);
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .right-panel-content {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .victoria-box {
+            text-align: center;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .victoria-avatar {
+            width: 55px;
+            height: 55px;
+            background: linear-gradient(135deg, #C5A059, #10b981);
+            border-radius: 50%;
+            margin: 0 auto 12px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: bold;
+            color: #fff;
+            letter-spacing: 1px;
+        }
+
+        .btn-action {
+            display: block;
+            width: 100%;
+            background-color: var(--accent-green);
+            color: #fff;
+            text-align: center;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: bold;
+            text-decoration: none;
+            margin-top: 15px;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+            transition: opacity 0.2s;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-action:hover {
+            opacity: 0.9;
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            margin-top: 8px;
+            box-shadow: none;
+            font-size: 12.5px;
+            display: block;
+            text-align: center;
+            text-decoration: none;
+            padding: 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--accent-green);
+            color: var(--text-main);
+            background: var(--bg-base);
+        }
+
+        .login-box {
+            display: none;
+            text-align: left;
+            margin-top: 15px;
+            padding: 15px;
+            background: var(--bg-base);
+            border-radius: 8px;
+            border: 1px solid var(--accent-gold);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .login-box input {
+            width: 100%;
+            background: var(--bg-panel);
+            border: 1px solid var(--border-color);
+            color: #fff;
+            padding: 10px;
+            border-radius: 6px;
+            outline: none;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .login-box button {
+            width: 100%;
+            background: var(--accent-gold);
+            color: #000;
+            border: none;
+            padding: 10px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .login-box button:hover {
+            opacity: 0.9;
+        }
+
+        .login-msg {
+            font-size: 12px;
+            margin-top: 8px;
+            min-height: 15px;
+            font-weight: 500;
+        }
+
+        .captcha-container {
+            display: none;
+            background: var(--bg-panel);
+            border: 1px dashed var(--border-color);
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+            animation: fadeIn 0.3s ease;
+            text-align: left;
+        }
+
+        .captcha-text {
+            font-size: 12.5px;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+        }
+
+        .captcha-input-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .captcha-input-group input {
+            flex: 1;
+            background: var(--bg-base);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 14px;
+            text-align: center;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .captcha-input-group input:focus {
+            border-color: var(--accent-green);
+        }
+
+        .captcha-input-group button {
+            background: var(--accent-green);
+            color: #fff;
+            border: none;
+            padding: 0 15px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .legal-checkbox-container {
+            font-size: 11px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            margin-top: 15px;
+            background: rgba(0,0,0,0.2);
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .legal-checkbox-container input[type="checkbox"] {
+            margin-top: 2px;
+            cursor: pointer;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .chat-interface {
+            display: none;
+            flex-direction: column;
+            height: 350px;
+            background: var(--bg-base);
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            margin-top: 15px;
+            overflow: hidden;
+            text-align: left;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .chat-bubble {
+            max-width: 85%;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            line-height: 1.4;
+            word-wrap: break-word;
+        }
+
+        .bot-message {
+            background: var(--bg-panel);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            align-self: flex-start;
+            border-bottom-left-radius: 2px;
+        }
+
+        .user-message {
+            background: var(--accent-green);
+            color: #fff;
+            align-self: flex-end;
+            border-bottom-right-radius: 2px;
+        }
+
+        .typing-indicator {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-style: italic;
+            display: none;
+            margin-left: 10px;
+            padding: 5px 15px;
+        }
+
+        .chat-input-area {
+            display: flex;
+            border-top: 1px solid var(--border-color);
+            background: var(--bg-panel);
+        }
+
+        .chat-input-area input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            padding: 12px 15px;
+            color: var(--text-main);
+            font-size: 13px;
+            outline: none;
+        }
+
+        .chat-input-area button {
+            background: transparent;
+            border: none;
+            color: var(--accent-green);
+            font-weight: bold;
+            padding: 0 15px;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .chat-input-area button:hover {
+            color: #fff;
+        }
+
+        .partner-promo {
+            background: linear-gradient(135deg, rgba(59,130,246,0.1), rgba(16,185,129,0.1));
+            border: 1px dashed var(--accent-blue);
+            border-radius: 10px;
+            padding: 12px 15px;
+            font-size: 12px;
+            color: var(--text-muted);
+            text-align: left;
+            text-decoration: none;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .pro-partner-promo {
+            background: linear-gradient(135deg, rgba(16,185,129,0.1), rgba(59,130,246,0.1));
+            border: 1px dashed var(--accent-green);
+            border-radius: 10px;
+            padding: 12px 15px;
+            font-size: 12px;
+            color: var(--text-muted);
+            text-align: left;
+        }
+
+        .api-badge {
+            margin-top: auto;
+            padding-top: 20px;
+            text-align: center;
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .legal-accordion-container {
+            margin-top: 20px;
+            border-top: 1px solid var(--border-color);
+            padding-top: 20px;
+        }
+
+        details {
+            background-color: var(--bg-panel);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            margin-bottom: 10px;
+            overflow: hidden;
+        }
+
+        summary {
+            padding: 15px;
+            font-size: 13px;
+            font-weight: bold;
+            color: var(--text-muted);
+            cursor: pointer;
+            outline: none;
+            user-select: none;
+            transition: background 0.2s, color 0.2s;
+        }
+
+        summary:hover {
+            background-color: var(--bg-card);
+            color: var(--text-main);
+        }
+
+        .details-content {
+            padding: 15px;
+            font-size: 12px;
+            color: var(--text-muted);
+            line-height: 1.6;
+            border-top: 1px solid var(--border-color);
+            background-color: var(--bg-base);
+        }
+
+        .details-content strong {
+            color: var(--text-main);
+            display: block;
+            margin-top: 10px;
+            margin-bottom: 4px;
+        }
+
+        .unsubscribe-section {
+            text-align: center;
+            margin-top: 25px;
+            padding: 20px;
+            border-top: 1px dashed var(--border-color);
+        }
 
         @media (max-width: 900px) {
-            body { flex-direction: column; overflow-y: auto; overflow-x: hidden; }
-            aside { width: 100%; border-right: none; border-bottom: 1px solid var(--border-color); padding: 15px; flex-shrink: 0; }
-            .nav-menu { flex-direction: row; overflow-x: auto; max-height: none; padding-bottom: 10px; }
-            main { display: flex; flex-direction: column; height: auto; overflow: visible; }
-            header { flex-direction: column; padding: 15px; gap: 15px; height: auto; text-align: center; }
-            .content-area { padding: 15px; overflow-x: hidden; height: auto; }
-            .video-screen-horizontal { width: calc(100% - 30px); margin-left: 15px; }
-            .montsia-section, .unsubscribe-section, .legal-accordion-container { margin-left: 15px; margin-right: 15px; }
-            .right-panel { border-left: none; border-top: 1px solid var(--border-color); padding: 15px; overflow: visible; height: auto; }
-            .chat-interface { height: 350px; } 
+            body {
+                flex-direction: column;
+                overflow-y: auto;
+                overflow-x: hidden;
+            }
+
+            aside {
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid var(--border-color);
+                padding: 15px;
+                flex-shrink: 0;
+            }
+
+            .nav-menu {
+                flex-direction: row;
+                overflow-x: auto;
+                max-height: none;
+                padding-bottom: 10px;
+            }
+
+            main {
+                display: flex;
+                flex-direction: column;
+                height: auto;
+                overflow: visible;
+            }
+
+            header {
+                flex-direction: column;
+                padding: 15px;
+                gap: 15px;
+                height: auto;
+                text-align: center;
+            }
+
+            .content-area {
+                padding: 15px;
+                overflow-x: hidden;
+                height: auto;
+            }
+
+            .video-screen-horizontal {
+                width: calc(100% - 30px);
+                margin-left: 15px;
+            }
+
+            .montsia-section, 
+            .unsubscribe-section, 
+            .legal-accordion-container {
+                margin-left: 15px;
+                margin-right: 15px;
+            }
+
+            .right-panel {
+                border-left: none;
+                border-top: 1px solid var(--border-color);
+                padding: 15px;
+                overflow: visible;
+                height: auto;
+            }
+
+            .chat-interface {
+                height: 350px;
+            } 
         }
     </style>
 </head>
@@ -139,7 +868,7 @@
         </div>
 
         <div class="nav-menu">
-            <button class="nav-item">🎯 NetWorking Montsià</button>
+            <button class="nav-item active">🎯 NetWorking Montsià</button>
             <button class="nav-item" onclick="alert('Módulo disponible próximamente')">🏠 Comprar Inmuebles</button>
             <button class="nav-item" onclick="alert('Módulo disponible próximamente')">🏷️ Venta General</button>
             <button class="nav-item" onclick="alert('Módulo disponible próximamente')">⚙️ Gestión Integral</button>
@@ -249,7 +978,7 @@
                     </div>
                 </div>
 
-                <button class="btn-laser-futurista" onclick="pedirSeguridad('comprar_parcela', this)">
+                <button class="btn-laser-futurista" onclick="iniciarFlujo('comprar_parcela')">
                     ✨ ME INTERESA ESTE TERRENO. HABLAR CON ELENA
                 </button>
             </div>
@@ -314,8 +1043,10 @@
                 </details>
             </div>
 
+            <!-- SECCIÓN BAJA -->
             <div class="unsubscribe-section">
                 <p style="font-size: 12.5px; color: var(--text-muted); margin-bottom: 12px; font-weight: 500;">¿Ya no deseas recibir nuestras comunicaciones o quieres eliminar tus datos?</p>
+                
                 <button id="btn-show-baja" class="btn-secondary" style="display: inline-block; max-width: 250px; margin: 0 auto; width: 100%;" onclick="mostrarCaptchaBaja()">
                     🛑 Solicitar la baja
                 </button>
@@ -336,23 +1067,37 @@
                 <div class="victoria-box" id="victoria-box-panel">
                     <div class="victoria-avatar" style="background: linear-gradient(135deg, #C5A059, #10b981);">E</div>
                     <h3 style="font-size: 15px; margin-bottom: 6px;">Elena | AI Advisor Level-i</h3>
-                    <p style="font-size: 12px; color: var(--text-muted);" id="victoria-subtitle">Atención Personalizada y Gestión Ejecutiva.</p>
+                    <p style="font-size: 12px; color: var(--text-muted);" id="victoria-subtitle">Selecciona tu método de acceso:</p>
                     
-                    <button id="wa-button" class="btn-action" onclick="pedirSeguridad('alcanar_suelo', this)">
-                        <span id="btn-text">🎙️ Iniciar Atención Personalizada</span>
-                    </button>
-                    <button id="btn-login-toggle" class="btn-action btn-secondary" onclick="alert('Módulo disponible próximamente')">
-                        🔐 Acceso Usuarios Registrados
-                    </button>
+                    <div id="botones-acceso">
+                        <!-- VÍA 1: USUARIO REGISTRADO -->
+                        <button class="btn-action" style="background-color: var(--accent-gold); color: #000;" onclick="mostrarLoginRegistrados()">
+                            🔐 Acceso Usuarios Registrados
+                        </button>
+                        
+                        <!-- VÍA 2: NUEVO USUARIO (Abre el CAPTCHA) -->
+                        <button class="btn-action btn-secondary" style="border: 1px solid var(--accent-green); color: var(--accent-green);" onclick="mostrarCaptchaNuevo()">
+                            🎙️ Soy nuevo (Hablar con Recepcionista AI)
+                        </button>
+                    </div>
 
-                    <!-- CAPTCHA MATEMÁTICO DE SEGURIDAD -->
+                    <!-- CAJA: LOGIN DE USUARIOS REGISTRADOS -->
+                    <div id="login-container" class="login-box">
+                        <p style="font-size:12px; color:var(--accent-gold); margin-top:0; margin-bottom:10px;">Introduce tu teléfono vinculado:</p>
+                        <input type="tel" id="login-input" placeholder="Tu número (Ej. 600123456)" onkeypress="if(event.key === 'Enter') verificarUsuarioRegistrado()">
+                        <button onclick="verificarUsuarioRegistrado()">Verificar Acceso</button>
+                        <button class="btn-secondary" style="width: 100%; margin-top: 10px; border: 1px solid var(--border-color); color: var(--text-muted);" onclick="volverInicio()">🔙 Volver atrás</button>
+                        <div id="login-msg" class="login-msg"></div>
+                    </div>
+
+                    <!-- CAJA: CAPTCHA (PARA NUEVOS) -->
                     <div id="captcha-container" class="captcha-container">
                         <div class="captcha-text">🛡️ <b>Verificación de seguridad:</b> ¿Cuánto es <span id="captcha-question" style="color:var(--text-main); font-weight:bold; font-size:14px;"></span>?</div>
                         
                         <div class="legal-checkbox-container">
                             <input type="checkbox" id="legal-consent">
                             <label for="legal-consent">
-                                He leído y acepto la Política de Privacidad y el Aviso Legal. Entiendo y consiento que seré atendido por un sistema automatizado de <b>Inteligencia Artificial</b>.
+                                He leído y acepto la Política de Privacidad y el Aviso Legal. Entiendo y consiento que seré atendido por un sistema automatizado de Inteligencia Artificial.
                             </label>
                         </div>
 
@@ -360,28 +1105,29 @@
                             <input type="number" id="captcha-input" placeholder="Respuesta" onkeypress="handleCaptchaKeyPress(event)">
                             <button onclick="verificarCaptcha()">Verificar</button>
                         </div>
+                        
+                        <button class="btn-secondary" style="width: 100%; margin-top: 15px; border: 1px solid var(--border-color); color: var(--text-muted);" onclick="volverInicio()">🔙 Volver atrás</button>
                     </div>
 
+                    <!-- CAJA: CHATBOT ELENA -->
                     <div id="chat-interface" class="chat-interface">
                         <div style="background: var(--bg-panel); padding: 8px 15px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
-                            <span style="font-size: 11px; color: var(--text-muted); font-weight: bold; text-transform: uppercase;">Asistente Virtual</span>
+                            <span style="font-size: 11px; color: var(--text-muted); font-weight: bold; text-transform: uppercase;">Recepción Level-i</span>
                         </div>
                         <div id="chat-messages" class="chat-messages"></div>
                         <div id="typing-indicator" class="typing-indicator">Elena está escribiendo...</div>
                         <div class="chat-input-area">
-                            <input type="tel" id="chat-input" placeholder="Escribe tu número de teléfono..." onkeypress="handleKeyPress(event)">
+                            <!-- AHORA SIEMPRE ES TEXTO LIBRE DESDE EL INICIO (type="text") -->
+                            <input type="text" id="chat-input" placeholder="Escribe tu número de teléfono..." onkeypress="if(event.key === 'Enter') sendChatMessage()">
                             <button onclick="sendChatMessage()">Enviar</button>
                         </div>
                     </div>
-                </div>
 
-                <div class="partner-promo" style="border-color: var(--accent-green); cursor: pointer; margin-bottom: 5px;" onclick="pedirSeguridad('anunciar', this)">
-                    🎁 <b>Chivatazos / Colaboradores:</b> Gana una tarjeta regalo de <b>500 €</b> por cada propiedad vendida.
                 </div>
-                
-                <div class="pro-partner-promo">
-                    🚀 <b>Alianza Profesional:</b> Gana hasta el <b>60% por operación</b> con nuestra tecnología.
-                </div>
+            </div>
+
+            <div class="pro-partner-promo" style="margin-top: 15px;">
+                🚀 <b>Alianza Profesional:</b> Gana hasta el <b>60% por operación</b> con nuestra tecnología.
             </div>
 
             <div class="api-badge">
@@ -390,23 +1136,14 @@
         </div>
     </main>
 
-    <!-- CAJA FUERTE SEGURA -->
-    <script src="config.js"></script>
+    <!-- CONFIGURACIÓN DE TU WEBHOOK -->
+    <script>
+        // LA URL DE MAKE 
+        const webhookMake = "https://hook.eu1.make.com/8xd81xb9t3mg2ycwez1czd3quwhf2nef"; 
+    </script>
 
     <script>
-        function updateClock() {
-            const now = new Date();
-            const day = String(now.getDate()).padStart(2, '0');
-            const month = String(now.getMonth() + 1).padStart(2, '0');
-            const year = now.getFullYear();
-            const hours = String(now.getHours()).padStart(2, '0');
-            const minutes = String(now.getMinutes()).padStart(2, '0');
-            const seconds = String(now.getSeconds()).padStart(2, '0');
-            const clockEl = document.getElementById('live-clock');
-            if(clockEl) clockEl.innerText = `${day}/${month}/${year} | ${hours}:${minutes}:${seconds}`;
-        }
-        setInterval(updateClock, 1000); updateClock(); 
-
+        // FUNCIONES DEL SIMULADOR ESPECÍFICAS PARA LES CASES
         function calculateTotal() {
             const m2El = document.getElementById('m2-slider');
             const costEl = document.getElementById('cost-slider');
@@ -431,39 +1168,165 @@
         }
         setTimeout(calculateTotal, 500);
 
-        const webhookMake = window.ENV.MAKE_WEBHOOK; 
-        
-        const btnInicio = document.getElementById('wa-button');
-        const btnLoginToggle = document.getElementById('btn-login-toggle');
-        const interfaceChat = document.getElementById('chat-interface');
-        const chatMessages = document.getElementById('chat-messages');
-        const inputField = document.getElementById('chat-input');
-        const typingIndicator = document.getElementById('typing-indicator');
-        const subtitle = document.getElementById('victoria-subtitle');
-
-        let sessionId = "";
-        let modoAcceso = "alcanar_suelo";
+        // MOTOR PRINCIPAL DEL COMMAND CENTER
+        let sessionId = 'usr_' + Math.random().toString(36).substr(2, 9);
         let telefonoCliente = ""; 
         let nombreCliente = ""; 
+        let intencionGuardada = "";
         let captchaRespuesta = 0;
-        let modoPendiente = "";
+        
+        let perfilUsuario = "NUEVO"; 
+        
+        // CAPTURADOR DE IP (Evitando bloqueos de ejecución)
+        let clienteIP = "Desconocida";
+        fetch('https://api.ipify.org?format=json')
+            .then(response => response.json())
+            .then(data => { clienteIP = data.ip; })
+            .catch(error => console.log("No se pudo obtener la IP"));
 
-        function pedirSeguridad(modo, btnElement) {
-            modoPendiente = modo;
-            
-            if (btnElement) {
-                btnElement.classList.add('flash-btn-active');
-                setTimeout(() => btnElement.classList.remove('flash-btn-active'), 800);
-            }
+        // CONTADOR DE INTENTOS LOCAL (Protección Anti-Spam)
+        let intentosFallidos = localStorage.getItem('intentos_login') ? parseInt(localStorage.getItem('intentos_login')) : 0;
 
-            if (btnInicio) btnInicio.style.display = 'none';
-            if (btnLoginToggle) btnLoginToggle.style.display = 'none';
+        function updateClock() {
+            const now = new Date();
+            const day = String(now.getDate()).padStart(2, '0');
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const year = now.getFullYear();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            const clockEl = document.getElementById('live-clock');
+            if(clockEl) clockEl.innerText = `${day}/${month}/${year} | ${hours}:${minutes}:${seconds}`;
+        }
+        setInterval(updateClock, 1000); updateClock(); 
+
+        function ocultarBotones() {
+            const btnContainer = document.getElementById('botones-acceso');
+            if(btnContainer) btnContainer.style.display = 'none';
+            document.getElementById('victoria-subtitle').style.display = 'none';
+        }
+
+        function volverInicio() {
+            document.getElementById('login-container').style.display = 'none';
+            document.getElementById('captcha-container').style.display = 'none';
+            document.getElementById('login-msg').innerText = '';
+            document.getElementById('login-input').value = '';
             
+            const btnContainer = document.getElementById('botones-acceso');
+            if(btnContainer) btnContainer.style.display = 'block';
+            document.getElementById('victoria-subtitle').style.display = 'block';
+        }
+
+        function iniciarFlujo(intencion) {
+            intencionGuardada = intencion;
             document.getElementById('victoria-box-panel').scrollIntoView({ behavior: 'smooth', block: 'center' });
             
-            const captchaContainer = document.getElementById('captcha-container');
-            if (captchaContainer) captchaContainer.style.display = 'block';
-            
+            // Si quieres efecto flash en el contenedor, descomenta:
+            // const mainCont = document.getElementById('main-container');
+            // mainCont.classList.add('flash-active');
+            // setTimeout(() => mainCont.classList.remove('flash-active'), 500);
+        }
+
+        function mostrarLoginRegistrados() {
+            const intentosLocales = localStorage.getItem('intentos_login') ? parseInt(localStorage.getItem('intentos_login')) : 0;
+            if (intentosLocales >= 3) {
+                alert("⛔ ACCESO DENEGADO. Por motivos de seguridad, este dispositivo ha sido bloqueado temporalmente.");
+                return;
+            }
+            ocultarBotones();
+            document.getElementById('login-container').style.display = 'block';
+            document.getElementById('login-input').focus();
+        }
+
+        function verificarUsuarioRegistrado() {
+            let intentosLocales = localStorage.getItem('intentos_login') ? parseInt(localStorage.getItem('intentos_login')) : 0;
+            if (intentosLocales >= 3) return;
+
+            const telInput = document.getElementById('login-input');
+            const msgEl = document.getElementById('login-msg');
+            const telLimpio = telInput.value.replace(/\D/g, '');
+
+            if (telLimpio.length < 9) {
+                msgEl.style.color = "var(--accent-red)";
+                msgEl.innerText = "Error: Introduce un teléfono válido.";
+                return;
+            }
+
+            msgEl.style.color = "var(--accent-gold)";
+            msgEl.innerText = "⏳ Verificando credenciales...";
+            telInput.disabled = true;
+
+            fetch(webhookMake, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    evento: "verificar_registro", 
+                    telefono: telLimpio, 
+                    ip: clienteIP,
+                    Origen: "Level-i chat bot" 
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                telInput.disabled = false;
+                if(data.registrado === "bloqueado") {
+                    intentosFallidos = 3;
+                    localStorage.setItem('intentos_login', intentosFallidos);
+                    msgEl.style.color = "var(--accent-red)";
+                    msgEl.innerText = "⛔ ACCESO DENEGADO. Su dirección IP ha sido bloqueada.";
+                    return;
+                }
+
+                if(data.registrado === true || data.registrado === "true") {
+                    intentosFallidos = 0;
+                    localStorage.setItem('intentos_login', 0);
+                    perfilUsuario = "Usuario Registrado";
+                    
+                    msgEl.style.color = "var(--accent-green)";
+                    msgEl.innerText = "✅ Acceso concedido. Iniciando conexión segura...";
+                    
+                    setTimeout(() => {
+                        document.getElementById('login-container').style.display = 'none';
+                        telefonoCliente = telLimpio; 
+                        iniciarChatbotDirecto('login_exitoso');
+                    }, 1500);
+                } else {
+                    intentosFallidos++;
+                    localStorage.setItem('intentos_login', intentosFallidos);
+                    perfilUsuario = "NUEVO";
+
+                    if (intentosFallidos >= 3) {
+                        msgEl.style.color = "var(--accent-red)";
+                        msgEl.innerText = "⛔ Demasiados intentos fallidos. Dispositivo bloqueado.";
+                        telInput.disabled = true;
+                    } else {
+                        msgEl.style.color = "var(--accent-red)";
+                        msgEl.innerText = `❌ No registrado. Intento ${intentosFallidos} de 3. Pasando con Recepción...`;
+                        setTimeout(() => {
+                            document.getElementById('login-container').style.display = 'none';
+                            telefonoCliente = telLimpio; 
+                            iniciarChatbotDirecto('rechazado_login');
+                        }, 2500);
+                    }
+                }
+            })
+            .catch(err => {
+                // BLINDAJE PARA CONSTRUCCIÓN: Si Make no devuelve JSON todavía, forzamos el paso para que puedas trabajar
+                telInput.disabled = false;
+                msgEl.style.color = "var(--accent-green)";
+                msgEl.innerText = "✅ Conexión establecida. Iniciando chat...";
+                setTimeout(() => {
+                    document.getElementById('login-container').style.display = 'none';
+                    telefonoCliente = telLimpio;
+                    perfilUsuario = "Usuario Registrado";
+                    iniciarChatbotDirecto('login_exitoso');
+                }, 1500);
+            });
+        }
+
+        function mostrarCaptchaNuevo() {
+            ocultarBotones();
+            document.getElementById('captcha-container').style.display = 'block';
             generarNuevaSuma();
         }
 
@@ -475,7 +1338,7 @@
             const input = document.getElementById('captcha-input');
             input.value = "";
             document.getElementById('legal-consent').checked = false;
-            input.focus();
+            setTimeout(() => input.focus(), 100);
         }
 
         function handleCaptchaKeyPress(e) {
@@ -485,13 +1348,13 @@
         function verificarCaptcha() {
             const consentCheckbox = document.getElementById('legal-consent');
             if (!consentCheckbox.checked) {
-                alert("⚠️ Para continuar, debes marcar la casilla confirmando que has leído y aceptas la Política de Privacidad y el uso de IA.");
+                alert("⚠️ Para continuar, debes marcar la casilla confirmando que has leído y aceptas la Política de Privacidad.");
                 return;
             }
             const input = document.getElementById('captcha-input');
             if (parseInt(input.value) === captchaRespuesta) {
                 document.getElementById('captcha-container').style.display = 'none';
-                iniciarChat(modoPendiente);
+                iniciarChatbotDirecto('nuevo');
             } else {
                 input.classList.add('captcha-error');
                 setTimeout(() => input.classList.remove('captcha-error'), 400);
@@ -499,118 +1362,135 @@
             }
         }
 
-        function iniciarChat(modo) {
-            modoAcceso = modo;
+        function iniciarChatbotDirecto(origen) {
+            document.getElementById('chat-interface').style.display = 'flex';
+            let saludoInicial = "";
             
-            if (subtitle) subtitle.style.display = 'none';
-            if (interfaceChat) interfaceChat.style.display = 'flex';
-
-            const urlParams = new URLSearchParams(window.location.search);
-            sessionId = urlParams.get('id') || 'usr_' + Math.random().toString(36).substr(2, 9);
+            if (origen === 'login_exitoso') {
+                saludoInicial = "Bienvenido de nuevo a su zona privada. Ha sido identificado correctamente. ¿En qué le puedo gestionar hoy?";
+                document.getElementById('chat-input').placeholder = "Escriba su consulta...";
+                nombreCliente = "Usuario Registrado"; 
+            }
+            else if (telefonoCliente !== "") {
+                saludoInicial = "Hola. Soy Elena, recepcionista virtual. Su número **" + telefonoCliente + "** no consta en nuestros registros. ¿Cómo desea que me dirija a usted para abrirle una ficha?";
+                document.getElementById('chat-input').placeholder = "Indíqueme su nombre...";
+            } else {
+                saludoInicial = "Hola. Soy Elena, la recepcionista. Para atenderte de forma segura, indícame tu **número de teléfono móvil**.";
+                document.getElementById('chat-input').placeholder = "Escribe tu número de teléfono...";
+            }
             
-            let saludoInicial = "Hola. Soy Elena. Para informarte sobre el suelo urbano en Les Cases d'Alcanar, indícame tu **número de teléfono móvil**.";
             appendMessage("Elena", saludoInicial, 'bot');
             document.getElementById('chat-input').focus();
         }
 
-        function handleKeyPress(e) {
-            if (e.key === 'Enter') { e.preventDefault(); sendChatMessage(); }
-        }
-
         function sendChatMessage() {
-            if (!inputField) return;
+            const inputField = document.getElementById('chat-input');
             const message = inputField.value.trim();
             if (message === "") return;
+            
             inputField.value = "";
             appendMessage("Tú", message, 'user');
 
             if (telefonoCliente === "") {
-                const telefonoLimpio = message.replace(/\D/g, ''); 
-                if (telefonoLimpio.length < 9) {
-                    appendMessage("Elena", "Por favor, indícame un **número de teléfono móvil válido** (mínimo 9 dígitos).", 'bot');
+                const telLimpio = message.replace(/\D/g, ''); 
+                if (telLimpio.length < 9) {
+                    appendMessage("Elena", "Por favor, indícame un **número de móvil válido**.", 'bot');
                     return; 
                 }
-                telefonoCliente = telefonoLimpio; 
-                const inputEl = document.getElementById('chat-input');
-                inputEl.type = "text"; 
-                inputEl.placeholder = "Indícame tu nombre de pila...";
+                telefonoCliente = telLimpio; 
+                inputField.placeholder = "Indícame tu nombre de pila...";
                 appendMessage("Elena", "Perfecto. ¿Cómo deseas que me dirija a ti?", 'bot');
                 return; 
             } 
             
             if (nombreCliente === "") {
-                const textoLimpio = message.toLowerCase().trim();
-                
-                const palabrasProhibidas = [
-                    "puta", "puto", "putas", "putos", "mierda", "mierdas", "cabron", "cabrona", "cabrones", 
-                    "gilipollas", "idiota", "tonto", "tonta", "polla", "cojon", "cojones", "culo", "feo",
-                    "joder", "hostia", "ostia", "capullo", "zorra", "follar", "chingar", "chingada",
-                    "pendejo", "pendeja", "boludo", "boluda", "pelotudo", "pelotuda", "conchatumadre",
-                    "hijodeputa", "hdp", "weon", "huevon", "verga", "mamada", "culeado", "culero",
-                    "malparido", "soplapollas", "tontopolla", "caraculo", "lameculos", "comemierda",
-                    "subnormal", "retrasado", "mongolo", "tarado", "inutil", "asqueroso", "bastardo",
-                    "baboso", "pajero", "pajera", "chupapollas", "chupala", "mamaguevo", "gonorrea",
-                    "pirobo", "cabro", "putazo", "pinga", "choto", "chota", "caca", "pito", "nepe",
-                    "ano", "semen", "perra", "zorron", "guarra", "guarro", "cerdo", "cerda", "maricon", 
-                    "marica", "maricón", "putón", "puton", "putilla", "putillo", "folla", "follador",
-                    "folladora", "cagon", "cagón", "meon", "meón", "mierdoso", "mierdosa", "cabronazo"
-                ]; 
-                
-                const regexProhibidas = new RegExp(`\\b(${palabrasProhibidas.join('|')})\\b`, 'i');
-                const esInvalido = regexProhibidas.test(textoLimpio);
-
-                if (esInvalido || textoLimpio.length < 2 || !isNaN(textoLimpio)) {
-                    appendMessage("Elena", "Disculpa, necesito un nombre válido para poder dirigirme a ti de forma adecuada.", 'bot');
-                    return; 
-                }
-
                 nombreCliente = message;
-                document.getElementById('chat-input').placeholder = "Conectando con Ventas...";
-                document.getElementById('chat-input').disabled = true;
-
-                const textoSalida = `Encantada de saludarte, ${nombreCliente}. Por favor, no te retires.`;
-                appendMessage("Elena", textoSalida, 'bot');
-                
-                if (typingIndicator) typingIndicator.style.display = 'block';
-
-                const textoMensajeLark = `SI, estoy interesado en la adquisición del solar.`;
+                inputField.placeholder = "Escribe tu mensaje...";
+                document.getElementById('typing-indicator').style.display = 'block';
 
                 fetch(webhookMake, {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        departamento: "VENTAS",
-                        evento: "lead_interesado_solar",
-                        id_sesion: sessionId, 
-                        telefono: telefonoCliente, 
-                        nombre_cliente: nombreCliente, 
-                        mensaje: textoMensajeLark,
-                        modo: modoAcceso,
-                        ID_Inmueble: "REF202606200009",
-                        latitud: "40.547978",
-                        longitud: "0.521458"
-                    })
+                    body: JSON.stringify({ evento: "nuevo_mensaje", id_sesion: sessionId, telefono: telefonoCliente, nombre_cliente: nombreCliente, Origen: "Level-i chat bot", perfil: perfilUsuario, ip: clienteIP, mensaje: "Inicio de sesión completado" })
                 }).then(r => r.json()).then(data => {
-                    if (typingIndicator) typingIndicator.style.display = 'none';
-                    if (data.respuesta_bot && data.respuesta_bot.trim() !== "") {
-                        appendMessage("Ventas", data.respuesta_bot.trim(), 'bot');
+                    document.getElementById('typing-indicator').style.display = 'none';
+                    appendMessage("Elena", (data.respuesta_bot || `Encantada, ${nombreCliente}. ¿En qué te puedo ayudar?`).trim(), 'bot');
+                    
+                    if (intencionGuardada !== "") {
+                        setTimeout(() => {
+                            let textoIntencion = "Me interesa obtener información sobre la referencia seleccionada.";
+                            if(intencionGuardada === 'comprar_parcela') textoIntencion = "Me interesa adquirir la parcela P1 en Les Cases d'Alcanar.";
+                            if(intencionGuardada === 'alcanar_suelo') textoIntencion = "Solicito dossier del suelo en Alcanar.";
+                            if(intencionGuardada === 'precio_312k') textoIntencion = "Solicito detalles de la propiedad de 312k.";
+                            
+                            appendMessage("Tú", textoIntencion, 'user');
+                            document.getElementById('typing-indicator').style.display = 'block';
+                            
+                            fetch(webhookMake, {
+                                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ evento: "nuevo_mensaje", id_sesion: sessionId, telefono: telefonoCliente, nombre_cliente: nombreCliente, Origen: "Level-i chat bot", perfil: perfilUsuario, ip: clienteIP, mensaje: textoIntencion })
+                            }).then(r2 => r2.json()).then(data2 => {
+                                document.getElementById('typing-indicator').style.display = 'none';
+                                if (data2.respuesta_bot) appendMessage("Elena", data2.respuesta_bot.trim(), 'bot');
+                            }).catch(e => { document.getElementById('typing-indicator').style.display = 'none'; });
+                            
+                            intencionGuardada = "";
+                        }, 1500); 
                     }
                 }).catch(err => {
-                    if (typingIndicator) typingIndicator.style.display = 'none';
+                    document.getElementById('typing-indicator').style.display = 'none';
+                    appendMessage("Elena", `Entendido, ${nombreCliente}. ¿Qué información necesitas?`, 'bot');
                 });
                 return;
             }
+
+            document.getElementById('typing-indicator').style.display = 'block';
+            fetch(webhookMake, {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ evento: "nuevo_mensaje", id_sesion: sessionId, telefono: telefonoCliente, nombre_cliente: nombreCliente, Origen: "Level-i chat bot", perfil: perfilUsuario, ip: clienteIP, mensaje: message })
+            }).then(r => r.json()).then(data => {
+                document.getElementById('typing-indicator').style.display = 'none';
+                if (data.respuesta_bot) appendMessage("Elena", data.respuesta_bot.trim(), 'bot');
+            }).catch(err => {
+                document.getElementById('typing-indicator').style.display = 'none';
+                appendMessage("Elena", "Disculpa, hay un error de conexión con nuestros sistemas.", 'bot');
+            });
         }
 
+        // Efecto máquina de escribir integrado
         function appendMessage(sender, text, type) {
-            if (!chatMessages) return;
+            const chatMessages = document.getElementById('chat-messages');
             const msgDiv = document.createElement('div');
             msgDiv.classList.add('chat-bubble', type === 'bot' ? 'bot-message' : 'user-message');
+            chatMessages.appendChild(msgDiv);
             
             let htmlText = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-            msgDiv.innerHTML = htmlText;
-            
-            chatMessages.appendChild(msgDiv);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            if (type === 'bot') {
+                let i = 0;
+                function typeWriter() {
+                    if (i < htmlText.length) {
+                        let char = htmlText.charAt(i);
+                        if (char === '<') {
+                            let tag = "";
+                            while (htmlText.charAt(i) !== '>' && i < htmlText.length) {
+                                tag += htmlText.charAt(i);
+                                i++;
+                            }
+                            tag += '>';
+                            msgDiv.innerHTML += tag;
+                        } else {
+                            msgDiv.innerHTML += char;
+                            i++;
+                        }
+                        chatMessages.scrollTop = chatMessages.scrollHeight;
+                        setTimeout(typeWriter, 20); 
+                    }
+                }
+                typeWriter();
+            } else {
+                msgDiv.innerHTML = htmlText;
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
         }
 
         function setLanguage(lang) {
@@ -653,6 +1533,7 @@
             }
         }
 
+        // Auto-reproducción de videos silenciosos en móvil y PC
         document.addEventListener("DOMContentLoaded", function() {
             const videos = document.querySelectorAll('video');
             videos.forEach(v => {
