@@ -947,6 +947,126 @@
                 </div>
             </div>
 
+            <div class="parcel-simulator-wrapper" style="max-width: 700px; margin: 30px auto; background-color: #1a1a1a; color: #fff; padding: 20px; border-radius: 8px; border: 1px solid #444; font-family: Arial, sans-serif;">
+    
+    <div style="text-align: center; margin-bottom: 15px;">
+        <h3 style="color: #ffcc00; margin: 0 0 5px 0; font-size: 18px;">Simulador de División de Parcelas (920 m²)</h3>
+        <p style="color: #aaa; font-size: 13px; margin: 0;">Desplaza la barra divisoria (Edificabilidad: 0,80 m²t / m²s | Mínimo por parcela: 410 m²)</p>
+    </div>
+
+    <div id="parcel-container" style="position: relative; width: 100%; height: 320px; background-image: url('https://level-i.github.io/suelo-residencial/montsia-baix-maestrat/terreno-marjal-plano.jpg'); background-size: cover; background-position: center; border: 3px solid #444; border-radius: 6px; overflow: hidden; cursor: ew-resize;">
+        
+        <div id="parcel1" style="position: absolute; top: 0; bottom: 0; left: 0; width: 50%; background: rgba(0, 150, 0, 0.35); display: flex; flex-direction: column; align-items: center; justify-content: center; text-shadow: 1px 1px 4px rgba(0,0,0,0.9); padding: 10px; box-sizing: border-box;">
+            <div style="font-size: 16px; font-weight: bold; text-transform: uppercase; margin-bottom: 6px; border-bottom: 2px solid rgba(255,255,255,0.5); padding-bottom: 2px;">Parcela A</div>
+            <div id="p1-suelo" style="font-size: 15px; font-weight: bold;">460 m² suelo</div>
+            <div id="p1-techo" style="font-size: 13px; color: #ffcc00; margin-top: 4px;">368 m² techo</div>
+        </div>
+
+        <div id="divider" style="position: absolute; top: 0; bottom: 0; left: 50%; width: 6px; background-color: #ffcc00; cursor: ew-resize; z-index: 10; box-shadow: 0 0 10px rgba(255,204,0,0.8); transform: translateX(-3px);"></div>
+
+        <div id="parcel2" style="position: absolute; top: 0; bottom: 0; right: 0; width: 50%; background: rgba(0, 100, 255, 0.35); display: flex; flex-direction: column; align-items: center; justify-content: center; text-shadow: 1px 1px 4px rgba(0,0,0,0.9); padding: 10px; box-sizing: border-box;">
+            <div style="font-size: 16px; font-weight: bold; text-transform: uppercase; margin-bottom: 6px; border-bottom: 2px solid rgba(255,255,255,0.5); padding-bottom: 2px;">Parcela B</div>
+            <div id="p2-suelo" style="font-size: 15px; font-weight: bold;">460 m² suelo</div>
+            <div id="p2-techo" style="font-size: 13px; color: #ffcc00; margin-top: 4px;">368 m² techo</div>
+        </div>
+
+    </div>
+
+    <div style="display: flex; justify-content: space-between; margin-top: 15px; gap: 10px;">
+        <div style="background: #2a2a2a; padding: 10px; border-radius: 6px; flex: 1; border: 1px solid #444; text-align: center;">
+            <div style="color: #ffcc00; font-size: 13px; font-weight: bold; margin-bottom: 3px;">PARCELA IZQUIERDA (A)</div>
+            <div id="text1" style="font-size: 14px;">Suelo: 460 m² | Techo: 368 m²</div>
+        </div>
+        <div style="background: #2a2a2a; padding: 10px; border-radius: 6px; flex: 1; border: 1px solid #444; text-align: center;">
+            <div style="color: #ffcc00; font-size: 13px; font-weight: bold; margin-bottom: 3px;">PARCELA DERECHA (B)</div>
+            <div id="text2" style="font-size: 14px;">Suelo: 460 m² | Techo: 368 m²</div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+(function() {
+    const container = document.getElementById('parcel-container');
+    const divider = document.getElementById('divider');
+    const parcel1 = document.getElementById('parcel1');
+    const parcel2 = document.getElementById('parcel2');
+    const text1 = document.getElementById('text1');
+    const text2 = document.getElementById('text2');
+
+    const p1Suelo = document.getElementById('p1-suelo');
+    const p1Techo = document.getElementById('p1-techo');
+    const p2Suelo = document.getElementById('p2-suelo');
+    const p2Techo = document.getElementById('p2-techo');
+
+    const totalArea = 920;
+    const minArea = 410; // Mínimo estricto por parcela
+    const edificabilidad = 0.80;
+
+    let isDragging = false;
+
+    function updateSimulator(clientX) {
+        let rect = container.getBoundingClientRect();
+        let containerWidth = container.clientWidth;
+        let posX = clientX - rect.left;
+
+        // Límites dinámicos basados en los 410 m² mínimos
+        let minPixelLimit = (minArea / totalArea) * containerWidth;
+        let maxPixelLimit = containerWidth - minPixelLimit;
+
+        if (posX < minPixelLimit) posX = minPixelLimit;
+        if (posX > maxPixelLimit) posX = maxPixelLimit;
+
+        let percentage = (posX / containerWidth) * 100;
+
+        // Posicionar elementos
+        divider.style.left = percentage + '%';
+        parcel1.style.width = percentage + '%';
+        parcel2.style.width = (100 - percentage) + '%';
+
+        // Cálculos
+        let area1 = Math.round((posX / containerWidth) * totalArea);
+        let area2 = totalArea - area1;
+
+        let techo1 = Math.round(area1 * edificabilidad);
+        let techo2 = Math.round(area2 * edificabilidad);
+
+        // Actualizar textos
+        p1Suelo.innerText = area1 + ' m² suelo';
+        p1Techo.innerText = techo1 + ' m² techo';
+        p2Suelo.innerText = area2 + ' m² suelo';
+        p2Techo.innerText = techo2 + ' m² techo';
+
+        text1.innerText = `Suelo: ${area1} m² | Techo: ${techo1} m²`;
+        text2.innerText = `Suelo: ${area2} m² | Techo: ${techo2} m²`;
+    }
+
+    divider.addEventListener('mousedown', () => { isDragging = true; });
+    container.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        updateSimulator(e.clientX);
+    });
+
+    window.addEventListener('mouseup', () => { isDragging = false; });
+    window.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+        updateSimulator(e.clientX);
+    });
+
+    // Soporte táctil para móviles y tablets
+    divider.addEventListener('touchstart', () => { isDragging = true; });
+    container.addEventListener('touchstart', (e) => {
+        isDragging = true;
+        updateSimulator(e.touches[0].clientX);
+    });
+    window.addEventListener('touchend', () => { isDragging = false; });
+    window.addEventListener('touchmove', (e) => {
+        if (!isDragging) return;
+        updateSimulator(e.touches[0].clientX);
+    });
+})();
+</script>
+            
             <!-- 4. SIMULADOR DE CONSTRUCCIÓN Y BOTÓN CTA INTEGRADO -->
             <div style="background: linear-gradient(145deg, #161b22, #0d1117); border: 1px solid rgba(197, 160, 89, 0.3); border-radius: 12px; padding: 24px; margin-top: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); margin-left: 15px; margin-right: 15px;">
                 <h3 style="font-size: 15px; margin-bottom: 20px; color: var(--text-main);">📊 Simulador de Inversión Llaves en Mano (Suelo + Obra)</h3>
