@@ -278,6 +278,34 @@
             100% { box-shadow: 0 0 0 0 rgba(197, 160, 89, 0); }
         }
 
+        /* ANIMACIÓN PARA EL BOTÓN DE AUDIO */
+        @keyframes pulse-audio {
+            0% { opacity: 0.7; box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+            50% { opacity: 1; box-shadow: 0 0 12px 5px rgba(16, 185, 129, 0.6); }
+            100% { opacity: 0.7; box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+        }
+
+        .audio-badge-flotante {
+            position: absolute;
+            bottom: 12px;
+            right: 12px;
+            background: rgba(0,0,0,0.85);
+            border: 1px solid var(--accent-green);
+            padding: 6px 12px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 20;
+            animation: pulse-audio 1.5s infinite;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .audio-badge-flotante:hover {
+            background: rgba(16, 185, 129, 0.2);
+        }
+
         .montsia-title {
             font-size: 18px;
             line-height: 1.3;
@@ -926,15 +954,21 @@
                 </ul>
             </div>
 
-            <!-- VÍDEO HORIZONTAL FLIPPING (ETIQUETA FLOTANTE ELIMINADA Y TÍTULO CAMBIADO) -->
+            <!-- VÍDEO HORIZONTAL FLIPPING CON BOTÓN DE AUDIO -->
             <div class="montsia-section flipping-theme">
                 <h3 style="color: var(--text-main); margin-top: 0; font-size: 16px; margin-bottom: 15px; text-align: center;">Compra, Reforma y Vende (Renders & Realidad Virtual)</h3>
                 
-                <div class="video-screen-horizontal" style="border-color: rgba(16, 185, 129, 0.4); margin-bottom: 0;">
-                    <!-- Etiqueta flotante eliminada -->
+                <div class="video-screen-horizontal" style="border-color: rgba(16, 185, 129, 0.4); margin-bottom: 0; position: relative;">
                     
-                    <video autoplay loop muted playsinline preload="auto">
-                        <source src="/flipping/compra-reforma-vende-alquila.mp4" type="video/mp4">
+                    <!-- Indicador de audio parpadeante interactivo -->
+                    <div class="audio-badge-flotante" onclick="toggleAudioFlipping()">
+                        <span id="icono-audio-flipping" style="font-size: 14px;">🔇</span>
+                        <span id="texto-audio-flipping" style="font-size: 11px; color: var(--accent-green); font-weight: bold; text-transform: uppercase;">Activar Audio</span>
+                    </div>
+
+                    <!-- El vídeo arranca en mute por obligación de navegadores, pero al hacer clic se desmutea -->
+                    <video id="videoFlipping" autoplay loop muted playsinline preload="auto" onclick="toggleAudioFlipping()" style="cursor: pointer;">
+                        <source src="./flipping/compra-reforma-vende-alquila.mp4" type="video/mp4">
                         Tu navegador no soporta la reproducción de video.
                     </video>
                 </div>
@@ -1233,6 +1267,27 @@
     </script>
 
     <script>
+        /* ==========================================
+           FUNCIÓN PARA ACTIVAR/DESACTIVAR AUDIO
+           ========================================== */
+        function toggleAudioFlipping() {
+            const vid = document.getElementById('videoFlipping');
+            const icon = document.getElementById('icono-audio-flipping');
+            const texto = document.getElementById('texto-audio-flipping');
+            
+            if (vid.muted) {
+                vid.muted = false;
+                icon.innerText = "🔊";
+                texto.innerText = "Audio activado";
+                texto.style.color = "#fff";
+            } else {
+                vid.muted = true;
+                icon.innerText = "🔇";
+                texto.innerText = "Activar Audio";
+                texto.style.color = "var(--accent-green)";
+            }
+        }
+
         /* ==========================================
            SCRIPT PARA EL FORMULARIO FLIPPING
            ========================================== */
@@ -1697,7 +1752,10 @@
 
             const videos = document.querySelectorAll('video');
             videos.forEach(v => {
-                v.muted = true;
+                // Mantenemos los videos base muteados para el autoplay
+                if(v.id !== 'videoFlipping') {
+                    v.muted = true;
+                }
                 v.setAttribute('playsinline', '');
                 v.play().catch(e => console.log('Autoplay en espera de interacción'));
             });
