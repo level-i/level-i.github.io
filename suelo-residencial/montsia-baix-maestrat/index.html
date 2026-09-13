@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Level-i Command Center | NetWorking Montsià - Suelo Residencial</title>
+    <title>Level-i Global Command Center | Matriz Geoespacial de Activos</title>
     <style>
         :root {
             --bg-base: #090d16;
@@ -48,7 +48,7 @@
         }
 
         ::-webkit-scrollbar-thumb:hover {
-            background: var(--accent-green);
+            background: var(--accent-blue);
         }
 
         body {
@@ -92,10 +92,10 @@
         .brand-dot {
             width: 9px;
             height: 9px;
-            background-color: var(--accent-green);
+            background-color: var(--accent-blue);
             border-radius: 50%;
             margin: 0 6px 0 2px;
-            box-shadow: 0 0 10px rgba(16, 185, 129, 0.6);
+            box-shadow: 0 0 10px rgba(59, 130, 246, 0.6);
         }
 
         .logo-text {
@@ -107,10 +107,10 @@
         .brand-clock {
             font-family: 'Courier New', Courier, monospace;
             font-size: 11px;
-            color: var(--accent-green);
+            color: var(--accent-blue);
             font-weight: bold;
             letter-spacing: 0.5px;
-            text-shadow: 0 0 5px rgba(16, 185, 129, 0.4);
+            text-shadow: 0 0 5px rgba(59, 130, 246, 0.4);
             margin-top: 4px;
             white-space: nowrap;
         }
@@ -138,6 +138,7 @@
             align-items: center;
             gap: 10px;
             border-left: 3px solid transparent;
+            text-decoration: none;
         }
 
         .nav-item:hover {
@@ -146,16 +147,16 @@
         }
 
         .nav-item.active {
-            background: linear-gradient(90deg, rgba(16, 185, 129, 0.1) 0%, transparent 100%);
+            background: linear-gradient(90deg, rgba(59, 130, 246, 0.1) 0%, transparent 100%);
             color: var(--text-main);
-            border-left: 3px solid var(--accent-green);
+            border-left: 3px solid var(--accent-blue);
         }
 
         main {
             flex: 1;
             display: grid;
             grid-template-columns: 1fr 380px;
-            grid-template-rows: 60px 1fr;
+            grid-template-rows: 60px 40px 1fr;
             height: 100vh;
             overflow: hidden;
         }
@@ -192,9 +193,46 @@
         }
 
         .lang-btn.active {
-            background: var(--accent-green);
+            background: var(--accent-blue);
             color: #fff;
-            border-color: var(--accent-green);
+            border-color: var(--accent-blue);
+        }
+
+        /* TICKER SUPERIOR TIPO BOLSA */
+        .market-ticker {
+            grid-column: 1 / -1;
+            background: #0c121d;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+            white-space: nowrap;
+            position: relative;
+        }
+
+        .ticker-content {
+            display: inline-block;
+            animation: tickerScroll 25s linear infinite;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 12px;
+            color: var(--accent-gold);
+            padding-left: 100%;
+        }
+
+        .ticker-content span {
+            margin-right: 40px;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .ticker-content span:hover {
+            color: #fff;
+            text-decoration: underline;
+        }
+
+        @keyframes tickerScroll {
+            0% { transform: translate3d(0, 0, 0); }
+            100% { transform: translate3d(-100%, 0, 0); }
         }
 
         .content-area {
@@ -206,205 +244,131 @@
             overflow-x: hidden;
         }
 
-        .video-screen-horizontal {
+        .instruction-banner {
+            background: linear-gradient(135deg, rgba(59,130,246,0.1), rgba(197,160,89,0.05));
+            border: 1px dashed var(--accent-blue);
+            border-radius: 10px;
+            padding: 15px 20px;
+            text-align: center;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .flight-viewport {
             width: 100%;
             aspect-ratio: 16/9;
             background: #000;
-            border-radius: 8px;
+            border-radius: 10px;
             border: 1px solid var(--border-color);
             position: relative;
             overflow: hidden;
-            margin-bottom: 10px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
         }
 
-        .video-screen-horizontal video {
+        .flight-viewport img {
             width: 100%;
             height: 100%;
             object-fit: cover;
             display: block;
+            transition: transform 2s ease-in-out, filter 1s ease;
         }
 
-        .video-overlay-badge {
+        .flight-viewport.flying img {
+            transform: scale(1.1);
+            filter: brightness(1.2) contrast(1.1);
+        }
+
+        .hud-overlay-card {
             position: absolute;
-            top: 12px;
-            left: 12px;
-            background: rgba(0,0,0,0.75);
-            backdrop-filter: blur(4px);
-            padding: 4px 10px;
-            border-radius: 6px;
-            font-size: 11px;
-            font-weight: bold;
-            color: var(--accent-green);
-            border: 1px solid var(--border-color);
+            bottom: 20px;
+            left: 20px;
+            background: rgba(17, 24, 39, 0.85);
+            backdrop-filter: blur(8px);
+            border: 1px solid var(--accent-gold);
+            border-radius: 8px;
+            padding: 15px;
+            max-width: 340px;
             z-index: 10;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.7);
         }
 
-        .montsia-section {
-            background: linear-gradient(145deg, #121212, #070707);
-            border: 1px solid rgba(197, 160, 89, 0.3);
-            border-radius: 12px;
-            padding: 25px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        }
-
-        .montsia-header-tag {
-            display: flex;
-            align-items: center;
-            margin-bottom: 15px;
-            font-size: 11px;
-            color: var(--accent-gold);
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            font-weight: 700;
-        }
-
-        .gold-pulse-dot {
-            width: 8px;
-            height: 8px;
-            background-color: var(--accent-gold);
-            border-radius: 50%;
-            margin-right: 10px;
-            animation: pulse-gold 2s infinite;
-        }
-
-        @keyframes pulse-gold {
-            0% { box-shadow: 0 0 0 0 rgba(197, 160, 89, 0.7); }
-            70% { box-shadow: 0 0 0 10px rgba(197, 160, 89, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(197, 160, 89, 0); }
-        }
-
-        .montsia-title {
-            font-size: 18px;
-            line-height: 1.3;
-            margin: 0 0 10px 0;
-            color: #fff;
-            font-weight: 700;
-        }
-
-        .montsia-tech-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
-            gap: 12px;
-            padding: 15px 0;
-            border-top: 1px solid #222;
-            border-bottom: 1px solid #222;
-            margin-bottom: 15px;
-        }
-
-        .tech-card {
-            background: #161616;
-            border: 1px solid #222;
-            padding: 10px;
-            border-radius: 6px;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .tech-label {
+        .hud-tag {
             font-size: 10px;
-            color: #777;
             text-transform: uppercase;
+            color: var(--accent-gold);
+            font-weight: bold;
             letter-spacing: 1px;
             margin-bottom: 4px;
         }
 
-        .tech-value {
-            font-size: 18px;
-            font-weight: 700;
-            color: var(--accent-gold);
-        }
-
-        .tech-sub {
-            font-size: 10px;
-            color: var(--text-muted);
-            margin-top: 2px;
-        }
-
-        .tag-reservado-leveli {
-            position: absolute;
-            top: 12px;
-            right: -30px;
-            background: linear-gradient(90deg, var(--accent-blue), #1e3a8a);
+        .hud-title {
+            font-size: 14px;
+            font-weight: bold;
             color: #fff;
-            font-size: 9px;
+            margin-bottom: 6px;
+        }
+
+        .hud-price {
+            font-size: 16px;
             font-weight: 900;
-            padding: 4px 30px;
-            transform: rotate(45deg);
-            letter-spacing: 2px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-            z-index: 10;
+            color: var(--accent-green);
+            margin-bottom: 8px;
         }
 
-        .slider {
-            -webkit-appearance: none;
-            width: 100%;
-            height: 6px;
-            border-radius: 5px;
-            background: var(--bg-panel);
-            border: 1px solid var(--border-color);
-            outline: none;
-            margin-top: 8px;
+        .global-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 15px;
         }
 
-        .slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
-            background: var(--accent-gold);
+        .asset-card {
+            background: linear-gradient(145deg, #121212, #070707);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 10px;
+            padding: 18px;
             cursor: pointer;
-            transition: transform 0.2s;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
 
-        .slider::-webkit-slider-thumb:hover {
-            transform: scale(1.2);
+        .asset-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--accent-blue);
+            box-shadow: 0 6px 20px rgba(59,130,246,0.2);
+        }
+
+        .asset-card.active-node {
+            border-color: var(--accent-green);
+            background: linear-gradient(145deg, #101c18, #070707);
         }
 
         .btn-laser-futurista {
             position: relative;
             display: block;
             width: 100%;
-            padding: 14px;
-            margin-top: 25px;
+            padding: 10px;
             background: rgba(10, 15, 25, 0.8);
             color: var(--accent-gold);
-            font-size: 13.5px;
+            font-size: 11.5px;
             font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 2px;
+            letter-spacing: 1px;
             border: 1px solid rgba(197, 160, 89, 0.3);
-            border-radius: 8px;
+            border-radius: 6px;
             cursor: pointer;
             overflow: hidden;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
+            text-align: center;
+            text-decoration: none;
+            margin-top: 8px;
         }
 
         .btn-laser-futurista:hover {
             border-color: var(--accent-gold);
             text-shadow: 0 0 10px rgba(197, 160, 89, 0.5);
             box-shadow: 0 0 20px rgba(197, 160, 89, 0.15);
-        }
-
-        .btn-laser-futurista::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: -150%;
-            width: 50%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(197, 160, 89, 0.4), transparent);
-            transform: skewX(-25deg);
-            animation: radar-sweep 3.5s infinite;
-        }
-
-        @keyframes radar-sweep {
-            0% { left: -150%; }
-            40% { left: 200%; }
-            100% { left: 200%; }
         }
 
         @keyframes flashButtonLaser {
@@ -438,7 +402,6 @@
             border: 1px solid var(--border-color);
             border-radius: 12px;
             padding: 20px;
-            transition: all 0.3s ease;
         }
 
         .victoria-avatar {
@@ -453,13 +416,12 @@
             font-size: 18px;
             font-weight: bold;
             color: #fff;
-            letter-spacing: 1px;
         }
 
         .btn-action {
             display: block;
             width: 100%;
-            background-color: var(--accent-green);
+            background-color: var(--accent-blue);
             color: #fff;
             text-align: center;
             padding: 12px;
@@ -468,8 +430,6 @@
             font-weight: bold;
             text-decoration: none;
             margin-top: 15px;
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
-            transition: opacity 0.2s;
             cursor: pointer;
             border: none;
         }
@@ -483,11 +443,9 @@
             border: 1px solid var(--border-color);
             color: var(--text-muted);
             margin-top: 8px;
-            box-shadow: none;
             font-size: 12.5px;
             display: block;
             text-align: center;
-            text-decoration: none;
             padding: 10px;
             border-radius: 6px;
             cursor: pointer;
@@ -495,7 +453,7 @@
         }
 
         .btn-secondary:hover {
-            border-color: var(--accent-green);
+            border-color: var(--accent-blue);
             color: var(--text-main);
             background: var(--bg-base);
         }
@@ -523,22 +481,6 @@
             font-size: 14px;
         }
 
-        .login-box button {
-            width: 100%;
-            background: var(--accent-gold);
-            color: #000;
-            border: none;
-            padding: 10px;
-            border-radius: 6px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: opacity 0.2s;
-        }
-
-        .login-box button:hover {
-            opacity: 0.9;
-        }
-
         .login-msg {
             font-size: 12px;
             margin-top: 8px;
@@ -553,14 +495,7 @@
             border-radius: 8px;
             padding: 15px;
             margin-top: 15px;
-            animation: fadeIn 0.3s ease;
             text-align: left;
-        }
-
-        .captcha-text {
-            font-size: 12.5px;
-            color: var(--text-muted);
-            margin-bottom: 12px;
         }
 
         .captcha-input-group {
@@ -579,22 +514,6 @@
             font-size: 14px;
             text-align: center;
             outline: none;
-            transition: border-color 0.2s;
-        }
-
-        .captcha-input-group input:focus {
-            border-color: var(--accent-green);
-        }
-
-        .captcha-input-group button {
-            background: var(--accent-green);
-            color: #fff;
-            border: none;
-            padding: 0 15px;
-            border-radius: 6px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: opacity 0.2s;
         }
 
         .legal-checkbox-container {
@@ -607,23 +526,12 @@
             background: rgba(0,0,0,0.2);
             padding: 10px;
             border-radius: 6px;
-            border: 1px solid rgba(255,255,255,0.05);
-        }
-
-        .legal-checkbox-container input[type="checkbox"] {
-            margin-top: 2px;
-            cursor: pointer;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-5px); }
-            to { opacity: 1; transform: translateY(0); }
         }
 
         .chat-interface {
             display: none;
             flex-direction: column;
-            height: 350px;
+            height: 320px;
             background: var(--bg-base);
             border-radius: 8px;
             border: 1px solid var(--border-color);
@@ -634,20 +542,19 @@
 
         .chat-messages {
             flex: 1;
-            padding: 15px;
+            padding: 12px;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 8px;
         }
 
         .chat-bubble {
             max-width: 85%;
-            padding: 10px 14px;
+            padding: 10px 12px;
             border-radius: 8px;
-            font-size: 13px;
+            font-size: 12.5px;
             line-height: 1.4;
-            word-wrap: break-word;
         }
 
         .bot-message {
@@ -655,23 +562,20 @@
             border: 1px solid var(--border-color);
             color: var(--text-main);
             align-self: flex-start;
-            border-bottom-left-radius: 2px;
         }
 
         .user-message {
-            background: var(--accent-green);
+            background: var(--accent-blue);
             color: #fff;
             align-self: flex-end;
-            border-bottom-right-radius: 2px;
         }
 
         .typing-indicator {
-            font-size: 12px;
+            font-size: 11px;
             color: var(--text-muted);
             font-style: italic;
             display: none;
-            margin-left: 10px;
-            padding: 5px 15px;
+            padding: 5px 12px;
         }
 
         .chat-input-area {
@@ -684,37 +588,19 @@
             flex: 1;
             background: transparent;
             border: none;
-            padding: 12px 15px;
+            padding: 10px 12px;
             color: var(--text-main);
-            font-size: 13px;
+            font-size: 12.5px;
             outline: none;
         }
 
         .chat-input-area button {
             background: transparent;
             border: none;
-            color: var(--accent-green);
+            color: var(--accent-blue);
             font-weight: bold;
-            padding: 0 15px;
+            padding: 0 12px;
             cursor: pointer;
-            transition: color 0.2s;
-        }
-
-        .chat-input-area button:hover {
-            color: #fff;
-        }
-
-        .partner-promo {
-            background: linear-gradient(135deg, rgba(59,130,246,0.1), rgba(16,185,129,0.1));
-            border: 1px dashed var(--accent-blue);
-            border-radius: 10px;
-            padding: 12px 15px;
-            font-size: 12px;
-            color: var(--text-muted);
-            text-align: left;
-            text-decoration: none;
-            display: block;
-            margin-bottom: 5px;
         }
 
         .pro-partner-promo {
@@ -725,6 +611,7 @@
             font-size: 12px;
             color: var(--text-muted);
             text-align: left;
+            margin-top: 15px;
         }
 
         .api-badge {
@@ -735,125 +622,12 @@
             color: var(--text-muted);
         }
 
-        .legal-accordion-container {
-            margin-top: 20px;
-            border-top: 1px solid var(--border-color);
-            padding-top: 20px;
-        }
-
-        details {
-            background-color: var(--bg-panel);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            margin-bottom: 10px;
-            overflow: hidden;
-        }
-
-        summary {
-            padding: 15px;
-            font-size: 13px;
-            font-weight: bold;
-            color: var(--text-muted);
-            cursor: pointer;
-            outline: none;
-            user-select: none;
-            transition: background 0.2s, color 0.2s;
-        }
-
-        summary:hover {
-            background-color: var(--bg-card);
-            color: var(--text-main);
-        }
-
-        .details-content {
-            padding: 15px;
-            font-size: 12px;
-            color: var(--text-muted);
-            line-height: 1.6;
-            border-top: 1px solid var(--border-color);
-            background-color: var(--bg-base);
-        }
-
-        .details-content strong {
-            color: var(--text-main);
-            display: block;
-            margin-top: 10px;
-            margin-bottom: 4px;
-        }
-
-        .unsubscribe-section {
-            text-align: center;
-            margin-top: 25px;
-            padding: 20px;
-            border-top: 1px dashed var(--border-color);
-        }
-
         @media (max-width: 900px) {
-            body {
-                flex-direction: column;
-                overflow-y: auto;
-                overflow-x: hidden;
-            }
-
-            aside {
-                width: 100%;
-                border-right: none;
-                border-bottom: 1px solid var(--border-color);
-                padding: 15px;
-                flex-shrink: 0;
-            }
-
-            .nav-menu {
-                flex-direction: row;
-                overflow-x: auto;
-                max-height: none;
-                padding-bottom: 10px;
-            }
-
-            main {
-                display: flex;
-                flex-direction: column;
-                height: auto;
-                overflow: visible;
-            }
-
-            header {
-                flex-direction: column;
-                padding: 15px;
-                gap: 15px;
-                height: auto;
-                text-align: center;
-            }
-
-            .content-area {
-                padding: 15px;
-                overflow-x: hidden;
-                height: auto;
-            }
-
-            .video-screen-horizontal {
-                width: calc(100% - 30px);
-                margin-left: 15px;
-            }
-
-            .montsia-section, 
-            .unsubscribe-section, 
-            .legal-accordion-container {
-                margin-left: 15px;
-                margin-right: 15px;
-            }
-
-            .right-panel {
-                border-left: none;
-                border-top: 1px solid var(--border-color);
-                padding: 15px;
-                overflow: visible;
-                height: auto;
-            }
-
-            .chat-interface {
-                height: 350px;
-            } 
+            body { flex-direction: column; overflow-y: auto; overflow-x: hidden; }
+            aside { width: 100%; border-right: none; border-bottom: 1px solid var(--border-color); padding: 15px; }
+            main { display: flex; flex-direction: column; height: auto; overflow: visible; }
+            header { flex-direction: column; padding: 15px; gap: 10px; height: auto; text-align: center; }
+            .right-panel { border-left: none; border-top: 1px solid var(--border-color); padding: 15px; height: auto; }
         }
     </style>
 </head>
@@ -868,20 +642,15 @@
         </div>
 
         <div class="nav-menu">
-            <button class="nav-item active">🎯 NetWorking Montsià</button>
-            <button class="nav-item" onclick="alert('Módulo disponible próximamente')">🏠 Comprar Inmuebles</button>
-            <button class="nav-item" onclick="alert('Módulo disponible próximamente')">🏷️ Venta General</button>
-            <button class="nav-item" onclick="alert('Módulo disponible próximamente')">⚙️ Gestión Integral</button>
-            <button class="nav-item" onclick="window.location.href='../../residentes/index.html'">🔑 App Alquileres</button>
-            <button class="nav-item" onclick="alert('Módulo disponible próximamente')">🏢 App Comunidades</button>
-            <button class="nav-item" onclick="alert('Módulo disponible próximamente')">💶 Hipotecas</button>
-            <button class="nav-item" onclick="alert('Módulo disponible próximamente')">📈 Inversores</button>
+            <a class="nav-item active" href="#">🌍 Matriz Global</a>
+            <a class="nav-item" href="../index.html" id="link-web-plana">📍 Visitar Web Activo Actual</a>
+            <a class="nav-item" href="vr_command_center.html" target="_blank">🥽 Modo VR / Oculus</a>
         </div>
     </aside>
 
     <main>
         <header>
-            <div class="header-title">NetWorking Montsià · Consola Central PropTech · Sector: La Ràpita y Alcanar</div>
+            <div class="header-title">Matriz Geoespacial Global · Level-i PropTech Command Center</div>
             <div class="lang-selector">
                 <button class="lang-btn active" onclick="setLanguage('esp')">ESP</button>
                 <button class="lang-btn" onclick="setLanguage('ca')">CAT</button>
@@ -889,418 +658,257 @@
             </div>
         </header>
 
+        <!-- TICKER DINÁMICO TIPO BOLSA -->
+        <div class="market-ticker">
+            <div class="ticker-content" id="ticker-container">
+                <span>🔄 Sincronizando activos y coordenadas con la red Lark...</span>
+            </div>
+        </div>
+
         <div class="content-area">
-
-            <!-- 1. VÍDEO PORTADA HORIZONTAL PRINCIPAL -->
-            <div class="video-screen-horizontal" style="border-color: rgba(16, 185, 129, 0.4);">
-                <div class="video-overlay-badge" style="background: rgba(16,185,129,0.9); color:#fff; border:none;">🔴 NetWorking Montsià · EXPERIENCIA VR</div>
-                <video autoplay loop muted playsinline poster="https://app.level-i.com/suelo-residencial/montsia-baix-maestrat/les-cases-0.jpg">
-                    <source src="https://app.level-i.com/compras/larapita/portada-horizontal.mp4" type="video/mp4">
-                    Tu navegador no soporta la reproducción de video.
-                </video>
+            <div class="instruction-banner" id="instruccion-banner">
+                ⚡ <b>Matriz Geoespacial Activa:</b> Descargando nodos, coordenadas y prompts dinámicos de IA...
             </div>
 
-            <!-- 2. SEGUNDO VÍDEO HORIZONTAL AÑADIDO -->
-            <div class="video-screen-horizontal" style="border-color: rgba(197, 160, 89, 0.4);">
-                <div class="video-overlay-badge" style="background: rgba(197,160,89,0.9); color:#000; border:none;">🎬 LES CASES D'ALCANAR · VÍDEO 2</div>
-                <video autoplay loop muted playsinline>
-                    <source src="https://app.level-i.com/les-cases-4.mp4" type="video/mp4">
-                    <source src="https://level-i.github.io/les-cases-4.mp4" type="video/mp4">
-                </video>
-            </div>
-
-            <!-- 3. ANUNCIO LES CASES Y SPOT PROMOCIONAL -->
-            <div class="montsia-section">
-                <div class="montsia-header-tag"><span class="gold-pulse-dot"></span> NetWorking Montsià | Dossier de Inversión | Suelo Urbano</div>
-                
-                <div class="video-screen-horizontal" style="margin-bottom: 15px; width: 100%; margin-left: 0;">
-                    <div class="video-overlay-badge">🎬 SPOT PROMOCIONAL</div>
-                    <video autoplay loop muted playsinline>
-                        <source src="https://app.level-i.com/suelo-residencial/montsia-baix-maestrat/espot%20marjal%20les%20cases%20alcanar%20en%20off%20IA.mp4" type="video/mp4">
-                    </video>
-                </div>
-
-                <h3 class="montsia-title">Suelo Residencial Premium en Les Cases d'Alcanar</h3>
-                <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 15px;">
-                    Entorno consolidado de Ciudad Jardín a 300m del mar. Dos parcelas independientes disponibles. (Coordenadas: 40.547978, 0.521458)
-                </p>
-
-                <div class="montsia-tech-grid">
-                    <div class="tech-card"><div class="tech-label">Sup. Neta</div><div class="tech-value">460 m²</div><div class="tech-sub">Por parcela</div></div>
-                    <div class="tech-card"><div class="tech-label">Techo Máx.</div><div class="tech-value">335 m²</div><div class="tech-sub">Edificabilidad</div></div>
-                    <div class="tech-card"><div class="tech-label">Parcela P1</div><div class="tech-value">170.000 €</div></div>
-                    <div class="tech-card">
-                        <div class="tag-reservado-leveli">RESERVADO</div>
-                        <div class="tech-label">Parcela P2</div><div class="tech-value" style="opacity: 0.7;">170.000 €</div>
-                    </div>
-                </div>
-
-                <div style="display: flex; justify-content: space-between; border-top: 1px solid #222; padding-top: 15px; margin-top: 15px;">
-                    <div>
-                        <div style="font-size: 10px; color: #777; text-transform: uppercase;">Urbanística</div>
-                        <div style="font-size: 14px; font-weight: bold; color: var(--accent-gold);">Clave 17 a1</div>
-                    </div>
-                    <div style="text-align: right;">
-                        <div style="font-size: 10px; color: #777;">Diseño de Proyectos y Dirección de Obra llaves en mano.</div>
-                        <a href="https://arquitecturaecologicavinaros.com" target="_blank" style="font-size: 14px; font-weight: bold; color: var(--accent-gold); text-decoration: none;">Arquitectura Ecológica Vinaròs ↗</a>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- SIMULADOR DE DIVISIÓN DE PARCELAS INTEGRADO -->
-<div class="parcel-simulator-wrapper" style="background: linear-gradient(145deg, #121212, #070707); border: 1px solid rgba(197, 160, 89, 0.3); border-radius: 12px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); width: 100%; box-sizing: border-box; font-family: Arial, sans-serif; margin-bottom: 15px;">
-    
-    <div style="text-align: center; margin-bottom: 15px;">
-        <h3 style="color: #ffcc00; margin: 0 0 5px 0; font-size: 18px;">Simulador de División de Parcelas (920 m²)</h3>
-        <p style="color: #aaa; font-size: 13px; margin: 0;">Desplaza la barra divisoria (Edificabilidad: 0,80 m²t / m²s | Mínimo por parcela: 410 m²)</p>
-    </div>
-
-    <!-- AQUÍ ESTÁ LA LÍNEA ARREGLADA CON LA NUEVA RUTA -->
-    <div id="parcel-container" style="position: relative; width: 100%; height: 320px; background-image: url('https://level-i.github.io/suelo-residencial/montsia-baix-maestrat/suelo-urbano-marjal.jpg'); background-size: cover; background-position: center; border: 3px solid #444; border-radius: 6px; overflow: hidden; cursor: ew-resize;">
-        
-        <div id="parcel1" style="position: absolute; top: 0; bottom: 0; left: 0; width: 50%; background: rgba(0, 150, 0, 0.35); display: flex; flex-direction: column; align-items: center; justify-content: center; text-shadow: 1px 1px 4px rgba(0,0,0,0.9); padding: 10px; box-sizing: border-box;">
-            <div style="font-size: 16px; font-weight: bold; text-transform: uppercase; margin-bottom: 6px; border-bottom: 2px solid rgba(255,255,255,0.5); padding-bottom: 2px; color: #fff;">Parcela A</div>
-            <div id="p1-suelo" style="font-size: 15px; font-weight: bold; color: #fff;">460 m² suelo</div>
-            <div id="p1-techo" style="font-size: 13px; color: #ffcc00; margin-top: 4px;">368 m² techo</div>
-        </div>
-
-        <div id="divider" style="position: absolute; top: 0; bottom: 0; left: 50%; width: 6px; background-color: #ffcc00; cursor: ew-resize; z-index: 10; box-shadow: 0 0 10px rgba(255,204,0,0.8); transform: translateX(-3px);"></div>
-
-        <div id="parcel2" style="position: absolute; top: 0; bottom: 0; right: 0; width: 50%; background: rgba(0, 100, 255, 0.35); display: flex; flex-direction: column; align-items: center; justify-content: center; text-shadow: 1px 1px 4px rgba(0,0,0,0.9); padding: 10px; box-sizing: border-box;">
-            <div style="font-size: 16px; font-weight: bold; text-transform: uppercase; margin-bottom: 6px; border-bottom: 2px solid rgba(255,255,255,0.5); padding-bottom: 2px; color: #fff;">Parcela B</div>
-            <div id="p2-suelo" style="font-size: 15px; font-weight: bold; color: #fff;">460 m² suelo</div>
-            <div id="p2-techo" style="font-size: 13px; color: #ffcc00; margin-top: 4px;">368 m² techo</div>
-        </div>
-
-    </div>
-
-    <div style="display: flex; justify-content: space-between; margin-top: 15px; gap: 10px;">
-        <div style="background: #2a2a2a; padding: 10px; border-radius: 6px; flex: 1; border: 1px solid #444; text-align: center;">
-            <div style="color: #ffcc00; font-size: 13px; font-weight: bold; margin-bottom: 3px;">PARCELA IZQUIERDA (A)</div>
-            <div id="text1" style="font-size: 14px; color: #fff;">Suelo: 460 m² | Techo: 368 m²</div>
-        </div>
-        <div style="background: #2a2a2a; padding: 10px; border-radius: 6px; flex: 1; border: 1px solid #444; text-align: center;">
-            <div style="color: #ffcc00; font-size: 13px; font-weight: bold; margin-bottom: 3px;">PARCELA DERECHA (B)</div>
-            <div id="text2" style="font-size: 14px; color: #fff;">Suelo: 460 m² | Techo: 368 m²</div>
-        </div>
-    </div>
-
-</div>
-
-<script>
-(function() {
-    const container = document.getElementById('parcel-container');
-    if(!container) return; // Evita errores si falta el HTML
-    
-    const divider = document.getElementById('divider');
-    const parcel1 = document.getElementById('parcel1');
-    const parcel2 = document.getElementById('parcel2');
-    const text1 = document.getElementById('text1');
-    const text2 = document.getElementById('text2');
-
-    const p1Suelo = document.getElementById('p1-suelo');
-    const p1Techo = document.getElementById('p1-techo');
-    const p2Suelo = document.getElementById('p2-suelo');
-    const p2Techo = document.getElementById('p2-techo');
-
-    const totalArea = 920;
-    const minArea = 410;
-    const edificabilidad = 0.80;
-
-    let isDragging = false;
-
-    function updateSimulator(clientX) {
-        let rect = container.getBoundingClientRect();
-        let containerWidth = container.clientWidth;
-        let posX = clientX - rect.left;
-
-        let minPixelLimit = (minArea / totalArea) * containerWidth;
-        let maxPixelLimit = containerWidth - minPixelLimit;
-
-        if (posX < minPixelLimit) posX = minPixelLimit;
-        if (posX > maxPixelLimit) posX = maxPixelLimit;
-
-        let percentage = (posX / containerWidth) * 100;
-
-        divider.style.left = percentage + '%';
-        parcel1.style.width = percentage + '%';
-        parcel2.style.width = (100 - percentage) + '%';
-
-        let area1 = Math.round((posX / containerWidth) * totalArea);
-        let area2 = totalArea - area1;
-
-        let techo1 = Math.round(area1 * edificabilidad);
-        let techo2 = Math.round(area2 * edificabilidad);
-
-        p1Suelo.innerText = area1 + ' m² suelo';
-        p1Techo.innerText = techo1 + ' m² techo';
-        p2Suelo.innerText = area2 + ' m² suelo';
-        p2Techo.innerText = techo2 + ' m² techo';
-
-        text1.innerText = `Suelo: ${area1} m² | Techo: ${techo1} m²`;
-        text2.innerText = `Suelo: ${area2} m² | Techo: ${techo2} m²`;
-    }
-
-    divider.addEventListener('mousedown', () => { isDragging = true; });
-    container.addEventListener('mousedown', (e) => {
-        isDragging = true;
-        updateSimulator(e.clientX);
-    });
-
-    window.addEventListener('mouseup', () => { isDragging = false; });
-    window.addEventListener('mousemove', (e) => {
-        if (!isDragging) return;
-        updateSimulator(e.clientX);
-    });
-
-    divider.addEventListener('touchstart', () => { isDragging = true; });
-    container.addEventListener('touchstart', (e) => {
-        isDragging = true;
-        updateSimulator(e.touches[0].clientX);
-    });
-    window.addEventListener('touchend', () => { isDragging = false; });
-    window.addEventListener('touchmove', (e) => {
-        if (!isDragging) return;
-        updateSimulator(e.touches[0].clientX);
-    });
-})();
-</script>
-
-            
-            <!-- 4. SIMULADOR DE CONSTRUCCIÓN Y BOTÓN CTA INTEGRADO -->
-            <div style="background: linear-gradient(145deg, #161b22, #0d1117); border: 1px solid rgba(197, 160, 89, 0.3); border-radius: 12px; padding: 24px; margin-top: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); margin-left: 15px; margin-right: 15px;">
-                <h3 style="font-size: 15px; margin-bottom: 20px; color: var(--text-main);">📊 Simulador de Inversión Llaves en Mano (Suelo + Obra)</h3>
-                
-                <div style="margin-bottom: 20px;">
-                    <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
-                        <span style="font-size: 13px; color: var(--text-muted); font-weight: 600;">Superficie a Edificar</span>
-                        <span id="m2-val" style="color:var(--accent-green); font-weight:bold; font-size:15px; background: rgba(16,185,129,0.1); padding: 4px 10px; border-radius: 6px; border: 1px dashed var(--accent-green);">140 m²</span>
-                    </div>
-                    <input type="range" id="m2-slider" class="slider" min="140" max="335" value="140" step="5" oninput="calculateTotal()">
-                </div>
-                
-                <div style="margin-bottom: 20px;">
-                    <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
-                        <span style="font-size: 13px; color: var(--text-muted); font-weight: 600;">Calidad / Coste Construcción (m²)</span>
-                        <span id="cost-val" style="color: var(--accent-gold); font-weight:bold; font-size:15px; background: rgba(197,160,89,0.1); padding: 4px 10px; border-radius: 6px; border: 1px dashed var(--accent-gold);">1.400 €</span>
-                    </div>
-                    <input type="range" id="cost-slider" class="slider" min="1200" max="3000" value="1400" step="50" oninput="calculateTotal()">
-                </div>
-                
-                <div style="margin-top: 20px; padding-top: 15px; border-top: 1px dashed var(--border-color);">
-                    <div style="display:flex; justify-content:space-between; font-size:13px; color:var(--text-muted); margin-bottom:8px;"><span>Terreno (Parcela P1)</span> <span>170.000 €</span></div>
-                    <div style="display:flex; justify-content:space-between; font-size:13px; color:var(--text-muted); margin-bottom:8px;"><span>Gastos de Compra Terreno (13%)</span> <span id="res-terreno-gastos">22.100 €</span></div>
-                    <div style="display:flex; justify-content:space-between; font-size:13px; color:var(--text-muted); margin-bottom:8px;"><span>Ejecución Material de Obra</span> <span id="res-build">196.000 €</span></div>
-                    <div style="display:flex; justify-content:space-between; font-size:13px; color:var(--text-muted); margin-bottom:8px;"><span>Honorarios y Licencias de Obra (15%)</span> <span id="res-fees">29.400 €</span></div>
-                    
-                    <div style="display:flex; justify-content:space-between; align-items: center; font-size:18px; font-weight:bold; color:#fff; margin-top:15px; padding-top:15px; border-top:1px solid #333;">
-                        <span>INVERSIÓN TOTAL</span> <span id="res-total" style="color: var(--accent-gold);">417.500 €</span>
-                    </div>
-                </div>
-
-                <button class="btn-laser-futurista" onclick="iniciarFlujo('comprar_parcela_marjal')">
-                    ✨ ME INTERESA ESTE TERRENO. HABLAR CON VENTAS
-                </button>
-            </div>
-
-            <!-- ACORDEONES LEGALES COMPLETOS -->
-            <div class="legal-accordion-container" id="seccion-legal">
-                <details id="acordeon-privacidad">
-                    <summary>🔒 Política de Privacidad</summary>
-                    <div class="details-content">
-                        <strong>1. Responsable del Tratamiento</strong>
-                        Razón Social: LEVEL PUNTO IMMO 24365 SLU<br>
-                        NIF: B-26745430<br>
-                        Domicilio Social: Travessera de Gràcia, 56, 3-1a, 08006 Barcelona<br>
-                        Email de Contacto: level@level.immo<br><br>
-                        
-                        <strong>2. Objeto y Finalidad</strong>
-                        La presente política regula el tratamiento de los datos recogidos a través de level.immo. La finalidad exclusiva es la prestación de servicios de auditoría, consultoría e inteligencia inmobiliaria solicitados por el usuario, así como la gestión de las comunicaciones derivadas de dicha relación comercial.<br><br>
-
-                        <strong>3. Infraestructura y Seguridad (App Propia)</strong>
-                        Para garantizar la máxima precisión y rapidez, los datos suministrados se integran en nuestra Plataforma de Inteligencia Inmobiliaria. Este ecosistema tecnológico propio nos permite procesar su información bajo estrictos protocolos de seguridad y confidencialidad, evitando el uso de proveedores de almacenamiento masivo externos no controlados.<br><br>
-
-                        <strong>4. Legitimación</strong>
-                        El tratamiento de sus datos se basa en el consentimiento expreso otorgado al completar y enviar nuestros formularios de contacto o solicitud de auditoría.<br><br>
-
-                        <strong>5. Sus Derechos</strong>
-                        Como titular de los datos, usted tiene derecho a acceder, rectificar, limitar o suprimir su información en cualquier momento. Para ejercer estos derechos, puede dirigirse por escrito a nuestra dirección fiscal o mediante correo electrónico a level@level.immo, adjuntando copia de su DNI para su correcta identificación.
-                    </div>
-                </details>
-
-                <details>
-                    <summary>⚖️ Aviso Legal</summary>
-                    <div class="details-content">
-                        <strong>Información del Titular</strong>
-                        Entidad: LEVEL PUNTO IMMO 24365 SLU<br>
-                        NIF: B-26745430<br>
-                        Domicilio: Travessera de Gràcia, 56, 3-1a, 08006 Barcelona<br>
-                        Email: level@level.immo<br><br>
-
-                        <strong>Uso de la Plataforma</strong>
-                        Este sitio web es la puerta de acceso a nuestra infraestructura de auditoría inmobiliaria. Todo el contenido, incluyendo procesos de análisis y diseño, es propiedad de LEVEL PUNTO IMMO. Queda prohibida su reproducción sin consentimiento expreso.<br><br>
-
-                        <strong>Responsabilidad</strong>
-                        Los informes generados por nuestra tecnología son de carácter consultivo. LEVEL PUNTO IMMO no se hace responsable de las decisiones tomadas basadas en estas auditorías, las cuales dependen de la exactitud de los datos introducidos por el usuario.
-                    </div>
-                </details>
-                
-                <details>
-                    <summary>🍪 Política de Cookies</summary>
-                    <div class="details-content">
-                        <strong>POLÍTICA DE COOKIES</strong><br>
-                        En level.immo, la tecnología es el vehículo para alcanzar la excelencia en el servicio. Utilizamos cookies para asegurar que nuestra plataforma ofrece una respuesta precisa y humana a cada uno de los intervinientes en el proceso inmobiliario.<br><br>
-                        <strong>Uso de Tecnología v1.0.5</strong><br>
-                        Nuestra Plataforma de Inteligencia Inmobiliaria (v1.0.5) utiliza cookies para el correcto funcionamiento de los procesos de auditoría para compradores y vendedores, la seguridad en la transmisión de datos y el análisis de feedback constante. Este estudio nos permite optimizar la interacción entre el usuario y la empresa, buscando siempre el estándar de calidad más alto.<br><br>
-                        <strong>Tipos de Cookies y Finalidad</strong><br>
-                        - Técnicas y Operativas: Imprescindibles para la gestión de auditorías y la integridad de los datos de compradores y vendedores.<br>
-                        - De Análisis y Feedback: Destinadas a la investigación propia y mejora del servicio basada en la experiencia real del usuario en la plataforma.<br>
-                        - Publicitarias: Permiten que nuestra comunicación en Google Ads sea coherente con sus necesidades de inversión o venta.<br><br>
-                        <strong>Compromiso de Calidad</strong><br>
-                        No nos conformamos con el cumplimiento legal; trabajamos para que la tecnología sea transparente y útil. Usted puede gestionar sus preferencias o desactivar el uso de cookies en cualquier momento a través de la configuración de su navegador.<br><br>
-                        <em>Tecnología aplicada a la excelencia inmobiliaria | LEVEL PUNTO IMMO 24365 SLU</em>
-                    </div>
-                </details>
-            </div>
-
-            <div class="unsubscribe-section">
-                <p style="font-size: 12.5px; color: var(--text-muted); margin-bottom: 12px; font-weight: 500;">¿Ya no deseas recibir nuestras comunicaciones o quieres eliminar tus datos?</p>
-                <button id="btn-show-baja" class="btn-secondary" style="display: inline-block; max-width: 250px; margin: 0 auto; width: 100%;" onclick="mostrarCaptchaBaja()">🛑 Solicitar la baja</button>
-                <div id="captcha-baja-container" style="display: none; margin-top: 15px; background: rgba(0,0,0,0.2); padding: 15px; border-radius: 8px; border: 1px dashed var(--border-color); max-width: 300px; margin-left: auto; margin-right: auto;">
-                    <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 10px;">Para continuar, resuelve esta prueba de seguridad: <b id="captcha-baja-q" style="color: var(--text-main); font-size: 14px;"></b></div>
-                    <div style="display: flex; gap: 10px; justify-content: center;">
-                        <input type="number" id="captcha-baja-input" style="width: 80px; background: var(--bg-base); border: 1px solid var(--border-color); color: #fff; text-align: center; border-radius: 6px; outline: none; font-size: 14px;" placeholder="?" onkeypress="if(event.key === 'Enter') verificarBaja()">
-                        <button class="btn-action" style="margin: 0; padding: 8px 15px; width: auto;" onclick="verificarBaja()">Confirmar</button>
-                    </div>
+            <!-- VISOR DE VUELO INTERACTIVO -->
+            <div class="flight-viewport" id="viewport-vuelo">
+                <img id="visor-img" src="https://app.level-i.com/suelo-residencial/montsia-baix-maestrat/les-cases-0.jpg" alt="Vista Activo">
+                <div class="hud-overlay-card" id="hud-card">
+                    <div class="hud-tag" id="hud-tag">Sincronizando...</div>
+                    <div class="hud-title" id="hud-title">Cargando Inmueble</div>
+                    <div class="hud-price" id="hud-price">-- €</div>
+                    <a id="hud-web-link" href="#" target="_blank" class="btn-laser-futurista" style="margin-top: 6px; padding: 6px; font-size: 10px;">🌐 Ver Página Web Inmueble</a>
                 </div>
             </div>
 
+            <h3 style="font-size: 14px; font-weight: 700; color: #fff; margin: 10px 0 0 0;">📂 Nodos de Activos Sincronizados desde Lark</h3>
+            <div class="global-grid" id="catalogo-grid">
+                <!-- Generado dinámicamente -->
+            </div>
         </div>
 
         <div class="right-panel">
             <div class="right-panel-content">
                 <div class="victoria-box" id="victoria-box-panel">
-                    <div class="victoria-avatar" style="background: linear-gradient(135deg, #C5A059, #10b981);">E</div>
-                    <h3 style="font-size: 15px; margin-bottom: 6px;">Elena | AI Advisor Level-i</h3>
-                    <p style="font-size: 12px; color: var(--text-muted);" id="victoria-subtitle">Selecciona tu método de acceso:</p>
+                    <div class="victoria-avatar">E</div>
+                    <h3 style="font-size: 15px; margin-bottom: 4px;">Elena | AI Global Advisor</h3>
+                    <p style="font-size: 11.5px; color: var(--text-muted);" id="victoria-subtitle">Selecciona tu método de acceso:</p>
                     
+                    <!-- BOTONES DE ACCESO DUAL -->
                     <div id="botones-acceso">
                         <button class="btn-action" style="background-color: var(--accent-gold); color: #000;" onclick="mostrarLoginRegistrados()">🔐 Acceso Usuarios Registrados</button>
-                        <button class="btn-action btn-secondary" style="border: 1px solid var(--accent-green); color: var(--accent-green);" onclick="mostrarCaptchaNuevo()">🎙️ Soy nuevo (Hablar con Recepcionista AI)</button>
+                        <button class="btn-action btn-secondary" style="border: 1px solid var(--accent-blue); color: var(--accent-blue);" onclick="mostrarCaptchaNuevo()">🎙️ Soy nuevo (Hablar con Recepcionista AI)</button>
                     </div>
 
+                    <!-- LOGIN USUARIOS REGISTRADOS -->
                     <div id="login-container" class="login-box">
                         <p style="font-size:12px; color:var(--accent-gold); margin-top:0; margin-bottom:10px;">Introduce tu teléfono vinculado:</p>
                         <input type="tel" id="login-input" placeholder="Tu número (Ej. 600123456)" onkeypress="if(event.key === 'Enter') verificarUsuarioRegistrado()">
-                        <button onclick="verificarUsuarioRegistrado()">Verificar Acceso</button>
-                        <button class="btn-secondary" style="width: 100%; margin-top: 10px; border: 1px solid var(--border-color); color: var(--text-muted);" onclick="volverInicio()">🔙 Volver atrás</button>
+                        <button onclick="verificarUsuarioRegistrado()" style="width:100%; background:var(--accent-gold); color:#000; border:none; padding:10px; border-radius:6px; font-weight:bold; cursor:pointer;">Verificar Acceso</button>
+                        <button class="btn-secondary" style="width: 100%; margin-top: 10px;" onclick="volverInicio()">🔙 Volver atrás</button>
                         <div id="login-msg" class="login-msg"></div>
                     </div>
 
+                    <!-- CAPTCHA DE SEGURIDAD NUEVOS -->
                     <div id="captcha-container" class="captcha-container">
-                        <div class="captcha-text">🛡️ <b>Verificación de seguridad:</b> ¿Cuánto es <span id="captcha-question" style="color:var(--text-main); font-weight:bold; font-size:14px;"></span>?</div>
+                        <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">🛡️ Verificación: ¿Cuánto es <span id="captcha-question" style="color:#fff; font-weight:bold;"></span>?</div>
                         <div class="legal-checkbox-container">
                             <input type="checkbox" id="legal-consent">
-                            <label for="legal-consent">He leído y acepto la Política de Privacidad y el Aviso Legal. Entiendo y consiento que seré atendido por un sistema automatizado de Inteligencia Artificial.</label>
+                            <label for="legal-consent">Acepto la Política de Privacidad y el uso de Inteligencia Artificial.</label>
                         </div>
                         <div class="captcha-input-group">
-                            <input type="number" id="captcha-input" placeholder="Respuesta" onkeypress="handleCaptchaKeyPress(event)">
-                            <button onclick="verificarCaptcha()">Verificar</button>
+                            <input type="number" id="captcha-input" placeholder="?" onkeypress="handleCaptchaKeyPress(event)">
+                            <button onclick="verificarCaptcha()" style="background: var(--accent-blue); color: #fff; border: none; padding: 0 15px; border-radius: 6px; font-weight: bold; cursor: pointer;">Ok</button>
                         </div>
-                        <button class="btn-secondary" style="width: 100%; margin-top: 15px; border: 1px solid var(--border-color); color: var(--text-muted);" onclick="volverInicio()">🔙 Volver atrás</button>
+                        <button class="btn-secondary" style="width: 100%; margin-top: 15px;" onclick="volverInicio()">🔙 Volver atrás</button>
                     </div>
 
+                    <!-- INTERFAZ DE CHAT (MANTIENE LA MÁQUINA DE ESCRIBIR) -->
                     <div id="chat-interface" class="chat-interface">
-                        <div style="background: var(--bg-panel); padding: 8px 15px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
-                            <span style="font-size: 11px; color: var(--text-muted); font-weight: bold; text-transform: uppercase;">Recepción Level-i</span>
+                        <div style="background: var(--bg-panel); padding: 8px 12px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-size: 10px; color: var(--text-muted); font-weight: bold; text-transform: uppercase;">Canal Seguro IA · Recepción</span>
                         </div>
                         <div id="chat-messages" class="chat-messages"></div>
                         <div id="typing-indicator" class="typing-indicator">Elena está escribiendo...</div>
                         <div class="chat-input-area">
-                            <input type="text" id="chat-input" placeholder="Escribe tu número de teléfono..." onkeypress="if(event.key === 'Enter') sendChatMessage()">
+                            <input type="text" id="chat-input" placeholder="Escribe tu número de teléfono..." onkeypress="handleKeyPress(event)">
                             <button onclick="sendChatMessage()">Enviar</button>
                         </div>
                     </div>
-
                 </div>
             </div>
 
-            <div class="pro-partner-promo" style="margin-top: 15px;">
+            <div class="pro-partner-promo">
                 🚀 <b>Alianza Profesional:</b> Gana hasta el <b>60% por operación</b> con nuestra tecnología.
             </div>
 
             <div class="api-badge">
-                API 4173 · AICAT 14200
+                API 4173 · AICAT 14200 · Global Matrix
             </div>
         </div>
     </main>
 
-    <!-- CONFIGURACIÓN DE TU WEBHOOK -->
     <script>
-        const webhookMake = "https://hook.eu1.make.com/8xd81xb9t3mg2ycwez1czd3quwhf2nef"; 
-    </script>
+        const webhookMake = "https://hook.eu1.make.com/8xd81xb9t3mg2ycwez1czd3quwhf2nef";
 
-    <script>
-        // FUNCIONES DEL SIMULADOR ESPECÍFICAS PARA LES CASES
-        function calculateTotal() {
-            const m2El = document.getElementById('m2-slider');
-            const costEl = document.getElementById('cost-slider');
-            if(!m2El || !costEl) return;
-            
-            const m2 = parseInt(m2El.value);
-            const cost = parseInt(costEl.value);
-            
-            document.getElementById('m2-val').innerText = m2 + ' m²';
-            document.getElementById('cost-val').innerText = cost.toLocaleString('es-ES') + ' €';
-            
-            const terreno = 170000;
-            const gastosTerreno = terreno * 0.13;
-            const obra = m2 * cost;
-            const honorarios = obra * 0.15;
-            const total = terreno + gastosTerreno + obra + honorarios;
-            
-            document.getElementById('res-build').innerText = obra.toLocaleString('es-ES') + ' €';
-            document.getElementById('res-terreno-gastos').innerText = gastosTerreno.toLocaleString('es-ES') + ' €';
-            document.getElementById('res-fees').innerText = honorarios.toLocaleString('es-ES') + ' €';
-            document.getElementById('res-total').innerText = total.toLocaleString('es-ES') + ' €';
-        }
-        setTimeout(calculateTotal, 500);
-
-        // MOTOR PRINCIPAL DEL COMMAND CENTER
         let sessionId = 'usr_' + Math.random().toString(36).substr(2, 9);
-        let telefonoCliente = ""; 
-        let nombreCliente = ""; 
-        
-        // Variables globales para la intención, mensajes predefinidos y REFERENCIA
-        let intencionGuardada = "";
-        let mensajeAEnviarMake = "Inicio de sesión completado";
-        let inmuebleAEnviarMake = "";
-        let referenciaAEnviarMake = "";
-        
+        let telefonoCliente = "";
+        let nombreCliente = "";
         let captchaRespuesta = 0;
-        let perfilUsuario = "NUEVO"; 
+        let perfilUsuario = "NUEVO";
         let clienteIP = "Desconocida";
+        let intentosFallidos = localStorage.getItem('intentos_login') ? parseInt(localStorage.getItem('intentos_login')) : 0;
 
+        // Obtener IP simulada
         fetch('https://api.ipify.org?format=json')
             .then(response => response.json())
             .then(data => { clienteIP = data.ip; })
-            .catch(error => console.log("No se pudo obtener la IP"));
-
-        let intentosFallidos = localStorage.getItem('intentos_login') ? parseInt(localStorage.getItem('intentos_login')) : 0;
+            .catch(error => console.log("IP oculta"));
 
         function updateClock() {
             const now = new Date();
-            const day = String(now.getDate()).padStart(2, '0');
-            const month = String(now.getMonth() + 1).padStart(2, '0');
-            const year = now.getFullYear();
-            const hours = String(now.getHours()).padStart(2, '0');
-            const minutes = String(now.getMinutes()).padStart(2, '0');
-            const seconds = String(now.getSeconds()).padStart(2, '0');
             const clockEl = document.getElementById('live-clock');
-            if(clockEl) clockEl.innerText = `${day}/${month}/${year} | ${hours}:${minutes}:${seconds}`;
+            if(clockEl) clockEl.innerText = `${String(now.getDate()).padStart(2,'0')}/${String(now.getMonth()+1).padStart(2,'0')}/${now.getFullYear()} | ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
         }
-        setInterval(updateClock, 1000); updateClock(); 
+        setInterval(updateClock, 1000); updateClock();
 
+        let modoActivo = "alcanar_suelo";
+        let idInmuebleActual = "REF202606200009";
+        let latActual = "40.547978";
+        let lonActual = "0.521458";
+        let promptBotActual = "Informar sobre el activo seleccionado.";
+        let listaInmuebles = [];
+        const IMAGEN_DEFAULT = "https://app.level-i.com/suelo-residencial/montsia-baix-maestrat/les-cases-0.jpg";
+
+        async function cargarDatosLark() {
+            try {
+                const response = await fetch(webhookMake, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ accion: "obtener_inmuebles_global" })
+                });
+                const data = await response.json();
+                if (Array.isArray(data) && data.length > 0) {
+                    listaInmuebles = data.map(item => ({
+                        ...item,
+                        imagen: (item.imagen && item.imagen.trim() !== "") ? item.imagen : IMAGEN_DEFAULT
+                    }));
+                } else {
+                    throw new Error("Respaldo local activado");
+                }
+            } catch (error) {
+                listaInmuebles = [
+                    {
+                        id: "REF202606200009",
+                        titulo: "Suelo Residencial Les Cases d'Alcanar",
+                        tipo: "Suelo Urbano | Montsià",
+                        precio: "160.000 €",
+                        lat: "40.547978",
+                        lon: "0.521458",
+                        descripcion: "460 m² neta | Clave 17 a1",
+                        imagen: "https://app.level-i.com/suelo-residencial/montsia-baix-maestrat/les-cases-0.jpg",
+                        url_web: "../index.html",
+                        prompt_ia: "Eres Elena. Informa al inversor sobre el suelo urbano en Les Cases d'Alcanar."
+                    },
+                    {
+                        id: "REF-COW-780",
+                        titulo: "Coworking & Sótano Bovedado Barcelona",
+                        tipo: "Flagship Comercial | Barcelona",
+                        precio: "780.000 €",
+                        lat: "41.382736",
+                        lon: "2.165658",
+                        descripcion: "500 m² | Sótano Abovedado",
+                        imagen: "https://app.level-i.com/suelo-residencial/montsia-baix-maestrat/les-cases-0.jpg",
+                        url_web: "barcelona.html",
+                        prompt_ia: "Eres Elena. Vende la exclusividad de este activo comercial en Ciutat Vella."
+                    }
+                ];
+            }
+            renderizarMatrizGlobal();
+        }
+
+        function renderizarMatrizGlobal() {
+            const tickerContainer = document.getElementById('ticker-container');
+            const catalogoGrid = document.getElementById('catalogo-grid');
+            
+            tickerContainer.innerHTML = "";
+            catalogoGrid.innerHTML = "";
+
+            listaInmuebles.forEach((inm, index) => {
+                const tickerSpan = document.createElement('span');
+                tickerSpan.innerHTML = `📈 [${inm.id}] ${inm.titulo} — ${inm.precio} (Lat: ${inm.lat}, Lon: ${inm.lon})`;
+                tickerSpan.onclick = () => seleccionarActivoPorId(inm.id);
+                tickerContainer.appendChild(tickerSpan);
+
+                const card = document.createElement('div');
+                card.className = `asset-card ${index === 0 ? 'active-node' : ''}`;
+                card.id = `card-${inm.id}`;
+                card.onclick = () => seleccionarActivoPorId(inm.id);
+                card.innerHTML = `
+                    <div>
+                        <div style="font-size: 10px; color: var(--accent-blue); font-weight: bold; margin-bottom: 4px;">${inm.id}</div>
+                        <h4 style="margin: 0 0 6px 0; font-size: 14px; color: #fff;">${inm.titulo}</h4>
+                        <p style="font-size: 12px; color: var(--text-muted); margin: 0 0 10px 0;">${inm.descripcion}</p>
+                    </div>
+                    <div>
+                        <a href="${inm.url_web || '#'}" class="btn-laser-futurista" onclick="event.stopPropagation()">🌐 VER WEB ACTIVO</a>
+                        <button class="btn-laser-futurista" style="margin-top: 6px;">ENLAZAR NODO</button>
+                    </div>
+                `;
+                catalogoGrid.appendChild(card);
+            });
+
+            if (listaInmuebles.length > 0) seleccionarActivoPorId(listaInmuebles[0].id);
+        }
+
+        function seleccionarActivoPorId(idInmueble) {
+            const inm = listaInmuebles.find(item => item.id === idInmueble);
+            if (!inm) return;
+
+            const viewport = document.getElementById('viewport-vuelo');
+            const visorImg = document.getElementById('visor-img');
+            const hudTag = document.getElementById('hud-tag');
+            const hudTitle = document.getElementById('hud-title');
+            const hudPrice = document.getElementById('hud-price');
+            const hudWebLink = document.getElementById('hud-web-link');
+            const linkWebPlana = document.getElementById('link-web-plana');
+            const banner = document.getElementById('instruccion-banner');
+
+            viewport.classList.add('flying');
+
+            setTimeout(() => {
+                modoActivo = inm.id;
+                idInmuebleActual = inm.id;
+                latActual = inm.lat;
+                lonActual = inm.lon;
+                promptBotActual = inm.prompt_ia || "Atender al cliente sobre este activo.";
+
+                visorImg.src = (inm.imagen && inm.imagen.trim() !== "") ? inm.imagen : IMAGEN_DEFAULT;
+                hudTag.innerText = inm.tipo;
+                hudTitle.innerText = inm.titulo;
+                hudPrice.innerText = inm.precio;
+                if(hudWebLink) hudWebLink.href = inm.url_web || '#';
+                if(linkWebPlana) {
+                    linkWebPlana.href = inm.url_web || '#';
+                    linkWebPlana.innerText = `📍 Visitar Web: ${inm.titulo.substring(0, 22)}...`;
+                }
+                banner.innerHTML = `🎯 <b>Nodo Activo:</b> ${inm.titulo} (Lat: ${inm.lat}, Lon: ${inm.lon})`;
+
+                listaInmuebles.forEach(item => {
+                    const elCard = document.getElementById(`card-${item.id}`);
+                    if (elCard) {
+                        if (item.id === idInmueble) elCard.classList.add('active-node');
+                        else elCard.classList.remove('active-node');
+                    }
+                });
+
+                viewport.classList.remove('flying');
+            }, 600);
+        }
+
+        document.addEventListener("DOMContentLoaded", () => { cargarDatosLark(); });
+
+        // LÓGICA DE ACCESO DUAL Y SEGURIDAD
         function ocultarBotones() {
             const btnContainer = document.getElementById('botones-acceso');
             if(btnContainer) btnContainer.style.display = 'none';
@@ -1318,26 +926,10 @@
             document.getElementById('victoria-subtitle').style.display = 'block';
         }
 
-        function iniciarFlujo(intencion) {
-            intencionGuardada = intencion;
-            
-            // Configurar el mensaje oculto y la referencia según el botón pulsado
-            if (intencion === 'comprar_parcela_marjal') {
-                mensajeAEnviarMake = "Hola, me interesa adquirir el SOLAR AV MARJAL. ¿Me pueden informar?";
-                inmuebleAEnviarMake = "SOLAR AV MARJAL";
-                referenciaAEnviarMake = "REF2026062000009";
-            }
-            
-            document.getElementById('victoria-box-panel').scrollIntoView({ behavior: 'smooth', block: 'center' });
-            
-            // Forzamos directamente la apertura del Captcha para acelerar el flujo
-            mostrarCaptchaNuevo();
-        }
-
         function mostrarLoginRegistrados() {
             const intentosLocales = localStorage.getItem('intentos_login') ? parseInt(localStorage.getItem('intentos_login')) : 0;
             if (intentosLocales >= 3) {
-                alert("⛔ ACCESO DENEGADO. Por motivos de seguridad, este dispositivo ha sido bloqueado temporalmente.");
+                alert("⛔ ACCESO DENEGADO. Dispositivo bloqueado temporalmente por seguridad.");
                 return;
             }
             ocultarBotones();
@@ -1370,63 +962,52 @@
                     evento: "verificar_registro", 
                     telefono: telLimpio, 
                     ip: clienteIP,
-                    Origen: "Level-i chat bot" 
+                    Origen: "Level-i Global Command Center" 
                 })
             })
             .then(res => res.json())
             .then(data => {
                 telInput.disabled = false;
                 if(data.registrado === "bloqueado") {
-                    intentosFallidos = 3;
-                    localStorage.setItem('intentos_login', intentosFallidos);
+                    localStorage.setItem('intentos_login', 3);
                     msgEl.style.color = "var(--accent-red)";
-                    msgEl.innerText = "⛔ ACCESO DENEGADO. Su dirección IP ha sido bloqueada.";
+                    msgEl.innerText = "⛔ ACCESO DENEGADO. IP bloqueada.";
                     return;
                 }
 
                 if(data.registrado === true || data.registrado === "true") {
-                    intentosFallidos = 0;
                     localStorage.setItem('intentos_login', 0);
                     perfilUsuario = "Usuario Registrado";
-                    
                     msgEl.style.color = "var(--accent-green)";
-                    msgEl.innerText = "✅ Acceso concedido. Iniciando conexión segura...";
+                    msgEl.innerText = "✅ Acceso concedido.";
                     
                     setTimeout(() => {
                         document.getElementById('login-container').style.display = 'none';
                         telefonoCliente = telLimpio; 
                         iniciarChatbotDirecto('login_exitoso');
-                    }, 1500);
+                    }, 1200);
                 } else {
                     intentosFallidos++;
                     localStorage.setItem('intentos_login', intentosFallidos);
-                    perfilUsuario = "NUEVO";
-
-                    if (intentosFallidos >= 3) {
-                        msgEl.style.color = "var(--accent-red)";
-                        msgEl.innerText = "⛔ Demasiados intentos fallidos. Dispositivo bloqueado.";
-                        telInput.disabled = true;
-                    } else {
-                        msgEl.style.color = "var(--accent-red)";
-                        msgEl.innerText = `❌ No registrado. Intento ${intentosFallidos} de 3. Pasando con Recepción...`;
-                        setTimeout(() => {
-                            document.getElementById('login-container').style.display = 'none';
-                            telefonoCliente = telLimpio; 
-                            iniciarChatbotDirecto('rechazado_login');
-                        }, 2500);
-                    }
+                    msgEl.style.color = "var(--accent-red)";
+                    msgEl.innerText = `❌ No registrado. Intento ${intentosFallidos} de 3.`;
+                    setTimeout(() => {
+                        document.getElementById('login-container').style.display = 'none';
+                        telefonoCliente = telLimpio; 
+                        iniciarChatbotDirecto('rechazado_login');
+                    }, 2000);
                 }
             })
             .catch(err => {
                 telInput.disabled = false;
                 msgEl.style.color = "var(--accent-green)";
-                msgEl.innerText = "✅ Conexión establecida. Iniciando chat...";
+                msgEl.innerText = "✅ Conectado.";
                 setTimeout(() => {
                     document.getElementById('login-container').style.display = 'none';
                     telefonoCliente = telLimpio;
                     perfilUsuario = "Usuario Registrado";
                     iniciarChatbotDirecto('login_exitoso');
-                }, 1500);
+                }, 1000);
             });
         }
 
@@ -1452,9 +1033,8 @@
         }
 
         function verificarCaptcha() {
-            const consentCheckbox = document.getElementById('legal-consent');
-            if (!consentCheckbox.checked) {
-                alert("⚠️ Para continuar, debes marcar la casilla confirmando que has leído y aceptas la Política de Privacidad.");
+            if (!document.getElementById('legal-consent').checked) {
+                alert("⚠️ Debes aceptar la Política de Privacidad y el uso de IA.");
                 return;
             }
             const input = document.getElementById('captcha-input');
@@ -1462,8 +1042,6 @@
                 document.getElementById('captcha-container').style.display = 'none';
                 iniciarChatbotDirecto('nuevo');
             } else {
-                input.classList.add('captcha-error');
-                setTimeout(() => input.classList.remove('captcha-error'), 400);
                 generarNuevaSuma();
             }
         }
@@ -1472,57 +1050,17 @@
             document.getElementById('chat-interface').style.display = 'flex';
             
             if (origen === 'login_exitoso') {
-                document.getElementById('chat-input').placeholder = "Escriba su consulta...";
-                nombreCliente = "Usuario Registrado"; 
-                
-                // Si entra registrado y había pulsado el botón del solar, enviamos directamente la solicitud
-                if (intencionGuardada === 'comprar_parcela_marjal') {
-                    appendMessage("Tú", mensajeAEnviarMake, 'user');
-                    document.getElementById('typing-indicator').style.display = 'block';
-                    fetch(webhookMake, {
-                        method: 'POST', headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ 
-                            evento: "nuevo_mensaje", 
-                            id_sesion: sessionId, 
-                            telefono: telefonoCliente, 
-                            nombre_cliente: nombreCliente, 
-                            Origen: "Level-i chat bot", 
-                            perfil: perfilUsuario, 
-                            ip: clienteIP, 
-                            mensaje: mensajeAEnviarMake,
-                            inmueble: inmuebleAEnviarMake,
-                            referencia: referenciaAEnviarMake
-                        })
-                    }).then(r => r.json()).then(data => {
-                        document.getElementById('typing-indicator').style.display = 'none';
-                        if (data.respuesta_bot) appendMessage("Elena", data.respuesta_bot.trim(), 'bot');
-                    }).catch(e => { document.getElementById('typing-indicator').style.display = 'none'; });
-                    
-                    intencionGuardada = "";
-                } else {
-                    appendMessage("Elena", "Bienvenido de nuevo a su zona privada. Ha sido identificado correctamente. ¿En qué le puedo gestionar hoy?", 'bot');
-                }
-            }
-            else {
-                // FLUJO PARA NUEVOS USUARIOS O NO REGISTRADOS
+                document.getElementById('chat-input').placeholder = "Escriba su consulta sobre el activo...";
+                nombreCliente = "Usuario Registrado";
+                appendMessage("Elena", "Bienvenido de nuevo a su zona privada. ¿En qué le puedo gestionar hoy respecto al activo **" + idInmuebleActual + "**?", 'bot');
+            } else {
                 document.getElementById('chat-input').placeholder = "Escribe tu número de teléfono...";
-                
-                // Si la intención es el solar, simulamos que el usuario envía el primer mensaje
-                if (intencionGuardada === 'comprar_parcela_marjal') {
-                    appendMessage("Tú", mensajeAEnviarMake, 'user');
-                    setTimeout(() => {
-                        appendMessage("Elena", "Hola. Soy Elena, la recepcionista. Para atenderte de forma segura, indícame tu **número de teléfono móvil**.", 'bot');
-                    }, 600);
-                } else if (telefonoCliente !== "") {
-                    appendMessage("Elena", "Hola. Soy Elena, recepcionista virtual. Su número **" + telefonoCliente + "** no consta en nuestros registros. ¿Cómo desea que me dirija a usted para abrirle una ficha?", 'bot');
-                    document.getElementById('chat-input').placeholder = "Indíqueme su nombre...";
-                } else {
-                    appendMessage("Elena", "Hola. Soy Elena, la recepcionista. Para atenderte de forma segura, indícame tu **número de teléfono móvil**.", 'bot');
-                }
+                appendMessage("Elena", "Hola. Soy Elena, recepcionista virtual. Para atenderte sobre este activo, indícame tu **número de teléfono móvil**.", 'bot');
             }
-            
             document.getElementById('chat-input').focus();
         }
+
+        function handleKeyPress(e) { if (e.key === 'Enter') { e.preventDefault(); sendChatMessage(); } }
 
         function sendChatMessage() {
             const inputField = document.getElementById('chat-input');
@@ -1535,10 +1073,11 @@
             if (telefonoCliente === "") {
                 const telLimpio = message.replace(/\D/g, ''); 
                 if (telLimpio.length < 9) {
-                    appendMessage("Elena", "Por favor, indícame un **número de móvil válido**.", 'bot');
+                    appendMessage("Elena", "Por favor, indícame un **número de móvil válido** (mínimo 9 dígitos).", 'bot');
                     return; 
                 }
                 telefonoCliente = telLimpio; 
+                inputField.type = "text"; 
                 inputField.placeholder = "Indícame tu nombre de pila...";
                 appendMessage("Elena", "Perfecto. ¿Cómo deseas que me dirija a ti?", 'bot');
                 return; 
@@ -1546,23 +1085,8 @@
             
             if (nombreCliente === "") {
                 nombreCliente = message;
-                inputField.placeholder = "Escribe tu mensaje...";
+                inputField.placeholder = "Escribe tu consulta...";
                 document.getElementById('typing-indicator').style.display = 'block';
-
-                let primerMensajeMake = "Inicio de sesión completado";
-                let idInmuebleMake = "";
-                let refMake = "";
-
-                // SI PULSÓ EL BOTÓN DEL SOLAR, REEMPLAZAMOS EL MENSAJE DE INICIO Y MANDAMOS LA REFERENCIA
-                if (intencionGuardada === 'comprar_parcela_marjal') {
-                    primerMensajeMake = "Hola, me interesa adquirir el SOLAR AV MARJAL. ¿Me pueden informar?";
-                    idInmuebleMake = "SOLAR AV MARJAL";
-                    refMake = "REF2026062000009";
-                    setTimeout(() => {
-                        appendMessage("Tú", primerMensajeMake, 'user');
-                    }, 500);
-                    intencionGuardada = ""; 
-                }
 
                 fetch(webhookMake, {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -1571,43 +1095,52 @@
                         id_sesion: sessionId, 
                         telefono: telefonoCliente, 
                         nombre_cliente: nombreCliente, 
-                        Origen: "Level-i chat bot", 
+                        Origen: "Level-i Global Command Center", 
                         perfil: perfilUsuario, 
                         ip: clienteIP, 
-                        mensaje: primerMensajeMake,
-                        inmueble: idInmuebleMake,
-                        referencia: refMake
+                        mensaje: `Interesado en activo ID: ${idInmuebleActual}`,
+                        ID_Inmueble: idInmuebleActual,
+                        latitud: latActual,
+                        longitud: lonActual,
+                        prompt_sistema_ia: promptBotActual
                     })
                 }).then(r => r.json()).then(data => {
                     document.getElementById('typing-indicator').style.display = 'none';
-                    appendMessage("Elena", (data.respuesta_bot || `Encantada, ${nombreCliente}. ¿En qué te puedo ayudar?`).trim(), 'bot');
+                    appendMessage("Elena", (data.respuesta_bot || `Encantada, ${nombreCliente}. ¿En qué te puedo ayudar con este activo?`).trim(), 'bot');
                 }).catch(err => {
                     document.getElementById('typing-indicator').style.display = 'none';
-                    appendMessage("Elena", `Encantada, ${nombreCliente}. He recibido tus datos correctamente.`, 'bot');
+                    appendMessage("Elena", `Encantada, ${nombreCliente}. He registrado tu interés por este activo. Un asesor te contactará.`, 'bot');
                 });
-                
-                // Reseteamos las intenciones por si sigue escribiendo
-                intencionGuardada = "";
-                mensajeAEnviarMake = "Inicio de sesión completado";
-                inmuebleAEnviarMake = "";
-                referenciaAEnviarMake = "";
                 return;
             }
 
+            // Conversación normal con la IA ya registrado
             document.getElementById('typing-indicator').style.display = 'block';
             fetch(webhookMake, {
                 method: 'POST', headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ evento: "nuevo_mensaje", id_sesion: sessionId, telefono: telefonoCliente, nombre_cliente: nombreCliente, Origen: "Level-i chat bot", perfil: perfilUsuario, ip: clienteIP, mensaje: message })
+                body: JSON.stringify({ 
+                    evento: "nuevo_mensaje", 
+                    id_sesion: sessionId, 
+                    telefono: telefonoCliente, 
+                    nombre_cliente: nombreCliente, 
+                    Origen: "Level-i Global Command Center", 
+                    perfil: perfilUsuario, 
+                    ip: clienteIP, 
+                    mensaje: message,
+                    ID_Inmueble: idInmuebleActual,
+                    latitud: latActual,
+                    longitud: lonActual
+                })
             }).then(r => r.json()).then(data => {
                 document.getElementById('typing-indicator').style.display = 'none';
                 if (data.respuesta_bot) appendMessage("Elena", data.respuesta_bot.trim(), 'bot');
             }).catch(err => {
                 document.getElementById('typing-indicator').style.display = 'none';
-                appendMessage("Elena", "Disculpa, hay un error de conexión con nuestros sistemas.", 'bot');
+                appendMessage("Elena", "Disculpa, hay un error de conexión con nuestros servidores.", 'bot');
             });
         }
 
-        // Efecto máquina de escribir integrado
+        // Efecto de máquina de escribir integrado
         function appendMessage(sender, text, type) {
             const chatMessages = document.getElementById('chat-messages');
             const msgDiv = document.createElement('div');
@@ -1634,7 +1167,7 @@
                             i++;
                         }
                         chatMessages.scrollTop = chatMessages.scrollHeight;
-                        setTimeout(typeWriter, 20); 
+                        setTimeout(typeWriter, 15); 
                     }
                 }
                 typeWriter();
@@ -1646,53 +1179,10 @@
 
         function setLanguage(lang) {
             document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
-            if (lang === 'ca') {
-                document.querySelectorAll('.lang-btn')[1].classList.add('active');
-            } else if (lang === 'fra') {
-                document.querySelectorAll('.lang-btn')[2].classList.add('active');
-            } else {
-                document.querySelectorAll('.lang-btn')[0].classList.add('active');
-            }
+            if (lang === 'ca') document.querySelectorAll('.lang-btn')[1].classList.add('active');
+            else if (lang === 'fra') document.querySelectorAll('.lang-btn')[2].classList.add('active');
+            else document.querySelectorAll('.lang-btn')[0].classList.add('active');
         }
-
-        let captchaBajaRespuesta = 0;
-        function mostrarCaptchaBaja() {
-            document.getElementById('btn-show-baja').style.display = 'none';
-            document.getElementById('captcha-baja-container').style.display = 'block';
-            generarSumaBaja();
-        }
-
-        function generarSumaBaja() {
-            const n1 = Math.floor(Math.random() * 9) + 1;
-            const n2 = Math.floor(Math.random() * 9) + 1;
-            captchaBajaRespuesta = n1 + n2;
-            document.getElementById('captcha-baja-q').innerText = `${n1} + ${n2}`;
-            const input = document.getElementById('captcha-baja-input');
-            input.value = "";
-            input.focus();
-        }
-
-        function verificarBaja() {
-            const input = document.getElementById('captcha-baja-input');
-            if (parseInt(input.value) === captchaBajaRespuesta) {
-                document.getElementById('captcha-baja-container').innerHTML = "<span style='color: var(--accent-green); font-weight: bold; font-size: 13px;'>Redirigiendo a su gestor de correo...</span>";
-                window.location.href = "mailto:level@level.immo?subject=Baja%20de%20Suscripcion";
-            } else {
-                input.style.borderColor = "#ef4444";
-                setTimeout(() => input.style.borderColor = "var(--border-color)", 400);
-                generarSumaBaja();
-            }
-        }
-
-        // Auto-reproducción de videos silenciosos en móvil y PC
-        document.addEventListener("DOMContentLoaded", function() {
-            const videos = document.querySelectorAll('video');
-            videos.forEach(v => {
-                v.muted = true;
-                v.setAttribute('playsinline', '');
-                v.play().catch(e => console.log('Autoplay en espera de interacción'));
-            });
-        });
     </script>
 </body>
 </html>
