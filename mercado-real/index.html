@@ -1,1 +1,390 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Level-i Command Center | Mercado Real</title>
+    <style>
+        :root {
+            --bg-base: #090d16;
+            --bg-panel: #111827;
+            --bg-card: #1f2937;
+            --accent-green: #10b981;
+            --accent-blue: #3b82f6;
+            --accent-gold: #C5A059;
+            --accent-red: #ef4444;
+            --text-main: #f9fafb;
+            --text-muted: #9ca3af;
+            --border-color: #374151;
+        }
+        
+        html, body { margin: 0; padding: 0; height: 100%; width: 100%; }
+        * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; scrollbar-width: thin; scrollbar-color: var(--border-color) var(--bg-panel); }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg-panel); border-left: 1px solid var(--border-color); }
+        ::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--accent-green); }
 
+        body { background-color: var(--bg-base); color: var(--text-main); display: flex; overflow: hidden; }
+        
+        /* SIDEBAR (Idéntico a la consola para mantener el ecosistema) */
+        aside { width: 260px; background-color: var(--bg-panel); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; padding: 20px; flex-shrink: 0; z-index: 50;}
+        .brand-container { display: flex; flex-direction: column; gap: 8px; padding-bottom: 20px; margin-bottom: 20px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
+        .brand-logo { display: flex; align-items: baseline; color: #ffffff; }
+        .l-letter { font-size: 32px; font-weight: 900; line-height: 1; }
+        .brand-dot { width: 9px; height: 9px; background-color: var(--accent-green); border-radius: 50%; margin: 0 6px 0 2px; box-shadow: 0 0 10px rgba(16, 185, 129, 0.6); }
+        .logo-text { font-size: 22px; font-weight: 700; letter-spacing: 0.5px; }
+        .brand-clock { font-family: 'Courier New', Courier, monospace; font-size: 11px; color: var(--accent-green); font-weight: bold; letter-spacing: 0.5px; margin-top: 4px; }
+        .nav-menu { display: flex; flex-direction: column; gap: 6px; overflow-y: auto; max-height: calc(100vh - 120px); }
+        .nav-item { background: transparent; border: none; color: var(--text-muted); text-align: left; padding: 10px 14px; border-radius: 6px; font-size: 12.5px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; gap: 10px; border-left: 3px solid transparent; text-decoration: none;}
+        .nav-item:hover { background-color: rgba(255, 255, 255, 0.03); color: var(--text-main); }
+        .nav-item.active { background: linear-gradient(90deg, rgba(16, 185, 129, 0.1) 0%, transparent 100%); color: var(--text-main); border-left: 3px solid var(--accent-green); }
+
+        /* MAIN Y CABECERA */
+        main { flex: 1; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+        header { background-color: var(--bg-panel); border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; padding: 0 30px; height: 60px; flex-shrink: 0;}
+        .header-title { font-size: 13.5px; color: var(--text-muted); }
+        
+        /* ÁREA DE CONTENIDO (Layout a dos columnas) */
+        .content-area { display: grid; grid-template-columns: 350px 1fr; height: calc(100vh - 60px); overflow: hidden; }
+        
+        /* PANEL IZQUIERDO: FORMULARIO DE INGESTA */
+        .ingesta-panel { background-color: var(--bg-panel); border-right: 1px solid var(--border-color); padding: 25px; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; }
+        .ingesta-title { font-size: 16px; color: #fff; font-weight: 700; margin: 0; display: flex; align-items: center; gap: 8px;}
+        .ingesta-title::before { content: ''; display: inline-block; width: 8px; height: 8px; background-color: var(--accent-blue); border-radius: 50%; box-shadow: 0 0 10px var(--accent-blue); }
+        .ingesta-desc { font-size: 12.5px; color: var(--text-muted); line-height: 1.5; margin: 0; }
+        
+        .form-upload { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 15px;}
+        .form-group label { display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 5px; font-weight: bold; }
+        .form-group input, .form-group select { width: 100%; background: var(--bg-base); border: 1px solid var(--border-color); color: var(--text-main); padding: 10px; border-radius: 6px; font-size: 13px; outline: none; transition: border-color 0.2s; }
+        .form-group input:focus, .form-group select:focus { border-color: var(--accent-green); }
+        
+        .file-upload-box { border: 2px dashed var(--border-color); border-radius: 8px; padding: 20px; text-align: center; background: rgba(0,0,0,0.2); cursor: pointer; transition: all 0.2s; position: relative; }
+        .file-upload-box:hover { border-color: var(--accent-blue); background: rgba(59, 130, 246, 0.05); }
+        .file-upload-box input[type="file"] { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
+        .upload-icon { font-size: 24px; margin-bottom: 10px; display: block; }
+        .upload-text { font-size: 13px; color: var(--text-main); font-weight: bold; margin-bottom: 4px; }
+        .upload-subtext { font-size: 11px; color: var(--accent-red); font-weight: bold; line-height: 1.4; }
+        
+        #file-counter { font-size: 12px; color: var(--accent-green); margin-top: 10px; font-weight: bold; display: none; }
+
+        .btn-submit { width: 100%; background-color: var(--accent-blue); color: #fff; padding: 12px; border-radius: 6px; font-size: 14px; font-weight: bold; border: none; cursor: pointer; transition: opacity 0.2s; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);}
+        .btn-submit:hover { opacity: 0.9; }
+
+        /* PANEL DERECHO: FEED CRONOLÓGICO INFINITO */
+        .feed-panel { padding: 25px; overflow-y: auto; background-color: var(--bg-base); position: relative; }
+        .feed-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; position: sticky; top: 0; background: rgba(9, 13, 22, 0.9); backdrop-filter: blur(10px); padding: 10px 0; z-index: 10; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .feed-title { font-size: 20px; font-weight: 800; margin: 0; display: flex; align-items: center; gap: 10px; }
+        .live-indicator { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: bold; color: var(--accent-green); text-transform: uppercase; background: rgba(16, 185, 129, 0.1); padding: 4px 10px; border-radius: 20px; border: 1px solid rgba(16, 185, 129, 0.3); }
+        .live-dot { width: 6px; height: 6px; background-color: var(--accent-green); border-radius: 50%; animation: blink 1s infinite; }
+        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
+
+        /* TARJETAS DE PROPIEDAD CIEGA */
+        .feed-container { display: flex; flex-direction: column; gap: 20px; max-width: 800px; margin: 0 auto; padding-bottom: 50px; }
+        .property-card { background: var(--bg-panel); border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; transition: transform 0.2s, box-shadow 0.2s; }
+        .property-card:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(0,0,0,0.4); border-color: rgba(255,255,255,0.1); }
+        
+        .card-header { padding: 15px 20px; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-between; align-items: center; }
+        .card-ref { font-family: monospace; font-size: 12px; color: var(--text-muted); }
+        .card-time { font-size: 11px; color: var(--text-muted); }
+        
+        .card-body { padding: 20px; display: grid; grid-template-columns: 1.5fr 1fr; gap: 20px; }
+        .card-details h3 { font-size: 18px; margin: 0 0 10px 0; color: #fff; }
+        .card-tags { display: flex; gap: 8px; margin-bottom: 15px; flex-wrap: wrap; }
+        .tag { font-size: 11px; background: var(--bg-card); padding: 4px 10px; border-radius: 4px; color: var(--text-muted); border: 1px solid var(--border-color); }
+        
+        .price-block { background: rgba(0,0,0,0.2); padding: 15px; border-radius: 8px; border: 1px dashed var(--border-color); margin-bottom: 15px; }
+        .price-label { font-size: 11px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 4px; display: block; }
+        .price-value { font-size: 22px; font-weight: 800; color: var(--accent-gold); margin: 0; }
+        
+        /* Imágenes tipo cuadrícula */
+        .card-gallery { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .gallery-img { width: 100%; aspect-ratio: 4/3; background: var(--bg-base); border-radius: 6px; object-fit: cover; border: 1px solid var(--border-color); }
+        .gallery-img.empty { display: flex; align-items: center; justify-content: center; font-size: 24px; color: rgba(255,255,255,0.05); }
+
+        .card-footer { padding: 15px 20px; background: var(--bg-card); border-top: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
+        .likes-count { font-size: 13px; font-weight: bold; color: var(--accent-red); display: flex; align-items: center; gap: 6px; }
+        
+        .btn-like { background: transparent; border: 1px solid var(--accent-green); color: var(--accent-green); padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: bold; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 8px; }
+        .btn-like:hover { background: rgba(16, 185, 129, 0.1); }
+        .btn-like.liked { background: var(--accent-green); color: #fff; }
+
+        /* RESPONSIVE */
+        @media (max-width: 900px) {
+            .content-area { grid-template-columns: 1fr; overflow-y: auto; }
+            .ingesta-panel { border-right: none; border-bottom: 1px solid var(--border-color); height: auto; }
+            .feed-panel { height: auto; overflow: visible; }
+            .card-body { grid-template-columns: 1fr; }
+            body { flex-direction: column; overflow-y: auto; overflow-x: hidden; }
+            aside { width: 100%; border-right: none; border-bottom: 1px solid var(--border-color); padding: 15px; flex-shrink: 0; }
+            .nav-menu { flex-direction: row; overflow-x: auto; max-height: none; padding-bottom: 10px; }
+            main { height: auto; overflow: visible; }
+        }
+    </style>
+</head>
+<body>
+
+    <aside>
+        <div class="brand-container">
+            <div class="brand-logo">
+                <span class="l-letter">L</span><span class="brand-dot"></span> <span class="logo-text">Level.immo</span>
+            </div>
+            <div class="brand-clock" id="live-clock">--/---- | --:--:--</div>
+        </div>
+
+        <div class="nav-menu">
+            <a href="/demanda-activa" class="nav-item">🎯 Demanda Activa</a>
+            <button class="nav-item active">📡 Mercado Real</button>
+            <button class="nav-item" onclick="alert('Módulo disponible próximamente')">🏠 Comprar Inmuebles</button>
+            <button class="nav-item" onclick="alert('Módulo disponible próximamente')">⚙️ Gestión Integral</button>
+        </div>
+    </aside>
+
+    <main>
+        <header>
+            <div class="header-title">Consola Central PropTech · Feed Cronológico</div>
+        </header>
+
+        <div class="content-area">
+            
+            <!-- PANEL IZQUIERDO: FORMULARIO INGESTA -->
+            <div class="ingesta-panel">
+                <h2 class="ingesta-title">Añadir Inmueble al Radar</h2>
+                <p class="ingesta-desc">Tu propiedad se publicará de forma anónima. Sin direcciones ni datos personales.</p>
+                
+                <form class="form-upload" id="form-mercado-real">
+                    <div class="form-group">
+                        <label>Zona / Población</label>
+                        <select id="prop-zona" required>
+                            <option value="">Selecciona una zona...</option>
+                            <option value="La Ràpita">La Ràpita</option>
+                            <option value="Alcanar">Alcanar</option>
+                            <option value="Vinaròs">Vinaròs</option>
+                            <option value="Otras">Otras zonas</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Tipología y Características</label>
+                        <input type="text" id="prop-desc" placeholder="Ej: Piso 3 hab., 2 baños, reformado" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Precio de Venta Deseado (€)</label>
+                        <input type="number" id="prop-precio" placeholder="Ej: 145000" required>
+                    </div>
+
+                    <div class="form-group" style="margin-top: 10px;">
+                        <div class="file-upload-box">
+                            <span class="upload-icon">📸</span>
+                            <div class="upload-text">Subir Fotos (Máx. 4)</div>
+                            <div class="upload-subtext">⚠️ OBLIGATORIO: Solo interiores.<br>Cero fachadas o vistas a la calle.</div>
+                            <!-- ATRIBUTO MULTIPLE Y LIMITACIÓN JS -->
+                            <input type="file" id="prop-fotos" accept="image/*" multiple required>
+                        </div>
+                        <div id="file-counter">0 archivos seleccionados</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Tu Teléfono (No se publicará)</label>
+                        <input type="tel" id="prop-tel" placeholder="Para gestión interna..." required>
+                    </div>
+
+                    <button type="submit" class="btn-submit">Subir a Cuarentena 🔒</button>
+                </form>
+            </div>
+
+            <!-- PANEL DERECHO: FEED INFINITO -->
+            <div class="feed-panel">
+                <div class="feed-header">
+                    <h1 class="feed-title">Mercado Real <span class="live-indicator"><span class="live-dot"></span> En Directo</span></h1>
+                </div>
+
+                <div class="feed-container" id="feed-container">
+                    
+                    <!-- TARJETA EJEMPLO 1 (Generada por la fórmula de Lark) -->
+                    <div class="property-card" data-id="REF-2026-089">
+                        <div class="card-header">
+                            <span class="card-ref">REF-2026-089</span>
+                            <span class="card-time">Publicado hace 2 horas</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="card-details">
+                                <h3>Ático reformado con ascensor</h3>
+                                <div class="card-tags">
+                                    <span class="tag">📍 La Ràpita</span>
+                                    <span class="tag">🛏️ 3 Hab</span>
+                                    <span class="tag">🛁 2 Baños</span>
+                                </div>
+                                <div class="price-block">
+                                    <span class="price-label">Precio Propietario</span>
+                                    <h4 class="price-value">135.000 €</h4>
+                                </div>
+                            </div>
+                            <div class="card-gallery">
+                                <!-- En el MVP real, aquí inyectarías las URLs de Lark. Usamos div vacíos decorativos para la estructura -->
+                                <div class="gallery-img empty" style="background: rgba(16,185,129,0.1);">📸</div>
+                                <div class="gallery-img empty"></div>
+                                <div class="gallery-img empty"></div>
+                                <div class="gallery-img empty"></div>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <div class="likes-count">🔥 3 inversores interesados</div>
+                            <button class="btn-like" onclick="marcarLike(this, 'REF-2026-089')">
+                                <span class="radar-icon-pulse-green" style="width: 8px; height: 8px;"></span>
+                                Me Interesa
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- TARJETA EJEMPLO 2 -->
+                    <div class="property-card" data-id="REF-2026-090">
+                        <div class="card-header">
+                            <span class="card-ref">REF-2026-090</span>
+                            <span class="card-time">Publicado hace 5 horas</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="card-details">
+                                <h3>Planta baja tipo estudio</h3>
+                                <div class="card-tags">
+                                    <span class="tag">📍 Alcanar</span>
+                                    <span class="tag">🛏️ 1 Hab</span>
+                                    <span class="tag">🏢 Planta Baja</span>
+                                </div>
+                                <div class="price-block">
+                                    <span class="price-label">Precio Propietario</span>
+                                    <h4 class="price-value">85.000 €</h4>
+                                </div>
+                            </div>
+                            <div class="card-gallery">
+                                <div class="gallery-img empty" style="background: rgba(16,185,129,0.1);">📸</div>
+                                <div class="gallery-img empty"></div>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <!-- Si la fórmula en Lark dice 0, mostraría el texto alternativo -->
+                            <div class="likes-count" style="color: var(--accent-blue);">⚡ Novedad en el Radar</div>
+                            <button class="btn-like" onclick="marcarLike(this, 'REF-2026-090')">
+                                <span class="radar-icon-pulse-green" style="width: 8px; height: 8px;"></span>
+                                Me Interesa
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Reloj
+        function updateClock() {
+            const now = new Date();
+            const day = String(now.getDate()).padStart(2, '0');
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const year = now.getFullYear();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            const clockEl = document.getElementById('live-clock');
+            if(clockEl) clockEl.innerText = `${day}/${month}/${year} | ${hours}:${minutes}:${seconds}`;
+        }
+        setInterval(updateClock, 1000); updateClock(); 
+
+        // WEBHOOKS SEPARADOS (Arquitectura limpia)
+        const WEBHOOK_NUEVA_PROPIEDAD = "AQUI_TU_WEBHOOK_PARA_INGESTA"; // Crea un webhook nuevo en Make
+        const WEBHOOK_LIKES = "AQUI_TU_WEBHOOK_PARA_LIKES"; // Puede ser el mismo u otro
+
+        // CONTROL ESTRICTO DE 4 FOTOS
+        const fileInput = document.getElementById('prop-fotos');
+        const fileCounter = document.getElementById('file-counter');
+
+        fileInput.addEventListener('change', function() {
+            const maxFiles = 4;
+            if (this.files.length > maxFiles) {
+                alert(`⚠️ Límite excedido. Solo puedes subir un máximo de ${maxFiles} fotos de interior.`);
+                this.value = ''; // Resetea el input
+                fileCounter.style.display = 'none';
+            } else if (this.files.length > 0) {
+                fileCounter.innerText = `✅ ${this.files.length} archivo(s) validado(s) para revisión.`;
+                fileCounter.style.display = 'block';
+            } else {
+                fileCounter.style.display = 'none';
+            }
+        });
+
+        // ENVÍO DE FORMULARIO DE INGESTA
+        document.getElementById('form-mercado-real').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // En un entorno real, para enviar archivos por Webhook necesitas FormData
+            /*
+            const formData = new FormData();
+            formData.append("zona", document.getElementById('prop-zona').value);
+            formData.append("desc", document.getElementById('prop-desc').value);
+            formData.append("precio", document.getElementById('prop-precio').value);
+            formData.append("telefono", document.getElementById('prop-tel').value);
+            
+            for (let i = 0; i < fileInput.files.length; i++) {
+                formData.append("foto_" + i, fileInput.files[i]);
+            }
+            
+            fetch(WEBHOOK_NUEVA_PROPIEDAD, {
+                method: 'POST',
+                body: formData
+            }).then(...)
+            */
+
+            // Simulación visual
+            const btn = this.querySelector('.btn-submit');
+            const originalText = btn.innerText;
+            btn.innerText = "Procesando...";
+            btn.style.opacity = "0.7";
+
+            setTimeout(() => {
+                alert("Propiedad enviada a Cuarentena. Nuestro equipo técnico validará que las fotos cumplen las normativas de privacidad en breve.");
+                this.reset();
+                fileCounter.style.display = 'none';
+                btn.innerText = originalText;
+                btn.style.opacity = "1";
+            }, 1500);
+        });
+
+        // SISTEMA DE LIKES EN EL FEED
+        function marcarLike(btnElement, idInmueble) {
+            if (btnElement.classList.contains('liked')) return; // Evitar doble clic
+            
+            // Petición al Webhook de Likes
+            /*
+            fetch(WEBHOOK_LIKES, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    evento: "nuevo_like",
+                    inmueble_id: idInmueble,
+                    origen: "feed_publico"
+                })
+            });
+            */
+
+            // Efecto Visual Inmediato
+            btnElement.classList.add('liked');
+            btnElement.innerHTML = `✓ Guardado`;
+            
+            // Aquí idealmente saltaría un pequeño popup pidiendo el teléfono del comprador
+            // para enlazar el "Like" a su ficha en MATCH_COMPRADORES.
+            setTimeout(() => {
+                const telInversor = prompt("Para registrar tu interés y avisarte si el precio baja, confirma tu número de móvil:");
+                if(telInversor) {
+                    alert(`Interés registrado. Un Advisor de Level-i revisará tu ficha.`);
+                } else {
+                    // Si cancela, deshacemos visualmente el like
+                    btnElement.classList.remove('liked');
+                    btnElement.innerHTML = `<span class="radar-icon-pulse-green" style="width: 8px; height: 8px;"></span> Me Interesa`;
+                }
+            }, 300);
+        }
+    </script>
+</body>
+</html>
