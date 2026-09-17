@@ -50,10 +50,6 @@
         header { background-color: var(--bg-panel); border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; padding: 0 30px; height: 60px; flex-shrink: 0;}
         .header-title { font-size: 13.5px; color: var(--text-muted); }
         
-        .lang-selector { display: flex; gap: 6px; }
-        .lang-btn { background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-muted); padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; cursor: pointer; }
-        .lang-btn.active { background: var(--accent-green); color: #fff; border-color: var(--accent-green); }
-        
         .feed-panel { padding: 25px; overflow-y: auto; background-color: var(--bg-base); position: relative; height: calc(100vh - 60px); }
         
         .feed-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; position: sticky; top: 0; background: rgba(9, 13, 22, 0.95); backdrop-filter: blur(10px); padding: 15px 0; z-index: 10; border-bottom: 1px solid rgba(255,255,255,0.05); }
@@ -113,23 +109,21 @@
         .btn-like:hover { background: rgba(16, 185, 129, 0.1); }
         .btn-like.liked { background: var(--accent-green); color: #fff; }
 
-        /* MODAL ONBOARDING FLOTANTE (FORZADO EN PC Y MÓVIL) */
+        /* MODAL ONBOARDING FLOTANTE (ESTRICTAMENTE MANUAL PARA CERRAR) */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: rgba(9, 13, 22, 0.85); backdrop-filter: blur(8px);
             display: flex; justify-content: center; align-items: center;
-            z-index: 99999; opacity: 0; pointer-events: none;
+            z-index: 99999; opacity: 1; pointer-events: all;
             transition: opacity 0.4s ease;
         }
-        .modal-overlay.active { opacity: 1; pointer-events: all; }
+        .modal-overlay.hidden { opacity: 0; pointer-events: none; }
         .modal-content {
             background: var(--bg-panel); border: 1px solid var(--accent-green);
             border-radius: 16px; width: 90%; max-width: 550px;
             padding: 40px; position: relative;
             box-shadow: 0 20px 50px rgba(0,0,0,0.5), 0 0 0 1px rgba(16, 185, 129, 0.2) inset;
-            transform: translateY(20px); transition: transform 0.4s ease;
         }
-        .modal-overlay.active .modal-content { transform: translateY(0); }
         .modal-close {
             position: absolute; top: 20px; right: 20px;
             background: transparent; border: none; color: var(--text-muted);
@@ -183,13 +177,6 @@
     <main>
         <header>
             <div class="header-title">Consola Central PropTech · Interacciones en Tiempo Real</div>
-            <div class="lang-selector">
-                <button class="lang-btn active" onclick="setLanguage('esp', event)">ESP</button>
-                <button class="lang-btn" onclick="setLanguage('cat', event)">CAT</button>
-                <button class="lang-btn" onclick="setLanguage('fra', event)">FRA</button>
-                <button class="lang-btn" onclick="setLanguage('eng', event)">ENG</button>
-                <button class="lang-btn" onclick="setLanguage('deu', event)">DEU</button>
-            </div>
         </header>
 
         <div class="feed-panel">
@@ -356,37 +343,37 @@
         </div>
     </main>
 
-    <!-- MODAL DE ONBOARDING (GARANTIZADO EN PC Y MÓVIL) -->
-    <div class="modal-overlay active" id="onboarding-modal">
+    <!-- MODAL DE ONBOARDING (ABIERTO HASTA CIERRE MANUAL) -->
+    <div class="modal-overlay" id="onboarding-modal">
         <div class="modal-content">
             <button class="modal-close" onclick="closeOnboarding()">×</button>
-            <h2 class="modal-title" id="t-modal-title"><span class="live-dot" style="animation:none; width:10px; height:10px; background:var(--accent-green);"></span> ¿Cómo funciona el Live-Match?</h2>
+            <h2 class="modal-title"><span class="live-dot" style="animation:none; width:10px; height:10px; background:var(--accent-green);"></span> ¿Cómo funciona el Live-Match?</h2>
             
             <div class="modal-step">
                 <div class="step-number">1</div>
                 <div class="step-text">
-                    <h4 id="t-step1-title">La Demanda Verificada</h4>
-                    <p id="t-step1-desc">En los recuadros principales verás a los compradores con la financiación o el capital ya aprobado. Sabemos exactamente qué buscan y cuánto pueden pagar.</p>
+                    <h4>La Demanda Verificada</h4>
+                    <p>En los recuadros principales verás a los compradores con la financiación o el capital ya aprobado. Sabemos exactamente qué buscan y cuánto pueden pagar.</p>
                 </div>
             </div>
             
             <div class="modal-step">
                 <div class="step-number">2</div>
                 <div class="step-text">
-                    <h4 id="t-step2-title">El Mercado Oculto</h4>
-                    <p id="t-step2-desc">Justo debajo de cada comprador, aparecen las propiedades que los vendedores están ofreciendo de forma anónima para encajar con esa demanda.</p>
+                    <h4>El Mercado Oculto</h4>
+                    <p>Justo debajo de cada comprador, aparecen las propiedades que los vendedores están ofreciendo de forma anónima para encajar con esa demanda.</p>
                 </div>
             </div>
             
             <div class="modal-step">
                 <div class="step-number">3</div>
                 <div class="step-text">
-                    <h4 id="t-step3-title">El Match Inmediato</h4>
-                    <p id="t-step3-desc">Si tu propiedad encaja, pulsa "Sumar Interés". Nos encargamos del cruce de datos y cerramos la venta mediante nuestro modelo de Coste Compartido.</p>
+                    <h4>El Match Inmediato</h4>
+                    <p>Si tu propiedad encaja, pulsa "Sumar Interés". Nos encargamos del cruce de datos y cerramos la venta mediante nuestro modelo de Coste Compartido.</p>
                 </div>
             </div>
 
-            <button class="modal-btn" onclick="closeOnboarding()" id="t-modal-btn">Entrar al Mercado Real</button>
+            <button class="modal-btn" onclick="closeOnboarding()">Entrar al Mercado Real</button>
         </div>
     </div>
 
@@ -405,88 +392,11 @@
         }
         setInterval(updateClock, 1000); updateClock(); 
 
-        // DICCIONARIO DE IDIOMAS
-        const dict = {
-            esp: {
-                modalTitle: "¿Cómo funciona el Live-Match?",
-                s1Title: "La Demanda Verificada",
-                s1Desc: "En los recuadros principales verás a los compradores con la financiación o el capital ya aprobado. Sabemos exactamente qué buscan y cuánto pueden pagar.",
-                s2Title: "El Mercado Oculto",
-                s2Desc: "Justo debajo de cada comprador, aparecen las propiedades que los vendedores están ofreciendo de forma anónima para encajar con esa demanda.",
-                s3Title: "El Match Inmediato",
-                s3Desc: "Si tu propiedad encaja, pulsa 'Sumar Interés'. Nos encargamos del cruce de datos y cerramos la venta mediante nuestro modelo de Coste Compartido.",
-                modalBtn: "Entrar al Mercado Real"
-            },
-            cat: {
-                modalTitle: "Com funciona el Live-Match?",
-                s1Title: "La Demanda Verificada",
-                s1Desc: "Als requadres principals veuràs els compradors amb el finançament ja aprovat. Sabem exactament què busquen i quant poden pagar.",
-                s2Title: "El Mercat Ocult",
-                s2Desc: "Just a sota de cada comprador, apareixen les propietats que els venedors ofereixen de forma anònima per encaixar amb aquesta demanda.",
-                s3Title: "El Match Immediat",
-                s3Desc: "Si la teva propietat encaixa, prem 'Sumar Interès'. Ens encarreguem de l'encreuament de dades i tanquem la venda amb el nostre model de Cost Compartit.",
-                modalBtn: "Entrar al Mercat Real"
-            },
-            fra: {
-                modalTitle: "Comment fonctionne le Live-Match ?",
-                s1Title: "La Demande Vérifiée",
-                s1Desc: "Dans les encadrés principaux, vous verrez les acheteurs avec un financement déjà approuvé. Nous savons exactement ce qu'ils recherchent et leur budget.",
-                s2Title: "Le Marché Caché",
-                s2Desc: "Juste en dessous de chaque acheteur, apparaissent les propriétés que les vendeurs proposent de manière anonyme pour répondre à cette demande.",
-                s3Title: "Le Match Immédiat",
-                s3Desc: "Si votre bien correspond, cliquez sur 'Ajouter un intérêt'. Nous croisons les données et concluons la vente grâce à notre modèle de Coûts Partagés.",
-                modalBtn: "Entrer sur le Marché Réel"
-            },
-            eng: {
-                modalTitle: "How does Live-Match work?",
-                s1Title: "Verified Demand",
-                s1Desc: "In the main boxes, you will see buyers with pre-approved financing or capital. We know exactly what they are looking for and what they can pay.",
-                s2Title: "The Hidden Market",
-                s2Desc: "Right below each buyer, you'll find the properties that sellers are offering anonymously to meet that specific demand.",
-                s3Title: "Instant Match",
-                s3Desc: "If your property fits, click 'Show Interest'. We handle the data matching and close the sale using our Shared Cost model.",
-                modalBtn: "Enter the Real Market"
-            },
-            deu: {
-                modalTitle: "Wie funktioniert Live-Match?",
-                s1Title: "Geprüfte Nachfrage",
-                s1Desc: "In den Hauptfeldern sehen Sie Käufer mit bereits genehmigter Finanzierung. Wir wissen genau, was sie suchen und wie viel sie zahlen können.",
-                s2Title: "Der verdeckte Markt",
-                s2Desc: "Direkt unter jedem Käufer erscheinen die Immobilien, die Verkäufer anonym anbieten, um diese Nachfrage zu decken.",
-                s3Title: "Sofortiges Match",
-                s3Desc: "Wenn Ihre Immobilie passt, klicken Sie auf 'Interesse bekunden'. Wir übernehmen den Datenabgleich und schließen den Verkauf über unser Shared-Cost-Modell ab.",
-                modalBtn: "Den realen Markt betreten"
-            }
-        };
-
-        function setLanguage(lang, event) {
-            document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
-            if(event && event.target) event.target.classList.add('active');
-
-            document.getElementById('t-modal-title').innerHTML = `<span class="live-dot" style="animation:none; width:10px; height:10px; background:var(--accent-green);"></span> ${dict[lang].modalTitle}`;
-            document.getElementById('t-step1-title').innerText = dict[lang].s1Title;
-            document.getElementById('t-step1-desc').innerText = dict[lang].s1Desc;
-            document.getElementById('t-step2-title').innerText = dict[lang].s2Title;
-            document.getElementById('t-step2-desc').innerText = dict[lang].s2Desc;
-            document.getElementById('t-step3-title').innerText = dict[lang].s3Title;
-            document.getElementById('t-step3-desc').innerText = dict[lang].s3Desc;
-            document.getElementById('t-modal-btn').innerText = dict[lang].modalBtn;
-        }
-
+        // CIERRE MANUAL DEL MODAL
         function closeOnboarding() {
-            document.getElementById('onboarding-modal').classList.remove('active');
-            localStorage.setItem('leveli_livematch_seen', 'true');
-        }
-
-        // FUERZA QUE EL MODAL APAREZCA SIEMPRE DE ENTRADA (O RECUERDA SI YA SE CERRÓ)
-        window.onload = function() {
             const modal = document.getElementById('onboarding-modal');
-            if (localStorage.getItem('leveli_livematch_seen') === 'true') {
-                modal.classList.remove('active');
-            } else {
-                modal.classList.add('active');
-            }
-        };
+            modal.classList.add('hidden');
+        }
 
         function marcarLike(btnElement, idInmueble) {
             if (btnElement.classList.contains('liked')) return; 
