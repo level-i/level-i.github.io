@@ -37,13 +37,22 @@
         .logo-text { font-size: 22px; font-weight: 700; letter-spacing: 0.5px; }
         .brand-clock { font-family: 'Courier New', Courier, monospace; font-size: 11px; color: var(--accent-green); font-weight: bold; letter-spacing: 0.5px; margin-top: 4px; }
         
-        .nav-menu { display: flex; flex-direction: column; gap: 6px; overflow-y: auto; max-height: calc(100vh - 160px); }
+        .nav-menu { display: flex; flex-direction: column; gap: 6px; }
         .nav-item { background: transparent; border: none; color: var(--text-muted); text-align: left; padding: 10px 14px; border-radius: 6px; font-size: 12.5px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; gap: 10px; border-left: 3px solid transparent; text-decoration: none;}
         .nav-item:hover { background-color: rgba(255, 255, 255, 0.03); color: var(--text-main); }
         .nav-item.active { background: linear-gradient(90deg, rgba(16, 185, 129, 0.1) 0%, transparent 100%); color: var(--text-main); border-left: 3px solid var(--accent-green); }
 
+        /* ZONA SERVICIO PRESENCIAL (Fino Filipino) */
+        .sidebar-locations { margin-top: 25px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.05); flex: 1; overflow-y: auto; }
+        .locations-title { font-size: 10px; font-weight: 800; color: var(--text-muted); letter-spacing: 1.5px; margin-bottom: 12px; display: flex; align-items: center; gap: 6px;}
+        .locations-title::before { content: ''; width: 4px; height: 12px; background: var(--accent-green); border-radius: 2px; }
+        .locations-list { font-size: 11px; color: var(--text-muted); line-height: 1.8; text-align: justify; opacity: 0.7; }
+
         /* CREDENCIALES LEGALES EN EL SIDEBAR */
-        .sidebar-footer { margin-top: auto; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.05); text-align: center; font-size: 10.5px; color: var(--text-muted); }
+        .sidebar-footer { margin-top: 20px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.05); text-align: center; font-size: 10.5px; color: var(--text-muted); }
+        .legal-links { display: flex; justify-content: center; gap: 12px; margin-top: 8px; font-size: 10px; }
+        .legal-links a { color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
+        .legal-links a:hover { color: var(--accent-green); }
 
         /* MAIN Y CABECERA */
         main { flex: 1; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
@@ -109,13 +118,13 @@
         .btn-like:hover { background: rgba(16, 185, 129, 0.1); }
         .btn-like.liked { background: var(--accent-green); color: #fff; }
 
-        /* MODAL ONBOARDING FLOTANTE (ESTRICTAMENTE MANUAL PARA CERRAR) */
+        /* MODALES COMUNES */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: rgba(9, 13, 22, 0.85); backdrop-filter: blur(8px);
             display: flex; justify-content: center; align-items: center;
             z-index: 99999; opacity: 1; pointer-events: all;
-            transition: opacity 0.4s ease;
+            transition: opacity 0.3s ease;
         }
         .modal-overlay.hidden { opacity: 0; pointer-events: none; }
         .modal-content {
@@ -131,6 +140,8 @@
         }
         .modal-close:hover { color: var(--accent-red); }
         .modal-title { font-size: 22px; color: #fff; margin: 0 0 20px 0; display: flex; align-items: center; gap: 10px; }
+        
+        /* ESTILOS ESPECÍFICOS MODAL ONBOARDING */
         .modal-step { display: flex; align-items: flex-start; gap: 15px; margin-bottom: 20px; }
         .step-number { background: rgba(16, 185, 129, 0.1); color: var(--accent-green); border: 1px solid rgba(16, 185, 129, 0.3); width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-weight: bold; flex-shrink: 0; }
         .step-text h4 { margin: 0 0 5px 0; color: #fff; font-size: 15px; }
@@ -138,10 +149,16 @@
         .modal-btn { display: block; width: 100%; background: var(--accent-green); color: #fff; padding: 14px; border-radius: 8px; font-weight: bold; text-align: center; border: none; cursor: pointer; margin-top: 30px; font-size: 14px; transition: opacity 0.2s; }
         .modal-btn:hover { opacity: 0.9; }
 
+        /* ESTILOS ESPECÍFICOS MODAL LEGAL */
+        .legal-body { max-height: 60vh; overflow-y: auto; padding-right: 15px; color: var(--text-muted); font-size: 13px; line-height: 1.6; text-align: justify; }
+        .legal-body h3 { color: #fff; font-size: 15px; margin-top: 20px; margin-bottom: 10px; }
+        .legal-body strong { color: var(--accent-green); }
+
         @media (max-width: 900px) {
             body { flex-direction: column; overflow-y: auto; overflow-x: hidden; }
             aside { width: 100%; border-right: none; border-bottom: 1px solid var(--border-color); padding: 15px; }
             .nav-menu { flex-direction: row; overflow-x: auto; max-height: none; padding-bottom: 10px; }
+            .sidebar-locations { display: none; /* Ocultamos el bloque de poblaciones en móvil para ahorrar espacio */ }
             main { height: auto; overflow: visible; }
             .feed-panel { height: auto; overflow: visible; padding: 15px; }
             .card-body { grid-template-columns: 1fr; }
@@ -166,11 +183,22 @@
             <a href="/live-match" class="nav-item active">📡 Live-Match</a>
             <a href="/vender-low-cost" class="nav-item" style="color: var(--accent-green); font-weight: 700;">🏷️ Vender | Low Cost</a>
             <button class="nav-item" onclick="alert('Módulo disponible próximamente')">🏠 Comprar Inmuebles</button>
-            <button class="nav-item" onclick="alert('Módulo disponible próximamente')">⚙️ Gestión Integral</button>
+        </div>
+
+        <div class="sidebar-locations">
+            <div class="locations-title">SERVICIO PRESENCIAL</div>
+            <div class="locations-list">
+                Alcanar · Amposta · Barcelona · Benicarló · Caldes de Montbui · Castellar del Vallès · Cerdanyola del Vallès · Granollers · La Ràpita · Matadepera · Mataró · Polinyà · Rubí · Sabadell · Sant Cugat del Vallès · Sant Quirze del Vallès · Sentmenat · Tarragona · Terrassa · Tortosa · Vinaròs
+            </div>
         </div>
 
         <div class="sidebar-footer">
-            API 4173 · AICAT 14200
+            API 4173 · AICAT 14200<br>
+            <div class="legal-links">
+                <a href="javascript:void(0)" onclick="abrirLegal('aviso')">Aviso Legal</a>
+                <a href="javascript:void(0)" onclick="abrirLegal('privacidad')">Privacidad y LOPD</a>
+                <a href="javascript:void(0)" onclick="abrirLegal('cookies')">Cookies e IA</a>
+            </div>
         </div>
     </aside>
 
@@ -200,7 +228,7 @@
                     </div>
 
                     <div class="property-list">
-                        <!-- Propiedad 1: Verificada y con fotos -->
+                        <!-- Propiedad 1 -->
                         <div class="property-card" data-id="REF-089">
                             <div class="card-header">
                                 <span class="status-badge status-verified">✅ Auditoría Completada</span>
@@ -235,7 +263,7 @@
                             </div>
                         </div>
 
-                        <!-- Propiedad 2: Pendiente de validación visual -->
+                        <!-- Propiedad 2 -->
                         <div class="property-card" data-id="REF-091">
                             <div class="card-header">
                                 <span class="status-badge status-pending">🟡 Fotos en Cuarentena (IA)</span>
@@ -343,20 +371,16 @@
         </div>
     </main>
 
-    <!-- MODAL DE ONBOARDING (ABIERTO HASTA CIERRE MANUAL) -->
+    <!-- MODAL DE ONBOARDING -->
     <div class="modal-overlay" id="onboarding-modal">
         <div class="modal-content">
             <button class="modal-close" onclick="closeOnboarding()">×</button>
-            
-            <!-- Branding Inyectado -->
             <div style="display: flex; align-items: baseline; color: #ffffff; margin-bottom: 15px;">
                 <span style="font-size: 26px; font-weight: 900; line-height: 1;">L</span>
                 <span style="width: 8px; height: 8px; background-color: var(--accent-green); border-radius: 50%; margin: 0 6px 0 2px; box-shadow: 0 0 10px rgba(16, 185, 129, 0.6);"></span> 
                 <span style="font-size: 16px; font-weight: 700; letter-spacing: 0.5px; color: var(--text-muted);">Level-i.com</span>
             </div>
-
             <h2 class="modal-title">¿Cómo funciona el Live-Match?</h2>
-            
             <div class="modal-step">
                 <div class="step-number">1</div>
                 <div class="step-text">
@@ -364,7 +388,6 @@
                     <p>En los recuadros principales verás a los compradores con la financiación o el capital ya aprobado. Sabemos exactamente qué buscan y cuánto pueden pagar.</p>
                 </div>
             </div>
-            
             <div class="modal-step">
                 <div class="step-number">2</div>
                 <div class="step-text">
@@ -372,7 +395,6 @@
                     <p>Justo debajo de cada comprador, aparecen las propiedades que los vendedores están ofreciendo de forma anónima para encajar con esa demanda.</p>
                 </div>
             </div>
-            
             <div class="modal-step">
                 <div class="step-number">3</div>
                 <div class="step-text">
@@ -380,8 +402,18 @@
                     <p>Si tu propiedad encaja, pulsa "Sumar Interés". Nos encargamos del cruce de datos y cerramos la venta mediante nuestro modelo de Coste Compartido.</p>
                 </div>
             </div>
-
             <button class="modal-btn" onclick="closeOnboarding()">Entrar al Mercado Real</button>
+        </div>
+    </div>
+
+    <!-- MODAL LEGAL DINÁMICO -->
+    <div class="modal-overlay hidden" id="legal-modal">
+        <div class="modal-content" style="max-width: 700px;">
+            <button class="modal-close" onclick="cerrarLegal()">×</button>
+            <h2 class="modal-title" id="legal-title">Legal</h2>
+            <div class="legal-body" id="legal-body">
+                <!-- El contenido se inyecta por JS -->
+            </div>
         </div>
     </div>
 
@@ -400,10 +432,79 @@
         }
         setInterval(updateClock, 1000); updateClock(); 
 
-        // CIERRE MANUAL DEL MODAL
+        // GESTIÓN DEL MODAL DE BIENVENIDA
         function closeOnboarding() {
-            const modal = document.getElementById('onboarding-modal');
-            modal.classList.add('hidden');
+            document.getElementById('onboarding-modal').classList.add('hidden');
+        }
+
+        // TEXTOS LEGALES Y GESTIÓN DEL MODAL LEGAL
+        const textosLegales = {
+            aviso: {
+                titulo: "Aviso Legal",
+                cuerpo: `
+                    <h3>Información del Titular</h3>
+                    <p><strong>Entidad:</strong> LEVEL PUNTO IMMO 24365 SLU<br>
+                    <strong>NIF:</strong> B-26745430<br>
+                    <strong>Domicilio:</strong> Travessera de Gràcia, 56, 3-1a, 08006 Barcelona<br>
+                    <strong>Email:</strong> level@level.immo</p>
+                    
+                    <h3>Uso de la Plataforma</h3>
+                    <p>Este sitio web es la puerta de acceso a nuestra infraestructura de auditoría inmobiliaria. Todo el contenido, incluyendo procesos de análisis y diseño, es propiedad de LEVEL PUNTO IMMO. Queda prohibida su reproducción sin consentimiento expreso.</p>
+                    
+                    <h3>Responsabilidad</h3>
+                    <p>Los informes generados por nuestra tecnología son de carácter consultivo. LEVEL PUNTO IMMO no se hace responsable de las decisiones tomadas basadas en estas auditorías, las cuales dependen de la exactitud de los datos introducidos por el usuario.</p>
+                `
+            },
+            privacidad: {
+                titulo: "Política de Privacidad y LOPD",
+                cuerpo: `
+                    <h3>1. Responsable del Tratamiento</h3>
+                    <p><strong>Razón Social:</strong> LEVEL PUNTO IMMO 24365 SLU<br>
+                    <strong>NIF:</strong> B-26745430<br>
+                    <strong>Domicilio Social:</strong> Travessera de Gràcia, 56, 3-1a, 08006 Barcelona<br>
+                    <strong>Email de Contacto:</strong> level@level.immo</p>
+                    
+                    <h3>2. Objeto y Finalidad</h3>
+                    <p>La presente política regula el tratamiento de los datos recogidos a través de level.immo. La finalidad exclusiva es la prestación de servicios de auditoría, consultoría e inteligencia inmobiliaria solicitados por el usuario, así como la gestión de las comunicaciones derivadas de dicha relación comercial.</p>
+
+                    <h3>3. Infraestructura y Seguridad (App Propia)</h3>
+                    <p>Para garantizar la máxima precisión y rapidez, los datos suministrados se integran en nuestra Plataforma de Inteligencia Inmobiliaria. Este ecosistema tecnológico propio nos permite procesar su información bajo estrictos protocolos de seguridad y confidencialidad, evitando el uso de proveedores de almacenamiento masivo externos no controlados.</p>
+
+                    <h3>4. Legitimación</h3>
+                    <p>El tratamiento de sus datos se basa en el consentimiento expreso otorgado al completar y enviar nuestros formularios de contacto o solicitud de auditoría.</p>
+
+                    <h3>5. Sus Derechos</h3>
+                    <p>Como titular de los datos, usted tiene derecho a acceder, rectificar, limitar o suprimir su información en cualquier momento. Para ejercer estos derechos, puede dirigirse por escrito a nuestra dirección fiscal o mediante correo electrónico a level@level.immo, adjuntando copia de su DNI para su correcta identificación.</p>
+                `
+            },
+            cookies: {
+                titulo: "Política de Cookies y Transparencia IA",
+                cuerpo: `
+                    <h3>Uso de Tecnología v1.0.5 y Automatización</h3>
+                    <p>En level.immo, la tecnología es el vehículo para alcanzar la excelencia en el servicio. Utilizamos cookies y procesos automatizados (bots propios) para asegurar que nuestra plataforma ofrece una respuesta precisa y humana a cada uno de los intervinientes en el proceso inmobiliario.</p>
+                    <p>Nuestra Plataforma de Inteligencia Inmobiliaria (v1.0.5) utiliza cookies para el correcto funcionamiento de los procesos de auditoría para compradores y vendedores, la seguridad en la transmisión de datos y el análisis de feedback constante. Este estudio nos permite optimizar la interacción entre el usuario y la empresa, buscando siempre el estándar de calidad más alto.</p>
+
+                    <h3>Tipos de Cookies y Finalidad</h3>
+                    <ul>
+                        <li><strong>Técnicas y Operativas:</strong> Imprescindibles para la gestión de auditorías y la integridad de los datos de compradores y vendedores.</li>
+                        <li><strong>De Análisis y Feedback:</strong> Destinadas a la investigación propia y mejora del servicio basada en la experiencia real del usuario en la plataforma.</li>
+                        <li><strong>Publicitarias:</strong> Permiten que nuestra comunicación en Google Ads sea coherente con sus necesidades de inversión o venta.</li>
+                    </ul>
+
+                    <h3>Compromiso de Calidad</h3>
+                    <p>No nos conformamos con el cumplimiento legal; trabajamos para que la tecnología sea transparente y útil. Usted puede gestionar sus preferencias o desactivar el uso de cookies en cualquier momento a través de la configuración de su navegador.</p>
+                `
+            }
+        };
+
+        function abrirLegal(tipo) {
+            document.getElementById('legal-title').innerHTML = textosLegales[tipo].titulo;
+            document.getElementById('legal-body').innerHTML = textosLegales[tipo].cuerpo;
+            document.getElementById('legal-modal').classList.remove('hidden');
+        }
+
+        function cerrarLegal() {
+            document.getElementById('legal-modal').classList.add('hidden');
         }
 
         function marcarLike(btnElement, idInmueble) {
