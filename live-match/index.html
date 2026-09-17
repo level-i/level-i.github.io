@@ -36,10 +36,14 @@
         .brand-dot { width: 9px; height: 9px; background-color: var(--accent-green); border-radius: 50%; margin: 0 6px 0 2px; box-shadow: 0 0 10px rgba(16, 185, 129, 0.6); }
         .logo-text { font-size: 22px; font-weight: 700; letter-spacing: 0.5px; }
         .brand-clock { font-family: 'Courier New', Courier, monospace; font-size: 11px; color: var(--accent-green); font-weight: bold; letter-spacing: 0.5px; margin-top: 4px; }
-        .nav-menu { display: flex; flex-direction: column; gap: 6px; overflow-y: auto; max-height: calc(100vh - 120px); }
+        
+        .nav-menu { display: flex; flex-direction: column; gap: 6px; overflow-y: auto; max-height: calc(100vh - 160px); }
         .nav-item { background: transparent; border: none; color: var(--text-muted); text-align: left; padding: 10px 14px; border-radius: 6px; font-size: 12.5px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; gap: 10px; border-left: 3px solid transparent; text-decoration: none;}
         .nav-item:hover { background-color: rgba(255, 255, 255, 0.03); color: var(--text-main); }
         .nav-item.active { background: linear-gradient(90deg, rgba(16, 185, 129, 0.1) 0%, transparent 100%); color: var(--text-main); border-left: 3px solid var(--accent-green); }
+
+        /* CREDENCIALES LEGALES EN EL SIDEBAR */
+        .sidebar-footer { margin-top: auto; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.05); text-align: center; font-size: 10.5px; color: var(--text-muted); }
 
         /* MAIN Y CABECERA */
         main { flex: 1; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
@@ -109,12 +113,12 @@
         .btn-like:hover { background: rgba(16, 185, 129, 0.1); }
         .btn-like.liked { background: var(--accent-green); color: #fff; }
 
-        /* MODAL ONBOARDING FLOTANTE */
+        /* MODAL ONBOARDING FLOTANTE (FORZADO EN PC Y MÓVIL) */
         .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: rgba(9, 13, 22, 0.85); backdrop-filter: blur(8px);
             display: flex; justify-content: center; align-items: center;
-            z-index: 9999; opacity: 0; pointer-events: none;
+            z-index: 99999; opacity: 0; pointer-events: none;
             transition: opacity 0.4s ease;
         }
         .modal-overlay.active { opacity: 1; pointer-events: all; }
@@ -166,8 +170,13 @@
         <div class="nav-menu">
             <a href="/demanda-activa" class="nav-item">🎯 Demanda Activa</a>
             <a href="/live-match" class="nav-item active">📡 Live-Match</a>
+            <a href="/vender-low-cost" class="nav-item" style="color: var(--accent-green); font-weight: 700;">🏷️ Vender | Low Cost</a>
             <button class="nav-item" onclick="alert('Módulo disponible próximamente')">🏠 Comprar Inmuebles</button>
             <button class="nav-item" onclick="alert('Módulo disponible próximamente')">⚙️ Gestión Integral</button>
+        </div>
+
+        <div class="sidebar-footer">
+            API 4173 · AICAT 14200
         </div>
     </aside>
 
@@ -347,8 +356,8 @@
         </div>
     </main>
 
-    <!-- MODAL DE ONBOARDING -->
-    <div class="modal-overlay" id="onboarding-modal">
+    <!-- MODAL DE ONBOARDING (GARANTIZADO EN PC Y MÓVIL) -->
+    <div class="modal-overlay active" id="onboarding-modal">
         <div class="modal-content">
             <button class="modal-close" onclick="closeOnboarding()">×</button>
             <h2 class="modal-title" id="t-modal-title"><span class="live-dot" style="animation:none; width:10px; height:10px; background:var(--accent-green);"></span> ¿Cómo funciona el Live-Match?</h2>
@@ -469,11 +478,13 @@
             localStorage.setItem('leveli_livematch_seen', 'true');
         }
 
+        // FUERZA QUE EL MODAL APAREZCA SIEMPRE DE ENTRADA (O RECUERDA SI YA SE CERRÓ)
         window.onload = function() {
-            if (!localStorage.getItem('leveli_livematch_seen')) {
-                setTimeout(() => {
-                    document.getElementById('onboarding-modal').classList.add('active');
-                }, 400);
+            const modal = document.getElementById('onboarding-modal');
+            if (localStorage.getItem('leveli_livematch_seen') === 'true') {
+                modal.classList.remove('active');
+            } else {
+                modal.classList.add('active');
             }
         };
 
