@@ -44,13 +44,18 @@
         .brand-clock { font-family: 'Courier New', Courier, monospace; font-size: 11px; color: var(--accent-green); font-weight: bold; letter-spacing: 0.5px; text-shadow: 0 0 5px rgba(16, 185, 129, 0.4); margin-top: 4px; white-space: nowrap; }
 
         .nav-menu { display: flex; flex-direction: column; gap: 6px; overflow-y: auto; max-height: calc(100vh - 120px); }
-        .nav-item { background: transparent; border: none; color: var(--text-muted); text-align: left; padding: 10px 14px; border-radius: 6px; font-size: 12.5px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; gap: 10px; border-left: 3px solid transparent; }
+        .nav-item { background: transparent; border: none; color: var(--text-muted); text-align: left; padding: 10px 14px; border-radius: 6px; font-size: 12.5px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; gap: 10px; border-left: 3px solid transparent; text-decoration: none; }
         .nav-item:hover { background-color: rgba(255, 255, 255, 0.03); color: var(--text-main); }
         
         .nav-item.active { 
             background: linear-gradient(90deg, rgba(16, 185, 129, 0.1) 0%, transparent 100%); 
             color: var(--text-main); 
             border-left: 3px solid var(--accent-green); 
+        }
+
+        .nav-item.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
         
         main { flex: 1; display: grid; grid-template-columns: 1fr 380px; grid-template-rows: 60px 1fr; height: 100vh; overflow: hidden; }
@@ -62,7 +67,6 @@
         
         .content-area { padding: 25px; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; overflow-x: hidden; }
         
-        /* ESTILOS DEMANDA ACTIVA */
         .hero-title { font-size: 24px; color: #fff; font-weight: 800; line-height: 1.2; text-align: center; margin-bottom: 5px; }
         .hero-subtitle { font-size: 14px; color: var(--text-muted); text-align: center; margin-bottom: 20px; max-width: 90%; margin-left: auto; margin-right: auto; line-height: 1.5; }
         
@@ -79,7 +83,6 @@
         .form-group input:focus, .form-group select:focus { border-color: var(--accent-green); }
         .form-group input:disabled { opacity: 0.7; cursor: not-allowed; color: var(--accent-green); font-weight: bold; }
         
-        /* BOTÓN RADAR MERCADO REAL (Azul Corporativo) */
         .btn-radar-blue {
             display: flex;
             align-items: center;
@@ -169,7 +172,6 @@
         .gold-pulse-dot { width: 8px; height: 8px; background-color: var(--accent-gold); border-radius: 50%; margin-right: 10px; animation: pulse-gold 2s infinite; }
         .montsia-title { font-size: 18px; line-height: 1.3; margin: 0 0 10px 0; color: #fff; font-weight: 700; }
 
-        /* VÍDEOS VERTICALES */
         .vertical-video-section { display: flex; flex-direction: column; align-items: center; width: 100%; gap: 8px; margin-top: 20px; margin-bottom: 30px; }
         .vertical-video-wrapper { 
             position: relative;
@@ -281,7 +283,6 @@
         
         .unsubscribe-section { text-align: center; margin-top: 25px; padding: 20px; border-top: 1px dashed var(--border-color); }
 
-        /* MAGIA RESPONSIVE: VÍDEOS VERTICALES EDGE-TO-EDGE EN MÓVIL */
         @media (max-width: 900px) {
             body { flex-direction: column; overflow-y: auto; overflow-x: hidden; }
             aside { width: 100%; border-right: none; border-bottom: 1px solid var(--border-color); padding: 15px; flex-shrink: 0; }
@@ -339,6 +340,13 @@
 </head>
 <body>
 
+    <script>
+        // Redirección automática de la raíz a /live-match
+        if (window.location.pathname === "/" || window.location.pathname === "") {
+            window.location.replace("https://app.level-i.com/live-match");
+        }
+    </script>
+
     <aside>
         <div class="brand-container">
             <div class="brand-logo">
@@ -348,14 +356,14 @@
         </div>
 
         <div class="nav-menu">
-            <button class="nav-item active">🎯 Demanda Activa</button>
-            <button class="nav-item" onclick="alert('Módulo disponible próximamente')">🏠 Comprar Inmuebles</button>
-            <button class="nav-item" onclick="alert('Módulo disponible próximamente')">🏷️ Venta General</button>
-            <button class="nav-item" onclick="alert('Módulo disponible próximamente')">⚙️ Gestión Integral</button>
-            <button class="nav-item" onclick="window.location.href='../../residentes/index.html'">🔑 App Alquileres</button>
-            <button class="nav-item" onclick="alert('Módulo disponible próximamente')">🏢 App Comunidades</button>
-            <button class="nav-item" onclick="alert('Módulo disponible próximamente')">💶 Hipotecas</button>
-            <button class="nav-item" onclick="alert('Módulo disponible próximamente')">📈 Inversores</button>
+            <a href="https://app.level-i.com/live-match" class="nav-item active">🎯 Demanda Activa</a>
+            <a href="https://app.level-i.com/comprar" class="nav-item">🏠 Comprar Inmuebles</a>
+            <a href="https://app.level-i.com/vender" class="nav-item">🏷️ Venta General</a>
+            <a href="#" class="nav-item disabled" onclick="alert('Módulo de Gestión Integral inoperante por hoy'); return false;">⚙️ Gestión Integral</a>
+            <a href="#" class="nav-item disabled" onclick="return false;">🔑 App Alquileres</a>
+            <a href="#" class="nav-item disabled" onclick="return false;">🏢 App Comunidades</a>
+            <a href="#" class="nav-item disabled" onclick="return false;">💶 Hipotecas</a>
+            <a href="#" class="nav-item disabled" onclick="return false;">📈 Inversores</a>
         </div>
     </aside>
 
@@ -391,13 +399,18 @@
                     </div>
                 </div>
 
+                <!-- TARJETA DE CAPTACIÓN ACTUALIZADA -->
                 <div class="form-captacion">
                     <div class="form-group">
-                        <label>Referencia de Promoción</label>
-                        <input type="text" value="CAPTACION_LA_RAPITA" disabled>
+                        <label>Objetivo de Búsqueda Activa</label>
+                        <input type="text" value="3 HABITACIONES + ASCENSOR (LA RÀPITA)" disabled style="font-size: 12px;">
                     </div>
                     <div class="form-group">
-                        <label>Nombre</label>
+                        <label>Presupuesto / Solvencia</label>
+                        <input type="text" value="HASTA 125.000 € (SOLVENCIA VERIFICADA)" disabled style="font-size: 12px;">
+                    </div>
+                    <div class="form-group">
+                        <label>Tu Nombre</label>
                         <input type="text" id="cap-nombre" placeholder="Tu nombre...">
                     </div>
                     <div class="form-group">
@@ -405,7 +418,7 @@
                         <input type="tel" id="cap-telefono" placeholder="Tu móvil (min. 9 dígitos)...">
                     </div>
                     <button class="btn-action" style="margin-top: 20px; padding: 15px; font-size: 15px;" onclick="iniciarMatchAntonio()">
-                        ⚡ Solicitar Match con Antonio
+                        ⚡ Solicitar Match con Comprador
                     </button>
                 </div> 
 
@@ -750,7 +763,7 @@
             let saludoInicial = "Hola. Soy Elena, tu asistente. Para atenderte con absoluta seguridad y acceder a tu expediente, por favor indícame tu **número de teléfono móvil**.";
             
             if (modo === 'captacion_antonio') {
-                saludoInicial = `Hola, ${nombreCliente}. Soy la inteligencia operativa de Level-i. He recibido tu solicitud para la zona de La Ràpita. Te confirmo que la hipoteca de 125.000 euros de Antonio está validada, pero tiene unos requisitos muy claros: necesita 3 habitaciones y que la finca tenga ascensor, a menos que tu propiedad sea una planta baja. Además, descarta la zona del puerto y el barrio marítimo.<br><br>Para confirmar si hacemos match y aplicar el coste compartido, escríbeme por aquí: **¿en qué zona exacta está tu piso y cumple con estas condiciones?**`;
+                saludoInicial = `Hola, ${nombreCliente}. Soy la inteligencia operativa de Level-i. He recibido tu solicitud para el piso de 3 habitaciones con ascensor en La Ràpita (hasta 125k y solvencia verificada).<br><br>Para confirmar si hacemos match, escríbeme por aquí: **¿en qué calle o zona exacta está tu inmueble y cuáles son sus características principales?**`;
                 
                 const inputEl = document.getElementById('chat-input');
                 inputEl.type = "text"; 
