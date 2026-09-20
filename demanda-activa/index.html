@@ -142,8 +142,8 @@
 
         .section-divider { display: flex; align-items: center; text-align: center; color: var(--text-muted); font-size: 11px; text-transform: uppercase; letter-spacing: 2px; margin: 20px 0; }
         .section-divider::before, .section-divider::after { content: ''; flex: 1; border-bottom: 1px solid var(--border-color); }
-        .section-divider:not(:empty)::before { margin-right: 15px; }
-        .section-divider:not(:empty)::after { margin-left: 15px; }
+        .section-divider:not(:empty):before { margin-right: 15px; }
+        .section-divider:not(:empty):after { margin-left: 15px; }
 
         .video-screen-horizontal { width: 100%; aspect-ratio: 16/9; background: #000; border-radius: 8px; border: 1px solid var(--border-color); position: relative; overflow: hidden; margin-bottom: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.6); }
         .video-screen-horizontal video { width: 100%; height: 100%; object-fit: cover; display: block; }
@@ -385,10 +385,17 @@
                 
                 <div class="vertical-video-wrapper" style="box-shadow: 0 10px 40px rgba(16, 185, 129, 0.2); border-color: rgba(16, 185, 129, 0.4);">
                     <div class="video-overlay-badge" style="background: rgba(16,185,129,0.9); color:#fff; border:none;">✅ MATCH: LA RÀPITA</div>
-                    <video autoplay loop muted playsinline webkit-playsinline controls poster="">
+                    <!-- AÑADIDO ID video-principal -->
+                    <video id="video-principal" autoplay loop muted playsinline webkit-playsinline controls poster="">
                         <source src="https://level-i.github.io/demanda-activa/espot%20match.mp4" type="video/mp4">
                     </video>
                 </div>
+
+                <!-- AÑADIDO BOTÓN DE CONTROL DE AUDIO -->
+                <button id="audio-control-btn" onclick="toggleAudio()" style="background-color: var(--accent-green); color: white; padding: 12px 15px; border: none; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 14px; font-weight: bold; margin: 15px auto 20px auto; width: 100%; max-width: 400px; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); transition: opacity 0.2s;">
+                    <span id="audio-icon">🔇</span>
+                    <span id="audio-text">Activar Sonido del Vídeo</span>
+                </button>
 
                 <div class="pricing-box">
                     <h3>El Modelo de Coste Compartido</h3>
@@ -679,6 +686,23 @@
         let modoPendiente = "";
         
         let intencionGuardada = "";
+
+        // FUNCIÓN AÑADIDA PARA CONTROLAR EL AUDIO
+        function toggleAudio() {
+            const video = document.getElementById('video-principal');
+            const icon = document.getElementById('audio-icon');
+            const text = document.getElementById('audio-text');
+
+            if (video.muted) {
+                video.muted = false;
+                icon.innerText = '🔊';
+                text.innerText = 'Silenciar Vídeo';
+            } else {
+                video.muted = true;
+                icon.innerText = '🔇';
+                text.innerText = 'Activar Sonido del Vídeo';
+            }
+        }
 
         function iniciarMatchAntonio() {
             const nombre = document.getElementById('cap-nombre').value.trim();
