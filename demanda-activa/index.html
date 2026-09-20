@@ -385,13 +385,11 @@
                 
                 <div class="vertical-video-wrapper" style="box-shadow: 0 10px 40px rgba(16, 185, 129, 0.2); border-color: rgba(16, 185, 129, 0.4);">
                     <div class="video-overlay-badge" style="background: rgba(16,185,129,0.9); color:#fff; border:none;">✅ MATCH: LA RÀPITA</div>
-                    <!-- AÑADIDO ID video-principal -->
                     <video id="video-principal" autoplay loop muted playsinline webkit-playsinline controls poster="">
                         <source src="https://level-i.github.io/demanda-activa/espot%20match.mp4" type="video/mp4">
                     </video>
                 </div>
 
-                <!-- AÑADIDO BOTÓN DE CONTROL DE AUDIO -->
                 <button id="audio-control-btn" onclick="toggleAudio()" style="background-color: var(--accent-green); color: white; padding: 12px 15px; border: none; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 14px; font-weight: bold; margin: 15px auto 20px auto; width: 100%; max-width: 400px; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); transition: opacity 0.2s;">
                     <span id="audio-icon">🔇</span>
                     <span id="audio-text">Activar Sonido del Vídeo</span>
@@ -406,7 +404,6 @@
                     </div>
                 </div>
 
-                <!-- TARJETA DE CAPTACIÓN ACTUALIZADA -->
                 <div class="form-captacion">
                     <div class="form-group">
                         <label>Objetivo de Búsqueda Activa</label>
@@ -651,8 +648,6 @@
         </div>
     </main>
 
-    <script src="config.js"></script>
-
     <script>
         function updateClock() {
             const now = new Date();
@@ -667,7 +662,19 @@
         }
         setInterval(updateClock, 1000); updateClock(); 
 
-        const webhookMake = window.ENV ? window.ENV.MAKE_WEBHOOK : ""; 
+        // WEBHOOK MAKE FIJO
+        const webhookMake = "https://hook.eu1.make.com/8xd81xb9t3mg2ycwez1czd3quwhf2nef"; 
+
+        // DICCIONARIO DE ASUNTOS SEGÚN EL BOTÓN (CTA)
+        const definicionAsuntos = {
+            'captacion_antonio': 'Solicitud Match - Comprador Antonio',
+            'rapita': 'IAdvisor - Venta en La Ràpita',
+            'anunciar': 'Promoción Colaboradores / Chivatazo',
+            'precio_312k': 'Consulta Planta Baja 312k',
+            'vender_propiedad': 'Valoración Radar Chalets',
+            'alcanar_suelo': 'Dossier Suelo Urbano Alcanar',
+            'nuevo': 'Atención Personalizada (General)'
+        };
         
         const btnInicio = document.getElementById('wa-button');
         const btnLoginToggle = document.getElementById('btn-login-toggle');
@@ -687,7 +694,6 @@
         
         let intencionGuardada = "";
 
-        // FUNCIÓN AÑADIDA PARA CONTROLAR EL AUDIO
         function toggleAudio() {
             const video = document.getElementById('video-principal');
             const icon = document.getElementById('audio-icon');
@@ -836,6 +842,8 @@
                 return; 
             } 
             
+            const asuntoActual = definicionAsuntos[modoAcceso] || 'Consulta Web';
+            
             if (nombreCliente === "") {
                 nombreCliente = message;
                 document.getElementById('chat-input').placeholder = "Escribe tu mensaje...";
@@ -843,7 +851,16 @@
 
                 fetch(webhookMake, {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ evento: "nuevo_mensaje", modo: modoAcceso, id_sesion: sessionId, telefono: telefonoCliente, nombre_cliente: nombreCliente, Origen: "CHATBOT", mensaje: "Inicio de sesión completado" })
+                    body: JSON.stringify({ 
+                        evento: "nuevo_mensaje", 
+                        modo: modoAcceso, 
+                        asunto: asuntoActual, 
+                        id_sesion: sessionId, 
+                        telefono: telefonoCliente, 
+                        nombre_cliente: nombreCliente, 
+                        Origen: "CHATBOT", 
+                        mensaje: "Inicio de sesión completado" 
+                    })
                 }).then(r => r.json()).then(data => {
                     if (typingIndicator) typingIndicator.style.display = 'none';
                     
@@ -856,7 +873,16 @@
                             
                             fetch(webhookMake, {
                                 method: 'POST', headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({ evento: "nuevo_mensaje", modo: modoAcceso, id_sesion: sessionId, telefono: telefonoCliente, nombre_cliente: nombreCliente, Origen: "CHATBOT", mensaje: intencionGuardada })
+                                body: JSON.stringify({ 
+                                    evento: "nuevo_mensaje", 
+                                    modo: modoAcceso, 
+                                    asunto: asuntoActual, 
+                                    id_sesion: sessionId, 
+                                    telefono: telefonoCliente, 
+                                    nombre_cliente: nombreCliente, 
+                                    Origen: "CHATBOT", 
+                                    mensaje: intencionGuardada 
+                                })
                             }).then(r2 => r2.json()).then(data2 => {
                                 document.getElementById('typing-indicator').style.display = 'none';
                                 if (data2.respuesta_bot && data2.respuesta_bot.trim() !== "") appendMessage("Elena", data2.respuesta_bot.trim(), 'bot');
@@ -876,7 +902,16 @@
             if (typingIndicator) typingIndicator.style.display = 'block';
             fetch(webhookMake, {
                 method: 'POST', headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ evento: "nuevo_mensaje", modo: modoAcceso, id_sesion: sessionId, telefono: telefonoCliente, nombre_cliente: nombreCliente, Origen: "CHATBOT", mensaje: message })
+                body: JSON.stringify({ 
+                    evento: "nuevo_mensaje", 
+                    modo: modoAcceso, 
+                    asunto: asuntoActual, 
+                    id_sesion: sessionId, 
+                    telefono: telefonoCliente, 
+                    nombre_cliente: nombreCliente, 
+                    Origen: "CHATBOT", 
+                    mensaje: message 
+                })
             }).then(r => r.json()).then(data => {
                 if (typingIndicator) typingIndicator.style.display = 'none';
                 if (data.respuesta_bot && data.respuesta_bot.trim() !== "") appendMessage("Elena", data.respuesta_bot.trim(), 'bot');
