@@ -592,7 +592,7 @@
 
     <script>
         // AQUÍ ESTÁ EL CAMBIO A TU NUEVO WEBHOOK DE LA WEB
-        const webhookMake = "https://hook.eu1.make.com/8xd81xb9t3mg2ycwez1czd3quwhf2nef"; 
+        const webhookMake = "https://hook.eu1.make.com/xjdkh3tfbityojkdgpp1gisu1lnd9j34"; 
 
         // --- SISTEMA DE DICCIONARIO JSON PARA MÚLTIPLES IDIOMAS ---
         const traducciones = {
@@ -1178,6 +1178,7 @@
                 estadoChat = 'CHAT_LIBRE';
                 appendMessage("Elena", "Bienvenido de nuevo a su zona privada. ¿En qué le puedo gestionar hoy?", 'bot');
                 inputField.placeholder = "Escriba su consulta...";
+                // Si había una intención previa, la lanzamos
                 if(intencionGuardada !== "") procesarMensajeChat(intencionGuardada, true);
             } 
             else if (origen === 'nuevo_con_intencion') {
@@ -1194,10 +1195,12 @@
             inputField.focus();
         }
 
+        // LÓGICA DE GESTIÓN DE MENSAJES CORREGIDA
         function procesarMensajeChat(mensajeTexto = null, ocultarBurbujaUsuario = false) {
             const inputField = document.getElementById('chat-input');
             const message = mensajeTexto || inputField.value.trim();
             if (message === "") return;
+            
             if (!mensajeTexto) inputField.value = "";
             
             const optionsDiv = document.getElementById('chat-options-box');
@@ -1209,6 +1212,7 @@
             
             let idiomaActual = document.getElementById('language-selector').value;
 
+            // 1. Fase de captación de intención general (Si entró diciendo "Soy nuevo")
             if (estadoChat === 'ESPERANDO_INTENCION') {
                 intencionGuardada = message; 
                 estadoChat = 'ESPERANDO_TELEFONO';
@@ -1220,6 +1224,7 @@
                 return;
             }
 
+            // 2. Fase de captación de Teléfono
             if (estadoChat === 'ESPERANDO_TELEFONO') {
                 const telLimpio = message.replace(/\D/g, ''); 
                 if (telLimpio.length < 9) {
@@ -1236,6 +1241,7 @@
                 return; 
             } 
             
+            // 3. Fase de captación de Nombre y PRIMER envío a Make
             if (estadoChat === 'ESPERANDO_NOMBRE') {
                 nombreCliente = message;
                 estadoChat = 'CHAT_LIBRE';
@@ -1243,15 +1249,25 @@
                 
                 document.getElementById('typing-indicator').style.display = 'block';
 
+                // Aquí construimos el texto inicial para Make, incluyendo la intención que guardamos al principio
                 let textoParaMake = `Inicio de sesión en Live-Match. Intención del usuario: "${intencionGuardada}"`;
 
                 fetch(webhookMake, {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ evento: "nuevo_mensaje", id_sesion: sessionId, telefono: telefonoCliente, nombre_cliente: nombreCliente, Origen: "Live-Match chat bot", perfil: perfilUsuario, ip: clienteIP, mensaje: textoParaMake, idioma_usuario: idiomaActual })
+                    body: JSON.stringify({ 
+                        evento: "nuevo_mensaje", 
+                        id_sesion: sessionId, 
+                        telefono: telefonoCliente, 
+                        nombre_cliente: nombreCliente, 
+                        Origen: "Live-Match chat bot", 
+                        perfil: perfilUsuario, 
+                        ip: clienteIP, 
+                        mensaje: textoParaMake, 
+                        idioma_usuario: idiomaActual 
+                    })
                 }).then(r => r.json()).then(data => {
                     document.getElementById('typing-indicator').style.display = 'none';
-                    appendMessage("Elena", (data.respuesta_bot || `Encantada, ${nombreCliente}. He registrado tu solicitud. Un asesor humano o yo misma te daremos seguimiento en breve. ¿Tienes alguna otra duda?`).trim(), 'bot');
-                    intencionGuardada = ""; 
+                    appendMessage("Elena", (data.respuesta_bot || `Encantada, ${nombreCliente}. He registrado tu solicitud. ¿Qué más información necesitas?`).trim(), 'bot');
                 }).catch(err => {
                     document.getElementById('typing-indicator').style.display = 'none';
                     appendMessage("Elena", `Entendido, ${nombreCliente}. He guardado tu solicitud. ¿Qué más información necesitas?`, 'bot');
@@ -1259,11 +1275,27 @@
                 return;
             }
 
+            // 4. Fase de Chat Libre (Ya tenemos todos sus datos)
             if (estadoChat === 'CHAT_LIBRE') {
                 document.getElementById('typing-indicator').style.display = 'block';
+                
+                // Si llegamos a Chat Libre a través de un botón de intención ("Quiero vender") siendo ya clientes, 
+                // pasamos ese mensaje directo. Si no, pasamos lo que escriba el usuario.
+                let mensajeAEnviar = message;
+
                 fetch(webhookMake, {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ evento: "nuevo_mensaje", id_sesion: sessionId, telefono: telefonoCliente, nombre_cliente: nombreCliente, Origen: "Live-Match chat bot", perfil: perfilUsuario, ip: clienteIP, mensaje: message, idioma_usuario: idiomaActual })
+                    body: JSON.stringify({ 
+                        evento: "nuevo_mensaje", 
+                        id_sesion: sessionId, 
+                        telefono: telefonoCliente, 
+                        nombre_cliente: nombreCliente, 
+                        Origen: "Live-Match chat bot", 
+                        perfil: perfilUsuario, 
+                        ip: clienteIP, 
+                        mensaje: mensajeAEnviar, 
+                        idioma_usuario: idiomaActual 
+                    })
                 }).then(r => r.json()).then(data => {
                     document.getElementById('typing-indicator').style.display = 'none';
                     if (data.respuesta_bot) appendMessage("Elena", data.respuesta_bot.trim(), 'bot');
