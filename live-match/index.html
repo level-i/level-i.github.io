@@ -592,7 +592,7 @@
 
     <script>
         // AQUÍ ESTÁ EL CAMBIO A TU NUEVO WEBHOOK DE LA WEB
-        const webhookMake = "https://hook.eu1.make.com/xjdkh3tfbityojkdgpp1gisu1lnd9j34"; 
+        const webhookMake = "https://hook.eu1.make.com/8xd81xb9t3mg2ycwez1czd3quwhf2nef"; 
 
         // --- SISTEMA DE DICCIONARIO JSON PARA MÚLTIPLES IDIOMAS ---
         const traducciones = {
@@ -997,6 +997,11 @@
         let telefonoCliente = ""; 
         let nombreCliente = ""; 
         let intencionGuardada = "";
+        
+        // NUEVAS VARIABLES PARA MAKE
+        let accionGlobal = "GENERAL";
+        let referenciaGlobal = "";
+        
         let perfilUsuario = "NUEVO"; 
         let estadoChat = 'ESPERANDO_INTENCION'; 
         
@@ -1034,16 +1039,56 @@
             document.getElementById('victoria-subtitle').style.display = 'block';
         }
 
+        // LÓGICA DE CATEGORIZACIÓN INTELIGENTE
         function traducirIntencion(codigo) {
-            if(codigo === 'chivatazo') return "Pegar Chivatazo (Tengo un contacto)";
-            if(codigo === 'alianza') return "Unirse a la Red (Alianza Profesional)";
-            if(codigo.startsWith('sumar_interes_')) return "Sumar interés a la propiedad " + codigo.split('_')[2];
-            if(codigo === 'alcanar_suelo') return "Solicitar dossier de inversión de suelo en Alcanar";
-            if(codigo === 'precio_312k') return "Consultar detalles de la propiedad de 312.000€";
-            if(codigo === 'vender_propiedad') return "Iniciar gestión de venta de un chalet/propiedad";
-            if(codigo === 'ofrecer_propiedad') return "Ofrecer mi propiedad al radar de Sabadell";
-            if(codigo === 'nuevo_video_coworking') return "Consultar detalles sobre el Despacho Coworking en Barcelona";
-            return codigo; 
+            accionGlobal = "GENERAL";
+            referenciaGlobal = "";
+            let textoUsuario = codigo;
+
+            if (codigo === 'chivatazo') { 
+                accionGlobal = "PROFESIONALES-ADVISORS"; 
+                textoUsuario = "Quiero informar de un chivatazo (Tengo un contacto)"; 
+            }
+            else if (codigo === 'alianza') { 
+                accionGlobal = "PROFESIONALES-ADVISORS"; 
+                textoUsuario = "Quiero unirme a la red (Alianza Profesional)"; 
+            }
+            else if (codigo.startsWith('sumar_interes_')) { 
+                accionGlobal = "INTERESADOS MATCH"; 
+                referenciaGlobal = codigo.split('_')[2]; 
+                textoUsuario = "Quiero sumar interés a la propiedad " + referenciaGlobal; 
+            }
+            else if (codigo === 'alcanar_suelo') { 
+                accionGlobal = "COMPRAR"; 
+                referenciaGlobal = "Dossier Alcanar"; 
+                textoUsuario = "Solicitar dossier de inversión de suelo en Alcanar"; 
+            }
+            else if (codigo === 'precio_312k') { 
+                accionGlobal = "COMPRAR"; 
+                referenciaGlobal = "Video 312k"; 
+                textoUsuario = "Consultar detalles de la propiedad de 312.000€"; 
+            }
+            else if (codigo === 'vender_propiedad') { 
+                accionGlobal = "VENDER"; 
+                textoUsuario = "Iniciar gestión de venta de mi propiedad"; 
+            }
+            else if (codigo === 'ofrecer_propiedad') { 
+                accionGlobal = "PROPIEDADES MATCH"; 
+                textoUsuario = "Ofrecer mi propiedad al radar de demanda"; 
+            }
+            else if (codigo === 'nuevo_video_coworking') { 
+                accionGlobal = "COMPRAR"; 
+                referenciaGlobal = "Coworking BCN"; 
+                textoUsuario = "Consultar detalles sobre el Despacho Coworking en BCN"; 
+            }
+            // Para botones de chat directo
+            else if (codigo.includes('Comprar')) { accionGlobal = "COMPRAR"; }
+            else if (codigo.includes('Vender')) { accionGlobal = "VENDER"; }
+            else if (codigo.includes('Hipoteca')) { accionGlobal = "HIPOTECAS"; }
+            else if (codigo.includes('Invertir')) { accionGlobal = "COMPRAR"; }
+            else if (codigo.includes('Unirse') || codigo.includes('Chivatazo')) { accionGlobal = "PROFESIONALES-ADVISORS"; }
+            
+            return textoUsuario; 
         }
 
         function iniciarFlujo(intencion) {
@@ -1103,7 +1148,13 @@
 
             fetch(webhookMake, {
                 method: 'POST', headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ evento: "verificar_registro", telefono: telLimpio, ip: clienteIP, Origen: "Live-Match", idioma_usuario: idiomaActual })
+                body: JSON.stringify({ 
+                    evento: "verificar_registro", 
+                    telefono: telLimpio, 
+                    ip: clienteIP, 
+                    Origen: "Live-Match", 
+                    idioma_usuario: idiomaActual 
+                })
             }).then(res => res.json()).then(data => {
                 telInput.disabled = false;
                 if(data.registrado === "bloqueado") {
@@ -1178,12 +1229,11 @@
                 estadoChat = 'CHAT_LIBRE';
                 appendMessage("Elena", "Bienvenido de nuevo a su zona privada. ¿En qué le puedo gestionar hoy?", 'bot');
                 inputField.placeholder = "Escriba su consulta...";
-                // Si había una intención previa, la lanzamos
                 if(intencionGuardada !== "") procesarMensajeChat(intencionGuardada, true);
             } 
             else if (origen === 'nuevo_con_intencion') {
                 estadoChat = 'ESPERANDO_TELEFONO';
-                appendMessage("Elena", `Hola. Soy Elena, AI Advisor de Level-i. Para proceder de forma segura con tu solicitud sobre **${intencionGuardada}**, por favor indícame tu **número de teléfono móvil**.`, 'bot');
+                appendMessage("Elena", `Hola. Soy Elena, AI Advisor de Level-i. Para proceder de forma segura con tu solicitud, por favor indícame tu **número de teléfono móvil**.`, 'bot');
                 inputField.placeholder = "Ej: 600123456";
             }
             else {
@@ -1195,7 +1245,6 @@
             inputField.focus();
         }
 
-        // LÓGICA DE GESTIÓN DE MENSAJES CORREGIDA
         function procesarMensajeChat(mensajeTexto = null, ocultarBurbujaUsuario = false) {
             const inputField = document.getElementById('chat-input');
             const message = mensajeTexto || inputField.value.trim();
@@ -1208,13 +1257,14 @@
 
             if(!ocultarBurbujaUsuario) {
                 appendMessage("Tú", message, 'user');
+                // Si están en modo chat libre sin haber tocado botón, intentamos categorizar lo que han escrito
+                if(accionGlobal === "GENERAL") traducirIntencion(message);
             }
             
             let idiomaActual = document.getElementById('language-selector').value;
 
-            // 1. Fase de captación de intención general (Si entró diciendo "Soy nuevo")
             if (estadoChat === 'ESPERANDO_INTENCION') {
-                intencionGuardada = message; 
+                intencionGuardada = traducirIntencion(message); 
                 estadoChat = 'ESPERANDO_TELEFONO';
                 setTimeout(() => {
                     appendMessage("Elena", "Excelente. Para registrar esta gestión y poder cruzar tus datos con la plataforma, indícame tu **número de teléfono móvil**.", 'bot');
@@ -1224,7 +1274,6 @@
                 return;
             }
 
-            // 2. Fase de captación de Teléfono
             if (estadoChat === 'ESPERANDO_TELEFONO') {
                 const telLimpio = message.replace(/\D/g, ''); 
                 if (telLimpio.length < 9) {
@@ -1241,107 +1290,20 @@
                 return; 
             } 
             
-            // 3. Fase de captación de Nombre y PRIMER envío a Make
-            if (estadoChat === 'ESPERANDO_NOMBRE') {
-                nombreCliente = message;
-                estadoChat = 'CHAT_LIBRE';
-                inputField.placeholder = "Escribe tu mensaje...";
-                
-                document.getElementById('typing-indicator').style.display = 'block';
+            if (estadoChat === 'ESPERANDO_NOMBREEl flujo lógico que planteas, Joan, es ideal para una arquitectura de asistencia omnicanal. Separar la lógica de estado (la consola de navegación en *level-immo / level-i*) de la capa de comunicación (el entorno de procedencia del lead) garantiza una experiencia fluida sin obligar al usuario a cambiar de aplicación.
 
-                // Aquí construimos el texto inicial para Make, incluyendo la intención que guardamos al principio
-                let textoParaMake = `Inicio de sesión en Live-Match. Intención del usuario: "${intencionGuardada}"`;
+Para que Elena ejecute esto con precisión matemática en cada interacción, el sistema debe estructurar la entrada en tres fases de evaluación inmediatas antes de emitir cualquier respuesta:
 
-                fetch(webhookMake, {
-                    method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        evento: "nuevo_mensaje", 
-                        id_sesion: sessionId, 
-                        telefono: telefonoCliente, 
-                        nombre_cliente: nombreCliente, 
-                        Origen: "Live-Match chat bot", 
-                        perfil: perfilUsuario, 
-                        ip: clienteIP, 
-                        mensaje: textoParaMake, 
-                        idioma_usuario: idiomaActual 
-                    })
-                }).then(r => r.json()).then(data => {
-                    document.getElementById('typing-indicator').style.display = 'none';
-                    appendMessage("Elena", (data.respuesta_bot || `Encantada, ${nombreCliente}. He registrado tu solicitud. ¿Qué más información necesitas?`).trim(), 'bot');
-                }).catch(err => {
-                    document.getElementById('typing-indicator').style.display = 'none';
-                    appendMessage("Elena", `Entendido, ${nombreCliente}. He guardado tu solicitud. ¿Qué más información necesitas?`, 'bot');
-                });
-                return;
-            }
+**1. Detección de Origen y Clasificación de Acción**
+*   **Captura de Referencia:** Si el *webhook* o mensaje de entrada incluye un parámetro UTM, enlace o ID de campaña, se etiqueta automáticamente el origen publicitario para las métricas de conversión.
+*   **Asignación de Intención:** El motor analiza el mensaje y lo encapsula estrictamente en una de las seis acciones maestras: `COMPRAR`, `VENDER`, `HIPOTECAS`, `PROFESIONALES-ADVISORS`, `INTERESADOS MATCH`, o `PROPIEDADES MATCH`.
 
-            // 4. Fase de Chat Libre (Ya tenemos todos sus datos)
-            if (estadoChat === 'CHAT_LIBRE') {
-                document.getElementById('typing-indicator').style.display = 'block';
-                
-                // Si llegamos a Chat Libre a través de un botón de intención ("Quiero vender") siendo ya clientes, 
-                // pasamos ese mensaje directo. Si no, pasamos lo que escriba el usuario.
-                let mensajeAEnviar = message;
+**2. Resolución de Identidad (Cruce con CONTACTOS)**
+*   **Usuario Verificado (Match):** Se cruza el identificador (teléfono, email o token) con la tabla de contactos. Se extrae su nombre y su *array* de perfiles (ej. `Roles: [Advisor, Comprador, Inversor]`).
+*   **Usuario Nuevo:** Se marca el estado de la sesión como *Lead No Identificado*.
 
-                fetch(webhookMake, {
-                    method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        evento: "nuevo_mensaje", 
-                        id_sesion: sessionId, 
-                        telefono: telefonoCliente, 
-                        nombre_cliente: nombreCliente, 
-                        Origen: "Live-Match chat bot", 
-                        perfil: perfilUsuario, 
-                        ip: clienteIP, 
-                        mensaje: mensajeAEnviar, 
-                        idioma_usuario: idiomaActual 
-                    })
-                }).then(r => r.json()).then(data => {
-                    document.getElementById('typing-indicator').style.display = 'none';
-                    if (data.respuesta_bot) appendMessage("Elena", data.respuesta_bot.trim(), 'bot');
-                }).catch(err => {
-                    document.getElementById('typing-indicator').style.display = 'none';
-                    appendMessage("Elena", "Disculpa, hay un error de conexión temporal con mis sistemas centrales.", 'bot');
-                });
-            }
-        }
+**3. Enrutamiento de la Conversación (El Rol de Elena)**
+*   **Flujo para Usuarios Verificados:** Elena saluda por el nombre de pila y adapta el contexto a la multiplicidad de sus perfiles. En *backend*, el sistema envía un evento a la consola de *level-i* para pre-cargar u organizar su panel de navegación basándose en la nueva solicitud, pero **la conversación textual continúa ininterrumpida en el canal original** (WhatsApp, web, red social).
+*   **Flujo para Nuevos:** Elena asume un rol de cualificación (*Lead Filtering*). Guía la conversación de forma conversacional pero estructurada para perfilar al usuario, determinar cuál de los roles (Inquilino, Inversor, etc.) le corresponde, y finalmente registrarlo en la tabla de CONTACTOS.
 
-        function appendMessage(sender, text, type) {
-            const chatMessages = document.getElementById('chat-messages');
-            const msgDiv = document.createElement('div');
-            
-            msgDiv.classList.add('chat-bubble', type === 'bot' ? 'bot-message' : 'user-message');
-            chatMessages.appendChild(msgDiv);
-            
-            let htmlText = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-
-            if (type === 'bot') {
-                let i = 0;
-                function typeWriter() {
-                    if (i < htmlText.length) {
-                        let char = htmlText.charAt(i);
-                        if (char === '<') {
-                            let tag = "";
-                            while (htmlText.charAt(i) !== '>' && i < htmlText.length) {
-                                tag += htmlText.charAt(i);
-                                i++;
-                            }
-                            tag += '>';
-                            msgDiv.innerHTML += tag;
-                        } else {
-                            msgDiv.innerHTML += char;
-                            i++;
-                        }
-                        chatMessages.scrollTop = chatMessages.scrollHeight;
-                        setTimeout(typeWriter, 20); 
-                    }
-                }
-                typeWriter();
-            } else {
-                msgDiv.innerHTML = htmlText;
-                chatMessages.scrollTop = chatMessages.scrollHeight;
-            }
-        }
-    </script>
-</body>
-</html>
+¿Cómo tienes pensado gestionar los conflictos de contexto para los usuarios verificados? Por ejemplo, si alguien que es simultáneamente *Advisor* e *Inversor* entra por una campaña de `COMPRAR`, ¿Elena debería priorizar un tono de colega profesional o el de un cliente buscando rentabilidad?
