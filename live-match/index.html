@@ -223,6 +223,31 @@
         .risk-box p { margin: 0; font-size: 12px; color: var(--text-muted); line-height: 1.5; }
         .dossier-footer { padding: 20px 25px; position: sticky; bottom: 0; background: rgba(17, 24, 39, 0.95); backdrop-filter: blur(10px); border-top: 1px solid var(--border-color); z-index: 10; }
 
+        .btn-mute-toggle {
+            position: absolute; 
+            bottom: 15px; 
+            left: 15px; 
+            background: rgba(0,0,0,0.6); 
+            border: 1px solid rgba(255,255,255,0.2); 
+            color: #fff; 
+            border-radius: 50%; 
+            width: 38px; 
+            height: 38px; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            cursor: pointer; 
+            backdrop-filter: blur(4px); 
+            z-index: 20; 
+            transition: all 0.3s ease;
+            font-size: 18px;
+        }
+        .btn-mute-toggle:hover {
+            background: rgba(197, 160, 89, 0.8);
+            border-color: var(--accent-gold);
+            transform: scale(1.05);
+        }
+
         @media (max-width: 900px) {
             body { flex-direction: column; overflow-y: auto; overflow-x: hidden; }
             aside { width: 100%; border-right: none; border-bottom: 1px solid var(--border-color); padding: 15px; }
@@ -286,6 +311,7 @@
                 <option value="en">🇬🇧 English</option>
                 <option value="fr">🇫🇷 Français</option>
                 <option value="de">🇩🇪 Deutsch</option>
+                <option value="it">🇮🇹 Italiano</option>
             </select>
         </header>
 
@@ -304,9 +330,11 @@
 
                 <div class="video-screen-horizontal" style="margin-top: 0; border: 1px solid var(--accent-gold); box-shadow: 0 10px 40px rgba(197, 160, 89, 0.15);">
                     <div class="video-overlay-badge" style="background: rgba(197, 160, 89, 0.95); color:#000; border:none; text-transform: uppercase;" data-i18n="badge_horta_vella">💎 Horta Vella · 1.396 m²</div>
-                    <video autoplay loop muted playsinline webkit-playsinline preload="auto">
+                    <video id="video-feed-horta" autoplay loop muted playsinline webkit-playsinline preload="auto">
                         <source src="https://level-i.github.io/live-match/horta-vella-larapita.mp4" type="video/mp4">
                     </video>
+                    <!-- BOTÓN DE SONIDO AÑADIDO -->
+                    <button class="btn-mute-toggle" onclick="toggleVideoMute('video-feed-horta', this)">🔇</button>
                 </div>
                 
                 <button class="btn-action" style="max-width: 100%; width: 100%; margin-top: 15px; background: linear-gradient(90deg, #C5A059, #b08d4b); color: #000; font-size: 15px; box-shadow: 0 4px 15px rgba(197, 160, 89, 0.4);" onclick="abrirDossierOffcanvas()" data-i18n="btn_abrir_dossier">
@@ -641,9 +669,12 @@
         
         <div class="offcanvas-content">
             <div class="dossier-hero">
-                <video autoplay loop muted playsinline webkit-playsinline>
+                <video id="video-offcanvas-horta" autoplay loop muted playsinline webkit-playsinline>
                     <source src="https://level-i.github.io/live-match/horta-vella-larapita.mp4" type="video/mp4">
                 </video>
+                <!-- BOTÓN DE SONIDO TAMBIÉN EN EL OFFCANVAS -->
+                <button class="btn-mute-toggle" onclick="toggleVideoMute('video-offcanvas-horta', this)">🔇</button>
+                
                 <div class="dossier-hero-overlay">
                     <h1 class="dossier-hero-title">Suelo Urbanizable La Ràpita</h1>
                     <p class="dossier-hero-subtitle">Zona Horta Vella · 1.396 m²</p>
@@ -1063,6 +1094,76 @@
                 dossier_metodo: "📈 Dynamische Residualmethode",
                 dossier_salida: "🎯 Austrittsmarge (Exit)",
                 btn_dossier_elena: "💬 Mit Elena über dieses Grundstück sprechen"
+            },
+            it: {
+                nav_demanda: "🎯 Domanda Attiva",
+                nav_live: "📡 Live-Match",
+                nav_venta: "🏷️ Vendita Generale",
+                nav_comprar: "🏠 Comprare Immobili",
+                nav_gestion: "⚙️ Gestione Integrale",
+                header_title: "Centro di Comando PropTech · Ambiente di Test",
+                live_conexiones: "Connessioni in diretta",
+                comp_antonio: "Acquirente: Antonio",
+                loc_rapita: "La Ràpita",
+                req_antonio: "Cerca: 3 Camere · Fuori dal porto · Ascensore obbligatorio",
+                piso_luminoso: "Appartamento esterno centrale molto luminoso (Profilo Cieco)",
+                planta_baja: "Piano terra ristrutturato pronto per essere abitato",
+                comp_marta: "Acquirente: Marta",
+                loc_terrassa: "Terrassa",
+                req_marta: "Cerca: Attico o appartamento con grande terrazza · Zona Centro o Nord",
+                atico_duplex: "Attico Duplex con terrazza di 30m2 (Profilo Cieco)",
+                comp_carlos: "Acquirente: Carlos",
+                loc_sabadell: "Sabadell",
+                req_carlos: "Cerca: Investimento per affitto · Vicino a FGC · Da ristrutturare OK",
+                hipoteca_val: "Mutuo Validato",
+                cap_aprobado: "Capitale Approvato",
+                pago_contado: "Pagamento in Contanti",
+                auditoria_completada: "✅ Audit Completato",
+                fotos_cuarentena: "🟡 Foto in Quarantena (IA)",
+                metros: "Metri",
+                ascensor: "Ascensore",
+                bano: "Bagno",
+                banos: "Bagni",
+                precio_ofertado: "Prezzo Offerto",
+                inv_interesados: "🔥 4 investitori interessati",
+                sumar_interes: "Aggiungere Interesse",
+                img_bloq: "Immagini temporaneamente bloccate",
+                novedad_radar: "⚡ Novità sul Radar",
+                msg_radar: 'Radar in scansione. Al momento non ci sono proprietà offerte che corrispondono al 100% a questo mandato. <a href="javascript:void(0)" onclick="iniciarFlujo(\'ofrecer_propiedad\')" style="color: var(--accent-blue); font-weight: bold; text-decoration: none;">Ne hai una? Offrila qui con Elena.</a>',
+                mercado_gral: "MERCATO GENERALE E OPPORTUNITÀ ATTIVE",
+                nueva_prop: "⭐ NUOVA PROPRIETÀ: COWORKING BCN",
+                dossier_inv: "Dossier di Investimento | Terreno Urbano",
+                suelo_premium: "Terreno Residenziale Premium a Les Cases d'Alcanar",
+                btn_detalles: "💬 Consultare i dettagli con Elena",
+                btn_dossier: "Richiedere Dossier a Elena",
+                btn_vender: "🏠 Avviare la Gestione della Vendita con Elena",
+                panel_acceso: "Seleziona il tuo metodo di accesso:",
+                btn_registrados: "🔐 Accesso Utenti Registrati",
+                btn_nuevo: "🎙️ Sono nuovo (Parlare con la Receptionist IA)",
+                intro_tel: "Inserisci il tuo numero di telefono collegato:",
+                verificar_acceso: "Verificare Accesso",
+                volver: "🔙 Torna indietro",
+                escribiendo: "Elena sta scrivendo...",
+                enviar: "Invia",
+                promo_chivatazo: "🎁 <b>Soffiata Nazionale:</b> Conosci qualcuno che vende? Guadagna <b>500 €</b> fornendo il riferimento.",
+                promo_alianza: "🚀 <b>Unisciti alla nostra rete:</b> Alleanza Professionale. Guadagna fino al <b>60% per operazione</b> collegando gli acquirenti.",
+                servicio_presencial: "SERVIZIO IN PRESENZA",
+                como_funciona: "Come funziona Live-Match?",
+                modal_step1_title: "La Domanda Verificata",
+                modal_step1_desc: "Nei riquadri principali vedrai gli acquirenti con il finanziamento o il capitale già approvato. Sappiamo esattamente cosa cercano e quanto possono pagare.",
+                modal_step2_title: "Il Mercato Nascosto",
+                modal_step2_desc: "Proprio sotto ogni acquirente, appaiono le proprietà che i venditori stanno offrendo in modo anonimo per soddisfare quella domanda.",
+                modal_step3_title: "Il Match Immediato",
+                modal_step3_desc: "Se ti interessa un'operazione, clicca su 'Aggiungere Interesse' o proponi una proprietà. Ci occupiamo dell'incrocio dei dati attraverso il nostro modello a Costo Condiviso.",
+                acepto_legal: 'Ho letto e accetto la <a href="javascript:void(0)" onclick="abrirLegal(\'privacidad\')" style="color:var(--accent-green);">Informativa sulla Privacy</a> e l\'uso dei <a href="javascript:void(0)" onclick="abrirLegal(\'cookies\')" style="color:var(--accent-green);">Cookie</a>. Comprendo e acconsento a essere assistito da un sistema automatizzato di Intelligenza Artificiale.',
+                btn_entrar_mercado: "Entrare nel Mercato Reale",
+                div_oportunidad_inv: "ESCLUSIVA ISTITUZIONALE · LAND BANKING",
+                badge_horta_vella: "💎 Horta Vella · 1.396 m²",
+                btn_abrir_dossier: "📊 Analizzare Dossier e Redditività",
+                dossier_resumen: "📍 Riepilogo Strategico",
+                dossier_metodo: "📈 Metodo Residuale Dinamico (Stima)",
+                dossier_salida: "🎯 Margine di Uscita (Exit)",
+                btn_dossier_elena: "💬 Parlare con Elena di questa particella"
             }
         };
 
@@ -1131,7 +1232,6 @@
 
         // --- SISTEMA DE INICIO Y CHATBOT ---
         window.addEventListener('DOMContentLoaded', () => {
-            // HEMOS QUITADO EL CONDICIONAL TEMPORALMENTE PARA FORZAR EL POPUP
             document.getElementById('onboarding-modal').classList.remove('hidden');
             cambiarIdioma();
         });
@@ -1145,7 +1245,7 @@
             document.getElementById('onboarding-modal').classList.add('hidden');
         }
 
-        // --- FUNCIONES OFFCANVAS HORTA VELLA ---
+        // --- FUNCIONES OFFCANVAS Y VIDEO HORTA VELLA ---
         function abrirDossierOffcanvas() {
             document.getElementById('dossier-overlay').classList.add('active');
             document.getElementById('dossier-panel').classList.add('active');
@@ -1157,6 +1257,14 @@
         function contactarElenaHortaVella() {
             cerrarDossierOffcanvas();
             iniciarFlujo('inversion_horta_vella');
+        }
+        
+        function toggleVideoMute(videoId, btnElement) {
+            const video = document.getElementById(videoId);
+            if (video) {
+                video.muted = !video.muted;
+                btnElement.innerHTML = video.muted ? '🔇' : '🔊';
+            }
         }
 
         let sessionId = 'usr_' + Math.random().toString(36).substr(2, 9);
