@@ -153,9 +153,7 @@
             <div class="brand-logo">L<span>•</span> Level.immo</div>
         </div>
         <div class="nav-menu">
-            <!-- Pestaña Activa: Demanda Activa -->
             <a href="#" class="nav-item active" data-i18n="nav_demanda">🎯 Demanda Activa</a>
-            <!-- Enlace al Mercado Real -->
             <a href="mercado-real.html" class="nav-item" data-i18n="nav_mercado_real">📡 Mercado Real</a>
         </div>
 
@@ -190,15 +188,15 @@
                     Verificamos tu presupuesto y te conseguimos propiedades fuera de mercado directo de particulares.
                 </p>
                 
-                <form class="form-upload" onsubmit="event.preventDefault(); alert('Solicitud enviada a nuestro equipo PropTech. Te contactaremos en breve para la verificación de fondos.'); this.reset();">
+                <form class="form-upload" id="form-alta-inversor">
                     <div class="form-group">
                         <label data-i18n="lbl_nombre">Tu Nombre</label>
-                        <input type="text" placeholder="Ej: Antonio G." data-i18n-placeholder="plc_nombre" required>
+                        <input type="text" id="inv-nombre" placeholder="Ej: Antonio G." data-i18n-placeholder="plc_nombre" required>
                     </div>
                     
                     <div class="form-group">
                         <label data-i18n="lbl_zonas_int">Zonas de Interés</label>
-                        <select required>
+                        <select id="inv-zonas" required>
                             <option value="">Selecciona zona principal...</option>
                             <option value="Alcanar">Alcanar</option>
                             <option value="Les Cases d'Alcanar">Les Cases d'Alcanar</option>
@@ -216,17 +214,17 @@
                     
                     <div class="form-group">
                         <label data-i18n="lbl_presupuesto">Presupuesto Verificable (€)</label>
-                        <input type="number" placeholder="Ej: 150000" required>
+                        <input type="number" id="inv-presupuesto" placeholder="Ej: 150000" required>
                     </div>
                     
                     <div class="form-group">
                         <label data-i18n="lbl_requisito">Requisito Clave</label>
-                        <input type="text" placeholder="Ej: Vistas al mar, Ascensor..." data-i18n-placeholder="plc_requisito" required>
+                        <input type="text" id="inv-requisito" placeholder="Ej: Vistas al mar, Ascensor..." data-i18n-placeholder="plc_requisito" required>
                     </div>
                     
                     <div class="form-group">
                         <label data-i18n="lbl_tel_oculto">Teléfono Oculto</label>
-                        <input type="tel" placeholder="Para conectarte con vendedores" data-i18n-placeholder="plc_tel_oculto" required>
+                        <input type="tel" id="inv-tel" placeholder="Para conectarte con vendedores" data-i18n-placeholder="plc_tel_oculto" required>
                     </div>
                     
                     <button type="submit" class="btn-submit" data-i18n="btn_solicitar_vip">Solicitar Verificación VIP</button>
@@ -268,7 +266,7 @@
                     <button class="btn-offer" onclick="openOfferModal('María S.')" data-i18n="btn_tengo_buscas">Tengo lo que buscas 🏠</button>
                 </div>
 
-                <!-- COMPRADOR 3: CARLOS (Ejemplo Zona Vallès) -->
+                <!-- COMPRADOR 3: CARLOS -->
                 <div class="buyer-card">
                     <div class="buyer-header">
                         <div class="buyer-name">👤 Carlos M. <span class="buyer-badge" data-i18n="badge_verificado">✓ Verificado</span></div>
@@ -329,7 +327,7 @@
             <div class="modal-title" data-i18n="modal_offer_title">Ofrecer mi propiedad</div>
             <div class="modal-body">
                 <p id="offer-text" style="margin-bottom: 15px; font-weight: bold; color: var(--accent-gold);"></p>
-                <form class="form-upload" id="form-offer" onsubmit="submitOffer(event)">
+                <form class="form-upload" id="form-offer">
                     <div class="form-group">
                         <label data-i18n="lbl_tipo">Tipo de Inmueble</label>
                         <select id="offer-tipo" required>
@@ -360,9 +358,12 @@
     </div>
 
     <script>
+        // WEBHOOK MAESTRO DE MAKE
+        const WEBHOOK_MAKE = "https://hook.eu1.make.com/bpb012er1137ocx0tcdk19muh6le4qpu";
+
         const traducciones = {
             es: { nav_demanda: "🎯 Demanda Activa", nav_mercado_real: "📡 Mercado Real", header_title_da: "Consola PropTech · Reverse Market", unete_inversor: "Únete como Inversor", unete_desc: "Verificamos tu presupuesto y te conseguimos propiedades fuera de mercado directo de particulares.", lbl_nombre: "Tu Nombre", plc_nombre: "Ej: Antonio G.", lbl_zonas_int: "Zonas de Interés", lbl_presupuesto: "Presupuesto Verificable (€)", lbl_requisito: "Requisito Clave", plc_requisito: "Ej: Vistas al mar, Ascensor...", lbl_tel_oculto: "Teléfono Oculto", plc_tel_oculto: "Para conectarte con vendedores", btn_solicitar_vip: "Solicitar Verificación VIP", comp_verificados: "Compradores Verificados", badge_verificado: "✓ Verificado", hace_1_dia: "Hace 1 día", presupuesto_125: "Presupuesto: 125.000 €", tag_piso_ado: "🏠 Piso o Adosado", tag_min_3_hab: "🛏️ Mín. 3 Hab", tag_ascensor: "⭐ Ascensor obligatorio", btn_tengo_buscas: "Tengo lo que buscas 🏠", hace_3_dias: "Hace 3 días", presupuesto_210: "Presupuesto: 210.000 €", tag_chalet: "🏡 Chalet independiente", tag_parcela: "🌳 Con parcela / jardín", hace_5_dias: "Hace 5 días", presupuesto_350: "Presupuesto: 350.000 €", tag_piso_cen: "🏠 Piso céntrico", tag_min_4_hab: "🛏️ Mín. 4 Hab", tag_parking: "⭐ Parking incluido", modal_offer_title: "Ofrecer mi propiedad", lbl_tipo: "Tipo de Inmueble", lbl_precio: "Precio de Venta Deseado (€)", lbl_fotos: "Subir Fotos (Máx. 4)", btn_enviar_oferta: "Enviar a revisión" },
-            ca: { nav_demanda: "🎯 Demanda Activa", nav_mercado_real: "📡 Mercat Real", header_title_da: "Consola PropTech · Reverse Market", unete_inversor: "Uneix-te com a Inversor", unete_desc: "Verifiquem el teu pressupost i t'aconseguim propietats fora de mercat directe de particulars.", lbl_nombre: "El teu Nom", plc_nombre: "Ex: Antonio G.", lbl_zonas_int: "Zones d'Interès", lbl_presupuesto: "Pressupost Verificable (€)", lbl_requisito: "Requisit Clau", plc_requisito: "Ex: Vistes al mar, Ascensor...", lbl_tel_oculto: "Telèfon Ocult", plc_tel_oculto: "Per connectar-te amb venedors", btn_solicitar_vip: "Sol·licitar Verificació VIP", comp_verificados: "Compradors Verificats", badge_verificado: "✓ Verificat", hace_1_dia: "Fa 1 dia", presupuesto_125: "Pressupost: 125.000 €", tag_piso_ado: "🏠 Pis o Adossat", tag_min_3_hab: "🛏️️ Mín. 3 Hab", tag_ascensor: "⭐ Ascensor obligatori", btn_tengo_buscas: "Tinc el que busques 🏠", hace_3_dias: "Fa 3 dies", presupuesto_210: "Pressupost: 210.000 €", tag_chalet: "🏡 Xalet independent", tag_parcela: "🌳 Amb parcel·la / jardí", hace_5_dias: "Fa 5 dies", presupuesto_350: "Pressupost: 350.000 €", tag_piso_cen: "🏠 Pis cèntric", tag_min_4_hab: "🛏️️ Mín. 4 Hab", tag_parking: "⭐ Pàrquing inclòs", modal_offer_title: "Oferir la meva propietat", lbl_tipo: "Tipus d'Immoble", lbl_precio: "Preu de Venda Desitjat (€)", lbl_fotos: "Pujar Fotos (Màx. 4)", btn_enviar_oferta: "Enviar a revisió" },
+            ca: { nav_demanda: "🎯 Demanda Activa", nav_mercado_real: "📡 Mercat Real", header_title_da: "Consola PropTech · Reverse Market", unete_inversor: "Uneix-te com a Inversor", unete_desc: "Verifiquem el teu pressupost i t'aconseguim propietats fora de mercat directe de particulars.", lbl_nombre: "El teu Nom", plc_nombre: "Ex: Antonio G.", lbl_zonas_int: "Zones d'Interès", lbl_presupuesto: "Pressupost Verificable (€)", lbl_requisito: "Requisit Clau", plc_requisito: "Ex: Vistes al mar, Ascensor...", lbl_tel_oculto: "Telèfon Ocult", plc_tel_oculto: "Per connectar-te amb venedors", btn_solicitar_vip: "Sol·licitar Verificació VIP", comp_verificados: "Compradors Verificats", badge_verificado: "✓ Verificat", hace_1_dia: "Fa 1 dia", presupuesto_125: "Pressupost: 125.000 €", tag_piso_ado: "🏠 Pis o Adossat", tag_min_3_hab: "🛏 Mín. 3 Hab", tag_ascensor: "⭐ Ascensor obligatori", btn_tengo_buscas: "Tinc el que busques 🏠", hace_3_dias: "Fa 3 dies", presupuesto_210: "Pressupost: 210.000 €", tag_chalet: "🏡 Xalet independent", tag_parcela: "🌳 Amb parcel·la / jardí", hace_5_dias: "Fa 5 dies", presupuesto_350: "Pressupost: 350.000 €", tag_piso_cen: "🏠 Pis cèntric", tag_min_4_hab: "🛏 Mín. 4 Hab", tag_parking: "⭐ Pàrquing inclòs", modal_offer_title: "Oferir la meva propietat", lbl_tipo: "Tipus d'Immoble", lbl_precio: "Preu de Venda Desitjat (€)", lbl_fotos: "Pujar Fotos (Màx. 4)", btn_enviar_oferta: "Enviar a revisió" },
             en: { nav_demanda: "🎯 Active Demand", nav_mercado_real: "📡 Real Market", header_title_da: "PropTech Console · Reverse Market", unete_inversor: "Join as an Investor", unete_desc: "We verify your budget and find you off-market properties direct from owners.", lbl_nombre: "Your Name", plc_nombre: "E.g. Antonio G.", lbl_zonas_int: "Areas of Interest", lbl_presupuesto: "Verifiable Budget (€)", lbl_requisito: "Key Requirement", plc_requisito: "E.g. Sea views, Elevator...", lbl_tel_oculto: "Hidden Phone", plc_tel_oculto: "To connect you with sellers", btn_solicitar_vip: "Request VIP Verification", comp_verificados: "Verified Buyers", badge_verificado: "✓ Verified", hace_1_dia: "1 day ago", presupuesto_125: "Budget: €125,000", tag_piso_ado: "🏠 Apartment or Townhouse", tag_min_3_hab: "🛏️ Min. 3 Beds", tag_ascensor: "⭐ Elevator required", btn_tengo_buscas: "I have what you're looking for 🏠", hace_3_dias: "3 days ago", presupuesto_210: "Budget: €210,000", tag_chalet: "🏡 Detached Villa", tag_parcela: "🌳 With plot / garden", hace_5_dias: "5 days ago", presupuesto_350: "Budget: €350,000", tag_piso_cen: "🏠 Central Apartment", tag_min_4_hab: "🛏️ Min. 4 Beds", tag_parking: "⭐ Parking included", modal_offer_title: "Offer my property", lbl_tipo: "Property Type", lbl_precio: "Desired Sale Price (€)", lbl_fotos: "Upload Photos (Max 4)", btn_enviar_oferta: "Send for review" },
             de: { nav_demanda: "🎯 Aktive Nachfrage", nav_mercado_real: "📡 Echter Markt", header_title_da: "PropTech Konsole · Reverse Market", unete_inversor: "Als Investor beitreten", unete_desc: "Wir prüfen Ihr Budget und finden für Sie Off-Market-Immobilien direkt vom Eigentümer.", lbl_nombre: "Ihr Name", plc_nombre: "z.B. Antonio G.", lbl_zonas_int: "Interessengebiete", lbl_presupuesto: "Nachweisbares Budget (€)", lbl_requisito: "Hauptanforderung", plc_requisito: "z.B. Meerblick, Aufzug...", lbl_tel_oculto: "Verstecktes Telefon", plc_tel_oculto: "Zur Verbindung mit Verkäufern", btn_solicitar_vip: "VIP-Verifizierung anfordern", comp_verificados: "Verifizierte Käufer", badge_verificado: "✓ Verifiziert", hace_1_dia: "Vor 1 Tag", presupuesto_125: "Budget: 125.000 €", tag_piso_ado: "🏠 Wohnung oder Reihenhaus", tag_min_3_hab: "🛏️ Min. 3 Schlafzimmer", tag_ascensor: "⭐ Aufzug erforderlich", btn_tengo_buscas: "Ich habe, was Sie suchen 🏠", hace_3_dias: "Vor 3 Tagen", presupuesto_210: "Budget: 210.000 €", tag_chalet: "🏡 Freistehende Villa", tag_parcela: "🌳 Mit Grundstück / Garten", hace_5_dias: "Vor 5 Tagen", presupuesto_350: "Budget: 350.000 €", tag_piso_cen: "🏠 Zentrale Wohnung", tag_min_4_hab: "🛏️ Min. 4 Schlafzimmer", tag_parking: "⭐ Inklusive Parkplatz", modal_offer_title: "Meine Immobilie anbieten", lbl_tipo: "Immobilientyp", lbl_precio: "Gewünschter Verkaufspreis (€)", lbl_fotos: "Fotos hochladen (Max 4)", btn_enviar_oferta: "Zur Überprüfung senden" },
             it: { nav_demanda: "🎯 Domanda Attiva", nav_mercado_real: "📡 Mercato Reale", header_title_da: "Console PropTech · Reverse Market", unete_inversor: "Unisciti come Investitore", unete_desc: "Verifichiamo il tuo budget e ti troviamo proprietà fuori mercato direttamente dai proprietari.", lbl_nombre: "Il tuo Nome", plc_nombre: "Es. Antonio G.", lbl_zonas_int: "Zone di Interesse", lbl_presupuesto: "Budget Verificabile (€)", lbl_requisito: "Requisito Chiave", plc_requisito: "Es. Vista mare, Ascensore...", lbl_tel_oculto: "Telefono Nascosto", plc_tel_oculto: "Per metterti in contatto con i venditori", btn_solicitar_vip: "Richiedi Verifica VIP", comp_verificados: "Acquirenti Verificati", badge_verificado: "✓ Verificato", hace_1_dia: "1 giorno fa", presupuesto_125: "Budget: 125.000 €", tag_piso_ado: "🏠 Appartamento o Villetta", tag_min_3_hab: "🛏️ Min. 3 Camere", tag_ascensor: "⭐ Ascensore obbligatorio", btn_tengo_buscas: "Ho quello che cerchi 🏠", hace_3_dias: "3 giorni fa", presupuesto_210: "Budget: 210.000 €", tag_chalet: "🏡 Villa Indipendente", tag_parcela: "🌳 Con terreno / giardino", hace_5_dias: "5 giorni fa", presupuesto_350: "Budget: 350.000 €", tag_piso_cen: "🏠 Appartamento Centrale", tag_min_4_hab: "🛏️ Min. 4 Camere", tag_parking: "⭐ Parcheggio incluso", modal_offer_title: "Offri la mia proprietà", lbl_tipo: "Tipo di Immobile", lbl_precio: "Prezzo di Vendita Desiderato (€)", lbl_fotos: "Carica Foto (Max 4)", btn_enviar_oferta: "Invia per la revisione" },
@@ -393,8 +394,40 @@
             document.getElementById(id).classList.remove('active');
         }
 
+        // ENVÍO DE FORMULARIO 1: ALTA DE INVERSOR
+        document.getElementById('form-alta-inversor').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const btn = e.target.querySelector('button[type="submit"]');
+            const originalText = btn.innerHTML;
+            btn.innerText = "Verificando...";
+            btn.style.opacity = "0.7";
+
+            const payloadInversor = {
+                tipo_accion: "alta_inversor",
+                nombre: document.getElementById('inv-nombre').value,
+                zonas: document.getElementById('inv-zonas').value,
+                presupuesto: document.getElementById('inv-presupuesto').value,
+                requisito: document.getElementById('inv-requisito').value,
+                telefono: document.getElementById('inv-tel').value
+            };
+
+            fetch(WEBHOOK_MAKE, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payloadInversor)
+            }).then(() => {
+                alert("¡Solicitud enviada con éxito! Nuestro equipo PropTech validará tu perfil.");
+                this.reset();
+                btn.innerHTML = originalText;
+                btn.style.opacity = "1";
+            }).catch(err => console.error("Error al enviar a Make:", err));
+        });
+
         // FUNCIONALIDAD DEL POP-UP DE OFERTA
+        let compradorActual = ""; // Variable para saber a quién le estamos ofreciendo el piso
+        
         function openOfferModal(nombreComprador) {
+            compradorActual = nombreComprador;
             const lang = document.getElementById('language-selector').value;
             const text = lang === 'es' ? `Estás ofreciendo tu propiedad a ${nombreComprador}. Los datos pasarán a revisión.` : `You are offering your property to ${nombreComprador}. The data will go to review.`;
             document.getElementById('offer-text').innerText = text;
@@ -448,25 +481,40 @@
             }
         });
 
-        function submitOffer(e) {
+        // ENVÍO DE FORMULARIO 2: OFRECER PROPIEDAD DESDE EL POP-UP
+        document.getElementById('form-offer').addEventListener('submit', function(e) {
             e.preventDefault();
             const btn = e.target.querySelector('button[type="submit"]');
             const originalText = btn.innerHTML;
             btn.innerText = "Procesando...";
             btn.style.opacity = "0.7";
 
-            // Aquí enviarías los datos a Make. Por ahora simulamos el éxito.
-            setTimeout(() => {
-                alert("Propiedad enviada a revisión. ¡Gracias!");
-                closeModal('modal-offer');
-                e.target.reset();
-                previewContainer.innerHTML = '';
-                fileCounter.style.display = 'none';
-                rawOfferFiles = [];
-                btn.innerHTML = originalText;
-                btn.style.opacity = "1";
-            }, 1000);
-        }
+            const formData = new FormData();
+            formData.append("tipo_accion", "oferta_directa");
+            formData.append("comprador_destino", compradorActual); // Le enviamos a Make el nombre de Antonio G.
+            formData.append("tipo_inmueble", document.getElementById('offer-tipo').value);
+            formData.append("precio", document.getElementById('offer-precio').value);
+
+            rawOfferFiles.forEach((file, idx) => {
+                formData.append(`foto_${idx + 1}`, file);
+            });
+
+            fetch(WEBHOOK_MAKE, {
+                method: 'POST',
+                body: formData
+            }).then(() => {
+                setTimeout(() => {
+                    alert("Propiedad enviada a revisión. ¡Gracias!");
+                    closeModal('modal-offer');
+                    e.target.reset();
+                    previewContainer.innerHTML = '';
+                    fileCounter.style.display = 'none';
+                    rawOfferFiles = [];
+                    btn.innerHTML = originalText;
+                    btn.style.opacity = "1";
+                }, 800);
+            }).catch(err => console.error("Error al enviar a Make:", err));
+        });
     </script>
 </body>
 </html>
