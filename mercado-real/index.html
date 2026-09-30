@@ -257,7 +257,7 @@
         .btn-like:hover { background: rgba(16, 185, 129, 0.1); }
         .btn-like.liked { background: var(--accent-green); color: #fff; }
 
-        /* MODALES LEGALES */
+        /* MODALES LEGALES (CON CIERRE AL HACER CLIC FUERA) */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); display: none; justify-content: center; align-items: center; z-index: 999; opacity: 0; transition: opacity 0.3s; }
         .modal-overlay.active { display: flex; opacity: 1; }
         .modal-content { background: var(--bg-panel); border: 1px solid var(--border-color); border-radius: 12px; padding: 30px; width: 90%; max-width: 600px; color: var(--text-main); position: relative; max-height: 80vh; overflow-y: auto; }
@@ -301,9 +301,9 @@
         <div class="sidebar-footer">
             <div style="margin-bottom: 10px; font-weight: bold; color: var(--text-muted);">API 4173 · AICAT 14200</div>
             <div class="legal-links">
-                <a onclick="openModal('modal-legal')">Aviso Legal</a>
-                <a onclick="openModal('modal-privacidad')">Privacidad y LOPD</a>
-                <a onclick="openModal('modal-cookies')">Cookies e IA</a>
+                <a href="javascript:void(0)" onclick="openModal('modal-legal')">Aviso Legal</a>
+                <a href="javascript:void(0)" onclick="openModal('modal-privacidad')">Privacidad y LOPD</a>
+                <a href="javascript:void(0)" onclick="openModal('modal-cookies')">Cookies e IA</a>
             </div>
         </div>
     </aside>
@@ -457,8 +457,8 @@
         </div>
     </main>
 
-    <!-- VENTANAS MODALES LEGALES -->
-    <div class="modal-overlay" id="modal-legal">
+    <!-- VENTANAS MODALES LEGALES (SE CIERRAN AL CLICAR FUERA) -->
+    <div class="modal-overlay" id="modal-legal" onclick="if(event.target === this) closeModal('modal-legal')">
         <div class="modal-content">
             <button class="modal-close" onclick="closeModal('modal-legal')">&times;</button>
             <div class="modal-title">Aviso Legal</div>
@@ -469,7 +469,7 @@
         </div>
     </div>
 
-    <div class="modal-overlay" id="modal-privacidad">
+    <div class="modal-overlay" id="modal-privacidad" onclick="if(event.target === this) closeModal('modal-privacidad')">
         <div class="modal-content">
             <button class="modal-close" onclick="closeModal('modal-privacidad')">&times;</button>
             <div class="modal-title">Privacidad y LOPD</div>
@@ -480,7 +480,7 @@
         </div>
     </div>
 
-    <div class="modal-overlay" id="modal-cookies">
+    <div class="modal-overlay" id="modal-cookies" onclick="if(event.target === this) closeModal('modal-cookies')">
         <div class="modal-content">
             <button class="modal-close" onclick="closeModal('modal-cookies')">&times;</button>
             <div class="modal-title">Cookies e Inteligencia Artificial</div>
@@ -492,6 +492,7 @@
     </div>
 
     <script>
+        // WEBHOOK MAESTRO DE MAKE
         const WEBHOOK_MAKE = "https://hook.eu1.make.com/bpb012er1137ocx0tcdk19muh6le4qpu";
 
         const traducciones = {
