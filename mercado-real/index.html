@@ -111,7 +111,7 @@
         }
         
         .legal-links { display: flex; justify-content: center; gap: 12px; margin-top: 8px; font-size: 10px; flex-wrap: wrap; }
-        .legal-links a { color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
+        .legal-links a { color: var(--text-muted); text-decoration: none; transition: color 0.2s; cursor: pointer; }
         .legal-links a:hover { color: var(--accent-green); }
 
         /* MAIN Y CABECERA */
@@ -195,7 +195,7 @@
         
         #file-counter { font-size: 12px; color: var(--accent-green); margin-top: 10px; font-weight: bold; display: none; text-align: center; }
 
-        /* LEGAL CHECKBOX */
+        /* CHECKBOX LEGAL */
         .legal-check {
             display: flex;
             gap: 10px;
@@ -257,6 +257,15 @@
         .btn-like:hover { background: rgba(16, 185, 129, 0.1); }
         .btn-like.liked { background: var(--accent-green); color: #fff; }
 
+        /* MODALES LEGALES */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); display: none; justify-content: center; align-items: center; z-index: 999; opacity: 0; transition: opacity 0.3s; }
+        .modal-overlay.active { display: flex; opacity: 1; }
+        .modal-content { background: var(--bg-panel); border: 1px solid var(--border-color); border-radius: 12px; padding: 30px; width: 90%; max-width: 600px; color: var(--text-main); position: relative; max-height: 80vh; overflow-y: auto; }
+        .modal-close { position: absolute; top: 15px; right: 20px; font-size: 24px; color: var(--text-muted); cursor: pointer; background: none; border: none; }
+        .modal-close:hover { color: var(--accent-red); }
+        .modal-title { font-size: 20px; font-weight: bold; margin-bottom: 15px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; color: var(--accent-green); }
+        .modal-body { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+
         /* REGLA MÓVIL BLINDADA */
         @media (max-width: 900px) {
             body { flex-direction: column; overflow-y: auto; overflow-x: hidden; height: auto; }
@@ -292,9 +301,9 @@
         <div class="sidebar-footer">
             <div style="margin-bottom: 10px; font-weight: bold; color: var(--text-muted);">API 4173 · AICAT 14200</div>
             <div class="legal-links">
-                <a href="#">Aviso Legal</a>
-                <a href="#">Privacidad y LOPD</a>
-                <a href="#">Cookies e IA</a>
+                <a onclick="openModal('modal-legal')">Aviso Legal</a>
+                <a onclick="openModal('modal-privacidad')">Privacidad y LOPD</a>
+                <a onclick="openModal('modal-cookies')">Cookies e IA</a>
             </div>
         </div>
     </aside>
@@ -306,9 +315,9 @@
                 <option value="es" selected>🇪🇸 Español</option>
                 <option value="ca">🟨 Català</option>
                 <option value="en">🇬🇧 English</option>
+                <option value="fr">🇫🇷 Français</option>
                 <option value="de">🇩🇪 Deutsch</option>
                 <option value="it">🇮🇹 Italiano</option>
-                <option value="fr">🇫🇷 Français</option>
             </select>
         </header>
 
@@ -329,6 +338,13 @@
                             <option value="Les Cases d'Alcanar">Les Cases d'Alcanar</option>
                             <option value="La Ràpita">La Ràpita</option>
                             <option value="Vinaròs">Vinaròs</option>
+                            <option value="Terrassa">Terrassa</option>
+                            <option value="Sabadell">Sabadell</option>
+                            <option value="Castellar del Vallès">Castellar del Vallès</option>
+                            <option value="Matadepera">Matadepera</option>
+                            <option value="Cerdanyola del Vallès">Cerdanyola del Vallès</option>
+                            <option value="Sant Cugat del Vallès">Sant Cugat del Vallès</option>
+                            <option value="Sant Quirze del Vallès">Sant Quirze del Vallès</option>
                         </select>
                     </div>
 
@@ -381,7 +397,6 @@
                         <input type="tel" id="prop-tel" placeholder="Para gestión interna..." data-i18n-placeholder="plc_tel" required>
                     </div>
 
-                    <!-- BLOQUE DE CONSENTIMIENTO LEGAL -->
                     <div class="form-group legal-check">
                         <input type="checkbox" id="prop-legal" required>
                         <label for="prop-legal" data-i18n="lbl_legal">
@@ -441,6 +456,40 @@
             </div>
         </div>
     </main>
+
+    <!-- VENTANAS MODALES LEGALES -->
+    <div class="modal-overlay" id="modal-legal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal('modal-legal')">&times;</button>
+            <div class="modal-title">Aviso Legal</div>
+            <div class="modal-body">
+                <p>En cumplimiento con la Ley de Servicios de la Sociedad de la Información, se informa que Level.immo está operada por agentes registrados (API 4173 · AICAT 14200).</p>
+                <p>El uso de esta plataforma implica la aceptación de nuestras normas de publicación. Toda información proporcionada por los usuarios será verificada antes de su exposición pública.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modal-privacidad">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal('modal-privacidad')">&times;</button>
+            <div class="modal-title">Privacidad y LOPD</div>
+            <div class="modal-body">
+                <p>En cumplimiento del Reglamento General de Protección de Datos (RGPD), le informamos que sus datos personales (incluyendo números de teléfono) serán tratados de forma confidencial.</p>
+                <p>Su información no será compartida con terceros sin su consentimiento expreso. Los datos subidos en "Cuarentena" permanecen ciegos y cifrados en nuestras bases de datos internas hasta su validación manual.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modal-cookies">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal('modal-cookies')">&times;</button>
+            <div class="modal-title">Cookies e Inteligencia Artificial</div>
+            <div class="modal-body">
+                <p>Esta plataforma utiliza cookies técnicas estrictamente necesarias para mantener su sesión activa y asegurar el correcto funcionamiento del sistema multidioma.</p>
+                <p>Asimismo, los procesos de emparejamiento (Match) e ingesta pueden ser asistidos por algoritmos de Inteligencia Artificial para agilizar la conexión entre oferta y demanda.</p>
+            </div>
+        </div>
+    </div>
 
     <script>
         const WEBHOOK_MAKE = "https://hook.eu1.make.com/bpb012er1137ocx0tcdk19muh6le4qpu";
@@ -604,7 +653,7 @@
             
             fetch(WEBHOOK_MAKE, { method: 'POST', body: formData }).catch(e => console.log(e));
 
-            // --- MODO HOLLYWOOD (Animación para el vídeo) ---
+            // EFECTO CUARENTENA VISUAL (MODO DEMO)
             setTimeout(() => {
                 let g = ''; 
                 for (let i = 0; i < 4; i++) { 
@@ -655,14 +704,13 @@
                 btn.innerHTML = originalText; 
                 btn.style.opacity = "1";
             }, 1200);
-            // --- FIN MODO HOLLYWOOD ---
         });
 
         // BOTÓN ME GUSTA
         function darLikeVacio(btnElement, counterId) {
             if (btnElement.classList.contains('liked')) return;
             btnElement.classList.add('liked'); 
-            btnElement.innerHTML = '❤️️';
+            btnElement.innerHTML = '❤️';
             const cnt = document.getElementById(counterId); 
             if(cnt) {
                 cnt.innerText = parseInt(cnt.innerText) + 1;
@@ -691,6 +739,14 @@
                     alert(lang === 'es' ? "¡Interés registrado!" : "Interest registered!"); 
                 }, 400);
             }
+        }
+
+        // CONTROL DE VENTANAS MODALES
+        function openModal(id) {
+            document.getElementById(id).classList.add('active');
+        }
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('active');
         }
     </script>
 </body>
