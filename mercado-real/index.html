@@ -492,8 +492,53 @@
     </div>
 
     <script>
-        // WEBHOOK MAESTRO DE MAKE
-        const WEBHOOK_MAKE = "https://hook.eu1.make.com/bpb012er1137ocx0tcdk19muh6le4qpu";
+        // WEBHOOK MAESTRO DE MAKE Y SISTEMA DE ENVÍO
+        const WEBHOOK_MAKE = "https://hook.eu1.make.com/8xd81xb9t3mg2ycwez1czd3quwhf2nef";
+
+        // CAPTURAR PARÁMETROS UTM DE LA URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const utm_source = urlParams.get('utm_source') || "";
+        const utm_medium = urlParams.get('utm_medium') || "";
+        const utm_campaign = urlParams.get('utm_campaign') || "";
+
+        let sessionId = 'usr_' + Math.random().toString(36).substr(2, 9);
+        let clienteIP = "Desconocida";
+        fetch('https://api.ipify.org?format=json').then(r => r.json()).then(data => { clienteIP = data.ip; }).catch(e => {});
+
+        // Función para enviar solo JSON (usada en ME GUSTA y ME INTERESA)
+        function enviarWebhookMakeJSON(evento, tipoCta = "", datosUsuario = {}, datosInmueble = {}) {
+            const lang = document.getElementById('language-selector').value || "es";
+            const payloadMaestro = {
+                metadatos_sistema: {
+                    origen_landing: "MERCADO REAL",
+                    tipo_cta: tipoCta,
+                    idioma_usuario: lang,
+                    id_sesion: sessionId,
+                    ip_cliente: clienteIP
+                },
+                datos_usuario: {
+                    telefono: datosUsuario.telefono || "",
+                    nombre: "",
+                    acepto_legal: true
+                },
+                datos_demanda_inversion: {
+                    zonas_interes: "", presupuesto_requisitos: "", informacion_solicitada: ""
+                },
+                datos_inmueble_captacion: {
+                    poblacion: "", tipo_inmueble: "", habitaciones: "", banos: "",
+                    descripcion_observaciones: "", precio_deseado: "", fotos_subidas: 0,
+                    referencia_inmueble: datosInmueble.referencia_inmueble || ""
+                },
+                tracking_marketing: { utm_source, utm_medium, utm_campaign },
+                mensaje: evento
+            };
+
+            return fetch(WEBHOOK_MAKE, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payloadMaestro)
+            });
+        }
 
         const traducciones = {
             es: { 
@@ -629,6 +674,7 @@
             }
         });
 
+        // ENVÍO DE FORMULARIO AÑADIR INMUEBLE CON SUPER PAYLOAD
         document.getElementById('form-mercado-real').addEventListener('submit', function(e) {
             e.preventDefault();
             
@@ -639,17 +685,38 @@
             btn.innerText = traducciones[lang]?.btn_procesando || "Procesando..."; 
             btn.style.opacity = "0.7";
 
-            const formData = new FormData();
-            formData.append("tipo_accion", "ingesta");
-            formData.append("zona", document.getElementById('prop-zona').value);
-            formData.append("tipo_inmueble", document.getElementById('prop-tipo').value);
-            formData.append("habitaciones", document.getElementById('prop-hab').value);
-            formData.append("banos", document.getElementById('prop-banos').value);
-            formData.append("observaciones", document.getElementById('prop-obs').value);
-            formData.append("precio", document.getElementById('prop-precio').value);
-            formData.append("telefono_vendedor", document.getElementById('prop-tel').value);
-            formData.append("legal_accepted", document.getElementById('prop-legal').checked);
+            // Construimos el JSON Maestro pero lo convertimos a string para meterlo en FormData
+            const payloadMaestro = {
+                metadatos_sistema: {
+                    origen_landing: "MERCADO REAL",
+                    tipo_cta: "AÑADIR INMUEBLE AL RADAR",
+                    idioma_usuario: lang,
+                    id_sesion: sessionId,
+                    ip_cliente: clienteIP
+                },
+                datos_usuario: {
+                    telefono: document.getElementById('prop-tel').value,
+                    nombre: "",
+                    acepto_legal: document.getElementById('prop-legal').checked
+                },
+                datos_demanda_inversion: {
+                    zonas_interes: "", presupuesto_requisitos: "", informacion_solicitada: ""
+                },
+                datos_inmueble_captacion: {
+                    poblacion: document.getElementById('prop-zona').value,
+                    tipo_inmueble: document.getElementById('prop-tipo').value,
+                    habitaciones: document.getElementById('prop-hab').value,
+                    banos: document.getElementById('prop-banos').value,
+                    descripcion_observaciones: document.getElementById('prop-obs').value,
+                    precio_deseado: document.getElementById('prop-precio').value,
+                    fotos_subidas: rawFiles.length
+                },
+                tracking_marketing: { utm_source, utm_medium, utm_campaign }
+            };
 
+            const formData = new FormData();
+            formData.append("payload_maestro", JSON.stringify(payloadMaestro));
+            
             rawFiles.forEach((file, idx) => formData.append(`foto_${idx + 1}`, file));
             
             fetch(WEBHOOK_MAKE, { method: 'POST', body: formData }).catch(e => console.log(e));
@@ -661,6 +728,13 @@
                     g += uploadedImagesUrls[i] ? `<img src="${uploadedImagesUrls[i]}" class="gallery-img">` : `<div class="gallery-img empty" style="background: rgba(255,255,255,0.02);"></div>`; 
                 }
                 
+                const tipoInmueble = document.getElementById('prop-tipo').value;
+                const obsInmueble = document.getElementById('prop-obs').value;
+                const zonaInmueble = document.getElementById('prop-zona').value;
+                const habInmueble = document.getElementById('prop-hab').value;
+                const banosInmueble = document.getElementById('prop-banos').value;
+                const precioInmueble = document.getElementById('prop-precio').value;
+
                 const newCard = document.createElement('div'); 
                 newCard.className = 'property-card slide-down-enter';
                 newCard.innerHTML = `
@@ -670,16 +744,16 @@
                     </div>
                     <div class="card-body">
                         <div class="card-details">
-                            <h3>${formData.get('tipo_inmueble')}</h3>
-                            ${formData.get('observaciones') ? `<p class="card-obs">${formData.get('observaciones')}</p>` : ''}
+                            <h3>${tipoInmueble}</h3>
+                            ${obsInmueble ? `<p class="card-obs">${obsInmueble}</p>` : ''}
                             <div class="card-tags">
-                                <span class="tag">📍 ${formData.get('zona')}</span>
-                                ${formData.get('habitaciones') > 0 ? `<span class="tag">🛏️ ${formData.get('habitaciones')} Hab</span>` : ''}
-                                ${formData.get('banos') > 0 ? `<span class="tag">🛁 ${formData.get('banos')} Baños</span>` : ''}
+                                <span class="tag">📍 ${zonaInmueble}</span>
+                                ${habInmueble > 0 ? `<span class="tag">🛏️ ${habInmueble} Hab</span>` : ''}
+                                ${banosInmueble > 0 ? `<span class="tag">🛁 ${banosInmueble} Baños</span>` : ''}
                             </div>
                             <div class="price-block">
                                 <span class="price-label" data-i18n="precio_prop">${traducciones[lang]?.precio_prop || 'Precio Propietario'}</span>
-                                <h4 class="price-value">${formData.get('precio')}</h4>
+                                <h4 class="price-value">${precioInmueble}</h4>
                             </div>
                         </div>
                         <div class="card-gallery">${g}</div>
@@ -716,6 +790,9 @@
             if(cnt) {
                 cnt.innerText = parseInt(cnt.innerText) + 1;
             }
+            
+            // Envío por Webhook como "ME GUSTA"
+            enviarWebhookMakeJSON("click_me_gusta", "ME GUSTA", {}, { referencia_inmueble: counterId });
         }
 
         // BOTÓN ME INTERESA
@@ -728,11 +805,10 @@
             
             if(tel && tel.trim() !== "") {
                 btn.innerText = "...";
-                fetch(WEBHOOK_MAKE, { 
-                    method: 'POST', 
-                    headers: { 'Content-Type': 'application/json' }, 
-                    body: JSON.stringify({ tipo_accion: "like", id_inmueble: id, telefono_inversor: tel }) 
-                }).catch(e => console.log(e));
+                
+                // Envío por Webhook usando el payload maestro
+                enviarWebhookMakeJSON("click_me_interesa", "ME INTERESA", { telefono: tel }, { referencia_inmueble: id })
+                .catch(e => console.log(e));
                 
                 setTimeout(() => { 
                     btn.classList.add('liked'); 
