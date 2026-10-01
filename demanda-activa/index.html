@@ -437,9 +437,9 @@
                 unete_desc: "Verificamos tu presupuesto y te conseguimos propiedades fuera de mercado directo de particulares.", lbl_nombre: "Tu Nombre", plc_nombre: "Ej: Antonio G.", 
                 lbl_zonas_int: "Zonas de Interés", lbl_presupuesto: "Presupuesto Verificable (€)", lbl_requisito: "Requisito Clave", plc_requisito: "Ej: Vistas al mar, Ascensor...", 
                 lbl_tel_oculto: "Teléfono Oculto", plc_tel_oculto: "Para conectarte con vendedores", btn_solicitar_vip: "Solicitar Verificación VIP", comp_verificados: "Compradores Verificados", 
-                badge_verificado: "✓ Verificado", hace_1_dia: "Hace 1 día", presupuesto_125: "Presupuesto: 125.000 €", tag_piso_ado: "🏠 Piso o Adosado", tag_min_3_hab: "🛏️️ Mín. 3 Hab", 
+                badge_verificado: "✓ Verificado", hace_1_dia: "Hace 1 día", presupuesto_125: "Presupuesto: 125.000 €", tag_piso_ado: "🏠 Piso o Adosado", tag_min_3_hab: "🛏 Mín. 3 Hab", 
                 tag_ascensor: "⭐ Ascensor obligatorio", btn_tengo_buscas: "Tengo lo que buscas 🏠", hace_3_dias: "Hace 3 días", presupuesto_210: "Presupuesto: 210.000 €", tag_chalet: "🏡 Chalet independiente", 
-                tag_parcela: "🌳 Con parcela / jardín", hace_5_dias: "Hace 5 días", presupuesto_350: "Presupuesto: 350.000 €", tag_piso_cen: "🏠 Piso céntrico", tag_min_4_hab: "🛏️️ Mín. 4 Hab", 
+                tag_parcela: "🌳 Con parcela / jardín", hace_5_dias: "Hace 5 días", presupuesto_350: "Presupuesto: 350.000 €", tag_piso_cen: "🏠 Piso céntrico", tag_min_4_hab: "🛏 Mín. 4 Hab", 
                 tag_parking: "⭐ Parking incluido", modal_offer_title: "Ofrecer mi propiedad", lbl_tipo: "Tipo de Inmueble", lbl_precio: "Precio de Venta Deseado (€)", lbl_fotos: "Subir Fotos (Máx. 4)", 
                 btn_enviar_oferta: "Enviar a revisión", lbl_condiciones_vip: "<b>Acepto las Condiciones y la Privacidad.</b> Autorizo el tratamiento de mis datos.", lbl_seguridad: "Anti-spam: ¿Cuánto es",
                 lbl_zona: "Zona / Población", lbl_hab: "Habitaciones", lbl_banos: "Baños", lbl_obs: "Descripción breve", lbl_tel: "Tu Teléfono"
@@ -507,6 +507,15 @@
         };
 
         let currentMathAnswer = 0;
+        let sessionId = 'usr_' + Math.random().toString(36).substr(2, 9);
+        let clienteIP = "Desconocida";
+        fetch('https://api.ipify.org?format=json').then(r => r.json()).then(data => { clienteIP = data.ip; }).catch(e => {});
+
+        // CAPTURAR PARÁMETROS UTM DE LA URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const utm_source = urlParams.get('utm_source') || "";
+        const utm_medium = urlParams.get('utm_medium') || "";
+        const utm_campaign = urlParams.get('utm_campaign') || "";
 
         function generarSumaSeguridad() {
             const num1 = Math.floor(Math.random() * 10) + 1;
@@ -536,13 +545,13 @@
         function openModal(id) { document.getElementById(id).classList.add('active'); }
         function closeModal(id) { document.getElementById(id).classList.remove('active'); }
 
-        // ENVÍO ALTA INVERSOR A MAKE
+        // ENVÍO ALTA INVERSOR A MAKE CON SUPER PAYLOAD UNIFICADO
         document.getElementById('form-alta-inversor').addEventListener('submit', function(e) {
             e.preventDefault();
             
             const userAnswer = parseInt(document.getElementById('inv-math').value);
+            const lang = document.getElementById('language-selector').value;
             if (userAnswer !== currentMathAnswer) {
-                const lang = document.getElementById('language-selector').value;
                 alert(lang === 'es' ? "Error matemático de seguridad. Inténtalo de nuevo." : "Security math error. Please try again.");
                 generarSumaSeguridad();
                 document.getElementById('inv-math').value = '';
@@ -554,20 +563,36 @@
             btn.innerText = "Verificando...";
             btn.style.opacity = "0.7";
 
-            const payloadInversor = {
-                tipo_accion: "alta_inversor",
-                nombre: document.getElementById('inv-nombre').value,
-                zonas: document.getElementById('inv-zonas').value,
-                presupuesto: document.getElementById('inv-presupuesto').value,
-                requisito: document.getElementById('inv-requisito').value,
-                telefono: document.getElementById('inv-tel').value,
-                condiciones_aceptadas: document.getElementById('inv-legal').checked
+            // CONSTRUCCIÓN DEL JSON ESTANDARIZADO PARA TODAS LAS LANDINGS
+            const payloadMaestro = {
+                metadatos_sistema: {
+                    origen_landing: "DEMANDA ACTIVA",
+                    tipo_cta: "UNETE COMO INVERSOR",
+                    idioma_usuario: lang,
+                    id_sesion: sessionId,
+                    ip_cliente: clienteIP
+                },
+                datos_usuario: {
+                    telefono: document.getElementById('inv-tel').value,
+                    nombre: document.getElementById('inv-nombre').value,
+                    acepto_legal: document.getElementById('inv-legal').checked
+                },
+                datos_demanda_inversion: {
+                    zonas_interes: document.getElementById('inv-zonas').value,
+                    presupuesto_requisitos: document.getElementById('inv-presupuesto').value,
+                    informacion_solicitada: document.getElementById('inv-requisito').value // Usado aquí para almacenar el requisito clave
+                },
+                datos_inmueble_captacion: {
+                    poblacion: "", tipo_inmueble: "", habitaciones: "", banos: "",
+                    descripcion_observaciones: "", precio_deseado: "", fotos_subidas: 0
+                },
+                tracking_marketing: { utm_source, utm_medium, utm_campaign }
             };
 
             fetch(WEBHOOK_MAKE, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payloadInversor)
+                body: JSON.stringify(payloadMaestro)
             }).then(() => {
                 alert("¡Solicitud enviada con éxito! Nuestro equipo PropTech validará tu perfil.");
                 this.reset();
@@ -614,26 +639,47 @@
             if (rawOfferFiles.length > 0) { fileCounter.innerText = `✅ ${rawOfferFiles.length} archivo(s)`; fileCounter.style.display = 'block'; }
         });
 
-        // ENVÍO DE PROPIEDAD A MAKE
+        // ENVÍO DE OFERTA DE PROPIEDAD A MAKE CON SUPER PAYLOAD UNIFICADO (FORMATO FORMDATA)
         document.getElementById('form-offer').addEventListener('submit', function(e) {
             e.preventDefault();
             const btn = e.target.querySelector('button[type="submit"]');
             const originalText = btn.innerHTML;
             btn.innerText = "Procesando...";
             btn.style.opacity = "0.7";
+            const lang = document.getElementById('language-selector').value;
+
+            // Construimos el JSON Maestro pero lo convertimos a string para meterlo en FormData
+            const payloadMaestro = {
+                metadatos_sistema: {
+                    origen_landing: "DEMANDA ACTIVA",
+                    tipo_cta: "TENGO LO QUE BUSCAS",
+                    idioma_usuario: lang,
+                    id_sesion: sessionId,
+                    ip_cliente: clienteIP
+                },
+                datos_usuario: {
+                    telefono: document.getElementById('offer-tel').value,
+                    nombre: "", // No se pide nombre en este form
+                    acepto_legal: document.getElementById('offer-legal').checked
+                },
+                datos_demanda_inversion: {
+                    zonas_interes: "", presupuesto_requisitos: "", informacion_solicitada: compradorActual // Guardamos a qué comprador va dirigido
+                },
+                datos_inmueble_captacion: {
+                    poblacion: document.getElementById('offer-zona').value,
+                    tipo_inmueble: document.getElementById('offer-tipo').value,
+                    habitaciones: document.getElementById('offer-hab').value,
+                    banos: document.getElementById('offer-banos').value,
+                    descripcion_observaciones: document.getElementById('offer-obs').value,
+                    precio_deseado: document.getElementById('offer-precio').value,
+                    fotos_subidas: rawOfferFiles.length
+                },
+                tracking_marketing: { utm_source, utm_medium, utm_campaign }
+            };
 
             const formData = new FormData();
-            formData.append("tipo_accion", "oferta_directa");
-            formData.append("comprador_destino", compradorActual); 
-            formData.append("zona", document.getElementById('offer-zona').value);
-            formData.append("tipo_inmueble", document.getElementById('offer-tipo').value);
-            formData.append("habitaciones", document.getElementById('offer-hab').value);
-            formData.append("banos", document.getElementById('offer-banos').value);
-            formData.append("observaciones", document.getElementById('offer-obs').value);
-            formData.append("precio", document.getElementById('offer-precio').value);
-            formData.append("telefono_vendedor", document.getElementById('offer-tel').value);
-            formData.append("legal_accepted", document.getElementById('offer-legal').checked);
-
+            formData.append("payload_maestro", JSON.stringify(payloadMaestro));
+            
             rawOfferFiles.forEach((file, idx) => {
                 formData.append(`foto_${idx + 1}`, file);
             });
@@ -643,7 +689,6 @@
                 body: formData
             }).then(() => {
                 setTimeout(() => {
-                    const lang = document.getElementById('language-selector').value;
                     const alertText = lang === 'es' ? "¡Propiedad enviada a revisión y publicada provisionalmente en el Mercado Real!" : "Property sent for review and provisionally published in the Real Market!";
                     alert(alertText);
                     closeModal('modal-offer');
@@ -654,7 +699,6 @@
                     btn.innerHTML = originalText;
                     btn.style.opacity = "1";
                     
-                    // Efecto redirección para el flujo de UX (Opcional para tu vídeo)
                     window.location.href = "mercado-real.html";
                 }, 800);
             }).catch(err => console.error("Error al enviar a Make:", err));
