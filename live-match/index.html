@@ -738,8 +738,10 @@
                 </div>
                 
                 <div class="risk-box" style="margin-top: 0;">
-                    <h4 style="margin: 0 0 8px 0; color: var(--accent-orange); font-size: 13px; display: flex; align-items: center; gap: 6px;">⚠️ Mitigación de Riesgos (Plazos)</h4>
-                    <p style="margin: 0; font-size: 12px; color: var(--text-muted); line-height: 1.5;">Al ser suelo no delimitado, la operación requiere paciencia para impulsar el Plan Parcial. El bajo precio de entrada asume este factor temporal y mitiga futuras posibles derramas.</p>
+                    <h4 style="margin: 0 0 8px 0; color: var(--accent-orange); font-size: 13px; display: flex; align-items: center; gap: 6px;">⚠️ Estado Legal y Mitigación</h4>
+                    <p style="margin: 0; font-size: 12px; color: var(--text-muted); line-height: 1.5;">
+                        Al tratarse de suelo urbanizable, la operación está sujeta a los plazos de desarrollo del Plan Parcial. Para garantizar total transparencia al inversor, <strong>actualmente tenemos en trámite el Certificado Urbanístico oficial</strong> en el Ajuntament. El acuerdo final se estructurará en base a las métricas de este documento.
+                    </p>
                 </div>
             </div>
         </div>
@@ -752,8 +754,55 @@
     </div>
     
     <script>
-        // WEBHOOK DE MAKE
+        // WEBHOOK DE MAKE Y FUNCIÓN MAESTRA
         const webhookMake = "https://hook.eu1.make.com/8xd81xb9t3mg2ycwez1czd3quwhf2nef"; 
+        
+        // CAPTURAR PARÁMETROS UTM DE LA URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const utm_source = urlParams.get('utm_source') || "";
+        const utm_medium = urlParams.get('utm_medium') || "";
+        const utm_campaign = urlParams.get('utm_campaign') || "";
+
+        function enviarWebhookMake(evento, mensajeTexto, tipoCta = "", datosUsuario = {}, datosDemanda = {}, datosInmueble = {}) {
+            const lang = document.getElementById('language-selector').value || "es";
+            
+            const payloadMaestro = {
+                metadatos_sistema: {
+                    origen_landing: "LIVE MATCH",
+                    tipo_cta: tipoCta,
+                    idioma_usuario: lang,
+                    id_sesion: sessionId,
+                    ip_cliente: clienteIP
+                },
+                datos_usuario: {
+                    telefono: datosUsuario.telefono || telefonoCliente || "",
+                    nombre: datosUsuario.nombre || nombreCliente || "",
+                    acepto_legal: datosUsuario.acepto_legal !== undefined ? datosUsuario.acepto_legal : true
+                },
+                datos_demanda_inversion: {
+                    zonas_interes: datosDemanda.zonas_interes || "",
+                    presupuesto_requisitos: datosDemanda.presupuesto_requisitos || "",
+                    informacion_solicitada: datosDemanda.informacion_solicitada || ""
+                },
+                datos_inmueble_captacion: {
+                    poblacion: datosInmueble.poblacion || "", 
+                    tipo_inmueble: datosInmueble.tipo_inmueble || "", 
+                    habitaciones: datosInmueble.habitaciones || "", 
+                    banos: datosInmueble.banos || "",
+                    descripcion_observaciones: datosInmueble.descripcion_observaciones || "", 
+                    precio_deseado: datosInmueble.precio_deseado || "", 
+                    fotos_subidas: datosInmueble.fotos_subidas || 0
+                },
+                tracking_marketing: { utm_source, utm_medium, utm_campaign },
+                mensaje: mensajeTexto
+            };
+
+            return fetch(webhookMake, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payloadMaestro)
+            }).then(r => r.json());
+        }
 
         // --- SISTEMA DE DICCIONARIO JSON PARA MÚLTIPLES IDIOMAS ---
         const traducciones = {
@@ -828,7 +877,7 @@
             ca: {
                 nav_demanda: "🎯 Demanda Activa",
                 nav_live: "📡 Live-Match",
-                nav_venta: "🏷️ Venda General",
+                nav_venta: "🏷️️ Venda General",
                 nav_comprar: "🏠 Comprar Immobles",
                 nav_gestion: "⚙️ Gestió Integral",
                 header_title: "Consola Central PropTech · Entorn de Proves",
@@ -1329,16 +1378,14 @@
             document.getElementById('victoria-subtitle').style.display = 'block';
         }
 
+        // Traductor exacto para coincidir con la tabla de webhooks
         function traducirIntencion(codigo) {
-            if(codigo === 'chivatazo') return "Pegar Chivatazo (Tengo un contacto)";
-            if(codigo === 'alianza') return "Unirse a la Red (Alianza Profesional)";
-            if(codigo.startsWith('sumar_interes_')) return "Sumar interés a la propiedad " + codigo.split('_')[2];
-            if(codigo === 'alcanar_suelo') return "Solicitar dossier de inversión de suelo en Alcanar";
-            if(codigo === 'precio_312k') return "Consultar detalles de la propiedad de 312.000€";
-            if(codigo === 'vender_propiedad') return "Iniciar gestión de venta de un chalet/propiedad";
-            if(codigo === 'ofrecer_propiedad') return "Ofrecer mi propiedad al radar de Sabadell";
-            if(codigo === 'nuevo_video_coworking') return "Consultar detalles sobre el Despacho Coworking en Barcelona";
-            if(codigo === 'inversion_horta_vella') return "Quiero analizar la rentabilidad del suelo en Horta Vella";
+            if(codigo === 'chivatazo') return "CHIVATAZO NACIONAL";
+            if(codigo === 'alianza') return "ÚNETE A NUESTRA RED";
+            if(codigo.startsWith('sumar_interes_')) return "ME INTERESA - " + codigo.split('_')[2];
+            if(codigo === 'vender_propiedad') return "VENDER TU PROPIEDAD";
+            if(codigo === 'inversion_horta_vella') return "DOSSIER HORTA VELLA";
+            if(codigo === 'nuevo_video_coworking') return "COWORKING BCN";
             return codigo; 
         }
 
@@ -1395,11 +1442,17 @@
             msgEl.innerText = "⏳ Verificando credenciales...";
             telInput.disabled = true;
             
-            let idiomaActual = document.getElementById('language-selector').value;
+            const lang = document.getElementById('language-selector').value || "es";
 
             fetch(webhookMake, {
                 method: 'POST', headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ evento: "verificar_registro", telefono: telLimpio, ip: clienteIP, Origen: "Live-Match", idioma_usuario: idiomaActual })
+                body: JSON.stringify({ 
+                    evento: "verificar_registro", 
+                    telefono: telLimpio, 
+                    ip: clienteIP, 
+                    Origen: "Live-Match", 
+                    idioma_usuario: lang 
+                })
             }).then(res => res.json()).then(data => {
                 telInput.disabled = false;
                 if(data.registrado === "bloqueado") {
@@ -1478,7 +1531,7 @@
             } 
             else if (origen === 'nuevo_con_intencion') {
                 estadoChat = 'ESPERANDO_TELEFONO';
-                appendMessage("Elena", `Hola. Soy Elena, AI Advisor de Level-i. Para proceder de forma segura con tu solicitud sobre **${intencionGuardada}**, por favor indícame tu **número de teléfono móvil**.`, 'bot');
+                appendMessage("Elena", `Hola. Soy Elena, AI Advisor de Level-i. Para proceder de forma segura con tu solicitud, por favor indícame tu **número de teléfono móvil**.`, 'bot');
                 inputField.placeholder = "Ej: 600123456";
             }
             else {
@@ -1502,8 +1555,6 @@
             if(!ocultarBurbujaUsuario) {
                 appendMessage("Tú", message, 'user');
             }
-            
-            let idiomaActual = document.getElementById('language-selector').value;
 
             if (estadoChat === 'ESPERANDO_INTENCION') {
                 intencionGuardada = message; 
@@ -1539,12 +1590,30 @@
                 
                 document.getElementById('typing-indicator').style.display = 'block';
 
-                let textoParaMake = `Inicio de sesión en Live-Match. Intención del usuario: "${intencionGuardada}"`;
+                let tipoCtaFinal = "CHAT LIBRE";
+                let textoMensaje = `Inicio de sesión.`;
+                let infoSolicitada = "";
 
-                fetch(webhookMake, {
-                    method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ evento: "nuevo_mensaje", id_sesion: sessionId, telefono: telefonoCliente, nombre_cliente: nombreCliente, Origen: "Live-Match chat bot", perfil: perfilUsuario, ip: clienteIP, mensaje: textoParaMake, idioma_usuario: idiomaActual })
-                }).then(r => r.json()).then(data => {
+                if (intencionGuardada === 'DOSSIER HORTA VELLA') {
+                    tipoCtaFinal = "DOSSIER HORTA VELLA";
+                    infoSolicitada = "Información sobre rentabilidad y plazos del Suelo Horta Vella";
+                    textoMensaje = "Me interesa analizar el dossier de inversión de Horta Vella.";
+                } else if (intencionGuardada.startsWith('ME INTERESA')) {
+                    tipoCtaFinal = "ME INTERESA";
+                    infoSolicitada = intencionGuardada; // Incluye la REF
+                    textoMensaje = `Quiero más información sobre la propiedad: ${intencionGuardada}`;
+                } else if (intencionGuardada !== "") {
+                    tipoCtaFinal = intencionGuardada;
+                    textoMensaje = `Quiero gestionar: ${intencionGuardada}`;
+                }
+
+                enviarWebhookMake(
+                    "nuevo_mensaje", 
+                    textoMensaje, 
+                    tipoCtaFinal,
+                    { nombre: nombreCliente, telefono: telefonoCliente },
+                    { informacion_solicitada: infoSolicitada }
+                ).then(data => {
                     document.getElementById('typing-indicator').style.display = 'none';
                     appendMessage("Elena", (data.respuesta_bot || `Encantada, ${nombreCliente}. He registrado tu solicitud. Un asesor humano o yo misma te daremos seguimiento en breve. ¿Tienes alguna otra duda?`).trim(), 'bot');
                     intencionGuardada = ""; 
@@ -1557,10 +1626,13 @@
 
             if (estadoChat === 'CHAT_LIBRE') {
                 document.getElementById('typing-indicator').style.display = 'block';
-                fetch(webhookMake, {
-                    method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ evento: "nuevo_mensaje", id_sesion: sessionId, telefono: telefonoCliente, nombre_cliente: nombreCliente, Origen: "Live-Match chat bot", perfil: perfilUsuario, ip: clienteIP, mensaje: message, idioma_usuario: idiomaActual })
-                }).then(r => r.json()).then(data => {
+                
+                enviarWebhookMake(
+                    "nuevo_mensaje", 
+                    message, 
+                    "CHAT LIBRE",
+                    { nombre: nombreCliente, telefono: telefonoCliente }
+                ).then(data => {
                     document.getElementById('typing-indicator').style.display = 'none';
                     if (data.respuesta_bot) appendMessage("Elena", data.respuesta_bot.trim(), 'bot');
                 }).catch(err => {
