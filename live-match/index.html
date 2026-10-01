@@ -686,22 +686,22 @@
                     </div>
                     <div class="sim-row">
                         <span style="color:var(--text-muted)">Precio Inmueble</span>
-                        <span style="font-weight:700">110.000 €</span>
+                        <span style="font-weight:700; color: var(--accent-orange);">A Consultar</span>
                     </div>
                     <div class="sim-row">
                         <span style="color:var(--text-muted)">ITP Estimado (10%)</span>
-                        <span>11.000 €</span>
+                        <span>--</span>
                     </div>
                     <div class="sim-row">
                         <span style="color:var(--text-muted)">Notaría + Reg. + Gest. (Est.)</span>
-                        <span>1.600 €</span>
+                        <span>--</span>
                     </div>
                     <div class="sim-row total">
                         <span>Coste Total Adquisición</span>
-                        <span class="sim-highlight">122.600 €</span>
+                        <span class="sim-highlight">Pendiente de Oferta</span>
                     </div>
                     <div style="text-align:right; font-size:11px; color:var(--text-muted); margin-top:4px;">
-                        Repercusión total de entrada: <strong>87,82 €/m²</strong>
+                        Repercusión total de entrada: <strong>A calcular</strong>
                     </div>
                 </div>
 
@@ -709,12 +709,12 @@
                 <div class="slider-section">
                     <div class="slider-top">
                         <span class="slider-label">Ref. Suelo Urbano Consolidado</span>
-                        <span class="slider-value-box"><span id="val-price-horta">250</span> €/m²</span>
+                        <span class="slider-value-box"><span id="val-price-horta">200</span> €/m²</span>
                     </div>
-                    <input type="range" class="sim-slider" id="slider-price-horta" min="200" max="400" value="250" step="10" oninput="actualizarCalculosHorta()">
+                    <input type="range" class="sim-slider" id="slider-price-horta" min="150" max="400" value="200" step="10" oninput="actualizarCalculosHorta()">
                     <div style="display:flex; justify-content:space-between; font-size:10px; color:var(--text-muted);">
-                        <span>Bajo (200 €)</span>
-                        <span>Medio (300 €)</span>
+                        <span>Bajo (150 €)</span>
+                        <span>Medio (200 €)</span>
                         <span>Alto (400 €)</span>
                     </div>
                 </div>
@@ -723,18 +723,18 @@
                 <div class="comparison-grid">
                     <div class="comp-card">
                         <span class="comp-label">Coste Actual</span>
-                        <span class="comp-val">122,6 k€</span>
-                        <span class="comp-sub">87,82 €/m²</span>
+                        <span class="comp-val" style="font-size: 14px; margin-top: 5px;">A Consultar</span>
+                        <span class="comp-sub">-- €/m²</span>
                     </div>
                     <div class="comp-card target">
                         <span class="comp-label">Valor Si Fuera Urbano</span>
-                        <span class="comp-val" id="val-urbano-horta">349 k€</span>
-                        <span class="comp-sub" id="val-diferencia-horta">+226,4 k€</span>
+                        <span class="comp-val" id="val-urbano-horta">279 k€</span>
+                        <span class="comp-sub" id="val-diferencia-horta">Valor Suelo Finalista</span>
                     </div>
                 </div>
 
                 <div class="gap-badge" id="gap-text-horta">
-                    Entrada actual a un <strong>65% por debajo</strong> del valor de suelo finalista de la zona.
+                    Contacta con Elena para enviar tu oferta de <strong>Land Banking</strong> y calcular tu margen de beneficio frente al valor urbano.
                 </div>
                 
                 <div class="risk-box" style="margin-top: 0;">
@@ -1272,7 +1272,6 @@
 
         // --- LÓGICA DEL SIMULADOR DE HORTA VELLA ---
         const sqmHorta = 1396;
-        const totalCostHorta = 122600; // 110k + ITP (11k) + Gastos (1.6k)
 
         function actualizarCalculosHorta() {
             const elSlider = document.getElementById('slider-price-horta');
@@ -1282,13 +1281,10 @@
             document.getElementById('val-price-horta').innerText = pricePerSqm;
 
             const valorHipoteticoUrbano = sqmHorta * pricePerSqm;
-            const diferencia = valorHipoteticoUrbano - totalCostHorta;
-            const ratioDescuento = Math.round((1 - (totalCostHorta / valorHipoteticoUrbano)) * 100);
 
             document.getElementById('val-urbano-horta').innerText = Math.round(valorHipoteticoUrbano / 1000) + " k€";
-            document.getElementById('val-diferencia-horta').innerText = "+" + (diferencia / 1000).toFixed(1) + " k€ brecha";
             document.getElementById('gap-text-horta').innerHTML = 
-                `Entrada actual con gastos un <strong>${ratioDescuento}% por debajo</strong> del valor de mercado finalista colindante.`;
+                `Contacta con Elena para enviar tu oferta de <strong>Land Banking</strong> y calcular tu margen de beneficio frente a los <strong>${Math.round(valorHipoteticoUrbano / 1000)} k€</strong> de valor finalista.`;
         }
 
         // --- LÓGICA DE USUARIO Y ELENA ---
