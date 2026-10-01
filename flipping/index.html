@@ -929,10 +929,12 @@
         <header>
             <div class="header-title">NetWorking Montsià · Consola Central PropTech · Sector: La Ràpita y Alcanar</div>
             <div class="lang-selector">
-                <button class="lang-btn active" onclick="setLanguage('esp')">ESP</button>
-                <button class="lang-btn" onclick="setLanguage('ca')">CAT</button>
-                <button class="lang-btn" onclick="setLanguage('fra')">FRA</button>
+                <button class="lang-btn active" onclick="setLanguage('es')" data-lang="es">ESP</button>
+                <button class="lang-btn" onclick="setLanguage('ca')" data-lang="ca">CAT</button>
+                <button class="lang-btn" onclick="setLanguage('fr')" data-lang="fr">FRA</button>
             </div>
+            <!-- Campo oculto para guardar el idioma seleccionado de forma sencilla -->
+            <input type="hidden" id="language-selector" value="es">
         </header>
 
         <div class="content-area">
@@ -979,7 +981,7 @@
                 <h3 style="color: var(--accent-green); margin-top: 0; font-size: 16px;">¿Quieres vender tu propiedad al máximo rendimiento?</h3>
                 <p style="font-size: 12.5px; color: var(--text-muted); margin-bottom: 20px;">Propietarios de viviendas con ganas de liquidez rápida. Valoración exprés en 24/48h. Honorarios máximos hasta 7.500€ IVA incluido.</p>
                 
-                <form id="leadFormFlipping" action="https://hook.eu1.make.com/8xd81xb9t3mg2ycwez1czd3quwhf2nef" method="POST" onsubmit="return validarFlippingForm(event)" style="display: flex; flex-direction: column; gap: 15px;">
+                <form id="leadFormFlipping" method="POST" style="display: flex; flex-direction: column; gap: 15px;">
                     <div>
                         <input type="text" id="nombreFlipping" name="nombre" required placeholder="Tu nombre completo" style="width: 100%; background: var(--bg-base); border: 1px solid var(--border-color); color: #fff; padding: 12px; border-radius: 6px; outline: none; font-size: 13px;">
                     </div>
@@ -1261,9 +1263,57 @@
         </div>
     </main>
 
-    <!-- CONFIGURACIÓN DE TU WEBHOOK -->
+    <!-- CONFIGURACIÓN DE TU WEBHOOK Y FUNCIÓN MAESTRA -->
     <script>
         const webhookMake = "https://hook.eu1.make.com/8xd81xb9t3mg2ycwez1czd3quwhf2nef"; 
+
+        // CAPTURAR PARÁMETROS UTM DE LA URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const utm_source = urlParams.get('utm_source') || "";
+        const utm_medium = urlParams.get('utm_medium') || "";
+        const utm_campaign = urlParams.get('utm_campaign') || "";
+
+        function enviarWebhookMake(evento, mensajeTexto, tipoCta = "", datosUsuario = {}, datosDemanda = {}, datosInmueble = {}) {
+            const lang = document.getElementById('language-selector').value || "es";
+            
+            // CONSTRUCCIÓN DEL JSON ESTANDARIZADO PARA TODAS LAS LANDINGS
+            const payloadMaestro = {
+                metadatos_sistema: {
+                    origen_landing: "FLIPPING",
+                    tipo_cta: tipoCta,
+                    idioma_usuario: lang,
+                    id_sesion: sessionId,
+                    ip_cliente: clienteIP
+                },
+                datos_usuario: {
+                    telefono: datosUsuario.telefono || telefonoCliente || "",
+                    nombre: datosUsuario.nombre || nombreCliente || "",
+                    acepto_legal: datosUsuario.acepto_legal !== undefined ? datosUsuario.acepto_legal : true
+                },
+                datos_demanda_inversion: {
+                    zonas_interes: datosDemanda.zonas_interes || "",
+                    presupuesto_requisitos: datosDemanda.presupuesto_requisitos || "",
+                    informacion_solicitada: datosDemanda.informacion_solicitada || ""
+                },
+                datos_inmueble_captacion: {
+                    poblacion: datosInmueble.poblacion || "", 
+                    tipo_inmueble: datosInmueble.tipo_inmueble || "", 
+                    habitaciones: datosInmueble.habitaciones || "", 
+                    banos: datosInmueble.banos || "",
+                    descripcion_observaciones: datosInmueble.descripcion_observaciones || "", 
+                    precio_deseado: datosInmueble.precio_deseado || "", 
+                    fotos_subidas: datosInmueble.fotos_subidas || 0
+                },
+                tracking_marketing: { utm_source, utm_medium, utm_campaign },
+                mensaje: mensajeTexto
+            };
+
+            return fetch(webhookMake, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payloadMaestro)
+            }).then(r => r.json());
+        }
     </script>
 
     <script>
@@ -1300,17 +1350,47 @@
             document.getElementById('preguntaCaptchaFlipping').innerText = `${n1} + ${n2}`;
         }
 
-        function validarFlippingForm(e) {
+        // REEMPLAZO DE LA FUNCIÓN DE VALIDACIÓN PARA USAR EL WEBHOOK UNIFICADO
+        document.getElementById('leadFormFlipping').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
             const userInput = parseInt(document.getElementById('captchaFlipping').value);
             if (userInput !== flippingCaptchaRespuesta) {
-                e.preventDefault();
                 alert('⚠️ La suma de verificación de seguridad es incorrecta.');
                 document.getElementById('captchaFlipping').value = '';
                 generarSumaFlipping();
-                return false;
+                return;
             }
-            return true;
-        }
+
+            const btn = e.target.querySelector('button[type="submit"]');
+            const originalText = btn.innerHTML;
+            btn.innerText = "Procesando...";
+            btn.style.opacity = "0.7";
+
+            const nombreCapturado = document.getElementById('nombreFlipping').value;
+            const telefonoCapturado = document.getElementById('telefonoFlipping').value;
+            const poblacionCapturada = document.getElementById('poblacionFlipping').value;
+
+            enviarWebhookMake(
+                "nuevo_lead", 
+                "Solicitud de valoración exprés (Flipping)", 
+                "VENDER TU PROPIEDAD",
+                { nombre: nombreCapturado, telefono: telefonoCapturado, acepto_legal: true },
+                {},
+                { poblacion: poblacionCapturada }
+            ).then(() => {
+                alert("¡Solicitud enviada con éxito! Nos pondremos en contacto contigo en breve.");
+                this.reset();
+                generarSumaFlipping();
+                btn.innerHTML = originalText;
+                btn.style.opacity = "1";
+            }).catch(err => {
+                console.error("Error al enviar a Make:", err);
+                alert("Hubo un error al procesar tu solicitud. Por favor, inténtalo de nuevo.");
+                btn.innerHTML = originalText;
+                btn.style.opacity = "1";
+            });
+        });
 
         /* ==========================================
            RESTO DE SCRIPTS EXISTENTES
@@ -1346,8 +1426,6 @@
         
         let intencionGuardada = "";
         let mensajeAEnviarMake = "Inicio de sesión completado";
-        let inmuebleAEnviarMake = "";
-        let referenciaAEnviarMake = "";
         
         let captchaRespuesta = 0;
         let perfilUsuario = "NUEVO"; 
@@ -1395,8 +1473,6 @@
             
             if (intencion === 'comprar_parcela_marjal') {
                 mensajeAEnviarMake = "Hola, me interesa adquirir el SOLAR AV MARJAL. ¿Me pueden informar?";
-                inmuebleAEnviarMake = "SOLAR AV MARJAL";
-                referenciaAEnviarMake = "REF2026062000009";
             }
             
             document.getElementById('victoria-box-panel').scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -1432,6 +1508,8 @@
             msgEl.innerText = "⏳ Verificando credenciales...";
             telInput.disabled = true;
 
+            // Reemplazado por envío a través del Payload Unificado, adaptado para la validación de login
+            const lang = document.getElementById('language-selector').value || "es";
             fetch(webhookMake, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -1439,7 +1517,8 @@
                     evento: "verificar_registro", 
                     telefono: telLimpio, 
                     ip: clienteIP,
-                    Origen: "Level-i chat bot" 
+                    Origen: "Level-i chat bot",
+                    idioma_usuario: lang
                 })
             })
             .then(res => res.json())
@@ -1547,21 +1626,14 @@
                 if (intencionGuardada === 'comprar_parcela_marjal') {
                     appendMessage("Tú", mensajeAEnviarMake, 'user');
                     document.getElementById('typing-indicator').style.display = 'block';
-                    fetch(webhookMake, {
-                        method: 'POST', headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ 
-                            evento: "nuevo_mensaje", 
-                            id_sesion: sessionId, 
-                            telefono: telefonoCliente, 
-                            nombre_cliente: nombreCliente, 
-                            Origen: "Level-i chat bot", 
-                            perfil: perfilUsuario, 
-                            ip: clienteIP, 
-                            mensaje: mensajeAEnviarMake,
-                            inmueble: inmuebleAEnviarMake,
-                            referencia: referenciaAEnviarMake
-                        })
-                    }).then(r => r.json()).then(data => {
+                    
+                    enviarWebhookMake(
+                        "nuevo_mensaje", 
+                        mensajeAEnviarMake, 
+                        "NETWORKING MONTSIA SUELO URBANO", 
+                        { telefono: telefonoCliente, nombre: nombreCliente }, 
+                        { informacion_solicitada: "SOLAR AV MARJAL - REF2026062000009" }
+                    ).then(data => {
                         document.getElementById('typing-indicator').style.display = 'none';
                         if (data.respuesta_bot) appendMessage("Elena", data.respuesta_bot.trim(), 'bot');
                     }).catch(e => { document.getElementById('typing-indicator').style.display = 'none'; });
@@ -1617,33 +1689,23 @@
 
                 let primerMensajeMake = "Inicio de sesión completado";
                 let idInmuebleMake = "";
-                let refMake = "";
 
                 if (intencionGuardada === 'comprar_parcela_marjal') {
                     primerMensajeMake = "Hola, me interesa adquirir el SOLAR AV MARJAL. ¿Me pueden informar?";
-                    idInmuebleMake = "SOLAR AV MARJAL";
-                    refMake = "REF2026062000009";
+                    idInmuebleMake = "SOLAR AV MARJAL - REF2026062000009";
                     setTimeout(() => {
                         appendMessage("Tú", primerMensajeMake, 'user');
                     }, 500);
                     intencionGuardada = ""; 
                 }
 
-                fetch(webhookMake, {
-                    method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        evento: "nuevo_mensaje", 
-                        id_sesion: sessionId, 
-                        telefono: telefonoCliente, 
-                        nombre_cliente: nombreCliente, 
-                        Origen: "Level-i chat bot", 
-                        perfil: perfilUsuario, 
-                        ip: clienteIP, 
-                        mensaje: primerMensajeMake,
-                        inmueble: idInmuebleMake,
-                        referencia: refMake
-                    })
-                }).then(r => r.json()).then(data => {
+                enviarWebhookMake(
+                    "nuevo_mensaje", 
+                    primerMensajeMake, 
+                    idInmuebleMake ? "NETWORKING MONTSIA SUELO URBANO" : "CHAT LIBRE", 
+                    { telefono: telefonoCliente, nombre: nombreCliente },
+                    { informacion_solicitada: idInmuebleMake }
+                ).then(data => {
                     document.getElementById('typing-indicator').style.display = 'none';
                     appendMessage("Elena", (data.respuesta_bot || `Encantada, ${nombreCliente}. ¿En qué te puedo ayudar?`).trim(), 'bot');
                 }).catch(err => {
@@ -1653,16 +1715,17 @@
                 
                 intencionGuardada = "";
                 mensajeAEnviarMake = "Inicio de sesión completado";
-                inmuebleAEnviarMake = "";
-                referenciaAEnviarMake = "";
                 return;
             }
 
             document.getElementById('typing-indicator').style.display = 'block';
-            fetch(webhookMake, {
-                method: 'POST', headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ evento: "nuevo_mensaje", id_sesion: sessionId, telefono: telefonoCliente, nombre_cliente: nombreCliente, Origen: "Level-i chat bot", perfil: perfilUsuario, ip: clienteIP, mensaje: message })
-            }).then(r => r.json()).then(data => {
+            
+            enviarWebhookMake(
+                "nuevo_mensaje", 
+                message, 
+                "CHAT LIBRE", 
+                { telefono: telefonoCliente, nombre: nombreCliente }
+            ).then(data => {
                 document.getElementById('typing-indicator').style.display = 'none';
                 if (data.respuesta_bot) appendMessage("Elena", data.respuesta_bot.trim(), 'bot');
             }).catch(err => {
@@ -1709,13 +1772,12 @@
 
         function setLanguage(lang) {
             document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
-            if (lang === 'ca') {
-                document.querySelectorAll('.lang-btn')[1].classList.add('active');
-            } else if (lang === 'fra') {
-                document.querySelectorAll('.lang-btn')[2].classList.add('active');
-            } else {
-                document.querySelectorAll('.lang-btn')[0].classList.add('active');
+            // Usamos un querySelector basado en el data attribute para evitar que dependa del orden
+            const activeBtn = document.querySelector(`.lang-btn[data-lang="${lang}"]`);
+            if (activeBtn) {
+                activeBtn.classList.add('active');
             }
+            document.getElementById('language-selector').value = lang;
         }
 
         let captchaBajaRespuesta = 0;
