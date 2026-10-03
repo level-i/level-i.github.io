@@ -269,8 +269,8 @@
                     </div>
 
                     <!-- PRUEBA MATEMÁTICA CAPTCHA -->
-                    <div class="form-group">
-                        <label id="captcha-label">Verificación: ¿Cuánto es X + Y?</label>
+                    <div class="form-group" style="background: rgba(59, 130, 246, 0.05); padding: 10px; border-radius: 6px; border: 1px solid rgba(59, 130, 246, 0.2);">
+                        <label id="captcha-label" style="color: var(--accent-blue);">Verificación: ¿Cuánto es X + Y?</label>
                         <input type="number" id="prop-captcha" placeholder="Resultado..." required>
                         <input type="hidden" id="captcha-answer">
                     </div>
@@ -411,6 +411,22 @@
         }
 
         // ==========================================
+        // NUEVA FUNCIÓN: TRADUCTOR DE OBJETOS LARK
+        // ==========================================
+        function extraerTextoLark(campo) {
+            if (!campo) return "";
+            if (typeof campo === 'string' || typeof campo === 'number') return campo;
+            if (Array.isArray(campo)) {
+                if (campo.length === 0) return "";
+                return extraerTextoLark(campo[0]); // Si es array, escarba en el primer elemento
+            }
+            if (typeof campo === 'object') {
+                return campo.text || campo.value || campo.name || campo.full_address || "";
+            }
+            return String(campo);
+        }
+
+        // ==========================================
         // 4. MOTOR SURTIDOR: CARGA DATOS REALES
         // ==========================================
         async function cargarInmueblesReales() {
@@ -434,36 +450,52 @@
                 inmuebles.forEach(prop => {
                     const campos = prop.fields || {};
                     
-                    // Galería de fotos limpia (URL plana)
+                    // --- LIMPIEZA DE CAMPOS ---
+                    const tipoStr = extraerTextoLark(campos["Tipo Propiedad"]);
+                    const habsStr = extraerTextoLark(campos["N_Habitaciones"]);
+                    const banosStr = extraerTextoLark(campos["N_wc"]);
+                    const supStr = extraerTextoLark(campos["Superficie_Construida"]);
+                    const textoObs = extraerTextoLark(campos["DESCRIPCION"]);
+                    
+                    // Nuevos campos de ubicación extraídos
+                    const cpStr = extraerTextoLark(campos["Código Postal"]);
+                    const poblacionStr = extraerTextoLark(campos["Población"]);
+                    const provinciaStr = extraerTextoLark(campos["Provincia"]);
+                    const zonaStr = extraerTextoLark(campos["Zona o Barrio"]);
+                    
+                    // Construcción inteligente de la cadena de ubicación
+                    let ubicacionPrincipal = zonaStr ? `${poblacionStr} (${zonaStr})` : poblacionStr;
+                    let ubicacionSecundaria = [cpStr, provinciaStr].filter(Boolean).join(" · ");
+                    let zonaCompleta = [ubicacionPrincipal, ubicacionSecundaria].filter(Boolean).join(" · ");
+                    if (!zonaCompleta) zonaCompleta = 'Ubicación reservada';
+
+                    // --- GALERÍA DE FOTOS SEGURA ---
                     let galeriaHTML = '';
                     const fotosLark = campos["Imagen Principal"] || [];
                     for (let i = 0; i < 4; i++) {
-                        if (fotosLark[i] && (fotosLark[i].tmp_url || fotosLark[i].url || typeof fotosLark[i] === 'string')) {
-                            const imgSafe = fotosLark[i].tmp_url || fotosLark[i].url || fotosLark[i];
-                            galeriaHTML += `<img src="${imgSafe}" class="gallery-img" alt="Inmueble">`;
+                        let imgSafe = "";
+                        if (fotosLark[i]) {
+                            if (typeof fotosLark[i] === 'string') { imgSafe = fotosLark[i]; } 
+                            else if (typeof fotosLark[i] === 'object') { 
+                                imgSafe = fotosLark[i].tmp_url || fotosLark[i].url || ""; 
+                            }
+                        }
+
+                        if (imgSafe && imgSafe !== "[object Object]") {
+                            galeriaHTML += `<img src="${imgSafe}" class="gallery-img" alt="Inmueble" onerror="this.src='https://placehold.co/400x300/1f2937/9ca3af?text=Foto+Lark+Privada';">`;
                         } else {
                             galeriaHTML += `<div class="gallery-img empty" style="background: rgba(255,255,255,0.02);"></div>`;
                         }
                     }
 
-                    // Descripción
-                    let textoObs = "";
-                    const descLark = campos["DESCRIPCION"];
-                    if (descLark) {
-                        if (typeof descLark === 'string') { textoObs = descLark; } 
-                        else if (Array.isArray(descLark)) { textoObs = descLark.map(item => item.text || item.content || '').join(''); }
-                    }
-
-                    // Botones interactivos (Limpieza de coordenadas)
-                    let lat = campos["lat"]; if (Array.isArray(lat)) lat = lat[0]?.value || lat[0]?.text || lat[0];
-                    let lon = campos["lon"]; if (Array.isArray(lon)) lon = lon[0]?.value || lon[0]?.text || lon[0];
+                    // --- BOTONES DE VUELO Y WEB ---
+                    const lat = extraerTextoLark(campos["lat"]);
+                    const lon = extraerTextoLark(campos["lon"]);
                     let botonVuelo = (lat && lon) ? `<span class="tag" style="cursor:pointer; background: rgba(59, 130, 246, 0.1); color: var(--accent-blue); border-color: var(--accent-blue); font-weight: bold;" onclick="window.open('https://earth.google.com/web/search/${lat},${lon}', '_blank')">🚁 Vuelo 3D</span>` : '';
 
-                    let webLink = campos["ENLACE WEB"];
-                    if (Array.isArray(webLink)) webLink = webLink[0]?.link || webLink[0]?.url || webLink[0];
+                    let webLink = extraerTextoLark(campos["ENLACE WEB"]);
                     let botonWeb = webLink ? `<span class="tag" style="cursor:pointer; background: rgba(197, 160, 89, 0.1); color: var(--accent-gold); border-color: var(--accent-gold); font-weight: bold;" onclick="window.open('${webLink}', '_blank')">🌐 Tour / Web</span>` : '';
 
-                    const zonaCompleta = campos["Zona o Barrio"] ? `${campos["Población"] || ''} (${campos["Zona o Barrio"]})` : (campos["Población"] || 'Ubicación reservada');
                     const totalInteresados = campos["Contador_Interesados"] || 0;
                     const totalLikes = campos["Contador_Likes"] || 0;
                     const refID = campos["ID_Inmueble"] || prop.record_id || prop.id;
@@ -479,14 +511,14 @@
                         </div>
                         <div class="card-body">
                             <div class="card-details">
-                                <h3>${campos["Tipo Propiedad"] || 'Inmueble'}</h3>
+                                <h3>${tipoStr || 'Inmueble'}</h3>
                                 ${textoObs ? `<p class="card-obs">${textoObs}</p>` : ''}
                                 
                                 <div class="card-tags">
                                     <span class="tag">📍 ${zonaCompleta}</span>
-                                    ${campos["N_Habitaciones"] ? `<span class="tag">🛏️️ ${campos["N_Habitaciones"]} Hab</span>` : ''}
-                                    ${campos["N_wc"] ? `<span class="tag">🛁 ${campos["N_wc"]} Baños</span>` : ''}
-                                    ${campos["Superficie_Construida"] ? `<span class="tag">📐 ${campos["Superficie_Construida"]} m²</span>` : ''}
+                                    ${habsStr ? `<span class="tag">🛏 ${habsStr} Hab</span>` : ''}
+                                    ${banosStr ? `<span class="tag">🛁 ${banosStr} Baños</span>` : ''}
+                                    ${supStr ? `<span class="tag">📐 ${supStr} m²</span>` : ''}
                                     ${botonVuelo}
                                     ${botonWeb}
                                 </div>
@@ -527,7 +559,7 @@
         });
 
         // ==========================================
-        // 5. LÓGICA DEL FORMULARIO Y BOTONES (ELENA)
+        // 5. LÓGICA DEL FORMULARIO Y BOTONES
         // ==========================================
         const precioInput = document.getElementById('prop-precio');
         precioInput.addEventListener('input', function(e) {
@@ -599,8 +631,7 @@
             formData.append("payload_maestro", JSON.stringify(payloadMaestro));
             rawFiles.forEach((file, idx) => formData.append(`foto_${idx + 1}`, file));
             
-            fetch(WEBHOOK_INGESTA, { method: 'POST', body: formData })
-            .catch(e => console.log(e));
+            fetch(WEBHOOK_INGESTA, { method: 'POST', body: formData }).catch(e => console.log(e));
 
             // Simulación visual en el feed local
             setTimeout(() => {
@@ -645,7 +676,6 @@
             btnElement.innerHTML = '❤️';
             const cnt = document.getElementById(counterId); 
             if(cnt) cnt.innerText = parseInt(cnt.innerText) + 1;
-            // Al ser un simple "Me Gusta", usamos el webhook de ingesta/analítica general para registrarlo
             enviarWebhookMakeJSON("click_me_gusta", "ME GUSTA", {}, { referencia_inmueble: refInmueble });
         }
 
@@ -660,7 +690,6 @@
             const tel = prompt(lang === 'es' ? "Introduce tu teléfono de contacto:" : "Enter your phone number:");
             if(tel && tel.trim() !== "") {
                 btn.innerText = "...";
-                // Esto llamará a la constante WEBHOOK_ELENA automáticamente gracias a nuestro desvío inteligente en enviarWebhookMakeJSON
                 enviarWebhookMakeJSON("click_me_interesa", "ME INTERESA", { telefono: tel, email: email }, { referencia_inmueble: id }).catch(e => console.log(e));
                 setTimeout(() => { 
                     btn.classList.add('liked'); 
