@@ -6,17 +6,10 @@
     <title>Level-i Command Center | Mercado Real</title>
     <style>
         :root {
-            --bg-base: #090d16;
-            --bg-panel: #111827;
-            --bg-card: #1f2937;
-            --accent-green: #10b981;
-            --accent-blue: #3b82f6;
-            --accent-gold: #C5A059;
-            --accent-orange: #f59e0b;
-            --accent-red: #ef4444;
-            --text-main: #f9fafb;
-            --text-muted: #9ca3af;
-            --border-color: #374151;
+            --bg-base: #090d16; --bg-panel: #111827; --bg-card: #1f2937;
+            --accent-green: #10b981; --accent-blue: #3b82f6; --accent-gold: #C5A059;
+            --accent-orange: #f59e0b; --accent-red: #ef4444;
+            --text-main: #f9fafb; --text-muted: #9ca3af; --border-color: #374151;
         }
         
         html, body { margin: 0; padding: 0; height: 100%; width: 100%; }
@@ -98,6 +91,7 @@
         .feed-title { font-size: 20px; font-weight: 800; margin: 0; display: flex; align-items: center; gap: 10px; }
         .live-indicator { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: bold; color: var(--accent-green); text-transform: uppercase; background: rgba(16, 185, 129, 0.1); padding: 4px 10px; border-radius: 20px; border: 1px solid rgba(16, 185, 129, 0.3); }
         .live-dot { width: 6px; height: 6px; background-color: var(--accent-green); border-radius: 50%; animation: blink 1s infinite; }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
         
         .feed-container { display: flex; flex-direction: column; gap: 20px; max-width: 800px; margin: 0 auto; padding-bottom: 50px; }
         .property-card { background: var(--bg-panel); border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; transition: transform 0.2s, box-shadow 0.2s; }
@@ -274,6 +268,13 @@
                         <input type="tel" id="prop-tel" placeholder="Para gestión interna..." data-i18n-placeholder="plc_tel" required>
                     </div>
 
+                    <!-- PRUEBA MATEMÁTICA CAPTCHA -->
+                    <div class="form-group">
+                        <label id="captcha-label">Verificación: ¿Cuánto es X + Y?</label>
+                        <input type="number" id="prop-captcha" placeholder="Resultado..." required>
+                        <input type="hidden" id="captcha-answer">
+                    </div>
+
                     <div class="form-group legal-check">
                         <input type="checkbox" id="prop-legal" required>
                         <label for="prop-legal">
@@ -298,14 +299,14 @@
         </div>
     </main>
 
-    <!-- VENTANAS MODALES LEGALES (SE CIERRAN AL CLICAR FUERA) -->
+    <!-- VENTANAS MODALES LEGALES -->
     <div class="modal-overlay" id="modal-legal" onclick="if(event.target === this) closeModal('modal-legal')">
         <div class="modal-content">
             <button class="modal-close" onclick="closeModal('modal-legal')">&times;</button>
             <div class="modal-title">Aviso Legal y Condiciones</div>
             <div class="modal-body">
-                <p>En cumplimiento con la Ley de Servicios de la Sociedad de la Información, se informa que Level.immo está operada por agentes registrados (API 4173 · AICAT 14200).</p>
-                <p>El uso de esta plataforma implica la aceptación de nuestras normas de publicación. Toda información proporcionada por los usuarios será verificada minuciosamente antes de su exposición pública.</p>
+                <p>En cumplimiento con la Ley de Servicios de la Sociedad de la Información, se informa que Level.immo está operada por un agente registrado (API 4173 · AICAT 14200).</p>
+                <p>El uso de esta plataforma implica la aceptación de las normas de publicación. Toda información proporcionada por los usuarios será verificada minuciosamente antes de su exposición pública.</p>
             </div>
         </div>
     </div>
@@ -334,10 +335,11 @@
 
     <script>
         // ==========================================
-        // 1. CONFIGURACIÓN DE LOS WEBHOOKS (SEPARADOS)
+        // 1. CONFIGURACIÓN DE LOS WEBHOOKS (ACTUALIZADOS)
         // ==========================================
-        const WEBHOOK_INGESTA = "https://hook.eu1.make.com/8xd81xb9t3mg2ycwez1czd3quwhf2nef";
-        const WEBHOOK_SURTIDOR = "https://hook.eu1.make.com/bpb012er1137ocx0tcdk19muh6le4qpu";
+        const WEBHOOK_INGESTA = "https://hook.eu1.make.com/loy5kvv4qmnvo748fmxo2qvt48mbf986"; // Recepción Cuarentena
+        const WEBHOOK_SURTIDOR = "https://hook.eu1.make.com/bpb012er1137ocx0tcdk19muh6le4qpu"; // Mercado Real Feed
+        const WEBHOOK_ELENA = "https://hook.eu1.make.com/3w2wmbbcc3evnvg8ajo3kjkucrd6dfkw"; // IA Advisor
 
         // ==========================================
         // 2. UTILIDADES Y SISTEMA BÁSICO
@@ -354,30 +356,18 @@
         function enviarWebhookMakeJSON(evento, tipoCta = "", datosUsuario = {}, datosInmueble = {}) {
             const lang = document.getElementById('language-selector').value || "es";
             const payloadMaestro = {
-                metadatos_sistema: {
-                    origen_landing: "MERCADO REAL",
-                    tipo_cta: tipoCta,
-                    idioma_usuario: lang,
-                    id_sesion: sessionId,
-                    ip_cliente: clienteIP
-                },
-                datos_usuario: {
-                    telefono: datosUsuario.telefono || "",
-                    email: datosUsuario.email || "",
-                    nombre: "",
-                    acepto_legal: true
-                },
+                metadatos_sistema: { origen_landing: "MERCADO REAL", tipo_cta: tipoCta, idioma_usuario: lang, id_sesion: sessionId, ip_cliente: clienteIP },
+                datos_usuario: { telefono: datosUsuario.telefono || "", email: datosUsuario.email || "", nombre: "", acepto_legal: true },
                 datos_demanda_inversion: { zonas_interes: "", presupuesto_requisitos: "", informacion_solicitada: "" },
-                datos_inmueble_captacion: {
-                    poblacion: "", tipo_inmueble: "", habitaciones: "", banos: "",
-                    descripcion_observaciones: "", precio_deseado: "", fotos_subidas: 0,
-                    referencia_inmueble: datosInmueble.referencia_inmueble || ""
-                },
+                datos_inmueble_captacion: { poblacion: "", tipo_inmueble: "", habitaciones: "", banos: "", descripcion_observaciones: "", precio_deseado: "", fotos_subidas: 0, referencia_inmueble: datosInmueble.referencia_inmueble || "" },
                 tracking_marketing: { utm_source, utm_medium, utm_campaign },
                 mensaje: evento
             };
 
-            return fetch(WEBHOOK_INGESTA, {
+            // DESVÍO A ELENA O INGESTA SEGÚN EL BOTÓN
+            const urlDestino = (tipoCta === "ME INTERESA") ? WEBHOOK_ELENA : WEBHOOK_INGESTA;
+
+            return fetch(urlDestino, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payloadMaestro)
@@ -387,7 +377,7 @@
         const traducciones = {
             es: { nav_demanda: "🎯 Demanda Activa", nav_mercado_real: "📡 Mercado Real", nav_comprar: "🏠 Comprar Inmuebles", nav_gestion: "⚙️ Gestión Integral", header_title: "Consola Central PropTech", ingesta_titulo: "Añadir Inmueble al Radar", ingesta_desc: "Tu propiedad se publicará de forma anónima. Sin direcciones.", lbl_zona: "Zona / Población", opt_sel: "Selecciona...", lbl_tipo: "Tipo de Inmueble", opt_apt: "Apartamento", opt_piso: "Piso", opt_ado: "Adosado", opt_cha: "Chalet", opt_loc: "Local", opt_ter: "Terreno o Parcela", lbl_hab: "Habitaciones", lbl_banos: "Baños", lbl_obs: "Observaciones (Opcional)", plc_obs: "Reformado, vistas, ascensor...", lbl_precio: "Precio de Venta Deseado (€)", lbl_fotos: "Subir Fotos (Máx. 4)", lbl_fotos_warn: "⚠ OBLIGATORIO: Solo interiores.<br>Cero fachadas.", lbl_tel: "Tu Teléfono (No se publicará)", plc_tel: "Para gestión interna...", btn_cuarentena: "Subir a Cuarentena 🔒", btn_procesando: "Procesando...", titulo_feed: "Mercado Real", en_directo: "En Directo", btn_interesa: "Me Interesa" },
             ca: { nav_demanda: "🎯 Demanda Activa", nav_mercado_real: "📡 Mercat Real", nav_comprar: "🏠 Comprar Immobles", nav_gestion: "⚙️ Gestió", header_title: "Consola Central PropTech", ingesta_titulo: "Afegir Immoble al Radar", ingesta_desc: "La teva propietat es publicarà de forma anònima.", lbl_zona: "Zona / Població", opt_sel: "Selecciona...", lbl_tipo: "Tipus d'Immoble", opt_apt: "Apartament", opt_piso: "Pis", opt_ado: "Adossat", opt_cha: "Xalet", opt_loc: "Local", opt_ter: "Terreny", lbl_hab: "Habitacions", lbl_banos: "Banys", lbl_obs: "Observacions (Opcional)", plc_obs: "Reformat, vistes...", lbl_precio: "Preu de Venda (€)", lbl_fotos: "Pujar Fotos (Màx. 4)", lbl_fotos_warn: "⚠️ OBLIGATORI: Només interiors.", lbl_tel: "El teu Telèfon (No es publicarà)", plc_tel: "Per a gestió interna...", btn_cuarentena: "Pujar a Quarantena 🔒", btn_procesando: "Processant...", titulo_feed: "Mercat Real", en_directo: "En Directe", btn_interesa: "M'Interessa" },
-            en: { nav_demanda: "🎯 Active Demand", nav_mercado_real: "📡 Real Market", nav_comprar: "🏠 Buy Properties", nav_gestion: "⚙️ Management", header_title: "PropTech Central Console", ingesta_titulo: "Add Property to Radar", ingesta_desc: "Your property will be published anonymously.", lbl_zona: "Area / City", opt_sel: "Select...", lbl_tipo: "Property Type", opt_apt: "Apartment", opt_piso: "Flat", opt_ado: "Townhouse", opt_cha: "Villa", opt_loc: "Commercial", opt_ter: "Land", lbl_hab: "Bedrooms", lbl_banos: "Bathrooms", lbl_obs: "Remarks (Optional)", plc_obs: "Renovated, views...", lbl_precio: "Desired Sale Price (€)", lbl_fotos: "Upload Photos (Max 4)", lbl_fotos_warn: "⚠️️ MANDATORY: Only interiors.", lbl_tel: "Your Phone (Will not be published)", plc_tel: "For internal management...", btn_cuarentena: "Upload to Quarantine 🔒", btn_procesando: "Processing...", titulo_feed: "Real Market", en_directo: "Live", btn_interesa: "I'm Interested" }
+            en: { nav_demanda: "🎯 Active Demand", nav_mercado_real: "📡 Real Market", nav_comprar: "🏠 Buy Properties", nav_gestion: "⚙️ Management", header_title: "PropTech Central Console", ingesta_titulo: "Add Property to Radar", ingesta_desc: "Your property will be published anonymously.", lbl_zona: "Area / City", opt_sel: "Select...", lbl_tipo: "Property Type", opt_apt: "Apartment", opt_piso: "Flat", opt_ado: "Townhouse", opt_cha: "Villa", opt_loc: "Commercial", opt_ter: "Land", lbl_hab: "Bedrooms", lbl_banos: "Bathrooms", lbl_obs: "Remarks (Optional)", plc_obs: "Renovated, views...", lbl_precio: "Desired Sale Price (€)", lbl_fotos: "Upload Photos (Max 4)", lbl_fotos_warn: "⚠ MANDATORY: Only interiors.", lbl_tel: "Your Phone (Will not be published)", plc_tel: "For internal management...", btn_cuarentena: "Upload to Quarantine 🔒", btn_procesando: "Processing...", titulo_feed: "Real Market", en_directo: "Live", btn_interesa: "I'm Interested" }
         };
 
         function cambiarIdioma() {
@@ -395,6 +385,7 @@
             const dic = traducciones[lang] || traducciones['es'];
             document.querySelectorAll('[data-i18n]').forEach(el => { if (dic[el.getAttribute('data-i18n')]) el.innerHTML = dic[el.getAttribute('data-i18n')]; });
             document.querySelectorAll('[data-i18n-placeholder]').forEach(el => { if (dic[el.getAttribute('data-i18n-placeholder')]) el.placeholder = dic[el.getAttribute('data-i18n-placeholder')]; });
+            generarCaptcha(lang); // Refresca el idioma del captcha
         }
 
         function updateClock() {
@@ -404,7 +395,23 @@
         }
 
         // ==========================================
-        // 3. MOTOR SURTIDOR: CARGA DATOS REALES
+        // 3. CAPTCHA MATEMÁTICO (ANTI-SPAM)
+        // ==========================================
+        function generarCaptcha(lang = 'es') {
+            const num1 = Math.floor(Math.random() * 10) + 1;
+            const num2 = Math.floor(Math.random() * 10) + 1;
+            document.getElementById('captcha-answer').value = num1 + num2;
+            document.getElementById('prop-captcha').value = '';
+            
+            let labelTexto = `Verificación: ¿Cuánto es ${num1} + ${num2}?`;
+            if(lang === 'en') labelTexto = `Verification: What is ${num1} + ${num2}?`;
+            if(lang === 'ca') labelTexto = `Verificació: Quant és ${num1} + ${num2}?`;
+            
+            document.getElementById('captcha-label').innerText = labelTexto;
+        }
+
+        // ==========================================
+        // 4. MOTOR SURTIDOR: CARGA DATOS REALES
         // ==========================================
         async function cargarInmueblesReales() {
             const feedContainer = document.getElementById('feed-container');
@@ -427,44 +434,34 @@
                 inmuebles.forEach(prop => {
                     const campos = prop.fields || {};
                     
-                    // Galería de fotos (0 a 4 aseguradas)
+                    // Galería de fotos limpia (URL plana)
                     let galeriaHTML = '';
                     const fotosLark = campos["Imagen Principal"] || [];
                     for (let i = 0; i < 4; i++) {
-                        if (fotosLark[i] && (fotosLark[i].tmp_url || fotosLark[i].url)) {
-                            const imgSafe = fotosLark[i].tmp_url || fotosLark[i].url;
+                        if (fotosLark[i] && (fotosLark[i].tmp_url || fotosLark[i].url || typeof fotosLark[i] === 'string')) {
+                            const imgSafe = fotosLark[i].tmp_url || fotosLark[i].url || fotosLark[i];
                             galeriaHTML += `<img src="${imgSafe}" class="gallery-img" alt="Inmueble">`;
                         } else {
                             galeriaHTML += `<div class="gallery-img empty" style="background: rgba(255,255,255,0.02);"></div>`;
                         }
                     }
 
-                    // Descripción limpia de Lark
+                    // Descripción
                     let textoObs = "";
                     const descLark = campos["DESCRIPCION"];
                     if (descLark) {
-                        if (typeof descLark === 'string') {
-                            textoObs = descLark;
-                        } else if (Array.isArray(descLark)) {
-                            textoObs = descLark.map(item => item.text || item.content || '').join('');
-                        }
+                        if (typeof descLark === 'string') { textoObs = descLark; } 
+                        else if (Array.isArray(descLark)) { textoObs = descLark.map(item => item.text || item.content || '').join(''); }
                     }
 
-                    // Vuelo 3D por Coordenadas
-                    let lat = campos["lat"]; if (Array.isArray(lat)) lat = lat[0];
-                    let lon = campos["lon"]; if (Array.isArray(lon)) lon = lon[0];
-                    let botonVuelo = '';
-                    if (lat && lon) {
-                        botonVuelo = `<span class="tag" style="cursor:pointer; background: rgba(59, 130, 246, 0.1); color: var(--accent-blue); border-color: var(--accent-blue); font-weight: bold;" onclick="window.open('https://earth.google.com/web/search/${lat},${lon}', '_blank')">🚁 Vuelo 3D</span>`;
-                    }
+                    // Botones interactivos (Limpieza de coordenadas)
+                    let lat = campos["lat"]; if (Array.isArray(lat)) lat = lat[0]?.value || lat[0]?.text || lat[0];
+                    let lon = campos["lon"]; if (Array.isArray(lon)) lon = lon[0]?.value || lon[0]?.text || lon[0];
+                    let botonVuelo = (lat && lon) ? `<span class="tag" style="cursor:pointer; background: rgba(59, 130, 246, 0.1); color: var(--accent-blue); border-color: var(--accent-blue); font-weight: bold;" onclick="window.open('https://earth.google.com/web/search/${lat},${lon}', '_blank')">🚁 Vuelo 3D</span>` : '';
 
-                    // Enlace Web / Tour Virtual
                     let webLink = campos["ENLACE WEB"];
                     if (Array.isArray(webLink)) webLink = webLink[0]?.link || webLink[0]?.url || webLink[0];
-                    let botonWeb = '';
-                    if (webLink) {
-                        botonWeb = `<span class="tag" style="cursor:pointer; background: rgba(197, 160, 89, 0.1); color: var(--accent-gold); border-color: var(--accent-gold); font-weight: bold;" onclick="window.open('${webLink}', '_blank')">🌐 Tour / Web</span>`;
-                    }
+                    let botonWeb = webLink ? `<span class="tag" style="cursor:pointer; background: rgba(197, 160, 89, 0.1); color: var(--accent-gold); border-color: var(--accent-gold); font-weight: bold;" onclick="window.open('${webLink}', '_blank')">🌐 Tour / Web</span>` : '';
 
                     const zonaCompleta = campos["Zona o Barrio"] ? `${campos["Población"] || ''} (${campos["Zona o Barrio"]})` : (campos["Población"] || 'Ubicación reservada');
                     const totalInteresados = campos["Contador_Interesados"] || 0;
@@ -487,7 +484,7 @@
                                 
                                 <div class="card-tags">
                                     <span class="tag">📍 ${zonaCompleta}</span>
-                                    ${campos["N_Habitaciones"] ? `<span class="tag">🛏️ ${campos["N_Habitaciones"]} Hab</span>` : ''}
+                                    ${campos["N_Habitaciones"] ? `<span class="tag">🛏️️ ${campos["N_Habitaciones"]} Hab</span>` : ''}
                                     ${campos["N_wc"] ? `<span class="tag">🛁 ${campos["N_wc"]} Baños</span>` : ''}
                                     ${campos["Superficie_Construida"] ? `<span class="tag">📐 ${campos["Superficie_Construida"]} m²</span>` : ''}
                                     ${botonVuelo}
@@ -504,7 +501,7 @@
                                 <span style="font-size: 12px; color: var(--text-muted); margin-right: 5px;">❤️ <span id="contador-likes-${refID}">${totalLikes}</span></span>
                                 <button type="button" class="btn-heart" onclick="darLikeVacio(this, 'contador-likes-${refID}', '${refID}')" title="Me Gusta">🤍</button>
                                 <button type="button" class="btn-like" onclick="marcarInteres(this, '${refID}')">
-                                    <span>Me Interesa</span>
+                                    <span data-i18n="btn_interesa">Me Interesa</span>
                                 </button>
                             </div>
                         </div>
@@ -525,11 +522,12 @@
             updateClock(); 
             cambiarIdioma(); 
             document.getElementById('language-selector').addEventListener('change', cambiarIdioma);
+            generarCaptcha();
             cargarInmueblesReales();
         });
 
         // ==========================================
-        // 4. LÓGICA DEL FORMULARIO Y BOTONES (ELENA + AUDIO)
+        // 5. LÓGICA DEL FORMULARIO Y BOTONES (ELENA)
         // ==========================================
         const precioInput = document.getElementById('prop-precio');
         precioInput.addEventListener('input', function(e) {
@@ -564,12 +562,22 @@
         // ENVÍO ALTA INMUEBLE A LA INGESTA
         document.getElementById('form-mercado-real').addEventListener('submit', function(e) {
             e.preventDefault();
+            const lang = document.getElementById('language-selector').value;
+
+            // Validación de CAPTCHA
+            const answerCorrect = document.getElementById('captcha-answer').value;
+            const userAnswer = document.getElementById('prop-captcha').value;
+            if (userAnswer !== answerCorrect) {
+                alert(lang === 'es' ? "⚠️ Error: La suma matemática es incorrecta." : "⚠️ Error: Incorrect math verification.");
+                generarCaptcha(lang);
+                return;
+            }
+
             const btn = document.getElementById('btn-procesar'); 
             const originalText = btn.innerHTML;
-            const lang = document.getElementById('language-selector').value;
-            
             btn.innerText = traducciones[lang]?.btn_procesando || "Procesando..."; 
             btn.style.opacity = "0.7";
+            btn.disabled = true;
 
             const payloadMaestro = {
                 metadatos_sistema: { origen_landing: "MERCADO REAL", tipo_cta: "AÑADIR INMUEBLE AL RADAR", idioma_usuario: lang, id_sesion: sessionId, ip_cliente: clienteIP },
@@ -591,8 +599,10 @@
             formData.append("payload_maestro", JSON.stringify(payloadMaestro));
             rawFiles.forEach((file, idx) => formData.append(`foto_${idx + 1}`, file));
             
-            fetch(WEBHOOK_INGESTA, { method: 'POST', body: formData }).catch(e => console.log(e));
+            fetch(WEBHOOK_INGESTA, { method: 'POST', body: formData })
+            .catch(e => console.log(e));
 
+            // Simulación visual en el feed local
             setTimeout(() => {
                 let g = ''; 
                 for (let i = 0; i < 4; i++) { g += uploadedImagesUrls[i] ? `<img src="${uploadedImagesUrls[i]}" class="gallery-img">` : `<div class="gallery-img empty" style="background: rgba(255,255,255,0.02);"></div>`; }
@@ -623,7 +633,9 @@
                 if (window.innerWidth <= 900) { window.scrollTo({ top: document.querySelector('.feed-panel').offsetTop, behavior: 'smooth' }); } 
                 else { document.getElementById('scroll-feed').scrollTo({ top: 0, behavior: 'smooth' }); }
                 
-                this.reset(); previewContainer.innerHTML = ''; fileCounter.style.display = 'none'; uploadedImagesUrls = []; rawFiles = []; btn.innerHTML = originalText; btn.style.opacity = "1";
+                this.reset(); previewContainer.innerHTML = ''; fileCounter.style.display = 'none'; uploadedImagesUrls = []; rawFiles = []; 
+                btn.innerHTML = originalText; btn.style.opacity = "1"; btn.disabled = false;
+                generarCaptcha(lang); // Refresca el captcha
             }, 1200);
         });
 
@@ -633,6 +645,7 @@
             btnElement.innerHTML = '❤️';
             const cnt = document.getElementById(counterId); 
             if(cnt) cnt.innerText = parseInt(cnt.innerText) + 1;
+            // Al ser un simple "Me Gusta", usamos el webhook de ingesta/analítica general para registrarlo
             enviarWebhookMakeJSON("click_me_gusta", "ME GUSTA", {}, { referencia_inmueble: refInmueble });
         }
 
@@ -647,6 +660,7 @@
             const tel = prompt(lang === 'es' ? "Introduce tu teléfono de contacto:" : "Enter your phone number:");
             if(tel && tel.trim() !== "") {
                 btn.innerText = "...";
+                // Esto llamará a la constante WEBHOOK_ELENA automáticamente gracias a nuestro desvío inteligente en enviarWebhookMakeJSON
                 enviarWebhookMakeJSON("click_me_interesa", "ME INTERESA", { telefono: tel, email: email }, { referencia_inmueble: id }).catch(e => console.log(e));
                 setTimeout(() => { 
                     btn.classList.add('liked'); 
