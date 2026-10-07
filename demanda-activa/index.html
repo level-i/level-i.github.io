@@ -178,6 +178,9 @@
             .math-box { flex-direction: column; gap: 10px; align-items: flex-start; text-align: left; }
             .math-box input { width: 100% !important; }
         }
+    </style>
+</head>
+<body>
 
     <aside>
         <div class="brand-container">
@@ -488,7 +491,7 @@
                 unete_desc: "We verify your budget and find you off-market properties direct from owners.", lbl_nombre: "Your Name", plc_nombre: "E.g. Antonio G.", 
                 lbl_zonas_int: "Areas of Interest", lbl_presupuesto: "Verifiable Budget (€)", lbl_requisito: "Key Requirement", plc_requisito: "E.g. Sea views, Elevator...", 
                 lbl_tel_oculto: "Hidden Phone", plc_tel_oculto: "To connect you with sellers", btn_solicitar_vip: "Request VIP Verification", comp_verificados: "Verified Buyers", 
-                badge_verificado: "✓ Verified", hace_1_dia: "1 day ago", presupuesto_125: "Budget: €125,000", tag_piso_ado: "🏠 Apartment or Townhouse", tag_min_3_hab: "🛏️️ Min. 3 Beds", 
+                badge_verificado: "✓ Verified", hace_1_dia: "1 day ago", presupuesto_125: "Budget: €125,000", tag_piso_ado: "🏠 Apartment or Townhouse", tag_min_3_hab: "🛏 Min. 3 Beds", 
                 tag_ascensor: "⭐ Elevator required", btn_tengo_buscas: "I have what you're looking for 🏠", hace_3_dias: "3 days ago", presupuesto_210: "Budget: €210,000", tag_chalet: "🏡 Detached Villa", 
                 tag_parcela: "🌳 With plot / garden", hace_5_dias: "5 days ago", presupuesto_350: "Budget: €350,000", tag_piso_cen: "🏠 Central Apartment", tag_min_4_hab: "🛏️ Min. 4 Beds", 
                 tag_parking: "⭐ Parking included", modal_offer_title: "Offer my property", lbl_tipo: "Property Type", lbl_precio: "Desired Sale Price (€)", lbl_fotos: "Upload Photos (Max 4)", 
@@ -538,7 +541,6 @@
         let clienteIP = "Desconocida";
         fetch('https://api.ipify.org?format=json').then(r => r.json()).then(data => { clienteIP = data.ip; }).catch(e => {});
 
-        // CAPTURAR PARÁMETROS UTM DE LA URL
         const urlParams = new URLSearchParams(window.location.search);
         const utm_source = urlParams.get('utm_source') || "";
         const utm_medium = urlParams.get('utm_medium') || "";
@@ -572,7 +574,6 @@
         function openModal(id) { document.getElementById(id).classList.add('active'); }
         function closeModal(id) { document.getElementById(id).classList.remove('active'); }
 
-        // ENVÍO ALTA INVERSOR A MAKE CON SUPER PAYLOAD UNIFICADO
         document.getElementById('form-alta-inversor').addEventListener('submit', function(e) {
             e.preventDefault();
             
@@ -590,7 +591,6 @@
             btn.innerText = "Verificando...";
             btn.style.opacity = "0.7";
 
-            // CONSTRUCCIÓN DEL JSON ESTANDARIZADO PARA TODAS LAS LANDINGS
             const payloadMaestro = {
                 metadatos_sistema: {
                     origen_landing: "DEMANDA ACTIVA",
@@ -607,7 +607,7 @@
                 datos_demanda_inversion: {
                     zonas_interes: document.getElementById('inv-zonas').value,
                     presupuesto_requisitos: document.getElementById('inv-presupuesto').value,
-                    informacion_solicitada: document.getElementById('inv-requisito').value // Usado aquí para almacenar el requisito clave
+                    informacion_solicitada: document.getElementById('inv-requisito').value
                 },
                 datos_inmueble_captacion: {
                     poblacion: "", tipo_inmueble: "", habitaciones: "", banos: "",
@@ -666,7 +666,6 @@
             if (rawOfferFiles.length > 0) { fileCounter.innerText = `✅ ${rawOfferFiles.length} archivo(s)`; fileCounter.style.display = 'block'; }
         });
 
-        // ENVÍO DE OFERTA DE PROPIEDAD A MAKE CON SUPER PAYLOAD UNIFICADO (FORMATO FORMDATA)
         document.getElementById('form-offer').addEventListener('submit', function(e) {
             e.preventDefault();
             const btn = e.target.querySelector('button[type="submit"]');
@@ -675,7 +674,6 @@
             btn.style.opacity = "0.7";
             const lang = document.getElementById('language-selector').value;
 
-            // Construimos el JSON Maestro pero lo convertimos a string para meterlo en FormData
             const payloadMaestro = {
                 metadatos_sistema: {
                     origen_landing: "DEMANDA ACTIVA",
@@ -686,11 +684,11 @@
                 },
                 datos_usuario: {
                     telefono: document.getElementById('offer-tel').value,
-                    nombre: "", // No se pide nombre en este form
+                    nombre: "",
                     acepto_legal: document.getElementById('offer-legal').checked
                 },
                 datos_demanda_inversion: {
-                    zonas_interes: "", presupuesto_requisitos: "", informacion_solicitada: compradorActual // Guardamos a qué comprador va dirigido
+                    zonas_interes: "", presupuesto_requisitos: "", informacion_solicitada: compradorActual
                 },
                 datos_inmueble_captacion: {
                     poblacion: document.getElementById('offer-zona').value,
