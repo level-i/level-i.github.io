@@ -161,7 +161,6 @@
             <!-- AQUÍ ESTÁ EL ENLACE CORREGIDO A DEMANDA ACTIVA -->
             <a href="/demanda-activa" class="nav-item" data-i18n="nav_demanda">🎯 Demanda Activa</a>
             <a href="#" class="nav-item active" data-i18n="nav_mercado_real">📡 Mercado Real</a>
-            <a href="#" class="nav-item" onclick="alert('Módulo en mantenimiento')" data-i18n="nav_comprar">🏠 Comprar Inmuebles</a>
             <a href="#" class="nav-item" onclick="alert('Módulo inoperante')" data-i18n="nav_gestion">⚙️ Gestión Integral</a>
         </div>
 
@@ -680,22 +679,26 @@
             enviarWebhookMakeJSON("click_me_gusta", "ME GUSTA", {}, { referencia_inmueble: refInmueble });
         }
 
-        // FLUJO DE INTERÉS CON ELENA (AUDIO DOSSIER A CAMBIO DE EMAIL Y TELÉFONO)
+        // FLUJO DE INTERÉS CON ELENA (AUDIO DOSSIER A CAMBIO DE EMAIL Y WHATSAPP)
         function marcarInteres(btn, id) {
             if (btn.classList.contains('liked')) return;
             const lang = document.getElementById('language-selector').value;
             
+            // 1. Pedir Correo Electrónico
             const email = prompt(lang === 'es' ? "🤖 ELENA AI: Introduce tu correo electrónico para enviarte el dossier de audio personalizado con las condiciones de esta propiedad:" : "🤖 ELENA AI: Enter your email to receive the custom audio dossier:");
             if(!email || email.trim() === "") return;
 
-            const tel = prompt(lang === 'es' ? "Introduce tu teléfono de contacto:" : "Enter your phone number:");
+            // 2. Pedir Teléfono/WhatsApp
+            const tel = prompt(lang === 'es' ? "🤖 ELENA AI: Introduce tu número de WhatsApp para enviarte el dossier directamente:" : "🤖 ELENA AI: Enter your WhatsApp number to send the dossier directly:");
+            
+            // 3. Enviar datos y mostrar alerta
             if(tel && tel.trim() !== "") {
                 btn.innerText = "...";
                 enviarWebhookMakeJSON("click_me_interesa", "ME INTERESA", { telefono: tel, email: email }, { referencia_inmueble: id }).catch(e => console.log(e));
                 setTimeout(() => { 
                     btn.classList.add('liked'); 
                     btn.innerHTML = `✓`; 
-                    alert(lang === 'es' ? "¡Solicitud recibida! ELENA está generando tu dossier de audio personalizado y te lo enviará en breve a tu correo." : "Request received! ELENA is generating your audio dossier."); 
+                    alert(lang === 'es' ? "¡Solicitud recibida! ELENA está generando tu dossier de audio personalizado y te lo enviará en breve a tu WhatsApp." : "Request received! ELENA is generating your audio dossier and will send it to your WhatsApp shortly."); 
                 }, 500);
             }
         }
