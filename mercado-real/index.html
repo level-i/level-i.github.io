@@ -340,7 +340,7 @@
             <div class="modal-title">Cookies e Inteligencia Artificial</div>
             <div class="modal-body">
                 <p>Esta plataforma utiliza cookies técnicas estrictamente necesarias para mantener su sesión activa y asegurar el correcto funcionamiento del sistema multidioma.</p>
-                <p>Asimismo, los processes de emparejamiento (Match) e ingesta pueden ser asistidos por algoritmos de Inteligencia Artificial para agilizar la conexión entre oferta y demanda.</p>
+                <p>Asimismo, los procesos de emparejamiento (Match) e ingesta pueden ser asistidos por algoritmos de Inteligencia Artificial para agilizar la conexión entre oferta y demanda.</p>
             </div>
         </div>
     </div>
@@ -483,13 +483,23 @@
 
                     // --- GALERÍA DE FOTOS SEGURA ---
                     let galeriaHTML = '';
-                    const fotosLark = campos["Imagen Principal"] || [];
+                    
+                    // CAMBIO: Priorizamos 'Fotos_Publicas', si está vacío usamos 'Imagen Principal' por si acaso
+                    let fotosLark = campos["Fotos_Publicas"] || campos["Imagen Principal"] || [];
+                    
+                    // Si por algún motivo Make lo pasa como un texto separado por comas:
+                    if (typeof fotosLark === 'string') {
+                        fotosLark = fotosLark.split(',').map(url => url.trim());
+                    }
+
                     for (let i = 0; i < 4; i++) {
                         let imgSafe = "";
                         if (fotosLark[i]) {
-                            if (typeof fotosLark[i] === 'string') { imgSafe = fotosLark[i]; } 
-                            else if (typeof fotosLark[i] === 'object') { 
-                                imgSafe = fotosLark[i].tmp_url || fotosLark[i].url || ""; 
+                            if (typeof fotosLark[i] === 'string') { 
+                                imgSafe = fotosLark[i]; 
+                            } else if (typeof fotosLark[i] === 'object') { 
+                                // Si es un adjunto nativo de Lark
+                                imgSafe = fotosLark[i].file_url || fotosLark[i].tmp_url || fotosLark[i].url || ""; 
                             }
                         }
 
