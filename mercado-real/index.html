@@ -438,7 +438,7 @@
         }
 
         // ==========================================
-        // 4. MOTOR SURTIDOR: CARGA DE INMUEBLES
+        // 4. MOTOR SURTIDOR: CARGA DE INMUEBLES Y ADJUNTOS NATIVOS
         // ==========================================
         async function cargarInmueblesReales() {
             const feedContainer = document.getElementById('feed-container');
@@ -467,7 +467,6 @@
                     const supStr = extraerTextoLark(campos["Superficie_Construida"]);
                     const textoObs = extraerTextoLark(campos["DESCRIPCION"]);
                     
-                    // Extracción correcta del precio basada en la columna real 'Precio'
                     let precioRaw = extraerTextoLark(campos["Precio"]) || extraerTextoLark(campos["Precio Venta"]) || "";
                     let precioStr = "";
                     if (precioRaw) {
@@ -485,49 +484,24 @@
                     let zonaCompleta = [ubicacionPrincipal, ubicacionSecundaria].filter(Boolean).join(" · ");
                     if (!zonaCompleta) zonaCompleta = 'Ubicación reservada';
 
-                    // --- GALERÍA DE FOTOS MANUALES DESDE FOTOS_PUBLICAS ---
-let galeriaHTML = '';
-let fotosLark = campos["Fotos_Publicas"] || [];
+                    // --- GALERÍA DESDE ADJUNTOS NATIVOS DE LARK ---
+                    let galeriaHTML = '';
+                    let fotosLark = campos["Imagen Principal"] || campos["Fotos_Provisionales"] || [];
 
-// Si Lark lo pasa como texto plano, lo separamos por comas o saltos de línea
-if (typeof fotosLark === 'string') {
-    fotosLark = fotosLark.split(/[\n,]+/).map(url => url.trim()).filter(url => url !== "");
-} else if (Array.isArray(fotosLark)) {
-    // Si viene como array de objetos o textos
-    fotosLark = fotosLark.map(item => {
-        if (typeof item === 'string') return item.trim();
-        return item.url || item.file_url || item.tmp_url || "";
-    }).filter(Boolean);
-}
-
-for (let i = 0; i < 4; i++) {
-    let imgSafe = fotosLark[i] || "";
-
-    if (imgSafe && imgSafe !== "[object Object]") {
-        galeriaHTML += `<img src="${imgSafe}" class="gallery-img" alt="Inmueble" onerror="this.src='https://placehold.co/400x300/1f2937/9ca3af?text=Imagen+No+Disponible';">`;
-    } else {
-        galeriaHTML += `<div class="gallery-img empty" style="background: rgba(255,255,255,0.02);"></div>`;
-    }
-}
+                    if (Array.isArray(fotosLark)) {
+                        fotosLark = fotosLark.map(item => {
+                            if (typeof item === 'string') return item;
+                            return item.file_url || item.tmp_url || item.url || "";
+                        }).filter(Boolean);
+                    } else if (typeof fotosLark === 'string') {
+                        fotosLark = fotosLark.split(/[\n,]+/).map(url => url.trim()).filter(Boolean);
+                    }
 
                     for (let i = 0; i < 4; i++) {
-                        let imgSafe = "";
-                        if (fotosLark[i]) {
-                            if (typeof fotosLark[i] === 'string') { 
-                                imgSafe = fotosLark[i]; 
-                            } else if (typeof fotosLark[i] === 'object') { 
-                                imgSafe = fotosLark[i].file_url || fotosLark[i].tmp_url || fotosLark[i].url || ""; 
-                            }
-                        }
+                        let imgSafe = fotosLark[i] || "";
 
                         if (imgSafe && imgSafe !== "[object Object]") {
-                            if (imgSafe.includes("drive.google.com")) {
-                                const match = imgSafe.match(/id=([^&]+)/);
-                                if (match && match[1]) {
-                                    imgSafe = `https://lh3.googleusercontent.com/d/${match[1]}`;
-                                }
-                            }
-                            galeriaHTML += `<img src="${imgSafe}" class="gallery-img" alt="Inmueble" onerror="this.src='https://placehold.co/400x300/1f2937/9ca3af?text=Foto+Lark+Privada';">`;
+                            galeriaHTML += `<img src="${imgSafe}" class="gallery-img" alt="Inmueble" onerror="this.src='https://placehold.co/400x300/1f2937/9ca3af?text=Imagen+No+Disponible';">`;
                         } else {
                             galeriaHTML += `<div class="gallery-img empty" style="background: rgba(255,255,255,0.02);"></div>`;
                         }
