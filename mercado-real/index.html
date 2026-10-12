@@ -347,11 +347,11 @@
 
     <script>
         // ==========================================
-        // 1. CONFIGURACIÓN DE LOS WEBHOOKS (ACTUALIZADOS)
+        // 1. CONFIGURACIÓN DE LOS WEBHOOKS
         // ==========================================
-        const WEBHOOK_INGESTA = "https://hook.eu1.make.com/loy5kvv4qmnvo748fmxo2qvt48mbf986"; // Recepción Cuarentena
-        const WEBHOOK_SURTIDOR = "https://hook.eu1.make.com/bpb012er1137ocx0tcdk19muh6le4qpu"; // Mercado Real Feed
-        const WEBHOOK_ELENA = "https://hook.eu1.make.com/3w2wmbbcc3evnvg8ajo3kjkucrd6dfkw"; // IA Advisor
+        const WEBHOOK_INGESTA = "https://hook.eu1.make.com/loy5kvv4qmnvo748fmxo2qvt48mbf986"; 
+        const WEBHOOK_SURTIDOR = "https://hook.eu1.make.com/bpb012er1137ocx0tcdk19muh6le4qpu"; 
+        const WEBHOOK_ELENA = "https://hook.eu1.make.com/3w2wmbbcc3evnvg8ajo3kjkucrd6dfkw"; 
 
         // ==========================================
         // 2. UTILIDADES Y SISTEMA BÁSICO
@@ -376,7 +376,6 @@
                 mensaje: evento
             };
 
-            // DESVÍO A ELENA O INGESTA SEGÚN EL BOTÓN
             const urlDestino = (tipoCta === "ME INTERESA") ? WEBHOOK_ELENA : WEBHOOK_INGESTA;
 
             return fetch(urlDestino, {
@@ -397,7 +396,7 @@
             const dic = traducciones[lang] || traducciones['es'];
             document.querySelectorAll('[data-i18n]').forEach(el => { if (dic[el.getAttribute('data-i18n')]) el.innerHTML = dic[el.getAttribute('data-i18n')]; });
             document.querySelectorAll('[data-i18n-placeholder]').forEach(el => { if (dic[el.getAttribute('data-i18n-placeholder')]) el.placeholder = dic[el.getAttribute('data-i18n-placeholder')]; });
-            generarCaptcha(lang); // Refresca el idioma del captcha
+            generarCaptcha(lang);
         }
 
         function updateClock() {
@@ -423,14 +422,14 @@
         }
 
         // ==========================================
-        // NUEVA FUNCIÓN: TRADUCTOR DE OBJETOS LARK
+        // TRADUCTOR DE OBJETOS LARK
         // ==========================================
         function extraerTextoLark(campo) {
             if (!campo) return "";
             if (typeof campo === 'string' || typeof campo === 'number') return campo;
             if (Array.isArray(campo)) {
                 if (campo.length === 0) return "";
-                return extraerTextoLark(campo[0]); // Si es array, escarba en el primer elemento
+                return extraerTextoLark(campo[0]); 
             }
             if (typeof campo === 'object') {
                 return campo.text || campo.value || campo.name || campo.full_address || "";
@@ -439,7 +438,7 @@
         }
 
         // ==========================================
-        // 4. MOTOR SURTIDOR: CARGA DATOS REALES
+        // 4. MOTOR SURTIDOR: CARGA DATOS REALES Y DESBLOQUEO DE DRIVE
         // ==========================================
         async function cargarInmueblesReales() {
             const feedContainer = document.getElementById('feed-container');
@@ -462,32 +461,26 @@
                 inmuebles.forEach(prop => {
                     const campos = prop.fields || {};
                     
-                    // --- LIMPIEZA DE CAMPOS ---
                     const tipoStr = extraerTextoLark(campos["Tipo Propiedad"]);
                     const habsStr = extraerTextoLark(campos["N_Habitaciones"]);
                     const banosStr = extraerTextoLark(campos["N_wc"]);
                     const supStr = extraerTextoLark(campos["Superficie_Construida"]);
                     const textoObs = extraerTextoLark(campos["DESCRIPCION"]);
                     
-                    // Nuevos campos de ubicación extraídos
                     const cpStr = extraerTextoLark(campos["Código Postal"]);
                     const poblacionStr = extraerTextoLark(campos["Población"]);
                     const provinciaStr = extraerTextoLark(campos["Provincia"]);
                     const zonaStr = extraerTextoLark(campos["Zona o Barrio"]);
                     
-                    // Construcción inteligente de la cadena de ubicación
                     let ubicacionPrincipal = zonaStr ? `${poblacionStr} (${zonaStr})` : poblacionStr;
                     let ubicacionSecundaria = [cpStr, provinciaStr].filter(Boolean).join(" · ");
                     let zonaCompleta = [ubicacionPrincipal, ubicacionSecundaria].filter(Boolean).join(" · ");
                     if (!zonaCompleta) zonaCompleta = 'Ubicación reservada';
 
-                    // --- GALERÍA DE FOTOS SEGURA ---
+                    // --- GALERÍA DE FOTOS Y DESBLOQUEO DE DRIVE ---
                     let galeriaHTML = '';
-                    
-                    // CAMBIO: Priorizamos 'Fotos_Publicas', si está vacío usamos 'Imagen Principal' por si acaso
                     let fotosLark = campos["Fotos_Publicas"] || campos["Imagen Principal"] || [];
                     
-                    // Soporta separaciones por comas o saltos de línea (formato por defecto de Make)
                     if (typeof fotosLark === 'string') {
                         fotosLark = fotosLark.split(/[\n,]+/).map(url => url.trim()).filter(url => url !== "");
                     }
@@ -503,11 +496,12 @@
                         }
 
                         if (imgSafe && imgSafe !== "[object Object]") {
-                            // Bypass anti-bloqueo de Google Drive: convierte al endpoint 'thumbnail'
+                            // MAGIA ANTI-BLOQUEO: Usamos el CDN secreto lh3 de Google
                             if (imgSafe.includes("drive.google.com")) {
                                 const match = imgSafe.match(/id=([^&]+)/);
                                 if (match && match[1]) {
-                                    imgSafe = `https://drive.google.com/thumbnail?id=${match[1]}&sz=w1000`;
+                                    // Este enlace sirve la foto sin bloqueos de seguridad de Drive
+                                    imgSafe = `https://lh3.googleusercontent.com/d/${match[1]}`;
                                 }
                             }
                             galeriaHTML += `<img src="${imgSafe}" class="gallery-img" alt="Inmueble" onerror="this.src='https://placehold.co/400x300/1f2937/9ca3af?text=Foto+Lark+Privada';">`;
@@ -516,7 +510,6 @@
                         }
                     }
 
-                    // --- BOTONES DE VUELO Y WEB ---
                     const lat = extraerTextoLark(campos["lat"]);
                     const lon = extraerTextoLark(campos["lon"]);
                     let botonVuelo = (lat && lon) ? `<span class="tag" style="cursor:pointer; background: rgba(59, 130, 246, 0.1); color: var(--accent-blue); border-color: var(--accent-blue); font-weight: bold;" onclick="window.open('https://earth.google.com/web/search/${lat},${lon}', '_blank')">🚁 Vuelo 3D</span>` : '';
@@ -624,7 +617,6 @@
             e.preventDefault();
             const lang = document.getElementById('language-selector').value;
 
-            // Validación de CAPTCHA
             const answerCorrect = document.getElementById('captcha-answer').value;
             const userAnswer = document.getElementById('prop-captcha').value;
             if (userAnswer !== answerCorrect) {
@@ -694,7 +686,7 @@
                 
                 this.reset(); previewContainer.innerHTML = ''; fileCounter.style.display = 'none'; uploadedImagesUrls = []; rawFiles = []; 
                 btn.innerHTML = originalText; btn.style.opacity = "1"; btn.disabled = false;
-                generarCaptcha(lang); // Refresca el captcha
+                generarCaptcha(lang);
             }, 1200);
         });
 
@@ -707,19 +699,15 @@
             enviarWebhookMakeJSON("click_me_gusta", "ME GUSTA", {}, { referencia_inmueble: refInmueble });
         }
 
-        // FLUJO DE INTERÉS CON ELENA (AUDIO DOSSIER A CAMBIO DE EMAIL Y WHATSAPP)
         function marcarInteres(btn, id) {
             if (btn.classList.contains('liked')) return;
             const lang = document.getElementById('language-selector').value;
             
-            // 1. Pedir Correo Electrónico
             const email = prompt(lang === 'es' ? "🤖 ELENA AI: Introduce tu correo electrónico para enviarte el dossier de audio personalizado con las condiciones de esta propiedad:" : "🤖 ELENA AI: Enter your email to receive the custom audio dossier:");
             if(!email || email.trim() === "") return;
 
-            // 2. Pedir Teléfono/WhatsApp
             const tel = prompt(lang === 'es' ? "🤖 ELENA AI: Introduce tu número de WhatsApp para enviarte el dossier directamente:" : "🤖 ELENA AI: Enter your WhatsApp number to send the dossier directly:");
             
-            // 3. Enviar datos y mostrar alerta
             if(tel && tel.trim() !== "") {
                 btn.innerText = "...";
                 enviarWebhookMakeJSON("click_me_interesa", "ME INTERESA", { telefono: tel, email: email }, { referencia_inmueble: id }).catch(e => console.log(e));
