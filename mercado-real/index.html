@@ -484,19 +484,32 @@
                     let zonaCompleta = [ubicacionPrincipal, ubicacionSecundaria].filter(Boolean).join(" · ");
                     if (!zonaCompleta) zonaCompleta = 'Ubicación reservada';
 
-                    // --- GALERÍA DIRECTA DESDE URLS PÚBLICAS (FOTOS_PUBLICAS O IMAGEN PRINCIPAL EN TEXTO) ---
-                    let galeriaHTML = '';
-                    let fotosPublicasRaw = campos["Fotos_Publicas"] || campos["Imagen Principal"] || "";
-                    let listaUrls = [];
+                    // --- GALERÍA DE FOTOS DESDE ADJUNTOS NATIVOS DE LARK ---
+let galeriaHTML = '';
+// Apuntamos directamente a tu columna real: "Imagen Principal" o "Fotos_Provisionales"
+let fotosLark = campos["Imagen Principal"] || campos["Fotos_Provisionales"] || [];
 
-                    if (typeof fotosPublicasRaw === 'string') {
-                        listaUrls = fotosPublicasRaw.split(/[\n,]+/).map(u => u.trim()).filter(Boolean);
-                    } else if (Array.isArray(fotosPublicasRaw)) {
-                        listaUrls = fotosPublicasRaw.map(item => {
-                            if (typeof item === 'string') return item.trim();
-                            return item.url || item.file_url || item.tmp_url || "";
-                        }).filter(Boolean);
-                    }
+// Si Lark nos devuelve un array de objetos adjuntos nativos
+if (Array.isArray(fotosLark)) {
+    fotosLark = fotosLark.map(item => {
+        if (!item) return "";
+        if (typeof item === 'string') return item;
+        // Extraemos la URL directa del archivo adjunto en los servidores de Lark
+        return item.file_url || item.url || item.tmp_url || item.path || "";
+    }).filter(Boolean);
+} else if (typeof fotosLark === 'string') {
+    fotosLark = fotosLark.split(/[\n,]+/).map(url => url.trim()).filter(Boolean);
+}
+
+for (let i = 0; i < 4; i++) {
+    let imgSafe = fotosLark[i] || "";
+
+    if (imgSafe && imgSafe !== "[object Object]") {
+        galeriaHTML += `<img src="${imgSafe}" class="gallery-img" alt="Inmueble" onerror="this.src='https://placehold.co/400x300/1f2937/9ca3af?text=Imagen+No+Disponible';">`;
+    } else {
+        galeriaHTML += `<div class="gallery-img empty" style="background: rgba(255,255,255,0.02);"></div>`;
+    }
+}
 
                     for (let i = 0; i < 4; i++) {
                         let imgSafe = listaUrls[i] || "";
