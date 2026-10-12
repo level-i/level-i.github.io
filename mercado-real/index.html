@@ -487,9 +487,9 @@
                     // CAMBIO: Priorizamos 'Fotos_Publicas', si está vacío usamos 'Imagen Principal' por si acaso
                     let fotosLark = campos["Fotos_Publicas"] || campos["Imagen Principal"] || [];
                     
-                    // Si por algún motivo Make lo pasa como un texto separado por comas:
+                    // Soporta separaciones por comas o saltos de línea (formato por defecto de Make)
                     if (typeof fotosLark === 'string') {
-                        fotosLark = fotosLark.split(',').map(url => url.trim());
+                        fotosLark = fotosLark.split(/[\n,]+/).map(url => url.trim()).filter(url => url !== "");
                     }
 
                     for (let i = 0; i < 4; i++) {
@@ -498,12 +498,18 @@
                             if (typeof fotosLark[i] === 'string') { 
                                 imgSafe = fotosLark[i]; 
                             } else if (typeof fotosLark[i] === 'object') { 
-                                // Si es un adjunto nativo de Lark
                                 imgSafe = fotosLark[i].file_url || fotosLark[i].tmp_url || fotosLark[i].url || ""; 
                             }
                         }
 
                         if (imgSafe && imgSafe !== "[object Object]") {
+                            // Bypass anti-bloqueo de Google Drive: convierte al endpoint 'thumbnail'
+                            if (imgSafe.includes("drive.google.com")) {
+                                const match = imgSafe.match(/id=([^&]+)/);
+                                if (match && match[1]) {
+                                    imgSafe = `https://drive.google.com/thumbnail?id=${match[1]}&sz=w1000`;
+                                }
+                            }
                             galeriaHTML += `<img src="${imgSafe}" class="gallery-img" alt="Inmueble" onerror="this.src='https://placehold.co/400x300/1f2937/9ca3af?text=Foto+Lark+Privada';">`;
                         } else {
                             galeriaHTML += `<div class="gallery-img empty" style="background: rgba(255,255,255,0.02);"></div>`;
