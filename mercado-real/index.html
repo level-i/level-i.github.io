@@ -422,23 +422,24 @@
         }
 
         // ==========================================
-        // EXTRACCIÓN ROBUSTA DE OBJETOS LARK
+        // EXTRACCIÓN ULTRARROBUSTA DE OBJETOS LARK
         // ==========================================
         function extraerTextoLark(campo) {
             if (!campo) return "";
             if (typeof campo === 'string' || typeof campo === 'number') return campo;
             if (Array.isArray(campo)) {
                 if (campo.length === 0) return "";
+                // Si es un array de objetos (como ubicaciones o textos enriquecidos), los procesamos individualmente
                 return campo.map(item => extraerTextoLark(item)).filter(Boolean).join(", ");
             }
             if (typeof campo === 'object') {
-                return campo.text || campo.value || campo.name || campo.full_address || campo.title || "";
+                return campo.text || campo.value || campo.name || campo.full_address || campo.title || JSON.stringify(campo);
             }
             return String(campo);
         }
 
         // ==========================================
-        // 4. MOTOR SURTIDOR: CARGA DE INMUEBLES Y ADJUNTOS NATIVOS
+        // 4. MOTOR SURTIDOR: CARGA DE INMUEBLES Y FOTOS NATIVAS
         // ==========================================
         async function cargarInmueblesReales() {
             const feedContainer = document.getElementById('feed-container');
@@ -484,22 +485,23 @@
                     let zonaCompleta = [ubicacionPrincipal, ubicacionSecundaria].filter(Boolean).join(" · ");
                     if (!zonaCompleta) zonaCompleta = 'Ubicación reservada';
 
-                    // --- GALERÍA DESDE ADJUNTOS NATIVOS DE LARK ("Imagen Principal" o "Fotos_Provisionales") ---
+                    // --- EXTRACCIÓN BLINDADA DE IMÁGENES NATIVAS DE LARK ---
                     let galeriaHTML = '';
-                    let fotosLark = campos["Imagen Principal"] || campos["Fotos_Provisionales"] || [];
+                    let fotosLark = campos["Imagen Principal"] || campos["Fotos_Provisionales"] || campos["Fotos_Publicas"] || [];
 
+                    let listaUrls = [];
                     if (Array.isArray(fotosLark)) {
-                        fotosLark = fotosLark.map(item => {
+                        listaUrls = fotosLark.map(item => {
                             if (!item) return "";
                             if (typeof item === 'string') return item;
                             return item.file_url || item.url || item.tmp_url || item.path || "";
                         }).filter(Boolean);
                     } else if (typeof fotosLark === 'string') {
-                        fotosLark = fotosLark.split(/[\n,]+/).map(url => url.trim()).filter(Boolean);
+                        listaUrls = fotosLark.split(/[\n,]+/).map(u => u.trim()).filter(Boolean);
                     }
 
                     for (let i = 0; i < 4; i++) {
-                        let imgSafe = fotosLark[i] || "";
+                        let imgSafe = listaUrls[i] || "";
 
                         if (imgSafe && imgSafe !== "[object Object]") {
                             galeriaHTML += `<img src="${imgSafe}" class="gallery-img" alt="Inmueble" onerror="this.src='https://placehold.co/400x300/1f2937/9ca3af?text=Imagen+No+Disponible';">`;
@@ -671,7 +673,7 @@
                     <div class="card-body">
                         <div class="card-details">
                             <h3>${tipoInmueble}</h3>
-                            ${obsInmueble ? `<p class="card-obs">${obsInmueble}</p>` : ''}
+                            ${obsInmueble ? `<p class="card-obs">${obsInmueble}` : ''}
                             <div class="card-tags"><span class="tag">📍 ${zonaInmueble}</span>${habInmueble > 0 ? `<span class="tag">🛏️ ${habInmueble} Hab</span>` : ''}${banosInmueble > 0 ? `<span class="tag">🛁 ${banosInmueble} Baños</span>` : ''}</div>
                         </div>
                         <div class="card-gallery">${g}</div>
