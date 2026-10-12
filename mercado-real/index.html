@@ -422,23 +422,23 @@
         }
 
         // ==========================================
-        // TRADUCTOR DE OBJETOS LARK
+        // EXTRACCIÓN ROBUSTA DE OBJETOS LARK
         // ==========================================
         function extraerTextoLark(campo) {
             if (!campo) return "";
             if (typeof campo === 'string' || typeof campo === 'number') return campo;
             if (Array.isArray(campo)) {
                 if (campo.length === 0) return "";
-                return extraerTextoLark(campo[0]); 
+                return campo.map(item => extraerTextoLark(item)).filter(Boolean).join(", ");
             }
             if (typeof campo === 'object') {
-                return campo.text || campo.value || campo.name || campo.full_address || "";
+                return campo.text || campo.value || campo.name || campo.full_address || campo.title || "";
             }
             return String(campo);
         }
 
         // ==========================================
-        // 4. MOTOR SURTIDOR: CARGA DATOS REALES Y DESBLOQUEO DE DRIVE
+        // 4. MOTOR SURTIDOR: CARGA DE INMUEBLES
         // ==========================================
         async function cargarInmueblesReales() {
             const feedContainer = document.getElementById('feed-container');
@@ -466,6 +466,14 @@
                     const banosStr = extraerTextoLark(campos["N_wc"]);
                     const supStr = extraerTextoLark(campos["Superficie_Construida"]);
                     const textoObs = extraerTextoLark(campos["DESCRIPCION"]);
+                    
+                    // Extracción correcta del precio basada en la columna real 'Precio'
+                    let precioRaw = extraerTextoLark(campos["Precio"]) || extraerTextoLark(campos["Precio Venta"]) || "";
+                    let precioStr = "";
+                    if (precioRaw) {
+                        let numPrecio = parseInt(String(precioRaw).replace(/\D/g, ''), 10);
+                        precioStr = !isNaN(numPrecio) && numPrecio > 0 ? numPrecio.toLocaleString('es-ES') : "";
+                    }
                     
                     const cpStr = extraerTextoLark(campos["Código Postal"]);
                     const poblacionStr = extraerTextoLark(campos["Población"]);
@@ -496,11 +504,9 @@
                         }
 
                         if (imgSafe && imgSafe !== "[object Object]") {
-                            // MAGIA ANTI-BLOQUEO: Usamos el CDN secreto lh3 de Google
                             if (imgSafe.includes("drive.google.com")) {
                                 const match = imgSafe.match(/id=([^&]+)/);
                                 if (match && match[1]) {
-                                    // Este enlace sirve la foto sin bloqueos de seguridad de Drive
                                     imgSafe = `https://lh3.googleusercontent.com/d/${match[1]}`;
                                 }
                             }
@@ -532,10 +538,13 @@
                         </div>
                         <div class="card-body">
                             <div class="card-details">
-                                <h3>${tipoStr || 'Inmueble'}</h3>
-                                ${textoObs ? `<p class="card-obs">${textoObs}</p>` : ''}
+                                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                                    <h3>${tipoStr || 'Inmueble'}</h3>
+                                    <span style="font-size: 16px; font-weight: 800; color: var(--accent-green); background: rgba(16,185,129,0.1); padding: 4px 10px; border-radius: 6px;">${precioStr ? precioStr + ' €' : 'Consultar'}</span>
+                                </div>
+                                ${textoObs ? `<p class="card-obs" style="margin-top: 10px;">${textoObs}</p>` : ''}
                                 
-                                <div class="card-tags">
+                                <div class="card-tags" style="margin-top: 15px;">
                                     <span class="tag">📍 ${zonaCompleta}</span>
                                     ${habsStr ? `<span class="tag">🛏 ${habsStr} Hab</span>` : ''}
                                     ${banosStr ? `<span class="tag">🛁 ${banosStr} Baños</span>` : ''}
@@ -653,7 +662,6 @@
             
             fetch(WEBHOOK_INGESTA, { method: 'POST', body: formData }).catch(e => console.log(e));
 
-            // Simulación visual en el feed local
             setTimeout(() => {
                 let g = ''; 
                 for (let i = 0; i < 4; i++) { g += uploadedImagesUrls[i] ? `<img src="${uploadedImagesUrls[i]}" class="gallery-img">` : `<div class="gallery-img empty" style="background: rgba(255,255,255,0.02);"></div>`; }
