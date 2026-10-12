@@ -328,7 +328,7 @@
             <button class="modal-close" onclick="closeModal('modal-privacidad')">&times;</button>
             <div class="modal-title">Privacidad y LOPD</div>
             <div class="modal-body">
-                <p>En cumplimiento del Reglamento General de Protección de Datos (RGPD), le informamos que sus datos personales (incluyendo números de teléfono) serão tratados de forma confidencial.</p>
+                <p>En cumplimiento del Reglamento General de Protección de Datos (RGPD), le informamos que sus datos personales (incluyendo números de teléfono) serán tratados de forma confidencial.</p>
                 <p>Su información no será compartida con terceros sin su consentimiento expreso. Los datos subidos en "Cuarentena" permanecen ciegos y cifrados en nuestras bases de datos internas hasta su validación manual.</p>
             </div>
         </div>
@@ -438,7 +438,7 @@
         }
 
         // ==========================================
-        // 4. MOTOR SURTIDOR: CARGA DE INMUEBLES Y FOTOS PÚBLICAS
+        // 4. MOTOR SURTIDOR: CARGA DE INMUEBLES Y ADJUNTOS NATIVOS
         // ==========================================
         async function cargarInmueblesReales() {
             const feedContainer = document.getElementById('feed-container');
@@ -453,7 +453,7 @@
 
                 feedContainer.innerHTML = '';
 
-                    if (!inmuebles || inmuebles.length === 0) {
+                if (!inmuebles || inmuebles.length === 0) {
                     feedContainer.innerHTML = `<div style="text-align:center; padding: 40px; color: var(--text-muted);">El Radar está despejado. No hay propiedades activas.</div>`;
                     return;
                 }
@@ -484,37 +484,24 @@
                     let zonaCompleta = [ubicacionPrincipal, ubicacionSecundaria].filter(Boolean).join(" · ");
                     if (!zonaCompleta) zonaCompleta = 'Ubicación reservada';
 
-                    // --- GALERÍA DE FOTOS DESDE ADJUNTOS NATIVOS DE LARK ---
-let galeriaHTML = '';
-// Apuntamos directamente a tu columna real: "Imagen Principal" o "Fotos_Provisionales"
-let fotosLark = campos["Imagen Principal"] || campos["Fotos_Provisionales"] || [];
+                    // --- GALERÍA DESDE ADJUNTOS NATIVOS DE LARK ("Imagen Principal" o "Fotos_Provisionales") ---
+                    let galeriaHTML = '';
+                    let fotosLark = campos["Imagen Principal"] || campos["Fotos_Provisionales"] || [];
 
-// Si Lark nos devuelve un array de objetos adjuntos nativos
-if (Array.isArray(fotosLark)) {
-    fotosLark = fotosLark.map(item => {
-        if (!item) return "";
-        if (typeof item === 'string') return item;
-        // Extraemos la URL directa del archivo adjunto en los servidores de Lark
-        return item.file_url || item.url || item.tmp_url || item.path || "";
-    }).filter(Boolean);
-} else if (typeof fotosLark === 'string') {
-    fotosLark = fotosLark.split(/[\n,]+/).map(url => url.trim()).filter(Boolean);
-}
-
-for (let i = 0; i < 4; i++) {
-    let imgSafe = fotosLark[i] || "";
-
-    if (imgSafe && imgSafe !== "[object Object]") {
-        galeriaHTML += `<img src="${imgSafe}" class="gallery-img" alt="Inmueble" onerror="this.src='https://placehold.co/400x300/1f2937/9ca3af?text=Imagen+No+Disponible';">`;
-    } else {
-        galeriaHTML += `<div class="gallery-img empty" style="background: rgba(255,255,255,0.02);"></div>`;
-    }
-}
+                    if (Array.isArray(fotosLark)) {
+                        fotosLark = fotosLark.map(item => {
+                            if (!item) return "";
+                            if (typeof item === 'string') return item;
+                            return item.file_url || item.url || item.tmp_url || item.path || "";
+                        }).filter(Boolean);
+                    } else if (typeof fotosLark === 'string') {
+                        fotosLark = fotosLark.split(/[\n,]+/).map(url => url.trim()).filter(Boolean);
+                    }
 
                     for (let i = 0; i < 4; i++) {
-                        let imgSafe = listaUrls[i] || "";
+                        let imgSafe = fotosLark[i] || "";
 
-                        if (imgSafe && !imgSafe.includes("[object Object]")) {
+                        if (imgSafe && imgSafe !== "[object Object]") {
                             galeriaHTML += `<img src="${imgSafe}" class="gallery-img" alt="Inmueble" onerror="this.src='https://placehold.co/400x300/1f2937/9ca3af?text=Imagen+No+Disponible';">`;
                         } else {
                             galeriaHTML += `<div class="gallery-img empty" style="background: rgba(255,255,255,0.02);"></div>`;
