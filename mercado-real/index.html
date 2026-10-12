@@ -485,13 +485,30 @@
                     let zonaCompleta = [ubicacionPrincipal, ubicacionSecundaria].filter(Boolean).join(" · ");
                     if (!zonaCompleta) zonaCompleta = 'Ubicación reservada';
 
-                    // --- GALERÍA DE FOTOS Y DESBLOQUEO DE DRIVE ---
-                    let galeriaHTML = '';
-                    let fotosLark = campos["Fotos_Publicas"] || campos["Imagen Principal"] || [];
-                    
-                    if (typeof fotosLark === 'string') {
-                        fotosLark = fotosLark.split(/[\n,]+/).map(url => url.trim()).filter(url => url !== "");
-                    }
+                    // --- GALERÍA DE FOTOS MANUALES DESDE FOTOS_PUBLICAS ---
+let galeriaHTML = '';
+let fotosLark = campos["Fotos_Publicas"] || [];
+
+// Si Lark lo pasa como texto plano, lo separamos por comas o saltos de línea
+if (typeof fotosLark === 'string') {
+    fotosLark = fotosLark.split(/[\n,]+/).map(url => url.trim()).filter(url => url !== "");
+} else if (Array.isArray(fotosLark)) {
+    // Si viene como array de objetos o textos
+    fotosLark = fotosLark.map(item => {
+        if (typeof item === 'string') return item.trim();
+        return item.url || item.file_url || item.tmp_url || "";
+    }).filter(Boolean);
+}
+
+for (let i = 0; i < 4; i++) {
+    let imgSafe = fotosLark[i] || "";
+
+    if (imgSafe && imgSafe !== "[object Object]") {
+        galeriaHTML += `<img src="${imgSafe}" class="gallery-img" alt="Inmueble" onerror="this.src='https://placehold.co/400x300/1f2937/9ca3af?text=Imagen+No+Disponible';">`;
+    } else {
+        galeriaHTML += `<div class="gallery-img empty" style="background: rgba(255,255,255,0.02);"></div>`;
+    }
+}
 
                     for (let i = 0; i < 4; i++) {
                         let imgSafe = "";
