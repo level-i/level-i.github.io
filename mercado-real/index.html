@@ -280,7 +280,6 @@
                         <input type="tel" id="prop-tel" placeholder="Para gestión interna..." data-i18n-placeholder="plc_tel" required>
                     </div>
 
-                    <!-- PRUEBA MATEMÁTICA CAPTCHA -->
                     <div class="form-group" style="background: rgba(59, 130, 246, 0.05); padding: 10px; border-radius: 6px; border: 1px solid rgba(59, 130, 246, 0.2);">
                         <label id="captcha-label" style="color: var(--accent-blue);">Verificación: ¿Cuánto es X + Y?</label>
                         <input type="number" id="prop-captcha" placeholder="Resultado..." required>
@@ -305,7 +304,7 @@
                 </div>
 
                 <div class="feed-container" id="feed-container">
-                    <!-- LAS TARJETAS SE GENERARÁN AQUÍ POR JAVASCRIPT DESDE EL SURTIDOR -->
+                    <!-- LAS TARJETAS SE GENERARÁN AQUÍ POR JAVASCRIPT -->
                 </div>
             </div>
         </div>
@@ -422,24 +421,23 @@
         }
 
         // ==========================================
-        // EXTRACCIÓN ULTRARROBUSTA DE OBJETOS LARK
+        // EXTRACCIÓN BLINDADA DE OBJETOS LARK
         // ==========================================
         function extraerTextoLark(campo) {
             if (!campo) return "";
             if (typeof campo === 'string' || typeof campo === 'number') return campo;
             if (Array.isArray(campo)) {
                 if (campo.length === 0) return "";
-                // Si es un array de objetos (como ubicaciones o textos enriquecidos), los procesamos individualmente
                 return campo.map(item => extraerTextoLark(item)).filter(Boolean).join(", ");
             }
             if (typeof campo === 'object') {
-                return campo.text || campo.value || campo.name || campo.full_address || campo.title || JSON.stringify(campo);
+                return campo.text || campo.value || campo.name || campo.full_address || campo.title || "";
             }
             return String(campo);
         }
 
         // ==========================================
-        // 4. MOTOR SURTIDOR: CARGA DE INMUEBLES Y FOTOS NATIVAS
+        // 4. MOTOR SURTIDOR: CARGA DE INMUEBLES Y FOTOS BLINDADO
         // ==========================================
         async function cargarInmueblesReales() {
             const feedContainer = document.getElementById('feed-container');
@@ -462,13 +460,13 @@
                 inmuebles.forEach(prop => {
                     const campos = prop.fields || {};
                     
-                    const tipoStr = extraerTextoLark(campos["Tipo Propiedad"]);
-                    const habsStr = extraerTextoLark(campos["N_Habitaciones"]);
-                    const banosStr = extraerTextoLark(campos["N_wc"]);
-                    const supStr = extraerTextoLark(campos["Superficie_Construida"]);
-                    const textoObs = extraerTextoLark(campos["DESCRIPCION"]);
+                    const tipoStr = extraerTextoLark(campos["Tipo Propiedad"] || campos["Tipo de Inmueble"]);
+                    const habsStr = extraerTextoLark(campos["N_Habitaciones"] || campos["Habitaciones"]);
+                    const banosStr = extraerTextoLark(campos["N_wc"] || campos["Baños"]);
+                    const supStr = extraerTextoLark(campos["Superficie_Construida"] || campos["Superficie"]);
+                    const textoObs = extraerTextoLark(campos["DESCRIPCION"] || campos["Observaciones"]);
                     
-                    let precioRaw = extraerTextoLark(campos["Precio"]) || extraerTextoLark(campos["Precio Venta"]) || "";
+                    let precioRaw = extraerTextoLark(campos["Precio"] || campos["Precio Venta"] || campos["Precio de Venta Deseado"]) || "";
                     let precioStr = "";
                     if (precioRaw) {
                         let numPrecio = parseInt(String(precioRaw).replace(/\D/g, ''), 10);
@@ -476,7 +474,7 @@
                     }
                     
                     const cpStr = extraerTextoLark(campos["Código Postal"]);
-                    const poblacionStr = extraerTextoLark(campos["Población"]);
+                    const poblacionStr = extraerTextoLark(campos["Población"] || campos["Zona / Población"]);
                     const provinciaStr = extraerTextoLark(campos["Provincia"]);
                     const zonaStr = extraerTextoLark(campos["Zona o Barrio"]);
                     
@@ -485,16 +483,16 @@
                     let zonaCompleta = [ubicacionPrincipal, ubicacionSecundaria].filter(Boolean).join(" · ");
                     if (!zonaCompleta) zonaCompleta = 'Ubicación reservada';
 
-                    // --- EXTRACCIÓN BLINDADA DE IMÁGENES NATIVAS DE LARK ---
+                    // --- EXTRACCIÓN BLINDADA DE URLs DIRECTAS DE LARK ---
                     let galeriaHTML = '';
-                    let fotosLark = campos["Imagen Principal"] || campos["Fotos_Provisionales"] || campos["Fotos_Publicas"] || [];
+                    let fotosLark = campos["Fotos_Publicas"] || campos["Imagen Principal"] || campos["Fotos_Provisionales"] || [];
 
                     let listaUrls = [];
                     if (Array.isArray(fotosLark)) {
                         listaUrls = fotosLark.map(item => {
                             if (!item) return "";
                             if (typeof item === 'string') return item;
-                            return item.file_url || item.url || item.tmp_url || item.path || "";
+                            return item.url || item.tmp_url || item.file_url || "";
                         }).filter(Boolean);
                     } else if (typeof fotosLark === 'string') {
                         listaUrls = fotosLark.split(/[\n,]+/).map(u => u.trim()).filter(Boolean);
@@ -503,7 +501,7 @@
                     for (let i = 0; i < 4; i++) {
                         let imgSafe = listaUrls[i] || "";
 
-                        if (imgSafe && imgSafe !== "[object Object]") {
+                        if (imgSafe && !imgSafe.includes("[object Object]")) {
                             galeriaHTML += `<img src="${imgSafe}" class="gallery-img" alt="Inmueble" onerror="this.src='https://placehold.co/400x300/1f2937/9ca3af?text=Imagen+No+Disponible';">`;
                         } else {
                             galeriaHTML += `<div class="gallery-img empty" style="background: rgba(255,255,255,0.02);"></div>`;
@@ -615,7 +613,6 @@
             if (rawFiles.length > 0) { fileCounter.innerText = `✅ ${rawFiles.length} archivo(s)`; fileCounter.style.display = 'block'; }
         });
 
-        // ENVÍO ALTA INMUEBLE A LA INGESTA
         document.getElementById('form-mercado-real').addEventListener('submit', function(e) {
             e.preventDefault();
             const lang = document.getElementById('language-selector').value;
@@ -673,7 +670,7 @@
                     <div class="card-body">
                         <div class="card-details">
                             <h3>${tipoInmueble}</h3>
-                            ${obsInmueble ? `<p class="card-obs">${obsInmueble}` : ''}
+                            ${obsInmueble ? `<p class="card-obs">${obsInmueble}</p>` : ''}
                             <div class="card-tags"><span class="tag">📍 ${zonaInmueble}</span>${habInmueble > 0 ? `<span class="tag">🛏️ ${habInmueble} Hab</span>` : ''}${banosInmueble > 0 ? `<span class="tag">🛁 ${banosInmueble} Baños</span>` : ''}</div>
                         </div>
                         <div class="card-gallery">${g}</div>
