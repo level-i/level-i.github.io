@@ -421,7 +421,7 @@
         }
 
         // ==========================================
-        // 4. MOTOR SURTIDOR: VERSIÓN DE DIAGNÓSTICO
+        // 4. MOTOR SURTIDOR: VERSIÓN BLINDADA
         // ==========================================
         async function cargarInmueblesReales() {
             const feedContainer = document.getElementById('feed-container');
@@ -441,11 +441,19 @@
                 const textoRespuesta = await response.text();
                 let paqueteLark;
                 
-                // 3. Intentar convertir a JSON
+                // 3. Intentar convertir a JSON BLINDADO contra Enters invisibles y caracteres fantasma
                 try {
-                    paqueteLark = JSON.parse(textoRespuesta);
+                    let textoLimpio = textoRespuesta.trim();
+                    // Eliminar el maldito carácter invisible BOM si Make lo ha añadido
+                    if (textoLimpio.charCodeAt(0) === 0xFEFF) {
+                        textoLimpio = textoLimpio.slice(1);
+                    }
+                    // Destruir cualquier salto de línea, tabulación o control oculto en todo el texto
+                    textoLimpio = textoLimpio.replace(/[\n\r\t\b\f\v]/g, ' ');
+                    
+                    paqueteLark = JSON.parse(textoLimpio);
                 } catch (jsonError) {
-                    console.error("Respuesta cruda de Make:", textoRespuesta);
+                    console.error("Fallo real de JSON.parse:", jsonError);
                     throw new Error(`Make no está enviando datos JSON. Respuesta de Make: "${textoRespuesta}"`);
                 }
 
@@ -486,7 +494,7 @@
                     let zonaCompleta = [ubicacionPrincipal, cpStr].filter(Boolean).join(" · ");
                     if (!zonaCompleta) zonaCompleta = 'Ubicación reservada';
 
-                    // Características Condicionales (Desaparecen en locales o terrenos sin datos)
+                    // Características Condicionales
                     const habsVal = parseInt(datos.habitaciones);
                     const habsStr = (!isNaN(habsVal) && habsVal > 0) ? `<span class="tag">🛏 ${habsVal} Hab</span>` : '';
                     
@@ -500,7 +508,7 @@
                     const botonVuelo = (datos.lat && datos.lon) ? `<span class="tag" style="cursor:pointer; background: rgba(59, 130, 246, 0.1); color: var(--accent-blue); border-color: var(--accent-blue); font-weight: bold;" onclick="window.open('https://earth.google.com/web/search/${datos.lat},${datos.lon}', '_blank')">🚁 Vuelo 3D</span>` : '';
                     const botonWeb = datos.enlace ? `<span class="tag" style="cursor:pointer; background: rgba(197, 160, 89, 0.1); color: var(--accent-gold); border-color: var(--accent-gold); font-weight: bold;" onclick="window.open('${datos.enlace}', '_blank')">🌐 Tour / Web</span>` : '';
 
-                    // Galería (Adaptada para mostrar la URL directa de la imagen de Make)
+                    // Galería
                     let galeriaHTML = '';
                     if (datos.imagen && datos.imagen !== "undefined") {
                         galeriaHTML = `<img src="${datos.imagen}" class="gallery-img" style="grid-column: span 2; height: 100%; max-height: 220px;" alt="${tituloStr}" onerror="this.src='https://placehold.co/400x300/1f2937/9ca3af?text=Imagen+No+Disponible';">`;
