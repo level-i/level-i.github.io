@@ -437,7 +437,7 @@
         }
 
         // ==========================================
-        // 4. MOTOR SURTIDOR: CARGA DE INMUEBLES Y FOTOS BLINDADO
+        // 4. MOTOR SURTIDOR: VERSIÓN DE DIAGNÓSTICO
         // ==========================================
         async function cargarInmueblesReales() {
             const feedContainer = document.getElementById('feed-container');
@@ -447,16 +447,35 @@
 
             try {
                 const response = await fetch(WEBHOOK_SURTIDOR, { cache: 'no-store' });
-                const paqueteLark = await response.json();
-                const inmuebles = paqueteLark.data ? paqueteLark.data.items : paqueteLark.items || [];
+                
+                // 1. Comprobar si Make da un error 404, 500, etc.
+                if (!response.ok) {
+                    throw new Error(`Make rechazó la petición: Error HTTP ${response.status}`);
+                }
+                
+                // 2. Leer la respuesta en crudo primero
+                const textoRespuesta = await response.text();
+                let paqueteLark;
+                
+                // 3. Intentar convertir a JSON
+                try {
+                    paqueteLark = JSON.parse(textoRespuesta);
+                } catch (jsonError) {
+                    console.error("Respuesta cruda de Make:", textoRespuesta);
+                    throw new Error(`Make no está enviando datos JSON. Respuesta de Make: "${textoRespuesta}"`);
+                }
+
+                // 4. Buscar la lista de inmuebles donde quiera que Make la haya anidado
+                const inmuebles = paqueteLark.data ? paqueteLark.data.items : (paqueteLark.items || (Array.isArray(paqueteLark) ? paqueteLark : []));
 
                 feedContainer.innerHTML = '';
 
                 if (!inmuebles || inmuebles.length === 0) {
-                    feedContainer.innerHTML = `<div style="text-align:center; padding: 40px; color: var(--text-muted);">El Radar está despejado. No hay propiedades activas.</div>`;
+                    feedContainer.innerHTML = `<div style="text-align:center; padding: 40px; color: var(--text-muted);">El Radar está despejado. Make ha devuelto 0 registros.</div>`;
                     return;
                 }
 
+                // 5. Renderizar tarjetas (Mismo código blindado de antes)
                 inmuebles.forEach(prop => {
                     const campos = prop.fields || {};
                     
@@ -483,7 +502,6 @@
                     let zonaCompleta = [ubicacionPrincipal, ubicacionSecundaria].filter(Boolean).join(" · ");
                     if (!zonaCompleta) zonaCompleta = 'Ubicación reservada';
 
-                    // --- EXTRACCIÓN BLINDADA DE URLs DIRECTAS DE LARK ---
                     let galeriaHTML = '';
                     let fotosLark = campos["Fotos_Publicas"] || campos["Imagen Principal"] || campos["Fotos_Provisionales"] || [];
 
@@ -500,7 +518,6 @@
 
                     for (let i = 0; i < 4; i++) {
                         let imgSafe = listaUrls[i] || "";
-
                         if (imgSafe && !imgSafe.includes("[object Object]")) {
                             galeriaHTML += `<img src="${imgSafe}" class="gallery-img" alt="Inmueble" onerror="this.src='https://placehold.co/400x300/1f2937/9ca3af?text=Imagen+No+Disponible';">`;
                         } else {
@@ -517,7 +534,7 @@
 
                     const totalInteresados = campos["Contador_Interesados"] || 0;
                     const totalLikes = campos["Contador_Likes"] || 0;
-                    const refID = campos["ID_Inmueble"] || prop.record_id || prop.id;
+                    const refID = campos["ID_Inmueble"] || prop.record_id || prop.id || "REF-ND";
 
                     const card = document.createElement('div');
                     card.className = 'property-card slide-down-enter';
@@ -566,8 +583,11 @@
                 cambiarIdioma();
                 
             } catch (error) {
-                console.error("Error cargando datos del surtidor:", error);
-                feedContainer.innerHTML = `<div style="text-align:center; padding: 40px; color: var(--accent-red);">⚠️ Error de conexión con la base de datos central.</div>`;
+                console.error("Error crítico en el script:", error);
+                feedContainer.innerHTML = `<div style="text-align:center; padding: 40px; color: var(--accent-red);">
+                    <strong>⚠️ FALLO DETECTADO:</strong><br><br>
+                    <span style="color: #fca5a5;">${error.message}</span>
+                </div>`;
             }
         }
 
