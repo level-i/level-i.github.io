@@ -421,22 +421,6 @@
         }
 
         // ==========================================
-        // EXTRACCIÓN BLINDADA DE OBJETOS LARK
-        // ==========================================
-        function extraerTextoLark(campo) {
-            if (!campo) return "";
-            if (typeof campo === 'string' || typeof campo === 'number') return campo;
-            if (Array.isArray(campo)) {
-                if (campo.length === 0) return "";
-                return campo.map(item => extraerTextoLark(item)).filter(Boolean).join(", ");
-            }
-            if (typeof campo === 'object') {
-                return campo.text || campo.value || campo.name || campo.full_address || campo.title || "";
-            }
-            return String(campo);
-        }
-
-        // ==========================================
         // 4. MOTOR SURTIDOR: VERSIÓN DE DIAGNÓSTICO
         // ==========================================
         async function cargarInmueblesReales() {
@@ -475,67 +459,60 @@
                     return;
                 }
 
-                // 5. Renderizar tarjetas (Mismo código blindado de antes)
+                // 5. Renderizar tarjetas adaptadas al nuevo JSON de Make
                 inmuebles.forEach(prop => {
-                    const campos = prop.fields || {};
+                    // Si sigues usando la estructura antigua por error, esto lo captura. Si es el JSON nuevo, lee directo de 'prop'
+                    const datos = prop.fields || prop; 
                     
-                    const tipoStr = extraerTextoLark(campos["Tipo Propiedad"] || campos["Tipo de Inmueble"]);
-                    const habsStr = extraerTextoLark(campos["N_Habitaciones"] || campos["Habitaciones"]);
-                    const banosStr = extraerTextoLark(campos["N_wc"] || campos["Baños"]);
-                    const supStr = extraerTextoLark(campos["Superficie_Construida"] || campos["Superficie"]);
-                    const textoObs = extraerTextoLark(campos["DESCRIPCION"] || campos["Observaciones"]);
+                    const refID = datos.referencia || datos.id || "REF-ND";
+                    const tituloStr = datos.titulo || "Inmueble en venta";
+                    const obsStr = datos.estado || datos.descripcion || ""; 
                     
-                    let precioRaw = extraerTextoLark(campos["Precio"] || campos["Precio Venta"] || campos["Precio de Venta Deseado"]) || "";
-                    let precioStr = "";
-                    if (precioRaw) {
-                        let numPrecio = parseInt(String(precioRaw).replace(/\D/g, ''), 10);
-                        precioStr = !isNaN(numPrecio) && numPrecio > 0 ? numPrecio.toLocaleString('es-ES') : "";
-                    }
-                    
-                    const cpStr = extraerTextoLark(campos["Código Postal"]);
-                    const poblacionStr = extraerTextoLark(campos["Población"] || campos["Zona / Población"]);
-                    const provinciaStr = extraerTextoLark(campos["Provincia"]);
-                    const zonaStr = extraerTextoLark(campos["Zona o Barrio"]);
-                    
-                    let ubicacionPrincipal = zonaStr ? `${poblacionStr} (${zonaStr})` : poblacionStr;
-                    let ubicacionSecundaria = [cpStr, provinciaStr].filter(Boolean).join(" · ");
-                    let zonaCompleta = [ubicacionPrincipal, ubicacionSecundaria].filter(Boolean).join(" · ");
-                    if (!zonaCompleta) zonaCompleta = 'Ubicación reservada';
-
-                    let galeriaHTML = '';
-                    let fotosLark = campos["Fotos_Publicas"] || campos["Imagen Principal"] || campos["Fotos_Provisionales"] || [];
-
-                    let listaUrls = [];
-                    if (Array.isArray(fotosLark)) {
-                        listaUrls = fotosLark.map(item => {
-                            if (!item) return "";
-                            if (typeof item === 'string') return item;
-                            return item.url || item.tmp_url || item.file_url || "";
-                        }).filter(Boolean);
-                    } else if (typeof fotosLark === 'string') {
-                        listaUrls = fotosLark.split(/[\n,]+/).map(u => u.trim()).filter(Boolean);
-                    }
-
-                    for (let i = 0; i < 4; i++) {
-                        let imgSafe = listaUrls[i] || "";
-                        if (imgSafe && !imgSafe.includes("[object Object]")) {
-                            galeriaHTML += `<img src="${imgSafe}" class="gallery-img" alt="Inmueble" onerror="this.src='https://placehold.co/400x300/1f2937/9ca3af?text=Imagen+No+Disponible';">`;
-                        } else {
-                            galeriaHTML += `<div class="gallery-img empty" style="background: rgba(255,255,255,0.02);"></div>`;
+                    // Tratamiento del precio
+                    let precioStr = "Consultar";
+                    if (datos.precio) {
+                        let numPrecio = parseInt(String(datos.precio).replace(/\D/g, ''), 10);
+                        if (!isNaN(numPrecio) && numPrecio > 0) {
+                            precioStr = numPrecio.toLocaleString('es-ES') + ' €';
                         }
                     }
+                    
+                    // Ubicación (Población + Barrio + CP)
+                    const poblacionStr = datos.poblacion || "";
+                    const barrioStr = datos.barrio || "";
+                    const cpStr = datos.cp || "";
+                    
+                    let ubicacionPrincipal = barrioStr ? `${poblacionStr} (${barrioStr})` : poblacionStr;
+                    let zonaCompleta = [ubicacionPrincipal, cpStr].filter(Boolean).join(" · ");
+                    if (!zonaCompleta) zonaCompleta = 'Ubicación reservada';
 
-                    const lat = extraerTextoLark(campos["lat"]);
-                    const lon = extraerTextoLark(campos["lon"]);
-                    let botonVuelo = (lat && lon) ? `<span class="tag" style="cursor:pointer; background: rgba(59, 130, 246, 0.1); color: var(--accent-blue); border-color: var(--accent-blue); font-weight: bold;" onclick="window.open('https://earth.google.com/web/search/${lat},${lon}', '_blank')">🚁 Vuelo 3D</span>` : '';
+                    // Características Condicionales (Desaparecen en locales o terrenos sin datos)
+                    const habsVal = parseInt(datos.habitaciones);
+                    const habsStr = (!isNaN(habsVal) && habsVal > 0) ? `<span class="tag">🛏 ${habsVal} Hab</span>` : '';
+                    
+                    const banosVal = parseInt(datos.baños || datos.banos);
+                    const banosStr = (!isNaN(banosVal) && banosVal > 0) ? `<span class="tag">🛁 ${banosVal} Baños</span>` : '';
+                    
+                    const supVal = parseInt(datos.superficie);
+                    const supStr = (!isNaN(supVal) && supVal > 0) ? `<span class="tag">📐 ${supVal} m²</span>` : '';
 
-                    let webLink = extraerTextoLark(campos["ENLACE WEB"]);
-                    let botonWeb = webLink ? `<span class="tag" style="cursor:pointer; background: rgba(197, 160, 89, 0.1); color: var(--accent-gold); border-color: var(--accent-gold); font-weight: bold;" onclick="window.open('${webLink}', '_blank')">🌐 Tour / Web</span>` : '';
+                    // Botones interactivos (Vuelo 3D y Web)
+                    const botonVuelo = (datos.lat && datos.lon) ? `<span class="tag" style="cursor:pointer; background: rgba(59, 130, 246, 0.1); color: var(--accent-blue); border-color: var(--accent-blue); font-weight: bold;" onclick="window.open('https://earth.google.com/web/search/${datos.lat},${datos.lon}', '_blank')">🚁 Vuelo 3D</span>` : '';
+                    const botonWeb = datos.enlace ? `<span class="tag" style="cursor:pointer; background: rgba(197, 160, 89, 0.1); color: var(--accent-gold); border-color: var(--accent-gold); font-weight: bold;" onclick="window.open('${datos.enlace}', '_blank')">🌐 Tour / Web</span>` : '';
 
-                    const totalInteresados = campos["Contador_Interesados"] || 0;
-                    const totalLikes = campos["Contador_Likes"] || 0;
-                    const refID = campos["ID_Inmueble"] || prop.record_id || prop.id || "REF-ND";
+                    // Galería (Adaptada para mostrar la URL directa de la imagen de Make)
+                    let galeriaHTML = '';
+                    if (datos.imagen && datos.imagen !== "undefined") {
+                        galeriaHTML = `<img src="${datos.imagen}" class="gallery-img" style="grid-column: span 2; height: 100%; max-height: 220px;" alt="${tituloStr}" onerror="this.src='https://placehold.co/400x300/1f2937/9ca3af?text=Imagen+No+Disponible';">`;
+                    } else {
+                        galeriaHTML = `<div class="gallery-img empty" style="grid-column: span 2; background: rgba(255,255,255,0.02);">Sin imagen</div>`;
+                    }
 
+                    // Contadores sociales
+                    const totalInteresados = datos.interesados || 0;
+                    const totalLikes = datos.likes || 0;
+
+                    // Inyección en el DOM
                     const card = document.createElement('div');
                     card.className = 'property-card slide-down-enter';
                     card.dataset.id = refID;
@@ -548,16 +525,16 @@
                         <div class="card-body">
                             <div class="card-details">
                                 <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                                    <h3>${tipoStr || 'Inmueble'}</h3>
-                                    <span style="font-size: 16px; font-weight: 800; color: var(--accent-green); background: rgba(16,185,129,0.1); padding: 4px 10px; border-radius: 6px;">${precioStr ? precioStr + ' €' : 'Consultar'}</span>
+                                    <h3 style="font-size: 16px; margin-right: 10px;">${tituloStr}</h3>
+                                    <span style="font-size: 16px; font-weight: 800; color: var(--accent-green); background: rgba(16,185,129,0.1); padding: 4px 10px; border-radius: 6px; white-space: nowrap;">${precioStr}</span>
                                 </div>
-                                ${textoObs ? `<p class="card-obs" style="margin-top: 10px;">${textoObs}</p>` : ''}
+                                ${obsStr ? `<p class="card-obs" style="margin-top: 10px;">${obsStr}</p>` : ''}
                                 
                                 <div class="card-tags" style="margin-top: 15px;">
                                     <span class="tag">📍 ${zonaCompleta}</span>
-                                    ${habsStr ? `<span class="tag">🛏 ${habsStr} Hab</span>` : ''}
-                                    ${banosStr ? `<span class="tag">🛁 ${banosStr} Baños</span>` : ''}
-                                    ${supStr ? `<span class="tag">📐 ${supStr} m²</span>` : ''}
+                                    ${habsStr}
+                                    ${banosStr}
+                                    ${supStr}
                                     ${botonVuelo}
                                     ${botonWeb}
                                 </div>
