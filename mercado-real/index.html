@@ -104,13 +104,15 @@
         .card-time { font-size: 11px; color: var(--text-muted); }
         
         .card-body { padding: 20px; display: grid; grid-template-columns: 1.5fr 1fr; gap: 20px; }
-        .card-details h3 { font-size: 18px; margin: 0 0 5px 0; color: #fff; }
+        .card-details h3 { font-size: 18px; margin: 0 0 5px 0; color: #fff; cursor: pointer; transition: color 0.2s; }
+        .card-details h3:hover { color: var(--accent-blue); text-decoration: underline; }
         .card-obs { font-size: 12px; color: var(--text-muted); margin-bottom: 12px; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
         .card-tags { display: flex; gap: 8px; margin-bottom: 15px; flex-wrap: wrap; }
         .tag { font-size: 11px; background: var(--bg-card); padding: 4px 10px; border-radius: 4px; color: var(--text-muted); border: 1px solid var(--border-color); display: flex; align-items: center; gap: 4px;}
         
-        .card-gallery { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-        .gallery-img { width: 100%; aspect-ratio: 4/3; background: var(--bg-base); border-radius: 6px; object-fit: cover; border: 1px solid var(--border-color); }
+        .card-gallery { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; cursor: pointer; }
+        .gallery-img { width: 100%; aspect-ratio: 4/3; background: var(--bg-base); border-radius: 6px; object-fit: cover; border: 1px solid var(--border-color); transition: opacity 0.2s; }
+        .gallery-img:hover { opacity: 0.8; }
         .gallery-img.empty { display: flex; align-items: center; justify-content: center; font-size: 24px; color: rgba(255,255,255,0.05); }
 
         .card-footer { padding: 15px 20px; background: var(--bg-card); border-top: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
@@ -146,11 +148,31 @@
 
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); display: none; justify-content: center; align-items: center; z-index: 999; opacity: 0; transition: opacity 0.3s; }
         .modal-overlay.active { display: flex; opacity: 1; }
-        .modal-content { background: var(--bg-panel); border: 1px solid var(--border-color); border-radius: 12px; padding: 30px; width: 90%; max-width: 600px; color: var(--text-main); position: relative; max-height: 80vh; overflow-y: auto; }
-        .modal-close { position: absolute; top: 15px; right: 20px; font-size: 24px; color: var(--text-muted); cursor: pointer; background: none; border: none; }
+        .modal-content { background: var(--bg-panel); border: 1px solid var(--border-color); border-radius: 12px; padding: 30px; width: 90%; max-width: 800px; color: var(--text-main); position: relative; max-height: 90vh; overflow-y: auto; }
+        .modal-close { position: absolute; top: 15px; right: 20px; font-size: 24px; color: var(--text-muted); cursor: pointer; background: none; border: none; z-index: 10; }
         .modal-close:hover { color: var(--accent-red); }
         .modal-title { font-size: 20px; font-weight: bold; margin-bottom: 15px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; color: var(--accent-green); }
         .modal-body { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+
+        /* DISEÑO DE LA FICHA DE INMUEBLE */
+        .ficha-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid var(--border-color); padding-bottom: 15px;}
+        .ficha-title { font-size: 24px; color: #fff; margin: 0; }
+        .ficha-price { font-size: 22px; font-weight: 800; padding: 6px 15px; border-radius: 8px; white-space: nowrap; }
+        .ficha-price.active { color: var(--accent-green); background: rgba(16,185,129,0.1); }
+        .ficha-price.teaser { color: var(--accent-orange); background: rgba(245,158,11,0.1); font-size: 16px; }
+        
+        .ficha-gallery { display: flex; overflow-x: auto; gap: 15px; padding-bottom: 15px; margin-bottom: 25px; scroll-snap-type: x mandatory; }
+        .ficha-gallery::-webkit-scrollbar { height: 8px; }
+        .ficha-img { height: 350px; border-radius: 12px; object-fit: cover; min-width: 85%; scroll-snap-align: center; border: 1px solid var(--border-color); }
+        .ficha-img.empty { display: flex; align-items: center; justify-content: center; font-size: 30px; color: rgba(255,255,255,0.05); background: var(--bg-base); flex-direction: column; gap: 15px; border: 2px dashed var(--border-color); }
+        
+        .ficha-details-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 30px; }
+        .ficha-desc-title { font-size: 16px; color: #fff; font-weight: bold; margin-bottom: 10px; }
+        .ficha-desc { font-size: 14px; line-height: 1.7; color: var(--text-muted); }
+        .ficha-panel-right { background: var(--bg-card); padding: 20px; border-radius: 12px; border: 1px solid var(--border-color); height: fit-content; }
+        .ficha-tags { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+        .ficha-btn-elena { width: 100%; background: var(--accent-green); color: #fff; border: none; padding: 15px; border-radius: 8px; font-size: 15px; font-weight: bold; cursor: pointer; transition: 0.2s; display: flex; justify-content: center; align-items: center; gap: 8px; box-shadow: 0 4px 15px rgba(16,185,129,0.3); }
+        .ficha-btn-elena:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(16,185,129,0.4); }
 
         /* Toast Notificaciones */
         .toast-notification { position: fixed; top: 20px; right: 20px; background: var(--accent-blue); color: white; padding: 12px 20px; border-radius: 8px; font-weight: bold; font-size: 13px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); transform: translateX(150%); transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1); z-index: 2000; }
@@ -169,6 +191,9 @@
             .feed-panel { width: 100%; height: auto; border-right: none; overflow: visible; padding: 20px; flex-shrink: 0; }
             .card-body { grid-template-columns: 1fr; }
             .elena-widget { bottom: 0; right: 0; width: 100%; border-radius: 16px 16px 0 0; }
+            .ficha-details-grid { grid-template-columns: 1fr; }
+            .ficha-header { flex-direction: column; align-items: flex-start; gap: 15px; }
+            .ficha-img { height: 250px; min-width: 90%; }
         }
     </style>
 </head>
@@ -218,6 +243,11 @@
                 <option value="es" selected>🇪🇸 Español</option>
                 <option value="ca">🟨 Català</option>
                 <option value="en">🇬🇧 English</option>
+                <option value="fr">🇫🇷 Français</option>
+                <option value="de">🇩🇪 Deutsch</option>
+                <option value="it">🇮🇹 Italiano</option>
+                <option value="ar">🇦🇪 العربية (Árabe)</option>
+                <option value="zh">🇨🇳 中文 (Mandarín)</option>
             </select>
         </header>
 
@@ -289,7 +319,7 @@
                     <div class="form-group" style="margin-top: 5px;">
                         <div class="file-upload-box">
                             <span class="upload-icon">📸</span>
-                            <div class="upload-text" data-i18n="lbl_fotos">Subir Fotos (Máx. 4)</div>
+                            <div class="upload-text" data-i18n="lbl_fotos">Subir Fotos (Máx. 20)</div>
                             <div class="upload-subtext" data-i18n="lbl_fotos_warn">⚠️ OBLIGATORIO: Solo interiores.<br>Cero fachadas o vistas a la calle.</div>
                             <input type="file" id="prop-fotos" accept="image/*" multiple required>
                             <div id="preview-container"></div>
@@ -349,6 +379,16 @@
         </div>
     </div>
 
+    <!-- MODAL: FICHA PÚBLICA DE INMUEBLE (DEEP LINK) -->
+    <div class="modal-overlay" id="modal-ficha-inmueble" onclick="if(event.target === this) closeModal('modal-ficha-inmueble')">
+        <div class="modal-content" style="max-width: 900px; padding: 0; overflow: hidden; display: flex; flex-direction: column;">
+            <button class="modal-close" onclick="closeModal('modal-ficha-inmueble')" style="background: rgba(0,0,0,0.5); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white;">&times;</button>
+            <div id="ficha-dinamica-content" style="padding: 40px; overflow-y: auto; max-height: 85vh;">
+                <!-- EL CONTENIDO SE INYECTA AQUÍ -->
+            </div>
+        </div>
+    </div>
+
     <!-- TOAST NOTIFICATION -->
     <div class="toast-notification" id="toast-msg"></div>
 
@@ -405,6 +445,8 @@
         let sessionId = 'usr_' + Math.random().toString(36).substr(2, 9);
         let clienteIP = "Desconocida";
         fetch('https://api.ipify.org?format=json').then(r => r.json()).then(data => { clienteIP = data.ip; }).catch(e => {});
+        
+        window.inmueblesGlobal = []; // Almacén global para el Deep Linking
 
         function enviarWebhookMakeJSON(evento, tipoCta = "", datosUsuario = {}, datosInmueble = {}) {
             const lang = document.getElementById('language-selector').value || "es";
@@ -426,10 +468,18 @@
             });
         }
 
+        // ==========================================
+        // DICCIONARIO MULTIDIOMA ACTUALIZADO
+        // ==========================================
         const traducciones = {
-            es: { nav_demanda: "🎯 Demanda Activa", nav_mercado_real: "📡 Mercado Real", nav_gestion: "👥 Acceso a Usuarios", nav_chivatazo: "📣 Chivatazo Nacional", nav_equipos: "💼 Únete al Equipo de Advisors en tu Zona", nav_poblaciones_titulo: "📍 Servicios Presenciales en:", header_title: "Consola Central PropTech", ingesta_titulo: "Añadir Inmueble al Radar", ingesta_desc: "Tu propiedad se publicará de forma anónima tras ser verificada por nuestro equipo.", lbl_zona: "Zona / Población", opt_sel: "Selecciona...", lbl_tipo: "Tipo de Inmueble", opt_apt: "Apartamento", opt_piso: "Piso", opt_ado: "Adosado", opt_cha: "Chalet", opt_loc: "Local", opt_ter: "Terreno o Parcela", lbl_hab: "Habitaciones", lbl_banos: "Baños", lbl_obs: "Observaciones", plc_obs: "Reformado, vistas, ascensor...", lbl_precio: "Precio de Venta Deseado (€)", lbl_fotos: "Subir Fotos (Máx. 4)", lbl_fotos_warn: "⚠ OBLIGATORIO: Solo interiores.<br>Cero fachadas.", lbl_tel: "Tu Teléfono (No se publicará)", plc_tel: "Para gestión interna...", btn_cuarentena: "Subir a Cuarentena 🔒", btn_procesando: "Procesando...", titulo_feed: "Mercado Real", en_directo: "En Directo", btn_interesa: "Me Interesa", btn_compartir: "Compartir" },
-            ca: { nav_demanda: "🎯 Demanda Activa", nav_mercado_real: "📡 Mercat Real", nav_gestion: "👥 Accés a Usuaris", nav_chivatazo: "📣 Chivatazo Nacional", nav_equipos: "💼 Uneix-te a l'Equip d'Advisors a la teva Zona", nav_poblaciones_titulo: "📍 Serveis Presencials a:", header_title: "Consola Central PropTech", ingesta_titulo: "Afegir Immoble al Radar", ingesta_desc: "La teva propietat es publicarà de forma anònima després de ser verificada.", lbl_zona: "Zona / Població", opt_sel: "Selecciona...", lbl_tipo: "Tipus d'Immoble", opt_apt: "Apartament", opt_piso: "Pis", opt_ado: "Adossat", opt_cha: "Xalet", opt_loc: "Local", opt_ter: "Terreny", lbl_hab: "Habitacions", lbl_banos: "Banys", lbl_obs: "Observacions", plc_obs: "Reformat, vistes...", lbl_precio: "Preu de Venda (€)", lbl_fotos: "Pujar Fotos (Màx. 4)", lbl_fotos_warn: "⚠️ OBLIGATORI: Només interiors.", lbl_tel: "El teu Telèfon (No es publicarà)", plc_tel: "Per a gestió interna...", btn_cuarentena: "Pujar a Quarantena 🔒", btn_procesando: "Processant...", titulo_feed: "Mercat Real", en_directo: "En Directe", btn_interesa: "M'Interessa", btn_compartir: "Compartir" },
-            en: { nav_demanda: "🎯 Active Demand", nav_mercado_real: "📡 Real Market", nav_gestion: "👥 User Access", nav_chivatazo: "📣 National Tip-off", nav_equipos: "💼 Join the Advisors Team in your Area", nav_poblaciones_titulo: "📍 In-Person Services in:", header_title: "PropTech Central Console", ingesta_titulo: "Add Property to Radar", ingesta_desc: "Your property will be published anonymously after verification.", lbl_zona: "Area / City", opt_sel: "Select...", lbl_tipo: "Property Type", opt_apt: "Apartment", opt_piso: "Flat", opt_ado: "Townhouse", opt_cha: "Villa", opt_loc: "Commercial", opt_ter: "Land", lbl_hab: "Bedrooms", lbl_banos: "Bathrooms", lbl_obs: "Remarks", plc_obs: "Renovated, views...", lbl_precio: "Desired Sale Price (€)", lbl_fotos: "Upload Photos (Max 4)", lbl_fotos_warn: "⚠ MANDATORY: Only interiors.", lbl_tel: "Your Phone (Will not be published)", plc_tel: "For internal management...", btn_cuarentena: "Upload to Quarantine 🔒", btn_procesando: "Processing...", titulo_feed: "Real Market", en_directo: "Live", btn_interesa: "I'm Interested", btn_compartir: "Share" }
+            es: { nav_demanda: "🎯 Demanda Activa", nav_mercado_real: "📡 Mercado Real", nav_gestion: "👥 Acceso a Usuarios", nav_chivatazo: "📣 Chivatazo Nacional", nav_equipos: "💼 Únete al Equipo de Advisors en tu Zona", nav_poblaciones_titulo: "📍 Servicios Presenciales en:", header_title: "Consola Central PropTech", ingesta_titulo: "Añadir Inmueble al Radar", ingesta_desc: "Tu propiedad se publicará de forma anónima tras ser verificada por nuestro equipo.", lbl_zona: "Zona / Población", opt_sel: "Selecciona...", lbl_tipo: "Tipo de Inmueble", opt_apt: "Apartamento", opt_piso: "Piso", opt_ado: "Adosado", opt_cha: "Chalet", opt_loc: "Local", opt_ter: "Terreno o Parcela", lbl_hab: "Habitaciones", lbl_banos: "Baños", lbl_obs: "Observaciones", plc_obs: "Reformado, vistas, ascensor...", lbl_precio: "Precio de Venta Deseado (€)", lbl_fotos: "Subir Fotos (Máx. 20)", lbl_fotos_warn: "⚠ OBLIGATORIO: Solo interiores.<br>Cero fachadas.", lbl_tel: "Tu Teléfono (No se publicará)", plc_tel: "Para gestión interna...", btn_cuarentena: "Subir a Cuarentena 🔒", btn_procesando: "Procesando...", titulo_feed: "Mercado Real", en_directo: "En Directo", btn_interesa: "Me Interesa", btn_compartir: "Compartir" },
+            ca: { nav_demanda: "🎯 Demanda Activa", nav_mercado_real: "📡 Mercat Real", nav_gestion: "👥 Accés a Usuaris", nav_chivatazo: "📣 Chivatazo Nacional", nav_equipos: "💼 Uneix-te a l'Equip d'Advisors a la teva Zona", nav_poblaciones_titulo: "📍 Serveis Presencials a:", header_title: "Consola Central PropTech", ingesta_titulo: "Afegir Immoble al Radar", ingesta_desc: "La teva propietat es publicarà de forma anònima després de ser verificada.", lbl_zona: "Zona / Població", opt_sel: "Selecciona...", lbl_tipo: "Tipus d'Immoble", opt_apt: "Apartament", opt_piso: "Pis", opt_ado: "Adossat", opt_cha: "Xalet", opt_loc: "Local", opt_ter: "Terreny", lbl_hab: "Habitacions", lbl_banos: "Banys", lbl_obs: "Observacions", plc_obs: "Reformat, vistes...", lbl_precio: "Preu de Venda (€)", lbl_fotos: "Pujar Fotos (Màx. 20)", lbl_fotos_warn: "⚠️ OBLIGATORI: Només interiors.", lbl_tel: "El teu Telèfon (No es publicarà)", plc_tel: "Per a gestió interna...", btn_cuarentena: "Pujar a Quarantena 🔒", btn_procesando: "Processant...", titulo_feed: "Mercat Real", en_directo: "En Directe", btn_interesa: "M'Interessa", btn_compartir: "Compartir" },
+            en: { nav_demanda: "🎯 Active Demand", nav_mercado_real: "📡 Real Market", nav_gestion: "👥 User Access", nav_chivatazo: "📣 National Tip-off", nav_equipos: "💼 Join the Advisors Team in your Area", nav_poblaciones_titulo: "📍 In-Person Services in:", header_title: "PropTech Central Console", ingesta_titulo: "Add Property to Radar", ingesta_desc: "Your property will be published anonymously after verification.", lbl_zona: "Area / City", opt_sel: "Select...", lbl_tipo: "Property Type", opt_apt: "Apartment", opt_piso: "Flat", opt_ado: "Townhouse", opt_cha: "Villa", opt_loc: "Commercial", opt_ter: "Land", lbl_hab: "Bedrooms", lbl_banos: "Bathrooms", lbl_obs: "Remarks", plc_obs: "Renovated, views...", lbl_precio: "Desired Sale Price (€)", lbl_fotos: "Upload Photos (Max 20)", lbl_fotos_warn: "⚠ MANDATORY: Only interiors.", lbl_tel: "Your Phone (Will not be published)", plc_tel: "For internal management...", btn_cuarentena: "Upload to Quarantine 🔒", btn_procesando: "Processing...", titulo_feed: "Real Market", en_directo: "Live", btn_interesa: "I'm Interested", btn_compartir: "Share" },
+            fr: { nav_demanda: "🎯 Demande Active", nav_mercado_real: "📡 Marché Réel", nav_gestion: "👥 Accès Utilisateurs", nav_chivatazo: "📣 Info Nationale", nav_equipos: "💼 Rejoignez l'équipe des Conseillers", nav_poblaciones_titulo: "📍 Services en personne à:", header_title: "Console Centrale PropTech", ingesta_titulo: "Ajouter une propriété", ingesta_desc: "Votre propriété sera publiée anonymement après vérification.", lbl_zona: "Zone / Ville", opt_sel: "Sélectionnez...", lbl_tipo: "Type de Propriété", opt_apt: "Appartement", opt_piso: "Étage", opt_ado: "Maison de ville", opt_cha: "Villa", opt_loc: "Commercial", opt_ter: "Terrain", lbl_hab: "Chambres", lbl_banos: "Salles de bain", lbl_obs: "Remarques", plc_obs: "Rénové, vue...", lbl_precio: "Prix de vente souhaité (€)", lbl_fotos: "Télécharger Photos (Max 20)", lbl_fotos_warn: "⚠ OBLIGATOIRE: Uniquement à l'intérieur.", lbl_tel: "Votre téléphone (Non publié)", plc_tel: "Pour la gestion interne...", btn_cuarentena: "Télécharger en Quarantaine 🔒", btn_procesando: "Traitement...", titulo_feed: "Marché Réel", en_directo: "En Direct", btn_interesa: "Je suis intéressé", btn_compartir: "Partager" },
+            de: { nav_demanda: "🎯 Aktive Nachfrage", nav_mercado_real: "📡 Realer Markt", nav_gestion: "👥 Benutzerzugang", nav_chivatazo: "📣 Nationaler Tipp", nav_equipos: "💼 Treten Sie dem Beraterteam bei", nav_poblaciones_titulo: "📍 Persönliche Dienstleistungen in:", header_title: "PropTech Zentralkonsole", ingesta_titulo: "Immobilie zum Radar hinzufügen", ingesta_desc: "Ihre Immobilie wird nach Überprüfung anonym veröffentlicht.", lbl_zona: "Bereich / Stadt", opt_sel: "Wählen...", lbl_tipo: "Immobilienart", opt_apt: "Wohnung", opt_piso: "Etage", opt_ado: "Reihenhaus", opt_cha: "Villa", opt_loc: "Gewerbe", opt_ter: "Grundstück", lbl_hab: "Schlafzimmer", lbl_banos: "Badezimmer", lbl_obs: "Bemerkungen", plc_obs: "Renoviert, Aussicht...", lbl_precio: "Gewünschter Verkaufspreis (€)", lbl_fotos: "Fotos hochladen (Max 20)", lbl_fotos_warn: "⚠ PFLICHT: Nur Innenräume.", lbl_tel: "Ihr Telefon (wird nicht veröffentlicht)", plc_tel: "Für internes Management...", btn_cuarentena: "In Quarantäne hochladen 🔒", btn_procesando: "Verarbeitung...", titulo_feed: "Realer Markt", en_directo: "Live", btn_interesa: "Ich bin interessiert", btn_compartir: "Teilen" },
+            it: { nav_demanda: "🎯 Domanda Attiva", nav_mercado_real: "📡 Mercato Reale", nav_gestion: "👥 Accesso Utenti", nav_chivatazo: "📣 Soffiata Nazionale", nav_equipos: "💼 Unisciti al Team dei Consulenti", nav_poblaciones_titulo: "📍 Servizi di persona a:", header_title: "Console Centrale PropTech", ingesta_titulo: "Aggiungi Immobile al Radar", ingesta_desc: "La tua proprietà sarà pubblicata in modo anonimo dopo la verifica.", lbl_zona: "Zona / Città", opt_sel: "Seleziona...", lbl_tipo: "Tipo di Immobile", opt_apt: "Appartamento", opt_piso: "Piano", opt_ado: "Villetta a schiera", opt_cha: "Villa", opt_loc: "Commerciale", opt_ter: "Terreno", lbl_hab: "Camere da letto", lbl_banos: "Bagni", lbl_obs: "Osservazioni", plc_obs: "Ristrutturato, vista...", lbl_precio: "Prezzo di vendita desiderato (€)", lbl_fotos: "Carica Foto (Max 20)", lbl_fotos_warn: "⚠ OBBLIGATORIO: Solo interni.", lbl_tel: "Il tuo Telefono (Non sarà pubblicato)", plc_tel: "Per la gestione interna...", btn_cuarentena: "Carica in Quarantena 🔒", btn_procesando: "Elaborazione...", titulo_feed: "Mercato Reale", en_directo: "In Diretta", btn_interesa: "Mi Interessa", btn_compartir: "Condividi" },
+            ar: { nav_demanda: "🎯 الطلب النشط", nav_mercado_real: "📡 السوق الحقيقي", nav_gestion: "👥 وصول المستخدمين", nav_chivatazo: "📣 نصيحة وطنية", nav_equipos: "💼 انضم إلى فريق المستشارين", nav_poblaciones_titulo: "📍 الخدمات الشخصية في:", header_title: "وحدة التحكم المركزية PropTech", ingesta_titulo: "إضافة عقار إلى الرادار", ingesta_desc: "سيتم نشر عقارك بشكل مجهول بعد التحقق.", lbl_zona: "المنطقة / المدينة", opt_sel: "اختر...", lbl_tipo: "نوع العقار", opt_apt: "شقة", opt_piso: "طابق", opt_ado: "منزل مستقل", opt_cha: "فيلا", opt_loc: "تجاري", opt_ter: "أرض", lbl_hab: "غرف النوم", lbl_banos: "الحمامات", lbl_obs: "ملاحظات", plc_obs: "مجدد، إطلالة...", lbl_precio: "سعر البيع المطلوب (€)", lbl_fotos: "تحميل الصور (بحد أقصى 20)", lbl_fotos_warn: "⚠ إلزامي: التصميم الداخلي فقط.", lbl_tel: "هاتفك (لن يتم نشره)", plc_tel: "للإدارة الداخلية...", btn_cuarentena: "تحميل إلى الحجر الصحي 🔒", btn_procesando: "جارٍ المعالجة...", titulo_feed: "السوق الحقيقي", en_directo: "مباشر", btn_interesa: "أنا مهتم", btn_compartir: "مشاركة" },
+            zh: { nav_demanda: "🎯 活跃需求", nav_mercado_real: "📡 真实市场", nav_gestion: "👥 用户访问", nav_chivatazo: "📣 全国提示", nav_equipos: "💼 加入顾问团队", nav_poblaciones_titulo: "📍 面对面服务：", header_title: "PropTech 中央控制台", ingesta_titulo: "将房产添加到雷达", ingesta_desc: "您的房产将在核实后匿名发布。", lbl_zona: "区域/城市", opt_sel: "选择...", lbl_tipo: "房产类型", opt_apt: "公寓", opt_piso: "楼层", opt_ado: "联排别墅", opt_cha: "别墅", opt_loc: "商业", opt_ter: "土地", lbl_hab: "卧室", lbl_banos: "浴室", lbl_obs: "备注", plc_obs: "翻新，景观...", lbl_precio: "期望售价（€）", lbl_fotos: "上传照片（最多 20 张）", lbl_fotos_warn: "⚠ 必填：仅限室内。", lbl_tel: "您的电话（不会公开）", plc_tel: "用于内部管理...", btn_cuarentena: "上传至隔离区 🔒", btn_procesando: "处理中...", titulo_feed: "真实市场", en_directo: "直播", btn_interesa: "我感兴趣", btn_compartir: "分享" }
         };
 
         function cambiarIdioma() {
@@ -447,7 +497,7 @@
         }
 
         // ==========================================
-        // 3. CAPTCHA MATEMÁTICO (ANTI-SPAM)
+        // 3. CAPTCHA MATEMÁTICO ADAPTATIVO
         // ==========================================
         function generarCaptcha(lang = 'es') {
             const num1 = Math.floor(Math.random() * 10) + 1;
@@ -458,12 +508,17 @@
             let labelTexto = `Verificación: ¿Cuánto es ${num1} + ${num2}?`;
             if(lang === 'en') labelTexto = `Verification: What is ${num1} + ${num2}?`;
             if(lang === 'ca') labelTexto = `Verificació: Quant és ${num1} + ${num2}?`;
+            if(lang === 'fr') labelTexto = `Vérification: Combien font ${num1} + ${num2}?`;
+            if(lang === 'de') labelTexto = `Verifizierung: Was ist ${num1} + ${num2}?`;
+            if(lang === 'it') labelTexto = `Verifica: Quanto fa ${num1} + ${num2}?`;
+            if(lang === 'ar') labelTexto = `التحقق: كم هو ${num1} + ${num2}؟`;
+            if(lang === 'zh') labelTexto = `验证：${num1} + ${num2} 等于多少？`;
             
             document.getElementById('captcha-label').innerText = labelTexto;
         }
 
         // ==========================================
-        // 4. LÓGICA DE INTERACCIÓN (COMPARTIR Y ELENA)
+        // 4. LÓGICA DE INTERACCIÓN Y FICHAS (DEEP LINK)
         // ==========================================
         function mostrarToast(mensaje) {
             const toast = document.getElementById('toast-msg');
@@ -476,14 +531,15 @@
             const fakeUrl = `https://level.immo/mercado-real?ref=${refID}`;
             if (navigator.clipboard) {
                 navigator.clipboard.writeText(fakeUrl).then(() => {
-                    mostrarToast('🔗 Enlace de la propiedad copiado al portapapeles');
+                    mostrarToast('🔗 Enlace copiado al portapapeles');
                 });
             } else {
-                mostrarToast('🔗 Enlace listo para compartir: ' + fakeUrl);
+                mostrarToast('🔗 Enlace listo: ' + fakeUrl);
             }
         }
 
         function abrirChatElena(refID) {
+            closeModal('modal-ficha-inmueble'); 
             document.getElementById('elena-ref-inmueble').value = refID;
             document.getElementById('elena-ref-display').innerText = refID;
             document.getElementById('elena-widget').classList.add('active');
@@ -492,7 +548,7 @@
             const chatHistory = document.getElementById('elena-chat-history');
             chatHistory.innerHTML = `
                 <div class="chat-bubble">¡Hola! Soy Elena 🤖. Veo que te interesa la propiedad <strong style="color:var(--accent-gold);">${refID}</strong>.</div>
-                <div class="chat-bubble">Por favor, indícame tu correo electrónico o tu número de WhatsApp y te añadiré a la lista de espera prioritaria o te enviaré el dossier.</div>
+                <div class="chat-bubble">Por favor, indícame tu correo electrónico o tu número de WhatsApp y te añadiré a la lista de espera.</div>
             `;
         }
 
@@ -552,8 +608,93 @@
             });
         }
 
+        function abrirFichaInmueble(refID) {
+            const propData = window.inmueblesGlobal.find(p => {
+                const d = p.fields || p;
+                return (d.ID_Inmueble || d.referencia) === refID;
+            });
+
+            if (!propData) {
+                mostrarToast("❌ La propiedad solicitada no está disponible o sigue en evaluación.");
+                return;
+            }
+
+            const datos = propData.fields || propData;
+            const esActivo = (datos.Cuarentena || "") === "Apto / Activo";
+            
+            const tipoStr = datos['Tipo Propiedad'] || "Inmueble";
+            const poblacionStr = datos['Población'] || "";
+            let tituloStr = `${tipoStr} en ${poblacionStr}`; 
+            if (!poblacionStr) tituloStr = tipoStr;
+
+            let precioHTML = `<span class="ficha-price teaser">🔒 PRÓXIMAMENTE</span>`;
+            let descHTML = "🔒 <i>Propiedad en proceso de verificación documental. Únete a la lista de espera para recibir los detalles completos.</i>";
+            let fotosHTML = `<div class="ficha-img empty"><span style="font-size:40px;">📸</span><span style="font-size:16px; color:var(--text-muted);">Documentación en Revisión</span></div>`;
+
+            if (esActivo) {
+                if (datos['Precio Venta']) {
+                    let numPrecio = parseInt(String(datos['Precio Venta']).replace(/\D/g, ''), 10);
+                    if (!isNaN(numPrecio) && numPrecio > 0) precioHTML = `<span class="ficha-price active">${numPrecio.toLocaleString('es-ES')} €</span>`;
+                }
+                descHTML = (datos['Descripcion inicial'] || "").replace(/\n/g, '<br>');
+                
+                let imagenUrl = datos.Fotos_Publicas;
+                if (imagenUrl && imagenUrl !== "undefined") {
+                    fotosHTML = `<img src="${imagenUrl}" class="ficha-img" alt="${tituloStr}">`;
+                } else {
+                    fotosHTML = `<div class="ficha-img empty" style="font-size:16px;">Sin imágenes públicas</div>`;
+                }
+            }
+
+            const habsVal = parseInt(datos.N_Habitaciones);
+            const habsStr = (!isNaN(habsVal) && habsVal > 0) ? `<span class="tag" style="font-size:13px; padding:8px 12px;">🛏 ${habsVal} Habitaciones</span>` : '';
+            const banosVal = parseInt(datos.N_wc);
+            const banosStr = (!isNaN(banosVal) && banosVal > 0) ? `<span class="tag" style="font-size:13px; padding:8px 12px;">🛁 ${banosVal} Baños</span>` : '';
+            let zonaCompleta = poblacionStr || 'Ubicación reservada';
+
+            const fichaContainer = document.getElementById('ficha-dinamica-content');
+            fichaContainer.innerHTML = `
+                <div class="ficha-header">
+                    <div>
+                        <span style="font-family: monospace; color: var(--text-muted); font-size: 13px;">${refID}</span>
+                        <h1 class="ficha-title" style="margin-top: 5px;">${tituloStr}</h1>
+                    </div>
+                    <div>${precioHTML}</div>
+                </div>
+                
+                <div class="ficha-gallery">
+                    ${fotosHTML}
+                </div>
+
+                <div class="ficha-details-grid">
+                    <div>
+                        <h3 class="ficha-desc-title">Descripción de la Propiedad</h3>
+                        <div class="ficha-desc">${descHTML}</div>
+                    </div>
+                    
+                    <div class="ficha-panel-right">
+                        <div class="ficha-tags">
+                            <span class="tag" style="font-size:13px; padding:8px 12px;">📍 ${zonaCompleta}</span>
+                            ${habsStr}
+                            ${banosStr}
+                        </div>
+                        <div style="margin-top: 30px;">
+                            <button class="ficha-btn-elena" onclick="abrirChatElena('${refID}')">
+                                ✨ Solicitar Información
+                            </button>
+                            <button class="btn-share" style="width: 100%; justify-content: center; margin-top: 10px; padding: 12px;" onclick="compartirPropiedad('${refID}')">
+                                🔗 Compartir esta Ficha
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            openModal('modal-ficha-inmueble');
+        }
+
         // ==========================================
-        // 5. MOTOR SURTIDOR: VERSIÓN BLINDADA ORDENADA
+        // 5. MOTOR SURTIDOR
         // ==========================================
         async function cargarInmueblesReales() {
             const feedContainer = document.getElementById('feed-container');
@@ -591,7 +732,9 @@
                     return d['Primer Filtro'] === "Contenido Validado";
                 });
 
-                // 🔄 ORDENACIÓN INTELIGENTE: Teasers/Cuarentena primero, Activos después
+                // Guardar en la variable global para el Deep Linking
+                window.inmueblesGlobal = inmueblesValidados;
+
                 inmueblesValidados.sort((a, b) => {
                     const estA = (a.fields || a).Cuarentena === "Apto / Activo" ? 1 : -1;
                     const estB = (b.fields || b).Cuarentena === "Apto / Activo" ? 1 : -1;
@@ -627,16 +770,14 @@
                     let bloqueInteresadosHTML = '';
 
                     if (!esActivo) {
-                        // 🔒 MODO TEASER: EN CUARENTENA (Pero validado)
                         precioStr = "PRÓXIMAMENTE";
-                        obsStr = "🔒 <i>Propiedad en proceso de verificación documental por nuestro equipo. Únete a la lista de espera para ser de los primeros en recibir los detalles completos y el reportaje fotográfico.</i>";
-                        galeriaHTML = `<div class="gallery-img empty" style="grid-column: span 2; background: rgba(245, 158, 11, 0.05); border: 1px dashed var(--accent-orange); color: var(--accent-orange); font-size: 13px; text-align: center; flex-direction: column; gap: 10px;">
-                            <span style="font-size: 24px;">📸</span><span>Documentación en Revisión</span>
+                        obsStr = "🔒 <i>Propiedad en proceso de verificación documental por nuestro equipo. Únete a la lista de espera para ser de los primeros en recibir los detalles.</i>";
+                        galeriaHTML = `<div class="gallery-img empty" style="grid-column: span 2; background: rgba(245, 158, 11, 0.05); border: 1px dashed var(--accent-orange); color: var(--accent-orange); font-size: 13px; text-align: center; flex-direction: column; gap: 10px;" onclick="abrirFichaInmueble('${refID}')">
+                            <span style="font-size: 24px;">📸</span><span>Ver Ficha en Revisión</span>
                         </div>`;
                         etiquetaEstado = `<span class="card-time" style="color: var(--accent-orange); font-weight: bold;">En Verificación</span>`;
-                        bloqueInteresadosHTML = `<div class="likes-count" style="color: var(--accent-orange);">👥 <span id="contador-int-${refID}">${totalInteresados}</span> <span style="margin-left: 5px;">en lista de espera</span></div>`;
+                        bloqueInteresadosHTML = `<div class="likes-count" style="color: var(--accent-orange);">👥 <span id="contador-int-${refID}">${totalInteresados}</span> <span style="margin-left: 5px;">en espera</span></div>`;
                     } else {
-                        // ✅ MODO ACTIVO: MOSTRAR TODO Y PRECIO PÚBLICO
                         if (datos['Precio Venta']) {
                             let numPrecio = parseInt(String(datos['Precio Venta']).replace(/\D/g, ''), 10);
                             if (!isNaN(numPrecio) && numPrecio > 0) precioStr = numPrecio.toLocaleString('es-ES') + ' €';
@@ -646,7 +787,6 @@
                         etiquetaEstado = `<span class="card-time">Radar Activo</span>`;
                         bloqueInteresadosHTML = `<div class="likes-count">🔥 <span id="contador-int-${refID}">${totalInteresados}</span> <span style="margin-left: 5px;">interesados</span></div>`;
                         
-                        // Botones de Vuelo 3D y Tour Web
                         const lat = datos.lat || "";
                         const lon = datos.lon || "";
                         const enlaceWeb = datos['ENLACE VR 360'] || datos.enlace || "";
@@ -657,9 +797,9 @@
                         
                         let imagenUrl = datos.Fotos_Publicas;
                         if (imagenUrl && imagenUrl !== "undefined") {
-                            galeriaHTML = `<img src="${imagenUrl}" class="gallery-img" style="grid-column: span 2; height: 100%; max-height: 220px;" alt="${tituloStr}" onerror="this.src='https://placehold.co/400x300/1f2937/9ca3af?text=Imagen+No+Disponible';">`;
+                            galeriaHTML = `<img src="${imagenUrl}" class="gallery-img" style="grid-column: span 2; height: 100%; max-height: 220px;" alt="${tituloStr}" onerror="this.src='https://placehold.co/400x300/1f2937/9ca3af?text=Imagen+No+Disponible';" onclick="abrirFichaInmueble('${refID}')">`;
                         } else {
-                            galeriaHTML = `<div class="gallery-img empty" style="grid-column: span 2; background: rgba(255,255,255,0.02);">Sin imagen</div>`;
+                            galeriaHTML = `<div class="gallery-img empty" style="grid-column: span 2; background: rgba(255,255,255,0.02);" onclick="abrirFichaInmueble('${refID}')">Abrir Ficha</div>`;
                         }
                     }
 
@@ -681,10 +821,10 @@
                         <div class="card-body">
                             <div class="card-details">
                                 <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                                    <h3 style="font-size: 16px; margin-right: 10px;">${tituloStr}</h3>
+                                    <h3 style="font-size: 16px; margin-right: 10px;" onclick="abrirFichaInmueble('${refID}')">${tituloStr}</h3>
                                     <span style="font-size: 15px; font-weight: 800; color: ${esActivo ? 'var(--accent-green)' : 'var(--accent-orange)'}; background: ${esActivo ? 'rgba(16,185,129,0.1)' : 'rgba(245,158,11,0.1)'}; padding: 4px 10px; border-radius: 6px; white-space: nowrap;">${precioStr}</span>
                                 </div>
-                                <p class="card-obs" style="margin-top: 10px;">${obsStr}</p>
+                                <p class="card-obs" style="margin-top: 10px;" onclick="abrirFichaInmueble('${refID}')" style="cursor:pointer;">${obsStr}</p>
                                 <div class="card-tags" style="margin-top: 15px;">
                                     <span class="tag">📍 ${zonaCompleta}</span>
                                     ${habsStr}
@@ -709,6 +849,12 @@
                 
                 cambiarIdioma();
                 
+                // 📡 DETECCIÓN DE DEEP LINK AL CARGAR
+                const refToOpen = urlParams.get('ref');
+                if (refToOpen) {
+                    setTimeout(() => abrirFichaInmueble(refToOpen), 500);
+                }
+                
             } catch (error) {
                 console.error("Error crítico en el script:", error);
                 feedContainer.innerHTML = `<div style="text-align:center; padding: 40px; color: var(--accent-red);"><strong>⚠️ FALLO DETECTADO:</strong><br><br><span style="color: #fca5a5;">${error.message}</span></div>`;
@@ -725,7 +871,7 @@
         });
 
         // ==========================================
-        // 6. LÓGICA DEL FORMULARIO DE INGESTA
+        // 6. LÓGICA DEL FORMULARIO DE INGESTA Y FOTOS
         // ==========================================
         const precioInput = document.getElementById('prop-precio');
         precioInput.addEventListener('input', function(e) {
@@ -742,16 +888,34 @@
             previewContainer.innerHTML = ''; 
             rawFiles = [];
             
-            if (this.files.length > 4) { alert("⚠️ Límite excedido. Máx 4 fotos."); this.value = ''; fileCounter.style.display = 'none'; return; }
+            // 📸 LÍMITE INCREMENTADO A 20 FOTOS
+            if (this.files.length > 20) { 
+                alert("⚠️ Límite excedido. Máx 20 fotos."); 
+                this.value = ''; 
+                fileCounter.style.display = 'none'; 
+                return; 
+            }
+            
             for (let file of this.files) {
-                if (file.size > 5*1024*1024) { alert(`⚠️ Archivo muy grande: ${file.name}`); this.value = ''; previewContainer.innerHTML = ''; fileCounter.style.display = 'none'; return; }
+                if (file.size > 5*1024*1024) { 
+                    alert(`⚠️ Archivo muy grande: ${file.name}`); 
+                    this.value = ''; 
+                    previewContainer.innerHTML = ''; 
+                    fileCounter.style.display = 'none'; 
+                    return; 
+                }
                 rawFiles.push(file);
                 const imgUrl = URL.createObjectURL(file); 
                 const img = document.createElement('img'); 
                 img.src = imgUrl; img.className = 'preview-thumb'; 
                 previewContainer.appendChild(img);
             }
-            if (rawFiles.length > 0) { fileCounter.innerText = `✅ ${rawFiles.length} archivo(s)`; fileCounter.style.display = 'block'; }
+            
+            // Lógica correcta: si hay archivos, mostramos el contador
+            if (rawFiles.length > 0) { 
+                fileCounter.innerText = `✅ ${rawFiles.length} archivo(s)`; 
+                fileCounter.style.display = 'block'; 
+            }
         });
 
         document.getElementById('form-mercado-real').addEventListener('submit', function(e) {
@@ -790,7 +954,9 @@
 
             const formData = new FormData();
             formData.append("payload_maestro", JSON.stringify(payloadMaestro));
-            rawFiles.forEach((file, idx) => formData.append(`foto_${idx + 1}`, file));
+            
+            // 🚀 EMPAQUETADO CLAVE PARA MAKE: Enviar todo el array bajo el nombre "array_fotos"
+            rawFiles.forEach((file) => formData.append("array_fotos", file));
             
             fetch(WEBHOOK_INGESTA, { method: 'POST', body: formData })
             .then(() => {
