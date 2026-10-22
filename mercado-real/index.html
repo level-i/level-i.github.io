@@ -295,15 +295,14 @@
                         </select>
                     </div>
                     
-                    <div class="form-grid">
+                    <!-- BLOQUE CARACTERÍSTICAS AÑADIDO ID PARA MOSTRAR/OCULTAR -->
+                    <div class="form-grid" id="bloque-caracteristicas">
                         <div class="form-group">
                             <label data-i18n="lbl_hab">Habitaciones</label>
-                            <!-- ¡CLAVE AQUÍ! value="0" por defecto para no enviar strings vacíos -->
                             <input type="number" id="prop-hab" min="0" value="0" placeholder="0" required>
                         </div>
                         <div class="form-group">
                             <label data-i18n="lbl_banos">Baños</label>
-                            <!-- ¡CLAVE AQUÍ! value="0" por defecto para no enviar strings vacíos -->
                             <input type="number" id="prop-banos" min="0" value="0" placeholder="0" required>
                         </div>
                     </div>
@@ -870,6 +869,31 @@
             document.getElementById('language-selector').addEventListener('change', cambiarIdioma);
             generarCaptcha();
             cargarInmueblesReales();
+
+            // ==========================================
+            // LÓGICA DE MOSTRAR/OCULTAR CARACTERÍSTICAS SEGÚN TIPO
+            // ==========================================
+            const selectorTipo = document.getElementById('prop-tipo');
+            const bloqueCaracteristicas = document.getElementById('bloque-caracteristicas');
+            const inputHab = document.getElementById('prop-hab');
+            const inputBanos = document.getElementById('prop-banos');
+
+            if(selectorTipo) {
+                selectorTipo.addEventListener('change', function() {
+                    const tipo = this.value;
+                    if (tipo === 'Local' || tipo === 'Terreno o Parcela') {
+                        bloqueCaracteristicas.style.display = 'none';
+                        inputHab.value = "0";
+                        inputBanos.value = "0";
+                        inputHab.removeAttribute('required');
+                        inputBanos.removeAttribute('required');
+                    } else {
+                        bloqueCaracteristicas.style.display = 'grid';
+                        inputHab.setAttribute('required', 'true');
+                        inputBanos.setAttribute('required', 'true');
+                    }
+                });
+            }
         });
 
         // ==========================================
