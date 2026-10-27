@@ -1,1 +1,283 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Level.immo | Próximamente Estreno de Nuestro Hub</title>
+    <style>
+        :root {
+            --bg-base: #090d16; --bg-panel: #111827; --bg-card: #1f2937;
+            --accent-green: #10b981; --accent-blue: #3b82f6; --accent-gold: #C5A059;
+            --accent-orange: #f59e0b; --accent-red: #ef4444;
+            --text-main: #f9fafb; --text-muted: #9ca3af; --border-color: #374151;
+        }
+        
+        * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+        body { background-color: var(--bg-base); color: var(--text-main); margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; overflow-x: hidden; }
 
+        /* AVISO DE ROTACIÓN MÓVIL */
+        #rotate-notice { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(9,13,22,0.95); z-index: 9999; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px; }
+        #rotate-notice svg { width: 64px; height: 64px; fill: var(--accent-gold); animation: rotatePhone 2s infinite ease-in-out; margin-bottom: 20px; }
+        @keyframes rotatePhone { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(90deg); } }
+
+        .container { width: 100%; max-width: 480px; background: var(--bg-panel); border: 1px solid var(--border-color); min-height: 100vh; display: flex; flex-direction: column; position: relative; box-shadow: 0 0 50px rgba(0,0,0,0.8); }
+        @media(min-width: 481px) { .container { min-height: 90vh; border-radius: 16px; margin: 20px 0; } }
+
+        /* HEADER & LANG */
+        .top-bar { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; border-bottom: 1px solid var(--border-color); background: rgba(17,24,39,0.9); }
+        .brand { font-weight: 900; font-size: 18px; letter-spacing: 0.5px; color: #fff; display: flex; align-items: center; gap: 6px; }
+        .brand-dot { width: 8px; height: 8px; background: var(--accent-green); border-radius: 50%; box-shadow: 0 0 8px var(--accent-green); }
+        .lang-selector { background: var(--bg-card); color: var(--text-muted); border: 1px solid var(--border-color); padding: 5px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; outline: none; cursor: pointer; }
+
+        /* LIVE CLOCK & PREMIERE BANNER */
+        .premiere-banner { background: linear-gradient(90deg, rgba(197,160,89,0.1), rgba(16,185,129,0.1)); border-bottom: 1px dashed var(--accent-gold); padding: 8px 20px; font-size: 11px; text-align: center; color: var(--accent-gold); font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
+        .live-clock { font-family: monospace; color: var(--accent-green); }
+
+        /* VIDEO WRAPPER */
+        .video-section { position: relative; width: 100%; background: #000; aspect-ratio: 16/9; display: flex; align-items: center; justify-content: center; }
+        video { width: 100%; height: 100%; object-fit: contain; outline: none; }
+
+        /* ACCIONES RÁPIDAS (LIKES Y SHARE) */
+        .action-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 20px; background: var(--bg-card); border-bottom: 1px solid var(--border-color); }
+        .action-btn { background: transparent; border: 1px solid var(--border-color); color: var(--text-main); padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: 0.2s; }
+        .action-btn:hover { border-color: var(--accent-green); background: rgba(16,185,129,0.05); }
+        .action-btn.liked { color: var(--accent-red); border-color: var(--accent-red); background: rgba(239,68,68,0.1); }
+
+        /* TARJETA DINÁMICA DE ADVISOR / COLABORADOR */
+        .advisor-card { display: flex; align-items: center; gap: 15px; padding: 15px 20px; background: rgba(255,255,255,0.02); border-bottom: 1px solid var(--border-color); }
+        .advisor-avatar { width: 55px; height: 55px; border-radius: 50%; object-fit: cover; border: 2px solid var(--accent-gold); }
+        .advisor-info h4 { margin: 0 0 3px 0; font-size: 14px; color: #fff; }
+        .advisor-info p { margin: 0; font-size: 11px; color: var(--accent-gold); font-weight: bold; }
+        .advisor-info span { font-size: 10px; color: var(--text-muted); display: block; margin-top: 2px; }
+
+        /* BOTONERA FINO-FILIPINO */
+        .fino-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 15px 20px; }
+        .fino-btn { background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-main); padding: 12px; border-radius: 8px; font-size: 11.5px; font-weight: bold; text-align: center; cursor: pointer; transition: 0.2s; text-decoration: none; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+        .fino-btn:hover { border-color: var(--accent-blue); background: rgba(59,130,246,0.05); transform: translateY(-1px); }
+        .fino-btn span { font-size: 16px; }
+
+        /* SECCIÓN DE ACCIÓN DINÁMICA (ADAPTADA SEGÚN ROL) */
+        .recruitment-section { padding: 20px; background: linear-gradient(180deg, transparent, rgba(16,185,129,0.03)); border-top: 1px solid var(--border-color); text-align: center; margin-top: auto; }
+        .recruitment-section h3 { font-size: 14px; color: var(--accent-green); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .recruitment-section p { font-size: 12px; color: var(--text-muted); line-height: 1.5; margin-bottom: 15px; }
+        .btn-cta-advisor { background: var(--accent-green); color: #fff; border: none; width: 100%; padding: 12px; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 4px 15px rgba(16,185,129,0.3); transition: 0.2s; text-decoration: none; display: block; }
+        .btn-cta-advisor:hover { opacity: 0.9; transform: translateY(-1px); }
+    </style>
+</head>
+<body>
+
+    <!-- AVISO ROTACIÓN MÓVIL -->
+    <div id="rotate-notice">
+        <svg viewBox="0 0 24 24"><path d="M16 18H8V6h8M16 4H8C6.9 4 6 4.9 6 6v12c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2z"/></svg>
+        <h3 id="txt-rotate-title" style="color:#fff; margin:0 0 10px 0;">Gira tu dispositivo</h3>
+        <p id="txt-rotate-desc" style="color:var(--text-muted); font-size:13px; margin:0;">Para disfrutar de la experiencia inmersiva del Publireportaje, por favor pon el móvil en horizontal.</p>
+    </div>
+
+    <div class="container">
+        <!-- TOP BAR -->
+        <div class="top-bar">
+            <div class="brand">L<span class="brand-dot"></span> level.immo</div>
+            <select class="lang-selector" id="language-selector" onchange="cambiarIdioma()">
+                <option value="es" selected>🇪🇸 Español</option>
+                <option value="ca">🟨 Català</option>
+                <option value="en">🇬🇧 English</option>
+                <option value="fr">🇫🇷 Français</option>
+                <option value="de">🇩🇪 Deutsch</option>
+                <option value="it">🇮🇹 Italiano</option>
+                <option value="ar">🇦🇪 العربية</option>
+                <option value="zh">🇨🇳 中文</option>
+            </select>
+        </div>
+
+        <!-- PREMIERE BANNER & CLOCK -->
+        <div class="premiere-banner">
+            <span id="txt-premiere">🚀 PRÓXIMAMENTE ESTRENO HUB</span>
+            <span class="live-clock" id="live-clock">--:--:--</span>
+        </div>
+
+        <!-- VIDEO SECTION (CORREGIDO CON EL NOMBRE EXACTO DEL FICHERO) -->
+        <div class="video-section">
+            <video id="promo-video" controls playsinline poster="https://placehold.co/1280x720/090d16/10b981?text=Level.immo+Publireportaje">
+                <source src="publi reportaje level-i com_v2.mp4" type="video/mp4">
+                Tu navegador no soporta vídeo HTML5.
+            </video>
+        </div>
+
+        <!-- LIKES & SHARE -->
+        <div class="action-row">
+            <button class="action-btn" id="btn-like" onclick="darLike()">
+                ❤️ <span id="like-count">142</span> <span data-i18n="lbl_likes">Me gusta</span>
+            </button>
+            <button class="action-btn" onclick="compartirVideo()">
+                🔗 <span data-i18n="lbl_share">Reenviar / Compartir</span>
+            </button>
+        </div>
+
+        <!-- TARJETA DINÁMICA DE ADVISOR / COLABORADOR -->
+        <div class="advisor-card">
+            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150" class="advisor-avatar" id="adv-img" alt="Referente">
+            <div class="advisor-info">
+                <h4 id="adv-name">Sara Martín</h4>
+                <p id="adv-title">Advisor Advanced · Titular de Plaza</p>
+                <span id="adv-ref">API 4173 · Ref: Central</span>
+            </div>
+        </div>
+
+        <!-- BOTONERA FINO-FILIPINO -->
+        <div class="fino-grid">
+            <a href="/comprar" class="fino-btn"><span>🏠</span> <strong data-i18n="btn_comprar">Comprar</strong><small style="color:var(--text-muted); font-size:9px;">Demanda Validada</small></a>
+            <a href="/vender" class="fino-btn"><span>💎</span> <strong data-i18n="btn_vender">Vender</strong><small style="color:var(--text-muted); font-size:9px;">Cuarentena Ciega</small></a>
+            <a href="/hipotecas" class="fino-btn"><span>💳</span> <strong data-i18n="btn_hipotecas">Hipotecas Pre-Aprobadas</strong><small style="color:var(--text-muted); font-size:9px;">Solvencia en Vivo</small></a>
+            <a href="/chivatazo" class="fino-btn"><span>📣</span> <strong data-i18n="btn_chivatazo">Chivatazo Nacional</strong><small style="color:var(--text-muted); font-size:9px;">Gana hasta 500€</small></a>
+        </div>
+
+        <!-- SECCIÓN DE ACCIÓN DINÁMICA (ADAPTADA SEGÚN ROL) -->
+        <div class="recruitment-section">
+            <h3 id="dynamic-cta-title" data-i18n="rec_title">🌟 Expansión Nacional · Plazas Exclusivas</h3>
+            <p id="dynamic-cta-desc" data-i18n="rec_desc">
+                Incorporamos Advisors independientes y Titulares de Plaza en cualquier idioma. Buscamos perfiles cultos, empáticos, con alta vocación consultora y excelencia relacional para liderar nuestro Command Center local.
+            </p>
+            <a href="#" id="dynamic-main-btn" target="_blank" class="btn-cta-advisor" data-i18n="btn_quiero_advisor">
+                ✨ Quiero ser Advisor
+            </a>
+        </div>
+    </div>
+
+    <div class="toast" id="toast" style="position:fixed; bottom:20px; left:50%; transform:translateX(-50%); background:var(--accent-blue); color:#fff; padding:10px 20px; border-radius:6px; font-size:12px; font-weight:bold; box-shadow:0 5px 15px rgba(0,0,0,0.5); opacity:0; transition:0.3s; pointer-events:none; z-index:10000;">¡Enlace copiado al portapapeles!</div>
+
+    <script>
+        // WEBHOOK DE MAKE (REFERIDOS) & LARK (tblTEEknEyWM56KN)
+        const WEBHOOK_REFERIDOS = "https://hook.eu1.make.com/lcfewra8wffai81fjda2g5jgm76cjaeo";
+
+        // RELOJ EN DIRECTO
+        function updateClock() {
+            const now = new Date();
+            document.getElementById('live-clock').innerText = now.toLocaleDateString() + ' ' + now.toLocaleTimeString();
+        }
+        setInterval(updateClock, 1000); updateClock();
+
+        // LIKES LOCALSTORAGE
+        let likes = parseInt(localStorage.getItem('level_publi_likes')) || 142;
+        let liked = localStorage.getItem('level_publi_liked') === 'true';
+        const likeBtn = document.getElementById('btn-like');
+        const likeCountSpan = document.getElementById('like-count');
+        
+        likeCountSpan.innerText = likes;
+        if(liked) likeBtn.classList.add('liked');
+
+        function darLike() {
+            if(!liked) {
+                likes++; liked = true; likeBtn.classList.add('liked');
+                localStorage.setItem('level_publi_likes', likes);
+                localStorage.setItem('level_publi_liked', 'true');
+            } else {
+                likes--; liked = false; likeBtn.classList.remove('liked');
+                localStorage.setItem('level_publi_likes', likes);
+                localStorage.setItem('level_publi_liked', 'false');
+            }
+            likeCountSpan.innerText = likes;
+        }
+
+        // COMPARTIR
+        function compartirVideo() {
+            const url = window.location.href;
+            if (navigator.share) {
+                navigator.share({ title: 'Level.immo | Próximamente Estreno', url: url }).catch(() => {});
+            } else {
+                navigator.clipboard.writeText(url);
+                const t = document.getElementById('toast');
+                t.style.opacity = '1';
+                setTimeout(() => t.style.opacity = '0', 3000);
+            }
+        }
+
+        // PARÁMETROS URL DINÁMICOS Y REGISTRO EN WEBHOOK REFERIDOS (LARK)
+        const urlParams = new URLSearchParams(window.location.search);
+        const rol = urlParams.get('rol') || 'advisor';
+        const nombreRef = urlParams.get('nombre');
+        const plazaRef = urlParams.get('plaza');
+        const refId = urlParams.get('ref');
+        const imgRef = urlParams.get('img');
+
+        if(nombreRef) document.getElementById('adv-name').innerText = nombreRef;
+        if(imgRef) document.getElementById('adv-img').src = imgRef;
+        if(refId) document.getElementById('adv-ref').innerText = 'Ref: ' + refId;
+
+        // ADAPTACIÓN DINÁMICA SEGÚN ROL (ADVISOR VS COLABORADOR)
+        const mainBtn = document.getElementById('dynamic-main-btn');
+        const ctaTitle = document.getElementById('dynamic-cta-title');
+        const ctaDesc = document.getElementById('dynamic-cta-desc');
+
+        if(rol === 'colaborador') {
+            if(plazaRef) document.getElementById('adv-title').innerText = 'Colaborador VIP · ' + plazaRef;
+            else document.getElementById('adv-title').innerText = 'Colaborador Oficial de Referidos';
+            
+            ctaTitle.innerText = "📣 ¡Activa tu Red y Gana con el Chivatazo!";
+            ctaDesc.innerText = "Comparte este publireportaje. Si detectas un inmueble en tu zona o aportas un contacto que termine en operación a través de Level.immo, obtén hasta 500€ de gratificación.";
+            mainBtn.innerText = "✨ Dar Chivatazo Nacional";
+            mainBtn.href = `https://wa.me/34000000000?text=Hola,%20quiero%20dar%20un%20chivatazo%20referenciado%20por%20${encodeURIComponent(nombreRef || 'Central')}`;
+        } else {
+            // Rol Advisor por defecto
+            if(plazaRef) document.getElementById('adv-title').innerText = 'Advisor Advanced · ' + plazaRef;
+            else document.getElementById('adv-title').innerText = 'Advisor Advanced · Titular de Plaza';
+            
+            mainBtn.href = `https://wa.me/34000000000?text=Hola,%20quiero%20solicitar%20información%20para%20ser%20Advisor%20congelando%20mi%20plaza`;
+        }
+
+        // DISPARAR WEBHOOK DE REGISTRO EN MAKE (REFERIDOS -> LARK tblTEEknEyWM56KN)
+        if(nombreRef || refId) {
+            fetch(WEBHOOK_REFERIDOS, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ rol: rol, nombre: nombreRef, plaza: plazaRef, ref: refId, timestamp: new Date().toISOString(), urlOrigen: window.location.href })
+            }).catch(() => {});
+        }
+
+        // DICCIONARIO MULTIDIOMA (8 IDIOMAS)
+        const t = {
+            es: { premiere: "🚀 PRÓXIMAMENTE ESTRENO HUB", likes: "Me gusta", share: "Reenviar / Compartir", comprar: "Comprar", vender: "Vender", hipotecas: "Hipotecas Pre-Aprobadas", chivatazo: "Chivatazo Nacional", rec_title: "🌟 Expansión Nacional · Plazas Exclusivas", rec_desc: "Incorporamos Advisors independientes y Titulares de Plaza en cualquier idioma. Buscamos perfiles cultos, empáticos, con alta vocación consultora y excelencia relacional para liderar nuestro Command Center local.", btn_advisor: "✨ Quiero ser Advisor", rotate_title: "Gira tu dispositivo", rotate_desc: "Para disfrutar de la experiencia inmersiva del Publireportaje, por favor pon el móvil en horizontal." },
+            ca: { premiere: "🚀 PRÒXIMAMENT ESTRENA HUB", likes: "M'agrada", share: "Reenviar / Compartir", comprar: "Comprar", vender: "Vendre", hipotecas: "Hipoteques Pre-Aprovades", chivatazo: "Chivatazo Nacional", rec_title: "🌟 Expansió Nacional · Places Exclusives", rec_desc: "Incorporem Advisors independents i Titulars de Plaça en qualsevol idioma. Busquem perfils cultes, empàtics, amb alta vocació consultora i excel·lència relacional.", btn_advisor: "✨ Vull ser Advisor", rotate_title: "Gira el teu dispositiu", rotate_desc: "Per gaudir de l'experiència immersiva, si us plau posa el mòbil en horitzontal." },
+            en: { premiere: "🚀 UPCOMING HUB PREMIERE", likes: "Like", share: "Forward / Share", comprar: "Buy", vender: "Sell", hipotecas: "Pre-Approved Mortgages", chivatazo: "National Tip-off", rec_title: "🌟 National Expansion · Exclusive Seats", rec_desc: "We onboard independent Advisors and Plaza Titulars in any language. We seek educated, empathetic professionals with strong advisory skills to lead our local Command Center.", btn_advisor: "✨ I want to be an Advisor", rotate_title: "Rotate your device", rotate_desc: "To enjoy the immersive video experience, please rotate your phone to landscape." },
+            fr: { premiere: "🚀 PROCHAINE PREMIÈRE HUB", likes: "J'aime", share: "Transférer / Partager", comprar: "Acheter", vender: "Vendre", hipotecas: "Prêts Pré-approuvés", chivatazo: "Info Nationale", rec_title: "🌟 Expansion Nationale · Places Exclusives", rec_desc: "Nous recrutons des conseillers indépendants dans toutes les langages. Profils cultivés et empathiques pour diriger notre Command Center local.", btn_advisor: "✨ Je veux être Advisor", rotate_title: "Pivotez votre appareil", rotate_desc: "Pour profiter de l'expérience immersive, veuillez tourner votre téléphone en mode paysage." },
+            de: { premiere: "🚀 DEMNÄCHST HUB-PREMIERE", likes: "Gefällt mir", share: "Weiterleiten / Teilen", comprar: "Kaufen", vender: "Verkaufen", hipotecas: "Vorgeprüfte Hypotheken", chivatazo: "Nationaler Tipp", rec_title: "🌟 Nationale Expansion · Exklusive Plätze", rec_desc: "Wir integrieren unabhängige Berater in jeder Sprache. Gesucht werden gebildete, empathische Profile mit starker Beratungskompetenz.", btn_advisor: "✨ Ich möchte Advisor werden", rotate_title: "Drehen Sie Ihr Gerät", rotate_desc: "Bitte drehen Sie Ihr Handy ins Querformat, um das Video optimal zu erleben." },
+            it: { premiere: "🚀 PROSSIMA ANTEPRIMA HUB", likes: "Mi piace", share: "Inoltra / Condividi", comprar: "Comprare", vender: "Vendere", hipotecas: "Mutui Pre-Approvati", chivatazo: "Soffiata Nazionale", rec_title: "🌟 Espansione Nazionale · Posti Esclusivi", rec_desc: "Inseriamo Advisor indipendenti in qualsiasi lingua. Cerchiamo profili colti, empatici e con forte vocazione di consulenza.", btn_advisor: "✨ Voglio essere Advisor", rotate_title: "Ruota il tuo dispositivo", rotate_desc: "Per goderti l'esperienza immersiva, si prega di girare il telefono in orizzontale." },
+            ar: { premiere: "🚀 قريباً افتتاح المركز", likes: "إعجاب", share: "إعادة توجيه / مشاركة", comprar: "شراء", vender: "بيع", hipotecas: "رهون معتمدة مسبقاً", chivatazo: "نصيحة وطنية", rec_title: "🌟 التوسع الوطني · مقاعد حصرية", rec_desc: "نضم مستشارين مستقلين بأي لغة. نبحث عن شخصيات مثقفة ومتعاطفة تتمتع بكفاءة استشارية عالية.", btn_advisor: "✨ أريد أن أكون مستشاراً", rotate_title: "أدر جهازك", rotate_desc: "للاستمتاع بالتجربة الغامرة، يرجى وضع هاتفك في الوضع الأفقي." },
+            zh: { premiere: "🚀 枢纽即将首发", likes: "点赞", share: "转发 / 分享", comprar: "购买", vender: "出售", hipotecas: "预批按揭", chivatazo: "全国爆料", rec_title: "🌟 全国扩张 · 独家席位", rec_desc: "我们招募精通任意语言的独立顾问。寻找受过良好教育、富有同理心且具卓越咨询素养的人才。", btn_advisor: "✨ 我想成为顾问", rotate_title: "旋转您的设备", rotate_desc: "为了获得沉浸式体验，请将手机横屏观看。" }
+        };
+
+        function cambiarIdioma() {
+            const lang = document.getElementById('language-selector').value;
+            const d = t[lang] || t['es'];
+            document.getElementById('txt-premiere').innerText = d.premiere;
+            document.querySelectorAll('[data-i18n="lbl_likes"]')[0].innerText = d.likes;
+            document.querySelectorAll('[data-i18n="lbl_share"]')[0].innerText = d.share;
+            document.querySelectorAll('[data-i18n="btn_comprar"]')[0].innerText = d.comprar;
+            document.querySelectorAll('[data-i18n="btn_vender"]')[0].innerText = d.vender;
+            document.querySelectorAll('[data-i18n="btn_hipotecas"]')[0].innerText = d.hipotecas;
+            document.querySelectorAll('[data-i18n="btn_chivatazo"]')[0].innerText = d.chivatazo;
+            if(rol !== 'colaborador') {
+                document.querySelectorAll('[data-i18n="rec_title"]')[0].innerText = d.rec_title;
+                document.querySelectorAll('[data-i18n="rec_desc"]')[0].innerText = d.rec_desc;
+                document.querySelectorAll('[data-i18n="btn_quiero_advisor"]')[0].innerText = d.btn_advisor;
+            }
+            document.getElementById('txt-rotate-title').innerText = d.rotate_title;
+            document.getElementById('txt-rotate-desc').innerText = d.rotate_desc;
+        }
+
+        // DETECTOR INTELIGENTE DE ORIENTACIÓN MÓVIL
+        function checkOrientation() {
+            const isMobile = window.innerWidth <= 768;
+            const isPortrait = window.innerHeight > window.innerWidth;
+            const notice = document.getElementById('rotate-notice');
+            if (isMobile && isPortrait) {
+                notice.style.display = 'flex';
+            } else {
+                notice.style.display = 'none';
+            }
+        }
+        window.addEventListener('resize', checkOrientation);
+        window.addEventListener('orientationchange', checkOrientation);
+        checkOrientation();
+    </script>
+</body>
+</html>
