@@ -15,11 +15,6 @@
         * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
         body { background-color: var(--bg-base); color: var(--text-main); margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; overflow-x: hidden; }
 
-        /* AVISO DE ROTACIÓN MÓVIL */
-        #rotate-notice { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(9,13,22,0.95); z-index: 9999; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px; }
-        #rotate-notice svg { width: 64px; height: 64px; fill: var(--accent-gold); animation: rotatePhone 2s infinite ease-in-out; margin-bottom: 20px; }
-        @keyframes rotatePhone { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(90deg); } }
-
         .container { width: 100%; max-width: 480px; background: var(--bg-panel); border: 1px solid var(--border-color); min-height: 100vh; display: flex; flex-direction: column; position: relative; box-shadow: 0 0 50px rgba(0,0,0,0.8); }
         @media(min-width: 481px) { .container { min-height: 90vh; border-radius: 16px; margin: 20px 0; } }
 
@@ -66,13 +61,6 @@
 </head>
 <body>
 
-    <!-- AVISO ROTACIÓN MÓVIL -->
-    <div id="rotate-notice">
-        <svg viewBox="0 0 24 24"><path d="M16 18H8V6h8M16 4H8C6.9 4 6 4.9 6 6v12c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2z"/></svg>
-        <h3 id="txt-rotate-title" style="color:#fff; margin:0 0 10px 0;">Gira tu dispositivo</h3>
-        <p id="txt-rotate-desc" style="color:var(--text-muted); font-size:13px; margin:0;">Para disfrutar de la experiencia inmersiva del Publireportaje, por favor pon el móvil en horizontal.</p>
-    </div>
-
     <div class="container">
         <!-- TOP BAR -->
         <div class="top-bar">
@@ -95,7 +83,7 @@
             <span class="live-clock" id="live-clock">--:--:--</span>
         </div>
 
-        <!-- VIDEO SECTION (CORREGIDO CON EL NOMBRE EXACTO DEL FICHERO) -->
+        <!-- VIDEO SECTION -->
         <div class="video-section">
             <video id="promo-video" controls playsinline poster="https://placehold.co/1280x720/090d16/10b981?text=Level.immo+Publireportaje">
                 <source src="publi reportaje level-i com_v2.mp4" type="video/mp4">
@@ -217,7 +205,6 @@
             mainBtn.innerText = "✨ Dar Chivatazo Nacional";
             mainBtn.href = `https://wa.me/34000000000?text=Hola,%20quiero%20dar%20un%20chivatazo%20referenciado%20por%20${encodeURIComponent(nombreRef || 'Central')}`;
         } else {
-            // Rol Advisor por defecto
             if(plazaRef) document.getElementById('adv-title').innerText = 'Advisor Advanced · ' + plazaRef;
             else document.getElementById('adv-title').innerText = 'Advisor Advanced · Titular de Plaza';
             
@@ -235,14 +222,14 @@
 
         // DICCIONARIO MULTIDIOMA (8 IDIOMAS)
         const t = {
-            es: { premiere: "🚀 PRÓXIMAMENTE ESTRENO HUB", likes: "Me gusta", share: "Reenviar / Compartir", comprar: "Comprar", vender: "Vender", hipotecas: "Hipotecas Pre-Aprobadas", chivatazo: "Chivatazo Nacional", rec_title: "🌟 Expansión Nacional · Plazas Exclusivas", rec_desc: "Incorporamos Advisors independientes y Titulares de Plaza en cualquier idioma. Buscamos perfiles cultos, empáticos, con alta vocación consultora y excelencia relacional para liderar nuestro Command Center local.", btn_advisor: "✨ Quiero ser Advisor", rotate_title: "Gira tu dispositivo", rotate_desc: "Para disfrutar de la experiencia inmersiva del Publireportaje, por favor pon el móvil en horizontal." },
-            ca: { premiere: "🚀 PRÒXIMAMENT ESTRENA HUB", likes: "M'agrada", share: "Reenviar / Compartir", comprar: "Comprar", vender: "Vendre", hipotecas: "Hipoteques Pre-Aprovades", chivatazo: "Chivatazo Nacional", rec_title: "🌟 Expansió Nacional · Places Exclusives", rec_desc: "Incorporem Advisors independents i Titulars de Plaça en qualsevol idioma. Busquem perfils cultes, empàtics, amb alta vocació consultora i excel·lència relacional.", btn_advisor: "✨ Vull ser Advisor", rotate_title: "Gira el teu dispositiu", rotate_desc: "Per gaudir de l'experiència immersiva, si us plau posa el mòbil en horitzontal." },
-            en: { premiere: "🚀 UPCOMING HUB PREMIERE", likes: "Like", share: "Forward / Share", comprar: "Buy", vender: "Sell", hipotecas: "Pre-Approved Mortgages", chivatazo: "National Tip-off", rec_title: "🌟 National Expansion · Exclusive Seats", rec_desc: "We onboard independent Advisors and Plaza Titulars in any language. We seek educated, empathetic professionals with strong advisory skills to lead our local Command Center.", btn_advisor: "✨ I want to be an Advisor", rotate_title: "Rotate your device", rotate_desc: "To enjoy the immersive video experience, please rotate your phone to landscape." },
-            fr: { premiere: "🚀 PROCHAINE PREMIÈRE HUB", likes: "J'aime", share: "Transférer / Partager", comprar: "Acheter", vender: "Vendre", hipotecas: "Prêts Pré-approuvés", chivatazo: "Info Nationale", rec_title: "🌟 Expansion Nationale · Places Exclusives", rec_desc: "Nous recrutons des conseillers indépendants dans toutes les langages. Profils cultivés et empathiques pour diriger notre Command Center local.", btn_advisor: "✨ Je veux être Advisor", rotate_title: "Pivotez votre appareil", rotate_desc: "Pour profiter de l'expérience immersive, veuillez tourner votre téléphone en mode paysage." },
-            de: { premiere: "🚀 DEMNÄCHST HUB-PREMIERE", likes: "Gefällt mir", share: "Weiterleiten / Teilen", comprar: "Kaufen", vender: "Verkaufen", hipotecas: "Vorgeprüfte Hypotheken", chivatazo: "Nationaler Tipp", rec_title: "🌟 Nationale Expansion · Exklusive Plätze", rec_desc: "Wir integrieren unabhängige Berater in jeder Sprache. Gesucht werden gebildete, empathische Profile mit starker Beratungskompetenz.", btn_advisor: "✨ Ich möchte Advisor werden", rotate_title: "Drehen Sie Ihr Gerät", rotate_desc: "Bitte drehen Sie Ihr Handy ins Querformat, um das Video optimal zu erleben." },
-            it: { premiere: "🚀 PROSSIMA ANTEPRIMA HUB", likes: "Mi piace", share: "Inoltra / Condividi", comprar: "Comprare", vender: "Vendere", hipotecas: "Mutui Pre-Approvati", chivatazo: "Soffiata Nazionale", rec_title: "🌟 Espansione Nazionale · Posti Esclusivi", rec_desc: "Inseriamo Advisor indipendenti in qualsiasi lingua. Cerchiamo profili colti, empatici e con forte vocazione di consulenza.", btn_advisor: "✨ Voglio essere Advisor", rotate_title: "Ruota il tuo dispositivo", rotate_desc: "Per goderti l'esperienza immersiva, si prega di girare il telefono in orizzontale." },
-            ar: { premiere: "🚀 قريباً افتتاح المركز", likes: "إعجاب", share: "إعادة توجيه / مشاركة", comprar: "شراء", vender: "بيع", hipotecas: "رهون معتمدة مسبقاً", chivatazo: "نصيحة وطنية", rec_title: "🌟 التوسع الوطني · مقاعد حصرية", rec_desc: "نضم مستشارين مستقلين بأي لغة. نبحث عن شخصيات مثقفة ومتعاطفة تتمتع بكفاءة استشارية عالية.", btn_advisor: "✨ أريد أن أكون مستشاراً", rotate_title: "أدر جهازك", rotate_desc: "للاستمتاع بالتجربة الغامرة، يرجى وضع هاتفك في الوضع الأفقي." },
-            zh: { premiere: "🚀 枢纽即将首发", likes: "点赞", share: "转发 / 分享", comprar: "购买", vender: "出售", hipotecas: "预批按揭", chivatazo: "全国爆料", rec_title: "🌟 全国扩张 · 独家席位", rec_desc: "我们招募精通任意语言的独立顾问。寻找受过良好教育、富有同理心且具卓越咨询素养的人才。", btn_advisor: "✨ 我想成为顾问", rotate_title: "旋转您的设备", rotate_desc: "为了获得沉浸式体验，请将手机横屏观看。" }
+            es: { premiere: "🚀 PRÓXIMAMENTE ESTRENO HUB", likes: "Me gusta", share: "Reenviar / Compartir", comprar: "Comprar", vender: "Vender", hipotecas: "Hipotecas Pre-Aprobadas", chivatazo: "Chivatazo Nacional", rec_title: "🌟 Expansión Nacional · Plazas Exclusivas", rec_desc: "Incorporamos Advisors independientes y Titulares de Plaza en cualquier idioma. Buscamos perfiles cultos, empáticos, con alta vocación consultora y excelencia relacional para liderar nuestro Command Center local.", btn_advisor: "✨ Quiero ser Advisor" },
+            ca: { premiere: "🚀 PRÒXIMAMENT ESTRENA HUB", likes: "M'agrada", share: "Reenviar / Compartir", comprar: "Comprar", vender: "Vendre", hipotecas: "Hipoteques Pre-Aprovades", chivatazo: "Chivatazo Nacional", rec_title: "🌟 Expansió Nacional · Places Exclusives", rec_desc: "Incorporem Advisors independents i Titulars de Plaça en qualsevol idioma. Busquem perfils cultes, empàtics, amb alta vocació consultora i excel·lència relacional.", btn_advisor: "✨ Vull ser Advisor" },
+            en: { premiere: "🚀 UPCOMING HUB PREMIERE", likes: "Like", share: "Forward / Share", comprar: "Buy", vender: "Sell", hipotecas: "Pre-Approved Mortgages", chivatazo: "National Tip-off", rec_title: "🌟 National Expansion · Exclusive Seats", rec_desc: "We onboard independent Advisors and Plaza Titulars in any language. We seek educated, empathetic professionals with strong advisory skills to lead our local Command Center.", btn_advisor: "✨ I want to be an Advisor" },
+            fr: { premiere: "🚀 PROCHAINE PREMIÈRE HUB", likes: "J'aime", share: "Transférer / Partager", comprar: "Acheter", vender: "Vendre", hipotecas: "Prêts Pré-approuvés", chivatazo: "Info Nationale", rec_title: "🌟 Expansion Nationale · Places Exclusives", rec_desc: "Nous recrutons des conseillers indépendants dans toutes les langages. Profils cultivés et empathiques pour diriger notre Command Center local.", btn_advisor: "✨ Je veux être Advisor" },
+            de: { premiere: "🚀 DEMNÄCHST HUB-PREMIERE", likes: "Gefällt mir", share: "Weiterleiten / Teilen", comprar: "Kaufen", vender: "Verkaufen", hipotecas: "Vorgeprüfte Hypotheken", chivatazo: "Nationaler Tipp", rec_title: "🌟 Nationale Expansion · Exklusive Plätze", rec_desc: "Wir integrieren unabhängige Berater in jeder Sprache. Gesucht werden gebildete, empathische Profile mit starker Beratungskompetenz.", btn_advisor: "✨ Ich möchte Advisor werden" },
+            it: { premiere: "🚀 PROSSIMA ANTEPRIMA HUB", likes: "Mi piace", share: "Inoltra / Condividi", comprar: "Comprare", vender: "Vendere", hipotecas: "Mutui Pre-Approvati", chivatazo: "Soffiata Nazionale", rec_title: "🌟 Espansione Nazionale · Posti Esclusivi", rec_desc: "Inseriamo Advisor indipendenti in qualsiasi lingua. Cerchiamo profili colti, empatici e con forte vocazione di consulenza.", btn_advisor: "✨ Voglio essere Advisor" },
+            ar: { premiere: "🚀 قريباً افتتاح المركز", likes: "إعجاب", share: "إعادة توجيه / مشاركة", comprar: "شراء", vender: "بيع", hipotecas: "رهون معتمدة مسبقاً", chivatazo: "نصيحة وطنية", rec_title: "🌟 التوسع الوطني · مقاعد حصرية", rec_desc: "نضم مستشارين مستقلين بأي لغة. نبحث عن شخصيات مثقفة ومتعاطفة تتمتع بكفاءة استشارية عالية.", btn_advisor: "✨ أريد أن أكون مستشاراً" },
+            zh: { premiere: "🚀 枢纽即将首发", likes: "点赞", share: "转发 / 分享", comprar: "购买", vender: "出售", hipotecas: "预批按揭", chivatazo: "全国爆料", rec_title: "🌟 全国扩张 · 独家席位", rec_desc: "我们招募精通任意语言的独立顾问。寻找受过良好教育、富有同理心且具卓越咨询素养的人才。", btn_advisor: "✨ 我想成为顾问" }
         };
 
         function cambiarIdioma() {
@@ -260,24 +247,7 @@
                 document.querySelectorAll('[data-i18n="rec_desc"]')[0].innerText = d.rec_desc;
                 document.querySelectorAll('[data-i18n="btn_quiero_advisor"]')[0].innerText = d.btn_advisor;
             }
-            document.getElementById('txt-rotate-title').innerText = d.rotate_title;
-            document.getElementById('txt-rotate-desc').innerText = d.rotate_desc;
         }
-
-        // DETECTOR INTELIGENTE DE ORIENTACIÓN MÓVIL
-        function checkOrientation() {
-            const isMobile = window.innerWidth <= 768;
-            const isPortrait = window.innerHeight > window.innerWidth;
-            const notice = document.getElementById('rotate-notice');
-            if (isMobile && isPortrait) {
-                notice.style.display = 'flex';
-            } else {
-                notice.style.display = 'none';
-            }
-        }
-        window.addEventListener('resize', checkOrientation);
-        window.addEventListener('orientationchange', checkOrientation);
-        checkOrientation();
     </script>
 </body>
 </html>
