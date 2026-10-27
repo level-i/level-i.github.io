@@ -15,10 +15,10 @@
         * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
         body, html { margin: 0; padding: 0; width: 100%; height: 100%; background-color: var(--bg-base); color: var(--text-main); overflow-x: hidden; scroll-behavior: smooth; }
 
-        /* HERO FULLSCREEN PORTADA IMPACTANTE CON /portada real.jpg y /plano de distribucion.jpg */
+        /* HERO FULLSCREEN PORTADA IMPACTANTE */
         #hero-portada {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: linear-gradient(180deg, rgba(9,13,22,0.2) 0%, rgba(9,13,22,0.4) 50%, rgba(9,13,22,0.95) 100%), url('portada real.jpg') no-repeat center center/cover;
+            background: linear-gradient(180deg, rgba(9,13,22,0.18) 0%, rgba(9,13,22,0.4) 50%, rgba(9,13,22,0.95) 100%), url('portada real.jpg') no-repeat center center/cover;
             z-index: 1000; display: flex; flex-direction: column; justify-content: space-between; padding: 30px 40px;
             transition: opacity 0.8s ease-in-out, visibility 0.8s ease-in-out;
         }
@@ -39,20 +39,44 @@
             background: rgba(17, 24, 39, 0.85); backdrop-filter: blur(12px); border: 1px solid var(--accent-gold);
             padding: 15px; border-radius: 12px; max-width: 340px; width: 100%; box-shadow: 0 15px 35px rgba(0,0,0,0.6);
         }
-        .hero-plano-card img { width: 100%; aspect-ratio: 4/3; object-fit: cover; border-radius: 8px; border: 1px solid var(--border-color); margin-bottom: 8px; }
+        .hero-plano-card img { width: 100%; aspect-ratio: 4/3; object-fit: cover; border-radius: 8px; border: 1px solid var(--border-color); margin-bottom: 8px; cursor: pointer; }
         .hero-plano-card span { font-size: 11px; color: var(--accent-gold); font-weight: bold; display: block; text-align: center; text-transform: uppercase; letter-spacing: 0.5px; }
 
         /* VERIFICACIÓN MATEMÁTICA Y LEGAL EN PORTADA */
         .hero-verification-box { background: rgba(9,13,22,0.9); border: 1px solid var(--border-color); padding: 15px; border-radius: 10px; margin-top: 15px; }
-        .math-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+        .math-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; flex-wrap: wrap; }
         .math-input { width: 80px; background: var(--bg-base); border: 1px solid var(--border-color); padding: 8px; border-radius: 6px; color: #fff; text-align: center; font-weight: bold; }
         
-        .legal-footer-text { font-size: 10px; color: var(--text-muted); text-align: center; margin-top: 10px; }
-        .legal-footer-text a { color: var(--accent-gold); text-decoration: underline; }
+        .legal-footer-text { font-size: 10.5px; color: var(--text-muted); text-align: left; margin-top: 8px; }
+        .legal-btn-inline { background: none; border: none; color: var(--accent-gold); text-decoration: underline; cursor: pointer; font-size: 10.5px; padding: 0; font-weight: bold; }
 
-        .btn-fino { background: var(--accent-gold); color: #000; border: none; padding: 14px 28px; border-radius: 8px; font-weight: 900; font-size: 13px; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 20px rgba(197,160,89,0.5); display: inline-flex; align-items: center; gap: 10px; text-transform: uppercase; letter-spacing: 0.5px; text-shadow: none; width: 100%; justify-content: center; }
+        .btn-fino { background: var(--accent-gold); color: #000; border: none; padding: 14px 28px; border-radius: 8px; font-weight: 900; font-size: 13px; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 20px rgba(197,160,89,0.5); display: inline-flex; align-items: center; gap: 10px; text-transform: uppercase; letter-spacing: 0.5px; text-shadow: none; justify-content: center; }
         .btn-fino:hover { background: #d4af37; transform: translateY(-2px); }
-        .btn-fino:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+        .btn-fino:disabled { opacity: 0.45; cursor: not-allowed; transform: none; box-shadow: none; }
+
+        /* MODAL POPUP PARA AVISO LEGAL Y PRIVACIDAD */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.82);
+            backdrop-filter: blur(6px); z-index: 5000; display: none; align-items: center; justify-content: center; padding: 20px;
+        }
+        .modal-overlay.active { display: flex; }
+        .modal-box {
+            background: var(--bg-panel); border: 1px solid var(--accent-gold); border-radius: 14px; max-width: 650px; width: 100%;
+            max-height: 80vh; display: flex; flex-direction: column; box-shadow: 0 20px 50px rgba(0,0,0,0.8); overflow: hidden;
+        }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; border-bottom: 1px solid var(--border-color); background: var(--bg-card); }
+        .modal-header h3 { margin: 0; font-size: 15px; color: var(--accent-gold); }
+        .modal-close { background: transparent; border: none; color: #fff; font-size: 20px; cursor: pointer; line-height: 1; }
+        .modal-body { padding: 20px; overflow-y: auto; font-size: 12.5px; color: #d1d5db; line-height: 1.6; }
+
+        /* MODAL LIGHTBOX PARA AMPLIAR IMÁGENES */
+        #lightbox-modal {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(5,8,15,0.92);
+            z-index: 6000; display: none; align-items: center; justify-content: center; flex-direction: column; padding: 20px;
+        }
+        #lightbox-modal.active { display: flex; }
+        #lightbox-img { max-width: 92vw; max-height: 82vh; border-radius: 10px; border: 2px solid var(--accent-gold); object-fit: contain; box-shadow: 0 15px 40px rgba(0,0,0,0.9); }
+        #lightbox-caption { margin-top: 12px; color: var(--accent-gold); font-weight: bold; font-size: 14px; }
 
         /* LAYOUT CON MENÚ LATERAL IZQUIERDO */
         .app-wrapper { display: flex; max-width: 1280px; margin: 0 auto; padding: 20px; gap: 20px; align-items: flex-start; }
@@ -78,44 +102,62 @@
         @media(min-width: 960px) { .property-grid { grid-template-columns: 1.25fr 0.85fr; } }
 
         .card { background: var(--bg-panel); border: 1px solid var(--border-color); border-radius: 14px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.4); }
-        .card h2 { font-size: 15.5px; color: var(--accent-gold); margin-top: 0; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; }
+        .card h2 { font-size: 15.5px; color: var(--accent-gold); margin-top: 0; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; gap: 8px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; flex-wrap: wrap; }
 
-        /* CHAT BOT ADVISOR (ELENA) */
-        .advisor-widget { background: var(--bg-panel); border: 2px solid var(--accent-green); border-radius: 14px; padding: 20px; box-shadow: 0 10px 30px rgba(16,185,129,0.15); }
-        .advisor-header { display: flex; align-items: center; gap: 12px; margin-bottom: 15px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; }
-        .advisor-avatar { width: 42px; height: 42px; background: var(--accent-green); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px; color: #000; box-shadow: 0 0 12px var(--accent-green); }
-        .advisor-chat-box { background: var(--bg-base); border: 1px solid var(--border-color); border-radius: 10px; height: 240px; padding: 12px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; font-size: 12.5px; }
-        .chat-bubble { max-width: 85%; padding: 10px 14px; border-radius: 10px; line-height: 1.4; }
-        .chat-bubble.elena { background: var(--bg-card); color: #fff; align-self: flex-start; border-bottom-left-radius: 2px; }
-        .chat-bubble.user { background: var(--accent-green); color: #fff; align-self: flex-end; border-bottom-right-radius: 2px; }
-        .advisor-input-area { display: flex; gap: 8px; }
-
-        /* GALERÍA DE FOTOS Y EFECTO ÓPTICO */
-        .optical-bar { display: flex; justify-content: space-between; align-items: center; background: var(--bg-card); padding: 8px 12px; border-radius: 8px; margin-bottom: 10px; border: 1px solid var(--border-color); flex-wrap: wrap; gap: 8px; }
+        /* GALERÍA DE FOTOS CON LEYENDA EXTERIOR ARRIBA Y LOGO LEVEL.IMMO */
+        .optical-bar { display: flex; justify-content: space-between; align-items: center; background: var(--bg-card); padding: 8px 12px; border-radius: 8px; margin-bottom: 8px; border: 1px solid var(--border-color); flex-wrap: wrap; gap: 8px; }
         .optical-label { font-size: 11px; color: var(--text-muted); font-weight: bold; }
         .optical-btns { display: flex; gap: 6px; flex-wrap: wrap; }
         .btn-optical { background: var(--bg-base); border: 1px solid var(--accent-gold); color: var(--accent-gold); padding: 5px 10px; border-radius: 6px; font-size: 10.5px; font-weight: bold; cursor: pointer; transition: 0.2s; }
         .btn-optical:hover, .btn-optical.active { background: var(--accent-gold); color: #000; }
 
-        .gallery-main { position: relative; width: 100%; aspect-ratio: 16/10; border-radius: 10px; overflow: hidden; margin-bottom: 12px; border: 1px solid var(--border-color); background: #000; }
+        .caption-top-bar {
+            display: flex; justify-content: space-between; align-items: center; background: rgba(31,41,55,0.7);
+            padding: 6px 12px; border-radius: 8px 8px 0 0; border: 1px solid var(--border-color); border-bottom: none;
+        }
+        .external-caption { font-size: 11.5px; color: var(--accent-gold); font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; }
+        .zoom-hint { font-size: 10.5px; color: var(--text-muted); cursor: pointer; }
+
+        .gallery-main { position: relative; width: 100%; aspect-ratio: 16/10; border-radius: 0 0 10px 10px; overflow: hidden; margin-bottom: 12px; border: 1px solid var(--border-color); background: #000; cursor: zoom-in; }
         .gallery-main img { width: 100%; height: 100%; object-fit: cover; transition: opacity 0.35s ease-in-out; }
-        .gallery-badge { position: absolute; bottom: 10px; right: 10px; background: rgba(9,13,22,0.88); color: #fff; padding: 5px 12px; border-radius: 6px; font-size: 11px; font-weight: bold; border: 1px solid var(--accent-gold); pointer-events: none; }
+        
+        /* MARCA DE AGUA LEVEL.IMMO EN LA ESQUINA DE LA FOTO */
+        .watermark-badge {
+            position: absolute; bottom: 10px; right: 10px; background: rgba(9, 13, 22, 0.82); backdrop-filter: blur(4px);
+            padding: 5px 11px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.15); font-weight: 900; font-size: 12px;
+            color: #fff; display: flex; align-items: center; gap: 5px; pointer-events: none;
+        }
 
         .gallery-thumbs { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
         .thumb { aspect-ratio: 16/10; border-radius: 6px; overflow: hidden; cursor: pointer; border: 2px solid transparent; transition: 0.2s; }
         .thumb img { width: 100%; height: 100%; object-fit: cover; }
         .thumb:hover, .thumb.active { border-color: var(--accent-gold); transform: scale(1.03); }
 
-        /* SELECTOR DE PRECIO DINÁMICO */
+        /* CARRUSEL AUTOMÁTICO DE UBICACIÓN */
+        .location-carousel { position: relative; width: 100%; aspect-ratio: 16/9; border-radius: 10px; overflow: hidden; border: 1px solid var(--border-color); margin-bottom: 10px; background: #000; cursor: zoom-in; }
+        .location-carousel img { width: 100%; height: 100%; object-fit: cover; transition: opacity 0.4s ease; }
+        .carousel-dots { display: flex; justify-content: center; gap: 8px; margin-bottom: 12px; }
+        .c-dot { width: 28px; height: 6px; border-radius: 4px; background: var(--border-color); cursor: pointer; transition: 0.3s; border: none; }
+        .c-dot.active { background: var(--accent-gold); width: 42px; }
+
+        /* SELECTOR DE PRECIO DE VENTA & ESTUDIO ECONÓMICO */
         .price-toggle-box { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 16px; text-align: center; margin-bottom: 14px; }
-        .toggle-options { display: inline-flex; background: var(--bg-base); padding: 4px; border-radius: 8px; border: 1px solid var(--border-color); margin-bottom: 12px; flex-wrap: wrap; justify-content: center; }
-        .toggle-btn { background: transparent; border: none; color: var(--text-muted); padding: 7px 14px; font-size: 11px; font-weight: bold; border-radius: 6px; cursor: pointer; transition: 0.3s; }
+        .toggle-options { display: grid; grid-template-columns: 1fr 1fr; background: var(--bg-base); padding: 4px; border-radius: 8px; border: 1px solid var(--border-color); margin-bottom: 14px; gap: 4px; }
+        .toggle-btn { background: transparent; border: none; color: var(--text-muted); padding: 9px 10px; font-size: 11px; font-weight: bold; border-radius: 6px; cursor: pointer; transition: 0.3s; }
         .toggle-btn.active { background: var(--accent-gold); color: #000; box-shadow: 0 2px 10px rgba(197,160,89,0.3); }
         
-        .price-display { font-size: 32px; font-weight: 900; color: #fff; transition: all 0.4s ease; transform: scale(1); }
-        .price-display.animate { transform: scale(1.05); color: var(--accent-gold); }
-        .price-subtitle { font-size: 11.5px; color: var(--text-muted); margin-top: 5px; }
+        .price-display { font-size: 32px; font-weight: 900; color: #fff; transition: all 0.3s ease; }
+        .price-subtitle { font-size: 11.5px; color: #fca5a5; margin-top: 6px; font-weight: 600; line-height: 1.4; }
 
+        /* CAJA INTERACTIVA DE ESTUDIO ECONÓMICO Y DE COSTES */
+        #box-estudio-economico { display: none; text-align: left; background: var(--bg-base); padding: 14px; border-radius: 10px; border: 1px solid var(--border-color); margin-top: 10px; }
+        .cost-row { display: flex; justify-content: space-between; align-items: center; font-size: 12px; padding: 6px 0; border-bottom: 1px dashed rgba(255,255,255,0.08); color: #d1d5db; }
+        .cost-row strong { color: #fff; }
+        .cost-input-row { display: flex; justify-content: space-between; align-items: center; font-size: 11.5px; padding: 6px 0; color: var(--accent-gold); }
+        .cost-input { width: 95px; background: var(--bg-card); border: 1px solid var(--border-color); color: #fff; padding: 5px 8px; border-radius: 6px; text-align: right; font-weight: bold; font-size: 12px; }
+        .cost-total-row { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; padding-top: 10px; border-top: 2px solid var(--accent-gold); font-size: 14px; font-weight: 900; color: var(--accent-green); }
+
+        /* CATASTRO Y REFERENCIAS DIFUMINADAS */
         .mini-catastro-box { background: rgba(255,255,255,0.02); padding: 12px 14px; border-radius: 10px; border: 1px solid var(--border-color); font-size: 11.5px; color: var(--text-muted); }
         .mini-catastro-title { color: var(--accent-gold); font-weight: bold; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; font-size: 12px; }
         .mini-catastro-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 12px; margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.07); }
@@ -123,12 +165,22 @@
         .mini-catastro-item strong { color: #fff; }
         .ibi-highlight { line-height: 1.45; color: #d1d5db; font-size: 11px; margin-top: 6px; }
         .ibi-highlight strong { color: var(--accent-green); }
-        .ref-catastral-multi { font-size: 10px; color: #94a3b8; font-family: monospace; background: rgba(0,0,0,0.3); padding: 6px; border-radius: 6px; margin-top: 8px; word-break: break-all; }
+        
+        .ref-catastral-multi {
+            font-size: 10px; color: #94a3b8; font-family: monospace; background: rgba(0,0,0,0.35);
+            padding: 7px 8px; border-radius: 6px; margin-top: 8px; display: flex; justify-content: space-between; align-items: center; gap: 8px;
+        }
+        .blurred-refs { filter: blur(4px); user-select: none; transition: filter 0.3s ease; cursor: pointer; }
+        .blurred-refs:hover, .blurred-refs.revealed { filter: blur(0); user-select: text; }
 
+        /* FORMULARIO BLOQUEO 24H & PREFIJO INTERNACIONAL */
         .form-group { margin-bottom: 12px; text-align: left; }
         .form-group label { display: block; font-size: 10.5px; font-weight: bold; color: var(--text-muted); margin-bottom: 4px; text-transform: uppercase; }
         .input-group { display: flex; align-items: center; background: var(--bg-base); border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; }
-        .input-prefix { background: var(--bg-card); color: var(--accent-gold); padding: 10px 12px; font-size: 12.5px; font-weight: bold; border-right: 1px solid var(--border-color); }
+        .input-prefix-edit {
+            width: 65px; background: var(--bg-card); color: var(--accent-gold); padding: 10px 8px; font-size: 12.5px;
+            font-weight: bold; border: none; border-right: 1px solid var(--border-color); text-align: center; outline: none;
+        }
         .form-control { width: 100%; background: transparent; border: none; padding: 10px 12px; color: #fff; font-size: 12.5px; outline: none; }
         .form-group input.form-control { background: var(--bg-base); border: 1px solid var(--border-color); border-radius: 8px; }
 
@@ -140,17 +192,50 @@
         .mortgage-warning { display: none; background: rgba(239, 68, 68, 0.12); border: 1px solid var(--accent-red); color: #fca5a5; padding: 12px; border-radius: 8px; font-size: 11.5px; line-height: 1.45; margin-bottom: 12px; text-align: left; }
         .mortgage-warning.show { display: block; }
 
-        .btn-bloquear { background: var(--accent-green); color: #fff; border: none; width: 100%; padding: 13px; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 15px rgba(16,185,129,0.3); }
-        .btn-bloquear:hover { opacity: 0.9; }
+        .btn-dual-group { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .btn-bloquear { background: var(--accent-green); color: #fff; border: none; width: 100%; padding: 12px 10px; border-radius: 8px; font-weight: bold; font-size: 12px; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 15px rgba(16,185,129,0.25); }
+        .btn-contactar { background: var(--accent-gold); color: #000; border: none; width: 100%; padding: 12px 10px; border-radius: 8px; font-weight: bold; font-size: 12px; cursor: pointer; transition: 0.2s; }
+        .btn-hipoteca-redirect { background: var(--accent-blue); color: #fff; border: none; width: 100%; padding: 13px; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; text-align: center; grid-column: span 2; }
 
-        .btn-hipoteca-redirect { background: var(--accent-blue); color: #fff; border: none; width: 100%; padding: 13px; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 15px rgba(59,130,246,0.3); text-decoration: none; display: block; text-align: center; }
+        /* CHAT BOT ADVISOR (ELENA) */
+        .advisor-widget { background: var(--bg-panel); border: 2px solid var(--accent-green); border-radius: 14px; padding: 20px; box-shadow: 0 10px 30px rgba(16,185,129,0.15); }
+        .advisor-header { display: flex; align-items: center; gap: 12px; margin-bottom: 15px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; }
+        .advisor-avatar { width: 42px; height: 42px; background: var(--accent-green); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px; color: #000; box-shadow: 0 0 12px var(--accent-green); }
+        .advisor-chat-box { background: var(--bg-base); border: 1px solid var(--border-color); border-radius: 10px; height: 220px; padding: 12px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; font-size: 12.5px; }
+        .chat-bubble { max-width: 85%; padding: 10px 14px; border-radius: 10px; line-height: 1.4; }
+        .chat-bubble.elena { background: var(--bg-card); color: #fff; align-self: flex-start; border-bottom-left-radius: 2px; }
+        .chat-bubble.user { background: var(--accent-green); color: #fff; align-self: flex-end; border-bottom-right-radius: 2px; }
+        .advisor-input-area { display: flex; gap: 8px; }
+
         .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--accent-green); color: #fff; padding: 12px 25px; border-radius: 8px; font-size: 13px; font-weight: bold; box-shadow: 0 5px 20px rgba(0,0,0,0.5); transition: 0.4s ease; z-index: 10000; opacity: 0; }
         .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
     </style>
 </head>
 <body>
 
-    <!-- PORTADA FULLSCREEN IMPACTANTE CON /portada real.jpg y /plano de distribucion.jpg -->
+    <!-- MODAL POPUP DE AVISO LEGAL Y PRIVACIDAD (SIN SALIR DE LA PÁGINA) -->
+    <div class="modal-overlay" id="modal-legal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3 data-i18n="legal_link">⚖️ Aviso Legal, Privacidad y Condiciones</h3>
+                <button class="modal-close" onclick="cerrarModalLegal()">×</button>
+            </div>
+            <div class="modal-body">
+                <p><strong>1. Titularidad y Confidencialidad:</strong> La presente plataforma interactiva es propiedad exclusiva de <strong>Level.immo (Level Punto Immo S.L.U.)</strong>. Los datos catastrales, ubicación georreferenciada y documentación gráfica corresponden a un activo comercializado bajo mandato exclusivo.</p>
+                <p><strong>2. Protección de Datos (RGPD):</strong> Los datos facilitados en los formularios de bloqueo 24h, contacto o asesoramiento mediante IA (Elena) serán tratados con la única finalidad de verificar la identidad del interesado, gestionar el bloqueo temporal de reserva o tramitar su estudio de viabilidad financiera.</p>
+                <p><strong>3. Condiciones Económicas del Activo:</strong> El precio de venta anunciado (75.000 €) corresponde a la adquisición del cuerpo cierto en su estado actual. <strong>No incluye impuestos ni gastos de compraventa</strong> (Impuesto de Transmisiones Patrimoniales ITP 10%, aranceles notariales ni inscripción en el Registro de la Propiedad). Inmueble no sujeto a financiación hipotecaria bancaria tradicional (requiere fondos propios).</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL LIGHTBOX PARA VER FOTOS Y MAPAS EN GRANDE -->
+    <div id="lightbox-modal" onclick="cerrarLightbox()">
+        <img id="lightbox-img" src="" alt="Ampliación">
+        <div id="lightbox-caption"></div>
+        <span style="font-size: 11px; color: #9ca3af; margin-top: 6px;">(Haz clic en cualquier lugar para cerrar)</span>
+    </div>
+
+    <!-- PORTADA FULLSCREEN IMPACTANTE -->
     <div id="hero-portada">
         <div class="hero-header">
             <div class="hero-badge" data-i18n="hero_badge">🌟 Exclusiva Level.immo</div>
@@ -169,9 +254,9 @@
         <div class="hero-layout">
             <div class="hero-content">
                 <h1 data-i18n="hero_title">Finca Rústica con Casa de Madera en Alcanar</h1>
-                <p data-i18n="hero_desc">1.760 m² de parcela gráfica con olivos productivos (150L de aceite anuales), luz, agua de pozo, 100% habitable.</p>
+                <p data-i18n="hero_desc">1.760 m² de parcela gráfica con olivos productivos (150L de aceite anuales), luz, agua de pozo y 100% habitable.</p>
                 
-                <!-- VERIFICACIÓN MATEMÁTICA Y ACCESO -->
+                <!-- VERIFICACIÓN MATEMÁTICA Y AVISO LEGAL EN VENTANA MODAL -->
                 <div class="hero-verification-box">
                     <div style="font-size: 11px; color: var(--accent-gold); font-weight: bold; margin-bottom: 6px;" data-i18n="sec_math_title">🔐 Verificación de Seguridad (Anti-Bots)</div>
                     <div class="math-row">
@@ -180,14 +265,15 @@
                         <button class="btn-fino" id="btn-entrar" disabled onclick="entrarConsola()" style="width: auto; padding: 10px 20px; font-size: 11.5px;" data-i18n="hero_btn">⚡ Acceder</button>
                     </div>
                     <div class="legal-footer-text">
-                        <span data-i18n="legal_text">Al acceder, acepta nuestro</span> <a href="https://level.immo/aviso-legal" target="_blank" data-i18n="legal_link">Aviso Legal y Política de Privacidad</a>.
+                        <span data-i18n="legal_text">Al acceder, acepta nuestro</span>
+                        <button type="button" class="legal-btn-inline" onclick="abrirModalLegal()" data-i18n="legal_link">📋 Aviso Legal y Política de Privacidad</button>.
                     </div>
                 </div>
             </div>
 
             <!-- PLANO INCRUSTADO EN LA PORTADA -->
             <div class="hero-plano-card">
-                <img src="plano de distribucion.jpg" alt="Plano de Distribución">
+                <img src="plano de distribucion.jpg" alt="Plano de Distribución" onclick="abrirLightbox('plano de distribucion.jpg', 'Plano Oficial de Distribución')">
                 <span data-i18n="plano_badge">Plano Oficial de Distribución</span>
             </div>
         </div>
@@ -201,9 +287,9 @@
             <div class="nav-brand">L<span class="nav-dot"></span> level.immo</div>
             <button class="nav-link active" onclick="scrollToSection('sec-info', this)">🏠 <span data-i18n="nav_info">Información</span></button>
             <button class="nav-link" onclick="scrollToSection('sec-ubicacion', this)">📍 <span data-i18n="nav_ubicacion">Ubicación</span></button>
-            <button class="nav-link" onclick="scrollToSection('sec-precio', this)">💰 <span data-i18n="nav_precio">Precio & Catastro</span></button>
-            <button class="nav-link" onclick="scrollToSection('sec-advisor', this)" style="color:var(--accent-green);">💬 <span data-i18n="nav_advisor">Chat Elena</span></button>
+            <button class="nav-link" onclick="scrollToSection('sec-precio', this)">💰 <span data-i18n="nav_precio">Precio & Costes</span></button>
             <button class="nav-link" onclick="scrollToSection('sec-bloqueo', this)">🔒 <span data-i18n="nav_bloqueo">Bloquear 24h</span></button>
+            <button class="nav-link" onclick="scrollToSection('sec-advisor', this)" style="color:var(--accent-green);">💬 <span data-i18n="nav_advisor">Chat Elena</span></button>
             <div class="side-lang">
                 <select class="lang-selector" id="side-language-selector" style="width:100%;" onchange="sincronizarIdioma(this.value)">
                     <option value="es" selected>🇪🇸 Español</option>
@@ -219,6 +305,7 @@
         </aside>
 
         <div class="property-grid">
+            <!-- COLUMNA IZQUIERDA: 1. GALERÍA, 2. UBICACIÓN CARRUSEL, 3. CHAT ELENA ABAJO -->
             <div style="display: flex; flex-direction: column; gap: 20px;">
                 <div class="card" id="sec-info">
                     <h2 data-i18n="card_info_title">🏠 Estado Actual, Distribución & Comparativa</h2>
@@ -232,9 +319,16 @@
                         </div>
                     </div>
 
-                    <div class="gallery-main">
+                    <!-- LEYENDA ARRIBA FUERA DE LA FOTO -->
+                    <div class="caption-top-bar">
+                        <span class="external-caption" id="img-caption">Fachada Principal de la Finca</span>
+                        <span class="zoom-hint" onclick="ampliarFotoActual()">🔍 Ampliar</span>
+                    </div>
+
+                    <div class="gallery-main" onclick="ampliarFotoActual()">
                         <img id="main-img" src="portada real.jpg" alt="Casita Les Mallades">
-                        <div class="gallery-badge" id="img-caption">Fachada Principal de la Finca</div>
+                        <!-- LOGO LEVEL.IMMO DENTRO DE LA FOTO -->
+                        <div class="watermark-badge">L<span class="nav-dot"></span> level.immo</div>
                     </div>
 
                     <div class="gallery-thumbs">
@@ -246,7 +340,7 @@
                         <div class="thumb" onclick="cambiarFoto('vacio hab 1.jpg', 'cap_hab1_vacia', this)"><img src="vacio hab 1.jpg" alt="Hab 1"></div>
                         <div class="thumb" onclick="cambiarFoto('mallades_habitacion1.jpg', 'cap_hab1_antes', this)"><img src="mallades_habitacion1.jpg" alt="Hab 1 Antes"></div>
                         <div class="thumb" onclick="cambiarFoto('vacio hab2.jpg', 'cap_hab2_vacia', this)"><img src="vacio hab2.jpg" alt="Hab 2"></div>
-                        <div class="thumb" onclick="cambiarFoto('mallades_habitacion2.jpg', 'cap_hab2_antes', this)"><img src="mallades_habitacion2.jpg" alt="mallades_habitacion2.jpg"></div>
+                        <div class="thumb" onclick="cambiarFoto('mallades_habitacion2.jpg', 'cap_hab2_antes', this)"><img src="mallades_habitacion2.jpg" alt="Hab 2 Antes"></div>
                         <div class="thumb" onclick="cambiarFoto('mallades_olivos.jpg', 'cap_olivos', this)"><img src="mallades_olivos.jpg" alt="Olivos"></div>
                     </div>
 
@@ -255,18 +349,38 @@
                     </p>
                 </div>
 
-                <!-- CHAT BOT ADVISOR (ELENA) -->
+                <!-- UBICACIÓN CON CARRUSEL AUTOMÁTICO DE LAS 3 FOTOS Y AMPLIACIÓN -->
+                <div class="card" id="sec-ubicacion">
+                    <h2>
+                        <span data-i18n="card_ubi_title">📍 Ubicación, Parcela & Perímetro</span>
+                        <span style="font-size: 11px; color: var(--text-muted); font-weight: normal;" id="ubicacion-caption">1/3 · Mapa de Ubicación General</span>
+                    </h2>
+                    <div class="location-carousel" onclick="ampliarUbicacionActual()">
+                        <img id="carousel-ubi-img" src="mallades_ubicacion.jpg" alt="Ubicación Les Mallades">
+                        <div class="watermark-badge">L<span class="nav-dot"></span> level.immo · 🔍 Click para ampliar</div>
+                    </div>
+                    <div class="carousel-dots">
+                        <button type="button" class="c-dot active" onclick="irSlideUbicacion(0)"></button>
+                        <button type="button" class="c-dot" onclick="irSlideUbicacion(1)"></button>
+                        <button type="button" class="c-dot" onclick="irSlideUbicacion(2)"></button>
+                    </div>
+                    <p style="font-size: 12.5px; color: var(--text-muted); line-height: 1.6; margin: 0;" data-i18n="card_ubi_desc">
+                        Ubicación excelente en la Partida Les Mallades (Alcanar). A tan solo 4 minutos en coche del supermercado y a menos de 15 minutos caminando del casco urbano. Zona muy tranquila, vallada, rodeada de naturaleza y 100% habitable.
+                    </p>
+                </div>
+
+                <!-- CHAT BOT ADVISOR (ELENA) ABAJO DEL TODO -->
                 <div class="advisor-widget" id="sec-advisor">
                     <div class="advisor-header">
                         <div class="advisor-avatar">E</div>
                         <div>
                             <strong style="font-size: 14px; color: #fff; display: block;" data-i18n="elena_name">Elena · AI Advisor Level.immo</strong>
-                            <span style="font-size: 11px; color: var(--accent-green);" data-i18n="elena_status">● En línea (Contexto Les Mallades cargado)</span>
+                            <span style="font-size: 11px; color: var(--accent-green);" data-i18n="elena_status">● En línea (Expediente REF2026102600060 cargado)</span>
                         </div>
                     </div>
                     <div class="advisor-chat-box" id="chat-messages">
                         <div class="chat-bubble elena" data-i18n="elena_welcome">
-                            ¡Hola! Soy Elena, tu asesora personal en Level.immo. Tengo todo el expediente de Partida Les Mallades (89k Llaves en Mano / 69,9k Termínala tú, 3 IBIs catastrales y condiciones de compra). ¿En qué te puedo ayudar hoy?
+                            ¡Hola! Soy Elena, tu asesora personal en Level.immo. Tengo todo el expediente de Partida Les Mallades (Precio de Venta 75.000 €, estudio económico de costes, 3 IBIs catastrales y condiciones de compra). ¿En qué te puedo ayudar hoy?
                         </div>
                     </div>
                     <div class="advisor-input-area">
@@ -274,37 +388,64 @@
                         <button class="btn-bloquear" style="width: auto; padding: 0 16px;" onclick="enviarMensajeElena()" data-i18n="btn_enviar">Enviar</button>
                     </div>
                 </div>
-
-                <div class="card" id="sec-ubicacion">
-                    <h2 data-i18n="card_ubi_title">📍 Ubicación & Entorno</h2>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px;">
-                        <div style="aspect-ratio:16/10; border-radius:8px; overflow:hidden; border:1px solid var(--border-color);">
-                            <img src="mallades_ubicacion.jpg" style="width:100%; height:100%; object-fit:cover; cursor:pointer;" onclick="cambiarFoto('mallades_ubicacion.jpg', 'cap_mapa', this)" alt="Ubicación">
-                        </div>
-                        <div style="aspect-ratio:16/10; border-radius:8px; overflow:hidden; border:1px solid var(--border-color);">
-                            <img src="mallades_parcela.jpg" style="width:100%; height:100%; object-fit:cover; cursor:pointer;" onclick="cambiarFoto('mallades_parcela.jpg', 'cap_aerea', this)" alt="Parcela">
-                        </div>
-                    </div>
-                    <p style="font-size: 12.5px; color: var(--text-muted); line-height: 1.6; margin: 0;" data-i18n="card_ubi_desc">
-                        Ubicación excelente en la Partida Les Mallades (Alcanar). A tan solo 4 minutos en coche del supermercado y a menos de 15 minutos caminando del casco urbano. Zona muy tranquila, vallada, rodeada de naturaleza y 100% habitable.
-                    </p>
-                </div>
             </div>
 
+            <!-- COLUMNA DERECHA: PRECIO DE VENTA + ESTUDIO ECONÓMICO Y BLOQUEO/CONTACTO -->
             <div style="display: flex; flex-direction: column; gap: 20px; position: sticky; top: 20px;">
                 <div class="card" id="sec-precio">
-                    <h2 data-i18n="card_price_title">💰 Valoración & Opciones de Compra</h2>
+                    <h2 data-i18n="card_price_title">💰 Precio de Venta & Estudio Económico</h2>
                     
                     <div class="price-toggle-box">
                         <div class="toggle-options">
-                            <button class="toggle-btn active" id="btn-llaves" onclick="setPrecio('llaves')" data-i18n="btn_llaves">Llaves en Mano (89k)</button>
-                            <button class="toggle-btn" id="btn-personal" onclick="setPrecio('personal')" data-i18n="btn_personal">Termínala Tú (69,9k)</button>
+                            <button type="button" class="toggle-btn active" id="btn-venta" onclick="setPestanaPrecio('venta')" data-i18n="btn_venta">Precio de Venta</button>
+                            <button type="button" class="toggle-btn" id="btn-estudio" onclick="setPestanaPrecio('estudio')" data-i18n="btn_estudio">Estudio Económico y de Costes</button>
                         </div>
-                        <div class="price-display" id="precio-valor">89.000 €</div>
-                        <div class="price-subtitle" id="precio-desc" data-i18n="desc_llaves">Incluye instalación completa de baño nuevo y cocina equipada.</div>
+
+                        <!-- VISTA 1: PRECIO DE VENTA (POR DEFECTO) -->
+                        <div id="vista-precio-venta">
+                            <div class="price-display">75.000 €</div>
+                            <div class="price-subtitle" data-i18n="desc_venta">
+                                ⚠️ No incluye gastos de compra ni impuestos (Notaría, ITP 10% y Registro de la Propiedad no incluidos).
+                            </div>
+                        </div>
+
+                        <!-- VISTA 2: ESTUDIO ECONÓMICO Y DE COSTES DETALLADO -->
+                        <div id="box-estudio-economico">
+                            <div class="cost-row">
+                                <span data-i18n="est_adq">Precio de Adquisición (Venta):</span>
+                                <strong>75.000 €</strong>
+                            </div>
+                            <div class="cost-row">
+                                <span data-i18n="est_itp">Impuesto ITP (10%):</span>
+                                <strong>7.500 €</strong>
+                            </div>
+                            <div class="cost-row">
+                                <span data-i18n="est_not">Notaría y Registro de la Propiedad (est.):</span>
+                                <strong>1.500 €</strong>
+                            </div>
+                            <div style="font-size: 10.5px; color: var(--text-muted); margin: 8px 0 4px 0; text-transform: uppercase; font-weight: bold;" data-i18n="est_pers_title">
+                                🛠️ Personaliza tu estimación de acabados (Opcional):
+                            </div>
+                            <div class="cost-input-row">
+                                <span data-i18n="est_bano">+ Presupuesto Baño (ducha, sanitario, lavabo):</span>
+                                <input type="number" id="inp-bano" class="cost-input" value="2500" min="0" step="100" oninput="calcularTotalEstudio()">
+                            </div>
+                            <div class="cost-input-row">
+                                <span data-i18n="est_cocina">+ Presupuesto Cocina equipada:</span>
+                                <input type="number" id="inp-cocina" class="cost-input" value="3500" min="0" step="100" oninput="calcularTotalEstudio()">
+                            </div>
+                            <div class="cost-input-row">
+                                <span data-i18n="est_ext">+ Presupuesto Exteriores / Barnizado:</span>
+                                <input type="number" id="inp-ext" class="cost-input" value="1500" min="0" step="100" oninput="calcularTotalEstudio()">
+                            </div>
+                            <div class="cost-total-row">
+                                <span data-i18n="est_total">SUMA TOTAL COSTE REAL:</span>
+                                <span id="suma-total-estudio">91.500 €</span>
+                            </div>
+                        </div>
                     </div>
 
-                    <!-- RESUMEN CATASTRAL CON MULTIPLES REFERENCIAS -->
+                    <!-- RESUMEN CATASTRAL CON REFERENCIAS DIFUMINADAS POR PRIVACIDAD -->
                     <div class="mini-catastro-box">
                         <div class="mini-catastro-title" data-i18n="mini_cat_title">📋 Resumen Catastral & Ventaja Fiscal (3 IBIs)</div>
                         <div class="mini-catastro-grid">
@@ -316,27 +457,29 @@
                         <div class="ibi-highlight" data-i18n="ibi_strong_points">
                             ✅ <strong>Punto Fuerte Legal:</strong> Paga <strong>1 IBI rústico + 2 IBIs urbanos residenciales</strong>. Seguridad única en la zona.
                         </div>
-                        <div class="ref-catastral-multi">
-                            <strong>Refs. Catastrales:</strong> 0318613DF3801G0007AY, 43004A012002070000GX, 43004A012002070001H
+                        <div class="ref-catastral-multi" title="Pasa el ratón o haz clic para enfocar">
+                            <strong>Refs. Catastrales:</strong>
+                            <span class="blurred-refs" onclick="this.classList.toggle('revealed')">0318613DF3801G0007AY, 43004A012002070000GX, 43004A012002070001H</span>
                         </div>
                     </div>
                 </div>
 
+                <!-- FORMULARIO CON PREFIJO EDITABLE Y 2 BOTONES (BLOQUEAR 24H / CONTACTAR CON ELENA) -->
                 <div class="card" id="sec-bloqueo" style="border-color: var(--accent-green);">
-                    <h2 data-i18n="lock_title">🔒 Bloqueo Preferente 24H (Verificado)</h2>
+                    <h2 data-i18n="lock_title">🔒 Bloqueo 24H o Contacto Directo</h2>
                     <p style="font-size: 11.5px; color: var(--text-muted); margin-bottom: 14px;" data-i18n="lock_desc">
-                        Bloquea la propiedad temporalmente a coste cero contrastando tu teléfono con nuestra base de datos:
+                        Introduce tus datos (prefijo internacional editable) para bloquear la finca 24h a coste cero o abrir consulta con Elena:
                     </p>
-                    <form id="form-bloqueo" onsubmit="enviarBloqueo(event)">
+                    <form id="form-bloqueo" onsubmit="enviarBloqueo(event, 'Bloqueo 24h')">
                         <div class="form-group">
                             <label data-i18n="lbl_nombre">Nombre Completo</label>
                             <input type="text" id="b-nombre" class="form-control" required placeholder="Ej. Joan García">
                         </div>
                         <div class="form-group">
-                            <label data-i18n="lbl_tel">Teléfono (+34 fijo)</label>
+                            <label data-i18n="lbl_tel">Teléfono (Prefijo País + Número)</label>
                             <div class="input-group">
-                                <span class="input-prefix">+34</span>
-                                <input type="tel" id="b-telefono" class="form-control" required placeholder="600000000" maxlength="9" pattern="[0-9]{9}">
+                                <input type="text" id="b-prefix" class="input-prefix-edit" value="+34" aria-label="Prefijo internacional">
+                                <input type="tel" id="b-telefono" class="form-control" required placeholder="600000000" pattern="[0-9\s]{6,15}">
                             </div>
                         </div>
                         <div class="form-group">
@@ -357,11 +500,12 @@
                         </div>
 
                         <div class="mortgage-warning" id="aviso-hipoteca" data-i18n="msg_no_hipotecable">
-                            ⚠️ <strong>Importante:</strong> Esta operación requiere compra con <strong>fondos propios</strong>. Solicita tu Hipoteca Pre-Aprobada abajo:
+                            ⚠️ <strong>Importante:</strong> Esta compraventa no está sujeta a hipoteca y requiere <strong>fondos propios</strong>. Si buscas hipoteca para otro inmueble, solicítala aquí:
                         </div>
 
-                        <div id="contenedor-botones">
-                            <button type="submit" class="btn-bloquear" id="btn-accion-form" data-i18n="btn_bloquear">✨ Validar & Bloquear 24h</button>
+                        <div class="btn-dual-group" id="contenedor-botones">
+                            <button type="submit" class="btn-bloquear" id="btn-accion-bloquear" data-i18n="btn_bloquear">🔒 Bloquear 24h</button>
+                            <button type="button" class="btn-contactar" id="btn-accion-contactar" onclick="enviarBloqueo(event, 'Contactar con Elena')" data-i18n="btn_contactar">💬 Contactar (Elena)</button>
                         </div>
                     </form>
                 </div>
@@ -369,20 +513,70 @@
         </div>
     </div>
 
-    <div class="toast" id="toast" data-i18n="toast_msg">¡Validación en curso! Bloqueo registrado.</div>
+    <div class="toast" id="toast" data-i18n="toast_msg">¡Validación en curso! Solicitud enviada y asistente Elena activada.</div>
 
     <script>
         const WEBHOOK_PRINCIPAL = "https://hook.eu1.make.com/lcfewra8wffai81fjda2g5jgm76cjaeo";
         const WEBHOOK_HIPOTECAS = "https://hook.eu1.make.com/kueqnuc36n5qbhbyw9r7z14vpkitxc1p";
-        let precioActualTipo = 'llaves';
+        const ID_INMUEBLE = "REF2026102600060";
+
+        let pestanaPrecioActual = 'venta';
         let tieneHipoteca = null;
         let currentCaptionKey = 'cap_portada';
         let estadoComparador = { cocina: false, hab1: false, hab2: false };
         let numA = Math.floor(Math.random() * 5) + 2;
         let numB = Math.floor(Math.random() * 5) + 1;
 
+        // CARRUSEL AUTOMÁTICO DE UBICACIÓN (3 FOTOS CADA 4 SEGUNDOS)
+        const slidesUbicacion = [
+            { src: 'mallades_ubicacion.jpg', key: 'cap_mapa', fallback: '1/3 · Mapa de Ubicación General' },
+            { src: 'mallades_parcela.jpg', key: 'cap_aerea', fallback: '2/3 · Vista Aérea de la Parcela' },
+            { src: 'mallades_parcela_limites.jpg', key: 'cap_limites', fallback: '3/3 · Perímetro Marcado (1.760 m²)' }
+        ];
+        let indiceUbicacion = 0;
+
         window.onload = function() {
             document.getElementById('math-question').innerText = `¿Cuánto es ${numA} + ${numB}?`;
+            calcularTotalEstudio();
+            setInterval(() => {
+                irSlideUbicacion((indiceUbicacion + 1) % slidesUbicacion.length);
+            }, 4000);
+        };
+
+        function irSlideUbicacion(idx) {
+            indiceUbicacion = idx;
+            const imgEl = document.getElementById('carousel-ubi-img');
+            const capEl = document.getElementById('ubicacion-caption');
+            const lang = document.getElementById('language-selector').value;
+            const d = t[lang] || t['es'];
+
+            imgEl.style.opacity = '0.3';
+            setTimeout(() => {
+                imgEl.src = slidesUbicacion[idx].src;
+                const translated = d[slidesUbicacion[idx].key] || slidesUbicacion[idx].fallback;
+                capEl.innerText = `${idx + 1}/3 · ${translated}`;
+                imgEl.style.opacity = '1';
+            }, 180);
+
+            document.querySelectorAll('.c-dot').forEach((dot, i) => {
+                dot.classList.toggle('active', i === idx);
+            });
+        }
+
+        function abrirModalLegal() { document.getElementById('modal-legal').classList.add('active'); }
+        function cerrarModalLegal() { document.getElementById('modal-legal').classList.remove('active'); }
+
+        function abrirLightbox(src, caption) {
+            document.getElementById('lightbox-img').src = src;
+            document.getElementById('lightbox-caption').innerText = caption || '';
+            document.getElementById('lightbox-modal').classList.add('active');
+        }
+        function cerrarLightbox() { document.getElementById('lightbox-modal').classList.remove('active'); }
+        function ampliarFotoActual() {
+            abrirLightbox(document.getElementById('main-img').src, document.getElementById('img-caption').innerText);
+        }
+        function ampliarUbicacionActual() {
+            abrirLightbox(document.getElementById('carousel-ubi-img').src, document.getElementById('ubicacion-caption').innerText);
         }
 
         function validarMatematica() {
@@ -441,37 +635,46 @@
             }
         }
 
-        function setPrecio(tipo) {
-            precioActualTipo = tipo;
-            const btnLlaves = document.getElementById('btn-llaves');
-            const btnPersonal = document.getElementById('btn-personal');
-            const precioDisplay = document.getElementById('precio-valor');
-            const precioDesc = document.getElementById('precio-desc');
-            const lang = document.getElementById('language-selector').value;
-            const d = t[lang] || t['es'];
+        // PESTAÑAS: PRECIO DE VENTA VS ESTUDIO ECONÓMICO Y DE COSTES
+        function setPestanaPrecio(tipo) {
+            pestanaPrecioActual = tipo;
+            const btnVenta = document.getElementById('btn-venta');
+            const btnEstudio = document.getElementById('btn-estudio');
+            const vistaVenta = document.getElementById('vista-precio-venta');
+            const vistaEstudio = document.getElementById('box-estudio-economico');
 
-            precioDisplay.classList.add('animate');
-            setTimeout(() => precioDisplay.classList.remove('animate'), 400);
-
-            if(tipo === 'llaves') {
-                btnLlaves.classList.add('active');
-                btnPersonal.classList.remove('active');
-                precioDisplay.innerText = "89.000 €";
-                precioDesc.innerText = d.desc_llaves;
+            if(tipo === 'venta') {
+                btnVenta.classList.add('active');
+                btnEstudio.classList.remove('active');
+                vistaVenta.style.display = 'block';
+                vistaEstudio.style.display = 'none';
             } else {
-                btnPersonal.classList.add('active');
-                btnLlaves.classList.remove('active');
-                precioDisplay.innerText = "69.900 €";
-                precioDesc.innerText = d.desc_personal;
+                btnEstudio.classList.add('active');
+                btnVenta.classList.remove('active');
+                vistaVenta.style.display = 'none';
+                vistaEstudio.style.display = 'block';
+                calcularTotalEstudio();
             }
+        }
+
+        function calcularTotalEstudio() {
+            const base = 75000;
+            const itp = 7500;
+            const notaria = 1500;
+            const bano = parseFloat(document.getElementById('inp-bano').value) || 0;
+            const cocina = parseFloat(document.getElementById('inp-cocina').value) || 0;
+            const ext = parseFloat(document.getElementById('inp-ext').value) || 0;
+            const total = base + itp + notaria + bano + cocina + ext;
+            document.getElementById('suma-total-estudio').innerText = total.toLocaleString('es-ES') + ' €';
+            return total;
         }
 
         function seleccionarHipoteca(necesita) {
             tieneHipoteca = necesita;
             const optSi = document.getElementById('opt-si');
             const optNo = document.getElementById('opt-no');
-            const btnAccion = document.getElementById('btn-accion-form');
             const aviso = document.getElementById('aviso-hipoteca');
+            const contenedor = document.getElementById('contenedor-botones');
             const lang = document.getElementById('language-selector').value;
             const d = t[lang] || t['es'];
 
@@ -479,14 +682,15 @@
                 optSi.classList.add('selected');
                 optNo.classList.remove('selected');
                 aviso.classList.add('show');
-                btnAccion.className = "btn-hipoteca-redirect";
-                btnAccion.innerText = d.btn_redir_hipoteca;
+                contenedor.innerHTML = `<button type="submit" class="btn-hipoteca-redirect">${d.btn_redir_hipoteca}</button>`;
             } else {
                 optNo.classList.add('selected');
                 optSi.classList.remove('selected');
                 aviso.classList.remove('show');
-                btnAccion.className = "btn-bloquear";
-                btnAccion.innerText = d.btn_bloquear;
+                contenedor.innerHTML = `
+                    <button type="submit" class="btn-bloquear" id="btn-accion-bloquear">${d.btn_bloquear}</button>
+                    <button type="button" class="btn-contactar" id="btn-accion-contactar" onclick="enviarBloqueo(event, 'Contactar con Elena')">${d.btn_contactar}</button>
+                `;
             }
         }
 
@@ -500,97 +704,108 @@
             input.value = '';
 
             setTimeout(() => {
-                box.innerHTML += `<div class="chat-bubble elena">Entendido. Como Advisor de Level.immo para Les Mallades, anoto tu consulta sobre "${txt}". Te pondré en contacto directo con el equipo comercial en breve o gestionaré tu bloqueo 24h.</div>`;
+                box.innerHTML += `<div class="chat-bubble elena">Perfecto. Tengo registrado el expediente ${ID_INMUEBLE} (Partida Les Mallades, Precio de Venta 75.000 € + gastos). He tomado nota de tu consulta: "${txt}".</div>`;
                 box.scrollTop = box.scrollHeight;
-            }, 800);
+            }, 700);
         }
 
         const t = {
             es: {
                 hero_badge: "🌟 Exclusiva Level.immo",
                 hero_title: "Finca Rústica con Casa de Madera en Alcanar",
-                hero_desc: "1.760 m² de parcela gráfica con olivos productivos (150L de aceite anuales), luz, agua de pozo, 100% habitable.",
+                hero_desc: "1.760 m² de parcela gráfica con olivos productivos (150L de aceite anuales), luz, agua de pozo y 100% habitable.",
                 sec_math_title: "🔐 Verificación de Seguridad (Anti-Bots)",
                 hero_btn: "⚡ Acceder",
                 legal_text: "Al acceder, acepta nuestro",
-                legal_link: "Aviso Legal y Política de Privacidad",
+                legal_link: "📋 Aviso Legal y Política de Privacidad",
                 plano_badge: "Plano Oficial de Distribución",
                 hero_footer: "Partida Les Mallades · Alcanar (Tarragona)",
-                nav_info: "Información", nav_ubicacion: "Ubicación", nav_precio: "Precio & Catastro", nav_advisor: "Chat Elena", nav_bloqueo: "Bloquear 24h",
+                nav_info: "Información", nav_ubicacion: "Ubicación", nav_precio: "Precio & Costes", nav_advisor: "Chat Elena", nav_bloqueo: "Bloquear 24h",
                 card_info_title: "🏠 Estado Actual, Distribución & Comparativa",
                 opt_label: "✨ Efecto Comparador (Vacía vs. Amueblada):",
                 opt_cocina: "🔄 Cocina", opt_hab1: "🔄 Hab. 1", opt_hab2: "🔄 Hab. 2",
                 cap_portada: "Fachada Principal de la Finca",
                 cap_plano: "Plano Oficial de Distribución",
                 cap_recibidor: "Pasillo de Distribución",
-                cap_cocina_vacia: "Cocina Vacía",
-                cap_cocina_antes: "Cocina Equipada",
-                cap_hab1_vacia: "Habitación 1 Vacía",
-                cap_hab1_antes: "Habitación 1 Amueblada",
-                cap_hab2_vacia: "Habitación 2 Vacía",
-                cap_hab2_antes: "Habitación 2 Amueblada",
-                cap_olivos: "Olivos Productivos",
-                cap_limites: "Límites de la Parcela",
-                cap_mapa: "Mapa de Ubicación",
-                cap_aerea: "Vista Aérea",
-                card_info_desc: "Casita de madera muy acogedora de 2 habitaciones dobles y salón-comedor. Actualmente vacía para personalizar al gusto. Luz, agua de pozo, porches registrados que pagan IBI como vivienda y balsa de riego.",
-                card_ubi_title: "📍 Ubicación & Entorno",
+                cap_cocina_vacia: "Cocina (Estado Actual Vacío)",
+                cap_cocina_antes: "Cocina Equipada (Cómo era antes)",
+                cap_hab1_vacia: "Habitación 1 (Estado Actual Vacío)",
+                cap_hab1_antes: "Habitación 1 Amueblada (Antes)",
+                cap_hab2_vacia: "Habitación 2 (Estado Actual Vacío)",
+                cap_hab2_antes: "Habitación 2 Amueblada (Antes)",
+                cap_olivos: "Olivos Productivos (150L/año)",
+                cap_limites: "Perímetro Marcado de la Parcela (1.760 m²)",
+                cap_mapa: "Mapa de Ubicación General",
+                cap_aerea: "Vista Aérea de la Parcela",
+                card_info_desc: "Casita de madera muy acogedora de 2 habitaciones dobles y salón-comedor. Actualmente vacía para personalizar al gusto. Luz, agua de pozo, porches registrados que pagan IBI como vivienda y balsa de riego. Cosecha de olivos incluida (150 litros de aceite el año pasado).",
+                card_ubi_title: "📍 Ubicación, Parcela & Perímetro",
                 card_ubi_desc: "Ubicación excelente en Partida Les Mallades (Alcanar). A 4 min del supermercado y 15 min a pie del centro urbano.",
-                card_price_title: "💰 Valoración & Opciones de Compra",
-                btn_llaves: "Llaves en Mano (89k)", btn_personal: "Termínala Tú (69,9k)",
-                desc_llaves: "Incluye instalación completa de baño nuevo y cocina equipada.",
-                desc_personal: "Opción 'Termínala tú': ideal para diseñar los acabados a tu gusto con ahorro directo.",
+                card_price_title: "💰 Precio de Venta & Estudio Económico",
+                btn_venta: "Precio de Venta", btn_estudio: "Estudio Económico y de Costes",
+                desc_venta: "⚠️ No incluye gastos de compra ni impuestos (Notaría, ITP 10% y Registro de la Propiedad no incluidos).",
+                est_adq: "Precio de Adquisición (Venta):", est_itp: "Impuesto ITP (10%):", est_not: "Notaría y Registro de la Propiedad (est.):",
+                est_pers_title: "🛠️ Personaliza tu estimación de acabados (Opcional):",
+                est_bano: "+ Presupuesto Baño (ducha, sanitario, lavabo):", est_cocina: "+ Presupuesto Cocina equipada:", est_ext: "+ Presupuesto Exteriores / Barnizado:",
+                est_total: "SUMA TOTAL COSTE REAL:",
                 mini_cat_title: "📋 Resumen Catastral & Ventaja Fiscal (3 IBIs)",
                 cat_sup: "Parcela Gráfica:", cat_viv: "Vivienda (Urbana):", cat_alm: "Almacén/Porches:", cat_agr: "Agrario (Rústico):",
                 ibi_strong_points: "✅ <strong>Punto Fuerte Legal:</strong> Paga <strong>1 IBI rústico + 2 IBIs urbanos residenciales</strong>. Seguridad única en la zona.",
-                lock_title: "🔒 Bloqueo Preferente 24H (Verificado)", lock_desc: "Bloquea la propiedad temporalmente a coste cero:",
-                lbl_nombre: "Nombre Completo", lbl_tel: "Teléfono (+34 fijo)", lbl_email: "Correo Electrónico",
+                lock_title: "🔒 Bloqueo 24H o Contacto Directo", lock_desc: "Introduce tus datos (prefijo internacional editable) para bloquear 24h o abrir consulta con Elena:",
+                lbl_nombre: "Nombre Completo", lbl_tel: "Teléfono (Prefijo País + Número)", lbl_email: "Correo Electrónico",
                 lbl_hipoteca_pregunta: "¿Necesitas tramitar hipoteca para la compra?",
                 lbl_no_hipoteca: "No / Fondos Propios", lbl_si_hipoteca: "Sí, necesito hipoteca",
-                msg_no_hipotecable: "⚠️ <strong>Importante:</strong> Requiere compra con <strong>fondos propios</strong>. Solicita tu Hipoteca Pre-Aprobada abajo:",
-                btn_bloquear: "✨ Validar & Bloquear 24h",
+                msg_no_hipotecable: "⚠️ <strong>Importante:</strong> Esta operación requiere compra con <strong>fondos propios</strong>. Si buscas hipoteca para otra propiedad, solicítala abajo:",
+                btn_bloquear: "🔒 Bloquear 24h", btn_contactar: "💬 Contactar (Elena)",
                 btn_redir_hipoteca: "💳 Solicitar Hipoteca Pre-Aprobada",
-                toast_msg: "¡Validación en curso! Bloqueo registrado.",
+                toast_msg: "¡Solicitud procesada! Elena ha cargado tu expediente.",
                 elena_name: "Elena · AI Advisor Level.immo",
-                elena_status: "● En línea (Contexto Les Mallades cargado)",
-                elena_welcome: "¡Hola! Soy Elena, tu asesora personal en Level.immo. Tengo todo el expediente de Partida Les Mallades (89k Llaves en Mano / 69,9k Termínala tú, 3 IBIs catastrales y condiciones de compra). ¿En qué te puedo ayudar hoy?",
+                elena_status: "● En línea (Expediente REF2026102600060 cargado)",
+                elena_welcome: "¡Hola! Soy Elena, tu asesora personal en Level.immo. Tengo todo el expediente de Partida Les Mallades (Precio de Venta 75.000 €, estudio económico de costes, 3 IBIs catastrales y condiciones de compra). ¿En qué te puedo ayudar hoy?",
                 btn_enviar: "Enviar"
             },
             ca: {
                 hero_badge: "🌟 Exclusiva Level.immo",
                 hero_title: "Finca Rústica amb Casa de Fusta a Alcanar",
-                hero_desc: "1.760 m² de parcel·la amb oliveres productives, llum, aigua de pou, 100% habitable.",
+                hero_desc: "1.760 m² de parcel·la amb oliveres productives, llum, aigua de pou i 100% habitable.",
                 sec_math_title: "🔐 Verificació de Seguretat (Anti-Bots)",
                 hero_btn: "⚡ Accedir",
                 legal_text: "En accedir, accepta el nostre",
-                legal_link: "Avís Legal i Política de Privadesa",
+                legal_link: "📋 Avís Legal i Política de Privadesa",
                 plano_badge: "Plànol Oficial de Distribució",
                 hero_footer: "Partida Les Mallades · Alcanar",
-                nav_info: "Informació", nav_ubicacion: "Ubicació", nav_precio: "Preu & Cadastre", nav_advisor: "Xat Elena", nav_bloqueo: "Bloquejar 24h",
+                nav_info: "Informació", nav_ubicacion: "Ubicació", nav_precio: "Preu & Costos", nav_advisor: "Xat Elena", nav_bloqueo: "Bloquejar 24h",
                 card_info_title: "🏠 Estat Actual, Distribució & Comparativa",
                 opt_label: "✨ Efecte Comparador:",
                 opt_cocina: "🔄 Cuina", opt_hab1: "🔄 Hab. 1", opt_hab2: "🔄 Hab. 2",
+                cap_portada: "Façana Principal de la Finca", cap_plano: "Plànol Oficial de Distribució", cap_recibidor: "Passadís de Distribució",
+                cap_cocina_vacia: "Cuina (Estat Actual Buit)", cap_cocina_antes: "Cuina Equipada (Abans)",
+                cap_hab1_vacia: "Habitació 1 (Buida)", cap_hab1_antes: "Habitació 1 Moblada (Abans)",
+                cap_hab2_vacia: "Habitació 2 (Buida)", cap_hab2_antes: "Habitació 2 Moblada (Abans)",
+                cap_olivos: "Oliveres Productives (150L/any)", cap_limites: "Perímetre Marcat (1.760 m²)", cap_mapa: "Mapa d'Ubicació", cap_aerea: "Vista Aèria",
                 card_info_desc: "Caseta de fusta acollidora de 2 habitacions. Actualment buida per personalitzar. Llum i aigua de pou.",
-                card_ubi_title: "📍 Ubicació & Entorn",
+                card_ubi_title: "📍 Ubicació, Parcel·la & Perímetre",
                 card_ubi_desc: "Ubicació excel·lent a Partida Les Mallades (Alcanar). A 4 min del supermercat.",
-                card_price_title: "💰 Valoració & Opcions de Compra",
-                btn_llaves: "Claus en Mà (89k)", btn_personal: "Acaba-la Tu (69,9k)",
-                desc_llaves: "Inclou instal·lació completa de bany nou i cuina equipada.",
-                desc_personal: "Opció 'Acaba-la tu': ideal per estalvi directe.",
+                card_price_title: "💰 Preu de Venda & Estudi Econòmic",
+                btn_venta: "Preu de Venda", btn_estudio: "Estudi Econòmic i de Costos",
+                desc_venta: "⚠️ No inclou despeses de compra ni impostos (Notaria, ITP 10% i Registre de la Propietat no inclosos).",
+                est_adq: "Preu d'Adquisició (Venda):", est_itp: "Impost ITP (10%):", est_not: "Notaria i Registre de la Propietat (est.):",
+                est_pers_title: "🛠️ Personalitza la teva estimació d'acabats:",
+                est_bano: "+ Pressupost Bany:", est_cocina: "+ Pressupost Cuina:", est_ext: "+ Pressupost Exteriors:",
+                est_total: "SUMA TOTAL COST REAL:",
                 mini_cat_title: "📋 Resum Cadastral & Avantatge Fiscal (3 IBIs)",
                 cat_sup: "Parcel·la:", cat_viv: "Habitatge:", cat_alm: "Magatzem:", cat_agr: "Agrari:",
                 ibi_strong_points: "✅ <strong>Punt Fort Legal:</strong> Paga <strong>1 IBI rústic + 2 IBIs urbans residencials</strong>.",
-                lock_title: "🔒 Bloqueig Preferent 24H", lock_desc: "Bloqueja la propietat temporalment a cost zero:",
-                lbl_nombre: "Nom Complet", lbl_tel: "Telèfon (+34)", lbl_email: "Correu Electrònic",
+                lock_title: "🔒 Bloqueig 24H o Contacte", lock_desc: "Introdueix les teves dades per bloquejar 24h o parlar amb l'Elena:",
+                lbl_nombre: "Nom Complet", lbl_tel: "Telèfon (Prefix + Número)", lbl_email: "Correu Electrònic",
                 lbl_hipoteca_pregunta: "Necessites hipoteca?",
                 lbl_no_hipoteca: "No / Fons Propis", lbl_si_hipoteca: "Sí, necessito hipoteca",
                 msg_no_hipotecable: "⚠️ <strong>Important:</strong> Requereix <strong>fons propis</strong>.",
-                btn_bloquear: "✨ Validar & Bloquejar 24h",
+                btn_bloquear: "🔒 Bloquejar 24h", btn_contactar: "💬 Contactar (Elena)",
                 btn_redir_hipoteca: "💳 Sol·licitar Hipoteca Pre-Aprovada",
-                toast_msg: "¡Validació en curs!",
+                toast_msg: "¡Sol·licitud enviada!",
                 elena_name: "Elena · AI Advisor Level.immo",
-                elena_status: "● En línia",
-                elena_welcome: "¡Hola! Sóc la Elena, la teva assessora a Level.immo. Com et puc ajudar?",
+                elena_status: "● En línia (REF2026102600060)",
+                elena_welcome: "¡Hola! Sóc l'Elena, la teva assessora a Level.immo. Tinc l'expedient de Les Mallades (Preu de Venda 75.000 €). Com et puc ajudar?",
                 btn_enviar: "Enviar"
             },
             en: {
@@ -600,50 +815,58 @@
                 sec_math_title: "🔐 Security Verification (Anti-Bots)",
                 hero_btn: "⚡ Access",
                 legal_text: "By accessing, you accept our",
-                legal_link: "Legal Notice & Privacy Policy",
+                legal_link: "📋 Legal Notice & Privacy Policy",
                 plano_badge: "Official Floor Plan Layout",
                 hero_footer: "Partida Les Mallades · Alcanar",
-                nav_info: "Information", nav_ubicacion: "Location", nav_precio: "Price & Cadastre", nav_advisor: "Elena Chat", nav_bloqueo: "Lock 24h",
+                nav_info: "Information", nav_ubicacion: "Location", nav_precio: "Price & Costs", nav_advisor: "Elena Chat", nav_bloqueo: "Lock 24h",
                 card_info_title: "🏠 Current Status & Comparison",
                 opt_label: "✨ Comparator:",
                 opt_cocina: "🔄 Kitchen", opt_hab1: "🔄 Bed 1", opt_hab2: "🔄 Bed 2",
+                cap_portada: "Main Facade", cap_plano: "Official Floor Plan", cap_recibidor: "Hallway",
+                cap_cocina_vacia: "Kitchen (Current Empty)", cap_cocina_antes: "Equipped Kitchen (Before)",
+                cap_hab1_vacia: "Bedroom 1 (Empty)", cap_hab1_antes: "Bedroom 1 (Before)",
+                cap_hab2_vacia: "Bedroom 2 (Empty)", cap_hab2_antes: "Bedroom 2 (Before)",
+                cap_olivos: "Olive Trees (150L/year)", cap_limites: "Marked Plot Boundaries (1,760 sqm)", cap_mapa: "Location Map", cap_aerea: "Aerial View",
                 card_info_desc: "Cozy wooden house with 2 double bedrooms. Empty and ready to customize.",
-                card_ubi_title: "📍 Location",
+                card_ubi_title: "📍 Location, Plot & Boundaries",
                 card_ubi_desc: "Excellent location in Partida Les Mallades (Alcanar). 4 min from supermarket.",
-                card_price_title: "💰 Valuation & Purchase Options",
-                btn_llaves: "Turnkey (89k)", btn_personal: "Finish it Yourself (69.9k)",
-                desc_llaves: "Includes full bathroom and equipped kitchen installation.",
-                desc_personal: "'Finish it yourself' option for direct savings.",
+                card_price_title: "💰 Sale Price & Economic Study",
+                btn_venta: "Sale Price", btn_estudio: "Economic & Cost Study",
+                desc_venta: "⚠️ Does not include purchase costs or taxes (Notary, 10% ITP Transfer Tax, and Land Registry not included).",
+                est_adq: "Acquisition Price (Sale):", est_itp: "Transfer Tax ITP (10%):", est_not: "Notary & Land Registry (est.):",
+                est_pers_title: "🛠️ Customize your finishings estimate:",
+                est_bano: "+ Bathroom Budget:", est_cocina: "+ Kitchen Budget:", est_ext: "+ Exterior / Varnish Budget:",
+                est_total: "TOTAL REAL COST:",
                 mini_cat_title: "📋 Cadastre Summary (3 Taxes)",
                 cat_sup: "Plot:", cat_viv: "House:", cat_alm: "Warehouse:", cat_agr: "Rustic:",
-                ibi_strong_points: "✅ <strong>Key Advantage:</strong> Pays <strong>1 rustic tax + 2 urban taxes</strong>.",
-                lock_title: "🔒 24H Priority Lock", lock_desc: "Temporarily lock the property at zero cost:",
-                lbl_nombre: "Full Name", lbl_tel: "Phone (+34)", lbl_email: "Email Address",
+                ibi_strong_points: "✅ <strong>Key Advantage:</strong> Pays <strong>1 rustic tax + 2 urban residential taxes</strong>.",
+                lock_title: "🔒 24H Lock or Direct Contact", lock_desc: "Enter your details (editable country prefix) to lock for 24h or chat with Elena:",
+                lbl_nombre: "Full Name", lbl_tel: "Phone (Country Prefix + Number)", lbl_email: "Email Address",
                 lbl_hipoteca_pregunta: "Do you need a mortgage?",
                 lbl_no_hipoteca: "No / Cash Funds", lbl_si_hipoteca: "Yes, I need a mortgage",
                 msg_no_hipotecable: "⚠️ <strong>Important:</strong> Requires <strong>cash funds</strong>.",
-                btn_bloquear: "✨ Validate & Lock 24h",
+                btn_bloquear: "🔒 Lock 24h", btn_contactar: "💬 Contact (Elena)",
                 btn_redir_hipoteca: "💳 Request Pre-Approved Mortgage",
-                toast_msg: "Validation in progress!",
+                toast_msg: "Request sent!",
                 elena_name: "Elena · AI Advisor Level.immo",
-                elena_status: "● Online",
-                elena_welcome: "Hello! I'm Elena, your AI Advisor at Level.immo. How can I help you today?",
+                elena_status: "● Online (REF2026102600060)",
+                elena_welcome: "Hello! I'm Elena, your AI Advisor at Level.immo. Sale Price is 75,000 € (taxes not included). How can I help you today?",
                 btn_enviar: "Send"
             },
             fr: {
-                hero_badge: "🌟 Exclusif Level.immo", hero_title: "Propriété Rustique avec Maison en Bois", hero_desc: "Terrain de 1 760 m² avec oliviers.", sec_math_title: "🔐 Vérification de Sécurité", hero_btn: "⚡ Accéder", legal_text: "En accédant, vous acceptez notre", legal_link: "Mentions Légales", plano_badge: "Plan de Distribution", hero_footer: "Alcanar", nav_info: "Info", nav_ubicacion: "Emplacement", nav_precio: "Prix", nav_advisor: "Chat Elena", nav_bloqueo: "Bloquer", card_info_title: "🏠 État Actuel", opt_label: "✨ Comparateur :", opt_cocina: "🔄 Cuisine", opt_hab1: "🔄 Ch. 1", opt_hab2: "🔄 Ch. 2", card_info_desc: "Maison en bois chaleureuse.", card_ubi_title: "📍 Emplacement", card_ubi_desc: "Excellent emplacement.", card_price_title: "💰 Prix", btn_llaves: "Clé en Main (89k)", btn_personal: "Finissez-la (69,9k)", desc_llaves: "Salle de bains et cuisine.", desc_personal: "Option libre.", mini_cat_title: "📋 Résumé Cadastral", cat_sup: "Parcelle:", cat_viv: "Maison:", cat_alm: "Entrepôt:", cat_agr: "Rustique:", ibi_strong_points: "✅ <strong>Avantage :</strong> 3 taxes.", lock_title: "🔒 Verrouillage", lock_desc: "Verrouillez sans frais:", lbl_nombre: "Nom", lbl_tel: "Téléphone", lbl_email: "E-mail", lbl_hipoteca_pregunta: "Prêt immobilier ?", lbl_no_hipoteca: "Non / Fonds Propres", lbl_si_hipoteca: "Oui", msg_no_hipotecable: "⚠️ <strong>Important :</strong> Fonds propres requis.", btn_bloquear: "✨ Valider", btn_redir_hipoteca: "💳 Demander Prêt", toast_msg: "Validation en cours !", elena_name: "Elena", elena_status: "● En ligne", elena_welcome: "Bonjour ! Je suis Elena.", btn_enviar: "Envoyer"
+                hero_badge: "🌟 Exclusif Level.immo", hero_title: "Propriété Rustique avec Maison en Bois", hero_desc: "Terrain de 1 760 m² avec oliviers.", sec_math_title: "🔐 Vérification de Sécurité", hero_btn: "⚡ Accéder", legal_text: "En accédant, vous acceptez nos", legal_link: "📋 Mentions Légales", plano_badge: "Plan de Distribution", hero_footer: "Alcanar", nav_info: "Info", nav_ubicacion: "Emplacement", nav_precio: "Prix & Coûts", nav_advisor: "Chat Elena", nav_bloqueo: "Bloquer 24h", card_info_title: "🏠 État Actuel", opt_label: "✨ Comparateur :", opt_cocina: "🔄 Cuisine", opt_hab1: "🔄 Ch. 1", opt_hab2: "🔄 Ch. 2", cap_portada: "Façade Principale", cap_plano: "Plan Officiel", cap_recibidor: "Couloir", cap_cocina_vacia: "Cuisine Vide", cap_cocina_antes: "Cuisine Équipée", cap_hab1_vacia: "Chambre 1 Vide", cap_hab1_antes: "Chambre 1 Meublée", cap_hab2_vacia: "Chambre 2 Vide", cap_hab2_antes: "Chambre 2 Meublée", cap_olivos: "Oliviers", cap_limites: "Limites de la Parcelle", cap_mapa: "Carte d'Emplacement", cap_aerea: "Vue Aérienne", card_info_desc: "Maison en bois chaleureuse.", card_ubi_title: "📍 Emplacement & Limites", card_ubi_desc: "Excellent emplacement.", card_price_title: "💰 Prix de Vente & Étude des Coûts", btn_venta: "Prix de Vente", btn_estudio: "Étude Économique et Coûts", desc_venta: "⚠️ Hors frais d'achat et taxes (Notaire, ITP 10% et Registre Foncier non inclus).", est_adq: "Prix d'Acquisition :", est_itp: "Impôt ITP (10%) :", est_not: "Notaire et Registre (est.) :", est_pers_title: "🛠️ Budget travaux estimé :", est_bano: "+ Budget Salle de Bain :", est_cocina: "+ Budget Cuisine :", est_ext: "+ Budget Extérieur :", est_total: "COÛT TOTAL RÉEL :", mini_cat_title: "📋 Résumé Cadastral", cat_sup: "Parcelle:", cat_viv: "Maison:", cat_alm: "Entrepôt:", cat_agr: "Rustique:", ibi_strong_points: "✅ <strong>Avantage :</strong> 3 taxes IBI.", lock_title: "🔒 Verrouillage 24H ou Contact", lock_desc: "Entrez vos coordonnées (préfixe international modifiable) :", lbl_nombre: "Nom Complet", lbl_tel: "Téléphone (Préfixe + Numéro)", lbl_email: "E-mail", lbl_hipoteca_pregunta: "Prêt immobilier ?", lbl_no_hipoteca: "Non / Fonds Propres", lbl_si_hipoteca: "Oui", msg_no_hipotecable: "⚠️ <strong>Important :</strong> Fonds propres requis.", btn_bloquear: "🔒 Bloquer 24h", btn_contactar: "💬 Contacter (Elena)", btn_redir_hipoteca: "💳 Demander Prêt", toast_msg: "Envoyé !", elena_name: "Elena", elena_status: "● En ligne", elena_welcome: "Bonjour ! Je suis Elena. Prix de vente : 75 000 €.", btn_enviar: "Envoyer"
             },
             de: {
-                hero_badge: "🌟 Exklusiv", hero_title: "Rustikales Anwesen mit Holzhaus", hero_desc: "1.760 m² Grundstück.", sec_math_title: "🔐 Sicherheitsprüfung", hero_btn: "⚡ Zugriff", legal_text: "Hinweis:", legal_link: "Impressum", plano_badge: "Grundriss", hero_footer: "Alcanar", nav_info: "Info", nav_ubicacion: "Lage", nav_precio: "Preis", nav_advisor: "Elena Chat", nav_bloqueo: "Sperren", card_info_title: "🏠 Zustand", opt_label: "✨ Vergleich:", opt_cocina: "🔄 Küche", opt_hab1: "🔄 Zi. 1", opt_hab2: "🔄 Zi. 2", card_info_desc: "Gemütliches Holzhaus.", card_ubi_title: "📍 Lage", card_ubi_desc: "Top Lage.", card_price_title: "💰 Preis", btn_llaves: "Schlüsselfertig (89k)", btn_personal: "Selbst (69,9k)", desc_llaves: "Inklusive.", desc_personal: "Eigenregie.", mini_cat_title: "📋 Kataster", cat_sup: "Grundstück:", cat_viv: "Haus:", cat_alm: "Lager:", cat_agr: "Rustikal:", ibi_strong_points: "✅ <strong>Vorteil:</strong> 3 Steuern.", lock_title: "🔒 Sperren", lock_desc: "Kostenlos sperren:", lbl_nombre: "Name", lbl_tel: "Telefon", lbl_email: "E-Mail", lbl_hipoteca_pregunta: "Hypothek?", lbl_no_hipoteca: "Nein / Eigenkapital", lbl_si_hipoteca: "Ja", msg_no_hipotecable: "⚠️ <strong>Wichtig:</strong> Eigenkapital.", btn_bloquear: "✨ Bestätigen", btn_redir_hipoteca: "💳 Hypothek", toast_msg: "Wird verarbeitet!", elena_name: "Elena", elena_status: "● Online", elena_welcome: "Hallo! Ich bin Elena.", btn_enviar: "Senden"
+                hero_badge: "🌟 Exklusiv", hero_title: "Rustikales Anwesen mit Holzhaus", hero_desc: "1.760 m² Grundstück.", sec_math_title: "🔐 Sicherheitsprüfung", hero_btn: "⚡ Zugriff", legal_text: "Hinweis:", legal_link: "📋 Impressum & Datenschutz", plano_badge: "Grundriss", hero_footer: "Alcanar", nav_info: "Info", nav_ubicacion: "Lage", nav_precio: "Preis & Kosten", nav_advisor: "Elena Chat", nav_bloqueo: "24h Sperren", card_info_title: "🏠 Zustand", opt_label: "✨ Vergleich:", opt_cocina: "🔄 Küche", opt_hab1: "🔄 Zi. 1", opt_hab2: "🔄 Zi. 2", cap_portada: "Hauptfassade", cap_plano: "Grundriss", cap_recibidor: "Flur", cap_cocina_vacia: "Küche Leer", cap_cocina_antes: "Küche Vorher", cap_hab1_vacia: "Zimmer 1 Leer", cap_hab1_antes: "Zimmer 1 Vorher", cap_hab2_vacia: "Zimmer 2 Leer", cap_hab2_antes: "Zimmer 2 Vorher", cap_olivos: "Olivenbäume", cap_limites: "Grundstücksgrenzen", cap_mapa: "Lagekarte", cap_aerea: "Luftbild", card_info_desc: "Gemütliches Holzhaus.", card_ubi_title: "📍 Lage & Grenzen", card_ubi_desc: "Top Lage.", card_price_title: "💰 Verkaufspreis & Kostenstudie", btn_venta: "Verkaufspreis", btn_estudio: "Wirtschafts- & Kostenstudie", desc_venta: "⚠️ Ohne Kaufnebenkosten und Steuern (Notar, 10% Grunderwerbsteuer ITP und Grundbuch nicht enthalten).", est_adq: "Kaufpreis:", est_itp: "Steuer ITP (10%):", est_not: "Notar & Grundbuch (ca.):", est_pers_title: "🛠️ Individuelle Ausbaukosten:", est_bano: "+ Budget Bad:", est_cocina: "+ Budget Küche:", est_ext: "+ Budget Außenbereich:", est_total: "GESAMTKOSTEN REAL:", mini_cat_title: "📋 Kataster", cat_sup: "Grundstück:", cat_viv: "Haus:", cat_alm: "Lager:", cat_agr: "Rustikal:", ibi_strong_points: "✅ <strong>Vorteil:</strong> 3 IBI-Steuern.", lock_title: "🔒 24h Sperren oder Kontakt", lock_desc: "Daten eingeben (Ländervorwahl änderbar):", lbl_nombre: "Name", lbl_tel: "Telefon (Vorwahl + Nummer)", lbl_email: "E-Mail", lbl_hipoteca_pregunta: "Hypothek?", lbl_no_hipoteca: "Nein / Eigenkapital", lbl_si_hipoteca: "Ja", msg_no_hipotecable: "⚠️ <strong>Wichtig:</strong> Eigenkapital erforderlich.", btn_bloquear: "🔒 24h Sperren", btn_contactar: "💬 Kontakt (Elena)", btn_redir_hipoteca: "💳 Hypothek anfordern", toast_msg: "Gesendet!", elena_name: "Elena", elena_status: "● Online", elena_welcome: "Hallo! Ich bin Elena. Verkaufspreis: 75.000 €.", btn_enviar: "Senden"
             },
             it: {
-                hero_badge: "🌟 Esclusiva", hero_title: "Proprietà Rustica", hero_desc: "1.760 m² di terreno.", sec_math_title: "🔐 Verifica", hero_btn: "⚡ Accedi", legal_text: "Note:", legal_link: "Note Legali", plano_badge: "Planimetria", hero_footer: "Alcanar", nav_info: "Info", nav_ubicacion: "Posizione", nav_precio: "Prezzo", nav_advisor: "Chat Elena", nav_bloqueo: "Blocca", card_info_title: "🏠 Stato", opt_label: "✨ Confronto:", opt_cocina: "🔄 Cucina", opt_hab1: "🔄 Cam. 1", opt_hab2: "🔄 Cam. 2", card_info_desc: "Casetta in legno.", card_ubi_title: "📍 Posizione", card_ubi_desc: "Ottima.", card_price_title: "💰 Prezzo", btn_llaves: "Chiavi in Mano (89k)", btn_personal: "Finiscila (69,9k)", desc_llaves: "Incluso.", desc_personal: "Fai da te.", mini_cat_title: "📋 Catasto", cat_sup: "Terreno:", cat_viv: "Casa:", cat_alm: "Magazzino:", cat_agr: "Rustico:", ibi_strong_points: "✅ <strong>Vantaggio:</strong> 3 IBI.", lock_title: "🔒 Blocco", lock_desc: "Blocca gratis:", lbl_nombre: "Nome", lbl_tel: "Telefono", lbl_email: "Email", lbl_hipoteca_pregunta: "Mutuo?", lbl_no_hipoteca: "No / Fondi Propri", lbl_si_hipoteca: "Sì", msg_no_hipotecable: "⚠️ <strong>Importante:</strong> Fondi propri.", btn_bloquear: "✨ Valida", btn_redir_hipoteca: "💳 Richiedi Mutuo", toast_msg: "In corso!", elena_name: "Elena", elena_status: "● Online", elena_welcome: "Ciao! Sono Elena.", btn_enviar: "Invia"
+                hero_badge: "🌟 Esclusiva", hero_title: "Proprietà Rustica", hero_desc: "1.760 m² di terreno.", sec_math_title: "🔐 Verifica", hero_btn: "⚡ Accedi", legal_text: "Note:", legal_link: "📋 Note Legali", plano_badge: "Planimetria", hero_footer: "Alcanar", nav_info: "Info", nav_ubicacion: "Posizione", nav_precio: "Prezzo & Costi", nav_advisor: "Chat Elena", nav_bloqueo: "Blocca 24h", card_info_title: "🏠 Stato", opt_label: "✨ Confronto:", opt_cocina: "🔄 Cucina", opt_hab1: "🔄 Cam. 1", opt_hab2: "🔄 Cam. 2", cap_portada: "Facciata Principale", cap_plano: "Planimetria", cap_recibidor: "Corridoio", cap_cocina_vacia: "Cucina Vuota", cap_cocina_antes: "Cucina Prima", cap_hab1_vacia: "Camera 1 Vuota", cap_hab1_antes: "Camera 1 Prima", cap_hab2_vacia: "Camera 2 Vuota", cap_hab2_antes: "Camera 2 Prima", cap_olivos: "Ulivi", cap_limites: "Confini del Terreno", cap_mapa: "Mappa", cap_aerea: "Vista Aerea", card_info_desc: "Casetta in legno.", card_ubi_title: "📍 Posizione & Confini", card_ubi_desc: "Ottima posizione.", card_price_title: "💰 Prezzo di Vendita & Studio Costi", btn_venta: "Prezzo di Vendita", btn_estudio: "Studio Economico e Costi", desc_venta: "⚠️ Esclusi costi d'acquisto e imposte (Notaio, ITP 10% e Registro Immobiliare non inclusi).", est_adq: "Prezzo di Acquisto:", est_itp: "Imposta ITP (10%):", est_not: "Notaio e Registro (stima):", est_pers_title: "🛠️ Stima finiture personalizzabile:", est_bano: "+ Budget Bagno:", est_cocina: "+ Budget Cucina:", est_ext: "+ Budget Esterni:", est_total: "TOTALE COSTO REALE:", mini_cat_title: "📋 Catasto", cat_sup: "Terreno:", cat_viv: "Casa:", cat_alm: "Magazzino:", cat_agr: "Rustico:", ibi_strong_points: "✅ <strong>Vantaggio:</strong> 3 IBI.", lock_title: "🔒 Blocco 24H o Contatto", lock_desc: "Inserisci i dati (prefisso internazionale modificabile):", lbl_nombre: "Nome", lbl_tel: "Telefono (Prefisso + Numero)", lbl_email: "Email", lbl_hipoteca_pregunta: "Mutuo?", lbl_no_hipoteca: "No / Fondi Propri", lbl_si_hipoteca: "Sì", msg_no_hipotecable: "⚠️ <strong>Importante:</strong> Fondi propri.", btn_bloquear: "🔒 Blocca 24h", btn_contactar: "💬 Contatta (Elena)", btn_redir_hipoteca: "💳 Richiedi Mutuo", toast_msg: "Inviato!", elena_name: "Elena", elena_status: "● Online", elena_welcome: "Ciao! Sono Elena. Prezzo di vendita: 75.000 €.", btn_enviar: "Invia"
             },
             ar: {
-                hero_badge: "حصري", hero_title: "عقار ريفي", hero_desc: "1760 متر مربع", sec_math_title: "تحقق أمني", hero_btn: "دخول", legal_text: "قبول", legal_link: "الشروط", plano_badge: "المخطط", hero_footer: "ألكانار", nav_info: "معلومات", nav_ubicacion: "الموقع", nav_precio: "السعر", nav_advisor: "ايلينا", nav_bloqueo: "قفل", card_info_title: "الحالة", opt_label: "مقارنة:", opt_cocina: "مطبخ", opt_hab1: "غرفة 1", opt_hab2: "غرفة 2", card_info_desc: "منزل خشبي.", card_ubi_title: "الموقع", card_ubi_desc: "ممتاز", card_price_title: "السعر", btn_llaves: "جاهز (89k)", btn_personal: "أكمله (69.9k)", desc_llaves: "شامل", desc_personal: "ذاتي", mini_cat_title: "السجل", cat_sup: "الأرض:", cat_viv: "المنزل:", cat_alm: "المستودع:", cat_agr: "ريفي:", ibi_strong_points: "ميزة قانونية", lock_title: "قفل", lock_desc: "قفل مجاني:", lbl_nombre: "الاسم", lbl_tel: "الهاتف", lbl_email: "البريد", lbl_hipoteca_pregunta: "تمويل؟", lbl_no_hipoteca: "لا", lbl_si_hipoteca: "نعم", msg_no_hipotecable: "أموال خاصة", btn_bloquear: "تحقق", btn_redir_hipoteca: "طلب تمويل", toast_msg: "تم", elena_name: "إيلينا", elena_status: "متصل", elena_welcome: "مرحباً! أنا إيلينا.", btn_enviar: "إرسال"
+                hero_badge: "حصري", hero_title: "عقار ريفي", hero_desc: "1760 متر مربع", sec_math_title: "تحقق أمني", hero_btn: "دخول", legal_text: "قبول", legal_link: "📋 الشروط القانونية", plano_badge: "المخطط", hero_footer: "ألكانار", nav_info: "معلومات", nav_ubicacion: "الموقع", nav_precio: "السعر والتكاليف", nav_advisor: "ايلينا", nav_bloqueo: "حجز", card_info_title: "الحالة", opt_label: "مقارنة:", opt_cocina: "مطبخ", opt_hab1: "غرفة 1", opt_hab2: "غرفة 2", cap_portada: "الواجهة الرئيسية", cap_plano: "المخطط", cap_recibidor: "الممر", cap_cocina_vacia: "مطبخ فارغ", cap_cocina_antes: "مطبخ مجهز", cap_hab1_vacia: "غرفة 1", cap_hab1_antes: "غرفة 1 مفروشة", cap_hab2_vacia: "غرفة 2", cap_hab2_antes: "غرفة 2 مفروشة", cap_olivos: "أشجار الزيتون", cap_limites: "حدود الأرض", cap_mapa: "الخريطة", cap_aerea: "صورة جوية", card_info_desc: "منزل خشبي.", card_ubi_title: "📍 الموقع والحدود", card_ubi_desc: "موقع ممتاز", card_price_title: "💰 سعر البيع والدراسة الاقتصادية", btn_venta: "سعر البيع", btn_estudio: "الدراسة الاقتصادية والتكاليف", desc_venta: "⚠️ لا يشمل مصاريف الشراء والضرائب (كاتب العدل، ضريبة ITP 10% والسجل العقاري غير مشمولة).", est_adq: "سعر الشراء:", est_itp: "ضريبة ITP (10%):", est_not: "كاتب العدل والسجل:", est_pers_title: "🛠️ تكلفة التشطيبات التقديرية:", est_bano: "+ ميزانية الحمام:", est_cocina: "+ ميزانية المطبخ:", est_ext: "+ ميزانية الخارج:", est_total: "إجمالي التكلفة الحقيقية:", mini_cat_title: "السجل", cat_sup: "الأرض:", cat_viv: "المنزل:", cat_alm: "المستودع:", cat_agr: "ريفي:", ibi_strong_points: "ميزة قانونية", lock_title: "حجز أو تواصل", lock_desc: "أدخل بياناتك:", lbl_nombre: "الاسم", lbl_tel: "الهاتف", lbl_email: "البريد", lbl_hipoteca_pregunta: "تمويل؟", lbl_no_hipoteca: "لا", lbl_si_hipoteca: "نعم", msg_no_hipotecable: "أموال خاصة", btn_bloquear: "🔒 حجز 24 ساعة", btn_contactar: "💬 تواصل مع إيلينا", btn_redir_hipoteca: "طلب تمويل", toast_msg: "تم", elena_name: "إيلينا", elena_status: "متصل", elena_welcome: "مرحباً! أنا إيلينا. سعر البيع 75,000 يورو.", btn_enviar: "إرسال"
             },
             zh: {
-                hero_badge: "独家", hero_title: "乡村庄园", hero_desc: "1,760平方米土地", sec_math_title: "安全验证", hero_btn: "进入", legal_text: "接受", legal_link: "法律声明", plano_badge: "平面图", hero_footer: "阿尔卡纳尔", nav_info: "信息", nav_ubicacion: "位置", nav_precio: "价格", nav_advisor: "Elena 聊天", nav_bloqueo: "锁定", card_info_title: "现状", opt_label: "对比:", opt_cocina: "厨房", opt_hab1: "卧室1", opt_hab2: "卧室2", card_info_desc: "温馨木屋", card_ubi_title: "位置", card_ubi_desc: "极佳位置", card_price_title: "价格", btn_llaves: "拎包入住 (8.9万)", btn_personal: "自主装修 (6.99万)", desc_llaves: "包含全套", desc_personal: "自主设计", mini_cat_title: "地籍摘要", cat_sup: "地块:", cat_viv: "住宅:", cat_alm: "仓库:", cat_agr: "农业:", ibi_strong_points: "法律优势", lock_title: "锁定", lock_desc: "免费锁定:", lbl_nombre: "姓名", lbl_tel: "电话", lbl_email: "邮箱", lbl_hipoteca_pregunta: "需要贷款吗？", lbl_no_hipoteca: "不需要", lbl_si_hipoteca: "需要", msg_no_hipotecable: "需自有资金", btn_bloquear: "验证并锁定", btn_redir_hipoteca: "申请贷款", toast_msg: "处理中", elena_name: "Elena", elena_status: "在线", elena_welcome: "你好！我是 Elena。", btn_enviar: "发送"
+                hero_badge: "独家", hero_title: "乡村庄园", hero_desc: "1,760平方米土地", sec_math_title: "安全验证", hero_btn: "进入", legal_text: "接受", legal_link: "📋 法律声明与隐私政策", plano_badge: "平面图", hero_footer: "阿尔卡纳尔", nav_info: "信息", nav_ubicacion: "位置", nav_precio: "价格与成本", nav_advisor: "Elena 聊天", nav_bloqueo: "锁定", card_info_title: "现状", opt_label: "对比:", opt_cocina: "厨房", opt_hab1: "卧室1", opt_hab2: "卧室2", cap_portada: "主立面", cap_plano: "户型平面图", cap_recibidor: "走廊", cap_cocina_vacia: "空置厨房", cap_cocina_antes: "装修前厨房", cap_hab1_vacia: "卧室1", cap_hab1_antes: "卧室1(前)", cap_hab2_vacia: "卧室2", cap_hab2_antes: "卧室2(前)", cap_olivos: "橄榄树", cap_limites: "地块边界", cap_mapa: "位置地图", cap_aerea: "航拍图", card_info_desc: "温馨木屋", card_ubi_title: "📍 位置与地块边界", card_ubi_desc: "极佳位置", card_price_title: "💰 售价与经济成本测算", btn_venta: "销售价格", btn_estudio: "经济与成本测算", desc_venta: "⚠️ 不含购房费用及税费（公证费、10%产权转让税ITP及房产登记费不包含在内）。", est_adq: "购置价格 (售价)：", est_itp: "转让税 ITP (10%)：", est_not: "公证与房产登记费 (预估)：", est_pers_title: "🛠️ 自定义装修预算：", est_bano: "+ 浴室预算：", est_cocina: "+ 厨房预算：", est_ext: "+ 室外/木蜡油预算：", est_total: "真实总成本合计：", mini_cat_title: "地籍摘要", cat_sup: "地块:", cat_viv: "住宅:", cat_alm: "仓库:", cat_agr: "农业:", ibi_strong_points: "法律优势", lock_title: "24小时锁定或联系", lock_desc: "输入您的联系信息（国家代码可修改）：", lbl_nombre: "姓名", lbl_tel: "电话 (国家代码 + 号码)", lbl_email: "邮箱", lbl_hipoteca_pregunta: "需要贷款吗？", lbl_no_hipoteca: "不需要", lbl_si_hipoteca: "需要", msg_no_hipotecable: "需自有资金", btn_bloquear: "🔒 锁定24小时", btn_contactar: "💬 联系 Elena", btn_redir_hipoteca: "申请贷款", toast_msg: "处理中", elena_name: "Elena", elena_status: "在线", elena_welcome: "你好！我是 Elena。房产售价为 75,000 €。", btn_enviar: "发送"
             }
         };
 
@@ -668,19 +891,24 @@
                 document.getElementById('img-caption').innerText = d[currentCaptionKey];
             }
 
-            setPrecio(precioActualTipo);
             if (tieneHipoteca !== null) seleccionarHipoteca(tieneHipoteca);
         }
 
-        function enviarBloqueo(e) {
-            e.preventDefault();
-            const nombre = document.getElementById('b-nombre').value;
-            const telefonoLocal = document.getElementById('b-telefono').value;
-            const email = document.getElementById('b-email').value;
-            const telefonoCompleto = "+34" + telefonoLocal;
+        function enviarBloqueo(e, tipoAccion) {
+            if(e) e.preventDefault();
+            const form = document.getElementById('form-bloqueo');
+            if(!form.reportValidity()) return;
+
+            const nombre = document.getElementById('b-nombre').value.trim();
+            const prefijo = document.getElementById('b-prefix').value.trim() || '+34';
+            const telefonoLocal = document.getElementById('b-telefono').value.trim();
+            const email = document.getElementById('b-email').value.trim();
+            const telefonoCompleto = prefijo + " " + telefonoLocal;
+            const totalEstudio = calcularTotalEstudio();
 
             if (tieneHipoteca) {
                 const payloadHipoteca = {
+                    id_inmueble: ID_INMUEBLE,
                     propiedad: "Partida Les Mallades (Alcanar)",
                     origen: "Landing Les Mallades - Filtro Hipoteca",
                     nombre: nombre,
@@ -700,12 +928,14 @@
                 return;
             }
 
-            const payloadBloqueo = {
+            const payloadPrincipal = {
+                id_inmueble: ID_INMUEBLE,
                 propiedad: "Partida Les Mallades (Alcanar)",
                 coordenadas_internas: "40°32'29.21\" N, 0°30'06.40\" E",
                 referencias_catastrales: "0318613DF3801G0007AY, 43004A012002070000GX, 43004A012002070001H",
-                accion: "Bloqueo 24h Verificado (Fondos Propios)",
-                opcion_precio: precioActualTipo === 'llaves' ? '89.000 € (Llaves en mano)' : '69.900 € (Termínala tú)',
+                accion: tipoAccion || "Bloqueo 24h Verificado",
+                precio_venta_base: "75.000 € (Impuestos y gastos no incluidos)",
+                estimacion_coste_total_usuario: totalEstudio.toLocaleString('es-ES') + " €",
                 nombre: nombre,
                 telefono: telefonoCompleto,
                 email: email,
@@ -716,15 +946,22 @@
             fetch(WEBHOOK_PRINCIPAL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payloadBloqueo)
+                body: JSON.stringify(payloadPrincipal)
             }).catch(() => {});
+
+            // Si el usuario pulsa "Contactar con Elena", le abrimos y saludamos directamente en el Chat de Elena con sus datos cargados
+            const box = document.getElementById('chat-messages');
+            box.innerHTML += `<div class="chat-bubble elena">✅ <strong>¡Hola ${nombre}!</strong> He recibido tus datos verificados (${telefonoCompleto}) para el expediente <strong>${ID_INMUEBLE}</strong> (${tipoAccion}). ¿Quieres que revisemos juntos el desglose de costes (${totalEstudio.toLocaleString('es-ES')} €) o agendamos visita?</div>`;
+            box.scrollTop = box.scrollHeight;
+
+            if(tipoAccion === 'Contactar con Elena') {
+                document.getElementById('sec-advisor').scrollIntoView({ behavior: 'smooth' });
+                document.getElementById('chat-input').focus();
+            }
 
             const toast = document.getElementById('toast');
             toast.classList.add('show');
             setTimeout(() => toast.classList.remove('show'), 4000);
-
-            document.getElementById('form-bloqueo').reset();
-            document.getElementById('aviso-hipoteca').classList.remove('show');
         }
     </script>
 </body>
