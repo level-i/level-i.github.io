@@ -155,11 +155,12 @@
         .modal-body { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
 
         /* DISEÑO DE LA FICHA DE INMUEBLE */
-        .ficha-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid var(--border-color); padding-bottom: 15px;}
+        .ficha-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid var(--border-color); padding-bottom: 15px; flex-wrap: wrap; gap: 12px; }
         .ficha-title { font-size: 24px; color: #fff; margin: 0; }
         .ficha-price { font-size: 22px; font-weight: 800; padding: 6px 15px; border-radius: 8px; white-space: nowrap; }
         .ficha-price.active { color: var(--accent-green); background: rgba(16,185,129,0.1); }
-        .ficha-price.teaser { color: var(--accent-orange); background: rgba(245,158,11,0.1); font-size: 16px; }
+        .ficha-price.teaser { color: var(--accent-orange); background: rgba(245,158,11,0.1); font-size: 15px; }
+        .badge-validacion { display: inline-flex; align-items: center; gap: 6px; background: rgba(245, 158, 11, 0.15); border: 1px solid var(--accent-orange); color: var(--accent-orange); font-size: 12px; font-weight: 800; padding: 6px 12px; border-radius: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
         
         .ficha-gallery { display: flex; overflow-x: auto; gap: 15px; padding-bottom: 15px; margin-bottom: 25px; scroll-snap-type: x mandatory; }
         .ficha-gallery::-webkit-scrollbar { height: 8px; }
@@ -312,8 +313,11 @@
                     </div>
 
                     <div class="form-group">
-                        <label data-i18n="lbl_precio">Precio de Venta Deseado (€)</label>
-                        <input type="text" id="prop-precio" placeholder="Ej: 145.000 €" required>
+                        <label data-i18n="lbl_precio">Precio Neto Propietario (€)</label>
+                        <input type="text" id="prop-precio" placeholder="Ej: 75.000 €" required>
+                        <div style="font-size: 10.5px; color: var(--accent-gold); margin-top: 4px;" id="calc-honorarios-hint">
+                            * En la ficha se sumarán automáticamente los honorarios mínimos (6.000 € + IVA = 7.260 €).
+                        </div>
                     </div>
 
                     <div class="form-group" style="margin-top: 5px;">
@@ -379,7 +383,7 @@
         </div>
     </div>
 
-    <!-- MODAL: FICHA PÚBLICA DE INMUEBLE (DEEP LINK) -->
+    <!-- MODAL: FICHA PÚBLICA DE INMUEBLE (DEEP LINK / VISTA PREVIA) -->
     <div class="modal-overlay" id="modal-ficha-inmueble" onclick="if(event.target === this) closeModal('modal-ficha-inmueble')">
         <div class="modal-content" style="max-width: 900px; padding: 0; overflow: hidden; display: flex; flex-direction: column;">
             <button class="modal-close" onclick="closeModal('modal-ficha-inmueble')" style="background: rgba(0,0,0,0.5); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white;">&times;</button>
@@ -428,13 +432,23 @@
 
     <script>
         // ==========================================
-        // 1. CONFIGURACIÓN DE LOS WEBHOOKS (DOBLE VÍA: INGESTA + FTP FOTOS)
+        // 1. CONFIGURACIÓN DE LOS 4 WEBHOOKS OFICIALES
         // ==========================================
+        // 1. ALTA CUARENTENA (Ingesta de datos del inmueble)
         const WEBHOOK_INGESTA  = "https://hook.eu1.make.com/loy5kvv4qmnvo748fmxo2qvt48mbf986"; 
-        // Si tienes un segundo webhook dedicado para subir las 4 fotos al FTP, pon su URL aquí (por defecto apunta al mismo de ingesta con multipart):
-        const WEBHOOK_FOTOS    = "https://hook.eu1.make.com/loy5kvv4qmnvo748fmxo2qvt48mbf986"; 
+        // 2. PROCESADOR FOTOS (Subida de hasta 4 fotos al FTP con enlace provisional)
+        const WEBHOOK_FOTOS    = "https://hook.eu1.make.com/2m0es5wfi84xf539fyoko870d2jip4b8"; 
+        // 3. MERCADO REAL (Surtidor en vivo desde Lark)
         const WEBHOOK_SURTIDOR = "https://hook.eu1.make.com/bpb012er1137ocx0tcdk19muh6le4qpu"; 
+        // 4. ELENA ADVISOR (Gestión de leads e interesados)
         const WEBHOOK_ELENA    = "https://hook.eu1.make.com/3w2wmbbcc3evnvg8ajo3kjkucrd6dfkw"; 
+
+        // Honorarios mínimos Level.immo: 6.000 € Base + 21% IVA (1.260 €) = 7.260 € Brutos
+        const HONORARIOS_BASE_MIN = 6000;
+        const HONORARIOS_IVA_MIN = 1260;
+        const HONORARIOS_BRUTOS_MIN = 7260;
+
+        const STORAGE_PROVISIONAL_KEY = "level_inmuebles_provisionales_v2";
 
         // ==========================================
         // 2. UTILIDADES Y SISTEMA BÁSICO
@@ -449,6 +463,35 @@
         fetch('https://api.ipify.org?format=json').then(r => r.json()).then(data => { clienteIP = data.ip; }).catch(e => {});
         
         window.inmueblesGlobal = [];
+
+        function obtenerProvisionalesLocales() {
+            try {
+                const raw = localStorage.getItem(STORAGE_PROVISIONAL_KEY);
+                return raw ? JSON.parse(raw) : [];
+            } catch (e) {
+                return [];
+            }
+        }
+
+        function guardarProvisionalLocal(inmuebleObj) {
+            try {
+                let lista = obtenerProvisionalesLocales();
+                lista.unshift(inmuebleObj);
+                lista = lista.slice(0, 3);
+                localStorage.setItem(STORAGE_PROVISIONAL_KEY, JSON.stringify(lista));
+            } catch (e) {
+                console.warn("Almacenamiento local lleno, manteniendo en sesión actual.");
+            }
+        }
+
+        function convertirArchivoABase64(file) {
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = () => resolve(URL.createObjectURL(file));
+                reader.readAsDataURL(file);
+            });
+        }
 
         function enviarWebhookMakeJSON(evento, tipoCta = "", datosUsuario = {}, datosInmueble = {}) {
             const lang = document.getElementById('language-selector').value || "es";
@@ -474,14 +517,14 @@
         // DICCIONARIO MULTIDIOMA (MÁX. 4 FOTOS)
         // ==========================================
         const traducciones = {
-            es: { nav_demanda: "🎯 Demanda Activa", nav_mercado_real: "📡 Mercado Real", nav_gestion: "👥 Acceso a Usuarios", nav_chivatazo: "📣 Chivatazo Nacional", nav_equipos: "💼 Únete al Equipo de Advisors en tu Zona", nav_poblaciones_titulo: "📍 Servicios Presenciales en:", header_title: "Consola Central PropTech · Feed Cronológico", ingesta_titulo: "Añadir Inmueble al Radar", ingesta_desc: "Tu propiedad se previsualizará al instante y se publicará de forma anónima tras ser verificada.", lbl_zona: "Zona / Población", opt_sel: "Selecciona...", lbl_tipo: "Tipo de Inmueble", opt_apt: "Apartamento", opt_piso: "Piso", opt_ado: "Adosado", opt_cha: "Chalet", opt_loc: "Local", opt_ter: "Terreno o Parcela", lbl_hab: "Habitaciones", lbl_banos: "Baños", lbl_obs: "Observaciones", plc_obs: "Reformado, vistas, ascensor...", lbl_precio: "Precio de Venta Deseado (€)", lbl_fotos: "Subir Fotos (Máx. 4)", lbl_fotos_warn: "⚠️ OBLIGATORIO: Solo interiores.<br>Cero fachadas.", lbl_tel: "Tu Teléfono (No se publicará)", plc_tel: "Para gestión interna...", btn_cuarentena: "Previsualizar y Subir a Cuarentena 🔒", btn_procesando: "Procesando...", titulo_feed: "Mercado Real", en_directo: "En Directo", btn_interesa: "Me Interesa", btn_compartir: "Compartir" },
-            ca: { nav_demanda: "🎯 Demanda Activa", nav_mercado_real: "📡 Mercat Real", nav_gestion: "👥 Accés a Usuaris", nav_chivatazo: "📣 Chivatazo Nacional", nav_equipos: "💼 Uneix-te a l'Equip d'Advisors a la teva Zona", nav_poblaciones_titulo: "📍 Serveis Presencials a:", header_title: "Consola Central PropTech", ingesta_titulo: "Afegir Immoble al Radar", ingesta_desc: "La teva propietat es previsualitzarà a l'instant i es publicarà després de ser verificada.", lbl_zona: "Zona / Població", opt_sel: "Selecciona...", lbl_tipo: "Tipus d'Immoble", opt_apt: "Apartament", opt_piso: "Pis", opt_ado: "Adossat", opt_cha: "Xalet", opt_loc: "Local", opt_ter: "Terreny", lbl_hab: "Habitacions", lbl_banos: "Banys", lbl_obs: "Observacions", plc_obs: "Reformat, vistes...", lbl_precio: "Preu de Venda (€)", lbl_fotos: "Pujar Fotos (Màx. 4)", lbl_fotos_warn: "⚠️ OBLIGATORI: Només interiors.", lbl_tel: "El teu Telèfon (No es publicarà)", plc_tel: "Per a gestió interna...", btn_cuarentena: "Previsualitzar i Pujar a Quarantena 🔒", btn_procesando: "Processant...", titulo_feed: "Mercat Real", en_directo: "En Directe", btn_interesa: "M'Interessa", btn_compartir: "Compartir" },
-            en: { nav_demanda: "🎯 Active Demand", nav_mercado_real: "📡 Real Market", nav_gestion: "👥 User Access", nav_chivatazo: "📣 National Tip-off", nav_equipos: "💼 Join the Advisors Team in your Area", nav_poblaciones_titulo: "📍 In-Person Services in:", header_title: "PropTech Central Console", ingesta_titulo: "Add Property to Radar", ingesta_desc: "Your property will be previewed instantly and published anonymously after verification.", lbl_zona: "Area / City", opt_sel: "Select...", lbl_tipo: "Property Type", opt_apt: "Apartment", opt_piso: "Flat", opt_ado: "Townhouse", opt_cha: "Villa", opt_loc: "Commercial", opt_ter: "Land", lbl_hab: "Bedrooms", lbl_banos: "Bathrooms", lbl_obs: "Remarks", plc_obs: "Renovated, views...", lbl_precio: "Desired Sale Price (€)", lbl_fotos: "Upload Photos (Max 4)", lbl_fotos_warn: "⚠️ MANDATORY: Only interiors.", lbl_tel: "Your Phone (Will not be published)", plc_tel: "For internal management...", btn_cuarentena: "Preview & Upload to Quarantine 🔒", btn_procesando: "Processing...", titulo_feed: "Real Market", en_directo: "Live", btn_interesa: "I'm Interested", btn_compartir: "Share" },
-            fr: { nav_demanda: "🎯 Demande Active", nav_mercado_real: "📡 Marché Réel", nav_gestion: "👥 Accès Utilisateurs", nav_chivatazo: "📣 Info Nationale", nav_equipos: "💼 Rejoignez l'équipe des Conseillers", nav_poblaciones_titulo: "📍 Services en personne à:", header_title: "Console Centrale PropTech", ingesta_titulo: "Ajouter une propriété", ingesta_desc: "Votre propriété sera prévisualisée et publiée anonymement après vérification.", lbl_zona: "Zone / Ville", opt_sel: "Sélectionnez...", lbl_tipo: "Type de Propriété", opt_apt: "Appartement", opt_piso: "Étage", opt_ado: "Maison de ville", opt_cha: "Villa", opt_loc: "Commercial", opt_ter: "Terrain", lbl_hab: "Chambres", lbl_banos: "Salles de bain", lbl_obs: "Remarques", plc_obs: "Rénové, vue...", lbl_precio: "Prix de vente souhaité (€)", lbl_fotos: "Télécharger Photos (Max 4)", lbl_fotos_warn: "⚠️ OBLIGATOIRE: Uniquement à l'intérieur.", lbl_tel: "Votre téléphone (Non publié)", plc_tel: "Pour la gestion interne...", btn_cuarentena: "Prévisualiser & Mettre en Quarantaine 🔒", btn_procesando: "Traitement...", titulo_feed: "Marché Réel", en_directo: "En Direct", btn_interesa: "Je suis intéressé", btn_compartir: "Partager" },
-            de: { nav_demanda: "🎯 Aktive Nachfrage", nav_mercado_real: "📡 Realer Markt", nav_gestion: "👥 Benutzerzugang", nav_chivatazo: "📣 Nationaler Tipp", nav_equipos: "💼 Treten Sie dem Beraterteam bei", nav_poblaciones_titulo: "📍 Persönliche Dienstleistungen in:", header_title: "PropTech Zentralkonsole", ingesta_titulo: "Immobilie zum Radar hinzufügen", ingesta_desc: "Ihre Immobilie wird sofort in der Vorschau angezeigt und nach Überprüfung veröffentlicht.", lbl_zona: "Bereich / Stadt", opt_sel: "Wählen...", lbl_tipo: "Immobilienart", opt_apt: "Wohnung", opt_piso: "Etage", opt_ado: "Reihenhaus", opt_cha: "Villa", opt_loc: "Gewerbe", opt_ter: "Grundstück", lbl_hab: "Schlafzimmer", lbl_banos: "Badezimmer", lbl_obs: "Bemerkungen", plc_obs: "Renoviert, Aussicht...", lbl_precio: "Gewünschter Verkaufspreis (€)", lbl_fotos: "Fotos hochladen (Max 4)", lbl_fotos_warn: "⚠️ PFLICHT: Nur Innenräume.", lbl_tel: "Ihr Telefon (wird nicht veröffentlicht)", plc_tel: "Für internes Management...", btn_cuarentena: "Vorschau & In Quarantäne hochladen 🔒", btn_procesando: "Verarbeitung...", titulo_feed: "Realer Markt", en_directo: "Live", btn_interesa: "Ich bin interessiert", btn_compartir: "Teilen" },
-            it: { nav_demanda: "🎯 Domanda Attiva", nav_mercado_real: "📡 Mercato Reale", nav_gestion: "👥 Accesso Utenti", nav_chivatazo: "📣 Soffiata Nazionale", nav_equipos: "💼 Unisciti al Team dei Consulenti", nav_poblaciones_titulo: "📍 Servizi di persona a:", header_title: "Console Centrale PropTech", ingesta_titulo: "Aggiungi Immobile al Radar", ingesta_desc: "La tua proprietà sarà visualizzata in anteprima e pubblicata dopo la verifica.", lbl_zona: "Zona / Città", opt_sel: "Seleziona...", lbl_tipo: "Tipo di Immobile", opt_apt: "Appartamento", opt_piso: "Piano", opt_ado: "Villetta a schiera", opt_cha: "Villa", opt_loc: "Commerciale", opt_ter: "Terreno", lbl_hab: "Camere da letto", lbl_banos: "Bagni", lbl_obs: "Osservazioni", plc_obs: "Ristrutturato, vista...", lbl_precio: "Prezzo di vendita desiderato (€)", lbl_fotos: "Carica Foto (Max 4)", lbl_fotos_warn: "⚠️ OBBLIGATORIO: Solo interni.", lbl_tel: "Il tuo Telefono (Non sarà pubblicato)", plc_tel: "Per la gestione interna...", btn_cuarentena: "Anteprima & Carica in Quarantena 🔒", btn_procesando: "Elaborazione...", titulo_feed: "Mercato Reale", en_directo: "In Diretta", btn_interesa: "Mi Interessa", btn_compartir: "Condividi" },
-            ar: { nav_demanda: "🎯 الطلب النشط", nav_mercado_real: "📡 السوق الحقيقي", nav_gestion: "👥 وصول المستخدمين", nav_chivatazo: "📣 نصيحة وطنية", nav_equipos: "💼 انضم إلى فريق المستشارين", nav_poblaciones_titulo: "📍 الخدمات الشخصية في:", header_title: "وحدة التحكم المركزية PropTech", ingesta_titulo: "إضافة عقار إلى الرادار", ingesta_desc: "سيتم معاينة عقارك ونشره بشكل مجهول بعد التحقق.", lbl_zona: "المنطقة / المدينة", opt_sel: "اختر...", lbl_tipo: "نوع العقار", opt_apt: "شقة", opt_piso: "طابق", opt_ado: "منزل مستقل", opt_cha: "فيلا", opt_loc: "تجاري", opt_ter: "أرض", lbl_hab: "غرف النوم", lbl_banos: "الحمامات", lbl_obs: "ملاحظات", plc_obs: "مجدد، إطلالة...", lbl_precio: "سعر البيع المطلوب (€)", lbl_fotos: "تحميل الصور (بحد أقصى 4)", lbl_fotos_warn: "⚠️ إلزامي: التصميم الداخلي فقط.", lbl_tel: "هاتفك (لن يتم نشره)", plc_tel: "للإدارة الداخلية...", btn_cuarentena: "معاينة وتحميل إلى الحجر الصحي 🔒", btn_procesando: "جارٍ المعالجة...", titulo_feed: "السوق الحقيقي", en_directo: "مباشر", btn_interesa: "أنا مهتم", btn_compartir: "مشاركة" },
-            zh: { nav_demanda: "🎯 活跃需求", nav_mercado_real: "📡 真实市场", nav_gestion: "👥 用户访问", nav_chivatazo: "📣 全国提示", nav_equipos: "💼 加入顾问团队", nav_poblaciones_titulo: "📍 面对面服务：", header_title: "PropTech 中央控制台", ingesta_titulo: "将房产添加到雷达", ingesta_desc: "您的房产将立即预览，并在核实后匿名发布。", lbl_zona: "区域/城市", opt_sel: "选择...", lbl_tipo: "房产类型", opt_apt: "公寓", opt_piso: "楼层", opt_ado: "联排别墅", opt_cha: "别墅", opt_loc: "商业", opt_ter: "土地", lbl_hab: "卧室", lbl_banos: "浴室", lbl_obs: "备注", plc_obs: "翻新，景观...", lbl_precio: "期望售价（€）", lbl_fotos: "上传照片（最多 4 张）", lbl_fotos_warn: "⚠️ 必填：仅限室内。", lbl_tel: "您的电话（不会公开）", plc_tel: "用于内部管理...", btn_cuarentena: "预览并上传至隔离区 🔒", btn_procesando: "处理中...", titulo_feed: "真实市场", en_directo: "直播", btn_interesa: "我感兴趣", btn_compartir: "分享" }
+            es: { nav_demanda: "🎯 Demanda Activa", nav_mercado_real: "📡 Mercado Real", nav_gestion: "👥 Acceso a Usuarios", nav_chivatazo: "📣 Chivatazo Nacional", nav_equipos: "💼 Únete al Equipo de Advisors en tu Zona", nav_poblaciones_titulo: "📍 Servicios Presenciales en:", header_title: "Consola Central PropTech · Feed Cronológico", ingesta_titulo: "Añadir Inmueble al Radar", ingesta_desc: "Tu propiedad se previsualizará al instante y se publicará de forma anónima tras ser verificada.", lbl_zona: "Zona / Población", opt_sel: "Selecciona...", lbl_tipo: "Tipo de Inmueble", opt_apt: "Apartamento", opt_piso: "Piso", opt_ado: "Adosado", opt_cha: "Chalet", opt_loc: "Local", opt_ter: "Terreno o Parcela", lbl_hab: "Habitaciones", lbl_banos: "Baños", lbl_obs: "Observaciones", plc_obs: "Reformado, vistas, ascensor...", lbl_precio: "Precio Neto Propietario (€)", lbl_fotos: "Subir Fotos (Máx. 4)", lbl_fotos_warn: "⚠️ OBLIGATORIO: Solo interiores.<br>Cero fachadas.", lbl_tel: "Tu Teléfono (No se publicará)", plc_tel: "Para gestión interna...", btn_cuarentena: "Previsualizar y Subir a Cuarentena 🔒", btn_procesando: "Procesando...", titulo_feed: "Mercado Real", en_directo: "En Directo", btn_interesa: "Me Interesa", btn_compartir: "Compartir" },
+            ca: { nav_demanda: "🎯 Demanda Activa", nav_mercado_real: "📡 Mercat Real", nav_gestion: "👥 Accés a Usuaris", nav_chivatazo: "📣 Chivatazo Nacional", nav_equipos: "💼 Uneix-te a l'Equip d'Advisors a la teva Zona", nav_poblaciones_titulo: "📍 Serveis Presencials a:", header_title: "Consola Central PropTech", ingesta_titulo: "Afegir Immoble al Radar", ingesta_desc: "La teva propietat es previsualitzarà a l'instant i es publicarà després de ser verificada.", lbl_zona: "Zona / Població", opt_sel: "Selecciona...", lbl_tipo: "Tipus d'Immoble", opt_apt: "Apartament", opt_piso: "Pis", opt_ado: "Adossat", opt_cha: "Xalet", opt_loc: "Local", opt_ter: "Terreny", lbl_hab: "Habitacions", lbl_banos: "Banys", lbl_obs: "Observacions", plc_obs: "Reformat, vistes...", lbl_precio: "Preu Net Propietari (€)", lbl_fotos: "Pujar Fotos (Màx. 4)", lbl_fotos_warn: "⚠️ OBLIGATORI: Només interiors.", lbl_tel: "El teu Telèfon (No es publicarà)", plc_tel: "Per a gestió interna...", btn_cuarentena: "Previsualitzar i Pujar a Quarantena 🔒", btn_procesando: "Processant...", titulo_feed: "Mercat Real", en_directo: "En Directe", btn_interesa: "M'Interessa", btn_compartir: "Compartir" },
+            en: { nav_demanda: "🎯 Active Demand", nav_mercado_real: "📡 Real Market", nav_gestion: "👥 User Access", nav_chivatazo: "📣 National Tip-off", nav_equipos: "💼 Join the Advisors Team in your Area", nav_poblaciones_titulo: "📍 In-Person Services in:", header_title: "PropTech Central Console", ingesta_titulo: "Add Property to Radar", ingesta_desc: "Your property will be previewed instantly and published anonymously after verification.", lbl_zona: "Area / City", opt_sel: "Select...", lbl_tipo: "Property Type", opt_apt: "Apartment", opt_piso: "Flat", opt_ado: "Townhouse", opt_cha: "Villa", opt_loc: "Commercial", opt_ter: "Land", lbl_hab: "Bedrooms", lbl_banos: "Bathrooms", lbl_obs: "Remarks", plc_obs: "Renovated, views...", lbl_precio: "Owner Net Price (€)", lbl_fotos: "Upload Photos (Max 4)", lbl_fotos_warn: "⚠️ MANDATORY: Only interiors.", lbl_tel: "Your Phone (Will not be published)", plc_tel: "For internal management...", btn_cuarentena: "Preview & Upload to Quarantine 🔒", btn_procesando: "Processing...", titulo_feed: "Real Market", en_directo: "Live", btn_interesa: "I'm Interested", btn_compartir: "Share" },
+            fr: { nav_demanda: "🎯 Demande Active", nav_mercado_real: "📡 Marché Réel", nav_gestion: "👥 Accès Utilisateurs", nav_chivatazo: "📣 Info Nationale", nav_equipos: "💼 Rejoignez l'équipe des Conseillers", nav_poblaciones_titulo: "📍 Services en personne à:", header_title: "Console Centrale PropTech", ingesta_titulo: "Ajouter une propriété", ingesta_desc: "Votre propriété sera prévisualisée et publiée anonymement après vérification.", lbl_zona: "Zone / Ville", opt_sel: "Sélectionnez...", lbl_tipo: "Type de Propriété", opt_apt: "Appartement", opt_piso: "Étage", opt_ado: "Maison de ville", opt_cha: "Villa", opt_loc: "Commercial", opt_ter: "Terrain", lbl_hab: "Chambres", lbl_banos: "Salles de bain", lbl_obs: "Remarques", plc_obs: "Rénové, vue...", lbl_precio: "Prix Net Propriétaire (€)", lbl_fotos: "Télécharger Photos (Max 4)", lbl_fotos_warn: "⚠️ OBLIGATOIRE: Uniquement à l'intérieur.", lbl_tel: "Votre téléphone (Non publié)", plc_tel: "Pour la gestion interne...", btn_cuarentena: "Prévisualiser & Mettre en Quarantaine 🔒", btn_procesando: "Traitement...", titulo_feed: "Marché Réel", en_directo: "En Direct", btn_interesa: "Je suis intéressé", btn_compartir: "Partager" },
+            de: { nav_demanda: "🎯 Aktive Nachfrage", nav_mercado_real: "📡 Realer Markt", nav_gestion: "👥 Benutzerzugang", nav_chivatazo: "📣 Nationaler Tipp", nav_equipos: "💼 Treten Sie dem Beraterteam bei", nav_poblaciones_titulo: "📍 Persönliche Dienstleistungen in:", header_title: "PropTech Zentralkonsole", ingesta_titulo: "Immobilie zum Radar hinzufügen", ingesta_desc: "Ihre Immobilie wird sofort in der Vorschau angezeigt und nach Überprüfung veröffentlicht.", lbl_zona: "Bereich / Stadt", opt_sel: "Wählen...", lbl_tipo: "Immobilienart", opt_apt: "Wohnung", opt_piso: "Etage", opt_ado: "Reihenhaus", opt_cha: "Villa", opt_loc: "Gewerbe", opt_ter: "Grundstück", lbl_hab: "Schlafzimmer", lbl_banos: "Badezimmer", lbl_obs: "Bemerkungen", plc_obs: "Renoviert, Aussicht...", lbl_precio: "Nettopreis Eigentümer (€)", lbl_fotos: "Fotos hochladen (Max 4)", lbl_fotos_warn: "⚠️ PFLICHT: Nur Innenräume.", lbl_tel: "Ihr Telefon (wird nicht veröffentlicht)", plc_tel: "Für internes Management...", btn_cuarentena: "Vorschau & In Quarantäne hochladen 🔒", btn_procesando: "Verarbeitung...", titulo_feed: "Realer Markt", en_directo: "Live", btn_interesa: "Ich bin interessiert", btn_compartir: "Teilen" },
+            it: { nav_demanda: "🎯 Domanda Attiva", nav_mercado_real: "📡 Mercato Reale", nav_gestion: "👥 Accesso Utenti", nav_chivatazo: "📣 Soffiata Nazionale", nav_equipos: "💼 Unisciti al Team dei Consulenti", nav_poblaciones_titulo: "📍 Servizi di persona a:", header_title: "Console Centrale PropTech", ingesta_titulo: "Aggiungi Immobile al Radar", ingesta_desc: "La tua proprietà sarà visualizzata in anteprima e pubblicata dopo la verifica.", lbl_zona: "Zona / Città", opt_sel: "Seleziona...", lbl_tipo: "Tipo di Immobile", opt_apt: "Appartamento", opt_piso: "Piano", opt_ado: "Villetta a schiera", opt_cha: "Villa", opt_loc: "Commerciale", opt_ter: "Terreno", lbl_hab: "Camere da letto", lbl_banos: "Bagni", lbl_obs: "Osservazioni", plc_obs: "Ristrutturato, vista...", lbl_precio: "Prezzo Netto Proprietario (€)", lbl_fotos: "Carica Foto (Max 4)", lbl_fotos_warn: "⚠️ OBBLIGATORIO: Solo interni.", lbl_tel: "Il tuo Telefono (Non sarà pubblicato)", plc_tel: "Per la gestione interna...", btn_cuarentena: "Anteprima & Carica in Quarantena 🔒", btn_procesando: "Elaborazione...", titulo_feed: "Mercato Reale", en_directo: "In Diretta", btn_interesa: "Mi Interessa", btn_compartir: "Condividi" },
+            ar: { nav_demanda: "🎯 الطلب النشط", nav_mercado_real: "📡 السوق الحقيقي", nav_gestion: "👥 وصول المستخدمين", nav_chivatazo: "📣 نصيحة وطنية", nav_equipos: "💼 انضم إلى فريق المستشارين", nav_poblaciones_titulo: "📍 الخدمات الشخصية في:", header_title: "وحدة التحكم المركزية PropTech", ingesta_titulo: "إضافة عقار إلى الرادار", ingesta_desc: "سيتم معاينة عقارك ونشره بشكل مجهول بعد التحقق.", lbl_zona: "المنطقة / المدينة", opt_sel: "اختر...", lbl_tipo: "نوع العقار", opt_apt: "شقة", opt_piso: "طابق", opt_ado: "منزل مستقل", opt_cha: "فيلا", opt_loc: "تجاري", opt_ter: "أرض", lbl_hab: "غرف النوم", lbl_banos: "الحمامات", lbl_obs: "ملاحظات", plc_obs: "مجدد، إطلالة...", lbl_precio: "السعر الصافي للمالك (€)", lbl_fotos: "تحميل الصور (بحد أقصى 4)", lbl_fotos_warn: "⚠️ إلزامي: التصميم الداخلي فقط.", lbl_tel: "هاتفك (لن يتم نشره)", plc_tel: "للإدارة الداخلية...", btn_cuarentena: "معاينة وتحميل إلى الحجر الصحي 🔒", btn_procesando: "جارٍ المعالجة...", titulo_feed: "السوق الحقيقي", en_directo: "مباشر", btn_interesa: "أنا مهتم", btn_compartir: "مشاركة" },
+            zh: { nav_demanda: "🎯 活跃需求", nav_mercado_real: "📡 真实市场", nav_gestion: "👥 用户访问", nav_chivatazo: "📣 全国提示", nav_equipos: "💼 加入顾问团队", nav_poblaciones_titulo: "📍 面对面服务：", header_title: "PropTech 中央控制台", ingesta_titulo: "将房产添加到雷达", ingesta_desc: "您的房产将立即预览，并在核实后匿名发布。", lbl_zona: "区域/城市", opt_sel: "选择...", lbl_tipo: "房产类型", opt_apt: "公寓", opt_piso: "楼层", opt_ado: "联排别墅", opt_cha: "别墅", opt_loc: "商业", opt_ter: "土地", lbl_hab: "卧室", lbl_banos: "浴室", lbl_obs: "备注", plc_obs: "翻新，景观...", lbl_precio: "业主净价（€）", lbl_fotos: "上传照片（最多 4 张）", lbl_fotos_warn: "⚠️ 必填：仅限室内。", lbl_tel: "您的电话（不会公开）", plc_tel: "用于内部管理...", btn_cuarentena: "预览并上传至隔离区 🔒", btn_procesando: "处理中...", titulo_feed: "真实市场", en_directo: "直播", btn_interesa: "我感兴趣", btn_compartir: "分享" }
         };
 
         function cambiarIdioma() {
@@ -526,17 +569,22 @@
             const toast = document.getElementById('toast-msg');
             toast.innerText = mensaje;
             toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 3500);
+            setTimeout(() => toast.classList.remove('show'), 3800);
+        }
+
+        function confirmarInformacionProvisional(refID) {
+            closeModal('modal-ficha-inmueble');
+            mostrarToast(`✅ Información confirmada para ${refID}. Nuestro equipo contactará contigo tras la validación.`);
         }
 
         function compartirPropiedad(refID) {
-            const fakeUrl = `https://app.level-i.com/mercado-real?ref=${refID}`;
+            const shareUrl = `${window.location.origin}${window.location.pathname}?ref=${refID}`;
             if (navigator.clipboard) {
-                navigator.clipboard.writeText(fakeUrl).then(() => {
+                navigator.clipboard.writeText(shareUrl).then(() => {
                     mostrarToast('🔗 Enlace copiado al portapapeles');
                 });
             } else {
-                mostrarToast('🔗 Enlace listo: ' + fakeUrl);
+                mostrarToast('🔗 Enlace listo: ' + shareUrl);
             }
         }
 
@@ -617,7 +665,7 @@
             });
 
             if (!propData) {
-                mostrarToast("❌ La propiedad solicitada no está disponible o sigue en evaluación.");
+                mostrarToast("⏳ Esta propiedad sigue en proceso de validación interna por nuestro equipo.");
                 return;
             }
 
@@ -630,15 +678,30 @@
             let tituloStr = `${tipoStr} en ${poblacionStr}`; 
             if (!poblacionStr) tituloStr = tipoStr;
 
+            let badgeValidacionHTML = "";
+            if (esProvisionalLocal || !esActivo) {
+                badgeValidacionHTML = `<span class="badge-validacion">⏳ EN ESTADO DE VALIDACIÓN</span>`;
+            }
+
             let precioHTML = `<span class="ficha-price teaser">🔒 EN REVISIÓN</span>`;
+            let subPrecioDetalleHTML = "";
             let descHTML = "🔒 <i>Propiedad en proceso de verificación documental. Únete a la lista de espera para recibir los detalles completos.</i>";
             let fotosHTML = `<div class="ficha-img empty"><span style="font-size:40px;">📸</span><span style="font-size:16px; color:var(--text-muted);">Documentación en Revisión</span></div>`;
 
             if (esActivo || esProvisionalLocal) {
                 if (datos['Precio Venta']) {
                     let numPrecio = parseInt(String(datos['Precio Venta']).replace(/\D/g, ''), 10);
-                    if (!isNaN(numPrecio) && numPrecio > 0) precioHTML = `<span class="ficha-price active">${numPrecio.toLocaleString('es-ES')} €</span>`;
+                    if (!isNaN(numPrecio) && numPrecio > 0) {
+                        precioHTML = `<span class="ficha-price active">${numPrecio.toLocaleString('es-ES')} €</span>`;
+                    }
                 }
+                if (esProvisionalLocal && datos['Precio Deseado']) {
+                    let numDeseado = parseInt(String(datos['Precio Deseado']).replace(/\D/g, ''), 10);
+                    if (!isNaN(numDeseado) && numDeseado > 0) {
+                        subPrecioDetalleHTML = `<div style="font-size:11px; color:var(--text-muted); text-align:right; margin-top:4px;">Neto Prop.: ${numDeseado.toLocaleString('es-ES')} € + 7.260 € (Hon. IVA incl.)</div>`;
+                    }
+                }
+
                 descHTML = (datos['Descripcion inicial'] || "").replace(/\n/g, '<br>');
                 
                 if (Array.isArray(datos.Fotos_Locales_Array) && datos.Fotos_Locales_Array.length > 0) {
@@ -660,14 +723,41 @@
             const banosStr = (!isNaN(banosVal) && banosVal > 0) ? `<span class="tag" style="font-size:13px; padding:8px 12px;">🛁 ${banosVal} Baños</span>` : '';
             let zonaCompleta = poblacionStr || 'Ubicación reservada';
 
+            let botonesAccionModalHTML = "";
+            if (esProvisionalLocal) {
+                botonesAccionModalHTML = `
+                    <button class="ficha-btn-elena" onclick="confirmarInformacionProvisional('${refID}')">
+                        ✅ Confirmar Información
+                    </button>
+                    <div style="font-size:11px; color:var(--text-muted); text-align:center; margin-top:10px; line-height:1.4;">
+                        🔒 Ficha en revisión documental. La opción de compartir públicamente se activará tras la validación.
+                    </div>
+                `;
+            } else {
+                botonesAccionModalHTML = `
+                    <button class="ficha-btn-elena" onclick="abrirChatElena('${refID}')">
+                        ✨ Solicitar Información
+                    </button>
+                    <button class="btn-share" style="width: 100%; justify-content: center; margin-top: 10px; padding: 12px;" onclick="compartirPropiedad('${refID}')">
+                        🔗 Compartir esta Ficha
+                    </button>
+                `;
+            }
+
             const fichaContainer = document.getElementById('ficha-dinamica-content');
             fichaContainer.innerHTML = `
                 <div class="ficha-header">
                     <div>
-                        <span style="font-family: monospace; color: var(--text-muted); font-size: 13px;">${refID}</span>
-                        <h1 class="ficha-title" style="margin-top: 5px;">${tituloStr}</h1>
+                        <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+                            <span style="font-family: monospace; color: var(--text-muted); font-size: 13px;">${refID}</span>
+                            ${badgeValidacionHTML}
+                        </div>
+                        <h1 class="ficha-title" style="margin-top: 6px;">${tituloStr}</h1>
                     </div>
-                    <div>${precioHTML}</div>
+                    <div>
+                        ${precioHTML}
+                        ${subPrecioDetalleHTML}
+                    </div>
                 </div>
                 
                 <div class="ficha-gallery">
@@ -687,12 +777,7 @@
                             ${banosStr}
                         </div>
                         <div style="margin-top: 30px;">
-                            <button class="ficha-btn-elena" onclick="abrirChatElena('${refID}')">
-                                ✨ Solicitar Información
-                            </button>
-                            <button class="btn-share" style="width: 100%; justify-content: center; margin-top: 10px; padding: 12px;" onclick="compartirPropiedad('${refID}')">
-                                🔗 Compartir esta Ficha
-                            </button>
+                            ${botonesAccionModalHTML}
                         </div>
                     </div>
                 </div>
@@ -717,6 +802,7 @@
             if (!poblacionStr) tituloStr = tipoStr;
 
             let precioStr = "Consultar";
+            let subPrecioCardHTML = "";
             let obsStr = "";
             let galeriaHTML = "";
             let etiquetaEstado = "";
@@ -724,30 +810,47 @@
             
             const totalInteresados = datos.interesados || Math.floor(Math.random() * 8) + 1; 
             const totalLikes = datos.likes || 0;
-            let bloqueInteresadosHTML = '';
+            let footerHTML = '';
 
             if (esProvisionalLocal) {
                 if (datos['Precio Venta']) {
                     let numPrecio = parseInt(String(datos['Precio Venta']).replace(/\D/g, ''), 10);
                     if (!isNaN(numPrecio) && numPrecio > 0) precioStr = numPrecio.toLocaleString('es-ES') + ' €';
                 }
+                if (datos['Precio Deseado']) {
+                    let numNeto = parseInt(String(datos['Precio Deseado']).replace(/\D/g, ''), 10);
+                    if (!isNaN(numNeto) && numNeto > 0) {
+                        subPrecioCardHTML = `<div style="font-size:10.5px; color:var(--accent-gold); text-align:right; margin-top:3px;">(Neto Prop.: ${numNeto.toLocaleString('es-ES')} € + Hon. IVA incl.)</div>`;
+                    }
+                }
                 obsStr = datos['Descripcion inicial'] || "";
-                etiquetaEstado = `<span class="card-time" style="color: var(--accent-gold); font-weight: bold;">⏳ Ficha Provisional (En Cuarentena)</span>`;
-                bloqueInteresadosHTML = `<div class="likes-count" style="color: var(--accent-gold);">🔒 Pendiente de validación por Level.immo</div>`;
+                etiquetaEstado = `<span class="card-time" style="color: var(--accent-orange); font-weight: bold;">⏳ Ficha Provisional (En Cuarentena)</span>`;
 
                 if (Array.isArray(datos.Fotos_Locales_Array) && datos.Fotos_Locales_Array.length > 0) {
                     galeriaHTML = datos.Fotos_Locales_Array.slice(0, 4).map(url => 
                         `<img src="${url}" class="gallery-img" alt="${tituloStr}" onclick="abrirFichaInmueble('${refID}')">`
                     ).join('');
                 }
+
+                footerHTML = `
+                    <div class="likes-count" style="color: var(--accent-orange);">🔒 Pendiente de validación documental por Level.immo</div>
+                    <div class="btn-actions-group">
+                        <button type="button" class="btn-like" onclick="abrirFichaInmueble('${refID}')">👁️ Revisar / Confirmar Ficha</button>
+                    </div>
+                `;
             } else if (!esActivo) {
                 precioStr = "PRÓXIMAMENTE";
                 obsStr = "🔒 <i>Propiedad en proceso de verificación documental por nuestro equipo. Únete a la lista de espera para ser de los primeros en recibir los detalles.</i>";
                 galeriaHTML = `<div class="gallery-img empty" style="grid-column: span 2; background: rgba(245, 158, 11, 0.05); border: 1px dashed var(--accent-orange); color: var(--accent-orange); font-size: 13px; text-align: center; flex-direction: column; gap: 10px;" onclick="abrirFichaInmueble('${refID}')">
                     <span style="font-size: 24px;">📸</span><span>Ver Ficha en Revisión</span>
                 </div>`;
-                etiquetaEstado = `<span class="card-time" style="color: var(--accent-orange); font-weight: bold;">En Verificación</span>`;
-                bloqueInteresadosHTML = `<div class="likes-count" style="color: var(--accent-orange);">👥 <span id="contador-int-${refID}">${totalInteresados}</span> <span style="margin-left: 5px;">en espera</span></div>`;
+                etiquetaEstado = `<span class="card-time" style="color: var(--accent-orange); font-weight: bold;">⏳ EN ESTADO DE VALIDACIÓN</span>`;
+                footerHTML = `
+                    <div class="likes-count" style="color: var(--accent-orange);">👥 <span id="contador-int-${refID}">${totalInteresados}</span> <span style="margin-left: 5px;">en espera</span></div>
+                    <div class="btn-actions-group">
+                        <button type="button" class="btn-like" onclick="abrirChatElena('${refID}')">✨ <span data-i18n="btn_interesa">Me Interesa</span></button>
+                    </div>
+                `;
             } else {
                 if (datos['Precio Venta']) {
                     let numPrecio = parseInt(String(datos['Precio Venta']).replace(/\D/g, ''), 10);
@@ -756,7 +859,6 @@
                 
                 obsStr = datos['Descripcion inicial'] || "";
                 etiquetaEstado = `<span class="card-time">Radar Activo</span>`;
-                bloqueInteresadosHTML = `<div class="likes-count">🔥 <span id="contador-int-${refID}">${totalInteresados}</span> <span style="margin-left: 5px;">interesados</span></div>`;
                 
                 const lat = datos.lat || "";
                 const lon = datos.lon || "";
@@ -779,6 +881,16 @@
                 } else {
                     galeriaHTML = `<div class="gallery-img empty" style="grid-column: span 2; background: rgba(255,255,255,0.02);" onclick="abrirFichaInmueble('${refID}')">Abrir Ficha</div>`;
                 }
+
+                footerHTML = `
+                    <div class="likes-count">🔥 <span id="contador-int-${refID}">${totalInteresados}</span> <span style="margin-left: 5px;">interesados</span></div>
+                    <div class="btn-actions-group">
+                        <span style="font-size: 12px; color: var(--text-muted);">❤️ <span id="contador-likes-${refID}">${totalLikes}</span></span>
+                        <button type="button" class="btn-heart" onclick="darLikeVacio(this, 'contador-likes-${refID}', '${refID}')" title="Me Gusta">🤍</button>
+                        <button type="button" class="btn-share" onclick="compartirPropiedad('${refID}')">🔗 <span data-i18n="btn_compartir">Compartir</span></button>
+                        <button type="button" class="btn-like" onclick="abrirChatElena('${refID}')">✨ <span data-i18n="btn_interesa">Me Interesa</span></button>
+                    </div>
+                `;
             }
 
             const habsVal = parseInt(datos.N_Habitaciones);
@@ -800,7 +912,10 @@
                     <div class="card-details">
                         <div style="display: flex; justify-content: space-between; align-items: flex-start;">
                             <h3 style="font-size: 16px; margin-right: 10px;" onclick="abrirFichaInmueble('${refID}')">${tituloStr}</h3>
-                            <span style="font-size: 15px; font-weight: 800; color: ${(esActivo || esProvisionalLocal) ? 'var(--accent-green)' : 'var(--accent-orange)'}; background: ${(esActivo || esProvisionalLocal) ? 'rgba(16,185,129,0.1)' : 'rgba(245,158,11,0.1)'}; padding: 4px 10px; border-radius: 6px; white-space: nowrap;">${precioStr}</span>
+                            <div>
+                                <span style="font-size: 15px; font-weight: 800; color: ${(esActivo || esProvisionalLocal) ? 'var(--accent-green)' : 'var(--accent-orange)'}; background: ${(esActivo || esProvisionalLocal) ? 'rgba(16,185,129,0.1)' : 'rgba(245,158,11,0.1)'}; padding: 4px 10px; border-radius: 6px; white-space: nowrap; display:inline-block;">${precioStr}</span>
+                                ${subPrecioCardHTML}
+                            </div>
                         </div>
                         <p class="card-obs" style="margin-top: 10px; cursor:pointer;" onclick="abrirFichaInmueble('${refID}')">${obsStr}</p>
                         <div class="card-tags" style="margin-top: 15px;">
@@ -813,85 +928,65 @@
                     <div class="card-gallery">${galeriaHTML}</div>
                 </div>
                 <div class="card-footer">
-                    ${bloqueInteresadosHTML}
-                    <div class="btn-actions-group">
-                        <span style="font-size: 12px; color: var(--text-muted);">❤️ <span id="contador-likes-${refID}">${totalLikes}</span></span>
-                        <button type="button" class="btn-heart" onclick="darLikeVacio(this, 'contador-likes-${refID}', '${refID}')" title="Me Gusta">🤍</button>
-                        <button type="button" class="btn-share" onclick="compartirPropiedad('${refID}')">🔗 <span data-i18n="btn_compartir">Compartir</span></button>
-                        <button type="button" class="btn-like" onclick="abrirChatElena('${refID}')">✨ <span data-i18n="btn_interesa">Me Interesa</span></button>
-                    </div>
+                    ${footerHTML}
                 </div>
             `;
             return card;
         }
 
         // ==========================================
-        // 6. MOTOR SURTIDOR
+        // 6. MOTOR SURTIDOR + CARGA DE PROVISIONALES LOCALES
         // ==========================================
         async function cargarInmueblesReales() {
             const feedContainer = document.getElementById('feed-container');
+            const provisionalesGuardados = obtenerProvisionalesLocales();
+
             feedContainer.innerHTML = `<div style="text-align:center; padding: 40px; color: var(--accent-green);">📡 Conectando con el radar de Level.immo...</div>`;
+
+            let inmueblesValidados = [];
 
             try {
                 const response = await fetch(WEBHOOK_SURTIDOR, { cache: 'no-store' });
-                if (!response.ok) throw new Error(`Make rechazó la petición: Error HTTP ${response.status}`);
-                
-                const textoRespuesta = await response.text();
-                let paqueteDatos;
-                
-                try {
+                if (response.ok) {
+                    const textoRespuesta = await response.text();
                     let textoLimpio = textoRespuesta.trim();
                     if (textoLimpio.charCodeAt(0) === 0xFEFF) textoLimpio = textoLimpio.slice(1);
                     textoLimpio = textoLimpio.replace(/[\n\r\t\b\f\v]/g, ' ');
-                    paqueteDatos = JSON.parse(textoLimpio);
-                } catch (jsonError) {
-                    throw new Error(`El servidor no devolvió un JSON válido. Respuesta: "${textoRespuesta}"`);
+                    const paqueteDatos = JSON.parse(textoLimpio);
+
+                    const inmuebles = paqueteDatos.data ? paqueteDatos.data.items : (paqueteDatos.items || (Array.isArray(paqueteDatos) ? paqueteDatos : []));
+                    if (Array.isArray(inmuebles)) {
+                        inmueblesValidados = inmuebles.filter(prop => {
+                            const d = prop.fields || prop;
+                            const esValidado = d['Primer Filtro'] === "Contenido Validado";
+                            const estaActivo = d['ACTIVAR_FOTO_PUBLICA'] === "ACTIVADO" || d['ACTIVAR_FOTO_PUBLICA'] === true;
+                            const tieneFotos = (d['Fotos_Finales'] && d['Fotos_Finales'] !== "undefined") || (d['Fotos_Borrador'] && d['Fotos_Borrador'] !== "undefined");
+                            return (esValidado && estaActivo) || (tieneFotos && estaActivo);
+                        });
+                    }
                 }
+            } catch (error) {
+                console.warn("Aviso al conectar con el surtidor:", error);
+            }
 
-                const inmuebles = paqueteDatos.data ? paqueteDatos.data.items : (paqueteDatos.items || (Array.isArray(paqueteDatos) ? paqueteDatos : []));
-                feedContainer.innerHTML = '';
+            feedContainer.innerHTML = '';
 
-                if (!inmuebles || inmuebles.length === 0) {
-                    feedContainer.innerHTML = `<div style="text-align:center; padding: 40px; color: var(--text-muted);">El Radar está despejado. 0 registros activos.</div>`;
-                    return;
-                }
+            window.inmueblesGlobal = [...provisionalesGuardados, ...inmueblesValidados];
 
-                let inmueblesValidados = inmuebles.filter(prop => {
-                    const d = prop.fields || prop;
-                    const esValidado = d['Primer Filtro'] === "Contenido Validado";
-                    const estaActivo = d['ACTIVAR_FOTO_PUBLICA'] === "ACTIVADO" || d['ACTIVAR_FOTO_PUBLICA'] === true;
-                    const tieneFotos = (d['Fotos_Finales'] && d['Fotos_Finales'] !== "undefined") || (d['Fotos_Borrador'] && d['Fotos_Borrador'] !== "undefined");
-                    return (esValidado && estaActivo) || (tieneFotos && estaActivo);
-                });
-
-                window.inmueblesGlobal = inmueblesValidados;
-
-                inmueblesValidados.sort((a, b) => {
-                    const estA = (a.fields || a).Cuarentena === "Apto / Activo" ? 1 : -1;
-                    const estB = (b.fields || b).Cuarentena === "Apto / Activo" ? 1 : -1;
-                    return estB - estA;
-                });
-
-                if (inmueblesValidados.length === 0) {
-                    feedContainer.innerHTML = `<div style="text-align:center; padding: 40px; color: var(--text-muted);">Sin propiedades verificadas disponibles en este momento.</div>`;
-                    return;
-                }
-
-                inmueblesValidados.forEach(prop => {
+            if (window.inmueblesGlobal.length === 0) {
+                feedContainer.innerHTML = `<div id="empty-radar-msg" style="text-align:center; padding: 40px; color: var(--text-muted);">El Radar está despejado. 0 registros activos.</div>`;
+            } else {
+                window.inmueblesGlobal.forEach(prop => {
                     const card = crearElementoTarjeta(prop);
                     feedContainer.appendChild(card);
                 });
-                
-                cambiarIdioma();
-                
-                const refToOpen = urlParams.get('ref');
-                if (refToOpen) {
-                    setTimeout(() => abrirFichaInmueble(refToOpen), 500);
-                }
-                
-            } catch (error) {
-                console.error("Error crítico en el script:", error);
-                feedContainer.innerHTML = `<div style="text-align:center; padding: 40px; color: var(--accent-red);"><strong>⚠️ FALLO DETECTADO:</strong><br><br><span style="color: #fca5a5;">${error.message}</span></div>`;
+            }
+
+            cambiarIdioma();
+
+            const refToOpen = urlParams.get('ref');
+            if (refToOpen) {
+                setTimeout(() => abrirFichaInmueble(refToOpen), 500);
             }
         }
 
@@ -927,26 +1022,35 @@
         });
 
         // ==========================================
-        // 7. LÓGICA DEL FORMULARIO: MÁX 4 FOTOS, PREVISUALIZACIÓN Y DOBLE ENVÍO
+        // 7. LÓGICA DEL FORMULARIO: CÁLCULO DE HONORARIOS (7.260 €) + DOBLE ENVÍO A MAKE
         // ==========================================
         const precioInput = document.getElementById('prop-precio');
+        const hintHonorarios = document.getElementById('calc-honorarios-hint');
+
         precioInput.addEventListener('input', function(e) {
             let val = e.target.value.replace(/\D/g, ''); 
-            e.target.value = val ? parseInt(val, 10).toLocaleString('es-ES') + ' €' : '';
+            if (val) {
+                const neto = parseInt(val, 10);
+                const pvpFinal = neto + HONORARIOS_BRUTOS_MIN;
+                e.target.value = neto.toLocaleString('es-ES') + ' €';
+                hintHonorarios.innerHTML = `✅ Precio Venta Público (PVP): <strong>${pvpFinal.toLocaleString('es-ES')} €</strong> (Incluye 7.260 € de honorarios IVA incl.)`;
+            } else {
+                e.target.value = '';
+                hintHonorarios.innerHTML = `* En la ficha se sumarán automáticamente los honorarios mínimos (6.000 € + IVA = 7.260 €).`;
+            }
         });
 
         const fileInput = document.getElementById('prop-fotos');
         const previewContainer = document.getElementById('preview-container');
         const fileCounter = document.getElementById('file-counter');
         let rawFiles = []; 
-        let localPreviewUrls = [];
+        let base64PreviewUrls = [];
 
-        fileInput.addEventListener('change', function() {
+        fileInput.addEventListener('change', async function() {
             previewContainer.innerHTML = ''; 
             rawFiles = [];
-            localPreviewUrls = [];
+            base64PreviewUrls = [];
             
-            // 📸 LÍMITE ESTRICTO DE 4 FOTOS MÁXIMO
             if (this.files.length > 4) { 
                 alert("⚠️ Límite excedido: Puedes subir un máximo de 4 fotos para la ficha provisional."); 
                 this.value = ''; 
@@ -966,11 +1070,11 @@
                     return; 
                 }
                 rawFiles.push(file);
-                const imgUrl = URL.createObjectURL(file); 
-                localPreviewUrls.push(imgUrl);
+                const b64 = await convertirArchivoABase64(file);
+                base64PreviewUrls.push(b64);
 
                 const img = document.createElement('img'); 
-                img.src = imgUrl; 
+                img.src = b64; 
                 img.className = 'preview-thumb'; 
                 previewContainer.appendChild(img);
             }
@@ -999,7 +1103,6 @@
             btn.style.opacity = "0.7";
             btn.disabled = true;
 
-            // Generamos un ID único de referencia para vincular el alta de datos y la subida de fotos al FTP
             const now = new Date();
             const refProvisional = `REF${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}${Math.floor(10000 + Math.random() * 90000)}`;
 
@@ -1008,13 +1111,17 @@
             const habVal = document.getElementById('prop-hab').value || "0";
             const banosVal = document.getElementById('prop-banos').value || "0";
             const obsVal = document.getElementById('prop-obs').value;
-            const precioLimpio = document.getElementById('prop-precio').value.replace(/\D/g, '') || "0";
             const telVal = document.getElementById('prop-tel').value;
+
+            // Cálculo automático de precios y honorarios para Lark
+            const precioDeseadoNum = parseInt(document.getElementById('prop-precio').value.replace(/\D/g, ''), 10) || 0;
+            const precioVentaFinalNum = precioDeseadoNum + HONORARIOS_BRUTOS_MIN;
 
             const payloadMaestro = {
                 id_inmueble: refProvisional,
                 metadatos_sistema: { origen_landing: "MERCADO REAL", tipo_cta: "AÑADIR INMUEBLE AL RADAR", idioma_usuario: lang, id_sesion: sessionId, ip_cliente: clienteIP },
                 datos_usuario: { telefono: telVal, email: "", nombre: "", acepto_legal: document.getElementById('prop-legal').checked },
+                datos_demanda_inversion: { zonas_interes: "", presupuesto_requisitos: "", informacion_solicitada: "" },
                 datos_inmueble_captacion: {
                     id_inmueble: refProvisional,
                     poblacion: zonaVal,
@@ -1022,13 +1129,32 @@
                     habitaciones: habVal,
                     banos: banosVal,
                     descripcion_observaciones: obsVal,
-                    precio_deseado: precioLimpio,
+                    precio_deseado: String(precioDeseadoNum),
+                    PRECIO_PROPIETARIO: String(precioDeseadoNum),
+                    HONORARIOS_BRUTOS: String(HONORARIOS_BRUTOS_MIN),
+                    HONORARIOS_BASE: String(HONORARIOS_BASE_MIN),
+                    IVA: String(HONORARIOS_IVA_MIN),
+                    Precio_Venta: String(precioVentaFinalNum),
                     fotos_subidas: rawFiles.length
                 },
                 tracking_marketing: { utm_source, utm_medium, utm_campaign }
             };
 
-            // 1. Paquete FormData con Fotos + Payload (Para el flujo de FOTOS -> FTP)
+            // 1. Paquete FormData para ALTA CUARENTENA
+            const formDataIngesta = new FormData();
+            formDataIngesta.append("id_inmueble", refProvisional);
+            formDataIngesta.append("payload_maestro", JSON.stringify(payloadMaestro));
+            formDataIngesta.append("Precio Deseado", String(precioDeseadoNum));
+            formDataIngesta.append("PRECIO_PROPIETARIO", String(precioDeseadoNum));
+            formDataIngesta.append("HONORARIOS_BRUTOS", String(HONORARIOS_BRUTOS_MIN));
+            formDataIngesta.append("HONORARIOS_BASE", String(HONORARIOS_BASE_MIN));
+            formDataIngesta.append("IVA", String(HONORARIOS_IVA_MIN));
+            formDataIngesta.append("Precio Venta", String(precioVentaFinalNum));
+            rawFiles.forEach((file, index) => {
+                formDataIngesta.append("array_fotos", file, `${refProvisional}_foto_${index + 1}_${file.name}`);
+            });
+
+            // 2. Paquete FormData independiente para PROCESADOR FOTOS
             const formDataFotos = new FormData();
             formDataFotos.append("id_inmueble", refProvisional);
             formDataFotos.append("payload_maestro", JSON.stringify(payloadMaestro));
@@ -1036,20 +1162,12 @@
                 formDataFotos.append("array_fotos", file, `${refProvisional}_foto_${index + 1}_${file.name}`);
             });
 
-            // Disparamos el envío (Si WEBHOOK_INGESTA y WEBHOOK_FOTOS son distintos, envía a ambos; si son el mismo, envía el FormData completo)
-            const promesasEnvio = [fetch(WEBHOOK_FOTOS, { method: 'POST', body: formDataFotos })];
-            if (WEBHOOK_INGESTA !== WEBHOOK_FOTOS) {
-                promesasEnvio.push(
-                    fetch(WEBHOOK_INGESTA, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payloadMaestro)
-                    })
-                );
-            }
+            const promesas = [
+                fetch(WEBHOOK_INGESTA, { method: 'POST', body: formDataIngesta }),
+                fetch(WEBHOOK_FOTOS, { method: 'POST', body: formDataFotos })
+            ];
 
-            Promise.allSettled(promesasEnvio).then(() => {
-                // 🚀 PREVISUALIZACIÓN PROVISIONAL INMEDIATA EN EL FEED DEL USUARIO
+            Promise.allSettled(promesas).then(() => {
                 const nuevoInmuebleProvisional = {
                     ID_Inmueble: refProvisional,
                     'Tipo Propiedad': tipoVal,
@@ -1057,20 +1175,29 @@
                     N_Habitaciones: habVal,
                     N_wc: banosVal,
                     'Descripcion inicial': obsVal,
-                    'Precio Venta': precioLimpio,
+                    'Precio Deseado': String(precioDeseadoNum),
+                    'PRECIO_PROPIETARIO': String(precioDeseadoNum),
+                    'HONORARIOS_BRUTOS': String(HONORARIOS_BRUTOS_MIN),
+                    'Precio Venta': String(precioVentaFinalNum),
                     Cuarentena: "En Cuarentena",
                     esProvisionalLocal: true,
-                    Fotos_Locales_Array: [...localPreviewUrls]
+                    Fotos_Locales_Array: [...base64PreviewUrls]
                 };
 
+                guardarProvisionalLocal(nuevoInmuebleProvisional);
                 window.inmueblesGlobal.unshift(nuevoInmuebleProvisional);
+
+                const emptyMsg = document.getElementById('empty-radar-msg');
+                if (emptyMsg) emptyMsg.remove();
+
                 const feedContainer = document.getElementById('feed-container');
                 const cardProvisional = crearElementoTarjeta(nuevoInmuebleProvisional);
                 feedContainer.prepend(cardProvisional);
 
-                mostrarToast(`✅ Ficha provisional ${refProvisional} creada y enviada a cuarentena.`);
+                mostrarToast(`✅ Ficha provisional ${refProvisional} creada (PVP: ${precioVentaFinalNum.toLocaleString('es-ES')} €).`);
                 
                 this.reset(); 
+                hintHonorarios.innerHTML = `* En la ficha se sumarán automáticamente los honorarios mínimos (6.000 € + IVA = 7.260 €).`;
                 previewContainer.innerHTML = ''; 
                 fileCounter.style.display = 'none'; 
                 rawFiles = []; 
@@ -1079,7 +1206,6 @@
                 btn.disabled = false;
                 generarCaptcha(lang);
 
-                // Abrimos automáticamente el modal con la vista previa de su ficha recién creada
                 abrirFichaInmueble(refProvisional);
             });
         });
