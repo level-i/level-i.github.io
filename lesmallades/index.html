@@ -154,7 +154,7 @@
         .cost-input { width: 95px; background: var(--bg-card); border: 1px solid var(--border-color); color: #fff; padding: 5px 8px; border-radius: 6px; text-align: right; font-weight: bold; font-size: 12px; }
         .cost-total-row { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; padding-top: 10px; border-top: 2px solid var(--accent-gold); font-size: 14px; font-weight: 900; color: var(--accent-green); }
 
-        /* CATASTRO Y ENLACES CLICABLES */
+        /* CATASTRO Y ENLACES DIRECTOS A LA SEDE (OVCBusqueda.aspx) */
         .mini-catastro-box { background: rgba(255,255,255,0.02); padding: 12px 14px; border-radius: 10px; border: 1px solid var(--border-color); font-size: 11.5px; color: var(--text-muted); }
         .mini-catastro-title { color: var(--accent-gold); font-weight: bold; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; font-size: 12px; }
         .mini-catastro-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 12px; margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.07); }
@@ -166,8 +166,6 @@
         .ref-catastral-multi { font-size: 10px; color: #94a3b8; font-family: monospace; background: rgba(0,0,0,0.35); padding: 7px 8px; border-radius: 6px; margin-top: 8px; display: flex; flex-direction: column; gap: 4px; }
         .catastro-link-item { color: #38bdf8; text-decoration: underline; cursor: pointer; transition: color 0.2s; display: inline-block; }
         .catastro-link-item:hover { color: #7dd3fc; }
-        .blurred-refs { filter: blur(4px); user-select: none; transition: filter 0.3s ease; cursor: pointer; display: inline-block; }
-        .blurred-refs:hover, .blurred-refs.revealed { filter: blur(0); user-select: text; }
 
         /* FORMULARIOS Y PREFIJOS */
         .form-group { margin-bottom: 12px; text-align: left; }
@@ -190,7 +188,7 @@
         .btn-contactar { background: var(--accent-gold); color: #000; border: none; width: 100%; padding: 12px 10px; border-radius: 8px; font-weight: bold; font-size: 12px; cursor: pointer; transition: 0.2s; }
         .btn-hipoteca-redirect { background: var(--accent-blue); color: #fff; border: none; width: 100%; padding: 13px; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; text-align: center; grid-column: span 2; }
 
-        /* CHAT BOT ADVISOR (ELENA) - 100% OCULTO POR DEFECTO HASTA QUE EL USUARIO LO SOLICITE */
+        /* CHAT BOT ADVISOR (ELENA) - OCULTO POR DEFECTO HASTA QUE EL USUARIO LO SOLICITE */
         .advisor-widget { background: var(--bg-panel); border: 2px solid var(--accent-green); border-radius: 14px; padding: 20px; box-shadow: 0 10px 30px rgba(16,185,129,0.15); display: none; }
         .advisor-widget.active { display: block; }
         .advisor-header { display: flex; align-items: center; gap: 12px; margin-bottom: 15px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; }
@@ -471,7 +469,7 @@
                         </div>
                     </div>
 
-                    <!-- RESUMEN CATASTRAL CON REFERENCIAS CLICABLES A LA SEDE DEL CATASTRO -->
+                    <!-- RESUMEN CATASTRAL CON REFERENCIAS CLICABLES DIRECTAS A LA SEDE -->
                     <div class="mini-catastro-box">
                         <div class="mini-catastro-title" data-i18n="mini_cat_title">📋 Resumen Catastral & Ventaja Fiscal (3 IBIs)</div>
                         <div class="mini-catastro-grid">
@@ -583,14 +581,15 @@
         function openModal(id) { document.getElementById(id).classList.add('active'); }
         function closeModal(id) { document.getElementById(id).classList.remove('active'); }
 
+        // ENLACE DIRECTO CORRECTO A LA SEDE ELECTRÓNICA DEL CATASTRO (OVCBusqueda.aspx)
         function consultarCatastro(refCatastral, event) {
             event.stopPropagation();
             if (navigator.clipboard) {
                 navigator.clipboard.writeText(refCatastral).then(() => {
-                    mostrarToast(`📋 Ref. ${refCatastral} copiada. Pégala en el visor oficial del Catastro.`);
+                    mostrarToast(`📋 Ref. ${refCatastral} copiada. Pégala en el buscador oficial.`);
                 });
             }
-            window.open("https://www1.sedecatastro.gob.es/Cartografia/mapa.aspx?buscar=S", "_blank");
+            window.open("https://www1.sedecatastro.gob.es/CYCBienInmueble/OVCBusqueda.aspx", "_blank");
         }
 
         function mostrarToast(msg) {
@@ -810,12 +809,19 @@
                 body: JSON.stringify(payloadPrincipal)
             }).catch(() => {});
 
-            // ABRIR EL WIDGET DE ELENA SOLAMENTE CUANDO EL USUARIO LO SOLICITA
+            // ABRIR EL WIDGET DE ELENA Y MOSTRAR LAS REFERENCIAS CATASTRALES + INVITACIÓN A VISITA
             const widgetElena = document.getElementById('sec-advisor');
             widgetElena.classList.add('active');
 
             const box = document.getElementById('chat-messages');
-            box.innerHTML += `<div class="chat-bubble elena">✅ <strong>¡Hola ${nombre}!</strong> He recibido tus datos (${telefonoCompleto}) para el expediente <strong>${ID_INMUEBLE}</strong> (${tipoAccion}). ¿En qué te puedo ayudar para reservar tu visita?</div>`;
+            box.innerHTML += `
+                <div class="chat-bubble elena">✅ <strong>¡Hola ${nombre}!</strong> He registrado tus datos (${telefonoCompleto}) para el expediente <strong>${ID_INMUEBLE}</strong>.</div>
+                <div class="chat-bubble elena">🔍 <strong>Transparencia Total:</strong> Estas son las referencias catastrales oficiales de la finca:<br>
+                • <code>0318613DF3801G0007AY</code> (Vivienda)<br>
+                • <code>43004A012002070000GX</code> (Almacén)<br>
+                • <code>43004A012002070001H</code> (Rústico/Parcela)</div>
+                <div class="chat-bubble elena">¿Quieres que agendemos una visita presencial guiada para ver la propiedad?</div>
+            `;
             box.scrollTop = box.scrollHeight;
 
             widgetElena.scrollIntoView({ behavior: 'smooth' });
@@ -1024,7 +1030,7 @@
                 mod_legal_title: "⚖️ 法律声明", mod_legal_body: "<p>Level.immo 由注册代理运营 (<strong>API 4173 · AICAT 14200</strong>)。</p>",
                 mod_priv_title: "🔒 隐私政策", mod_priv_body: "<p>您的个人数据将严格按照 GDPR 予以保密。</p>",
                 mod_cook_title: "🍪 Cookie 与人工智能", mod_cook_body: "<p>我们使用技术 Cookie，并通过 <strong>Elena AI Advisor</strong> 提供智能协助。</p>",
-                plano_badge: "平面图", hero_footer: "阿尔卡纳尔", nav_info: "信息", nav_ubicacion: "位置", nav_precio: "价格与成本", nav_advisor: "Elena 聊天", nav_bloqueo: "锁定", card_info_title: "现状", opt_label: "对比:", opt_cocina: "厨房", opt_hab1: "卧室1", opt_hab2: "卧室2", cap_portada: "主立面", cap_plano: "户型平面图", cap_recibidor: "走廊", cap_cocina_vacia: "空置厨房", cap_cocina_antes: "装修前厨房", cap_hab1_vacia: "卧室1", cap_hab1_antes: "卧室1(前)", cap_hab2_vacia: "卧室2", cap_hab2_antes: "卧室2(前)", cap_olivos: "橄榄树", cap_limites: "地块边界", cap_mapa: "位置地图", cap_aerea: "航拍图", card_info_desc: "温馨木屋", card_ubi_title: "📍 位置与地块边界", card_ubi_desc: "极佳位置", card_price_title: "💰 售价与经济成本测算", btn_venta: "销售价格", btn_estudio: "经济与成本测算", desc_venta: "⚠️ 不含购房费用及税费（公证费、10%产权转让税ITP及房产登记费不包含在内）。", est_adq: "购置价格 (售价)：", est_itp: "转让税 ITP (10%)：", est_not: "公证与房产登记费 (预估)：", est_pers_title: "🛠️ 自定义装修预算：", est_bano: "+ 浴室预算：", est_cocina: "+ 厨房预算：", est_ext: "+ 室外/木蜡油预算：", est_total: "真实总成本合计：", mini_cat_title: "地籍摘要", cat_sup: "地块:", cat_viv: "住宅:", cat_alm: "仓库:", cat_agr: "农业:", cat_refs_label: "地籍号（点击前往地籍局查询）：", ibi_strong_points: "法律优势", lock_title: "24小时锁定或联系", lock_desc: "输入您的联系信息（国家代码可修改）：", lbl_nombre: "姓名", lbl_tel: "电话 (国家代码 + 号码)", lbl_email: "邮箱", lbl_hipoteca_pregunta: "需要贷款吗？", lbl_no_hipoteca: "不需要", lbl_si_hipoteca: "需要", msg_no_hipotecable: "需自有资金", btn_bloquear: "🔒 锁定24小时", btn_contactar: "💬 联系 Elena", btn_redir_hipoteca: "申请贷款", toast_msg: "✅ 处理中", elena_name: "✨ Elena AI Advisor", elena_status: "● En línea", elena_welcome: "你好！我是 Elena 🤖。房产售价为 75,000 €。", btn_enviar: "Sign In / Send"
+                plano_badge: "平面图", hero_footer: "阿尔卡纳尔", nav_info: "信息", nav_ubicacion: "位置", nav_precio: "价格与成本", nav_advisor: "Elena 聊天", nav_bloqueo: "锁定", card_info_title: "现状", opt_label: "对比:", opt_cocina: "厨房", opt_hab1: "卧室1", opt_hab2: "卧室2", cap_portada: "主立面", cap_plano: "户型平面图", cap_recibidor: "走廊", cap_cocina_vacia: "空置厨房", cap_cocina_antes: "装修前厨房", cap_hab1_vacia: "卧室1", cap_hab1_antes: "卧室1(前)", cap_hab2_vacia: "卧室2", cap_hab2_antes: "卧室2(前)", cap_olivos: "橄榄树", cap_limites: "地块边界", cap_mapa: "位置地图", cap_aerea: "航拍图", card_info_desc: "温馨木屋", card_ubi_title: "📍 位置与地块边界", card_ubi_desc: "极佳位置", card_price_title: "💰 售价与经济成本测算", btn_venta: "销售价格", btn_estudio: "经济与成本测算", desc_venta: "⚠️ 不含购房费用及税费（公证费、10%产权转让税ITP及房产登记费不包含在内）。", est_adq: "购置价格 (售价)：", est_itp: "转让税 ITP (10%)：", est_not: "公证与房产登记费 (预估)：", est_pers_title: "🛠️ 自定义装修预算：", est_bano: "+ 浴室预算：", est_cocina: "+ 厨房预算：", est_ext: "+ 室外/木蜡油预算：", est_total: "真实总成本合计：", mini_cat_title: "地籍摘要", cat_sup: "地块:", cat_viv: "住宅:", cat_alm: "仓库:", cat_agr: "农业:", cat_refs_label: "地籍号（点击前往地籍局查询）：", ibi_strong_points: "法律优势", lock_title: "24小时锁定或联系", lock_desc: "输入您的联系信息（国家代码可修改）：", lbl_nombre: "姓名", lbl_tel: "电话 (国家代码 + 号码)", lbl_email: "邮箱", lbl_hipoteca_pregunta: "需要贷款吗？", lbl_no_hipoteca: "不需要", lbl_si_hipoteca: "需要", msg_no_hipotecable: "需自有资金", btn_bloquear: "🔒 锁定24小时", btn_contactar: "💬 联系 Elena", btn_redir_hipoteca: "申请贷款", toast_msg: "✅ 处理中", elena_name: "✨ Elena AI Advisor", elena_status: "在线", elena_welcome: "你好！我是 Elena 🤖。房产售价为 75,000 €。", btn_enviar: "Sign In / Send"
             }
         };
 
@@ -1110,12 +1116,19 @@
                 body: JSON.stringify(payloadPrincipal)
             }).catch(() => {});
 
-            // ABRIR EL WIDGET DE ELENA SOLAMENTE CUANDO EL USUARIO LO SOLICITA
+            // ABRIR EL WIDGET DE ELENA Y MOSTRAR LAS REFERENCIAS CATASTRALES + INVITACIÓN A VISITA
             const widgetElena = document.getElementById('sec-advisor');
             widgetElena.classList.add('active');
 
             const box = document.getElementById('chat-messages');
-            box.innerHTML += `<div class="chat-bubble elena">✅ <strong>¡Hola ${nombre}!</strong> He recibido tus datos (${telefonoCompleto}) para el expediente <strong>${ID_INMUEBLE}</strong> (${tipoAccion}). ¿En qué te puedo ayudar para reservar tu visita?</div>`;
+            box.innerHTML += `
+                <div class="chat-bubble elena">✅ <strong>¡Hola ${nombre}!</strong> He registrado tus datos (${telefonoCompleto}) para el expediente <strong>${ID_INMUEBLE}</strong>.</div>
+                <div class="chat-bubble elena">🔍 <strong>Transparencia Total:</strong> Estas son las referencias catastrales oficiales de la finca:<br>
+                • <code>0318613DF3801G0007AY</code> (Vivienda)<br>
+                • <code>43004A012002070000GX</code> (Almacén)<br>
+                • <code>43004A012002070001H</code> (Rústico/Parcela)</div>
+                <div class="chat-bubble elena">¿Quieres que agendemos una visita presencial guiada para ver la propiedad? En breve contactará contigo nuestro Agente en la zona. Que tengas un buen día.</div>
+            `;
             box.scrollTop = box.scrollHeight;
 
             widgetElena.scrollIntoView({ behavior: 'smooth' });
