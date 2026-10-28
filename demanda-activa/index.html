@@ -3,66 +3,155 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Level-i Command Center | Mercado Real</title>
+    <title>Level-i | Demanda Activa</title>
     <style>
         :root {
-            --bg-base: #090d16; --bg-panel: #111827; --bg-card: #1f2937;
-            --accent-green: #10b981; --accent-blue: #3b82f6; --accent-gold: #C5A059;
-            --accent-orange: #f59e0b; --accent-red: #ef4444;
-            --text-main: #f9fafb; --text-muted: #9ca3af; --border-color: #374151;
+            --bg-base: #090d16;
+            --bg-panel: #111827;
+            --bg-card: #1f2937;
+            --accent-green: #10b981;
+            --accent-blue: #3b82f6;
+            --accent-gold: #C5A059;
+            --text-main: #f9fafb;
+            --text-muted: #9ca3af;
+            --border-color: #374151;
+            --accent-red: #ef4444;
         }
-        
-        html, body { margin: 0; padding: 0; height: 100%; width: 100%; }
-        * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; scrollbar-width: thin; scrollbar-color: var(--border-color) var(--bg-panel); }
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            display: flex;
+        }
+
+        * { box-sizing: border-box; scrollbar-width: thin; scrollbar-color: var(--border-color) var(--bg-panel); }
         
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: var(--bg-panel); border-left: 1px solid var(--border-color); }
         ::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: var(--accent-green); }
 
-        body { background-color: var(--bg-base); color: var(--text-main); display: flex; }
-        @media (min-width: 901px) { html, body { overflow: hidden; } }
-        
-        aside { width: 260px; background-color: var(--bg-panel); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; padding: 20px; flex-shrink: 0; z-index: 50; }
-        .brand-container { display: flex; flex-direction: column; gap: 8px; padding-bottom: 20px; margin-bottom: 20px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
-        .brand-logo { display: flex; align-items: baseline; color: #ffffff; }
-        .l-letter { font-size: 32px; font-weight: 900; line-height: 1; }
-        .brand-dot { width: 9px; height: 9px; background-color: var(--accent-green); border-radius: 50%; margin: 0 6px 0 2px; box-shadow: 0 0 10px rgba(16, 185, 129, 0.6); }
-        .logo-text { font-size: 22px; font-weight: 700; letter-spacing: 0.5px; }
-        .brand-clock { font-family: 'Courier New', Courier, monospace; font-size: 11px; color: var(--accent-green); font-weight: bold; letter-spacing: 0.5px; margin-top: 4px; }
-        
-        .nav-menu { display: flex; flex-direction: column; gap: 6px; overflow-y: auto; flex: 1; }
-        .nav-item { background: transparent; border: none; color: var(--text-muted); text-align: left; padding: 10px 14px; border-radius: 6px; font-size: 12.5px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; gap: 10px; border-left: 3px solid transparent; text-decoration: none; }
-        .nav-item:hover { background-color: rgba(255, 255, 255, 0.03); color: var(--text-main); }
-        .nav-item.active { background: linear-gradient(90deg, rgba(16, 185, 129, 0.1) 0%, transparent 100%); color: var(--text-main); border-left: 3px solid var(--accent-green); }
+        @media (max-width: 900px) {
+            html, body { height: auto; overflow-y: auto; overflow-x: hidden; }
+            body { flex-direction: column; }
+            aside { width: 100%; border-right: none; border-bottom: 1px solid var(--border-color); height: auto; padding: 15px; flex-shrink: 0; }
+            .nav-menu { flex-direction: row; overflow-x: auto; padding-bottom: 10px; }
+            .nav-item { white-space: nowrap; flex-shrink: 0; }
+            main { display: flex; flex-direction: column; height: auto; overflow: visible; }
+            header { flex-direction: column; gap: 15px; height: auto; padding: 15px; text-align: center; }
+            .content-area { display: flex; flex-direction: column; height: auto; overflow: visible; padding: 0; }
+            .ingesta-panel { width: 100%; height: auto; border-right: none; border-bottom: 1px solid var(--border-color); overflow: visible; padding: 15px; }
+            .feed-panel { width: 100%; height: auto; border-right: none; overflow: visible; padding: 15px; }
+            .feed-panel h1 { font-size: 22px !important; margin-bottom: 15px !important; line-height: 1.3; word-wrap: break-word; }
+            .ingesta-title { font-size: 18px; }
+            .buyer-card { padding: 15px; }
+            .buyer-header { flex-direction: column; align-items: flex-start; gap: 8px; }
+            .buyer-name { font-size: 16px; flex-wrap: wrap; }
+            .buyer-budget { font-size: 20px; margin-bottom: 12px; }
+            .tag { font-size: 11px; padding: 4px 8px; }
+            .math-box { flex-direction: column; gap: 10px; align-items: flex-start; text-align: left; }
+            .math-box input { width: 100% !important; }
+        }
+
+        /* SIDEBAR */
+        aside {
+            width: 260px;
+            background-color: var(--bg-panel);
+            border-right: 1px solid var(--border-color);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            z-index: 50;
+            flex-shrink: 0;
+        }
+
+        .brand-container {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+        }
+
+        .brand-logo { color: #ffffff; font-size: 22px; font-weight: bold; display: flex; align-items: baseline; }
+        .brand-logo span { color: var(--accent-green); margin: 0 5px; }
+
+        .nav-menu { display: flex; flex-direction: column; gap: 6px; flex: 1; }
+        .nav-item { padding: 10px 14px; border-radius: 6px; color: var(--text-muted); text-decoration: none; font-size: 12.5px; font-weight: 600; transition: all 0.3s ease; border-left: 3px solid transparent; }
+        .nav-item:hover { background-color: rgba(255, 255, 255, 0.03); color: #ffffff; }
+        .nav-item.active { background: linear-gradient(90deg, rgba(16, 185, 129, 0.1) 0%, transparent 100%); color: #ffffff; border-left: 3px solid var(--accent-green); }
 
         .sidebar-footer { margin-top: auto; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.05); text-align: center; font-size: 10.5px; color: var(--text-muted); }
         .legal-links { display: flex; justify-content: center; gap: 12px; margin-top: 8px; font-size: 10px; flex-wrap: wrap; }
         .legal-links a { color: var(--text-muted); text-decoration: none; transition: color 0.2s; cursor: pointer; }
         .legal-links a:hover { color: var(--accent-green); }
 
+        /* MAIN Y CABECERA */
         main { flex: 1; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
-        header { background-color: var(--bg-panel); border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; padding: 0 30px; height: 60px; flex-shrink: 0; }
+        header { background-color: var(--bg-panel); border-bottom: 1px solid var(--border-color); height: 60px; display: flex; align-items: center; padding: 0 30px; justify-content: space-between; }
         .header-title { font-size: 13.5px; color: var(--text-muted); }
-        .lang-selector { background-color: var(--bg-card); color: var(--text-muted); border: 1px solid var(--border-color); padding: 6px 10px; border-radius: 6px; font-size: 12.5px; font-weight: 600; outline: none; cursor: pointer; transition: all 0.2s; }
+
+        .lang-selector {
+            background-color: var(--bg-card);
+            color: var(--text-muted);
+            border: 1px solid var(--border-color);
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 12.5px;
+            font-weight: 600;
+            outline: none;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
         .lang-selector:hover { color: var(--text-main); border-color: var(--accent-green); }
 
-        .content-area { display: grid; grid-template-columns: 360px 1fr; height: calc(100vh - 60px); overflow: hidden; }
-        
-        .ingesta-panel { background-color: var(--bg-panel); border-right: 1px solid var(--border-color); padding: 25px; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; }
-        .ingesta-title { font-size: 16px; color: #fff; font-weight: 700; margin: 0; display: flex; align-items: center; gap: 8px;}
-        .ingesta-title::before { content: ''; display: inline-block; width: 8px; height: 8px; background-color: var(--accent-blue); border-radius: 50%; box-shadow: 0 0 10px var(--accent-blue); }
-        .ingesta-desc { font-size: 12.5px; color: var(--text-muted); line-height: 1.5; margin: 0; }
-        
-        .promo-badge { background: rgba(197, 160, 89, 0.1); border: 1px dashed var(--accent-gold); padding: 10px; border-radius: 8px; font-size: 11px; color: var(--accent-gold); text-align: center; font-weight: bold; }
+        /* ÁREA DE CONTENIDO */
+        .content-area { display: grid; grid-template-columns: 360px 1fr; height: calc(100vh - 60px); }
+        .ingesta-panel { background-color: var(--bg-panel); border-right: 1px solid var(--border-color); padding: 25px; overflow-y: auto; }
+        .feed-panel { padding: 25px; overflow-y: auto; position: relative; }
 
-        .form-upload { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 12px;}
+        /* FORMULARIOS */
+        .form-upload { background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
         .form-group label { display: block; font-size: 11.5px; color: var(--text-muted); margin-bottom: 5px; font-weight: bold; }
-        .form-group input[type="text"], .form-group input[type="number"], .form-group input[type="tel"], .form-group select, .form-group textarea { width: 100%; background: var(--bg-base); border: 1px solid var(--border-color); color: var(--text-main); padding: 10px; border-radius: 6px; font-size: 13px; outline: none; transition: border-color 0.2s; }
-        .form-group textarea { resize: vertical; min-height: 50px; font-family: inherit; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; background-color: var(--bg-base); border: 1px solid var(--border-color); color: #ffffff; padding: 10px; border-radius: 6px; font-size: 13px; outline: none; transition: border-color 0.2s ease;}
         .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--accent-green); }
+        .form-group textarea { resize: vertical; min-height: 50px; font-family: inherit; }
         .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        
+
+        .legal-check { display: flex; gap: 10px; align-items: flex-start; background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.2); padding: 12px; border-radius: 6px; margin-top: 5px; }
+        .legal-check input[type="checkbox"] { margin-top: 2px; accent-color: var(--accent-green); cursor: pointer; }
+        .legal-check label { font-size: 11px; color: var(--text-muted); line-height: 1.4; font-weight: normal; margin: 0; cursor: pointer; }
+        .legal-check label b { color: var(--text-main); }
+        .math-box { display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.2); padding: 10px 15px; border-radius: 6px; border: 1px dashed var(--border-color); }
+
+        .btn-submit { background-color: var(--accent-green); color: #ffffff; border: none; padding: 12px; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 10px; transition: all 0.2s ease; }
+        .btn-submit:hover { opacity: 0.9; }
+
+        /* TARJETAS DE COMPRADORES */
+        .buyer-card { background-color: var(--bg-panel); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; margin-bottom: 20px; transition: transform 0.2s ease, box-shadow 0.2s ease; border-left: 4px solid var(--accent-green); }
+        .buyer-card:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4); }
+        .buyer-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .buyer-name { font-size: 18px; font-weight: bold; color: #ffffff; display: flex; align-items: center; gap: 10px; }
+        .buyer-badge { background-color: rgba(16, 185, 129, 0.1); color: var(--accent-green); padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: bold; border: 1px solid rgba(16, 185, 129, 0.3); }
+        .buyer-budget { font-size: 24px; font-weight: 900; color: var(--accent-gold); margin-bottom: 15px; }
+        .buyer-tags { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+        .tag { background-color: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-muted); padding: 5px 10px; border-radius: 4px; font-size: 12px; }
+
+        .btn-offer { background-color: transparent; border: 1px solid var(--accent-blue); color: var(--accent-blue); width: 100%; padding: 12px; border-radius: 6px; font-weight: bold; cursor: pointer; transition: all 0.2s ease; }
+        .btn-offer:hover { background-color: rgba(59, 130, 246, 0.1); }
+
+        /* MODALES */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); display: none; justify-content: center; align-items: center; z-index: 999; opacity: 0; transition: opacity 0.3s; }
+        .modal-overlay.active { display: flex; opacity: 1; }
+        .modal-content { background: var(--bg-panel); border: 1px solid var(--border-color); border-radius: 12px; padding: 30px; width: 90%; max-width: 600px; color: var(--text-main); position: relative; max-height: 85vh; overflow-y: auto; }
+        .modal-close { position: absolute; top: 15px; right: 20px; font-size: 24px; color: var(--text-muted); cursor: pointer; background: none; border: none; }
+        .modal-close:hover { color: var(--accent-red); }
+        .modal-title { font-size: 20px; font-weight: bold; margin-bottom: 15px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; color: var(--accent-green); }
+        .modal-body { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+
         .file-upload-box { border: 2px dashed var(--border-color); border-radius: 8px; padding: 20px; text-align: center; background: rgba(0,0,0,0.2); cursor: pointer; transition: all 0.2s; position: relative; }
         .file-upload-box:hover { border-color: var(--accent-blue); background: rgba(59, 130, 246, 0.05); }
         .file-upload-box input[type="file"] { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
@@ -74,195 +163,64 @@
         .preview-thumb { width: 45px; height: 45px; object-fit: cover; border-radius: 6px; border: 1px solid var(--accent-green); box-shadow: 0 2px 8px rgba(16, 185, 129, 0.2); animation: popIn 0.3s ease-out; }
         @keyframes popIn { 0% { transform: scale(0); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
         #file-counter { font-size: 12px; color: var(--accent-green); margin-top: 10px; font-weight: bold; display: none; text-align: center; }
-
-        .legal-check { display: flex; gap: 10px; align-items: flex-start; background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.2); padding: 12px; border-radius: 6px; margin-top: 5px; }
-        .legal-check input[type="checkbox"] { margin-top: 2px; accent-color: var(--accent-green); cursor: pointer; }
-        .legal-check label { font-size: 11px; color: var(--text-muted); line-height: 1.4; font-weight: normal; margin: 0; }
-        .legal-check label b { color: var(--text-main); }
-        .legal-link { color: var(--accent-green); text-decoration: none; cursor: pointer; }
-        .legal-link:hover { text-decoration: underline; }
-
-        .btn-submit { width: 100%; background-color: var(--accent-blue); color: #fff; padding: 12px; border-radius: 6px; font-size: 14px; font-weight: bold; border: none; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);}
-        .btn-submit:hover { opacity: 0.9; transform: translateY(-1px); }
-
-        /* PANEL DERECHO: FEED */
-        .feed-panel { padding: 25px; overflow-y: auto; background-color: var(--bg-base); position: relative; }
-        .feed-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; position: sticky; top: -25px; background: rgba(9, 13, 22, 0.95); backdrop-filter: blur(10px); padding: 15px 0; z-index: 10; border-bottom: 1px solid rgba(255,255,255,0.05); margin-top: -25px;}
-        .feed-title { font-size: 20px; font-weight: 800; margin: 0; display: flex; align-items: center; gap: 10px; }
-        .live-indicator { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: bold; color: var(--accent-green); text-transform: uppercase; background: rgba(16, 185, 129, 0.1); padding: 4px 10px; border-radius: 20px; border: 1px solid rgba(16, 185, 129, 0.3); }
-        .live-dot { width: 6px; height: 6px; background-color: var(--accent-green); border-radius: 50%; animation: blink 1s infinite; }
-        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
-        
-        .feed-container { display: flex; flex-direction: column; gap: 20px; max-width: 800px; margin: 0 auto; padding-bottom: 50px; }
-        .property-card { background: var(--bg-panel); border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; transition: transform 0.2s, box-shadow 0.2s; }
-        .property-card:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(0,0,0,0.4); border-color: rgba(255,255,255,0.1); }
-        .slide-down-enter { animation: slideDownFade 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; border-color: var(--accent-orange); box-shadow: 0 0 20px rgba(245, 158, 11, 0.2); }
-        @keyframes slideDownFade { 0% { opacity: 0; transform: translateY(-30px) scale(0.98); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
-        
-        .card-header { padding: 15px 20px; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-between; align-items: center; }
-        .card-ref { font-family: monospace; font-size: 12px; color: var(--text-muted); }
-        .card-time { font-size: 11px; color: var(--text-muted); }
-        
-        .card-body { padding: 20px; display: grid; grid-template-columns: 1.5fr 1fr; gap: 20px; }
-        .card-details h3 { font-size: 18px; margin: 0 0 5px 0; color: #fff; cursor: pointer; transition: color 0.2s; }
-        .card-details h3:hover { color: var(--accent-blue); text-decoration: underline; }
-        .card-obs { font-size: 12px; color: var(--text-muted); margin-bottom: 12px; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
-        .card-tags { display: flex; gap: 8px; margin-bottom: 15px; flex-wrap: wrap; }
-        .tag { font-size: 11px; background: var(--bg-card); padding: 4px 10px; border-radius: 4px; color: var(--text-muted); border: 1px solid var(--border-color); display: flex; align-items: center; gap: 4px;}
-        
-        .card-gallery { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; cursor: pointer; }
-        .gallery-img { width: 100%; aspect-ratio: 4/3; background: var(--bg-base); border-radius: 6px; object-fit: cover; border: 1px solid var(--border-color); transition: opacity 0.2s; }
-        .gallery-img:hover { opacity: 0.8; }
-        .gallery-img.empty { display: flex; align-items: center; justify-content: center; font-size: 24px; color: rgba(255,255,255,0.05); }
-
-        .card-footer { padding: 15px 20px; background: var(--bg-card); border-top: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
-        .likes-count { font-size: 13px; font-weight: bold; color: var(--accent-red); display: flex; align-items: center; gap: 6px; }
-        
-        .btn-actions-group { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
-        .btn-heart { background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); color: var(--text-muted); padding: 8px 12px; border-radius: 6px; font-size: 14px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center;}
-        .btn-heart:hover { background: rgba(239, 68, 68, 0.1); border-color: var(--accent-red); }
-        .btn-heart.liked { background: rgba(239, 68, 68, 0.15); border-color: var(--accent-red); color: var(--accent-red); }
-        
-        .btn-share { background: transparent; border: 1px solid var(--accent-blue); color: var(--accent-blue); padding: 8px 12px; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 6px; }
-        .btn-share:hover { background: rgba(59, 130, 246, 0.1); }
-        
-        .btn-like { background: transparent; border: 1px solid var(--accent-green); color: var(--accent-green); padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: bold; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 8px; }
-        .btn-like:hover { background: rgba(16, 185, 129, 0.1); box-shadow: 0 0 10px rgba(16,185,129,0.2); }
-        .btn-like.liked { background: var(--accent-green); color: #fff; }
-
-        /* WIDGET ELENA AI FLOTANTE */
-        .elena-widget { position: fixed; bottom: 30px; right: 30px; width: 340px; background: rgba(17, 24, 39, 0.95); backdrop-filter: blur(10px); border: 1px solid var(--accent-green); border-radius: 16px; box-shadow: 0 15px 40px rgba(0,0,0,0.6); display: none; flex-direction: column; z-index: 1000; overflow: hidden; transform: translateY(20px); opacity: 0; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
-        .elena-widget.active { display: flex; transform: translateY(0); opacity: 1; }
-        .elena-header { background: linear-gradient(90deg, rgba(16, 185, 129, 0.15), transparent); padding: 15px 20px; border-bottom: 1px solid rgba(16, 185, 129, 0.2); display: flex; justify-content: space-between; align-items: center; }
-        .elena-title { color: var(--accent-green); font-weight: bold; display: flex; align-items: center; gap: 8px; font-size: 14px; }
-        .elena-close { color: var(--text-muted); cursor: pointer; font-size: 18px; border: none; background: none; }
-        .elena-close:hover { color: var(--text-main); }
-        .elena-body { padding: 20px; display: flex; flex-direction: column; gap: 15px; font-size: 13px; max-height: 300px; overflow-y: auto; }
-        .chat-bubble { background: rgba(255,255,255,0.05); padding: 12px 15px; border-radius: 12px; border-bottom-left-radius: 2px; color: var(--text-main); border-left: 3px solid var(--accent-green); line-height: 1.5; }
-        .chat-bubble.user { background: rgba(59, 130, 246, 0.1); border-left: none; border-right: 3px solid var(--accent-blue); border-bottom-left-radius: 12px; border-bottom-right-radius: 2px; text-align: right; }
-        .elena-footer { padding: 15px; border-top: 1px solid var(--border-color); display: flex; flex-direction: column; gap: 10px; background: var(--bg-panel); }
-        .elena-input { width: 100%; background: var(--bg-base); border: 1px solid var(--border-color); color: var(--text-main); padding: 12px; border-radius: 8px; outline: none; font-size: 13px; }
-        .elena-input:focus { border-color: var(--accent-green); }
-        .elena-btn-send { background: var(--accent-green); color: #fff; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.2s; font-size: 13px; }
-        .elena-btn-send:hover { opacity: 0.9; transform: translateY(-1px); }
-
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); display: none; justify-content: center; align-items: center; z-index: 999; opacity: 0; transition: opacity 0.3s; }
-        .modal-overlay.active { display: flex; opacity: 1; }
-        .modal-content { background: var(--bg-panel); border: 1px solid var(--border-color); border-radius: 12px; padding: 30px; width: 90%; max-width: 800px; color: var(--text-main); position: relative; max-height: 90vh; overflow-y: auto; }
-        .modal-close { position: absolute; top: 15px; right: 20px; font-size: 24px; color: var(--text-muted); cursor: pointer; background: none; border: none; z-index: 10; }
-        .modal-close:hover { color: var(--accent-red); }
-        .modal-title { font-size: 20px; font-weight: bold; margin-bottom: 15px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; color: var(--accent-green); }
-        .modal-body { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
-
-        /* DISEÑO DE LA FICHA DE INMUEBLE */
-        .ficha-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid var(--border-color); padding-bottom: 15px;}
-        .ficha-title { font-size: 24px; color: #fff; margin: 0; }
-        .ficha-price { font-size: 22px; font-weight: 800; padding: 6px 15px; border-radius: 8px; white-space: nowrap; }
-        .ficha-price.active { color: var(--accent-green); background: rgba(16,185,129,0.1); }
-        .ficha-price.teaser { color: var(--accent-orange); background: rgba(245,158,11,0.1); font-size: 16px; }
-        
-        .ficha-gallery { display: flex; overflow-x: auto; gap: 15px; padding-bottom: 15px; margin-bottom: 25px; scroll-snap-type: x mandatory; }
-        .ficha-gallery::-webkit-scrollbar { height: 8px; }
-        .ficha-img { height: 350px; border-radius: 12px; object-fit: cover; min-width: 85%; scroll-snap-align: center; border: 1px solid var(--border-color); }
-        .ficha-img.empty { display: flex; align-items: center; justify-content: center; font-size: 30px; color: rgba(255,255,255,0.05); background: var(--bg-base); flex-direction: column; gap: 15px; border: 2px dashed var(--border-color); }
-        
-        .ficha-details-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 30px; }
-        .ficha-desc-title { font-size: 16px; color: #fff; font-weight: bold; margin-bottom: 10px; }
-        .ficha-desc { font-size: 14px; line-height: 1.7; color: var(--text-muted); }
-        .ficha-panel-right { background: var(--bg-card); padding: 20px; border-radius: 12px; border: 1px solid var(--border-color); height: fit-content; }
-        .ficha-tags { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
-        .ficha-btn-elena { width: 100%; background: var(--accent-green); color: #fff; border: none; padding: 15px; border-radius: 8px; font-size: 15px; font-weight: bold; cursor: pointer; transition: 0.2s; display: flex; justify-content: center; align-items: center; gap: 8px; box-shadow: 0 4px 15px rgba(16,185,129,0.3); }
-        .ficha-btn-elena:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(16,185,129,0.4); }
-
-        /* Toast Notificaciones */
-        .toast-notification { position: fixed; top: 20px; right: 20px; background: var(--accent-blue); color: white; padding: 12px 20px; border-radius: 8px; font-weight: bold; font-size: 13px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); transform: translateX(150%); transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1); z-index: 2000; }
-        .toast-notification.show { transform: translateX(0); }
-
-        @media (max-width: 900px) {
-            html, body { height: auto; overflow-y: auto; overflow-x: hidden; }
-            body { flex-direction: column; }
-            aside { width: 100%; border-right: none; border-bottom: 1px solid var(--border-color); height: auto; padding: 15px; flex-shrink: 0; }
-            .nav-menu { flex-direction: row; overflow-x: auto; padding-bottom: 10px; }
-            .nav-item { white-space: nowrap; flex-shrink: 0; }
-            main { display: flex; flex-direction: column; height: auto; overflow: visible; flex: 1; }
-            header { flex-direction: column; gap: 15px; height: auto; padding: 15px; text-align: center; }
-            .content-area { display: flex; flex-direction: column; height: auto; overflow: visible; padding: 0; }
-            .ingesta-panel { width: 100%; height: auto; border-right: none; border-bottom: 1px solid var(--border-color); overflow: visible; padding: 20px; flex-shrink: 0; }
-            .feed-panel { width: 100%; height: auto; border-right: none; overflow: visible; padding: 20px; flex-shrink: 0; }
-            .card-body { grid-template-columns: 1fr; }
-            .elena-widget { bottom: 0; right: 0; width: 100%; border-radius: 16px 16px 0 0; }
-            .ficha-details-grid { grid-template-columns: 1fr; }
-            .ficha-header { flex-direction: column; align-items: flex-start; gap: 15px; }
-            .ficha-img { height: 250px; min-width: 90%; }
-        }
     </style>
 </head>
 <body>
 
     <aside>
         <div class="brand-container">
-            <div class="brand-logo">
-                <span class="l-letter">L</span><span class="brand-dot"></span> <span class="logo-text">Level.immo</span>
-            </div>
-            <div class="brand-clock" id="live-clock">--/---- | --:--:--</div>
+            <div class="brand-logo">L<span>•</span> Level.immo</div>
         </div>
-
         <div class="nav-menu">
-            <a href="/demanda-activa" class="nav-item" data-i18n="nav_demanda">🎯 Demanda Activa</a>
-            <a href="#" class="nav-item active" data-i18n="nav_mercado_real">📡 Mercado Real</a>
-            <a href="#" class="nav-item" onclick="alert('Área restringida. Solo acceso a usuarios verificados.')" data-i18n="nav_gestion">👥 Acceso a Usuarios</a>
-            
-            <div class="promo-badge" style="margin: 10px 0; cursor: pointer; text-align: left; padding: 10px 14px;" onclick="alert('Esta sección está en desarrollo.')">
-                <span data-i18n="nav_chivatazo" style="font-size: 13px; color: var(--accent-orange);">📣 Chivatazo Nacional</span>
-            </div>
-            
-            <a href="#" class="nav-item" onclick="alert('Información sobre los equipos comerciales pronto disponible.')" data-i18n="nav_equipos">💼 Únete al Equipo de Advisors en tu Zona</a>
-            
-            <div style="padding: 10px 14px;">
-                <div style="color: var(--text-muted); font-size: 12.5px; font-weight: 600; margin-bottom: 8px;" data-i18n="nav_poblaciones_titulo">📍 Servicios Presenciales en:</div>
-                <div style="font-size: 11px; color: var(--text-muted); line-height: 1.6; padding-left: 20px;">
-                    Alcanar, Les Cases d'Alcanar, La Ràpita, Vinaròs, Terrassa, Sabadell, Castellar del Vallès, Matadepera, Cerdanyola del Vallès, Sant Cugat del Vallès, Sant Quirze del Vallès.
-                </div>
-            </div>
+            <a href="#" class="nav-item active" data-i18n="nav_demanda">🎯 Demanda Activa</a>
+            <!-- RUTA CORREGIDA -->
+            <a href="/mercado-real.html" class="nav-item" data-i18n="nav_mercado_real">📡 Mercado Real</a>
         </div>
 
         <div class="sidebar-footer">
             <div style="margin-bottom: 10px; font-weight: bold; color: var(--text-muted);">API 4173 · AICAT 14200</div>
             <div class="legal-links">
-                <a href="javascript:void(0)" onclick="openModal('modal-legal')">Aviso Legal</a>
-                <a href="javascript:void(0)" onclick="openModal('modal-privacidad')">Privacidad y LOPD</a>
-                <a href="javascript:void(0)" onclick="openModal('modal-cookies')">Cookies e IA</a>
+                <a onclick="openModal('modal-legal')">Aviso Legal</a>
+                <a onclick="openModal('modal-privacidad')">Privacidad y LOPD</a>
+                <a onclick="openModal('modal-cookies')">Aviso Legal IA & Cookies</a>
+            </div>
+            <div style="margin-top: 15px; font-size: 10px; color: var(--border-color);">
+                &copy; <span id="year-copy">2026</span> Level.immo.<br>Todos los derechos reservados.
             </div>
         </div>
     </aside>
 
     <main>
         <header>
-            <div class="header-title" data-i18n="header_title">Consola Central PropTech · Feed Cronológico</div>
+            <div class="header-title" data-i18n="header_title_da">Consola PropTech · Reverse Market</div>
             <select class="lang-selector" id="language-selector">
                 <option value="es" selected>🇪🇸 Español</option>
                 <option value="ca">🟨 Català</option>
                 <option value="en">🇬🇧 English</option>
+                <option value="fr">🇫🇷 Français</option>
+                <option value="de">🇩🇪 Deutsch</option>
+                <option value="it">🇮🇹 Italiano</option>
             </select>
         </header>
 
         <div class="content-area">
-            
+            <!-- PANEL IZQUIERDO: ALTA DE INVERSOR -->
             <div class="ingesta-panel">
-                <div>
-                    <h2 class="ingesta-title" data-i18n="ingesta_titulo">Añadir Inmueble al Radar</h2>
-                    <p class="ingesta-desc" data-i18n="ingesta_desc">Tu propiedad se publicará de forma anónima tras ser verificada por nuestro equipo.</p>
-                </div>
-
-                <div class="promo-badge">
-                    💎 Tarifa: 10 €/mes · <span style="color: var(--accent-green);">¡GRATIS por Lanzamiento!</span>
-                </div>
+                <h2 style="margin:0; font-size:16px;" data-i18n="unete_inversor">Únete como Inversor</h2>
+                <p style="font-size:12px; color:var(--text-muted); line-height: 1.5; margin-top: 10px;" data-i18n="unete_desc">
+                    Verificamos tu presupuesto y te conseguimos propiedades fuera de mercado directo de particulares.
+                </p>
                 
-                <form class="form-upload" id="form-mercado-real">
+                <form class="form-upload" id="form-alta-inversor">
                     <div class="form-group">
-                        <label data-i18n="lbl_zona">Zona / Población</label>
-                        <select id="prop-zona" required>
-                            <option value="" data-i18n="opt_sel">Selecciona...</option>
+                        <label data-i18n="lbl_nombre">Tu Nombre</label>
+                        <input type="text" id="inv-nombre" placeholder="Ej: Antonio G." data-i18n-placeholder="plc_nombre" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label data-i18n="lbl_zonas_int">Zonas de Interés</label>
+                        <select id="inv-zonas" required>
+                            <option value="">Selecciona zona principal...</option>
                             <option value="Alcanar">Alcanar</option>
                             <option value="Les Cases d'Alcanar">Les Cases d'Alcanar</option>
                             <option value="La Ràpita">La Ràpita</option>
@@ -276,125 +234,60 @@
                             <option value="Sant Quirze del Vallès">Sant Quirze del Vallès</option>
                         </select>
                     </div>
-
+                    
                     <div class="form-group">
-                        <label data-i18n="lbl_tipo">Tipo de Inmueble</label>
-                        <select id="prop-tipo" required>
-                            <option value="" data-i18n="opt_sel">Selecciona...</option>
-                            <option value="Apartamento" data-i18n="opt_apt">Apartamento</option>
-                            <option value="Piso" data-i18n="opt_piso">Piso</option>
-                            <option value="Adosado" data-i18n="opt_ado">Adosado</option>
-                            <option value="Chalet" data-i18n="opt_cha">Chalet</option>
-                            <option value="Local" data-i18n="opt_loc">Local</option>
-                            <option value="Terreno o Parcela" data-i18n="opt_ter">Terreno o Parcela</option>
-                        </select>
+                        <label data-i18n="lbl_presupuesto">Presupuesto Verificable (€)</label>
+                        <input type="number" id="inv-presupuesto" placeholder="Ej: 150000" required>
                     </div>
                     
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label data-i18n="lbl_hab">Habitaciones</label>
-                            <input type="number" id="prop-hab" min="0" placeholder="0" required>
-                        </div>
-                        <div class="form-group">
-                            <label data-i18n="lbl_banos">Baños</label>
-                            <input type="number" id="prop-banos" min="0" placeholder="0" required>
-                        </div>
-                    </div>
-
                     <div class="form-group">
-                        <label data-i18n="lbl_obs">Observaciones</label>
-                        <textarea id="prop-obs" placeholder="Reformado, vistas, ascensor..." data-i18n-placeholder="plc_obs" required></textarea>
+                        <label data-i18n="lbl_requisito">Requisito Clave</label>
+                        <input type="text" id="inv-requisito" placeholder="Ej: Vistas al mar, Ascensor..." data-i18n-placeholder="plc_requisito" required>
                     </div>
-
+                    
                     <div class="form-group">
-                        <label data-i18n="lbl_precio">Precio de Venta Deseado (€)</label>
-                        <input type="text" id="prop-precio" placeholder="Ej: 145.000 €" required>
-                    </div>
-
-                    <div class="form-group" style="margin-top: 5px;">
-                        <div class="file-upload-box">
-                            <span class="upload-icon">📸</span>
-                            <div class="upload-text" data-i18n="lbl_fotos">Subir Fotos (Máx. 4)</div>
-                            <div class="upload-subtext" data-i18n="lbl_fotos_warn">⚠️ OBLIGATORIO: Solo interiores.<br>Cero fachadas o vistas a la calle.</div>
-                            <input type="file" id="prop-fotos" accept="image/*" multiple required>
-                            <div id="preview-container"></div>
-                        </div>
-                        <div id="file-counter">0 archivos</div>
-                    </div>
-
-                    <div class="form-group">
-                        <label data-i18n="lbl_tel">Tu Teléfono (No se publicará)</label>
-                        <input type="tel" id="prop-tel" placeholder="Para gestión interna..." data-i18n-placeholder="plc_tel" required>
-                    </div>
-
-                    <div class="form-group" style="background: rgba(59, 130, 246, 0.05); padding: 10px; border-radius: 6px; border: 1px solid rgba(59, 130, 246, 0.2);">
-                        <label id="captcha-label" style="color: var(--accent-blue);">Verificación: ¿Cuánto es X + Y?</label>
-                        <input type="number" id="prop-captcha" placeholder="Resultado..." required>
-                        <input type="hidden" id="captcha-answer">
+                        <label data-i18n="lbl_tel_oculto">Teléfono Oculto</label>
+                        <input type="tel" id="inv-tel" placeholder="Para conectarte con vendedores" data-i18n-placeholder="plc_tel_oculto" required>
                     </div>
 
                     <div class="form-group legal-check">
-                        <input type="checkbox" id="prop-legal" required>
-                        <label for="prop-legal">
-                            <b>Solicito acceso al Mercado Real y acepto <span class="legal-link" onclick="openModal('modal-legal')">las Condiciones</span>.</b> Declaro ser titular. Acepto aportar Nota Simple, autorizar visita presencial y garantizar exclusividad del canal.
+                        <input type="checkbox" id="inv-legal" required>
+                        <label for="inv-legal" data-i18n="lbl_condiciones_vip">
+                            <b>Acepto las Condiciones y Privacidad.</b> Autorizo el tratamiento de mis datos para la validación financiera.
                         </label>
                     </div>
 
-                    <button type="submit" class="btn-submit" id="btn-procesar" data-i18n="btn_cuarentena">Subir a Cuarentena 🔒</button>
+                    <div class="form-group math-box">
+                        <label style="margin:0;">
+                            <span data-i18n="lbl_seguridad">Anti-spam: ¿Cuánto es</span> 
+                            <span id="math-q" style="font-size:16px; color:var(--accent-gold); margin-left: 5px;"></span>?
+                        </label>
+                        <input type="number" id="inv-math" required style="width: 80px; text-align: center;">
+                    </div>
+                    
+                    <button type="submit" class="btn-submit" data-i18n="btn_solicitar_vip">Solicitar Verificación VIP</button>
                 </form>
             </div>
 
-            <!-- PANEL DERECHO: FEED DINÁMICO -->
-            <div class="feed-panel" id="scroll-feed">
-                <div class="feed-header">
-                    <h1 class="feed-title"><span data-i18n="titulo_feed">Mercado Real</span> <span class="live-indicator"><span class="live-dot"></span> <span data-i18n="en_directo">En Directo</span></span></h1>
-                </div>
-
-                <div class="feed-container" id="feed-container">
-                    <!-- LAS TARJETAS SE GENERARÁN AQUÍ POR JAVASCRIPT -->
+            <!-- PANEL DERECHO: MURO DE COMPRADORES (ALIMENTADO DESDE LARK) -->
+            <div class="feed-panel">
+                <h1 style="margin-top:0; margin-bottom: 20px;" data-i18n="comp_verificados">Compradores Verificados</h1>
+                
+                <div id="feed-compradores-container">
+                    <div style="text-align:center; padding: 40px; color: var(--accent-green);">📡 Cargando compradores verificados desde el radar...</div>
                 </div>
             </div>
         </div>
     </main>
 
-    <!-- WIDGET FLOTANTE ELENA AI -->
-    <div class="elena-widget" id="elena-widget">
-        <div class="elena-header">
-            <div class="elena-title">✨ Elena AI Advisor</div>
-            <button class="elena-close" onclick="cerrarChatElena()">&times;</button>
-        </div>
-        <div class="elena-body" id="elena-chat-history">
-            <div class="chat-bubble">¡Hola! Soy Elena 🤖. Veo que te interesa la propiedad <strong id="elena-ref-display" style="color:var(--accent-gold);"></strong>.</div>
-            <div class="chat-bubble">Por favor, indícame tu correo electrónico o tu número de WhatsApp y te añadiré a la lista de espera prioritaria o te enviaré el dossier.</div>
-        </div>
-        <div class="elena-footer">
-            <input type="hidden" id="elena-ref-inmueble">
-            <input type="text" id="elena-input-contact" class="elena-input" placeholder="Tu email o WhatsApp..." onkeypress="if(event.key === 'Enter') enviarDatosElena()">
-            <button class="elena-btn-send" id="elena-btn-send" onclick="enviarDatosElena()">Enviar Solicitud</button>
-        </div>
-    </div>
-
-    <!-- MODAL: FICHA PÚBLICA DE INMUEBLE (DEEP LINK) -->
-    <div class="modal-overlay" id="modal-ficha-inmueble" onclick="if(event.target === this) closeModal('modal-ficha-inmueble')">
-        <div class="modal-content" style="max-width: 900px; padding: 0; overflow: hidden; display: flex; flex-direction: column;">
-            <button class="modal-close" onclick="closeModal('modal-ficha-inmueble')" style="background: rgba(0,0,0,0.5); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white;">&times;</button>
-            <div id="ficha-dinamica-content" style="padding: 40px; overflow-y: auto; max-height: 85vh;">
-                <!-- EL CONTENIDO SE INYECTA AQUÍ -->
-            </div>
-        </div>
-    </div>
-
-    <!-- TOAST NOTIFICATION -->
-    <div class="toast-notification" id="toast-msg"></div>
-
     <!-- VENTANAS MODALES LEGALES -->
     <div class="modal-overlay" id="modal-legal" onclick="if(event.target === this) closeModal('modal-legal')">
         <div class="modal-content">
             <button class="modal-close" onclick="closeModal('modal-legal')">&times;</button>
-            <div class="modal-title">Aviso Legal y Condiciones</div>
+            <div class="modal-title">Aviso Legal</div>
             <div class="modal-body">
-                <p>En cumplimiento con la Ley de Servicios de la Sociedad de la Información, se informa que Level.immo está operada por un agente registrado (API 4173 · AICAT 14200).</p>
-                <p>El uso de esta plataforma implica la aceptación de las normas de publicación. Toda información proporcionada por los usuarios será verificada minuciosamente antes de su exposición pública.</p>
+                <p>En cumplimiento con la Ley de Servicios de la Sociedad de la Información, se informa que Level.immo está operada por agentes registrados (API 4173 · AICAT 14200).</p>
+                <p>El uso de esta plataforma implica la aceptación de nuestras normas de publicación. Toda información proporcionada por los usuarios será verificada antes de su exposición pública.</p>
             </div>
         </div>
     </div>
@@ -413,554 +306,438 @@
     <div class="modal-overlay" id="modal-cookies" onclick="if(event.target === this) closeModal('modal-cookies')">
         <div class="modal-content">
             <button class="modal-close" onclick="closeModal('modal-cookies')">&times;</button>
-            <div class="modal-title">Cookies e Inteligencia Artificial</div>
+            <div class="modal-title">Aviso Legal de IA y Cookies</div>
             <div class="modal-body">
                 <p>Esta plataforma utiliza cookies técnicas estrictamente necesarias para mantener su sesión activa y asegurar el correcto funcionamiento del sistema multidioma.</p>
-                <p>Asimismo, los procesos de emparejamiento (Match) e ingesta pueden ser asistidos por algoritmos de Inteligencia Artificial para agilizar la conexión entre oferta y demanda.</p>
+                <p><strong>Uso de Inteligencia Artificial:</strong> Informamos a nuestros usuarios que los procesos de verificación, emparejamiento (Match) y estructuración de datos pueden ser operados total o parcialmente mediante algoritmos de Inteligencia Artificial para agilizar la conexión entre oferta y demanda inmobiliaria. Al utilizar Level.immo, acepta esta intermediación automatizada.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE OFERTA DE PROPIEDAD -->
+    <div class="modal-overlay" id="modal-offer" onclick="if(event.target === this) closeModal('modal-offer')">
+        <div class="modal-content" style="margin-top: 20px;">
+            <button class="modal-close" onclick="closeModal('modal-offer')">&times;</button>
+            <div class="modal-title" data-i18n="modal_offer_title">Ofrecer mi propiedad</div>
+            <div class="modal-body">
+                <p id="offer-text" style="margin-bottom: 15px; font-weight: bold; color: var(--accent-gold);"></p>
+                
+                <form class="form-upload" id="form-offer" style="margin-top: 0;">
+                    <div class="form-group">
+                        <label data-i18n="lbl_zona">Zona / Población</label>
+                        <select id="offer-zona" required>
+                            <option value="">Selecciona...</option>
+                            <option value="Alcanar">Alcanar</option>
+                            <option value="Les Cases d'Alcanar">Les Cases d'Alcanar</option>
+                            <option value="La Ràpita">La Ràpita</option>
+                            <option value="Vinaròs">Vinaròs</option>
+                            <option value="Terrassa">Terrassa</option>
+                            <option value="Sabadell">Sabadell</option>
+                            <option value="Castellar del Vallès">Castellar del Vallès</option>
+                            <option value="Matadepera">Matadepera</option>
+                            <option value="Cerdanyola del Vallès">Cerdanyola del Vallès</option>
+                            <option value="Sant Cugat del Vallès">Sant Cugat del Vallès</option>
+                            <option value="Sant Quirze del Vallès">Sant Quirze del Vallès</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label data-i18n="lbl_tipo">Tipo de Inmueble</label>
+                        <select id="offer-tipo" required>
+                            <option value="">Selecciona...</option>
+                            <option value="Apartamento">Apartamento</option>
+                            <option value="Piso">Piso</option>
+                            <option value="Adosado">Adosado</option>
+                            <option value="Chalet">Chalet</option>
+                            <option value="Terreno o Parcela">Terreno o Parcela</option>
+                        </select>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label data-i18n="lbl_hab">Habitaciones</label>
+                            <input type="number" id="offer-hab" min="0" placeholder="0" required>
+                        </div>
+                        <div class="form-group">
+                            <label data-i18n="lbl_banos">Baños</label>
+                            <input type="number" id="offer-banos" min="0" placeholder="0" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label data-i18n="lbl_obs">Descripción breve</label>
+                        <textarea id="offer-obs" placeholder="Estado, extras..." required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label data-i18n="lbl_precio">Precio de Venta Deseado (€)</label>
+                        <input type="text" id="offer-precio" placeholder="Ej: 145.000 €" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <div class="file-upload-box">
+                            <span class="upload-icon">📸</span>
+                            <div class="upload-text" data-i18n="lbl_fotos">Subir Fotos (Máx. 4)</div>
+                            <input type="file" id="offer-fotos" accept="image/*" multiple required>
+                            <div id="preview-container"></div>
+                        </div>
+                        <div id="file-counter">0 archivos</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label data-i18n="lbl_tel">Tu Teléfono</label>
+                        <input type="tel" id="offer-tel" placeholder="Para contactarte" required>
+                    </div>
+
+                    <div class="form-group legal-check">
+                        <input type="checkbox" id="offer-legal" required>
+                        <label for="offer-legal" data-i18n="lbl_condiciones_vip">
+                            <b>Acepto las Condiciones y la Privacidad.</b> Autorizo el tratamiento de mis datos.
+                        </label>
+                    </div>
+
+                    <button type="submit" class="btn-submit" data-i18n="btn_enviar_oferta">Enviar a revisión</button>
+                </form>
             </div>
         </div>
     </div>
 
     <script>
         // ==========================================
-        // 1. CONFIGURACIÓN DE LOS WEBHOOKS
+        // CONFIGURACIÓN DE WEBHOOKS
         // ==========================================
-        const WEBHOOK_INGESTA = "https://hook.eu1.make.com/loy5kvv4qmnvo748fmxo2qvt48mbf986"; 
-        const WEBHOOK_SURTIDOR = "https://hook.eu1.make.com/bpb012er1137ocx0tcdk19muh6le4qpu"; 
-        const WEBHOOK_ELENA = "https://hook.eu1.make.com/3w2wmbbcc3evnvg8ajo3kjkucrd6dfkw"; 
+        const WEBHOOK_MAKE = "https://hook.eu1.make.com/loy5kvv4qmnvo748fmxo2qvt48mbf986"; 
+        // Webhook surtidor para leer los compradores verificados desde Lark (puedes crear un escenario surtidor dedicado o usar uno existente)
+        const WEBHOOK_SURTIDOR_COMPRADORES = "https://hook.eu1.make.com/bpb012er1137ocx0tcdk19muh6le4qpu"; 
 
-        // ==========================================
-        // 2. UTILIDADES Y SISTEMA BÁSICO
-        // ==========================================
-        const urlParams = new URLSearchParams(window.location.search);
-        const utm_source = urlParams.get('utm_source') || "";
-        const utm_medium = urlParams.get('utm_medium') || "";
-        const utm_campaign = urlParams.get('utm_campaign') || "";
+        // Respaldo de seguridad por si el surtidor de compradores sufre un fallo temporal
+        const COMPRADORES_REALES_BASE = [
+            {
+                Nombre_Inversor: "Antonio G.",
+                Estado_Verificacion: "Verificado",
+                Presupuesto: "125000",
+                Zonas_Interes: "La Ràpita / Alcanar",
+                Tipo_Propiedad: "Piso o Adosado",
+                Requisito_Clave: "Ascensor obligatorio",
+                Fecha_Alta: "Hace 1 día"
+            },
+            {
+                Nombre_Inversor: "María S.",
+                Estado_Verificacion: "Verificada",
+                Presupuesto: "210000",
+                Zonas_Interes: "Vinaròs",
+                Tipo_Propiedad: "Chalet independiente",
+                Requisito_Clave: "Con parcela / jardín",
+                Fecha_Alta: "Hace 3 días"
+            },
+            {
+                Nombre_Inversor: "Carlos M.",
+                Estado_Verificacion: "Verificado",
+                Presupuesto: "350000",
+                Zonas_Interes: "Sant Cugat / Terrassa",
+                Tipo_Propiedad: "Piso céntrico",
+                Requisito_Clave: "Parking incluido",
+                Fecha_Alta: "Hace 5 días"
+            }
+        ];
 
+        const traducciones = {
+            es: { 
+                nav_demanda: "🎯 Demanda Activa", nav_mercado_real: "📡 Mercado Real", header_title_da: "Consola PropTech · Reverse Market", unete_inversor: "Únete como Inversor", 
+                unete_desc: "Verificamos tu presupuesto y te conseguimos propiedades fuera de mercado directo de particulares.", lbl_nombre: "Tu Nombre", plc_nombre: "Ej: Antonio G.", 
+                lbl_zonas_int: "Zonas de Interés", lbl_presupuesto: "Presupuesto Verificable (€)", lbl_requisito: "Requisito Clave", plc_requisito: "Ej: Vistas al mar, Ascensor...", 
+                lbl_tel_oculto: "Teléfono Oculto", plc_tel_oculto: "Para conectarte con vendedores", btn_solicitar_vip: "Solicitar Verificación VIP", comp_verificados: "Compradores Verificados", 
+                badge_verificado: "✓ Verificado", modal_offer_title: "Ofrecer mi propiedad", lbl_tipo: "Tipo de Inmueble", lbl_precio: "Precio de Venta Deseado (€)", lbl_fotos: "Subir Fotos (Máx. 4)", 
+                btn_enviar_oferta: "Enviar a revisión", lbl_condiciones_vip: "<b>Acepto las Condiciones y la Privacidad.</b> Autorizo el tratamiento de mis datos.", lbl_seguridad: "Anti-spam: ¿Cuánto es",
+                lbl_zona: "Zona / Población", lbl_hab: "Habitaciones", lbl_banos: "Baños", lbl_obs: "Descripción breve", lbl_tel: "Tu Teléfono", btn_tengo_buscas: "Tengo lo que buscas 🏠"
+            },
+            ca: { 
+                nav_demanda: "🎯 Demanda Activa", nav_mercado_real: "📡 Mercat Real", header_title_da: "Consola PropTech · Reverse Market", unete_inversor: "Uneix-te com a Inversor", 
+                unete_desc: "Verifiquem el teu pressupost i t'aconseguim propietats fora de mercat directe de particulars.", lbl_nombre: "El teu Nom", plc_nombre: "Ex: Antonio G.", 
+                lbl_zonas_int: "Zones d'Interès", lbl_presupuesto: "Pressupost Verificable (€)", lbl_requisito: "Requisit Clau", plc_requisito: "Ex: Vistes al mar, Ascensor...", 
+                lbl_tel_oculto: "Telèfon Ocult", plc_tel_oculto: "Per connectar-te amb venedors", btn_solicitar_vip: "Sol·licitar Verificació VIP", comp_verificados: "Compradors Verificats", 
+                badge_verificado: "✓ Verificat", modal_offer_title: "Oferir la meva propietat", lbl_tipo: "Tipus d'Immoble", lbl_precio: "Preu de Venda Desitjat (€)", lbl_fotos: "Pujar Fotos (Màx. 4)", 
+                btn_enviar_oferta: "Enviar a revisió", lbl_condiciones_vip: "<b>Accepto les Condicions i la Privacitat.</b> Autoritzo el tractament de les meves dades.", lbl_seguridad: "Anti-spam: Quant és",
+                lbl_zona: "Zona / Població", lbl_hab: "Habitacions", lbl_banos: "Banys", lbl_obs: "Descripció breu", lbl_tel: "El teu Telèfon", btn_tengo_buscas: "Tinc el que busques 🏠"
+            },
+            en: { 
+                nav_demanda: "🎯 Active Demand", nav_mercado_real: "📡 Real Market", header_title_da: "PropTech Console · Reverse Market", unete_inversor: "Join as an Investor", 
+                unete_desc: "We verify your budget and find you off-market properties direct from owners.", lbl_nombre: "Your Name", plc_nombre: "E.g. Antonio G.", 
+                lbl_zonas_int: "Areas of Interest", lbl_presupuesto: "Verifiable Budget (€)", lbl_requisito: "Key Requirement", plc_requisito: "E.g. Sea views, Elevator...", 
+                lbl_tel_oculto: "Hidden Phone", plc_tel_oculto: "To connect you with sellers", btn_solicitar_vip: "Request VIP Verification", comp_verificados: "Verified Buyers", 
+                badge_verificado: "✓ Verified", modal_offer_title: "Offer my property", lbl_tipo: "Property Type", lbl_precio: "Desired Sale Price (€)", lbl_fotos: "Upload Photos (Max 4)", 
+                btn_enviar_oferta: "Send for review", lbl_condiciones_vip: "<b>I accept the Terms and Privacy Policy.</b> I authorize the processing of my data.", lbl_seguridad: "Anti-spam: What is",
+                lbl_zona: "Area / City", lbl_hab: "Bedrooms", lbl_banos: "Bathrooms", lbl_obs: "Short description", lbl_tel: "Your Phone", btn_tengo_buscas: "I have what you're looking for 🏠"
+            },
+            fr: { 
+                nav_demanda: "🎯 Demande Active", nav_mercado_real: "📡 Marché Réel", header_title_da: "Console PropTech · Reverse Market", unete_inversor: "Rejoignez en tant qu'Investisseur", 
+                unete_desc: "Nous vérifions votre budget et vous trouvons des biens hors marché directement auprès des propriétaires.", lbl_nombre: "Votre Nom", plc_nombre: "Ex. Antonio G.", 
+                lbl_zonas_int: "Zones d'Intérêt", lbl_presupuesto: "Budget Vérifiable (€)", lbl_requisito: "Exigence Clé", plc_requisito: "Ex. Vue mer, Ascenseur...", 
+                lbl_tel_oculto: "Téléphone Masqué", plc_tel_oculto: "Pour vous connecter aux vendeurs", btn_solicitar_vip: "Demander Vérification VIP", comp_verificados: "Acheteurs Vérifiés", 
+                badge_verificado: "✓ Vérifié", modal_offer_title: "Offrir ma propriété", lbl_tipo: "Type de Propriété", lbl_precio: "Prix de Vente Souhaité (€)", lbl_fotos: "Télécharger Photos (Max 4)", 
+                btn_enviar_oferta: "Envoyer pour examen", lbl_condiciones_vip: "<b>J'accepte les Conditions et la Confidentialité.</b> J'autorise le traitement de mes données.", lbl_seguridad: "Anti-spam: Combien font",
+                lbl_zona: "Zone / Ville", lbl_hab: "Chambres", lbl_banos: "Salles de bain", lbl_obs: "Brève description", lbl_tel: "Votre Téléphone", btn_tengo_buscas: "J'ai ce que vous cherchez 🏠"
+            },
+            de: { 
+                nav_demanda: "🎯 Aktive Nachfrage", nav_mercado_real: "📡 Echter Markt", header_title_da: "PropTech Konsole · Reverse Market", unete_inversor: "Als Investor beitreten", 
+                unete_desc: "Wir prüfen Ihr Budget und finden für Sie Off-Market-Immobilien direkt vom Eigentümer.", lbl_nombre: "Ihr Name", plc_nombre: "z.B. Antonio G.", 
+                lbl_zonas_int: "Interessengebiete", lbl_presupuesto: "Nachweisbares Budget (€)", lbl_requisito: "Hauptanforderung", plc_requisito: "z.B. Meerblick, Aufzug...", 
+                lbl_tel_oculto: "Verstecktes Telefon", plc_tel_oculto: "Zur Verbindung mit Verkäufern", btn_solicitar_vip: "VIP-Verifizierung anfordern", comp_verificados: "Verifizierte Käufer", 
+                badge_verificado: "✓ Verifiziert", modal_offer_title: "Meine Immobilie anbieten", lbl_tipo: "Immobilientyp", lbl_precio: "Gewünschter Verkaufspreis (€)", lbl_fotos: "Fotos hochladen (Max 4)", 
+                btn_enviar_oferta: "Zur Überprüfung senden", lbl_condiciones_vip: "<b>Ich akzeptiere die Bedingungen und den Datenschutz.</b> Ich stimme der Verarbeitung meiner Daten zu.", lbl_seguridad: "Anti-spam: Was ist",
+                lbl_zona: "Gebiet / Stadt", lbl_hab: "Schlafzimmer", lbl_banos: "Badezimmer", lbl_obs: "Kurze Beschreibung", lbl_tel: "Ihre Telefonnummer", btn_tengo_buscas: "Ich habe, was Sie suchen 🏠"
+            },
+            it: { 
+                nav_demanda: "🎯 Domanda Attiva", nav_mercado_real: "📡 Mercato Reale", header_title_da: "Console PropTech · Reverse Market", unete_inversor: "Unisciti come Investitore", 
+                unete_desc: "Verifichiamo il tuo budget e ti troviamo proprietà fuori mercato direttamente dai proprietari.", lbl_nombre: "Il tuo Nome", plc_nombre: "Es. Antonio G.", 
+                lbl_zonas_int: "Zone di Interesse", lbl_presupuesto: "Budget Verificabile (€)", lbl_requisito: "Requisito Chiave", plc_requisito: "Es. Vista mare, Ascensore...", 
+                lbl_tel_oculto: "Telefono Nascosto", plc_tel_oculto: "Per metterti in contatto con i venditori", btn_solicitar_vip: "Richiedi Verifica VIP", comp_verificados: "Acquirenti Verificati", 
+                badge_verificado: "✓ Verificato", modal_offer_title: "Offri la mia proprietà", lbl_tipo: "Tipo di Immobile", lbl_precio: "Prezzo di Vendita Desiderato (€)", lbl_fotos: "Carica Foto (Max 4)", 
+                btn_enviar_oferta: "Invia per la revisione", lbl_condiciones_vip: "<b>Accetto le Condizioni e la Privacy.</b> Autorizzo il trattamento dei miei dati.", lbl_seguridad: "Anti-spam: Quanto fa",
+                lbl_zona: "Zona / Città", lbl_hab: "Camere", lbl_banos: "Bagni", lbl_obs: "Breve descrizione", lbl_tel: "Il tuo Telefono", btn_tengo_buscas: "Ho quello che cerchi 🏠"
+            }
+        };
+
+        let currentMathAnswer = 0;
         let sessionId = 'usr_' + Math.random().toString(36).substr(2, 9);
         let clienteIP = "Desconocida";
         fetch('https://api.ipify.org?format=json').then(r => r.json()).then(data => { clienteIP = data.ip; }).catch(e => {});
-        
-        window.inmueblesGlobal = []; // Almacén global para el Deep Linking
 
-        function enviarWebhookMakeJSON(evento, tipoCta = "", datosUsuario = {}, datosInmueble = {}) {
-            const lang = document.getElementById('language-selector').value || "es";
-            const payloadMaestro = {
-                metadatos_sistema: { origen_landing: "MERCADO REAL", tipo_cta: tipoCta, idioma_usuario: lang, id_sesion: sessionId, ip_cliente: clienteIP },
-                datos_usuario: { telefono: datosUsuario.telefono || "", email: datosUsuario.email || "", nombre: "", acepto_legal: true },
-                datos_demanda_inversion: { zonas_interes: "", presupuesto_requisitos: "", informacion_solicitada: "" },
-                datos_inmueble_captacion: { poblacion: "", tipo_inmueble: "", habitaciones: "", banos: "", descripcion_observaciones: "", precio_deseado: "", fotos_subidas: 0, referencia_inmueble: datosInmueble.referencia_inmueble || "" },
-                tracking_marketing: { utm_source, utm_medium, utm_campaign },
-                mensaje: evento
-            };
-
-            const urlDestino = (tipoCta === "ME INTERESA") ? WEBHOOK_ELENA : WEBHOOK_INGESTA;
-
-            return fetch(urlDestino, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payloadMaestro)
-            });
+        function generarSumaSeguridad() {
+            const num1 = Math.floor(Math.random() * 10) + 1;
+            const num2 = Math.floor(Math.random() * 10) + 1;
+            currentMathAnswer = num1 + num2;
+            document.getElementById('math-q').innerText = `${num1} + ${num2}`;
         }
-
-        const traducciones = {
-            es: { nav_demanda: "🎯 Demanda Activa", nav_mercado_real: "📡 Mercado Real", nav_gestion: "👥 Acceso a Usuarios", nav_chivatazo: "📣 Chivatazo Nacional", nav_equipos: "💼 Únete al Equipo de Advisors en tu Zona", nav_poblaciones_titulo: "📍 Servicios Presenciales en:", header_title: "Consola Central PropTech", ingesta_titulo: "Añadir Inmueble al Radar", ingesta_desc: "Tu propiedad se publicará de forma anónima tras ser verificada por nuestro equipo.", lbl_zona: "Zona / Población", opt_sel: "Selecciona...", lbl_tipo: "Tipo de Inmueble", opt_apt: "Apartamento", opt_piso: "Piso", opt_ado: "Adosado", opt_cha: "Chalet", opt_loc: "Local", opt_ter: "Terreno o Parcela", lbl_hab: "Habitaciones", lbl_banos: "Baños", lbl_obs: "Observaciones", plc_obs: "Reformado, vistas, ascensor...", lbl_precio: "Precio de Venta Deseado (€)", lbl_fotos: "Subir Fotos (Máx. 4)", lbl_fotos_warn: "⚠ OBLIGATORIO: Solo interiores.<br>Cero fachadas.", lbl_tel: "Tu Teléfono (No se publicará)", plc_tel: "Para gestión interna...", btn_cuarentena: "Subir a Cuarentena 🔒", btn_procesando: "Procesando...", titulo_feed: "Mercado Real", en_directo: "En Directo", btn_interesa: "Me Interesa", btn_compartir: "Compartir" },
-            ca: { nav_demanda: "🎯 Demanda Activa", nav_mercado_real: "📡 Mercat Real", nav_gestion: "👥 Accés a Usuaris", nav_chivatazo: "📣 Chivatazo Nacional", nav_equipos: "💼 Uneix-te a l'Equip d'Advisors a la teva Zona", nav_poblaciones_titulo: "📍 Serveis Presencials a:", header_title: "Consola Central PropTech", ingesta_titulo: "Afegir Immoble al Radar", ingesta_desc: "La teva propietat es publicarà de forma anònima després de ser verificada.", lbl_zona: "Zona / Població", opt_sel: "Selecciona...", lbl_tipo: "Tipus d'Immoble", opt_apt: "Apartament", opt_piso: "Pis", opt_ado: "Adossat", opt_cha: "Xalet", opt_loc: "Local", opt_ter: "Terreny", lbl_hab: "Habitacions", lbl_banos: "Banys", lbl_obs: "Observacions", plc_obs: "Reformat, vistes...", lbl_precio: "Preu de Venda (€)", lbl_fotos: "Pujar Fotos (Màx. 4)", lbl_fotos_warn: "⚠️ OBLIGATORI: Només interiors.", lbl_tel: "El teu Telèfon (No es publicarà)", plc_tel: "Per a gestió interna...", btn_cuarentena: "Pujar a Quarantena 🔒", btn_procesando: "Processant...", titulo_feed: "Mercat Real", en_directo: "En Directe", btn_interesa: "M'Interessa", btn_compartir: "Compartir" },
-            en: { nav_demanda: "🎯 Active Demand", nav_mercado_real: "📡 Real Market", nav_gestion: "👥 User Access", nav_chivatazo: "📣 National Tip-off", nav_equipos: "💼 Join the Advisors Team in your Area", nav_poblaciones_titulo: "📍 In-Person Services in:", header_title: "PropTech Central Console", ingesta_titulo: "Add Property to Radar", ingesta_desc: "Your property will be published anonymously after verification.", lbl_zona: "Area / City", opt_sel: "Select...", lbl_tipo: "Property Type", opt_apt: "Apartment", opt_piso: "Flat", opt_ado: "Townhouse", opt_cha: "Villa", opt_loc: "Commercial", opt_ter: "Land", lbl_hab: "Bedrooms", lbl_banos: "Bathrooms", lbl_obs: "Remarks", plc_obs: "Renovated, views...", lbl_precio: "Desired Sale Price (€)", lbl_fotos: "Upload Photos (Max 4)", lbl_fotos_warn: "⚠ MANDATORY: Only interiors.", lbl_tel: "Your Phone (Will not be published)", plc_tel: "For internal management...", btn_cuarentena: "Upload to Quarantine 🔒", btn_procesando: "Processing...", titulo_feed: "Real Market", en_directo: "Live", btn_interesa: "I'm Interested", btn_compartir: "Share" }
-        };
 
         function cambiarIdioma() {
             const lang = document.getElementById('language-selector').value;
             const dic = traducciones[lang] || traducciones['es'];
-            document.querySelectorAll('[data-i18n]').forEach(el => { if (dic[el.getAttribute('data-i18n')]) el.innerHTML = dic[el.getAttribute('data-i18n')]; });
-            document.querySelectorAll('[data-i18n-placeholder]').forEach(el => { if (dic[el.getAttribute('data-i18n-placeholder')]) el.placeholder = dic[el.getAttribute('data-i18n-placeholder')]; });
-            generarCaptcha(lang);
-        }
-
-        function updateClock() {
-            const now = new Date();
-            const clk = document.getElementById('live-clock');
-            if(clk) clk.innerText = `${String(now.getDate()).padStart(2, '0')}/${String(now.getMonth() + 1).padStart(2, '0')}/${now.getFullYear()} | ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
-        }
-
-        // ==========================================
-        // 3. CAPTCHA MATEMÁTICO (ANTI-SPAM)
-        // ==========================================
-        function generarCaptcha(lang = 'es') {
-            const num1 = Math.floor(Math.random() * 10) + 1;
-            const num2 = Math.floor(Math.random() * 10) + 1;
-            document.getElementById('captcha-answer').value = num1 + num2;
-            document.getElementById('prop-captcha').value = '';
-            
-            let labelTexto = `Verificación: ¿Cuánto es ${num1} + ${num2}?`;
-            if(lang === 'en') labelTexto = `Verification: What is ${num1} + ${num2}?`;
-            if(lang === 'ca') labelTexto = `Verificació: Quant és ${num1} + ${num2}?`;
-            
-            document.getElementById('captcha-label').innerText = labelTexto;
-        }
-
-        // ==========================================
-        // 4. LÓGICA DE INTERACCIÓN Y FICHAS (DEEP LINK)
-        // ==========================================
-        function mostrarToast(mensaje) {
-            const toast = document.getElementById('toast-msg');
-            toast.innerText = mensaje;
-            toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 3000);
-        }
-
-        function compartirPropiedad(refID) {
-            // El deep link que abre automáticamente la ficha de ese inmueble
-            const fakeUrl = `https://level.immo/mercado-real?ref=${refID}`;
-            if (navigator.clipboard) {
-                navigator.clipboard.writeText(fakeUrl).then(() => {
-                    mostrarToast('🔗 Enlace de la propiedad copiado al portapapeles');
-                });
-            } else {
-                mostrarToast('🔗 Enlace listo para compartir: ' + fakeUrl);
-            }
-        }
-
-        function abrirChatElena(refID) {
-            // Cierra la ficha si estaba abierta por debajo
-            closeModal('modal-ficha-inmueble'); 
-            
-            document.getElementById('elena-ref-inmueble').value = refID;
-            document.getElementById('elena-ref-display').innerText = refID;
-            document.getElementById('elena-widget').classList.add('active');
-            document.getElementById('elena-input-contact').focus();
-            
-            const chatHistory = document.getElementById('elena-chat-history');
-            chatHistory.innerHTML = `
-                <div class="chat-bubble">¡Hola! Soy Elena 🤖. Veo que te interesa la propiedad <strong style="color:var(--accent-gold);">${refID}</strong>.</div>
-                <div class="chat-bubble">Por favor, indícame tu correo electrónico o tu número de WhatsApp y te añadiré a la lista de espera prioritaria o te enviaré el dossier.</div>
-            `;
-        }
-
-        function cerrarChatElena() {
-            document.getElementById('elena-widget').classList.remove('active');
-            document.getElementById('elena-input-contact').value = '';
-        }
-
-        function enviarDatosElena() {
-            const inputVal = document.getElementById('elena-input-contact').value.trim();
-            if (!inputVal) return;
-
-            const refID = document.getElementById('elena-ref-inmueble').value;
-            const chatHistory = document.getElementById('elena-chat-history');
-            const btnSend = document.getElementById('elena-btn-send');
-
-            const userMsg = document.createElement('div');
-            userMsg.className = 'chat-bubble user';
-            userMsg.innerText = inputVal;
-            chatHistory.appendChild(userMsg);
-            
-            document.getElementById('elena-input-contact').value = '';
-            chatHistory.scrollTop = chatHistory.scrollHeight;
-            btnSend.disabled = true;
-            btnSend.innerText = 'Enviando...';
-
-            let email = "";
-            let telefono = "";
-            if (inputVal.includes('@')) { email = inputVal; } else { telefono = inputVal; }
-
-            enviarWebhookMakeJSON("click_me_interesa", "ME INTERESA", { telefono: telefono, email: email }, { referencia_inmueble: refID })
-            .then(() => {
-                setTimeout(() => {
-                    const elenaReply = document.createElement('div');
-                    elenaReply.className = 'chat-bubble';
-                    elenaReply.innerHTML = `¡Perfecto! ✨ Ya estás en nuestra base de datos para esta propiedad.`;
-                    chatHistory.appendChild(elenaReply);
-                    chatHistory.scrollTop = chatHistory.scrollHeight;
-                    
-                    const cardBtn = document.querySelector(`.property-card[data-id="${refID}"] .btn-like`);
-                    if(cardBtn) {
-                        cardBtn.classList.add('liked');
-                        cardBtn.innerHTML = '✨ Solicitado';
-                    }
-
-                    setTimeout(() => {
-                        cerrarChatElena();
-                        btnSend.disabled = false;
-                        btnSend.innerText = 'Enviar Solicitud';
-                    }, 2500);
-                }, 800);
-            })
-            .catch(e => {
-                console.error(e);
-                btnSend.disabled = false;
-                btnSend.innerText = 'Enviar Solicitud';
+            document.querySelectorAll('[data-i18n]').forEach(el => { 
+                if (dic[el.getAttribute('data-i18n')]) el.innerHTML = dic[el.getAttribute('data-i18n')]; 
             });
-        }
-
-        // LA MAGIA DE LA FICHA PÚBLICA FLOTANTE
-        function abrirFichaInmueble(refID) {
-            const propData = window.inmueblesGlobal.find(p => {
-                const d = p.fields || p;
-                return (d.ID_Inmueble || d.referencia) === refID;
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(el => { 
+                if (dic[el.getAttribute('data-i18n-placeholder')]) el.placeholder = dic[el.getAttribute('data-i18n-placeholder')]; 
             });
-
-            if (!propData) {
-                mostrarToast("❌ La propiedad solicitada no está disponible o sigue en evaluación.");
-                return;
-            }
-
-            const datos = propData.fields || propData;
-            const esActivo = (datos.Cuarentena || "") === "Apto / Activo";
-            
-            const tipoStr = datos['Tipo Propiedad'] || "Inmueble";
-            const poblacionStr = datos['Población'] || "";
-            let tituloStr = `${tipoStr} en ${poblacionStr}`; 
-            if (!poblacionStr) tituloStr = tipoStr;
-
-            let precioHTML = `<span class="ficha-price teaser">🔒 PRÓXIMAMENTE</span>`;
-            let descHTML = "🔒 <i>Propiedad en proceso de verificación documental. Únete a la lista de espera para recibir los detalles completos.</i>";
-            let fotosHTML = `<div class="ficha-img empty"><span style="font-size:40px;">📸</span><span style="font-size:16px; color:var(--text-muted);">Documentación en Revisión</span></div>`;
-
-            if (esActivo) {
-                if (datos['Precio Venta']) {
-                    let numPrecio = parseInt(String(datos['Precio Venta']).replace(/\D/g, ''), 10);
-                    if (!isNaN(numPrecio) && numPrecio > 0) precioHTML = `<span class="ficha-price active">${numPrecio.toLocaleString('es-ES')} €</span>`;
-                }
-                descHTML = (datos['Descripcion inicial'] || "").replace(/\n/g, '<br>');
-                
-                // Extraer galería
-                let imagenUrl = datos.Fotos_Publicas;
-                if (imagenUrl && imagenUrl !== "undefined") {
-                    // Si tienes un array de fotos, podrías iterar. Como es una string, mostramos la principal de momento
-                    fotosHTML = `<img src="${imagenUrl}" class="ficha-img" alt="${tituloStr}">`;
-                } else {
-                    fotosHTML = `<div class="ficha-img empty" style="font-size:16px;">Sin imágenes públicas</div>`;
-                }
-            }
-
-            const habsVal = parseInt(datos.N_Habitaciones);
-            const habsStr = (!isNaN(habsVal) && habsVal > 0) ? `<span class="tag" style="font-size:13px; padding:8px 12px;">🛏 ${habsVal} Habitaciones</span>` : '';
-            const banosVal = parseInt(datos.N_wc);
-            const banosStr = (!isNaN(banosVal) && banosVal > 0) ? `<span class="tag" style="font-size:13px; padding:8px 12px;">🛁 ${banosVal} Baños</span>` : '';
-            let zonaCompleta = poblacionStr || 'Ubicación reservada';
-
-            const fichaContainer = document.getElementById('ficha-dinamica-content');
-            fichaContainer.innerHTML = `
-                <div class="ficha-header">
-                    <div>
-                        <span style="font-family: monospace; color: var(--text-muted); font-size: 13px;">${refID}</span>
-                        <h1 class="ficha-title" style="margin-top: 5px;">${tituloStr}</h1>
-                    </div>
-                    <div>${precioHTML}</div>
-                </div>
-                
-                <div class="ficha-gallery">
-                    ${fotosHTML}
-                </div>
-
-                <div class="ficha-details-grid">
-                    <div>
-                        <h3 class="ficha-desc-title">Descripción de la Propiedad</h3>
-                        <div class="ficha-desc">${descHTML}</div>
-                    </div>
-                    
-                    <div class="ficha-panel-right">
-                        <div class="ficha-tags">
-                            <span class="tag" style="font-size:13px; padding:8px 12px;">📍 ${zonaCompleta}</span>
-                            ${habsStr}
-                            ${banosStr}
-                        </div>
-                        <div style="margin-top: 30px;">
-                            <button class="ficha-btn-elena" onclick="abrirChatElena('${refID}')">
-                                ✨ Solicitar Información a Elena
-                            </button>
-                            <button class="btn-share" style="width: 100%; justify-content: center; margin-top: 10px; padding: 12px;" onclick="compartirPropiedad('${refID}')">
-                                🔗 Compartir esta Ficha
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            `;
-
-            openModal('modal-ficha-inmueble');
-        }
-
-        // ==========================================
-        // 5. MOTOR SURTIDOR
-        // ==========================================
-        async function cargarInmueblesReales() {
-            const feedContainer = document.getElementById('feed-container');
-            const lang = document.getElementById('language-selector').value || "es";
-            
-            feedContainer.innerHTML = `<div style="text-align:center; padding: 40px; color: var(--accent-green);">📡 Conectando con el radar de Level.immo...</div>`;
-
-            try {
-                const response = await fetch(WEBHOOK_SURTIDOR, { cache: 'no-store' });
-                if (!response.ok) throw new Error(`Make rechazó la petición: Error HTTP ${response.status}`);
-                
-                const textoRespuesta = await response.text();
-                let paqueteLark;
-                
-                try {
-                    let textoLimpio = textoRespuesta.trim();
-                    if (textoLimpio.charCodeAt(0) === 0xFEFF) textoLimpio = textoLimpio.slice(1);
-                    textoLimpio = textoLimpio.replace(/[\n\r\t\b\f\v]/g, ' ');
-                    paqueteLark = JSON.parse(textoLimpio);
-                } catch (jsonError) {
-                    throw new Error(`Make no está enviando datos JSON. Respuesta de Make: "${textoRespuesta}"`);
-                }
-
-                const inmuebles = paqueteLark.data ? paqueteLark.data.items : (paqueteLark.items || (Array.isArray(paqueteLark) ? paqueteLark : []));
-                feedContainer.innerHTML = '';
-
-                if (!inmuebles || inmuebles.length === 0) {
-                    feedContainer.innerHTML = `<div style="text-align:center; padding: 40px; color: var(--text-muted);">El Radar está despejado. Make ha devuelto 0 registros.</div>`;
-                    return;
-                }
-
-                // 🛡️ PRIMER FILTRO: Quedarse solo con lo Validado
-                let inmueblesValidados = inmuebles.filter(prop => {
-                    const d = prop.fields || prop;
-                    return d['Primer Filtro'] === "Contenido Validado";
-                });
-
-                // Guardar en la variable global para el Deep Linking
-                window.inmueblesGlobal = inmueblesValidados;
-
-                // 🔄 ORDENACIÓN INTELIGENTE: Teasers/Cuarentena primero, Activos después
-                inmueblesValidados.sort((a, b) => {
-                    const estA = (a.fields || a).Cuarentena === "Apto / Activo" ? 1 : -1;
-                    const estB = (b.fields || b).Cuarentena === "Apto / Activo" ? 1 : -1;
-                    return estA - estB; 
-                });
-
-                if (inmueblesValidados.length === 0) {
-                     feedContainer.innerHTML = `<div style="text-align:center; padding: 40px; color: var(--text-muted);">Sin propiedades verificadas disponibles en este momento.</div>`;
-                     return;
-                }
-
-                inmueblesValidados.forEach(prop => {
-                    const datos = prop.fields || prop; 
-                    
-                    const refID = datos.ID_Inmueble || datos.referencia || "REF-ND";
-                    const tipoStr = datos['Tipo Propiedad'] || "Inmueble";
-                    const poblacionStr = datos['Población'] || "";
-                    const estadoCuarentena = datos.Cuarentena || "";
-                    const esActivo = estadoCuarentena === "Apto / Activo";
-
-                    let tituloStr = `${tipoStr} en ${poblacionStr}`; 
-                    if (!poblacionStr) tituloStr = tipoStr;
-
-                    let precioStr = "Consultar";
-                    let obsStr = "";
-                    let galeriaHTML = "";
-                    let etiquetaEstado = "";
-                    let botonesExtraHTML = "";
-                    
-                    const totalInteresados = datos.interesados || Math.floor(Math.random() * 8) + 1; 
-                    const totalLikes = datos.likes || 0;
-                    
-                    let bloqueInteresadosHTML = '';
-
-                    if (!esActivo) {
-                        // 🔒 MODO TEASER
-                        precioStr = "PRÓXIMAMENTE";
-                        obsStr = "🔒 <i>Propiedad en proceso de verificación documental por nuestro equipo. Únete a la lista de espera para ser de los primeros en recibir los detalles.</i>";
-                        galeriaHTML = `<div class="gallery-img empty" style="grid-column: span 2; background: rgba(245, 158, 11, 0.05); border: 1px dashed var(--accent-orange); color: var(--accent-orange); font-size: 13px; text-align: center; flex-direction: column; gap: 10px;" onclick="abrirFichaInmueble('${refID}')">
-                            <span style="font-size: 24px;">📸</span><span>Ver Ficha en Revisión</span>
-                        </div>`;
-                        etiquetaEstado = `<span class="card-time" style="color: var(--accent-orange); font-weight: bold;">En Verificación</span>`;
-                        bloqueInteresadosHTML = `<div class="likes-count" style="color: var(--accent-orange);">👥 <span id="contador-int-${refID}">${totalInteresados}</span> <span style="margin-left: 5px;">en espera</span></div>`;
-                    } else {
-                        // ✅ MODO ACTIVO
-                        if (datos['Precio Venta']) {
-                            let numPrecio = parseInt(String(datos['Precio Venta']).replace(/\D/g, ''), 10);
-                            if (!isNaN(numPrecio) && numPrecio > 0) precioStr = numPrecio.toLocaleString('es-ES') + ' €';
-                        }
-                        
-                        obsStr = datos['Descripcion inicial'] || "";
-                        etiquetaEstado = `<span class="card-time">Radar Activo</span>`;
-                        bloqueInteresadosHTML = `<div class="likes-count">🔥 <span id="contador-int-${refID}">${totalInteresados}</span> <span style="margin-left: 5px;">interesados</span></div>`;
-                        
-                        const lat = datos.lat || "";
-                        const lon = datos.lon || "";
-                        const enlaceWeb = datos['ENLACE VR 360'] || datos.enlace || "";
-                        
-                        const botonVuelo = (lat && lon) ? `<span class="tag" style="cursor:pointer; background: rgba(59, 130, 246, 0.1); color: var(--accent-blue); border-color: var(--accent-blue); font-weight: bold;" onclick="window.open('https://earth.google.com/web/search/${lat},${lon}', '_blank')">🚁 Vuelo 3D</span>` : '';
-                        const botonWeb = enlaceWeb ? `<span class="tag" style="cursor:pointer; background: rgba(197, 160, 89, 0.1); color: var(--accent-gold); border-color: var(--accent-gold); font-weight: bold;" onclick="window.open('${enlaceWeb}', '_blank')">🌐 Tour / Web</span>` : '';
-                        botonesExtraHTML = botonVuelo + botonWeb;
-                        
-                        let imagenUrl = datos.Fotos_Publicas;
-                        if (imagenUrl && imagenUrl !== "undefined") {
-                            galeriaHTML = `<img src="${imagenUrl}" class="gallery-img" style="grid-column: span 2; height: 100%; max-height: 220px;" alt="${tituloStr}" onerror="this.src='https://placehold.co/400x300/1f2937/9ca3af?text=Imagen+No+Disponible';" onclick="abrirFichaInmueble('${refID}')">`;
-                        } else {
-                            galeriaHTML = `<div class="gallery-img empty" style="grid-column: span 2; background: rgba(255,255,255,0.02);" onclick="abrirFichaInmueble('${refID}')">Abrir Ficha</div>`;
-                        }
-                    }
-
-                    const habsVal = parseInt(datos.N_Habitaciones);
-                    const habsStr = (!isNaN(habsVal) && habsVal > 0) ? `<span class="tag">🛏 ${habsVal} Hab</span>` : '';
-                    const banosVal = parseInt(datos.N_wc);
-                    const banosStr = (!isNaN(banosVal) && banosVal > 0) ? `<span class="tag">🛁 ${banosVal} Baños</span>` : '';
-                    let zonaCompleta = poblacionStr || 'Ubicación reservada';
-
-                    const card = document.createElement('div');
-                    card.className = 'property-card slide-down-enter';
-                    card.dataset.id = refID;
-                    
-                    card.innerHTML = `
-                        <div class="card-header">
-                            <span class="card-ref">${refID}</span>
-                            ${etiquetaEstado}
-                        </div>
-                        <div class="card-body">
-                            <div class="card-details">
-                                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                                    <h3 style="font-size: 16px; margin-right: 10px;" onclick="abrirFichaInmueble('${refID}')">${tituloStr}</h3>
-                                    <span style="font-size: 15px; font-weight: 800; color: ${esActivo ? 'var(--accent-green)' : 'var(--accent-orange)'}; background: ${esActivo ? 'rgba(16,185,129,0.1)' : 'rgba(245,158,11,0.1)'}; padding: 4px 10px; border-radius: 6px; white-space: nowrap;">${precioStr}</span>
-                                </div>
-                                <p class="card-obs" style="margin-top: 10px;" onclick="abrirFichaInmueble('${refID}')" style="cursor:pointer;">${obsStr}</p>
-                                <div class="card-tags" style="margin-top: 15px;">
-                                    <span class="tag">📍 ${zonaCompleta}</span>
-                                    ${habsStr}
-                                    ${banosStr}
-                                    ${botonesExtraHTML}
-                                </div>
-                            </div>
-                            <div class="card-gallery">${galeriaHTML}</div>
-                        </div>
-                        <div class="card-footer">
-                            ${bloqueInteresadosHTML}
-                            <div class="btn-actions-group">
-                                <span style="font-size: 12px; color: var(--text-muted);">❤️ <span id="contador-likes-${refID}">${totalLikes}</span></span>
-                                <button type="button" class="btn-heart" onclick="darLikeVacio(this, 'contador-likes-${refID}', '${refID}')" title="Me Gusta">🤍</button>
-                                <button type="button" class="btn-share" onclick="compartirPropiedad('${refID}')">🔗 <span data-i18n="btn_compartir">Compartir</span></button>
-                                <button type="button" class="btn-like" onclick="abrirChatElena('${refID}')">✨ <span data-i18n="btn_interesa">Me Interesa</span></button>
-                            </div>
-                        </div>
-                    `;
-                    feedContainer.appendChild(card);
-                });
-                
-                cambiarIdioma();
-                
-                // 📡 DETECCIÓN DE DEEP LINK AL CARGAR
-                const refToOpen = urlParams.get('ref');
-                if (refToOpen) {
-                    setTimeout(() => abrirFichaInmueble(refToOpen), 500); // Pequeño retraso para que cargue la interfaz primero
-                }
-                
-            } catch (error) {
-                console.error("Error crítico en el script:", error);
-                feedContainer.innerHTML = `<div style="text-align:center; padding: 40px; color: var(--accent-red);"><strong>⚠️ FALLO DETECTADO:</strong><br><br><span style="color: #fca5a5;">${error.message}</span></div>`;
-            }
         }
 
         window.addEventListener('DOMContentLoaded', () => {
-            setInterval(updateClock, 1000); 
-            updateClock(); 
+            document.getElementById('year-copy').innerText = new Date().getFullYear();
             cambiarIdioma(); 
+            generarSumaSeguridad();
             document.getElementById('language-selector').addEventListener('change', cambiarIdioma);
-            generarCaptcha();
-            cargarInmueblesReales();
+            cargarCompradoresVerificados();
         });
 
+        function openModal(id) { document.getElementById(id).classList.add('active'); }
+        function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+
         // ==========================================
-        // 6. LÓGICA DEL FORMULARIO DE INGESTA
+        // MOTOR CARGA COMPRADORES VERIFICADOS DESDE LARK
         // ==========================================
-        const precioInput = document.getElementById('prop-precio');
-        precioInput.addEventListener('input', function(e) {
+        async function cargarCompradoresVerificados() {
+            const container = document.getElementById('feed-compradores-container');
+            container.innerHTML = `<div style="text-align:center; padding: 40px; color: var(--accent-green);">📡 Cargando compradores verificados...</div>`;
+
+            let listaCompradores = [];
+
+            try {
+                const response = await fetch(WEBHOOK_SURTIDOR_COMPRADORES, { cache: 'no-store' });
+                if (response.ok) {
+                    const textoRespuesta = await response.text();
+                    let textoLimpio = textoRespuesta.trim();
+                    if (textoLimpio.charCodeAt(0) === 0xFEFF) textoLimpio = textoLimpio.slice(1);
+                    const paqueteDatos = JSON.parse(textoLimpio);
+                    const extraidos = paqueteDatos.data ? paqueteDatos.data.items : (paqueteDatos.items || (Array.isArray(paqueteDatos) ? paqueteDatos : []));
+                    if (Array.isArray(extraidos) && extraidos.length > 0) {
+                        listaCompradores = extraidos;
+                    }
+                }
+            } catch (e) {
+                console.warn("Usando base de respaldo de compradores.");
+            }
+
+            if (listaCompradores.length === 0) {
+                listaCompradores = COMPRADORES_REALES_BASE;
+            }
+
+            container.innerHTML = '';
+
+            listaCompradores.forEach(comp => {
+                const d = comp.fields || comp;
+                const nombre = d.Nombre_Inversor || "Inversor Verificado";
+                const presupuestoNum = parseInt(String(d.Presupuesto || "0").replace(/\D/g, ''), 10) || 0;
+                const presupuestoStr = presupuestoNum > 0 ? presupuestoNum.toLocaleString('es-ES') + ' €' : "A consultar";
+                const zona = d.Zonas_Interes || "Zona general";
+                const tipo = d.Tipo_Propiedad || "Inmueble";
+                const requisito = d.Requisito_Clave || "Verificado";
+                const fecha = d.Fecha_Alta || "Reciente";
+
+                const card = document.createElement('div');
+                card.className = 'buyer-card';
+                card.innerHTML = `
+                    <div class="buyer-header">
+                        <div class="buyer-name">👤 ${nombre} <span class="buyer-badge">✓ Verificado</span></div>
+                        <span style="font-size:11px; color:var(--text-muted);">${fecha}</span>
+                    </div>
+                    <div class="buyer-budget">Presupuesto: ${presupuestoStr}</div>
+                    <div class="buyer-tags">
+                        <span class="tag">📍 ${zona}</span>
+                        <span class="tag">🏠 ${tipo}</span>
+                        <span class="tag">⭐ ${requisito}</span>
+                    </div>
+                    <button class="btn-offer" onclick="openOfferModal('${nombre}')">Tengo lo que buscas 🏠</button>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // Envío de Inversor Nuevo
+        document.getElementById('form-alta-inversor').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const userAnswer = parseInt(document.getElementById('inv-math').value);
+            const lang = document.getElementById('language-selector').value;
+            if (userAnswer !== currentMathAnswer) {
+                alert(lang === 'es' ? "Error matemático de seguridad. Inténtalo de nuevo." : "Security math error. Please try again.");
+                generarSumaSeguridad();
+                document.getElementById('inv-math').value = '';
+                return;
+            }
+
+            const btn = e.target.querySelector('button[type="submit"]');
+            const originalText = btn.innerHTML;
+            btn.innerText = "Verificando...";
+            btn.style.opacity = "0.7";
+
+            const payloadMaestro = {
+                metadatos_sistema: {
+                    origen_landing: "DEMANDA ACTIVA",
+                    tipo_cta: "UNETE COMO INVERSOR",
+                    idioma_usuario: lang,
+                    id_sesion: sessionId,
+                    ip_cliente: clienteIP
+                },
+                datos_usuario: {
+                    telefono: document.getElementById('inv-tel').value,
+                    nombre: document.getElementById('inv-nombre').value,
+                    acepto_legal: document.getElementById('inv-legal').checked
+                },
+                datos_demanda_inversion: {
+                    zonas_interes: document.getElementById('inv-zonas').value,
+                    presupuesto_requisitos: document.getElementById('inv-presupuesto').value,
+                    informacion_solicitada: document.getElementById('inv-requisito').value
+                },
+                tracking_marketing: { utm_source, utm_medium, utm_campaign }
+            };
+
+            fetch(WEBHOOK_MAKE, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payloadMaestro)
+            }).then(() => {
+                alert("¡Solicitud enviada con éxito! Nuestro equipo PropTech validará tu perfil.");
+                this.reset();
+                generarSumaSeguridad();
+                btn.innerHTML = originalText;
+                btn.style.opacity = "1";
+            }).catch(err => console.error("Error al enviar a Make:", err));
+        });
+
+        let compradorActual = ""; 
+        function openOfferModal(nombreComprador) {
+            compradorActual = nombreComprador;
+            const lang = document.getElementById('language-selector').value;
+            const text = lang === 'es' ? `Estás ofreciendo tu propiedad a ${nombreComprador}. Los datos pasarán a revisión.` : `You are offering your property to ${nombreComprador}. The data will go to review.`;
+            document.getElementById('offer-text').innerText = text;
+            openModal('modal-offer');
+        }
+
+        const offerPrecioInput = document.getElementById('offer-precio');
+        offerPrecioInput.addEventListener('input', function(e) {
             let val = e.target.value.replace(/\D/g, ''); 
             e.target.value = val ? parseInt(val, 10).toLocaleString('es-ES') + ' €' : '';
         });
 
-        const fileInput = document.getElementById('prop-fotos');
+        const offerFileInput = document.getElementById('offer-fotos');
         const previewContainer = document.getElementById('preview-container');
         const fileCounter = document.getElementById('file-counter');
-        let rawFiles = []; 
+        let rawOfferFiles = []; 
 
-        fileInput.addEventListener('change', function() {
+        offerFileInput.addEventListener('change', function() {
             previewContainer.innerHTML = ''; 
-            rawFiles = [];
-            
+            rawOfferFiles = [];
             if (this.files.length > 4) { alert("⚠️ Límite excedido. Máx 4 fotos."); this.value = ''; fileCounter.style.display = 'none'; return; }
             for (let file of this.files) {
-                if (file.size > 5*1024*1024) { alert(`⚠️ Archivo muy grande: ${file.name}`); this.value = ''; previewContainer.innerHTML = ''; fileCounter.style.display = 'none'; return; }
-                rawFiles.push(file);
+                if (file.size > 5 * 1024 * 1024) { alert(`⚠️ Archivo muy grande: ${file.name}`); this.value = ''; previewContainer.innerHTML = ''; fileCounter.style.display = 'none'; return; }
+                rawOfferFiles.push(file);
                 const imgUrl = URL.createObjectURL(file); 
                 const img = document.createElement('img'); 
                 img.src = imgUrl; img.className = 'preview-thumb'; 
                 previewContainer.appendChild(img);
             }
-            if (rawFiles.length > 0) { fileCounter.innerText = `✅ ${rawFiles.length} archivo(s)`; fileCounter.style.display = 'block'; }
+            if (rawOfferFiles.length > 0) { fileCounter.innerText = `✅ ${rawOfferFiles.length} archivo(s)`; fileCounter.style.display = 'block'; }
         });
 
-        document.getElementById('form-mercado-real').addEventListener('submit', function(e) {
+        document.getElementById('form-offer').addEventListener('submit', function(e) {
             e.preventDefault();
+            const btn = e.target.querySelector('button[type="submit"]');
+            const originalText = btn.innerHTML;
+            btn.innerText = "Procesando...";
+            btn.style.opacity = "0.7";
             const lang = document.getElementById('language-selector').value;
 
-            const answerCorrect = document.getElementById('captcha-answer').value;
-            const userAnswer = document.getElementById('prop-captcha').value;
-            if (userAnswer !== answerCorrect) {
-                alert(lang === 'es' ? "⚠️ Error: La suma matemática es incorrecta." : "⚠️ Error: Incorrect math verification.");
-                generarCaptcha(lang);
-                return;
-            }
-
-            const btn = document.getElementById('btn-procesar'); 
-            const originalText = btn.innerHTML;
-            btn.innerText = traducciones[lang]?.btn_procesando || "Procesando..."; 
-            btn.style.opacity = "0.7";
-            btn.disabled = true;
-
             const payloadMaestro = {
-                metadatos_sistema: { origen_landing: "MERCADO REAL", tipo_cta: "AÑADIR INMUEBLE AL RADAR", idioma_usuario: lang, id_sesion: sessionId, ip_cliente: clienteIP },
-                datos_usuario: { telefono: document.getElementById('prop-tel').value, email: "", nombre: "", acepto_legal: document.getElementById('prop-legal').checked },
-                datos_demanda_inversion: { zonas_interes: "", presupuesto_requisitos: "", informacion_solicitada: "" },
+                metadatos_sistema: {
+                    origen_landing: "DEMANDA ACTIVA",
+                    tipo_cta: "TENGO LO QUE BUSCAS",
+                    idioma_usuario: lang,
+                    id_sesion: sessionId,
+                    ip_cliente: clienteIP
+                },
+                datos_usuario: {
+                    telefono: document.getElementById('offer-tel').value,
+                    nombre: "",
+                    acepto_legal: document.getElementById('offer-legal').checked
+                },
+                datos_demanda_inversion: {
+                    zonas_interes: "", presupuesto_requisitos: "", informacion_solicitada: compradorActual
+                },
                 datos_inmueble_captacion: {
-                    poblacion: document.getElementById('prop-zona').value,
-                    tipo_inmueble: document.getElementById('prop-tipo').value,
-                    habitaciones: document.getElementById('prop-hab').value,
-                    banos: document.getElementById('prop-banos').value,
-                    descripcion_observaciones: document.getElementById('prop-obs').value,
-                    precio_deseado: document.getElementById('prop-precio').value.replace(/\D/g, ''), 
-                    fotos_subidas: rawFiles.length
+                    poblacion: document.getElementById('offer-zona').value,
+                    tipo_inmueble: document.getElementById('offer-tipo').value,
+                    habitaciones: document.getElementById('offer-hab').value,
+                    banos: document.getElementById('offer-banos').value,
+                    descripcion_observaciones: document.getElementById('offer-obs').value,
+                    precio_deseado: document.getElementById('offer-precio').value,
+                    fotos_subidas: rawOfferFiles.length
                 },
                 tracking_marketing: { utm_source, utm_medium, utm_campaign }
             };
 
             const formData = new FormData();
             formData.append("payload_maestro", JSON.stringify(payloadMaestro));
-            rawFiles.forEach((file, idx) => formData.append(`foto_${idx + 1}`, file));
-            
-            fetch(WEBHOOK_INGESTA, { method: 'POST', body: formData })
-            .then(() => {
-                mostrarToast("✅ Propiedad enviada. Pendiente de verificación por nuestro equipo.");
-                this.reset(); 
-                previewContainer.innerHTML = ''; 
-                fileCounter.style.display = 'none'; 
-                rawFiles = []; 
-                btn.innerHTML = originalText; 
-                btn.style.opacity = "1"; 
-                btn.disabled = false;
-                generarCaptcha(lang);
-            })
-            .catch(e => {
-                console.error(e);
-                btn.innerHTML = originalText; 
-                btn.style.opacity = "1"; 
-                btn.disabled = false;
-                mostrarToast("❌ Error al enviar. Inténtalo de nuevo.");
+            rawOfferFiles.forEach((file, idx) => {
+                formData.append(`foto_${idx + 1}`, file);
             });
+
+            fetch(WEBHOOK_MAKE, {
+                method: 'POST',
+                body: formData
+            }).then(() => {
+                setTimeout(() => {
+                    const alertText = lang === 'es' ? "¡Propiedad enviada a revisión y publicada provisionalmente en el Mercado Real!" : "Property sent for review and provisionally published in the Real Market!";
+                    alert(alertText);
+                    closeModal('modal-offer');
+                    e.target.reset();
+                    previewContainer.innerHTML = '';
+                    fileCounter.style.display = 'none';
+                    rawOfferFiles = [];
+                    btn.innerHTML = originalText;
+                    btn.style.opacity = "1";
+                    window.location.href = "/mercado-real.html";
+                }, 800);
+            }).catch(err => console.error("Error al enviar a Make:", err));
         });
-
-        function darLikeVacio(btnElement, counterId, refInmueble) {
-            if (btnElement.classList.contains('liked')) return;
-            btnElement.classList.add('liked'); 
-            btnElement.innerHTML = '❤️';
-            const cnt = document.getElementById(counterId); 
-            if(cnt) cnt.innerText = parseInt(cnt.innerText) + 1;
-            enviarWebhookMakeJSON("click_me_gusta", "ME GUSTA", {}, { referencia_inmueble: refInmueble });
-        }
-
-        function openModal(id) { document.getElementById(id).classList.add('active'); }
-        function closeModal(id) { document.getElementById(id).classList.remove('active'); }
     </script>
 </body>
 </html>
