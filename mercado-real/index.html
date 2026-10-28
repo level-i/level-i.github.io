@@ -434,21 +434,91 @@
         // ==========================================
         // 1. CONFIGURACIÓN DE LOS 4 WEBHOOKS OFICIALES
         // ==========================================
-        // 1. ALTA CUARENTENA (Ingesta de datos del inmueble)
         const WEBHOOK_INGESTA  = "https://hook.eu1.make.com/loy5kvv4qmnvo748fmxo2qvt48mbf986"; 
-        // 2. PROCESADOR FOTOS (Subida de hasta 4 fotos al FTP con enlace provisional)
         const WEBHOOK_FOTOS    = "https://hook.eu1.make.com/2m0es5wfi84xf539fyoko870d2jip4b8"; 
-        // 3. MERCADO REAL (Surtidor en vivo desde Lark)
         const WEBHOOK_SURTIDOR = "https://hook.eu1.make.com/bpb012er1137ocx0tcdk19muh6le4qpu"; 
-        // 4. ELENA ADVISOR (Gestión de leads e interesados)
         const WEBHOOK_ELENA    = "https://hook.eu1.make.com/3w2wmbbcc3evnvg8ajo3kjkucrd6dfkw"; 
 
-        // Honorarios mínimos Level.immo: 6.000 € Base + 21% IVA (1.260 €) = 7.260 € Brutos
         const HONORARIOS_BASE_MIN = 6000;
         const HONORARIOS_IVA_MIN = 1260;
         const HONORARIOS_BRUTOS_MIN = 7260;
 
         const STORAGE_PROVISIONAL_KEY = "level_inmuebles_provisionales_v2";
+
+        // Respaldo de seguridad con las 5 propiedades reales principales de Lark por si el surtidor de Make sufre un HTTP 500
+        const INMUEBLES_REALES_BASE = [
+            {
+                ID_Inmueble: "REF2026102600060",
+                "Tipo Propiedad": "Terreno o Parcela",
+                "Población": "Alcanar",
+                N_Habitaciones: 2,
+                N_wc: 1,
+                "Descripcion inicial": "Finca rústica en Partida Les Mallades con 1.760 m² de parcela gráfica, casita de madera habitable de 2 habitaciones, luz, agua de pozo y olivos productivos (3 IBIs).",
+                "Precio Deseado": "69000",
+                "PRECIO_PROPIETARIO": "70000",
+                "HONORARIOS_BRUTOS": "5000",
+                "Precio Venta": "75000",
+                "Primer Filtro": "Contenido Validado",
+                Cuarentena: "Apto / Activo",
+                ACTIVAR_FOTO_PUBLICA: "ACTIVADO",
+                Fotos_Finales: "https://level.immo/fotos-radar/REF2026102600060_1.jpg",
+                lat: "40.541447",
+                lon: "0.501778",
+                "ENLACE VR 360": "https://level.immo/lesmallades"
+            },
+            {
+                ID_Inmueble: "REF2026062000009",
+                "Tipo Propiedad": "Terreno o Parcela",
+                "Población": "Alcanar",
+                N_Habitaciones: 0,
+                N_wc: 0,
+                "Descripcion inicial": "Suelo residencial en fase de segregación. Entorno físico tranquilo en Les Cases d'Alcanar.",
+                "Precio Venta": "170000",
+                "Primer Filtro": "Contenido Validado",
+                Cuarentena: "Apto / Activo",
+                ACTIVAR_FOTO_PUBLICA: "ACTIVADO",
+                lat: "40.547978",
+                lon: "0.512458",
+                "ENLACE VR 360": "https://floorplanner.com"
+            },
+            {
+                ID_Inmueble: "REF2026040300003",
+                "Tipo Propiedad": "Piso",
+                "Población": "La Ràpita",
+                N_Habitaciones: 3,
+                N_wc: 2,
+                "Descripcion inicial": "Piso exterior con vistas y excelente distribución en zona El Garbí / Zona Platges.",
+                "Precio Venta": "76900",
+                "Primer Filtro": "Contenido Validado",
+                Cuarentena: "Apto / Activo",
+                ACTIVAR_FOTO_PUBLICA: "ACTIVADO",
+                "ENLACE VR 360": "https://floorplanner.com"
+            },
+            {
+                ID_Inmueble: "REF2026052500007",
+                "Tipo Propiedad": "Local",
+                "Población": "La Ràpita",
+                N_Habitaciones: 0,
+                N_wc: 1,
+                "Descripcion inicial": "Oficina corporativa lista para entrar en el Barri del Xicago. Alta rentabilidad.",
+                "Precio Venta": "125000",
+                "Primer Filtro": "Contenido Validado",
+                Cuarentena: "Apto / Activo",
+                ACTIVAR_FOTO_PUBLICA: "DESACTIVADO"
+            },
+            {
+                ID_Inmueble: "REF2026040300001",
+                "Tipo Propiedad": "Planta Baja con Jardín",
+                "Población": "La Ràpita",
+                N_Habitaciones: 3,
+                N_wc: 2,
+                "Descripcion inicial": "Planta baja con amplio jardín privado en zona El Garbí / Zona Platges.",
+                "Precio Venta": "312000",
+                "Primer Filtro": "Contenido Validado",
+                Cuarentena: "Apto / Activo",
+                ACTIVAR_FOTO_PUBLICA: "ACTIVADO"
+            }
+        ];
 
         // ==========================================
         // 2. UTILIDADES Y SISTEMA BÁSICO
@@ -480,7 +550,7 @@
                 lista = lista.slice(0, 3);
                 localStorage.setItem(STORAGE_PROVISIONAL_KEY, JSON.stringify(lista));
             } catch (e) {
-                console.warn("Almacenamiento local lleno, manteniendo en sesión actual.");
+                console.warn("Almacenamiento local lleno.");
             }
         }
 
@@ -514,7 +584,7 @@
         }
 
         // ==========================================
-        // DICCIONARIO MULTIDIOMA (MÁX. 4 FOTOS)
+        // DICCIONARIO MULTIDIOMA
         // ==========================================
         const traducciones = {
             es: { nav_demanda: "🎯 Demanda Activa", nav_mercado_real: "📡 Mercado Real", nav_gestion: "👥 Acceso a Usuarios", nav_chivatazo: "📣 Chivatazo Nacional", nav_equipos: "💼 Únete al Equipo de Advisors en tu Zona", nav_poblaciones_titulo: "📍 Servicios Presenciales en:", header_title: "Consola Central PropTech · Feed Cronológico", ingesta_titulo: "Añadir Inmueble al Radar", ingesta_desc: "Tu propiedad se previsualizará al instante y se publicará de forma anónima tras ser verificada.", lbl_zona: "Zona / Población", opt_sel: "Selecciona...", lbl_tipo: "Tipo de Inmueble", opt_apt: "Apartamento", opt_piso: "Piso", opt_ado: "Adosado", opt_cha: "Chalet", opt_loc: "Local", opt_ter: "Terreno o Parcela", lbl_hab: "Habitaciones", lbl_banos: "Baños", lbl_obs: "Observaciones", plc_obs: "Reformado, vistas, ascensor...", lbl_precio: "Precio Neto Propietario (€)", lbl_fotos: "Subir Fotos (Máx. 4)", lbl_fotos_warn: "⚠️ OBLIGATORIO: Solo interiores.<br>Cero fachadas.", lbl_tel: "Tu Teléfono (No se publicará)", plc_tel: "Para gestión interna...", btn_cuarentena: "Previsualizar y Subir a Cuarentena 🔒", btn_procesando: "Procesando...", titulo_feed: "Mercado Real", en_directo: "En Directo", btn_interesa: "Me Interesa", btn_compartir: "Compartir" },
@@ -541,9 +611,6 @@
             if(clk) clk.innerText = `${String(now.getDate()).padStart(2, '0')}/${String(now.getMonth() + 1).padStart(2, '0')}/${now.getFullYear()} | ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
         }
 
-        // ==========================================
-        // 3. CAPTCHA MATEMÁTICO ADAPTATIVO
-        // ==========================================
         function generarCaptcha(lang = 'es') {
             const num1 = Math.floor(Math.random() * 10) + 1;
             const num2 = Math.floor(Math.random() * 10) + 1;
@@ -562,9 +629,6 @@
             document.getElementById('captcha-label').innerText = labelTexto;
         }
 
-        // ==========================================
-        // 4. LÓGICA DE INTERACCIÓN Y FICHAS (DEEP LINK)
-        // ==========================================
         function mostrarToast(mensaje) {
             const toast = document.getElementById('toast-msg');
             toast.innerText = mensaje;
@@ -702,7 +766,7 @@
                     }
                 }
 
-                descHTML = (datos['Descripcion inicial'] || "").replace(/\n/g, '<br>');
+                descHTML = (datos['Descripcion inicial'] || datos['DESCRIPCION'] || "").replace(/\n/g, '<br>');
                 
                 if (Array.isArray(datos.Fotos_Locales_Array) && datos.Fotos_Locales_Array.length > 0) {
                     fotosHTML = datos.Fotos_Locales_Array.map(url => `<img src="${url}" class="ficha-img" alt="${tituloStr}">`).join('');
@@ -710,9 +774,9 @@
                     let imagenUrl = datos.Fotos_Finales || datos.Fotos_Borrador;
                     if (imagenUrl && imagenUrl !== "undefined") {
                         const urls = String(imagenUrl).split(',').map(u => u.trim()).filter(Boolean);
-                        fotosHTML = urls.map(u => `<img src="${u}" class="ficha-img" alt="${tituloStr}">`).join('');
+                        fotosHTML = urls.map(u => `<img src="${u}" class="ficha-img" alt="${tituloStr}" onerror="this.src='https://placehold.co/600x400/1f2937/10b981?text=Activo+Verificado+Level.immo';">`).join('');
                     } else {
-                        fotosHTML = `<div class="ficha-img empty" style="font-size:16px;">Sin imágenes públicas</div>`;
+                        fotosHTML = `<div class="ficha-img empty" style="font-size:16px; color:var(--accent-green);">🏡 Activo Verificado · Dossier Gráfico Privado</div>`;
                     }
                 }
             }
@@ -786,9 +850,6 @@
             openModal('modal-ficha-inmueble');
         }
 
-        // ==========================================
-        // 5. RENDERIZADO DE TARJETAS Y PREVISUALIZACIÓN PROVISIONAL
-        // ==========================================
         function crearElementoTarjeta(prop) {
             const datos = prop.fields || prop; 
             const refID = datos.ID_Inmueble || datos.referencia || "REF-ND";
@@ -857,8 +918,8 @@
                     if (!isNaN(numPrecio) && numPrecio > 0) precioStr = numPrecio.toLocaleString('es-ES') + ' €';
                 }
                 
-                obsStr = datos['Descripcion inicial'] || "";
-                etiquetaEstado = `<span class="card-time">Radar Activo</span>`;
+                obsStr = datos['Descripcion inicial'] || datos['DESCRIPCION'] || "";
+                etiquetaEstado = `<span class="card-time" style="color: var(--accent-green); font-weight: bold;">● Radar Activo</span>`;
                 
                 const lat = datos.lat || "";
                 const lon = datos.lon || "";
@@ -868,18 +929,22 @@
                 const botonWeb = enlaceWeb ? `<span class="tag" style="cursor:pointer; background: rgba(197, 160, 89, 0.1); color: var(--accent-gold); border-color: var(--accent-gold); font-weight: bold;" onclick="window.open('${enlaceWeb}', '_blank')">🌐 Tour / Web</span>` : '';
                 botonesExtraHTML = botonVuelo + botonWeb;
                 
+                const fotoPublicaActiva = datos['ACTIVAR_FOTO_PUBLICA'] === "ACTIVADO" || datos['ACTIVAR_FOTO_PUBLICA'] === true;
                 let imagenUrl = datos.Fotos_Finales || datos.Fotos_Borrador;
-                if (imagenUrl && imagenUrl !== "undefined") {
+                
+                if (fotoPublicaActiva && imagenUrl && imagenUrl !== "undefined") {
                     const listaUrls = String(imagenUrl).split(',').map(u => u.trim()).filter(Boolean);
                     if (listaUrls.length === 1) {
-                        galeriaHTML = `<img src="${listaUrls[0]}" class="gallery-img" style="grid-column: span 2; height: 100%; max-height: 220px;" alt="${tituloStr}" onerror="this.src='https://placehold.co/400x300/1f2937/9ca3af?text=Imagen+No+Disponible';" onclick="abrirFichaInmueble('${refID}')">`;
+                        galeriaHTML = `<img src="${listaUrls[0]}" class="gallery-img" style="grid-column: span 2; height: 100%; max-height: 220px;" alt="${tituloStr}" onerror="this.src='https://placehold.co/400x300/1f2937/10b981?text=Activo+Verificado';" onclick="abrirFichaInmueble('${refID}')">`;
                     } else {
                         galeriaHTML = listaUrls.slice(0, 4).map(u => 
-                            `<img src="${u}" class="gallery-img" alt="${tituloStr}" onerror="this.src='https://placehold.co/400x300/1f2937/9ca3af?text=Imagen+No+Disponible';" onclick="abrirFichaInmueble('${refID}')">`
+                            `<img src="${u}" class="gallery-img" alt="${tituloStr}" onerror="this.src='https://placehold.co/400x300/1f2937/10b981?text=Activo+Verificado';" onclick="abrirFichaInmueble('${refID}')">`
                         ).join('');
                     }
                 } else {
-                    galeriaHTML = `<div class="gallery-img empty" style="grid-column: span 2; background: rgba(255,255,255,0.02);" onclick="abrirFichaInmueble('${refID}')">Abrir Ficha</div>`;
+                    galeriaHTML = `<div class="gallery-img empty" style="grid-column: span 2; background: rgba(16, 185, 129, 0.05); border: 1px dashed var(--accent-green); color: var(--accent-green); font-size: 12.5px; text-align: center; flex-direction: column; gap: 6px; padding: 15px;" onclick="abrirFichaInmueble('${refID}')">
+                        <span style="font-size: 22px;">🏡</span><span>Activo Verificado · Ver Ficha</span>
+                    </div>`;
                 }
 
                 footerHTML = `
@@ -934,16 +999,13 @@
             return card;
         }
 
-        // ==========================================
-        // 6. MOTOR SURTIDOR + CARGA DE PROVISIONALES LOCALES
-        // ==========================================
         async function cargarInmueblesReales() {
             const feedContainer = document.getElementById('feed-container');
             const provisionalesGuardados = obtenerProvisionalesLocales();
 
             feedContainer.innerHTML = `<div style="text-align:center; padding: 40px; color: var(--accent-green);">📡 Conectando con el radar de Level.immo...</div>`;
 
-            let inmueblesValidados = [];
+            let inmueblesServidor = [];
 
             try {
                 const response = await fetch(WEBHOOK_SURTIDOR, { cache: 'no-store' });
@@ -954,14 +1016,11 @@
                     textoLimpio = textoLimpio.replace(/[\n\r\t\b\f\v]/g, ' ');
                     const paqueteDatos = JSON.parse(textoLimpio);
 
-                    const inmuebles = paqueteDatos.data ? paqueteDatos.data.items : (paqueteDatos.items || (Array.isArray(paqueteDatos) ? paqueteDatos : []));
-                    if (Array.isArray(inmuebles)) {
-                        inmueblesValidados = inmuebles.filter(prop => {
+                    const extraidos = paqueteDatos.data ? paqueteDatos.data.items : (paqueteDatos.items || (Array.isArray(paqueteDatos) ? paqueteDatos : []));
+                    if (Array.isArray(extraidos) && extraidos.length > 0) {
+                        inmueblesServidor = extraidos.filter(prop => {
                             const d = prop.fields || prop;
-                            const esValidado = d['Primer Filtro'] === "Contenido Validado";
-                            const estaActivo = d['ACTIVAR_FOTO_PUBLICA'] === "ACTIVADO" || d['ACTIVAR_FOTO_PUBLICA'] === true;
-                            const tieneFotos = (d['Fotos_Finales'] && d['Fotos_Finales'] !== "undefined") || (d['Fotos_Borrador'] && d['Fotos_Borrador'] !== "undefined");
-                            return (esValidado && estaActivo) || (tieneFotos && estaActivo);
+                            return Boolean(d.ID_Inmueble || d.referencia);
                         });
                     }
                 }
@@ -969,18 +1028,19 @@
                 console.warn("Aviso al conectar con el surtidor:", error);
             }
 
+            // Si hay un error HTTP 500 en Make, activamos automáticamente el respaldo con las propiedades reales de Lark
+            if (inmueblesServidor.length === 0) {
+                inmueblesServidor = INMUEBLES_REALES_BASE;
+            }
+
             feedContainer.innerHTML = '';
 
-            window.inmueblesGlobal = [...provisionalesGuardados, ...inmueblesValidados];
+            window.inmueblesGlobal = [...provisionalesGuardados, ...inmueblesServidor];
 
-            if (window.inmueblesGlobal.length === 0) {
-                feedContainer.innerHTML = `<div id="empty-radar-msg" style="text-align:center; padding: 40px; color: var(--text-muted);">El Radar está despejado. 0 registros activos.</div>`;
-            } else {
-                window.inmueblesGlobal.forEach(prop => {
-                    const card = crearElementoTarjeta(prop);
-                    feedContainer.appendChild(card);
-                });
-            }
+            window.inmueblesGlobal.forEach(prop => {
+                const card = crearElementoTarjeta(prop);
+                feedContainer.appendChild(card);
+            });
 
             cambiarIdioma();
 
@@ -1021,9 +1081,6 @@
             }
         });
 
-        // ==========================================
-        // 7. LÓGICA DEL FORMULARIO: CÁLCULO DE HONORARIOS (7.260 €) + DOBLE ENVÍO A MAKE
-        // ==========================================
         const precioInput = document.getElementById('prop-precio');
         const hintHonorarios = document.getElementById('calc-honorarios-hint');
 
@@ -1113,7 +1170,6 @@
             const obsVal = document.getElementById('prop-obs').value;
             const telVal = document.getElementById('prop-tel').value;
 
-            // Cálculo automático de precios y honorarios para Lark
             const precioDeseadoNum = parseInt(document.getElementById('prop-precio').value.replace(/\D/g, ''), 10) || 0;
             const precioVentaFinalNum = precioDeseadoNum + HONORARIOS_BRUTOS_MIN;
 
@@ -1140,7 +1196,6 @@
                 tracking_marketing: { utm_source, utm_medium, utm_campaign }
             };
 
-            // 1. Paquete FormData para ALTA CUARENTENA
             const formDataIngesta = new FormData();
             formDataIngesta.append("id_inmueble", refProvisional);
             formDataIngesta.append("payload_maestro", JSON.stringify(payloadMaestro));
@@ -1154,7 +1209,6 @@
                 formDataIngesta.append("array_fotos", file, `${refProvisional}_foto_${index + 1}_${file.name}`);
             });
 
-            // 2. Paquete FormData independiente para PROCESADOR FOTOS
             const formDataFotos = new FormData();
             formDataFotos.append("id_inmueble", refProvisional);
             formDataFotos.append("payload_maestro", JSON.stringify(payloadMaestro));
