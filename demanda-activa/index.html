@@ -121,6 +121,9 @@
         .form-group textarea { resize: vertical; min-height: 50px; font-family: inherit; }
         .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 
+        /* GRUPO DE TELÉFONO CON PREFIJO EDITABLE */
+        .phone-group { display: grid; grid-template-columns: 80px 1fr; gap: 8px; }
+
         .legal-check { display: flex; gap: 10px; align-items: flex-start; background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.2); padding: 12px; border-radius: 6px; margin-top: 5px; }
         .legal-check input[type="checkbox"] { margin-top: 2px; accent-color: var(--accent-green); cursor: pointer; }
         .legal-check label { font-size: 11px; color: var(--text-muted); line-height: 1.4; font-weight: normal; margin: 0; cursor: pointer; }
@@ -246,7 +249,10 @@
                     
                     <div class="form-group">
                         <label data-i18n="lbl_tel_oculto">Teléfono Oculto</label>
-                        <input type="tel" id="inv-tel" placeholder="Para conectarte con vendedores" data-i18n-placeholder="plc_tel_oculto" required>
+                        <div class="phone-group">
+                            <input type="text" id="inv-prefijo" value="+34" required>
+                            <input type="tel" id="inv-tel" placeholder="600000000" required>
+                        </div>
                     </div>
 
                     <div class="form-group legal-check">
@@ -385,7 +391,10 @@
 
                     <div class="form-group">
                         <label data-i18n="lbl_tel">Tu Teléfono</label>
-                        <input type="tel" id="offer-tel" placeholder="Para contactarte" required>
+                        <div class="phone-group">
+                            <input type="text" id="offer-prefijo" value="+34" required>
+                            <input type="tel" id="offer-tel" placeholder="600000000" required>
+                        </div>
                     </div>
 
                     <div class="form-group legal-check">
@@ -602,6 +611,10 @@
             btn.innerText = "Verificando...";
             btn.style.opacity = "0.7";
 
+            const prefijoInv = document.getElementById('inv-prefijo').value.trim();
+            const numInv = document.getElementById('inv-tel').value.trim();
+            const telefonoCompleto = prefijoInv + " " + numInv;
+
             const payloadMaestro = {
                 metadatos_sistema: {
                     origen_landing: "DEMANDA ACTIVA",
@@ -611,7 +624,7 @@
                     ip_cliente: clienteIP
                 },
                 datos_usuario: {
-                    telefono: document.getElementById('inv-tel').value,
+                    telefono: telefonoCompleto,
                     nombre: document.getElementById('inv-nombre').value,
                     acepto_legal: document.getElementById('inv-legal').checked
                 },
@@ -630,6 +643,7 @@
             }).then(() => {
                 alert("¡Solicitud enviada con éxito! Nuestro equipo PropTech validará tu perfil.");
                 this.reset();
+                document.getElementById('inv-prefijo').value = "+34";
                 generarSumaSeguridad();
                 btn.innerHTML = originalText;
                 btn.style.opacity = "1";
@@ -683,6 +697,10 @@
             const lang = document.getElementById('language-selector').value;
 
             try {
+                const prefijoOffer = document.getElementById('offer-prefijo').value.trim();
+                const numOffer = document.getElementById('offer-tel').value.trim();
+                const telefonoCompletoOffer = prefijoOffer + " " + numOffer;
+
                 const payloadMaestro = {
                     metadatos_sistema: {
                         origen_landing: "DEMANDA ACTIVA",
@@ -692,7 +710,7 @@
                         ip_cliente: clienteIP
                     },
                     datos_usuario: {
-                        telefono: document.getElementById('offer-tel').value,
+                        telefono: telefonoCompletoOffer,
                         nombre: "",
                         acepto_legal: document.getElementById('offer-legal').checked
                     },
@@ -727,6 +745,7 @@
                     alert(alertText);
                     closeModal('modal-offer');
                     e.target.reset();
+                    document.getElementById('offer-prefijo').value = "+34";
                     previewContainer.innerHTML = '';
                     fileCounter.style.display = 'none';
                     rawOfferFiles = [];
