@@ -36,29 +36,7 @@
         ::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: var(--accent-green); }
 
-        @media (max-width: 900px) {
-            html, body { height: auto; overflow-y: auto; overflow-x: hidden; }
-            body { flex-direction: column; }
-            aside { width: 100%; border-right: none; border-bottom: 1px solid var(--border-color); height: auto; padding: 15px; flex-shrink: 0; }
-            .nav-menu { flex-direction: row; overflow-x: auto; padding-bottom: 10px; }
-            .nav-item { white-space: nowrap; flex-shrink: 0; }
-            main { display: flex; flex-direction: column; height: auto; overflow: visible; }
-            header { flex-direction: column; gap: 15px; height: auto; padding: 15px; text-align: center; }
-            .content-area { display: flex; flex-direction: column; height: auto; overflow: visible; padding: 0; }
-            .ingesta-panel { width: 100%; height: auto; border-right: none; border-bottom: 1px solid var(--border-color); overflow: visible; padding: 15px; }
-            .feed-panel { width: 100%; height: auto; border-right: none; overflow: visible; padding: 15px; }
-            .feed-panel h1 { font-size: 22px !important; margin-bottom: 15px !important; line-height: 1.3; word-wrap: break-word; }
-            .ingesta-title { font-size: 18px; }
-            .buyer-card { padding: 15px; }
-            .buyer-header { flex-direction: column; align-items: flex-start; gap: 8px; }
-            .buyer-name { font-size: 16px; flex-wrap: wrap; }
-            .buyer-budget { font-size: 20px; margin-bottom: 12px; }
-            .tag { font-size: 11px; padding: 4px 8px; }
-            .math-box { flex-direction: column; gap: 10px; align-items: flex-start; text-align: left; }
-            .math-box input { width: 100% !important; }
-        }
-
-        /* SIDEBAR */
+        /* SIDEBAR ESCRITORIO */
         aside {
             width: 260px;
             background-color: var(--bg-panel);
@@ -68,6 +46,7 @@
             flex-direction: column;
             z-index: 50;
             flex-shrink: 0;
+            height: 100vh;
         }
 
         .brand-container {
@@ -91,7 +70,7 @@
 
         /* MAIN Y CABECERA */
         main { flex: 1; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
-        header { background-color: var(--bg-panel); border-bottom: 1px solid var(--border-color); height: 60px; display: flex; align-items: center; padding: 0 30px; justify-content: space-between; }
+        header { background-color: var(--bg-panel); border-bottom: 1px solid var(--border-color); height: 60px; display: flex; align-items: center; padding: 0 30px; justify-content: space-between; flex-shrink: 0; }
         .header-title { font-size: 13.5px; color: var(--text-muted); }
 
         .lang-selector {
@@ -109,7 +88,7 @@
         .lang-selector:hover { color: var(--text-main); border-color: var(--accent-green); }
 
         /* ÁREA DE CONTENIDO */
-        .content-area { display: grid; grid-template-columns: 360px 1fr; height: calc(100vh - 60px); }
+        .content-area { display: grid; grid-template-columns: 360px 1fr; height: calc(100vh - 60px); overflow: hidden; }
         .ingesta-panel { background-color: var(--bg-panel); border-right: 1px solid var(--border-color); padding: 25px; overflow-y: auto; }
         .feed-panel { padding: 25px; overflow-y: auto; position: relative; }
 
@@ -121,7 +100,6 @@
         .form-group textarea { resize: vertical; min-height: 50px; font-family: inherit; }
         .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 
-        /* GRUPO DE TELÉFONO CON PREFIJO EDITABLE */
         .phone-group { display: grid; grid-template-columns: 80px 1fr; gap: 8px; }
 
         .legal-check { display: flex; gap: 10px; align-items: flex-start; background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.2); padding: 12px; border-radius: 6px; margin-top: 5px; }
@@ -166,10 +144,90 @@
         .preview-thumb { width: 45px; height: 45px; object-fit: cover; border-radius: 6px; border: 1px solid var(--accent-green); box-shadow: 0 2px 8px rgba(16, 185, 129, 0.2); animation: popIn 0.3s ease-out; }
         @keyframes popIn { 0% { transform: scale(0); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
         #file-counter { font-size: 12px; color: var(--accent-green); margin-top: 10px; font-weight: bold; display: none; text-align: center; }
+
+        /* ==========================================
+           ADAPTACIÓN MÓVIL: BOTONERA SUPERIOR FIJA
+           ========================================== */
+        @media (max-width: 900px) {
+            html, body { height: 100%; overflow: hidden; }
+            body { flex-direction: column; }
+            
+            aside { display: none; }
+
+            .mobile-top-bar {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 55px;
+                background-color: var(--bg-panel);
+                border-bottom: 1px solid var(--border-color);
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 0 15px;
+                z-index: 1000;
+            }
+
+            .mobile-brand { font-size: 16px; font-weight: bold; color: #ffffff; }
+            .mobile-brand span { color: var(--accent-green); }
+
+            .mobile-nav-buttons { display: flex; gap: 8px; }
+            .mobile-nav-btn {
+                background-color: var(--bg-card);
+                border: 1px solid var(--border-color);
+                color: var(--text-muted);
+                padding: 6px 12px;
+                border-radius: 6px;
+                font-size: 11.5px;
+                font-weight: 600;
+                text-decoration: none;
+                transition: all 0.2s;
+            }
+            .mobile-nav-btn.active {
+                background: rgba(16, 185, 129, 0.15);
+                color: #ffffff;
+                border-color: var(--accent-green);
+            }
+
+            main {
+                margin-top: 55px;
+                height: calc(100vh - 55px);
+                overflow: hidden;
+            }
+
+            header { height: 45px; padding: 0 15px; }
+            .header-title { font-size: 11px; }
+
+            .content-area {
+                display: flex;
+                flex-direction: column;
+                height: calc(100vh - 100px);
+                overflow-y: auto;
+            }
+
+            .ingesta-panel { width: 100%; height: auto; border-right: none; border-bottom: 1px solid var(--border-color); padding: 15px; }
+            .feed-panel { width: 100%; height: auto; padding: 15px; }
+            .feed-panel h1 { font-size: 20px !important; margin-bottom: 15px !important; }
+        }
+
+        @media (min-width: 901px) {
+            .mobile-top-bar { display: none; }
+        }
     </style>
 </head>
 <body>
 
+    <!-- BARRA SUPERIOR FIJA MÓVIL -->
+    <div class="mobile-top-bar">
+        <div class="mobile-brand">L<span>•</span> Level.immo</div>
+        <div class="mobile-nav-buttons">
+            <a href="#" class="mobile-nav-btn active" data-i18n="nav_demanda">🎯 Demanda</a>
+            <a href="https://app.level-i.com/mercado-real" class="mobile-nav-btn" data-i18n="nav_mercado_real">📡 Mercado</a>
+        </div>
+    </div>
+
+    <!-- SIDEBAR ESCRITORIO -->
     <aside>
         <div class="brand-container">
             <div class="brand-logo">L<span>•</span> Level.immo</div>
@@ -411,9 +469,6 @@
     </div>
 
     <script>
-        // ==========================================
-        // CONFIGURACIÓN DE WEBHOOKS
-        // ==========================================
         const WEBHOOK_MAKE = "https://hook.eu1.make.com/loy5kvv4qmnvo748fmxo2qvt48mbf986"; 
         const WEBHOOK_SURTIDOR_COMPRADORES = "https://hook.eu1.make.com/bpb012er1137ocx0tcdk19muh6le4qpu"; 
 
@@ -452,7 +507,7 @@
                 nav_demanda: "🎯 Demanda Activa", nav_mercado_real: "📡 Mercado Real", header_title_da: "Consola PropTech · Reverse Market", unete_inversor: "Únete como Inversor", 
                 unete_desc: "Verificamos tu presupuesto y te conseguimos propiedades fuera de mercado directo de particulares.", lbl_nombre: "Tu Nombre", plc_nombre: "Ej: Antonio G.", 
                 lbl_zonas_int: "Zonas de Interés", lbl_presupuesto: "Presupuesto Verificable (€)", lbl_requisito: "Requisito Clave", plc_requisito: "Ej: Vistas al mar, Ascensor...", 
-                lbl_tel_oculto: "Teléfono Oculto", plc_tel_oculto: "Para conectarte con vendedores", btn_solicitar_vip: "Solicitar Verificación VIP", comp_verificados: "Compradores Verificados", 
+                lbl_tel_oculto: "Teléfono Oculto", btn_solicitar_vip: "Solicitar Verificación VIP", comp_verificados: "Compradores Verificados", 
                 badge_verificado: "✓ Verificado", modal_offer_title: "Ofrecer mi propiedad", lbl_tipo: "Tipo de Inmueble", lbl_precio: "Precio de Venta Deseado (€)", lbl_fotos: "Subir Fotos (Máx. 4)", 
                 btn_enviar_oferta: "Enviar a revisión", lbl_condiciones_vip: "<b>Acepto las Condiciones y la Privacidad.</b> Autorizo el tratamiento de mis datos.", lbl_seguridad: "Anti-spam: ¿Cuánto es",
                 lbl_zona: "Zona / Población", lbl_hab: "Habitaciones", lbl_banos: "Baños", lbl_obs: "Descripción breve", lbl_tel: "Tu Teléfono", btn_tengo_buscas: "Tengo lo que buscas 🏠"
@@ -461,7 +516,7 @@
                 nav_demanda: "🎯 Demanda Activa", nav_mercado_real: "📡 Mercat Real", header_title_da: "Consola PropTech · Reverse Market", unete_inversor: "Uneix-te com a Inversor", 
                 unete_desc: "Verifiquem el teu pressupost i t'aconseguim propietats fora de mercat directe de particulars.", lbl_nombre: "El teu Nom", plc_nombre: "Ex: Antonio G.", 
                 lbl_zonas_int: "Zones d'Interès", lbl_presupuesto: "Pressupost Verificable (€)", lbl_requisito: "Requisit Clau", plc_requisito: "Ex: Vistes al mar, Ascensor...", 
-                lbl_tel_oculto: "Telèfon Ocult", plc_tel_oculto: "Per connectar-te amb venedors", btn_solicitar_vip: "Sol·licitar Verificació VIP", comp_verificados: "Compradors Verificats", 
+                lbl_tel_oculto: "Telèfon Ocult", btn_solicitar_vip: "Sol·licitar Verificació VIP", comp_verificados: "Compradors Verificats", 
                 badge_verificado: "✓ Verificat", modal_offer_title: "Oferir la meva propietat", lbl_tipo: "Tipus d'Immoble", lbl_precio: "Preu de Venda Desitjat (€)", lbl_fotos: "Pujar Fotos (Màx. 4)", 
                 btn_enviar_oferta: "Enviar a revisió", lbl_condiciones_vip: "<b>Accepto les Condicions i la Privacitat.</b> Autoritzo el tractament de les meves dades.", lbl_seguridad: "Anti-spam: Quant és",
                 lbl_zona: "Zona / Població", lbl_hab: "Habitacions", lbl_banos: "Banys", lbl_obs: "Descripció breu", lbl_tel: "El teu Telèfon", btn_tengo_buscas: "Tinc el que busques 🏠"
@@ -470,7 +525,7 @@
                 nav_demanda: "🎯 Active Demand", nav_mercado_real: "📡 Real Market", header_title_da: "PropTech Console · Reverse Market", unete_inversor: "Join as an Investor", 
                 unete_desc: "We verify your budget and find you off-market properties direct from owners.", lbl_nombre: "Your Name", plc_nombre: "E.g. Antonio G.", 
                 lbl_zonas_int: "Areas of Interest", lbl_presupuesto: "Verifiable Budget (€)", lbl_requisito: "Key Requirement", plc_requisito: "E.g. Sea views, Elevator...", 
-                lbl_tel_oculto: "Hidden Phone", plc_tel_oculto: "To connect you with sellers", btn_solicitar_vip: "Request VIP Verification", comp_verificados: "Verified Buyers", 
+                lbl_tel_oculto: "Hidden Phone", btn_solicitar_vip: "Request VIP Verification", comp_verificados: "Verified Buyers", 
                 badge_verificado: "✓ Verified", modal_offer_title: "Offer my property", lbl_tipo: "Property Type", lbl_precio: "Desired Sale Price (€)", lbl_fotos: "Upload Photos (Max 4)", 
                 btn_enviar_oferta: "Send for review", lbl_condiciones_vip: "<b>I accept the Terms and Privacy Policy.</b> I authorize the processing of my data.", lbl_seguridad: "Anti-spam: What is",
                 lbl_zona: "Area / City", lbl_hab: "Bedrooms", lbl_banos: "Bathrooms", lbl_obs: "Short description", lbl_tel: "Your Phone", btn_tengo_buscas: "I have what you're looking for 🏠"
@@ -479,7 +534,7 @@
                 nav_demanda: "🎯 Demande Active", nav_mercado_real: "📡 Marché Réel", header_title_da: "Console PropTech · Reverse Market", unete_inversor: "Rejoignez en tant qu'Investisseur", 
                 unete_desc: "Nous vérifions votre budget et vous trouvons des biens hors marché directement auprès des propriétaires.", lbl_nombre: "Votre Nom", plc_nombre: "Ex. Antonio G.", 
                 lbl_zonas_int: "Zones d'Intérêt", lbl_presupuesto: "Budget Vérifiable (€)", lbl_requisito: "Exigence Clé", plc_requisito: "Ex. Vue mer, Ascenseur...", 
-                lbl_tel_oculto: "Téléphone Masqué", plc_tel_oculto: "Pour vous connecter aux vendeurs", btn_solicitar_vip: "Demander Vérification VIP", comp_verificados: "Acheteurs Vérifiés", 
+                lbl_tel_oculto: "Téléphone Masqué", btn_solicitar_vip: "Demander Vérification VIP", comp_verificados: "Acheteurs Vérifiés", 
                 badge_verificado: "✓ Vérifié", modal_offer_title: "Offrir ma propriété", lbl_tipo: "Type de Propriété", lbl_precio: "Prix de Vente Souhaité (€)", lbl_fotos: "Télécharger Photos (Max 4)", 
                 btn_enviar_oferta: "Envoyer pour examen", lbl_condiciones_vip: "<b>J'accepte les Conditions et la Confidentialité.</b> J'autorise le traitement de mes données.", lbl_seguridad: "Anti-spam: Combien font",
                 lbl_zona: "Zone / Ville", lbl_hab: "Chambres", lbl_banos: "Salles de bain", lbl_obs: "Brève description", lbl_tel: "Votre Téléphone", btn_tengo_buscas: "J'ai ce que vous cherchez 🏠"
@@ -488,7 +543,7 @@
                 nav_demanda: "🎯 Aktive Nachfrage", nav_mercado_real: "📡 Echter Markt", header_title_da: "PropTech Konsole · Reverse Market", unete_inversor: "Als Investor beitreten", 
                 unete_desc: "Wir prüfen Ihr Budget und finden für Sie Off-Market-Immobilien direkt vom Eigentümer.", lbl_nombre: "Ihr Name", plc_nombre: "z.B. Antonio G.", 
                 lbl_zonas_int: "Interessengebiete", lbl_presupuesto: "Nachweisbares Budget (€)", lbl_requisito: "Hauptanforderung", plc_requisito: "z.B. Meerblick, Aufzug...", 
-                lbl_tel_oculto: "Verstecktes Telefon", plc_tel_oculto: "Zur Verbindung mit Verkäufern", btn_solicitar_vip: "VIP-Verifizierung anfordern", comp_verificados: "Verifizierte Käufer", 
+                lbl_tel_oculto: "Verstecktes Telefon", btn_solicitar_vip: "VIP-Verifizierung anfordern", comp_verificados: "Verifizierte Käufer", 
                 badge_verificado: "✓ Verifiziert", modal_offer_title: "Meine Immobilie anbieten", lbl_tipo: "Immobilientyp", lbl_precio: "Gewünschter Verkaufspreis (€)", lbl_fotos: "Fotos hochladen (Max 4)", 
                 btn_enviar_oferta: "Zur Überprüfung senden", lbl_condiciones_vip: "<b>Ich akzeptiere die Bedingungen und den Datenschutz.</b> Ich stimme der Verarbeitung meiner Daten zu.", lbl_seguridad: "Anti-spam: Was ist",
                 lbl_zona: "Gebiet / Stadt", lbl_hab: "Schlafzimmer", lbl_banos: "Badezimmer", lbl_obs: "Kurze Beschreibung", lbl_tel: "Ihre Telefonnummer", btn_tengo_buscas: "Ich habe, was Sie suchen 🏠"
@@ -497,7 +552,7 @@
                 nav_demanda: "🎯 Domanda Attiva", nav_mercado_real: "📡 Mercato Reale", header_title_da: "Console PropTech · Reverse Market", unete_inversor: "Unisciti come Investitore", 
                 unete_desc: "Verifichiamo il tuo budget e ti troviamo proprietà fuori mercato direttamente dai proprietari.", lbl_nombre: "Il tuo Nome", plc_nombre: "Es. Antonio G.", 
                 lbl_zonas_int: "Zone di Interesse", lbl_presupuesto: "Budget Verificabile (€)", lbl_requisito: "Requisito Chiave", plc_requisito: "Es. Vista mare, Ascensore...", 
-                lbl_tel_oculto: "Telefono Nascosto", plc_tel_oculto: "Per metterti in contatto con i venditori", btn_solicitar_vip: "Richiedi Verifica VIP", comp_verificados: "Acquirenti Verificati", 
+                lbl_tel_oculto: "Telefono Nascosto", btn_solicitar_vip: "Richiedi Verifica VIP", comp_verificados: "Acquirenti Verificati", 
                 badge_verificado: "✓ Verificato", modal_offer_title: "Offri la mia proprietà", lbl_tipo: "Tipo di Immobile", lbl_precio: "Prezzo di Vendita Desiderato (€)", lbl_fotos: "Carica Foto (Max 4)", 
                 btn_enviar_oferta: "Invia per la revisione", lbl_condiciones_vip: "<b>Accetto le Condizioni e la Privacy.</b> Autorizzo il trattamento dei miei dati.", lbl_seguridad: "Anti-spam: Quanto fa",
                 lbl_zona: "Zona / Città", lbl_hab: "Camere", lbl_banos: "Bagni", lbl_obs: "Breve descrizione", lbl_tel: "Il tuo Telefono", btn_tengo_buscas: "Ho quello che cerchi 🏠"
@@ -615,6 +670,11 @@
             const numInv = document.getElementById('inv-tel').value.trim();
             const telefonoCompleto = prefijoInv + " " + numInv;
 
+            const urlParams = new URLSearchParams(window.location.search);
+            const utm_source = urlParams.get('utm_source') || "";
+            const utm_medium = urlParams.get('utm_medium') || "";
+            const utm_campaign = urlParams.get('utm_campaign') || "";
+
             const payloadMaestro = {
                 metadatos_sistema: {
                     origen_landing: "DEMANDA ACTIVA",
@@ -685,9 +745,6 @@
             if (rawOfferFiles.length > 0) { fileCounter.innerText = `✅ ${rawOfferFiles.length} archivo(s)`; fileCounter.style.display = 'block'; }
         });
 
-        // ==========================================
-        // ENVÍO BLINDADO DEL FORMULARIO DE OFERTA
-        // ==========================================
         document.getElementById('form-offer').addEventListener('submit', function(e) {
             e.preventDefault();
             const btn = e.target.querySelector('button[type="submit"]');
@@ -697,6 +754,11 @@
             const lang = document.getElementById('language-selector').value;
 
             try {
+                const urlParams = new URLSearchParams(window.location.search);
+                const utm_source = urlParams.get('utm_source') || "";
+                const utm_medium = urlParams.get('utm_medium') || "";
+                const utm_campaign = urlParams.get('utm_campaign') || "";
+
                 const prefijoOffer = document.getElementById('offer-prefijo').value.trim();
                 const numOffer = document.getElementById('offer-tel').value.trim();
                 const telefonoCompletoOffer = prefijoOffer + " " + numOffer;
@@ -755,11 +817,11 @@
                 }, 1200);
 
             } catch (err) {
-                console.error("Error crítico en formulario de oferta:", err);
-                alert("Error al procesar el formulario. Revisa los campos e inténtalo de nuevo.");
-                btn.innerHTML = originalText;
-                btn.style.opacity = "1";
-            }
+    console.error("Error exacto:", err);
+    alert("ERROR TÉCNICO: " + err.message);
+    btn.innerHTML = originalText;
+    btn.style.opacity = "1";
+}
         });
     </script>
 </body>
