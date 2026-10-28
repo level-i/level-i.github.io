@@ -173,7 +173,6 @@
         </div>
         <div class="nav-menu">
             <a href="#" class="nav-item active" data-i18n="nav_demanda">🎯 Demanda Activa</a>
-            <!-- RUTA ABSOLUTA CORREGIDA -->
             <a href="https://app.level-i.com/mercado-real" class="nav-item" data-i18n="nav_mercado_real">📡 Mercado Real</a>
         </div>
 
@@ -672,6 +671,9 @@
             if (rawOfferFiles.length > 0) { fileCounter.innerText = `✅ ${rawOfferFiles.length} archivo(s)`; fileCounter.style.display = 'block'; }
         });
 
+        // ==========================================
+        // ENVÍO BLINDADO DEL FORMULARIO DE OFERTA
+        // ==========================================
         document.getElementById('form-offer').addEventListener('submit', function(e) {
             e.preventDefault();
             const btn = e.target.querySelector('button[type="submit"]');
@@ -680,57 +682,65 @@
             btn.style.opacity = "0.7";
             const lang = document.getElementById('language-selector').value;
 
-            const payloadMaestro = {
-                metadatos_sistema: {
-                    origen_landing: "DEMANDA ACTIVA",
-                    tipo_cta: "TENGO LO QUE BUSCAS",
-                    idioma_usuario: lang,
-                    id_sesion: sessionId,
-                    ip_cliente: clienteIP
-                },
-                datos_usuario: {
-                    telefono: document.getElementById('offer-tel').value,
-                    nombre: "",
-                    acepto_legal: document.getElementById('offer-legal').checked
-                },
-                datos_demanda_inversion: {
-                    zonas_interes: "", presupuesto_requisitos: "", informacion_solicitada: compradorActual
-                },
-                datos_inmueble_captacion: {
-                    poblacion: document.getElementById('offer-zona').value,
-                    tipo_inmueble: document.getElementById('offer-tipo').value,
-                    habitaciones: document.getElementById('offer-hab').value,
-                    banos: document.getElementById('offer-banos').value,
-                    descripcion_observaciones: document.getElementById('offer-obs').value,
-                    precio_deseado: document.getElementById('offer-precio').value,
-                    fotos_subidas: rawOfferFiles.length
-                },
-                tracking_marketing: { utm_source, utm_medium, utm_campaign }
-            };
+            try {
+                const payloadMaestro = {
+                    metadatos_sistema: {
+                        origen_landing: "DEMANDA ACTIVA",
+                        tipo_cta: "TENGO LO QUE BUSCAS",
+                        idioma_usuario: lang,
+                        id_sesion: sessionId,
+                        ip_cliente: clienteIP
+                    },
+                    datos_usuario: {
+                        telefono: document.getElementById('offer-tel').value,
+                        nombre: "",
+                        acepto_legal: document.getElementById('offer-legal').checked
+                    },
+                    datos_demanda_inversion: {
+                        zonas_interes: "", presupuesto_requisitos: "", informacion_solicitada: compradorActual
+                    },
+                    datos_inmueble_captacion: {
+                        poblacion: document.getElementById('offer-zona').value,
+                        tipo_inmueble: document.getElementById('offer-tipo').value,
+                        habitaciones: document.getElementById('offer-hab').value,
+                        banos: document.getElementById('offer-banos').value,
+                        descripcion_observaciones: document.getElementById('offer-obs').value,
+                        precio_deseado: document.getElementById('offer-precio').value,
+                        fotos_subidas: rawOfferFiles.length
+                    },
+                    tracking_marketing: { utm_source, utm_medium, utm_campaign }
+                };
 
-            const formData = new FormData();
-            formData.append("payload_maestro", JSON.stringify(payloadMaestro));
-            rawOfferFiles.forEach((file, idx) => {
-                formData.append(`array_fotos`, file, `oferta_comprador_${idx + 1}_${file.name}`);
-            });
+                const formData = new FormData();
+                formData.append("payload_maestro", JSON.stringify(payloadMaestro));
+                rawOfferFiles.forEach((file, idx) => {
+                    formData.append(`array_fotos`, file, `oferta_comprador_${idx + 1}_${file.name}`);
+                });
 
-            fetch(WEBHOOK_MAKE, {
-                method: 'POST',
-                body: formData
-            }).catch(err => console.warn("Aviso de red:", err));
+                fetch(WEBHOOK_MAKE, {
+                    method: 'POST',
+                    body: formData
+                }).catch(err => console.warn("Aviso de red:", err));
 
-            setTimeout(() => {
-                const alertText = lang === 'es' ? "¡Propiedad enviada a revisión y publicada provisionalmente en el Mercado Real!" : "Property sent for review and provisionally published in the Real Market!";
-                alert(alertText);
-                closeModal('modal-offer');
-                e.target.reset();
-                previewContainer.innerHTML = '';
-                fileCounter.style.display = 'none';
-                rawOfferFiles = [];
+                setTimeout(() => {
+                    const alertText = lang === 'es' ? "¡Propiedad enviada a revisión y publicada provisionalmente en el Mercado Real!" : "Property sent for review and provisionally published in the Real Market!";
+                    alert(alertText);
+                    closeModal('modal-offer');
+                    e.target.reset();
+                    previewContainer.innerHTML = '';
+                    fileCounter.style.display = 'none';
+                    rawOfferFiles = [];
+                    btn.innerHTML = originalText;
+                    btn.style.opacity = "1";
+                    window.location.href = "https://app.level-i.com/mercado-real";
+                }, 1200);
+
+            } catch (err) {
+                console.error("Error crítico en formulario de oferta:", err);
+                alert("Error al procesar el formulario. Revisa los campos e inténtalo de nuevo.");
                 btn.innerHTML = originalText;
                 btn.style.opacity = "1";
-                window.location.href = "https://app.level-i.com/mercado-real";
-            }, 1200);
+            }
         });
     </script>
 </body>
