@@ -173,8 +173,8 @@
         </div>
         <div class="nav-menu">
             <a href="#" class="nav-item active" data-i18n="nav_demanda">🎯 Demanda Activa</a>
-            <!-- RUTA CORREGIDA -->
-            <a href="/mercado-real.html" class="nav-item" data-i18n="nav_mercado_real">📡 Mercado Real</a>
+            <!-- RUTA ABSOLUTA CORREGIDA -->
+            <a href="https://app.level-i.com/mercado-real" class="nav-item" data-i18n="nav_mercado_real">📡 Mercado Real</a>
         </div>
 
         <div class="sidebar-footer">
@@ -269,12 +269,12 @@
                 </form>
             </div>
 
-            <!-- PANEL DERECHO: MURO DE COMPRADORES (ALIMENTADO DESDE LARK) -->
+            <!-- PANEL DERECHO: MURO DE COMPRADORES -->
             <div class="feed-panel">
                 <h1 style="margin-top:0; margin-bottom: 20px;" data-i18n="comp_verificados">Compradores Verificados</h1>
                 
                 <div id="feed-compradores-container">
-                    <div style="text-align:center; padding: 40px; color: var(--accent-green);">📡 Cargando compradores verificados desde el radar...</div>
+                    <div style="text-align:center; padding: 40px; color: var(--accent-green);">📡 Cargando compradores verificados...</div>
                 </div>
             </div>
         </div>
@@ -407,10 +407,8 @@
         // CONFIGURACIÓN DE WEBHOOKS
         // ==========================================
         const WEBHOOK_MAKE = "https://hook.eu1.make.com/loy5kvv4qmnvo748fmxo2qvt48mbf986"; 
-        // Webhook surtidor para leer los compradores verificados desde Lark (puedes crear un escenario surtidor dedicado o usar uno existente)
         const WEBHOOK_SURTIDOR_COMPRADORES = "https://hook.eu1.make.com/bpb012er1137ocx0tcdk19muh6le4qpu"; 
 
-        // Respaldo de seguridad por si el surtidor de compradores sufre un fallo temporal
         const COMPRADORES_REALES_BASE = [
             {
                 Nombre_Inversor: "Antonio G.",
@@ -532,9 +530,6 @@
         function openModal(id) { document.getElementById(id).classList.add('active'); }
         function closeModal(id) { document.getElementById(id).classList.remove('active'); }
 
-        // ==========================================
-        // MOTOR CARGA COMPRADORES VERIFICADOS DESDE LARK
-        // ==========================================
         async function cargarCompradoresVerificados() {
             const container = document.getElementById('feed-compradores-container');
             container.innerHTML = `<div style="text-align:center; padding: 40px; color: var(--accent-green);">📡 Cargando compradores verificados...</div>`;
@@ -592,7 +587,6 @@
             });
         }
 
-        // Envío de Inversor Nuevo
         document.getElementById('form-alta-inversor').addEventListener('submit', function(e) {
             e.preventDefault();
             const userAnswer = parseInt(document.getElementById('inv-math').value);
@@ -717,26 +711,26 @@
             const formData = new FormData();
             formData.append("payload_maestro", JSON.stringify(payloadMaestro));
             rawOfferFiles.forEach((file, idx) => {
-                formData.append(`foto_${idx + 1}`, file);
+                formData.append(`array_fotos`, file, `oferta_comprador_${idx + 1}_${file.name}`);
             });
 
             fetch(WEBHOOK_MAKE, {
                 method: 'POST',
                 body: formData
-            }).then(() => {
-                setTimeout(() => {
-                    const alertText = lang === 'es' ? "¡Propiedad enviada a revisión y publicada provisionalmente en el Mercado Real!" : "Property sent for review and provisionally published in the Real Market!";
-                    alert(alertText);
-                    closeModal('modal-offer');
-                    e.target.reset();
-                    previewContainer.innerHTML = '';
-                    fileCounter.style.display = 'none';
-                    rawOfferFiles = [];
-                    btn.innerHTML = originalText;
-                    btn.style.opacity = "1";
-                    window.location.href = "/mercado-real.html";
-                }, 800);
-            }).catch(err => console.error("Error al enviar a Make:", err));
+            }).catch(err => console.warn("Aviso de red:", err));
+
+            setTimeout(() => {
+                const alertText = lang === 'es' ? "¡Propiedad enviada a revisión y publicada provisionalmente en el Mercado Real!" : "Property sent for review and provisionally published in the Real Market!";
+                alert(alertText);
+                closeModal('modal-offer');
+                e.target.reset();
+                previewContainer.innerHTML = '';
+                fileCounter.style.display = 'none';
+                rawOfferFiles = [];
+                btn.innerHTML = originalText;
+                btn.style.opacity = "1";
+                window.location.href = "https://app.level-i.com/mercado-real";
+            }, 1200);
         });
     </script>
 </body>
