@@ -25,6 +25,26 @@
             width: 100%;
             background-color: var(--bg-base);
             color: var(--text-main);
+            top: 0px !important;
+        }
+
+        /* Ocultar barra superior intrusiva de Google Translate manteniendo traducción 100% activa */
+        .goog-te-banner-frame.skiptranslate,
+        .goog-te-gadget-icon,
+        #goog-gt-tt,
+        .goog-te-balloon-frame {
+            display: none !important;
+        }
+        body {
+            top: 0px !important;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+        .goog-text-highlight {
+            background-color: transparent !important;
+            box-shadow: none !important;
         }
 
         * {
@@ -38,13 +58,6 @@
         ::-webkit-scrollbar-track { background: var(--bg-panel); border-left: 1px solid var(--border-color); }
         ::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: var(--accent-green); }
-
-        body {
-            display: flex;
-            flex-direction: column;
-            overflow-x: hidden;
-            overflow-y: auto;
-        }
 
         /* ==========================================
            1. INTRO SPLASH SCREEN A PANTALLA COMPLETA
@@ -188,6 +201,7 @@
             display: flex;
             align-items: center;
             gap: 10px;
+            flex-wrap: wrap;
         }
 
         .nav-pill {
@@ -218,7 +232,7 @@
 
         .lang-select {
             background: var(--bg-card);
-            border: 1px solid var(--border-color);
+            border: 1px solid var(--accent-gold);
             color: var(--text-main);
             padding: 7px 12px;
             border-radius: 6px;
@@ -360,13 +374,13 @@
         }
 
         .aviso-importante-suelo {
-            background: rgba(197, 160, 89, 0.1);
+            background: rgba(197, 160, 89, 0.12);
             border-left: 4px solid var(--accent-gold);
-            padding: 12px 15px;
+            padding: 14px 16px;
             border-radius: 6px;
-            font-size: 12.5px;
-            color: #e5e7eb;
-            line-height: 1.5;
+            font-size: 13px;
+            color: #f3f4f6;
+            line-height: 1.55;
             margin-bottom: 18px;
         }
 
@@ -669,6 +683,9 @@
 </head>
 <body>
 
+    <!-- Contenedor invisible para Google Translate -->
+    <div id="google_translate_element" style="display:none;"></div>
+
     <!-- ========================================================= -->
     <!-- 1. INTRO SPLASH SCREEN A PANTALLA COMPLETA                -->
     <!-- ========================================================= -->
@@ -689,10 +706,10 @@
     <!-- ========================================================= -->
     <header>
         <div class="brand-left">
-            <a href="#" class="brand-logo">
+            <a href="#" class="brand-logo" translate="no">
                 <span class="l-letter">L</span><span class="brand-dot"></span> <span class="logo-text">Level.immo</span>
             </a>
-            <div class="brand-clock" id="live-clock">--/--/---- | --:--:--</div>
+            <div class="brand-clock" id="live-clock" translate="no">--/--/---- | --:--:--</div>
         </div>
 
         <div class="header-center-nav">
@@ -702,7 +719,7 @@
         </div>
 
         <div class="header-right">
-            <select id="language-selector" class="lang-select" onchange="setLanguage(this.value)">
+            <select id="language-selector" class="lang-select" onchange="setLanguage(this.value)" translate="no">
                 <option value="es">ES Español</option>
                 <option value="ca">CA Català</option>
                 <option value="en">EN English</option>
@@ -710,7 +727,7 @@
                 <option value="de">DE Deutsch</option>
                 <option value="it">IT Italiano</option>
                 <option value="ar">AR العربية</option>
-                <option value="zh">ZH 中文 (Mandarín)</option>
+                <option value="zh-CN">ZH 中文 (Mandarín)</option>
             </select>
         </div>
     </header>
@@ -738,7 +755,7 @@
 
         <!-- DOSSIER DE INVERSIÓN + SPOT PROMOCIONAL -->
         <div class="montsia-section">
-            <div class="montsia-header-tag"><span class="gold-pulse-dot"></span> NetWorking Montsià | Dossier de Inversión | Suelo Urbano</div>
+            <div class="montsia-header-tag"><span class="gold-pulse-dot"></span> NetWorking Montsià | Venta Exclusiva de Suelo Urbano</div>
             
             <div class="video-screen-horizontal" style="margin-bottom: 18px;">
                 <div class="video-overlay-badge">🎬 SPOT PROMOCIONAL</div>
@@ -753,24 +770,24 @@
             </p>
 
             <div class="aviso-importante-suelo">
-                💡 <strong>Nota Comercial Importante:</strong> Level.immo comercializa directamente <strong>la venta del terreno urbano</strong> (170.000 € por parcela de 460 m² o 340.000 € por la parcela completa de 920 m²). Los simuladores constructivos inferiores muestran la viabilidad urbanística real (Clave 17 a1); el comprador es libre de edificar con su propio equipo o contratar el proyecto llave en mano con nuestro estudio de arquitectura colaborador.
+                ⚠️ <strong>Aviso Importante — Venta Exclusiva de Terreno:</strong> En <strong>Level.immo comercializamos únicamente la propiedad del suelo urbano</strong> (<strong>170.000 €</strong> por una parcela de 460 m² o <strong>340.000 €</strong> por la finca completa de 920 m²). Nosotros no vendemos ni obligamos a contratar la construcción. Los simuladores y esquemas de esta página se ofrecen como herramienta de consulta para que el comprador compruebe qué permite edificar la normativa (Clave 17 a1) a posteriori, pudiendo contratar a su propio arquitecto o al despacho local que recomendamos (<em>Arquitectura Ecológica Vinaròs</em>).
             </div>
 
             <div class="montsia-tech-grid">
                 <div class="tech-card">
                     <div class="tech-label">Parcela P1 (460 m²)</div>
                     <div class="tech-value">170.000 €</div>
-                    <div class="tech-sub">● Disponible (Suelo)</div>
+                    <div class="tech-sub">● Disponible (Solo Suelo)</div>
                 </div>
                 <div class="tech-card">
                     <div class="tech-label">Parcela P2 (460 m²)</div>
                     <div class="tech-value">170.000 €</div>
-                    <div class="tech-sub">● Disponible (Suelo)</div>
+                    <div class="tech-sub">● Disponible (Solo Suelo)</div>
                 </div>
                 <div class="tech-card" style="border-color: var(--accent-gold);">
                     <div class="tech-label">Finca Completa (920 m²)</div>
                     <div class="tech-value">340.000 €</div>
-                    <div class="tech-sub">● P1 + P2 Unidas</div>
+                    <div class="tech-sub">● P1 + P2 Unidas (Suelo)</div>
                 </div>
                 <div class="tech-card">
                     <div class="tech-label">Techo Edificable</div>
@@ -785,7 +802,7 @@
                     <div style="font-size: 14px; font-weight: bold; color: var(--accent-gold);">Clave 17 a1 (Ciudad Jardín Unifamiliar)</div>
                 </div>
                 <div style="text-align: right;">
-                    <div style="font-size: 10px; color: #777;">Diseño Opcional de Proyectos y Dirección de Obra:</div>
+                    <div style="font-size: 10px; color: #777;">Despacho de Arquitectura Recomendado en la Zona:</div>
                     <a href="https://arquitecturaecologicavinaros.com" target="_blank" style="font-size: 14px; font-weight: bold; color: var(--accent-gold); text-decoration: none;">Arquitectura Ecológica Vinaròs ↗</a>
                 </div>
             </div>
@@ -830,92 +847,117 @@
             </div>
         </div>
 
-        <!-- CONFIGURADOR URBANÍSTICO Y PLANO 2D DE PLANTA BAJA (2 CHALETS + PISCINA) -->
+        <!-- CONFIGURADOR URBANÍSTICO Y ESQUEMA DE CÓMPUTO (2 CHALETS + PISCINA) -->
         <div class="montsia-section" id="configurador-dos-chalets" style="border: 1px solid var(--accent-gold);">
             <div class="montsia-header-tag">
-                <span class="gold-pulse-dot"></span> Simulador Urbanístico de Implantación | Clave 17 a1
+                <span class="gold-pulse-dot"></span> Estudio Urbanístico de Superficies | Clave 17 a1
             </div>
-            <h3 class="montsia-title">¿Se pueden edificar 2 Chalets con Piscina? Compruébalo en el Plano</h3>
-            <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">
-                Selecciona si deseas adquirir <strong>1 Parcela de 460 m² (170.000 €)</strong> o la <strong>Parcela Completa de 920 m² (340.000 €)</strong>. Introduce los m² de piscina (hasta 100 m²) y de garaje para ver cómo se reparte el techo edificable y la ocupación en planta baja respetando los 3 metros de linde oficial.
-            </p>
+            <h3 class="montsia-title">¿Se pueden edificar 2 Chalets con Piscina? Compruébalo según la Parcela</h3>
+            
+            <!-- Explicación clara para el interesado integrada en la página -->
+            <div style="background: #151b26; border: 1px solid #2a3446; border-radius: 8px; padding: 14px 16px; margin-bottom: 20px; font-size: 13px; color: #d1d5db; line-height: 1.55;">
+                📌 <strong>Cómo interpretar las dos opciones de compra de terreno:</strong><br>
+                • Si adquieres <strong>1 Parcela de 460 m² (170.000 €)</strong> dispones de <strong>368 m² de techo edificable</strong>. Descontando por ejemplo una piscina de 24 m², te quedan <strong>344 m² de techo neto</strong> (para levantar hasta <strong>2 chalets pareados de 172 m² cada uno</strong>).<br>
+                • Si adquieres la <strong>Parcela Completa de 920 m² (340.000 €)</strong> duplicas la capacidad hasta <strong>736 m² de techo edificable</strong> (permitiendo <strong>2 grandes villas de más de 340 m² cada una</strong> con el doble de jardín privado).
+            </div>
 
             <!-- Selector Destacado de Precio de Suelo -->
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 15px; margin-bottom: 22px;">
-                <div id="card-460" onclick="setPlotSize(460)" style="padding: 18px; border-radius: 10px; border: 2px solid var(--accent-gold); background: rgba(197, 160, 89, 0.18); cursor: pointer; text-align: center; transition: 0.25s;">
-                    <div style="font-size: 12px; color: var(--accent-gold); font-weight: bold; text-transform: uppercase;">Opción 1 · Media Parcela (460 m²)</div>
+                <div id="card-460" onclick="setPlotSize(460, true)" style="padding: 18px; border-radius: 10px; border: 2px solid var(--accent-gold); background: rgba(197, 160, 89, 0.18); cursor: pointer; text-align: center; transition: 0.25s;">
+                    <div style="font-size: 12px; color: var(--accent-gold); font-weight: bold; text-transform: uppercase;">Opción 1 · Comprar 1 Parcela (460 m²)</div>
                     <div style="font-size: 28px; font-weight: 900; color: #fff; margin: 6px 0;">170.000 €</div>
-                    <div style="font-size: 11.5px; color: var(--accent-green);">Precio del Suelo Urbano (Sin Obra) · Hasta 368 m² techo</div>
+                    <div style="font-size: 11.5px; color: var(--accent-green); font-weight: bold;">Precio Exclusivo del Terreno · Techo máx: 368 m²</div>
                 </div>
 
-                <div id="card-920" onclick="setPlotSize(920)" style="padding: 18px; border-radius: 10px; border: 1px solid var(--border-color); background: var(--bg-panel); cursor: pointer; text-align: center; transition: 0.25s;">
-                    <div style="font-size: 12px; color: var(--text-muted); font-weight: bold; text-transform: uppercase;">Opción 2 · Parcela Completa (920 m²)</div>
+                <div id="card-920" onclick="setPlotSize(920, true)" style="padding: 18px; border-radius: 10px; border: 1px solid var(--border-color); background: var(--bg-panel); cursor: pointer; text-align: center; transition: 0.25s;">
+                    <div style="font-size: 12px; color: var(--text-muted); font-weight: bold; text-transform: uppercase;">Opción 2 · Comprar Finca Completa (920 m²)</div>
                     <div style="font-size: 28px; font-weight: 900; color: var(--accent-gold); margin: 6px 0;">340.000 €</div>
-                    <div style="font-size: 11.5px; color: var(--text-muted);">Precio del Suelo Urbano (Sin Obra) · Hasta 736 m² techo</div>
+                    <div style="font-size: 11.5px; color: var(--text-muted); font-weight: bold;">Precio Exclusivo del Terreno · Techo máx: 736 m²</div>
                 </div>
             </div>
 
-            <!-- Controles de Piscina (hasta 100m2) y Garaje + Tabla de Contador de Techo -->
+            <!-- Controles de Piscina (Slider + Input) y Garaje (Slider + Input) + Tabla de Contador de Techo -->
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-bottom: 25px;">
                 
                 <div style="background: var(--bg-panel); padding: 18px; border-radius: 8px; border: 1px solid var(--border-color);">
+                    <!-- Control Piscina -->
                     <div style="margin-bottom: 18px;">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
                             <label style="font-size: 12.5px; color: var(--text-main); font-weight: bold;">🏊 Superficie Piscina (m²):</label>
                             <input type="number" id="input-piscina-num" class="num-input-box" min="0" max="100" value="24" oninput="syncPiscina(this.value)">
                         </div>
                         <input type="range" id="input-piscina" class="slider" min="0" max="100" value="24" step="1" oninput="syncPiscina(this.value)">
-                        <div style="font-size: 11px; color: var(--text-muted); margin-top: 5px;">Puedes teclear o deslizar de 0 a 100 m² (resta del techo total).</div>
+                        <div style="font-size: 11px; color: var(--text-muted); margin-top: 5px;">Desliza o escribe de 0 a 100 m² (resta del techo total edificable).</div>
                     </div>
 
+                    <!-- Control Garaje con Slider y Número -->
                     <div style="padding-top: 12px; border-top: 1px solid var(--border-color);">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
                             <label style="display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: var(--text-main); cursor: pointer; font-weight: bold;">
                                 <input type="checkbox" id="check-garaje" checked onchange="actualizarConfigurador()" style="width: 16px; height: 16px; accent-color: var(--accent-gold);">
-                                🚗 Garaje en Planta Baja (m²/casa):
+                                🚗 Garaje Planta Baja (m²/casa):
                             </label>
-                            <input type="number" id="input-garaje-m2" class="num-input-box" min="0" max="60" value="20" oninput="actualizarConfigurador()">
+                            <input type="number" id="input-garaje-m2" class="num-input-box" min="0" max="120" value="20" oninput="syncGaraje(this.value)">
                         </div>
-                        <div style="font-size: 11px; color: var(--text-muted); line-height: 1.4;">
-                            Ajusta los m² de garaje por vivienda (limitado automáticamente para no superar la ocupación de Planta Baja).
+                        <input type="range" id="slider-garaje-m2" class="slider" min="0" max="120" value="20" step="1" oninput="syncGaraje(this.value)">
+                        <div style="font-size: 11px; color: var(--text-muted); margin-top: 5px; line-height: 1.4;">
+                            Desliza o escribe los m² de garaje por chalet (limitado automáticamente para no superar la ocupación de Planta Baja).
                         </div>
                     </div>
                 </div>
 
-                <div style="background: #151a24; padding: 16px; border-radius: 8px; border: 1px solid #2a3446;">
-                    <div style="font-size: 11px; color: var(--accent-gold); text-transform: uppercase; font-weight: bold; margin-bottom: 10px; letter-spacing: 1px;">
-                        📊 Contador Oficial de Techo (Clave 17 a1 · 0,80 m²t/m²s)
+                <div style="background: #151a24; padding: 16px; border-radius: 8px; border: 1px solid #2a3446; display:flex; flex-direction:column; justify-content:space-between;">
+                    <div>
+                        <div style="font-size: 11px; color: var(--accent-gold); text-transform: uppercase; font-weight: bold; margin-bottom: 10px; letter-spacing: 1px;">
+                            📊 Contador Oficial de Techo (Clave 17 a1 · 0,80 m²t/m²s)
+                        </div>
+                        <table style="width: 100%; border-collapse: collapse; font-size: 12.5px; color: var(--text-main);">
+                            <tr style="border-bottom: 1px solid #262f3f;">
+                                <td style="padding: 6px 0; color: var(--text-muted);">Techo Edificable Total:</td>
+                                <td id="tbl-techo-max" style="padding: 6px 0; text-align: right; font-weight: bold;">368 m²</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid #262f3f;">
+                                <td style="padding: 6px 0; color: var(--text-muted);">Ocupación Máx. Planta Baja (40%):</td>
+                                <td id="tbl-ocupacion-max" style="padding: 6px 0; text-align: right; font-weight: bold;">184 m² (92 m²/casa)</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid #262f3f;">
+                                <td style="padding: 6px 0; color: var(--accent-blue);">(-) Superficie Piscina:</td>
+                                <td id="tbl-resta-piscina" style="padding: 6px 0; text-align: right; color: var(--accent-blue); font-weight: bold;">-24 m²</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid #333; background: rgba(16, 185, 129, 0.08);">
+                                <td style="padding: 8px 4px; color: var(--accent-green); font-weight: bold;">(=) Techo Máximo Neto (2 Casas):</td>
+                                <td id="tbl-techo-neto" style="padding: 8px 4px; text-align: right; color: var(--accent-green); font-weight: bold; font-size: 14px;">344 m²</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 8px 0 2px 0; color: var(--accent-gold); font-weight: bold;">🏠 Techo Máximo por Chalet (50%):</td>
+                                <td id="tbl-techo-chalet" style="padding: 8px 0 2px 0; text-align: right; color: var(--accent-gold); font-weight: bold; font-size: 15px;">172 m² / chalet</td>
+                            </tr>
+                        </table>
                     </div>
-                    <table style="width: 100%; border-collapse: collapse; font-size: 12.5px; color: var(--text-main);">
-                        <tr style="border-bottom: 1px solid #262f3f;">
-                            <td style="padding: 6px 0; color: var(--text-muted);">Techo Edificable Total:</td>
-                            <td id="tbl-techo-max" style="padding: 6px 0; text-align: right; font-weight: bold;">368 m²</td>
-                        </tr>
-                        <tr style="border-bottom: 1px solid #262f3f;">
-                            <td style="padding: 6px 0; color: var(--text-muted);">Ocupación Máx. Planta Baja (40%):</td>
-                            <td id="tbl-ocupacion-max" style="padding: 6px 0; text-align: right; font-weight: bold;">184 m² (92 m²/casa)</td>
-                        </tr>
-                        <tr style="border-bottom: 1px solid #262f3f;">
-                            <td style="padding: 6px 0; color: var(--accent-blue);">(-) Superficie Piscina:</td>
-                            <td id="tbl-resta-piscina" style="padding: 6px 0; text-align: right; color: var(--accent-blue); font-weight: bold;">-24 m²</td>
-                        </tr>
-                        <tr style="border-bottom: 1px solid #333; background: rgba(16, 185, 129, 0.08);">
-                            <td style="padding: 8px 4px; color: var(--accent-green); font-weight: bold;">(=) Techo Neto para las 2 Casas:</td>
-                            <td id="tbl-techo-neto" style="padding: 8px 4px; text-align: right; color: var(--accent-green); font-weight: bold; font-size: 14px;">344 m²</td>
-                        </tr>
-                        <tr>
-                            <td style="padding: 8px 0 2px 0; color: var(--accent-gold); font-weight: bold;">🏠 Techo Máximo por Chalet (50%):</td>
-                            <td id="tbl-techo-chalet" style="padding: 8px 0 2px 0; text-align: right; color: var(--accent-gold); font-weight: bold; font-size: 15px;">172 m² / chalet</td>
-                        </tr>
-                    </table>
+
+                    <button type="button" onclick="maximizarTecho()" style="margin-top: 12px; width: 100%; background: rgba(197, 160, 89, 0.15); border: 1px solid var(--accent-gold); color: var(--accent-gold); padding: 8px; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer;">
+                        ⚡ Maximizar los 2 Chalets al 100% del Techo Disponible
+                    </button>
                 </div>
             </div>
 
-            <!-- PLANO 2D DE PLANTA BAJA CON RETRANQUEOS OFICIALES DE 3 METROS -->
+            <!-- ESQUEMA GRÁFICO DE CÓMPUTO EN PLANTA BAJA (CON AVISO DE QUE NO ES DISEÑO ARQUITECTÓNICO) -->
             <div style="background: #0d131f; border: 1px solid var(--border-color); border-radius: 10px; padding: 20px; margin-bottom: 25px;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 10px;">
-                    <span style="font-size: 13.5px; font-weight: bold; color: #fff;">📐 Plano Esquemático de Planta Baja (Separación obligatoria a lindes: 3,00 m)</span>
+                    <span style="font-size: 13.5px; font-weight: bold; color: #fff;">📐 Esquema de Cómputo de Superficies y Retranqueos (Linde obligatorio: 3,00 m)</span>
                     <span id="cota-parcela" style="font-size: 11.5px; color: var(--accent-gold); background: rgba(197,160,89,0.15); padding: 4px 10px; border-radius: 4px; font-weight: bold;">Parcela: 460 m² (~21m fachada × ~22m fondo)</span>
+                </div>
+
+                <!-- Barra Resumen de Cómputo Total vs Máximo Permitido -->
+                <div style="background: #161f30; border: 1px solid #2d3b55; border-radius: 6px; padding: 10px 14px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; font-size: 12.5px;">
+                    <div>
+                        📊 <strong>Cómputo Total Proyectado (Chalet 1 + Chalet 2 + Piscina):</strong> 
+                        <span id="resumen-computo-actual" style="color: var(--accent-green); font-weight: bold;">368 m²</span> 
+                        de <span id="resumen-computo-max" style="color: #fff; font-weight: bold;">368 m²</span> permitidos.
+                    </div>
+                    <div id="resumen-techo-libre" style="color: var(--accent-gold); font-size: 12px; font-weight: bold;">
+                        ✓ Aprovechamiento del 100% del techo
+                    </div>
                 </div>
 
                 <div style="position: relative; width: 100%; min-height: 310px; background: radial-gradient(circle, #142e24 0%, #0b1c16 100%); border: 2px solid #2e5c46; border-radius: 8px; padding: 30px; display: flex; flex-direction: column; justify-content: space-between;">
@@ -933,57 +975,62 @@
                             </div>
                         </div>
 
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; width: 100%;">
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 10px; width: 100%;">
                             <!-- Chalet 1 -->
                             <div style="background: rgba(31, 41, 55, 0.95); border: 2px solid var(--accent-gold); border-radius: 6px; padding: 10px; display: flex; flex-direction: column; justify-content: space-between; gap: 6px;">
-                                <div style="font-size: 11.5px; font-weight: bold; color: var(--accent-gold); text-align: center; border-bottom: 1px solid #374151; padding-bottom: 4px;">
-                                    CHALET 1 · Total: <span id="total-casa-1">140</span> m²
+                                <div style="font-size: 12px; font-weight: bold; color: var(--accent-gold); text-align: center; border-bottom: 1px solid #374151; padding-bottom: 4px;">
+                                    CHALET 1 · Total Construido: <span id="total-casa-1">172</span> m²
                                 </div>
-                                <div style="font-size: 11.5px; color: #e5e7eb; text-align: center; line-height: 1.5;">
-                                    🛋️ Vivienda en Planta Baja: <b id="pb-viv-1" style="color:var(--accent-green);">52 m²</b><br>
-                                    🛏️ Vivienda en Planta 1ª: <b id="p1-viv-1" style="color:#fff;">68 m²</b>
+                                <div style="font-size: 11.5px; color: #e5e7eb; text-align: center; line-height: 1.55;">
+                                    🛋️ Vivienda en Planta Baja: <b id="pb-viv-1" style="color:var(--accent-green);">69 m²</b><br>
+                                    🛏️ Vivienda en Planta 1ª: <b id="p1-viv-1" style="color:#fff;">83 m²</b>
                                 </div>
                                 <div id="garaje-box-1" style="background: #374151; color: #fbbf24; font-size: 11px; font-weight: bold; text-align: center; padding: 5px; border-radius: 4px; border: 1px dashed #fbbf24;">
-                                    🚗 Garaje Planta Baja: <span id="garaje-m2-1">20</span> m²
+                                    🚗 Garaje en Planta Baja: <span id="garaje-m2-1">20</span> m²
                                 </div>
                             </div>
 
                             <!-- Chalet 2 -->
                             <div style="background: rgba(31, 41, 55, 0.95); border: 2px solid var(--accent-gold); border-radius: 6px; padding: 10px; display: flex; flex-direction: column; justify-content: space-between; gap: 6px;">
-                                <div style="font-size: 11.5px; font-weight: bold; color: var(--accent-gold); text-align: center; border-bottom: 1px solid #374151; padding-bottom: 4px;">
-                                    CHALET 2 · Total: <span id="total-casa-2">140</span> m²
+                                <div style="font-size: 12px; font-weight: bold; color: var(--accent-gold); text-align: center; border-bottom: 1px solid #374151; padding-bottom: 4px;">
+                                    CHALET 2 · Total Construido: <span id="total-casa-2">172</span> m²
                                 </div>
-                                <div style="font-size: 11.5px; color: #e5e7eb; text-align: center; line-height: 1.5;">
-                                    🛋️ Vivienda en Planta Baja: <b id="pb-viv-2" style="color:var(--accent-green);">52 m²</b><br>
-                                    🛏️ Vivienda en Planta 1ª: <b id="p1-viv-2" style="color:#fff;">68 m²</b>
+                                <div style="font-size: 11.5px; color: #e5e7eb; text-align: center; line-height: 1.55;">
+                                    🛋️ Vivienda en Planta Baja: <b id="pb-viv-2" style="color:var(--accent-green);">69 m²</b><br>
+                                    🛏️ Vivienda en Planta 1ª: <b id="p1-viv-2" style="color:#fff;">83 m²</b>
                                 </div>
                                 <div id="garaje-box-2" style="background: #374151; color: #fbbf24; font-size: 11px; font-weight: bold; text-align: center; padding: 5px; border-radius: 4px; border: 1px dashed #fbbf24;">
-                                    🚗 Garaje Planta Baja: <span id="garaje-m2-2">20</span> m²
+                                    🚗 Garaje en Planta Baja: <span id="garaje-m2-2">20</span> m²
                                 </div>
                             </div>
                         </div>
 
                     </div>
                 </div>
-                <div style="font-size: 11.5px; color: var(--text-muted); margin-top: 8px; text-align: center;">
-                    * Nota técnica: La distribución en planta baja se ajusta automáticamente a las dimensiones de la parcela elegida, respetando el 40% de ocupación máxima y los 3,00 m de separación a lindes.
+                <div style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 6px; padding: 10px; font-size: 11.5px; color: #fca5a5; margin-top: 12px; text-align: center;">
+                    ⚠️ <strong>Aviso Técnico:</strong> Este esquema gráfico es <strong>exclusivamente a efectos de cómputo urbanístico de superficies y retranqueos</strong>. En ningún momento representa un diseño ni plano arquitectónico, el cual será realizado a medida por el comprador tras la adquisición de la parcela.
                 </div>
             </div>
 
-            <!-- ESTIMADOR OPCIONAL DE CONSTRUCCIÓN -->
+            <!-- CALCULADORA ORIENTATIVA DE GASTOS DE CONSTRUCCIÓN A POSTERIORI -->
             <div style="background: var(--bg-panel); border: 1px solid var(--border-color); border-radius: 10px; padding: 20px;">
-                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom: 15px;">
-                    <h4 style="margin: 0; color: var(--text-main); font-size: 15px;">💶 Estimador Opcional de Autopromoción (Suelo + Obra Orientativa)</h4>
-                    <span style="font-size: 11px; color: var(--accent-gold); background: rgba(197,160,89,0.12); padding: 4px 8px; border-radius: 4px;">* Nosotros vendemos el terreno; obra 100% opcional</span>
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom: 10px;">
+                    <h4 style="margin: 0; color: var(--text-main); font-size: 15px;">💶 Calculadora Orientativa de Costes de Construcción (A Posteriori)</h4>
+                    <span style="font-size: 11px; color: var(--accent-gold); background: rgba(197,160,89,0.15); padding: 4px 10px; border-radius: 4px; font-weight: bold;">
+                        Level.immo vende solo el terreno · Datos constructivos meramente orientativos
+                    </span>
                 </div>
+                <p style="font-size: 12px; color: var(--text-muted); margin-top: 0; margin-bottom: 18px;">
+                    Utiliza esta herramienta para estimar qué inversión total supondría edificar tus chalets una vez adquirida la propiedad del suelo:
+                </p>
 
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 18px;">
                     <div>
                         <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
-                            <span style="font-size: 12.5px; color: var(--text-muted);">Superficie a Construir (Por Chalet):</span>
-                            <span id="lbl-m2-chalet" style="color: var(--accent-green); font-weight: bold; font-size: 13.5px;">140 m² (280 m² total)</span>
+                            <span style="font-size: 12.5px; color: var(--text-muted);">Superficie a Edificar (Por Chalet):</span>
+                            <span id="lbl-m2-chalet" style="color: var(--accent-green); font-weight: bold; font-size: 13.5px;">172 m² (344 m² total)</span>
                         </div>
-                        <input type="range" id="slider-m2-chalet" class="slider" min="80" max="172" value="140" step="2" oninput="actualizarConfigurador()">
+                        <input type="range" id="slider-m2-chalet" class="slider" min="80" max="172" value="172" step="2" oninput="actualizarConfigurador()">
                     </div>
 
                     <div>
@@ -996,35 +1043,35 @@
                 </div>
 
                 <div style="border-top: 1px dashed var(--border-color); padding-top: 14px; font-size: 13px;">
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px; background: rgba(197,160,89,0.12); padding: 8px 10px; border-radius: 6px;">
-                        <span style="color: var(--accent-gold); font-weight: bold;">1. PRECIO DE VENTA DEL TERRENO (<span id="txt-suelo-m2">460</span> m²):</span>
-                        <span id="coste-suelo" style="color: var(--accent-gold); font-weight: 900; font-size: 15px;">170.000 €</span>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px; background: rgba(197,160,89,0.15); padding: 10px 12px; border-radius: 6px; border: 1px solid var(--accent-gold);">
+                        <span style="color: #fff; font-weight: bold;">1. PRECIO DE COMPRA DEL TERRENO URBANO (<span id="txt-suelo-m2">460</span> m²):</span>
+                        <span id="coste-suelo" style="color: var(--accent-gold); font-weight: 900; font-size: 16px;">170.000 €</span>
                     </div>
                     <div style="display: flex; justify-content: space-between; margin-bottom: 6px; color: var(--text-muted); padding: 0 4px;">
-                        <span>2. Impuestos y Gastos Escritura Suelo (~13%):</span>
+                        <span>2. Impuestos y Gastos Escritura Compraventa Suelo (~13%):</span>
                         <span id="coste-impuestos-suelo">22.100 €</span>
                     </div>
                     <div style="display: flex; justify-content: space-between; margin-bottom: 6px; color: var(--text-muted); padding: 0 4px;">
-                        <span>3. Estimación Obra Opcional (2 Chalets + Piscina):</span>
-                        <span id="coste-obra">428.800 €</span>
+                        <span>3. Coste Orientativo de Construcción a Posteriori (2 Chalets + Piscina):</span>
+                        <span id="coste-obra">521.600 €</span>
                     </div>
                     <div style="display: flex; justify-content: space-between; margin-bottom: 12px; color: var(--text-muted); padding: 0 4px;">
-                        <span>4. Estimación Arquitecto y Licencias (~15% s/obra):</span>
-                        <span id="coste-arquitecto">64.320 €</span>
+                        <span>4. Coste Orientativo de Arquitecto y Licencias (~15% s/obra):</span>
+                        <span id="coste-arquitecto">78.240 €</span>
                     </div>
 
                     <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #374151; padding-top: 12px; font-size: 14px; font-weight: bold;">
-                        <span>COSTE REPERCUTIDO POR CHALET TERMINADO (50%):</span>
-                        <span id="coste-por-chalet" style="color: var(--accent-green); font-size: 16px;">342.610 € / chalet</span>
+                        <span>INVERSIÓN ESTIMADA REPERCUTIDA POR CHALET (50%):</span>
+                        <span id="coste-por-chalet" style="color: var(--accent-green); font-size: 16px;">395.970 € / chalet</span>
                     </div>
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 4px; font-size: 12px; color: var(--text-muted);">
-                        <span>Estimación Total Suelo + 2 Casas Llaves en Mano:</span>
-                        <span id="coste-total-global">685.220 €</span>
+                        <span>Cálculo Orientativo Global (Suelo + Gastos + 2 Casas):</span>
+                        <span id="coste-total-global">791.940 €</span>
                     </div>
                 </div>
 
                 <button class="btn-laser-futurista" onclick="abrirModalElena('configurador_chalets')">
-                    ✨ ME INTERESA ESTE TERRENO · HABLAR CON ELENA Y AGENDAR LLAMADA
+                    ✨ ME INTERESA COMPRAR EL TERRENO · HABLAR CON ELENA Y AGENDAR LLAMADA
                 </button>
             </div>
         </div>
@@ -1046,7 +1093,7 @@
             <details>
                 <summary>🏷️ ¿Qué incluye exactamente el precio de 170.000 € (o 340.000 €)?</summary>
                 <div class="details-content">
-                    Level.immo comercializa exclusivamente la propiedad del terreno urbano (170.000 € por cada parcela de 460 m² o 340.000 € por la totalidad de los 920 m²). La compra del terreno es libre de cargas y no obliga a contratar la construcción. Si el comprador lo desea, ponemos a su disposición nuestro estudio colaborador (Arquitectura Ecológica Vinaròs) con anteproyectos ya estudiados para esta finca.
+                    Level.immo comercializa exclusivamente la propiedad del terreno urbano libre de cargas (170.000 € por cada parcela de 460 m² o 340.000 € por la totalidad de los 920 m²). Nosotros no vendemos la construcción. Una vez adquirido el terreno, el propietario puede edificar con sus propios profesionales o, si lo desea, contactar con el estudio de arquitectura local que recomendamos en la página (Arquitectura Ecológica Vinaròs).
                 </div>
             </details>
 
@@ -1153,7 +1200,7 @@
     <!-- ========================================================= -->
     <!-- 6. MODAL EMERGENTE ESTILO MERCADO-REAL (AVISO / COOKIES)  -->
     <!-- ========================================================= -->
-    <div id="modal-legal-rapido" class="modal-overlay" onclick="this.style.display='none'">
+    <div id="modal-legal-rapido" class="modal-overlay" style="z-index: 10005;" onclick="this.style.display='none'">
         <div class="elena-modal-box" style="max-width: 520px;" onclick="event.stopPropagation()">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
                 <h3 id="modal-legal-titulo" style="margin:0; color:var(--accent-green); font-size:16px;">Aviso Legal y Condiciones</h3>
@@ -1177,7 +1224,7 @@
                 <button class="btn-secondary" onclick="cerrarModalElena()">✕ Cerrar</button>
             </div>
 
-            <!-- PASO 1: PRUEBA MATEMÁTICA OBLIGATORIA + CONSENTIMIENTO LEGAL -->
+            <!-- PASO 1: PRUEBA MATEMÁTICA OBLIGATORIA + CONSENTIMIENTO LEGAL CON LINKS CLICABLES -->
             <div id="elena-step-captcha">
                 <div style="background: var(--bg-base); border: 1px dashed var(--border-color); padding: 15px; border-radius: 8px;">
                     <div style="font-size: 13px; color: var(--text-main); margin-bottom: 10px;">
@@ -1187,25 +1234,23 @@
                     
                     <label style="font-size: 11.5px; color: var(--text-muted); display: flex; align-items: flex-start; gap: 8px; cursor: pointer; line-height: 1.4;">
                         <input type="checkbox" id="legal-consent" style="margin-top: 3px; accent-color: var(--accent-green);">
-                        <span>He leído y acepto la Política de Privacidad, el Aviso Legal y consiento ser atendido de forma automatizada por el sistema de Inteligencia Artificial de Level.immo.</span>
+                        <span>He leído y acepto la <a onclick="event.preventDefault(); abrirModalLegal('privacidad');" style="color:var(--accent-gold); text-decoration:underline;">Política de Privacidad</a>, el <a onclick="event.preventDefault(); abrirModalLegal('aviso');" style="color:var(--accent-gold); text-decoration:underline;">Aviso Legal</a> y consiento ser atendido de forma automatizada por el sistema de Inteligencia Artificial de Level.immo.</span>
                     </label>
 
-                    <button class="btn-action" onclick="superarCaptchaElena()">✅ Verificar y Abrir Asistente Elena IA</button>
+                    <button class="btn-action" style="margin-top:14px;" onclick="superarCaptchaElena()">✅ Verificar y Abrir Asistente Elena IA</button>
                 </div>
             </div>
 
             <!-- PASO 2: INTERFAZ DE CHATBOT GUIADO + CALENDARIO DE LLAMADA -->
             <div id="elena-step-chat" style="display: none; flex-direction: column;">
                 <div id="chat-messages" class="chat-messages"></div>
-
-                <!-- Controles dinámicos según el paso del Chatbot -->
                 <div id="chat-dynamic-controls"></div>
             </div>
         </div>
     </div>
 
     <!-- ========================================================= -->
-    <!-- SCRIPTS Y LÓGICA COMPLETA CONECTADA AL WEBHOOK MAKE       -->
+    <!-- SCRIPTS Y LÓGICA COMPLETA + MOTOR DE TRADUCCIÓN 100%      -->
     <!-- ========================================================= -->
     <script>
         const webhookMake = "https://hook.eu1.make.com/8xd81xb9t3mg2ycwez1czd3quwhf2nef";
@@ -1220,7 +1265,6 @@
         let captchaRespuesta = 0;
         let captchaBajaRespuesta = 0;
 
-        // Datos capturados en el Chatbot de Elena
         let leadData = {
             parcela_elegida: "1 Parcela de 460 m² (170.000 €)",
             objetivo_compra: "",
@@ -1259,8 +1303,24 @@
         setInterval(updateClock, 1000);
         updateClock();
 
+        /* ==========================================
+           MOTOR DE TRADUCCIÓN AUTOMÁTICA AL 100%
+           ========================================== */
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({
+                pageLanguage: 'es',
+                includedLanguages: 'es,ca,en,fr,de,it,ar,zh-CN',
+                autoDisplay: false
+            }, 'google_translate_element');
+        }
+
         function setLanguage(lang) {
             document.getElementById('language-selector').value = lang;
+            const gtCombo = document.querySelector('.goog-te-combo');
+            if (gtCombo) {
+                gtCombo.value = lang;
+                gtCombo.dispatchEvent(new Event('change'));
+            }
         }
 
         /* ==========================================
@@ -1323,7 +1383,7 @@
         })();
 
         /* ==========================================
-           CONFIGURADOR DE 2 CHALETS + PISCINA + PLANO
+           CONFIGURADOR DE 2 CHALETS + PISCINA + GARAJE
            ========================================== */
         function syncPiscina(val) {
             let v = parseInt(val) || 0;
@@ -1334,7 +1394,26 @@
             actualizarConfigurador();
         }
 
-        function setPlotSize(size) {
+        function syncGaraje(val) {
+            let v = parseInt(val) || 0;
+            if (v < 0) v = 0;
+            document.getElementById('input-garaje-m2').value = v;
+            document.getElementById('slider-garaje-m2').value = v;
+            if (v > 0) document.getElementById('check-garaje').checked = true;
+            actualizarConfigurador();
+        }
+
+        function maximizarTecho() {
+            const techoMax = Math.round(parcelaSeleccionada * 0.80);
+            const m2Piscina = parseInt(document.getElementById('input-piscina').value) || 0;
+            const maxPorChalet = Math.floor(Math.max(100, techoMax - m2Piscina) / 2);
+            const sliderM2 = document.getElementById('slider-m2-chalet');
+            sliderM2.max = maxPorChalet;
+            sliderM2.value = maxPorChalet;
+            actualizarConfigurador();
+        }
+
+        function setPlotSize(size, autoMaximize = false) {
             parcelaSeleccionada = size;
             const c460 = document.getElementById('card-460');
             const c920 = document.getElementById('card-920');
@@ -1355,7 +1434,12 @@
                 cota.innerText = "Parcela Completa: 920 m² (~42m fachada × ~22m fondo)";
                 leadData.parcela_elegida = "Parcela Completa de 920 m² (340.000 €)";
             }
-            actualizarConfigurador();
+
+            if (autoMaximize) {
+                maximizarTecho();
+            } else {
+                actualizarConfigurador();
+            }
         }
 
         function actualizarConfigurador() {
@@ -1384,7 +1468,16 @@
             const m2TotalesVivienda = m2ConstruirChalet * 2;
             document.getElementById('lbl-m2-chalet').innerText = `${m2ConstruirChalet} m² (${m2TotalesVivienda} m² total)`;
 
-            // Actualizar piscina en el plano 2D
+            // Resumen de cómputo total proyectado
+            const computoTotalActual = m2TotalesVivienda + m2Piscina;
+            const techoRestante = Math.max(0, techoMax - computoTotalActual);
+            document.getElementById('resumen-computo-actual').innerText = computoTotalActual + " m²";
+            document.getElementById('resumen-computo-max').innerText = techoMax + " m²";
+            document.getElementById('resumen-techo-libre').innerText = techoRestante === 0
+                ? "✓ Aprovechamiento del 100% del techo permitido"
+                : `Margen de techo aún disponible: +${techoRestante} m²`;
+
+            // Piscina en el esquema
             const boxPiscina = document.getElementById('box-piscina');
             if (m2Piscina === 0) {
                 boxPiscina.style.display = "none";
@@ -1395,13 +1488,18 @@
 
             // Planta Baja y Garaje respetando ocupación máxima
             const m2PlantaBajaTotal = Math.min(ocupacionMaxPorCasa, Math.round(m2ConstruirChalet * 0.52));
-            const maxGarajePermitido = Math.max(0, m2PlantaBajaTotal - 25); // Deja mínimo 25m2 de vivienda en PB
+            const maxGarajePermitido = Math.max(0, m2PlantaBajaTotal - 25);
+            const sliderGaraje = document.getElementById('slider-garaje-m2');
+            sliderGaraje.max = maxGarajePermitido;
+            document.getElementById('input-garaje-m2').max = maxGarajePermitido;
+
             let m2GarajeInput = parseInt(document.getElementById('input-garaje-m2').value) || 0;
             if (!incluyeGaraje) {
                 m2GarajeInput = 0;
             } else if (m2GarajeInput > maxGarajePermitido) {
                 m2GarajeInput = maxGarajePermitido;
                 document.getElementById('input-garaje-m2').value = m2GarajeInput;
+                sliderGaraje.value = m2GarajeInput;
             }
 
             const m2ViviendaPB = m2PlantaBajaTotal - m2GarajeInput;
@@ -1419,7 +1517,7 @@
             document.getElementById('garaje-box-1').style.display = (incluyeGaraje && m2GarajeInput > 0) ? "block" : "none";
             document.getElementById('garaje-box-2').style.display = (incluyeGaraje && m2GarajeInput > 0) ? "block" : "none";
 
-            // Cálculos económicos
+            // Cálculos orientativos a posteriori
             const precioM2 = parseInt(document.getElementById('slider-precio-m2').value);
             document.getElementById('lbl-precio-m2').innerText = precioM2.toLocaleString('es-ES') + " €/m²";
 
@@ -1450,6 +1548,9 @@
             if (tipo === 'cookies') {
                 titulo.innerText = "Cookies e Inteligencia Artificial";
                 texto.innerHTML = "Esta plataforma utiliza cookies técnicas estrictamente necesarias para mantener su sesión activa y asegurar el correcto funcionamiento del sistema multiidioma.<br><br>Asimismo, los procesos de emparejamiento (Match), cualificación y agenda son asistidos por algoritmos de Inteligencia Artificial (Elena IA) para agilizar la conexión entre oferta y demanda.";
+            } else if (tipo === 'privacidad') {
+                titulo.innerText = "Política de Privacidad y RGPD";
+                texto.innerHTML = "<strong>Responsable:</strong> LEVEL PUNTO IMMO 24365 SLU (NIF B-26745430 · Travessera de Gràcia, 56, 3-1a, 08006 Barcelona · Email: level@level.immo).<br><br>Sus datos serán tratados con la finalidad exclusiva de gestionar su solicitud de información inmobiliaria, agendar su entrevista con el Responsable de Ventas y habilitar su acceso a la Zona Privada. Puede ejercer sus derechos de acceso, rectificación y supresión escribiendo a level@level.immo.";
             } else {
                 titulo.innerText = "Aviso Legal y Condiciones";
                 texto.innerHTML = "En cumplimiento con la Ley de Servicios de la Sociedad de la Información, se informa que Level.immo está operada por LEVEL PUNTO IMMO 24365 SLU (NIF B-26745430 · Travessera de Gràcia, 56, 3-1a, 08006 Barcelona) y agente registrado (API 4173 - AICAT 14200).";
@@ -1524,7 +1625,6 @@
             box.scrollTop = box.scrollHeight;
         }
 
-        // Paso 1 del Chat: Elegir entre 460 m² o 920 m²
         function iniciarConversacionElena() {
             addChatBubble("Elena", "Hola, soy <strong>Elena, AI Advisor de Level.immo</strong>. Para asignarte expediente en tu Zona Privada y agendar entrevista con el <strong>Responsable de Ventas de la Zona</strong>, dime primero:<br><br>¿Qué superficie de terreno te interesa valorar?", true);
 
@@ -1540,9 +1640,8 @@
             `;
         }
 
-        // Paso 2 del Chat: Objetivo (Plaza / Autopromoción vs Rentabilidad)
         function seleccionarParcelaChat(texto, m2) {
-            setPlotSize(m2);
+            setPlotSize(m2, true);
             leadData.parcela_elegida = texto;
             addChatBubble("Tú", texto, false);
 
@@ -1552,7 +1651,7 @@
                     <div style="display:flex; flex-direction:column; gap:8px;">
                         <select id="chat-objetivo" style="width:100%; background:var(--bg-base); border:1px solid var(--border-color); color:#fff; padding:10px; border-radius:6px;">
                             <option value="Autopromoción / Vivienda Propia">🏡 Autopromoción / Vivienda Propia</option>
-                            <option value="Inversión / Rentabilidad (Promoción o Venta)">📈 Inversión / Rentabilidad (Promoción 2 Chalets)</option>
+                            <option value="Inversión / Rentabilidad (Promoción 2 Chalets)">📈 Inversión / Rentabilidad (Promoción 2 Chalets)</option>
                         </select>
                         <input type="text" id="chat-plazas" value="Les Cases d'Alcanar" placeholder="Plazas de interés (Ej: Les Cases, La Ràpita, Vinaròs)" style="width:100%; background:var(--bg-base); border:1px solid var(--border-color); color:#fff; padding:10px; border-radius:6px;">
                         <button class="btn-action" style="margin-top:4px;" onclick="guardarObjetivoChat()">Continuar ➔</button>
@@ -1561,7 +1660,6 @@
             }, 350);
         }
 
-        // Paso 3 del Chat: Nombre, WhatsApp con prefijo y Email
         function guardarObjetivoChat() {
             const obj = document.getElementById('chat-objetivo').value;
             const plz = document.getElementById('chat-plazas').value || "Les Cases d'Alcanar";
@@ -1595,7 +1693,6 @@
             }, 350);
         }
 
-        // Paso 4 del Chat: Calendario y Hora de la llamada con el Responsable de Ventas
         function guardarContactoChat() {
             const nom = document.getElementById('chat-nombre').value.trim();
             const pref = document.getElementById('chat-prefijo').value;
@@ -1614,7 +1711,6 @@
 
             addChatBubble("Tú", `${nom} · ${leadData.telefono} · ${mail}`, false);
 
-            // Fecha mínima mañana
             const tomorrow = new Date();
             tomorrow.setDate(tomorrow.getDate() + 1);
             const minDateStr = tomorrow.toISOString().split('T')[0];
@@ -1646,7 +1742,6 @@
             }, 350);
         }
 
-        // Paso 5 del Chat: Envío al Escenario de Make + Confirmación Zona Privada
         function confirmarCitaYEnviarMake() {
             leadData.fecha_cita = document.getElementById('chat-fecha').value;
             leadData.hora_cita = document.getElementById('chat-hora').value;
@@ -1726,5 +1821,6 @@
             });
         });
     </script>
+    <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 </body>
 </html>
