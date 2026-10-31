@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" id="html-root">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Level-i Command Center | Captación La Ràpita</title>
+    <title>Level.immo | Ficha Ciega · La Ràpita - Centre (72.000 €)</title>
     <style>
         :root {
             --bg-base: #090d16;
@@ -12,763 +12,1251 @@
             --accent-green: #10b981;
             --accent-blue: #3b82f6;
             --accent-gold: #C5A059;
+            --accent-orange: #f59e0b;
             --accent-red: #ef4444;
             --text-main: #f9fafb;
             --text-muted: #9ca3af;
             --border-color: #374151;
         }
-        
-        html, body { margin: 0; padding: 0; height: 100%; width: 100%; }
-        * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; scrollbar-width: thin; scrollbar-color: var(--border-color) var(--bg-panel); }
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: var(--bg-panel); border-left: 1px solid var(--border-color); }
-        ::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--accent-green); }
 
-        body { background-color: var(--bg-base); color: var(--text-main); display: flex; overflow: hidden; }
-        
-        aside { width: 260px; background-color: var(--bg-panel); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; padding: 20px; flex-shrink: 0; }
-        
-        .brand-container { 
-            display: flex; 
-            flex-direction: column; 
-            gap: 8px; 
-            padding-bottom: 20px;
-            margin-bottom: 20px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        * {
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            scrollbar-width: thin;
+            scrollbar-color: var(--border-color) var(--bg-panel);
         }
-        .brand-logo { display: flex; align-items: baseline; color: #ffffff; }
-        .l-letter { font-size: 32px; font-weight: 900; line-height: 1; }
-        .brand-dot { width: 9px; height: 9px; background-color: var(--accent-green); border-radius: 50%; margin: 0 6px 0 2px; box-shadow: 0 0 10px rgba(16, 185, 129, 0.6); }
-        .logo-text { font-size: 22px; font-weight: 700; letter-spacing: 0.5px; }
-        .brand-clock { font-family: 'Courier New', Courier, monospace; font-size: 11px; color: var(--accent-green); font-weight: bold; letter-spacing: 0.5px; text-shadow: 0 0 5px rgba(16, 185, 129, 0.4); margin-top: 4px; white-space: nowrap; }
 
-        .nav-menu { display: flex; flex-direction: column; gap: 6px; overflow-y: auto; max-height: calc(100vh - 120px); }
-        .nav-item { background: transparent; border: none; color: var(--text-muted); text-align: left; padding: 10px 14px; border-radius: 6px; font-size: 12.5px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; gap: 10px; border-left: 3px solid transparent; }
-        .nav-item:hover { background-color: rgba(255, 255, 255, 0.03); color: var(--text-main); }
-        
-        .nav-item.active { 
-            background: linear-gradient(90deg, rgba(16, 185, 129, 0.1) 0%, transparent 100%); 
-            color: var(--text-main); 
-            border-left: 3px solid var(--accent-green); 
-        }
-        
-        main { flex: 1; display: grid; grid-template-columns: 1fr 380px; grid-template-rows: 60px 1fr; height: 100vh; overflow: hidden; }
-        header { grid-column: 1 / -1; background-color: var(--bg-panel); border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; padding: 0 30px; }
-        .header-title { font-size: 13.5px; color: var(--text-muted); }
-        .lang-selector { display: flex; gap: 6px; }
-        .lang-btn { background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-muted); padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; cursor: pointer; }
-        .lang-btn.active { background: var(--accent-green); color: #fff; border-color: var(--accent-green); }
-        
-        .content-area { padding: 25px; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; overflow-x: hidden; }
-        
-        .video-screen-horizontal { width: 100%; aspect-ratio: 16/9; background: #000; border-radius: 8px; border: 1px solid var(--border-color); position: relative; overflow: hidden; margin-bottom: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.6); }
-        .video-screen-horizontal video { width: 100%; height: 100%; object-fit: cover; display: block; }
-        .video-overlay-badge { position: absolute; top: 12px; left: 12px; background: rgba(0,0,0,0.75); backdrop-filter: blur(4px); padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: bold; color: var(--accent-green); border: 1px solid var(--border-color); z-index: 10; }
-        
-        .card-main { background-color: var(--bg-panel); border: 1px solid var(--border-color); border-radius: 12px; padding: 24px; flex-shrink: 0; }
-        
-        .laser-title {
-            font-size: 18px; 
-            margin-bottom: 12px; 
-            line-height: 1.4;
-            background: linear-gradient(to right, var(--text-main) 20%, #34d399 40%, var(--accent-green) 50%, #34d399 60%, var(--text-main) 80%);
-            background-size: 200% auto;
-            color: transparent;
-            -webkit-background-clip: text;
-            background-clip: text;
-            animation: shine 4s linear infinite;
-        }
-        @keyframes shine { to { background-position: 200% center; } }
-
-        .card-main p { font-size: 14px; color: var(--text-muted); line-height: 1.6; }
-        .highlight { color: var(--text-main); font-weight: 600; }
-
-        .montsia-section { background: linear-gradient(145deg, #121212, #070707); border: 1px solid rgba(197, 160, 89, 0.3); border-radius: 12px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .montsia-header-tag { display: flex; align-items: center; margin-bottom: 15px; font-size: 11px; color: var(--accent-gold); text-transform: uppercase; letter-spacing: 2px; font-weight: 700; }
-        .gold-pulse-dot { width: 8px; height: 8px; background-color: var(--accent-gold); border-radius: 50%; margin-right: 10px; animation: pulse-gold 2s infinite; }
-        .montsia-title { font-size: 18px; line-height: 1.3; margin: 0 0 10px 0; color: #fff; font-weight: 700; }
-
-        /* VÍDEOS VERTICALES */
-        .vertical-video-section { display: flex; flex-direction: column; align-items: center; width: 100%; gap: 8px; margin-top: 20px; margin-bottom: 30px; }
-        .vertical-video-wrapper { 
-            position: relative;
-            width: 100%; 
-            max-width: 380px;
-            height: 75vh; 
-            border-radius: 12px; 
-            overflow: hidden; 
-            border: 1px solid var(--border-color); 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.7); 
-            background: #000; 
-        }
-        .vertical-video-wrapper video { 
-            width: 100%; 
-            height: 100%; 
-            object-fit: contain; 
-            display: block; 
-        }
-        
-        .pvp-badge { font-size: 13px; font-weight: bold; color: var(--accent-green); background: rgba(16,185,129,0.1); padding: 8px 12px; border-radius: 6px; border: 1px dashed var(--accent-green); text-align: center; width: 100%; max-width: 400px; }
-        .pvp-small { font-size: 10.5px; color: var(--text-muted); font-weight: normal; display: block; margin-top: 2px; }
-
-        /* NUEVO BADGE DE VALORACIÓN */
-        .valuation-badge { font-size: 13px; font-weight: normal; color: var(--text-main); background: rgba(197, 160, 89, 0.05); padding: 12px; border-radius: 6px; border: 1px solid rgba(197, 160, 89, 0.3); text-align: center; width: 100%; max-width: 400px; line-height: 1.5; }
-        .valuation-badge strong { color: var(--accent-gold); display: block; margin-bottom: 4px; font-size: 14px;}
-
-        /* ENLACE LÁSER */
-        .laser-link-btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            margin-top: 10px;
-            padding: 10px 20px;
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-base);
             color: var(--text-main);
-            font-size: 12.5px;
-            font-weight: 500;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ==========================================
+           CABECERA EJECUTIVA
+           ========================================== */
+        header {
+            background-color: rgba(17, 24, 39, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 12px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .brand-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .brand-logo {
+            display: flex;
+            align-items: baseline;
+            color: #ffffff;
             text-decoration: none;
-            border: 1px solid rgba(16, 185, 129, 0.2);
+            font-weight: 800;
+            font-size: 21px;
+        }
+
+        .l-letter { font-size: 27px; font-weight: 900; line-height: 1; }
+        .brand-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--accent-green);
+            border-radius: 50%;
+            margin: 0 6px 0 3px;
+            box-shadow: 0 0 10px var(--accent-green);
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .ref-badge {
+            font-family: monospace;
+            font-size: 11.5px;
+            background: rgba(245, 158, 11, 0.14);
+            color: var(--accent-orange);
+            border: 1px solid rgba(245, 158, 11, 0.45);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+        .lang-selector {
+            background-color: var(--bg-card);
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            padding: 6px 11px;
             border-radius: 6px;
-            background: rgba(16, 185, 129, 0.03);
-            position: relative;
-            overflow: hidden;
-            transition: all 0.3s ease;
+            font-size: 12.5px;
+            font-weight: 600;
+            outline: none;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+        .lang-selector:hover { border-color: var(--accent-green); }
+
+        /* ==========================================
+           CONTENEDOR PRINCIPAL (VÍDEO 9:16 + FICHA CIEGA)
+           ========================================== */
+        .main-wrapper {
+            max-width: 1080px;
             width: 100%;
-            max-width: 400px;
+            margin: 28px auto;
+            padding: 0 20px 40px 20px;
+            display: grid;
+            grid-template-columns: 355px 1fr;
+            gap: 32px;
+            align-items: start;
+            flex: 1;
+        }
+
+        /* COLUMNA IZQUIERDA: VÍDEO VERTICAL 9:16 */
+        .video-column {
+            position: relative;
+            background: #000;
+            border-radius: 18px;
+            overflow: hidden;
+            border: 2px solid var(--accent-gold);
+            box-shadow: 0 20px 45px rgba(0, 0, 0, 0.65);
+            aspect-ratio: 9 / 16;
+            max-height: 630px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .video-column video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            background-color: #090d16;
+        }
+
+        .video-overlay-top {
+            position: absolute;
+            top: 14px;
+            left: 14px;
+            right: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        .blind-tag {
+            background: rgba(9, 13, 22, 0.88);
+            backdrop-filter: blur(6px);
+            border: 1px solid var(--accent-gold);
+            color: var(--accent-gold);
+            font-size: 11px;
+            font-weight: 800;
+            padding: 5px 10px;
+            border-radius: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+        }
+
+        .auth-ribbon {
+            position: absolute;
+            bottom: 64px;
+            left: 12px;
+            right: 12px;
+            background: rgba(245, 158, 11, 0.95);
+            color: #090d16;
+            padding: 10px 12px;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: 900;
+            font-size: 11.5px;
+            text-transform: uppercase;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.55);
+            z-index: 10;
+            pointer-events: none;
+            line-height: 1.3;
+        }
+        .auth-ribbon span {
+            display: block;
+            font-size: 10px;
+            font-weight: 700;
+            opacity: 0.92;
+            margin-top: 3px;
+            text-transform: none;
+        }
+
+        /* COLUMNA DERECHA: INFORMACIÓN DEL ACTIVO */
+        .info-column {
+            background: var(--bg-panel);
+            border: 1px solid var(--border-color);
+            border-radius: 18px;
+            padding: 28px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+        }
+
+        .status-banner {
+            background: rgba(245, 158, 11, 0.08);
+            border: 1px dashed var(--accent-orange);
+            color: var(--accent-orange);
+            padding: 13px 16px;
+            border-radius: 10px;
+            font-size: 12.5px;
+            line-height: 1.55;
+        }
+
+        .title-price-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 16px;
+            flex-wrap: wrap;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            padding-bottom: 18px;
+        }
+
+        .prop-location {
+            font-size: 12px;
+            color: var(--accent-green);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            margin-bottom: 6px;
+        }
+
+        .prop-title {
+            font-size: 22px;
+            font-weight: 800;
+            margin: 0;
+            line-height: 1.28;
+            color: #ffffff;
+        }
+
+        .price-box {
+            background: rgba(16, 185, 129, 0.12);
+            border: 1px solid rgba(16, 185, 129, 0.4);
+            padding: 10px 18px;
+            border-radius: 12px;
+            text-align: right;
+            flex-shrink: 0;
+        }
+        .price-label {
+            font-size: 10px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-weight: bold;
             letter-spacing: 0.5px;
         }
-        .laser-link-btn::before {
-            content: '';
+        .price-value {
+            font-size: 26px;
+            font-weight: 900;
+            color: var(--accent-green);
+            white-space: nowrap;
+        }
+
+        .tags-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .feature-tag {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            padding: 7px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            color: var(--text-main);
+            font-weight: 600;
+        }
+
+        .description-box {
+            background: rgba(255, 255, 255, 0.02);
+            border-left: 3px solid var(--accent-gold);
+            padding: 16px 18px;
+            border-radius: 0 10px 10px 0;
+            font-size: 13.8px;
+            line-height: 1.65;
+            color: #e5e7eb;
+        }
+
+        /* PANEL DE INTERACCIÓN EN TIEMPO REAL */
+        .traction-panel {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 15px 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .traction-stats {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            font-weight: 700;
+        }
+        .stat-num {
+            font-size: 18px;
+            font-weight: 900;
+            color: var(--accent-gold);
+        }
+
+        .cta-buttons {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 12px;
+        }
+
+        .btn-like {
+            background: rgba(239, 68, 68, 0.12);
+            border: 1px solid rgba(239, 68, 68, 0.45);
+            color: #ffffff;
+            padding: 14px 20px;
+            border-radius: 10px;
+            font-size: 13.5px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .btn-like:hover, .btn-like.liked {
+            background: var(--accent-red);
+            border-color: var(--accent-red);
+            transform: translateY(-1px);
+        }
+
+        .btn-visit {
+            background: var(--accent-green);
+            border: none;
+            color: #090d16;
+            padding: 14px 22px;
+            border-radius: 10px;
+            font-size: 14.5px;
+            font-weight: 900;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .btn-visit:hover {
+            opacity: 0.93;
+            transform: translateY(-1px);
+        }
+
+        .back-radar-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 8px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 12px;
+            color: var(--text-muted);
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .back-radar-link {
+            color: var(--accent-gold);
+            text-decoration: none;
+            font-weight: 700;
+        }
+        .back-radar-link:hover { text-decoration: underline; }
+
+        /* ==========================================
+           PIE DE PÁGINA LEGAL
+           ========================================== */
+        footer {
+            background-color: var(--bg-panel);
+            border-top: 1px solid var(--border-color);
+            padding: 18px 24px;
+            text-align: center;
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: auto;
+        }
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-top: 8px;
+            flex-wrap: wrap;
+        }
+        .footer-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .footer-links a:hover { color: var(--accent-green); }
+
+        /* ==========================================
+           VENTANAS MODALES (VISITA + LEGALES)
+           ========================================== */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.82);
+            backdrop-filter: blur(6px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 15px;
+        }
+        .modal-overlay.active { display: flex; }
+
+        .modal-card {
+            background: var(--bg-panel);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 26px;
+            width: 100%;
+            max-width: 460px;
+            position: relative;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .modal-close {
             position: absolute;
-            top: 0; left: -100%;
-            width: 50%; height: 100%;
-            background: linear-gradient(to right, transparent, rgba(16, 185, 129, 0.6), transparent);
-            transform: skewX(-20deg);
-            animation: laser-scan 3s infinite;
+            top: 12px;
+            right: 16px;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 24px;
+            cursor: pointer;
         }
-        .laser-link-btn:hover {
-            background: rgba(16, 185, 129, 0.15);
+        .modal-close:hover { color: var(--accent-red); }
+
+        .form-group { margin-bottom: 13px; }
+        .form-group label {
+            display: block;
+            font-size: 11.5px;
+            color: var(--text-muted);
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            background: var(--bg-base);
+            border: 1px solid var(--border-color);
+            color: #ffffff;
+            padding: 10px 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            outline: none;
+        }
+        .form-group input:focus, .form-group select:focus {
             border-color: var(--accent-green);
-            box-shadow: 0 0 15px rgba(16, 185, 129, 0.3);
-            color: #fff;
-        }
-        @keyframes laser-scan {
-            0% { left: -100%; }
-            20% { left: 200%; }
-            100% { left: 200%; }
         }
 
-        @keyframes flashLaser { 0% { box-shadow: inset 0 0 0 0 rgba(16, 185, 129, 0); } 50% { box-shadow: inset 0 0 50px 10px rgba(16, 185, 129, 0.4); border-color: var(--accent-green); } 100% { box-shadow: inset 0 0 0 0 rgba(16, 185, 129, 0); } }
-        .flash-active { animation: flashLaser 0.5s ease-out; }
-        
-        .right-panel { background-color: var(--bg-panel); border-left: 1px solid var(--border-color); padding: 25px; display: flex; flex-direction: column; overflow-y: auto; }
-        .right-panel-content { display: flex; flex-direction: column; gap: 16px; }
-        .victoria-box { text-align: center; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; transition: all 0.3s ease; }
-        .victoria-avatar { width: 55px; height: 55px; background: linear-gradient(135deg, #C5A059, #10b981); border-radius: 50%; margin: 0 auto 12px auto; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: bold; color: #fff; letter-spacing: 1px; }
-        
-        .btn-action { display: block; width: 100%; background-color: var(--accent-green); color: #fff; text-align: center; padding: 12px; border-radius: 8px; font-size: 14px; font-weight: bold; text-decoration: none; margin-top: 15px; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); transition: opacity 0.2s; cursor: pointer; border: none;}
-        .btn-action:hover { opacity: 0.9; }
-        
-        .btn-secondary { background-color: transparent; border: 1px solid var(--border-color); color: var(--text-muted); margin-top: 8px; box-shadow: none; font-size: 12.5px; display: block; text-align: center; text-decoration: none; padding: 10px; border-radius: 6px; cursor: pointer; transition: all 0.2s;}
-        .btn-secondary:hover { border-color: var(--accent-green); color: var(--text-main); background: var(--bg-base); }
+        .phone-group {
+            display: grid;
+            grid-template-columns: 76px 1fr;
+            gap: 8px;
+        }
 
-        .captcha-container { display: none; background: var(--bg-panel); border: 1px dashed var(--border-color); border-radius: 8px; padding: 15px; margin-top: 15px; animation: fadeIn 0.3s ease; text-align: left; }
-        .captcha-text { font-size: 12.5px; color: var(--text-muted); margin-bottom: 12px; }
-        .captcha-input-group { display: flex; gap: 10px; margin-top: 12px;}
-        .captcha-input-group input { flex: 1; background: var(--bg-base); border: 1px solid var(--border-color); color: var(--text-main); padding: 10px; border-radius: 6px; font-size: 14px; text-align: center; outline: none; transition: border-color 0.2s; }
-        .captcha-input-group input:focus { border-color: var(--accent-green); }
-        .captcha-input-group button { background: var(--accent-green); color: #fff; border: none; padding: 0 15px; border-radius: 6px; font-weight: bold; cursor: pointer; transition: opacity 0.2s; }
-        
-        .legal-checkbox-container { font-size: 11px; color: var(--text-muted); display: flex; align-items: flex-start; gap: 8px; margin-top: 15px; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.05); }
-        .legal-checkbox-container input[type="checkbox"] { margin-top: 2px; cursor: pointer; }
+        .math-box {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(59, 130, 246, 0.08);
+            border: 1px solid rgba(59, 130, 246, 0.25);
+            padding: 9px 12px;
+            border-radius: 8px;
+            margin-bottom: 13px;
+        }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+        .legal-check {
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+            background: rgba(16, 185, 129, 0.05);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            padding: 10px 12px;
+            border-radius: 8px;
+            margin-bottom: 14px;
+        }
+        .legal-check input[type="checkbox"] {
+            margin-top: 2px;
+            accent-color: var(--accent-green);
+            cursor: pointer;
+        }
+        .legal-check label {
+            font-size: 11px;
+            color: var(--text-muted);
+            line-height: 1.4;
+            font-weight: normal;
+            margin: 0;
+            cursor: pointer;
+        }
 
-        .chat-interface { display: none; flex-direction: column; height: 320px; background: var(--bg-base); border-radius: 8px; border: 1px solid var(--border-color); margin-top: 15px; overflow: hidden; text-align: left;}
-        .chat-messages { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
-        .chat-bubble { max-width: 85%; padding: 10px 14px; border-radius: 8px; font-size: 13px; line-height: 1.4; word-wrap: break-word; }
-        .bot-message { background: var(--bg-panel); border: 1px solid var(--border-color); color: var(--text-main); align-self: flex-start; border-bottom-left-radius: 2px; }
-        .user-message { background: var(--accent-green); color: #fff; align-self: flex-end; border-bottom-right-radius: 2px; }
-        .typing-indicator { font-size: 12px; color: var(--text-muted); font-style: italic; display: none; margin-left: 10px; padding: 5px 15px; }
-        .chat-input-area { display: flex; border-top: 1px solid var(--border-color); background: var(--bg-panel); }
-        .chat-input-area input { flex: 1; background: transparent; border: none; padding: 12px 15px; color: var(--text-main); font-size: 13px; outline: none; }
-        .chat-input-area button { background: transparent; border: none; color: var(--accent-green); font-weight: bold; padding: 0 15px; cursor: pointer; transition: color 0.2s; }
-        .chat-input-area button:hover { color: #fff; }
+        /* Toast de confirmación */
+        .toast-notification {
+            position: fixed;
+            top: 75px;
+            right: 20px;
+            background: var(--accent-green);
+            color: #090d16;
+            padding: 12px 18px;
+            border-radius: 8px;
+            font-weight: 800;
+            font-size: 13px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.45);
+            transform: translateX(150%);
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 2000;
+        }
+        .toast-notification.show { transform: translateX(0); }
 
-        .partner-promo { background: linear-gradient(135deg, rgba(59,130,246,0.1), rgba(16,185,129,0.1)); border: 1px dashed var(--accent-blue); border-radius: 10px; padding: 12px 15px; font-size: 12px; color: var(--text-muted); text-align: left; text-decoration: none; display: block; }
-        .pro-partner-promo { background: linear-gradient(135deg, rgba(16,185,129,0.1), rgba(59,130,246,0.1)); border: 1px dashed var(--accent-green); border-radius: 10px; padding: 12px 15px; font-size: 12px; color: var(--text-muted); text-align: left; }
-        .api-badge { margin-top: auto; padding-top: 20px; text-align: center; font-size: 11px; color: var(--text-muted); }
-
-        .legal-accordion-container { margin-top: 20px; border-top: 1px solid var(--border-color); padding-top: 20px; }
-        details { background-color: var(--bg-panel); border: 1px solid var(--border-color); border-radius: 8px; margin-bottom: 10px; overflow: hidden; }
-        summary { padding: 15px; font-size: 13px; font-weight: bold; color: var(--text-muted); cursor: pointer; outline: none; user-select: none; transition: background 0.2s, color 0.2s; }
-        summary:hover { background-color: var(--bg-card); color: var(--text-main); }
-        .details-content { padding: 15px; font-size: 12px; color: var(--text-muted); line-height: 1.6; border-top: 1px solid var(--border-color); background-color: var(--bg-base); }
-        .details-content strong { color: var(--text-main); display: block; margin-top: 10px; margin-bottom: 4px; }
-        
-        .unsubscribe-section { text-align: center; margin-top: 25px; padding: 20px; border-top: 1px dashed var(--border-color); }
-
-        /* MAGIA RESPONSIVE: VÍDEOS VERTICALES EDGE-TO-EDGE EN MÓVIL */
-        @media (max-width: 900px) {
-            body { flex-direction: column; overflow-y: auto; overflow-x: hidden; }
-            aside { width: 100%; border-right: none; border-bottom: 1px solid var(--border-color); padding: 15px; flex-shrink: 0; }
-            .nav-menu { flex-direction: row; overflow-x: auto; max-height: none; padding-bottom: 10px; }
-            main { display: flex; flex-direction: column; height: auto; overflow: visible; }
-            header { flex-direction: column; padding: 15px; gap: 15px; height: auto; text-align: center; }
-            
-            /* Ajuste del contenedor principal para móviles */
-            .content-area { padding: 15px 0; overflow-x: hidden; height: auto; }
-            
-            /* TRUCO CSS INFALIBLE PARA PANTALLA COMPLETA VERTICAL (Edge-to-Edge) */
-            .vertical-video-section { 
-                width: 100vw !important; 
-                max-width: 100vw !important;
-                margin-left: 50% !important;
-                transform: translateX(-50%) !important;
-                border-radius: 0 !important;
-                background: #000;
-                padding-bottom: 15px;
+        @media (max-width: 860px) {
+            header { padding: 10px 15px; }
+            .main-wrapper {
+                grid-template-columns: 1fr;
+                margin-top: 15px;
+                gap: 20px;
+                padding: 0 15px 35px 15px;
             }
-            .vertical-video-wrapper { 
-                width: 100vw !important; 
-                max-width: 100vw !important; 
-                height: 85vh !important; 
-                border-radius: 0 !important; 
-                border: none !important; 
+            .video-column {
+                max-width: 340px;
+                max-height: 580px;
             }
-            .vertical-video-wrapper video { 
-                object-fit: cover !important; 
-                width: 100% !important; 
-                height: 100% !important;
-            }
-
-            /* Los botones y badges de debajo del video se ajustan con márgenes internos */
-            .vertical-video-section .pvp-badge, 
-            .vertical-video-section .valuation-badge,
-            .vertical-video-section .btn-action, 
-            .vertical-video-section .laser-link-btn {
-                width: calc(100vw - 40px) !important;
-                margin-left: auto !important;
-                margin-right: auto !important;
-            }
-
-            /* Mantener padding solo en las tarjetas para que no se peguen a los bordes */
-            .card-main, .montsia-section, .unsubscribe-section, .legal-accordion-container {
-                margin-left: 15px;
-                margin-right: 15px;
-            }
-
-            .video-screen-horizontal {
-                width: calc(100% - 30px);
-                margin-left: 15px;
-            }
-
-            .right-panel { border-left: none; border-top: 1px solid var(--border-color); padding: 15px; overflow: visible; height: auto; }
-            .chat-interface { height: 350px; } 
+            .info-column { padding: 20px; }
+            .prop-title { font-size: 19px; }
+            .cta-buttons { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
 
-    <aside>
-        <div class="brand-container">
-            <div class="brand-logo">
-                <span class="l-letter">L</span><span class="brand-dot"></span> <span class="logo-text">Level.immo</span>
+    <header>
+        <div class="brand-left">
+            <a href="https://app.level-i.com/mercado-real" class="brand-logo">
+                <span class="l-letter">L</span><span class="brand-dot"></span><span>Level.immo</span>
+            </a>
+        </div>
+        <div class="header-right">
+            <span class="ref-badge" data-i18n="badge_ref">🔒 FICHA CIEGA · REF-RAPITA-72K</span>
+            <select class="lang-selector" id="language-selector" onchange="cambiarIdioma()">
+                <option value="es" selected>🇪🇸 Español</option>
+                <option value="ca">🟨 Català</option>
+                <option value="en">🇬🇧 English</option>
+                <option value="fr">🇫🇷 Français</option>
+                <option value="de">🇩🇪 Deutsch</option>
+                <option value="it">🇮🇹 Italiano</option>
+                <option value="ar">🇦🇪 العربية</option>
+                <option value="zh">🇨🇳 中文</option>
+            </select>
+        </div>
+    </header>
+
+    <div class="main-wrapper">
+        
+        <!-- COLUMNA IZQUIERDA: VÍDEO VERTICAL SUBIDO A GITHUB -->
+        <div class="video-column">
+            <div class="video-overlay-top">
+                <span class="blind-tag" data-i18n="tag_ubicacion">📍 La Ràpita · Centre (CP 43540)</span>
             </div>
-            <div class="brand-clock" id="live-clock">--/---- | --:--:--</div>
+
+            <!-- Triple ruta automática para asegurar carga tanto en app.level-i.com como en level-i.github.io -->
+            <video id="prop-video" controls playsinline loop muted autoplay>
+                <source src="https://app.level-i.com/la-rapita/ficha-ciega/ofertafichaciega.mp4" type="video/mp4">
+                <source src="https://level-i.github.io/la-rapita/ficha-ciega/ofertafichaciega.mp4" type="video/mp4">
+                <source src="ofertafichaciega.mp4" type="video/mp4">
+            </video>
+
+            <div class="auth-ribbon">
+                <div data-i18n="tag_pendiente">⏳ En Proceso de Verificación Documental</div>
+                <span data-i18n="tag_sub_pendiente">Ubicación exacta reservada · Exclusiva Level.immo</span>
+            </div>
         </div>
 
-        <div class="nav-menu">
-            <button class="nav-item active">🎯 Captación La Ràpita</button>
-            <button class="nav-item" onclick="alert('Módulo disponible próximamente')">🏠 Comprar Inmuebles</button>
-            <button class="nav-item" onclick="alert('Módulo disponible próximamente')">🏷️ Venta General</button>
-            <button class="nav-item" onclick="alert('Módulo disponible próximamente')">⚙️ Gestión Integral</button>
-            <button class="nav-item" onclick="window.location.href='../../residentes/index.html'">🔑 App Alquileres</button>
-            <button class="nav-item" onclick="alert('Módulo disponible próximamente')">🏢 App Comunidades</button>
-            <button class="nav-item" onclick="alert('Módulo disponible próximamente')">💶 Hipotecas</button>
-            <button class="nav-item" onclick="alert('Módulo disponible próximamente')">📈 Inversores</button>
-        </div>
-    </aside>
-
-    <main id="main-container">
-        <header>
-            <div class="header-title">Consola Central PropTech · Sector: La Ràpita y Alcanar</div>
-            <div class="lang-selector">
-                <button class="lang-btn active" onclick="setLanguage('esp')">ESP</button>
-                <button class="lang-btn" onclick="setLanguage('ca')">CAT</button>
-                <button class="lang-btn" onclick="setLanguage('fra')">FRA</button>
-            </div>
-        </header>
-
-        <div class="content-area">
-
-            <div class="video-screen-horizontal" style="border-color: rgba(16, 185, 129, 0.4);">
-                <div class="video-overlay-badge" style="background: rgba(16,185,129,0.9); color:#fff; border:none;">🔴 EXPERIENCIA LEVEL-I VR</div>
-                <video autoplay loop muted playsinline webkit-playsinline controls preload="auto" poster="https://app.level-i.com/suelo-residencial/montsia-baix-maestrat/les-cases-0.jpg">
-                    <source src="https://level-i.github.io/compras/larapita/portada-horizontal.mp4" type="video/mp4">
-                    Tu navegador no soporta la reproducción de video.
-                </video>
+        <!-- COLUMNA DERECHA: INFORMACIÓN Y SOLICITUD DE VISITA -->
+        <div class="info-column">
+            
+            <div class="status-banner" data-i18n="banner_protocolo">
+                🔒 <b>Protocolo de Ficha Ciega Level.immo:</b> Este activo en el centro de La Ràpita se encuentra en proceso de verificación documental por nuestro departamento técnico. La dirección exacta permanece reservada y las solicitudes de visita se registran por riguroso orden de entrada.
             </div>
 
-            <div class="card-main">
-                <h2 id="main-title" class="laser-title">¿Vendes tu piso o planta baja en La Ràpita? Tenemos al comprador ideal.</h2>
-                <p id="main-desc">
-                    Hola,<br><br>
-                    Te escribo de manera directa y personal. Represento a una clienta particular que acaba de vender su vivienda y necesita comprar con urgencia una propiedad pequeña <span class="highlight">(tipo estudio o 1 habitación)</span>, planta baja o con ascensor, obligatoriamente en <span class="highlight">La Ràpita</span>.<br><br>
-                    Nos da igual el estado (reformas integrales, cerrada o con enseres). Nos encargamos absolutamente de todo <span class="highlight">(vaciado, papeleo, licencias y trámites notariales)</span> de forma ágil y discreta.
-                </p>
-                <button class="btn-action" style="margin-top: 15px;" onclick="pedirSeguridad('rapita')">
-                    🎯 Iniciar IAdvisor Level-i sobre mi inmueble
+            <div class="title-price-row">
+                <div>
+                    <div class="prop-location" data-i18n="prop_loc">📍 La Ràpita - Centre (43540) · Zona Comercial</div>
+                    <h1 class="prop-title" data-i18n="prop_title">Local Comercial para Profesional Independiente + Vivienda Anexa Reformada</h1>
+                </div>
+                <div class="price-box">
+                    <div class="price-label" data-i18n="price_label">PVP Orientativo</div>
+                    <div class="price-value">72.000 €</div>
+                </div>
+            </div>
+
+            <div class="tags-grid">
+                <span class="feature-tag" data-i18n="tag_t1">🏪 Local a pie de calle</span>
+                <span class="feature-tag" data-i18n="tag_t2">🛏️ 2 Habitaciones</span>
+                <span class="feature-tag" data-i18n="tag_t3">🍳 Cocina Equipada</span>
+                <span class="feature-tag" data-i18n="tag_t4">🛁 Baño con Ducha</span>
+                <span class="feature-tag" data-i18n="tag_t5">📄 Cédula y CEE en regla</span>
+            </div>
+
+            <div class="description-box" data-i18n="box_desc">
+                <strong>Descripción del Activo:</strong><br>
+                Oportunidad todo en uno en pleno centro de La Ràpita con buen tráfico peatonal. Local ideal para profesional independiente (<b>peluquero, barbero, tatuador, centro de estética, cerrajero, joyero, agente comercial o cafetería boutique</b>) con <b>vivienda anexa totalmente reformada</b>.<br><br>
+                Dispone de <b>2 habitaciones, cocina equipada y baño completo</b>. Cuenta con <b>cédula de habitabilidad y certificación energética</b>. La solución perfecta para tener tu propio negocio y tu vivienda sin duplicar gastos de alquiler ni desplazamientos.
+            </div>
+
+            <!-- CONTADORES EN TIEMPO REAL -->
+            <div class="traction-panel">
+                <div class="traction-stats">
+                    <div class="stat-item">
+                        ❤️ <span class="stat-num" id="count-likes">14</span> <span data-i18n="stat_likes">Me gusta</span>
+                    </div>
+                    <div class="stat-item">
+                        📅 <span class="stat-num" id="count-visits">3</span> <span data-i18n="stat_visits">Solicitudes de visita</span>
+                    </div>
+                </div>
+                <span style="font-size: 11.5px; color: var(--accent-green); font-weight: bold;" data-i18n="stat_activo">● Radar Activo</span>
+            </div>
+
+            <!-- BOTONES DE ACCIÓN -->
+            <div class="cta-buttons">
+                <button type="button" class="btn-like" id="btn-like-main" onclick="registrarLike()">
+                    <span id="like-icon">🤍</span> <span id="like-text" data-i18n="btn_like">Me Gusta este Activo</span>
+                </button>
+                <button type="button" class="btn-visit" onclick="abrirModal('modal-visita')">
+                    📅 <span data-i18n="btn_visita">Solicitar Visita Prioritaria</span>
                 </button>
             </div>
 
-            <div class="partner-promo" style="border-color: var(--accent-green); cursor: pointer; margin-bottom: 5px; margin-left: 15px; margin-right: 15px;" onclick="pedirSeguridad('anunciar')">
-                🎁 <b>Chivatazos / Colaboradores:</b> Gana una tarjeta regalo de <b>500 €</b> por cada propiedad vendida.
-            </div>
-
-            <div class="montsia-section">
-                <div class="montsia-header-tag"><span class="gold-pulse-dot"></span> Dossier de Inversión | Suelo Urbano</div>
-                
-                <div class="video-screen-horizontal" style="margin-bottom: 15px; width: 100%; margin-left: 0;">
-                    <div class="video-overlay-badge">🎬 SPOT PROMOCIONAL</div>
-                    <video autoplay loop muted playsinline>
-                        <source src="https://app.level-i.com/suelo-residencial/montsia-baix-maestrat/espot%20marjal%20les%20cases%20alcanar%20en%20off%20IA.mp4" type="video/mp4">
-                    </video>
-                </div>
-
-                <h3 class="montsia-title">Suelo Residencial Premium en Les Cases d'Alcanar</h3>
-                <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 15px;">
-                    Entorno consolidado de Ciudad Jardín a 300m del mar. Dos parcelas independientes disponibles.
-                </p>
-                
-                <a href="/suelo-residencial/montsia-baix-maestrat/" class="btn-action btn-secondary" style="display: block; text-align: center; text-decoration: none; border: 1px dashed var(--accent-gold); color: var(--accent-gold);">
-                    Ver Renders y Dossier Completo ↗
-                </a>
-            </div>
-
-            <div class="vertical-video-section">
-                <div class="vertical-video-wrapper">
-                    <video autoplay loop muted playsinline webkit-playsinline controls>
-                        <source src="https://app.level-i.com/compras/larapita/bajos%20con%20jardin%20la%20rapita.mp4" type="video/mp4">
-                    </video>
-                </div>
-                
-                <div class="pvp-badge">
-                    PVP: 312.000 €
-                    <span class="pvp-small">* Gastos de compraventa y registro no incluidos.</span>
-                </div>
-                
-                <button class="btn-action" style="max-width: 400px; width: 100%; margin-top: 10px;" onclick="pedirSeguridad('precio_312k')">
-                    💬 Consultar detalles con IAdvisor Level-i
-                </button>
-
-                <a href="https://level.immo/planta-baja-la-rapita-jardin-terraza-privada-vistas-ok" target="_blank" class="laser-link-btn">
-                    Ver Detalles Oficiales en la Web ↗
-                </a>
-            </div>
-
-            <div class="vertical-video-section">
-                <div class="vertical-video-wrapper">
-                    <div class="video-overlay-badge" style="background: rgba(16,185,129,0.9); color:#fff; border:none;">🔴 RADAR CHALETS LA RÀPITA</div>
-                    <video autoplay loop muted playsinline webkit-playsinline controls>
-                        <source src="https://app.level-i.com/docs/radarchaletsalcanarlarapita.mp4" type="video/mp4">
-                    </video>
-                </div>
-                
-                <div class="valuation-badge" style="margin-top: 10px;">
-                    <strong>Estudio y Valoración Gratuita</strong>
-                    Fijamos la mejor estrategia de venta para tu propiedad.<br>
-                    <span style="font-size: 11.5px; color: var(--text-muted); display: block; margin-top: 4px;">Honorarios máximos: 7.500 € (IVA incl.)</span>
-                </div>
-
-                <button class="btn-action" style="max-width: 400px; width: 100%; margin-top: 10px; background-color: var(--accent-gold); color: #000;" onclick="pedirSeguridad('vender_propiedad')">
-                    🏠 Iniciar Gestión de Venta con Elena
-                </button>
-            </div>
-
-            <!-- ACORDEONES LEGALES COMPLETOS -->
-            <div class="legal-accordion-container" id="seccion-legal">
-                <details id="acordeon-privacidad">
-                    <summary>🔒 Política de Privacidad</summary>
-                    <div class="details-content">
-                        <strong>1. Responsable del Tratamiento</strong>
-                        Razón Social: LEVEL PUNTO IMMO 24365 SLU<br>
-                        NIF: B-26745430<br>
-                        Domicilio Social: Travessera de Gràcia, 56, 3-1a, 08006 Barcelona<br>
-                        Email de Contacto: level@level.immo<br><br>
-                        
-                        <strong>2. Objeto y Finalidad</strong>
-                        La presente política regula el tratamiento de los datos recogidos a través de level.immo. La finalidad exclusiva es la prestación de servicios de auditoría, consultoría e inteligencia inmobiliaria solicitados por el usuario, así como la gestión de las comunicaciones derivadas de dicha relación comercial.<br><br>
-
-                        <strong>3. Infraestructura y Seguridad (App Propia)</strong>
-                        Para garantizar la máxima precisión y rapidez, los datos suministrados se integran en nuestra Plataforma de Inteligencia Inmobiliaria. Este ecosistema tecnológico propio nos permite procesar su información bajo estrictos protocolos de seguridad y confidencialidad, evitando el uso de proveedores de almacenamiento masivo externos no controlados.<br><br>
-
-                        <strong>4. Legitimación</strong>
-                        El tratamiento de sus datos se basa en el consentimiento expreso otorgado al completar y enviar nuestros formularios de contacto o solicitud de auditoría.<br><br>
-
-                        <strong>5. Sus Derechos</strong>
-                        Como titular de los datos, usted tiene derecho a acceder, rectificar, limitar o suprimir su información en cualquier momento. Para ejercer estos derechos, puede dirigirse por escrito a nuestra dirección fiscal o mediante correo electrónico a level@level.immo, adjuntando copia de su DNI para su correcta identificación.
-                    </div>
-                </details>
-
-                <details>
-                    <summary>⚖️ Aviso Legal</summary>
-                    <div class="details-content">
-                        <strong>Información del Titular</strong>
-                        Entidad: LEVEL PUNTO IMMO 24365 SLU<br>
-                        NIF: B-26745430<br>
-                        Domicilio: Travessera de Gràcia, 56, 3-1a, 08006 Barcelona<br>
-                        Email: level@level.immo<br><br>
-
-                        <strong>Uso de la Plataforma</strong>
-                        Este sitio web es la puerta de acceso a nuestra infraestructura de auditoría inmobiliaria. Todo el contenido, incluyendo procesos de análisis y diseño, es propiedad de LEVEL PUNTO IMMO. Queda prohibida su reproducción sin consentimiento expreso.<br><br>
-
-                        <strong>Responsabilidad</strong>
-                        Los informes generados por nuestra tecnología son de carácter consultivo. LEVEL PUNTO IMMO no se hace responsable de las decisiones tomadas basadas en estas auditorías, las cuales dependen de la exactitud de los datos introducidos por el usuario.
-                    </div>
-                </details>
-                
-                <details>
-                    <summary>🍪 Política de Cookies</summary>
-                    <div class="details-content">
-                        <strong>POLÍTICA DE COOKIES</strong><br>
-                        En level.immo, la tecnología es el vehículo para alcanzar la excelencia en el servicio. Utilizamos cookies para asegurar que nuestra plataforma ofrece una respuesta precisa y humana a cada uno de los intervinientes en el proceso inmobiliario.<br><br>
-                        <strong>Uso de Tecnología v1.0.5</strong><br>
-                        Nuestra Plataforma de Inteligencia Inmobiliaria (v1.0.5) utiliza cookies para el correcto funcionamiento de los procesos de auditoría para compradores y vendedores, la seguridad en la transmisión de datos y el análisis de feedback constante. Este estudio nos permite optimizar la interacción entre el usuario y la empresa, buscando siempre el estándar de calidad más alto.<br><br>
-                        <strong>Tipos de Cookies y Finalidad</strong><br>
-                        - Técnicas y Operativas: Imprescindibles para la gestión de auditorías y la integridad de los datos de compradores y vendedores.<br>
-                        - De Análisis y Feedback: Destinadas a la investigación propia y mejora del servicio basada en la experiencia real del usuario en la plataforma.<br>
-                        - Publicitarias: Permiten que nuestra comunicación en Google Ads sea coherente con sus necesidades de inversión o venta.<br><br>
-                        <strong>Compromiso de Calidad</strong><br>
-                        No nos conformamos con el cumplimiento legal; trabajamos para que la tecnología sea transparente y útil. Usted puede gestionar sus preferencias o desactivar el uso de cookies en cualquier momento a través de la configuración de su navegador.<br><br>
-                        <em>Tecnología aplicada a la excelencia inmobiliaria | LEVEL PUNTO IMMO 24365 SLU</em>
-                    </div>
-                </details>
-            </div>
-
-            <div class="unsubscribe-section">
-                <p style="font-size: 12.5px; color: var(--text-muted); margin-bottom: 12px; font-weight: 500;">¿Ya no deseas recibir nuestras comunicaciones o quieres eliminar tus datos?</p>
-                <button id="btn-show-baja" class="btn-secondary" style="display: inline-block; max-width: 250px; margin: 0 auto; width: 100%;" onclick="mostrarCaptchaBaja()">
-                    🛑 Solicitar la baja
-                </button>
-                
-                <div id="captcha-baja-container" style="display: none; margin-top: 15px; background: rgba(0,0,0,0.2); padding: 15px; border-radius: 8px; border: 1px dashed var(--border-color); max-width: 300px; margin-left: auto; margin-right: auto;">
-                    <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 10px;">Para continuar, resuelve esta prueba de seguridad: <b id="captcha-baja-q" style="color: var(--text-main); font-size: 14px;"></b></div>
-                    <div style="display: flex; gap: 10px; justify-content: center;">
-                        <input type="number" id="captcha-baja-input" style="width: 80px; background: var(--bg-base); border: 1px solid var(--border-color); color: #fff; text-align: center; border-radius: 6px; outline: none; font-size: 14px;" placeholder="?" onkeypress="if(event.key === 'Enter') verificarBaja()">
-                        <button class="btn-action" style="margin: 0; padding: 8px 15px; width: auto;" onclick="verificarBaja()">Confirmar</button>
-                    </div>
-                </div>
+            <div class="back-radar-row">
+                <span data-i18n="nota_garantia">🛡️ Gestión directa supervisada por el Advisor de Zona (CP 43540)</span>
+                <a href="https://app.level-i.com/mercado-real" class="back-radar-link" data-i18n="link_volver">← Ver más activos en Mercado Real</a>
             </div>
 
         </div>
+    </div>
 
-        <div class="right-panel">
-            <div class="right-panel-content">
-                <div class="victoria-box" id="victoria-box-panel">
-                    <div class="victoria-avatar" style="background: linear-gradient(135deg, #C5A059, #10b981);">E</div>
-                    <h3 style="font-size: 15px; margin-bottom: 6px;">Elena | AI Advisor Level-i</h3>
-                    <p style="font-size: 12px; color: var(--text-muted);" id="victoria-subtitle">Atención Personalizada y Gestión Ejecutiva.</p>
-                    
-                    <button id="wa-button" class="btn-action" onclick="pedirSeguridad('nuevo')">
-                        <span id="btn-text">🎙️ Iniciar Atención Personalizada</span>
-                    </button>
-                    <button id="btn-login-toggle" class="btn-action btn-secondary" onclick="alert('Módulo disponible próximamente')">
-                        🔐 Acceso Usuarios Registrados
-                    </button>
-
-                    <div id="captcha-container" class="captcha-container">
-                        <div class="captcha-text">🛡️ <b>Verificación de seguridad:</b> ¿Cuánto es <span id="captcha-question" style="color:var(--text-main); font-weight:bold; font-size:14px;"></span>?</div>
-                        
-                        <div class="legal-checkbox-container">
-                            <input type="checkbox" id="legal-consent">
-                            <label for="legal-consent">
-                                He leído y acepto la Política de Privacidad y el Aviso Legal. Entiendo y consiento que seré atendido por un sistema automatizado de <b>Inteligencia Artificial</b>.
-                            </label>
-                        </div>
-
-                        <div class="captcha-input-group">
-                            <input type="number" id="captcha-input" placeholder="Respuesta" onkeypress="handleCaptchaKeyPress(event)">
-                            <button onclick="verificarCaptcha()">Verificar</button>
-                        </div>
-                    </div>
-
-                    <div id="chat-interface" class="chat-interface">
-                        <div style="background: var(--bg-panel); padding: 8px 15px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
-                            <span style="font-size: 11px; color: var(--text-muted); font-weight: bold; text-transform: uppercase;">Asistente Virtual</span>
-                        </div>
-                        <div id="chat-messages" class="chat-messages"></div>
-                        <div id="typing-indicator" class="typing-indicator">Elena está escribiendo...</div>
-                        <div class="chat-input-area">
-                            <input type="tel" id="chat-input" placeholder="Escribe tu número de teléfono..." onkeypress="handleKeyPress(event)">
-                            <button onclick="sendChatMessage()">Enviar</button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="pro-partner-promo">
-                    🚀 <b>Alianza Profesional:</b> Gana hasta el <b>60% por operación</b> con nuestra tecnología.
-                </div>
-            </div>
-
-            <div class="api-badge">
-                API 4173 · AICAT 14200
-            </div>
+    <!-- PIE DE PÁGINA LEGAL -->
+    <footer>
+        <div>API 4173 · AICAT 14200 · LEVEL PUNTO IMMO 24365 SLU</div>
+        <div class="footer-links">
+            <a onclick="abrirModal('modal-legal')" data-i18n="nav_legal">Aviso Legal</a>
+            <a onclick="abrirModal('modal-privacidad')" data-i18n="nav_privacidad">Privacidad y LOPD</a>
+            <a onclick="abrirModal('modal-cookies')" data-i18n="nav_cookies">Cookies e IA</a>
         </div>
-    </main>
+    </footer>
 
-    <!-- CAJA FUERTE SEGURO -->
-    <script src="config.js"></script>
+    <!-- TOAST DE NOTIFICACIÓN -->
+    <div class="toast-notification" id="toast-msg"></div>
+
+    <!-- MODAL: SOLICITAR VISITA PRIORITARIA -->
+    <div class="modal-overlay" id="modal-visita" onclick="if(event.target === this) cerrarModal('modal-visita')">
+        <div class="modal-card">
+            <button class="modal-close" onclick="cerrarModal('modal-visita')">&times;</button>
+            <h3 style="margin-top:0; color:var(--accent-green);" data-i18n="m_titulo">Solicitar Visita Prioritaria</h3>
+            <p style="font-size:12.5px; color:var(--text-muted); line-height:1.5;" data-i18n="m_sub">
+                Déjanos tus datos de contacto. En cuanto concluya la verificación documental, nuestro Advisor en La Ràpita te asignará turno de visita por orden de registro.
+            </p>
+            <form id="form-ficha-ciega">
+                <div class="form-group">
+                    <label data-i18n="m_nombre">Tu Nombre *</label>
+                    <input type="text" id="fc-nombre" data-i18n-placeholder="plc_nombre" placeholder="Ej: Marc V." required>
+                </div>
+                <div class="form-group">
+                    <label data-i18n="m_tel">Tu Teléfono WhatsApp *</label>
+                    <div class="phone-group">
+                        <input type="text" id="fc-prefijo" value="+34" required>
+                        <input type="tel" id="fc-telefono" data-i18n-placeholder="plc_tel" placeholder="600 000 000" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label data-i18n="m_uso">¿Qué proyecto o uso tienes pensado?</label>
+                    <select id="fc-uso">
+                        <option value="Negocio propio + Vivienda" data-i18n="opt_uso_1">Montar mi propio negocio + Vivienda</option>
+                        <option value="Inversión / Rentabilidad alquiler" data-i18n="opt_uso_2">Inversión para alquilar</option>
+                        <option value="Solo como vivienda planta baja" data-i18n="opt_uso_3">Solo como vivienda en planta baja</option>
+                    </select>
+                </div>
+
+                <div class="math-box">
+                    <label style="margin:0; font-size:12px; color:var(--accent-blue); font-weight:bold;">
+                        <span data-i18n="lbl_captcha">Verificación: ¿Cuánto es</span> <span id="captcha-nums"></span>?
+                    </label>
+                    <input type="number" id="fc-captcha" style="width:75px; text-align:center; padding:6px; background:var(--bg-base); border:1px solid var(--border-color); color:#fff; border-radius:6px;" required>
+                </div>
+
+                <div class="legal-check">
+                    <input type="checkbox" id="fc-legal" required>
+                    <label for="fc-legal" data-i18n="lbl_legal_check">
+                        <b>Acepto las Condiciones y la Privacidad.</b> Autorizo el contacto para gestionar mi solicitud sobre este activo.
+                    </label>
+                </div>
+
+                <button type="submit" class="btn-visit" style="width:100%;" id="btn-submit-modal" data-i18n="m_btn">
+                    Confirmar Solicitud de Visita
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODALES LEGALES TRADUCIDOS -->
+    <div class="modal-overlay" id="modal-legal" onclick="if(event.target === this) cerrarModal('modal-legal')">
+        <div class="modal-card">
+            <button class="modal-close" onclick="cerrarModal('modal-legal')">&times;</button>
+            <h3 style="margin-top:0; color:var(--accent-green);" data-i18n="nav_legal">Aviso Legal</h3>
+            <p style="font-size:12.5px; color:var(--text-muted); line-height:1.6;" data-i18n="txt_legal">
+                En cumplimiento con la Ley de Servicios de la Sociedad de la Información, se informa que Level.immo está operada por LEVEL PUNTO IMMO 24365 SLU (NIF B-26745430) y agentes colegiados registrados (API 4173 · AICAT 14200). Toda información de activos en Ficha Ciega se encuentra en fase de verificación documental previa.
+            </p>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modal-privacidad" onclick="if(event.target === this) cerrarModal('modal-privacidad')">
+        <div class="modal-card">
+            <button class="modal-close" onclick="cerrarModal('modal-privacidad')">&times;</button>
+            <h3 style="margin-top:0; color:var(--accent-green);" data-i18n="nav_privacidad">Privacidad y LOPD</h3>
+            <p style="font-size:12.5px; color:var(--text-muted); line-height:1.6;" data-i18n="txt_privacidad">
+                En cumplimiento del RGPD, sus datos personales serán tratados de forma estrictamente confidencial por LEVEL PUNTO IMMO 24365 SLU con la única finalidad de gestionar su interés y turno de visita sobre este activo inmobiliario.
+            </p>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modal-cookies" onclick="if(event.target === this) cerrarModal('modal-cookies')">
+        <div class="modal-card">
+            <button class="modal-close" onclick="cerrarModal('modal-cookies')">&times;</button>
+            <h3 style="margin-top:0; color:var(--accent-green);" data-i18n="nav_cookies">Cookies e IA</h3>
+            <p style="font-size:12.5px; color:var(--text-muted); line-height:1.6;" data-i18n="txt_cookies">
+                Esta página utiliza almacenamiento técnico local para recordar su idioma e interacciones, así como sistemas automatizados de Inteligencia Artificial (Elena IA) para asignar de inmediato su solicitud al Advisor de Zona en La Ràpita.
+            </p>
+        </div>
+    </div>
 
     <script>
-        function updateClock() {
-            const now = new Date();
-            const day = String(now.getDate()).padStart(2, '0');
-            const month = String(now.getMonth() + 1).padStart(2, '0');
-            const year = now.getFullYear();
-            const hours = String(now.getHours()).padStart(2, '0');
-            const minutes = String(now.getMinutes()).padStart(2, '0');
-            const seconds = String(now.getSeconds()).padStart(2, '0');
-            const clockEl = document.getElementById('live-clock');
-            if(clockEl) clockEl.innerText = `${day}/${month}/${year} | ${hours}:${minutes}:${seconds}`;
-        }
-        setInterval(updateClock, 1000); updateClock(); 
+        // ==========================================
+        // 1. CONFIGURACIÓN DEL WEBHOOK Y VARIABLES DE TRACKING
+        // ==========================================
+        const WEBHOOK_MAKE = "https://hook.eu1.make.com/loy5kvv4qmnvo748fmxo2qvt48mbf986";
+        const REF_EXPERIMENTO = "REF-RAPITA-LOCAL-72K";
 
-        const webhookMake = window.ENV.MAKE_WEBHOOK; 
-        
-        const btnInicio = document.getElementById('wa-button');
-        const btnLoginToggle = document.getElementById('btn-login-toggle');
-        const interfaceChat = document.getElementById('chat-interface');
-        const chatMessages = document.getElementById('chat-messages');
-        const inputField = document.getElementById('chat-input');
-        const typingIndicator = document.getElementById('typing-indicator');
-        const subtitle = document.getElementById('victoria-subtitle');
-        const mainContainer = document.getElementById('main-container');
+        const urlParams = new URLSearchParams(window.location.search);
+        const utm_source = urlParams.get('utm_source') || "";
+        const utm_medium = urlParams.get('utm_medium') || "";
+        const utm_campaign = urlParams.get('utm_campaign') || "";
 
-        let sessionId = "";
-        let modoAcceso = "nuevo";
-        let telefonoCliente = ""; 
-        let nombreCliente = ""; 
-        let captchaRespuesta = 0;
-        let modoPendiente = "";
-        
-        let intencionGuardada = "";
+        let sessionId = 'usr_' + Math.random().toString(36).substr(2, 9);
+        let clienteIP = "Desconocida";
+        fetch('https://api.ipify.org?format=json').then(r => r.json()).then(data => { clienteIP = data.ip; }).catch(() => {});
 
-        function dispararEfectoLaser() {
-            if (mainContainer) {
-                mainContainer.classList.add('flash-active');
-                setTimeout(() => mainContainer.classList.remove('flash-active'), 500);
+        let likesActuales = parseInt(localStorage.getItem("likes_" + REF_EXPERIMENTO) || "14", 10);
+        let visitasActuales = parseInt(localStorage.getItem("visitas_" + REF_EXPERIMENTO) || "3", 10);
+        let yaDioLike = localStorage.getItem("liked_" + REF_EXPERIMENTO) === "true";
+        let resultadoCaptcha = 0;
+
+        // ==========================================
+        // 2. DICCIONARIO COMPLETO EN LOS 8 IDIOMAS
+        // ==========================================
+        const traducciones = {
+            es: {
+                badge_ref: "🔒 FICHA CIEGA · REF-RAPITA-72K",
+                tag_ubicacion: "📍 La Ràpita · Centre (CP 43540)",
+                tag_pendiente: "⏳ En Proceso de Verificación Documental",
+                tag_sub_pendiente: "Ubicación exacta reservada · Exclusiva Level.immo",
+                banner_protocolo: "🔒 <b>Protocolo de Ficha Ciega Level.immo:</b> Este activo en el centro de La Ràpita se encuentra en proceso de verificación documental por nuestro departamento técnico. La dirección exacta permanece reservada y las solicitudes de visita se registran por riguroso orden de entrada.",
+                prop_loc: "📍 La Ràpita - Centre (43540) · Zona Comercial",
+                prop_title: "Local Comercial para Profesional Independiente + Vivienda Anexa Reformada",
+                price_label: "PVP Orientativo",
+                tag_t1: "🏪 Local a pie de calle", tag_t2: "🛏️ 2 Habitaciones", tag_t3: "🍳 Cocina Equipada", tag_t4: "🛁 Baño con Ducha", tag_t5: "📄 Cédula y CEE en regla",
+                box_desc: "<strong>Descripción del Activo:</strong><br>Oportunidad todo en uno en pleno centro de La Ràpita con buen tráfico peatonal. Local ideal para profesional independiente (<b>peluquero, barbero, tatuador, centro de estética, cerrajero, joyero, agente comercial o cafetería boutique</b>) con <b>vivienda anexa totalmente reformada</b>.<br><br>Dispone de <b>2 habitaciones, cocina equipada y baño completo</b>. Cuenta con <b>cédula de habitabilidad y certificación energética</b>. La solución perfecta para tener tu propio negocio y tu vivienda sin duplicar gastos de alquiler ni desplazamientos.",
+                stat_likes: "Me gusta", stat_visits: "Solicitudes de visita", stat_activo: "● Radar Activo",
+                btn_like: "Me Gusta este Activo", btn_liked: "¡Te Gusta! (Registrado)", btn_visita: "Solicitar Visita Prioritaria",
+                nota_garantia: "🛡️ Gestión directa supervisada por el Advisor de Zona (CP 43540)",
+                link_volver: "← Ver más activos en Mercado Real",
+                nav_legal: "Aviso Legal", nav_privacidad: "Privacidad y LOPD", nav_cookies: "Cookies e IA",
+                m_titulo: "Solicitar Visita Prioritaria",
+                m_sub: "Déjanos tus datos de contacto. En cuanto concluya la verificación documental, nuestro Advisor en La Ràpita te asignará turno de visita por orden de registro.",
+                m_nombre: "Tu Nombre *", plc_nombre: "Ej: Marc V.",
+                m_tel: "Tu Teléfono WhatsApp *", plc_tel: "600 000 000",
+                m_uso: "¿Qué proyecto o uso tienes pensado?",
+                opt_uso_1: "Montar mi propio negocio + Vivienda",
+                opt_uso_2: "Inversión para alquilar",
+                opt_uso_3: "Solo como vivienda en planta baja",
+                lbl_captcha: "Verificación: ¿Cuánto es",
+                lbl_legal_check: "<b>Acepto las Condiciones y la Privacidad.</b> Autorizo el contacto para gestionar mi solicitud sobre este activo.",
+                m_btn: "Confirmar Solicitud de Visita", m_btn_enviando: "Registrando solicitud...",
+                toast_like: "❤️ ¡Gracias! Tu interés ha quedado registrado en el radar.",
+                toast_visita: "✅ ¡Solicitud registrada! Nuestro Advisor de La Ràpita ha recibido tu aviso prioritario.",
+                err_captcha: "⚠️ La suma de verificación no es correcta. Inténtalo de nuevo.",
+                txt_legal: "En cumplimiento con la Ley de Servicios de la Sociedad de la Información, se informa que Level.immo está operada por LEVEL PUNTO IMMO 24365 SLU (NIF B-26745430) y agentes colegiados registrados (API 4173 · AICAT 14200). Toda información de activos en Ficha Ciega se encuentra en fase de verificación documental previa.",
+                txt_privacidad: "En cumplimiento del RGPD, sus datos personales serán tratados de forma estrictamente confidencial por LEVEL PUNTO IMMO 24365 SLU con la única finalidad de gestionar su interés y turno de visita sobre este activo inmobiliario.",
+                txt_cookies: "Esta página utiliza almacenamiento técnico local para recordar su idioma e interacciones, así como sistemas automatizados de Inteligencia Artificial (Elena IA) para asignar de inmediato su solicitud al Advisor de Zona en La Ràpita."
+            },
+            ca: {
+                badge_ref: "🔒 FITXA CEGA · REF-RAPITA-72K",
+                tag_ubicacion: "📍 La Ràpita · Centre (CP 43540)",
+                tag_pendiente: "⏳ En Procés de Verificació Documental",
+                tag_sub_pendiente: "Ubicació exacta reservada · Exclusiva Level.immo",
+                banner_protocolo: "🔒 <b>Protocol de Fitxa Cega Level.immo:</b> Aquest actiu al centre de La Ràpita es troba en procés de verificació documental pel nostre departament tècnic. L'adreça exacta roman reservada i les sol·licituds de visita es registren per rigorós ordre d'entrada.",
+                prop_loc: "📍 La Ràpita - Centre (43540) · Zona Comercial",
+                prop_title: "Local Comercial per a Professional Independent + Habitatge Annex Reformat",
+                price_label: "PVP Orientatiu",
+                tag_t1: "🏪 Local a peu de carrer", tag_t2: "🛏️ 2 Habitacions", tag_t3: "🍳 Cuina Equipada", tag_t4: "🛁 Bany amb Dutxa", tag_t5: "📄 Cèdula i CEE al dia",
+                box_desc: "<strong>Descripció de l'Actiu:</strong><br>Oportunitat tot en un al ple centre de La Ràpita amb bon trànsit de vianants. Local ideal per a professional independent (<b>perruquer, barber, tatuador, centre d'estètica, serraller, joier, agent comercial o cafeteria boutique</b>) amb <b>habitatge annex totalment reformat</b>.<br><br>Disposa de <b>2 habitacions, cuina equipada i bany complet</b>. Compta amb <b>cèdula d'habitabilitat i certificació energètica</b>. La solució perfecta per tenir el teu propi negoci i el teu habitatge sense duplicar despeses de lloguer ni desplaçaments.",
+                stat_likes: "M'agrada", stat_visits: "Sol·licituds de visita", stat_activo: "● Radar Actiu",
+                btn_like: "M'agrada aquest Actiu", btn_liked: "T'agrada! (Registrat)", btn_visita: "Sol·licitar Visita Prioritària",
+                nota_garantia: "🛡️ Gestió directa supervisada per l'Advisor de Zona (CP 43540)",
+                link_volver: "← Veure més actius a Mercat Real",
+                nav_legal: "Avís Legal", nav_privacidad: "Privacitat i LOPD", nav_cookies: "Cookies i IA",
+                m_titulo: "Sol·licitar Visita Prioritària",
+                m_sub: "Deixa'ns les teves dades de contacte. Tan bon punt finalitzi la verificació documental, el nostre Advisor a La Ràpita t'assignarà torn de visita per ordre de registre.",
+                m_nombre: "El teu Nom *", plc_nombre: "Ex: Marc V.",
+                m_tel: "El teu Telèfon WhatsApp *", plc_tel: "600 000 000",
+                m_uso: "Quin projecte o ús tens pensat?",
+                opt_uso_1: "Muntar el meu propi negoci + Habitatge",
+                opt_uso_2: "Inversió per llogar",
+                opt_uso_3: "Només com a habitatge en planta baixa",
+                lbl_captcha: "Verificació: Quant és",
+                lbl_legal_check: "<b>Accepto les Condicions i la Privacitat.</b> Autoritzo el contacte per gestionar la meva sol·licitud sobre aquest actiu.",
+                m_btn: "Confirmar Sol·licitud de Visita", m_btn_enviando: "Registrant sol·licitud...",
+                toast_like: "❤️ Gràcies! El teu interès ha quedat registrat al radar.",
+                toast_visita: "✅ Sol·licitud registrada! El nostre Advisor de La Ràpita ha rebut el teu avís prioritari.",
+                err_captcha: "⚠️ La suma de verificació no és correcta. Torna-ho a provar.",
+                txt_legal: "En compliment amb la Llei de Serveis de la Societat de la Informació, s'informa que Level.immo està operada per LEVEL PUNTO IMMO 24365 SLU (NIF B-26745430) i agents col·legiats registrats (API 4173 · AICAT 14200).",
+                txt_privacidad: "En compliment del RGPD, les seves dades personals seran tractades de forma estrictament confidencial per LEVEL PUNTO IMMO 24365 SLU per gestionar el seu torn de visita.",
+                txt_cookies: "Aquesta pàgina utilitza emmagatzematge tècnic local i sistemes d'Intel·ligència Artificial (Elena IA) per assignar la seva sol·licitud a l'Advisor de Zona."
+            },
+            en: {
+                badge_ref: "🔒 BLIND LISTING · REF-RAPITA-72K",
+                tag_ubicacion: "📍 La Ràpita · Centre (CP 43540)",
+                tag_pendiente: "⏳ Under Document Verification",
+                tag_sub_pendiente: "Exact location reserved · Level.immo Exclusive",
+                banner_protocolo: "🔒 <b>Level.immo Blind Listing Protocol:</b> This asset in the center of La Ràpita is currently undergoing document verification by our technical department. The exact address remains reserved and visit requests are registered strictly in order of arrival.",
+                prop_loc: "📍 La Ràpita - Centre (43540) · Commercial Area",
+                prop_title: "Commercial Space for Independent Professional + Renovated Annex Home",
+                price_label: "Guide Price",
+                tag_t1: "🏪 Street-level retail", tag_t2: "🛏️ 2 Bedrooms", tag_t3: "🍳 Equipped Kitchen", tag_t4: "🛁 Bathroom with Shower", tag_t5: "📄 Habitability & Energy Cert.",
+                box_desc: "<strong>Asset Description:</strong><br>All-in-one opportunity right in the center of La Ràpita with strong foot traffic. Ideal retail space for an independent professional (<b>hairdresser, barber, tattoo artist, beauty studio, locksmith, jeweler, sales agent, or boutique café</b>) with a <b>fully renovated annex home</b>.<br><br>Features <b>2 bedrooms, equipped kitchen, and full bathroom</b>. Includes <b>certificate of occupancy and energy performance certificate</b>. The perfect solution to own both your business and home without paying double rent or commuting.",
+                stat_likes: "Likes", stat_visits: "Visit requests", stat_activo: "● Live Radar",
+                btn_like: "I Like This Asset", btn_liked: "Liked! (Registered)", btn_visita: "Request Priority Visit",
+                nota_garantia: "🛡️ Direct management supervised by the Area Advisor (CP 43540)",
+                link_volver: "← View more assets in Real Market",
+                nav_legal: "Legal Notice", nav_privacidad: "Privacy Policy", nav_cookies: "Cookies & AI",
+                m_titulo: "Request Priority Visit",
+                m_sub: "Leave your contact details. As soon as document verification is completed, our Advisor in La Ràpita will assign your visit slot in order of registration.",
+                m_nombre: "Your Name *", plc_nombre: "E.g. Marc V.",
+                m_tel: "Your WhatsApp Phone *", plc_tel: "600 000 000",
+                m_uso: "What project or use do you have in mind?",
+                opt_uso_1: "Start my own business + Home",
+                opt_uso_2: "Buy-to-let investment",
+                opt_uso_3: "Ground-floor residence only",
+                lbl_captcha: "Verification: What is",
+                lbl_legal_check: "<b>I accept the Terms and Privacy Policy.</b> I authorize contact to manage my request for this asset.",
+                m_btn: "Confirm Visit Request", m_btn_enviando: "Registering request...",
+                toast_like: "❤️ Thank you! Your interest has been logged on our radar.",
+                toast_visita: "✅ Request registered! Our Advisor in La Ràpita has received your priority notice.",
+                err_captcha: "⚠️ Incorrect verification sum. Please try again.",
+                txt_legal: "Level.immo is operated by LEVEL PUNTO IMMO 24365 SLU (NIF B-26745430) and licensed real estate agents (API 4173 · AICAT 14200). All Blind Listing assets are undergoing prior document verification.",
+                txt_privacidad: "In compliance with GDPR, your personal data will be treated confidentially by LEVEL PUNTO IMMO 24365 SLU solely to manage your visit slot.",
+                txt_cookies: "This page uses technical local storage and AI systems (Elena AI) to immediately route your request to the Area Advisor."
+            },
+            fr: {
+                badge_ref: "🔒 FICHE AVEUGLE · REF-RAPITA-72K",
+                tag_ubicacion: "📍 La Ràpita · Centre (CP 43540)",
+                tag_pendiente: "⏳ En Cours de Vérification Documentaire",
+                tag_sub_pendiente: "Emplacement exact réservé · Exclusivité Level.immo",
+                banner_protocolo: "🔒 <b>Protocole Fiche Aveugle Level.immo :</b> Cet actif situé au centre de La Ràpita est en cours de vérification documentaire par notre service technique. L'adresse exacte reste réservée et les demandes de visite sont enregistrées par ordre d'arrivée.",
+                prop_loc: "📍 La Ràpita - Centre (43540) · Zone Commerciale",
+                prop_title: "Local Commercial pour Professionnel Indépendant + Logement Annexe Rénové",
+                price_label: "Prix Indicatif",
+                tag_t1: "🏪 Local de plain-pied", tag_t2: "🛏️ 2 Chambres", tag_t3: "🍳 Cuisine Équipée", tag_t4: "🛁 Salle d'eau avec douche", tag_t5: "📄 Certificat d'habitabilité & DPE",
+                box_desc: "<strong>Description de l'Actif :</strong><br>Opportunité tout-en-un en plein centre de La Ràpita avec un bon passage piétonnier. Local idéal pour professionnel indépendant (<b>coiffeur, barbier, tatoueur, institut de beauté, serrurier, bijoutier, agent commercial ou café boutique</b>) avec <b>logement attenant entièrement rénové</b>.<br><br>Dispose de <b>2 chambres, cuisine équipée et salle d'eau complète</b>. Certificat d'habitabilité et diagnostic énergétique en règle. La solution idéale pour réunir votre activité et votre résidence sans double loyer.",
+                stat_likes: "J'aime", stat_visits: "Demandes de visite", stat_activo: "● Radar Actif",
+                btn_like: "J'aime cet Actif", btn_liked: "Aimé ! (Enregistré)", btn_visita: "Demander une Visite Prioritaire",
+                nota_garantia: "🛡️ Gestion directe supervisée par l'Advisor de Zone (CP 43540)",
+                link_volver: "← Voir plus d'actifs sur Marché Réel",
+                nav_legal: "Mentions Légales", nav_privacidad: "Confidentialité", nav_cookies: "Cookies et IA",
+                m_titulo: "Demander une Visite Prioritaire",
+                m_sub: "Laissez-nous vos coordonnées. Dès la fin de la vérification documentaire, notre Advisor à La Ràpita vous attribuera un créneau de visite par ordre d'inscription.",
+                m_nombre: "Votre Nom *", plc_nombre: "Ex : Marc V.",
+                m_tel: "Votre Téléphone WhatsApp *", plc_tel: "600 000 000",
+                m_uso: "Quel projet ou usage envisagez-vous ?",
+                opt_uso_1: "Créer mon propre commerce + Logement",
+                opt_uso_2: "Investissement locatif",
+                opt_uso_3: "Uniquement comme logement en rez-de-chaussée",
+                lbl_captcha: "Vérification : Combien font",
+                lbl_legal_check: "<b>J'accepte les Conditions et la Confidentialité.</b> J'autorise le contact pour gérer ma demande.",
+                m_btn: "Confirmer la Demande de Visite", m_btn_enviando: "Enregistrement...",
+                toast_like: "❤️ Merci ! Votre intérêt a été enregistré sur le radar.",
+                toast_visita: "✅ Demande enregistrée ! Notre Advisor à La Ràpita a reçu votre alerte prioritaire.",
+                err_captcha: "⚠️ La somme de vérification est incorrecte.",
+                txt_legal: "Level.immo est exploitée par LEVEL PUNTO IMMO 24365 SLU (NIF B-26745430) et des agents immobiliers agréés (API 4173 · AICAT 14200).",
+                txt_privacidad: "Conformément au RGPD, vos données personnelles seront traitées de manière confidentielle par LEVEL PUNTO IMMO 24365 SLU.",
+                txt_cookies: "Cette page utilise le stockage local technique et des systèmes d'IA (Elena IA) pour transmettre votre demande au conseiller de zone."
+            },
+            de: {
+                badge_ref: "🔒 BLIND-LISTING · REF-RAPITA-72K",
+                tag_ubicacion: "📍 La Ràpita · Zentrum (PLZ 43540)",
+                tag_pendiente: "⏳ Dokumentenprüfung läuft",
+                tag_sub_pendiente: "Genaue Lage reserviert · Level.immo Exklusiv",
+                banner_protocolo: "🔒 <b>Level.immo Blind-Listing-Protokoll:</b> Dieses Objekt im Zentrum von La Ràpita befindet sich derzeit in der Dokumentenprüfung durch unsere Fachabteilung. Die genaue Adresse bleibt reserviert, Besichtigungsanfragen werden nach Eingangsreihenfolge registriert.",
+                prop_loc: "📍 La Ràpita - Zentrum (43540) · Geschäftsviertel",
+                prop_title: "Gewerbelokal für Selbstständige + Renovierte Nebenwohnung",
+                price_label: "Richtpreis",
+                tag_t1: "🏪 Ladenlokal im Erdgeschoss", tag_t2: "🛏️ 2 Schlafzimmer", tag_t3: "🍳 Einbauküche", tag_t4: "🛁 Bad mit Dusche", tag_t5: "📄 Bewohnbarkeits- & Energieausweis",
+                box_desc: "<strong>Objektbeschreibung:</strong><br>Alles-in-einem-Gelegenheit im Zentrum von La Ràpita mit guter Fußgängerfrequenz. Ideales Ladenlokal für Selbstständige (<b>Friseur, Barber, Tätowierer, Kosmetikstudio, Schlüsseldienst, Juwelier, Handelsvertreter oder Boutique-Café</b>) mit <b>komplett renovierter Nebenwohnung</b>.<br><br>Verfügt über <b>2 Schlafzimmer, Einbauküche und komplettes Bad</b>. Mit gültiger <b>Bewohnbarkeitsbescheinigung und Energieausweis</b>. Perfekt, um Geschäft und Wohnen unter einem Dach zu vereinen.",
+                stat_likes: "Gefällt mir", stat_visits: "Besichtigungsanfragen", stat_activo: "● Live-Radar",
+                btn_like: "Gefällt mir", btn_liked: "Gefällt dir! (Registriert)", btn_visita: "Prioritäts-Besichtigung anfordern",
+                nota_garantia: "🛡️ Direkte Verwaltung durch den Gebiets-Advisor (PLZ 43540)",
+                link_volver: "← Weitere Objekte im Realen Markt ansehen",
+                nav_legal: "Impressum", nav_privacidad: "Datenschutz", nav_cookies: "Cookies & KI",
+                m_titulo: "Prioritäts-Besichtigung anfordern",
+                m_sub: "Hinterlassen Sie Ihre Kontaktdaten. Sobald die Dokumentenprüfung abgeschlossen ist, weist Ihnen unser Advisor in La Ràpita einen Besichtigungstermin zu.",
+                m_nombre: "Ihr Name *", plc_nombre: "z.B. Marc V.",
+                m_tel: "Ihre WhatsApp-Nummer *", plc_tel: "600 000 000",
+                m_uso: "Welches Projekt oder welche Nutzung planen Sie?",
+                opt_uso_1: "Eigenes Geschäft + Wohnung",
+                opt_uso_2: "Kapitalanlage zur Vermietung",
+                opt_uso_3: "Nur als Erdgeschosswohnung",
+                lbl_captcha: "Prüfung: Was ergibt",
+                lbl_legal_check: "<b>Ich akzeptiere die Bedingungen und den Datenschutz.</b> Ich stimme der Kontaktaufnahme zu.",
+                m_btn: "Besichtigungsanfrage bestätigen", m_btn_enviando: "Wird gesendet...",
+                toast_like: "❤️ Danke! Ihr Interesse wurde im Radar registriert.",
+                toast_visita: "✅ Anfrage registriert! Unser Advisor in La Ràpita wurde benachrichtigt.",
+                err_captcha: "⚠️ Die Rechenaufgabe wurde nicht korrekt gelöst.",
+                txt_legal: "Level.immo wird betrieben von LEVEL PUNTO IMMO 24365 SLU (NIF B-26745430) und zugelassenen Immobilienmaklern (API 4173 · AICAT 14200).",
+                txt_privacidad: "Gemäß DSGVO werden Ihre Daten streng vertraulich behandelt, um Ihren Besichtigungstermin zu koordinieren.",
+                txt_cookies: "Diese Seite nutzt lokalen technischen Speicher und KI-Systeme (Elena AI), um Ihre Anfrage direkt dem Gebietsberater zuzuweisen."
+            },
+            it: {
+                badge_ref: "🔒 SCHEDA CIECA · REF-RAPITA-72K",
+                tag_ubicacion: "📍 La Ràpita · Centro (CAP 43540)",
+                tag_pendiente: "⏳ In Corso di Verifica Documentale",
+                tag_sub_pendiente: "Posizione esatta riservata · Esclusiva Level.immo",
+                banner_protocolo: "🔒 <b>Protocollo Scheda Cieca Level.immo:</b> Questo immobile nel centro di La Ràpita è in fase di verifica documentale da parte del nostro reparto tecnico. L'indirizzo esatto resta riservato e le richieste di visita vengono registrate in ordine di arrivo.",
+                prop_loc: "📍 La Ràpita - Centro (43540) · Zona Commerciale",
+                prop_title: "Locale Commerciale per Professionista Indipendente + Abitazione Annessa Ristrutturata",
+                price_label: "Prezzo Indicativo",
+                tag_t1: "🏪 Locale fronte strada", tag_t2: "🛏️ 2 Camere", tag_t3: "🍳 Cucina Attrezzata", tag_t4: "🛁 Bagno con Doccia", tag_t5: "📄 Agibilità e APE in regola",
+                box_desc: "<strong>Descrizione dell'Attivo:</strong><br>Opportunità tutto-in-uno nel centro di La Ràpita con ottimo passaggio pedonale. Locale ideale per professionista indipendente (<b>parrucchiere, barbiere, tatuatore, centro estetico, fabbro, gioielliere, agente commerciale o caffetteria boutique</b>) con <b>abitazione annessa completamente ristrutturata</b>.<br><br>Dispone di <b>2 camere da letto, cucina attrezzata e bagno completo</b>. Dotato di <b>certificato di agibilità e certificazione energetica</b>. La soluzione perfetta per unire attività e casa senza doppi affitti.",
+                stat_likes: "Mi piace", stat_visits: "Richieste di visita", stat_activo: "● Radar Attivo",
+                btn_like: "Mi Piace questo Attivo", btn_liked: "Ti Piace! (Registrato)", btn_visita: "Richiedi Visita Prioritaria",
+                nota_garantia: "🛡️ Gestione diretta supervisionata dall'Advisor di Zona (CAP 43540)",
+                link_volver: "← Vedi altri immobili nel Mercato Reale",
+                nav_legal: "Note Legali", nav_privacidad: "Privacy", nav_cookies: "Cookie e IA",
+                m_titulo: "Richiedi Visita Prioritaria",
+                m_sub: "Lasciaci i tuoi recapiti. Non appena terminata la verifica documentale, il nostro Advisor a La Ràpita ti assegnerà il turno di visita in ordine di registrazione.",
+                m_nombre: "Il tuo Nome *", plc_nombre: "Es: Marc V.",
+                m_tel: "Il tuo Telefono WhatsApp *", plc_tel: "600 000 000",
+                m_uso: "Quale progetto o utilizzo hai in mente?",
+                opt_uso_1: "Avviare la mia attività + Abitazione",
+                opt_uso_2: "Investimento a reddito (affitto)",
+                opt_uso_3: "Solo come abitazione al piano terra",
+                lbl_captcha: "Verifica: Quanto fa",
+                lbl_legal_check: "<b>Accetto le Condizioni e la Privacy.</b> Autorizzo il contatto per gestire la mia richiesta.",
+                m_btn: "Conferma Richiesta di Visita", m_btn_enviando: "Registrazione in corso...",
+                toast_like: "❤️ Grazie! Il tuo interesse è stato registrato nel radar.",
+                toast_visita: "✅ Richiesta registrata! Il nostro Advisor di La Ràpita ha ricevuto il tuo avviso prioritario.",
+                err_captcha: "⚠️ La somma di verifica non è corretta.",
+                txt_legal: "Level.immo è gestita da LEVEL PUNTO IMMO 24365 SLU (NIF B-26745430) e agenti immobiliari abilitati (API 4173 · AICAT 14200).",
+                txt_privacidad: "Ai sensi del GDPR, i suoi dati personali saranno trattati in modo confidenziale da LEVEL PUNTO IMMO 24365 SLU.",
+                txt_cookies: "Questa pagina utilizza memoria tecnica locale e sistemi di IA (Elena IA) per assegnare la richiesta al consulente di zona."
+            },
+            ar: {
+                badge_ref: "🔒 ملف عقاري سري · REF-RAPITA-72K",
+                tag_ubicacion: "📍 لا رابيتا · المركز (CP 43540)",
+                tag_pendiente: "⏳ قيد التحقق من المستندات القانونية",
+                tag_sub_pendiente: "الموقع الدقيق محفوظ · حصري لدى Level.immo",
+                banner_protocolo: "🔒 <b>بروتوكول الملف السري Level.immo:</b> يخضع هذا العقار الواقع في وسط لا رابيتا حالياً لعملية التحقق من المستندات من قِبل قسمنا الفني. يظل العنوان الدقيق محفوظاً ويتم تسجيل طلبات الزيارة حسب أسبقية الوصول.",
+                prop_loc: "📍 لا رابيتا - المركز (43540) · منطقة تجارية",
+                prop_title: "محل تجاري للمهنيين المستقلين + مسكن ملحق مجدد بالكامل",
+                price_label: "السعر التقديري",
+                tag_t1: "🏪 محل على مستوى الشارع", tag_t2: "🛏️ غرفتا نوم", tag_t3: "🍳 مطبخ مجهز", tag_t4: "🛁 حمام مع دش", tag_t5: "📄 شهادة السكن والطاقة جاهزة",
+                box_desc: "<strong>وصف العقار:</strong><br>فرصة متكاملة (الكل في واحد) في قلب لا رابيتا مع حركة مشاة نشطة. محل مثالي لأصحاب المهن الحرة والمشاريع (<b>صالون حلاقة، تجميل، استوديو، صائغ، أقفال، مكتب تجاري أو مقهى بوتيك</b>) مع <b>مسكن ملحق تم تجديده بالكامل</b>.<br><br>يحتوي على <b>غرفتي نوم ومطبخ مجهز وحمام كامل</b>، مع <b>شهادة صلاحية السكن وشهادة كفاءة الطاقة</b>. الحل الأمثل لجمع مشروعك التجاري ومسكنك في مكان واحد دون دفع إيجارين أو تكبد عناء التنقل.",
+                stat_likes: "إعجاب", stat_visits: "طلبات الزيارة", stat_activo: "● الرادار نشط",
+                btn_like: "أعجبني هذا العقار", btn_liked: "تم تسجيل إعجابك!", btn_visita: "طلب زيارة ذات أولوية",
+                nota_garantia: "🛡️ إدارة مباشرة بإشراف مستشار المنطقة (CP 43540)",
+                link_volver: "→ عرض المزيد من العقارات في السوق الحقيقي",
+                nav_legal: "إشعار قانوني", nav_privacidad: "الخصوصية وحماية البيانات", nav_cookies: "ملفات تعريف الارتباط والذكاء الاصطناعي",
+                m_titulo: "طلب زيارة ذات أولوية",
+                m_sub: "اترك بيانات الاتصال الخاصة بك. بمجرد اكتمال التحقق من المستندات، سيقوم مستشارنا في لا رابيتا بتحديد موعد زيارتك حسب أولوية التسجيل.",
+                m_nombre: "الاسم الكامل *", plc_nombre: "مثال: كريم أ.",
+                m_tel: "رقم هاتف واتساب *", plc_tel: "600 000 000",
+                m_uso: "ما هو المشروع أو الاستخدام الذي تخطط له؟",
+                opt_uso_1: "تأسيس مشروعي الخاص + سكن",
+                opt_uso_2: "استثمار للتأجير",
+                opt_uso_3: "كسكن في الطابق الأرضي فقط",
+                lbl_captcha: "التحقق: كم يساوي",
+                lbl_legal_check: "<b>أوافق على الشروط وسياسة الخصوصية.</b> أفوض الاتصال بي لإدارة طلبي حول هذا العقار.",
+                m_btn: "تأكيد طلب الزيارة", m_btn_enviando: "جارٍ تسجيل الطلب...",
+                toast_like: "❤️ شكراً لك! تم تسجيل اهتمامك في الرادار.",
+                toast_visita: "✅ تم تسجيل طلبك بنجاح! تلقى مستشارنا في لا رابيتا إشعارك ذا الأولوية.",
+                err_captcha: "⚠️ مجموع التحقق غير صحيح. يرجى المحاولة مرة أخرى.",
+                txt_legal: "تُدار منصة Level.immo بواسطة شركة LEVEL PUNTO IMMO 24365 SLU (رقم ضريبي B-26745430) ووكلاء عقاريين مسجلين (API 4173 · AICAT 14200).",
+                txt_privacidad: "وفقاً للائحة العامة لحماية البيانات (GDPR)، ستتم معالجة بياناتك بسرية تامة لإدارة موعد زيارتك.",
+                txt_cookies: "تستخدم هذه الصفحة التخزين الفني المحلي وأنظمة الذكاء الاصطناعي (Elena IA) لتوجيه طلبك فوراً إلى مستشار المنطقة."
+            },
+            zh: {
+                badge_ref: "🔒 盲审房源 · REF-RAPITA-72K",
+                tag_ubicacion: "📍 拉拉皮塔 · 市中心 (邮编 43540)",
+                tag_pendiente: "⏳ 产权文件核验中",
+                tag_sub_pendiente: "具体地址保密 · Level.immo 独家房源",
+                banner_protocolo: "🔒 <b>Level.immo 盲审房源协议：</b> 该位于拉拉皮塔（La Ràpita）市中心的房产目前正由我们的技术部门进行文件核验。具体地址暂时保密，预约看房申请将严格按照登记先后顺序安排。",
+                prop_loc: "📍 拉拉皮塔 - 市中心 (43540) · 核心商业区",
+                prop_title: "适合独立创业者的临街商铺 + 全新精装连体住宅",
+                price_label: "参考售价",
+                tag_t1: "🏪 临街旺铺", tag_t2: "🛏️ 2间卧室", tag_t3: "🍳 配套厨房", tag_t4: "🛁 带淋浴卫生间", tag_t5: "📄 居住证与能效证齐全",
+                box_desc: "<strong>资产详情：</strong><br>拉拉皮塔市中心罕见的“商住合一”机会，人流量大。非常适合独立创业者与手艺人（<b>美发沙龙、理发店、纹身工作室、美甲美容店、锁匠铺、珠宝修理、商务办公或精品咖啡店</b>），并附带一套<b>完全翻新的连体住宅</b>。<br><br>住宅设有 <b>2间卧室、配套厨房和完整卫浴</b>，<b>合法居住证（Cédula de habitabilidad）及能源证书（CEE）齐全</b>。让您在一个预算内同时拥有自己的生意与住所，省去双份房租与通勤成本。",
+                stat_likes: "人点赞", stat_visits: "人已预约看房", stat_activo: "● 雷达实时监控",
+                btn_like: "我喜欢这套房源", btn_liked: "已点赞！(已登记)", btn_visita: "申请优先看房",
+                nota_garantia: "🛡️ 由 43540 邮编区域专属顾问直接督办",
+                link_volver: "← 返回真实市场查看更多房源",
+                nav_legal: "法律声明", nav_privacidad: "隐私政策", nav_cookies: "Cookie 与人工智能",
+                m_titulo: "申请优先看房名额",
+                m_sub: "请留下您的联系方式。一旦文件核验完成，我们在拉拉皮塔的区域顾问将按登记顺序为您安排看房。",
+                m_nombre: "您的姓名 *", plc_nombre: "例如：陈先生 / Lin",
+                m_tel: "您的 WhatsApp 或手机号码 *", plc_tel: "600 000 000",
+                m_uso: "您计划用于什么项目或用途？",
+                opt_uso_1: "自己开店经营 + 自住",
+                opt_uso_2: "投资出租获取回报",
+                opt_uso_3: "仅作为一楼住宅自住",
+                lbl_captcha: "安全验证：请计算",
+                lbl_legal_check: "<b>我接受条款与隐私政策。</b> 我授权工作人员联系我以安排看房。",
+                m_btn: "确认提交优先看房申请", m_btn_enviando: "正在提交申请...",
+                toast_like: "❤️ 感谢关注！您的意向已记录在雷达系统中。",
+                toast_visita: "✅ 预约已登记！拉拉皮塔区域顾问已收到您的优先看房通知。",
+                err_captcha: "⚠️ 验证计算结果不正确，请重试。",
+                txt_legal: "Level.immo 由 LEVEL PUNTO IMMO 24365 SLU (税号 B-26745430) 及注册房地产经纪人 (API 4173 · AICAT 14200) 运营管理。",
+                txt_privacidad: "根据欧盟 GDPR 数据保护法规，您的个人信息将被严格保密，仅用于安排本次看房。",
+                txt_cookies: "本页面使用本地技术存储及 Elena AI 人工智能系统，以便第一时间将您的请求分配给区域专属顾问。"
             }
+        };
+
+        // ==========================================
+        // 3. FUNCIONES DE INTERFAZ Y MULTIDIOMA
+        // ==========================================
+        function obtenerDiccionarioActual() {
+            const lang = document.getElementById('language-selector').value || 'es';
+            return traducciones[lang] || traducciones['es'];
         }
 
-        function pedirSeguridad(modo) {
-            modoPendiente = modo;
-            
-            if (modo === 'vender_propiedad') {
-                intencionGuardada = "Hola, tengo una propiedad en venta.";
-            } else {
-                intencionGuardada = ""; 
-            }
-
-            if (btnInicio) btnInicio.style.display = 'none';
-            if (btnLoginToggle) btnLoginToggle.style.display = 'none';
-            document.getElementById('victoria-box-panel').scrollIntoView({ behavior: 'smooth', block: 'center' });
-            const captchaContainer = document.getElementById('captcha-container');
-            if (captchaContainer) captchaContainer.style.display = 'block';
-            generarNuevaSuma();
-        }
-
-        function generarNuevaSuma() {
+        function generarCaptcha() {
             const n1 = Math.floor(Math.random() * 9) + 1;
             const n2 = Math.floor(Math.random() * 9) + 1;
-            captchaRespuesta = n1 + n2;
-            document.getElementById('captcha-question').innerText = `${n1} + ${n2}`;
-            const input = document.getElementById('captcha-input');
-            input.value = "";
-            document.getElementById('legal-consent').checked = false;
-            input.focus();
+            resultadoCaptcha = n1 + n2;
+            const el = document.getElementById('captcha-nums');
+            if (el) el.innerText = `${n1} + ${n2}`;
+            const input = document.getElementById('fc-captcha');
+            if (input) input.value = '';
         }
 
-        function handleCaptchaKeyPress(e) {
-            if (e.key === 'Enter') { e.preventDefault(); verificarCaptcha(); }
-        }
+        function renderContadores() {
+            const dic = obtenerDiccionarioActual();
+            document.getElementById("count-likes").innerText = likesActuales;
+            document.getElementById("count-visits").innerText = visitasActuales;
+            const btnLike = document.getElementById("btn-like-main");
+            const likeIcon = document.getElementById("like-icon");
+            const likeText = document.getElementById("like-text");
 
-        function verificarCaptcha() {
-            const consentCheckbox = document.getElementById('legal-consent');
-            if (!consentCheckbox.checked) {
-                alert("⚠️ Para continuar, debes marcar la casilla confirmando que has leído y aceptas la Política de Privacidad y el uso de IA.");
-                return;
-            }
-            const input = document.getElementById('captcha-input');
-            if (parseInt(input.value) === captchaRespuesta) {
-                document.getElementById('captcha-container').style.display = 'none';
-                iniciarChat(modoPendiente);
+            if (yaDioLike) {
+                btnLike.classList.add("liked");
+                likeIcon.innerText = "❤️";
+                likeText.innerText = dic.btn_liked;
             } else {
-                input.classList.add('captcha-error');
-                setTimeout(() => input.classList.remove('captcha-error'), 400);
-                generarNuevaSuma();
+                btnLike.classList.remove("liked");
+                likeIcon.innerText = "🤍";
+                likeText.innerText = dic.btn_like;
             }
         }
 
-        function iniciarChat(modo) {
-            modoAcceso = modo;
-            dispararEfectoLaser();
-            if (subtitle) subtitle.style.display = 'none';
-            if (interfaceChat) interfaceChat.style.display = 'flex';
+        function cambiarIdioma() {
+            const lang = document.getElementById('language-selector').value;
+            const dic = traducciones[lang] || traducciones['es'];
+            const rootHtml = document.getElementById('html-root');
 
-            const urlParams = new URLSearchParams(window.location.search);
-            sessionId = urlParams.get('id') || 'usr_' + Math.random().toString(36).substr(2, 9);
-            
-            let saludoInicial = "Hola. Soy Elena, tu asistente. Para atenderte con absoluta seguridad y acceder a tu expediente, por favor indícame tu **número de teléfono móvil**.";
-            
-            if (modo === 'vender_propiedad') {
-                saludoInicial = "Hola. Soy Elena. Veo que te interesa vender una propiedad y conocer nuestra estrategia. Para empezar, por favor indícame tu **número de teléfono móvil**.";
-            } else if (modo === 'alcanar_suelo') {
-                saludoInicial = "Hola. Soy Elena. Para enviarte el dosier privado del suelo urbano en Les Cases d'Alcanar, indícame tu **número de teléfono móvil**.";
-            } else if (modo === 'rapita') {
-                saludoInicial = "Hola. Soy Elena. Para gestionar tu inmueble en La Ràpita con total discreción, por favor indícame tu **número de teléfono móvil** de contacto.";
-            } else if (modo === 'precio_312k') {
-                saludoInicial = "Hola. Soy Elena. Sobre esta propiedad de 312.000 €, para verificar tu acceso, indícame tu **número de teléfono móvil**.";
-            } else if (modo === 'anunciar') {
-                saludoInicial = "Hola. Soy Elena. Para configurar tu anuncio con honorarios máximos de 7.500 €, indícame tu **número de teléfono móvil**.";
-            } else if (modo === 'radar_chalets') {
-                saludoInicial = "Hola. Soy Elena. Para enviarte la información completa sobre el Radar de Chalets, indícame tu **número de teléfono móvil**.";
-            }
-            
-            appendMessage("Elena", saludoInicial, 'bot');
-            document.getElementById('chat-input').focus();
-        }
+            // Soporte nativo de lectura derecha-a-izquierda para Árabe
+            rootHtml.setAttribute('lang', lang);
+            rootHtml.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
 
-        function handleKeyPress(e) {
-            if (e.key === 'Enter') { e.preventDefault(); sendChatMessage(); }
-        }
-
-        function sendChatMessage() {
-            if (!inputField) return;
-            const message = inputField.value.trim();
-            if (message === "") return;
-            inputField.value = "";
-            appendMessage("Tú", message, 'user');
-
-            if (telefonoCliente === "") {
-                const telefonoLimpio = message.replace(/\D/g, ''); 
-                if (telefonoLimpio.length < 9) {
-                    appendMessage("Elena", "Por favor, indícame un **número de teléfono móvil válido** (mínimo 9 dígitos) para poder atenderte con seguridad.", 'bot');
-                    return; 
-                }
-                telefonoCliente = telefonoLimpio; 
-                const inputEl = document.getElementById('chat-input');
-                inputEl.type = "text"; 
-                inputEl.placeholder = "Indícame tu nombre de pila...";
-                appendMessage("Elena", "Perfecto. ¿Cómo deseas que me dirija a ti?", 'bot');
-                return; 
-            } 
-            
-            if (nombreCliente === "") {
-                nombreCliente = message;
-                document.getElementById('chat-input').placeholder = "Escribe tu mensaje...";
-                if (typingIndicator) typingIndicator.style.display = 'block';
-
-                fetch(webhookMake, {
-                    method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ evento: "nuevo_mensaje", modo: modoAcceso, id_sesion: sessionId, telefono: telefonoCliente, nombre_cliente: nombreCliente, Origen: "CHATBOT", mensaje: "Inicio de sesión completado" })
-                }).then(r => r.json()).then(data => {
-                    if (typingIndicator) typingIndicator.style.display = 'none';
-                    
-                    appendMessage("Elena", (data.respuesta_bot || data.message || `Encantada, ${nombreCliente}. ¿En qué te puedo ayudar?`).trim(), 'bot');
-                    
-                    if (intencionGuardada !== "") {
-                        setTimeout(() => {
-                            appendMessage("Tú", intencionGuardada, 'user');
-                            document.getElementById('typing-indicator').style.display = 'block';
-                            
-                            fetch(webhookMake, {
-                                method: 'POST', headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({ evento: "nuevo_mensaje", modo: modoAcceso, id_sesion: sessionId, telefono: telefonoCliente, nombre_cliente: nombreCliente, Origen: "CHATBOT", mensaje: intencionGuardada })
-                            }).then(r2 => r2.json()).then(data2 => {
-                                document.getElementById('typing-indicator').style.display = 'none';
-                                if (data2.respuesta_bot && data2.respuesta_bot.trim() !== "") appendMessage("Elena", data2.respuesta_bot.trim(), 'bot');
-                            }).catch(e => { document.getElementById('typing-indicator').style.display = 'none'; });
-                            
-                            intencionGuardada = "";
-                        }, 1500); 
-                    }
-
-                }).catch(err => {
-                    if (typingIndicator) typingIndicator.style.display = 'none';
-                    appendMessage("Elena", `Entendido, ${nombreCliente}. ¿Qué información puedes proporcionarme sobre tu caso?`, 'bot');
-                });
-                return;
-            }
-
-            if (typingIndicator) typingIndicator.style.display = 'block';
-            fetch(webhookMake, {
-                method: 'POST', headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ evento: "nuevo_mensaje", modo: modoAcceso, id_sesion: sessionId, telefono: telefonoCliente, nombre_cliente: nombreCliente, Origen: "CHATBOT", mensaje: message })
-            }).then(r => r.json()).then(data => {
-                if (typingIndicator) typingIndicator.style.display = 'none';
-                if (data.respuesta_bot && data.respuesta_bot.trim() !== "") appendMessage("Elena", data.respuesta_bot.trim(), 'bot');
-            }).catch(err => {
-                if (typingIndicator) typingIndicator.style.display = 'none';
-                appendMessage("Elena", "Disculpa, ha ocurrido un error de conexión con nuestros sistemas centrales.", 'bot');
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (dic[key]) el.innerHTML = dic[key];
             });
+
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+                const key = el.getAttribute('data-i18n-placeholder');
+                if (dic[key]) el.placeholder = dic[key];
+            });
+
+            renderContadores();
         }
 
-        function appendMessage(sender, text, type) {
-            if (!chatMessages) return;
-            const msgDiv = document.createElement('div');
-            msgDiv.classList.add('chat-bubble', type === 'bot' ? 'bot-message' : 'user-message');
-            
-            let htmlText = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-            msgDiv.innerHTML = htmlText;
-            
-            chatMessages.appendChild(msgDiv);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
+        function mostrarToast(texto) {
+            const toast = document.getElementById('toast-msg');
+            toast.innerText = texto;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 4000);
         }
 
-        function setLanguage(lang) {
-            const title = document.getElementById('main-title');
-            document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
-            if (lang === 'ca') {
-                document.querySelectorAll('.lang-btn')[1].classList.add('active');
-                if (title) title.innerText = "Vens el teu pis o planta baixa a La Ràpita? Tenim el comprador ideal.";
-            } else if (lang === 'fra') {
-                document.querySelectorAll('.lang-btn')[2].classList.add('active');
-                if (title) title.innerText = "Vous vendez votre appartement ou rez-de-chaussée à La Ràpita ?";
-            } else {
-                document.querySelectorAll('.lang-btn')[0].classList.add('active');
-                if (title) title.innerText = "¿Vendes tu piso o planta baja en La Ràpita? Tenemos al comprador ideal.";
+        function abrirModal(id) {
+            if (id === 'modal-visita') generarCaptcha();
+            document.getElementById(id).classList.add("active");
+        }
+
+        function cerrarModal(id) {
+            document.getElementById(id).classList.remove("active");
+        }
+
+        // ==========================================
+        // 4. REGISTRO DE LIKES Y SOLICITUDES DE VISITA HACIA MAKE
+        // ==========================================
+        function registrarLike() {
+            const dic = obtenerDiccionarioActual();
+            const lang = document.getElementById('language-selector').value;
+            if (yaDioLike) return;
+
+            yaDioLike = true;
+            likesActuales++;
+            localStorage.setItem("likes_" + REF_EXPERIMENTO, String(likesActuales));
+            localStorage.setItem("liked_" + REF_EXPERIMENTO, "true");
+            renderContadores();
+            mostrarToast(dic.toast_like);
+
+            fetch(WEBHOOK_MAKE, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    evento: "like_ficha_ciega",
+                    id_inmueble: REF_EXPERIMENTO,
+                    metadatos_sistema: {
+                        origen_ingesta: "PROPIETARIO_AUTONOMO",
+                        origen_landing: "FICHA CIEGA LA RAPITA 72K",
+                        tipo_cta: "ME GUSTA VIDEO",
+                        idioma_usuario: lang,
+                        id_sesion: sessionId,
+                        ip_cliente: clienteIP
+                    },
+                    datos_inmueble_captacion: {
+                        id_inmueble: REF_EXPERIMENTO,
+                        codigo_postal: "43540",
+                        poblacion: "La Ràpita",
+                        barrio: "Centre Històric",
+                        id_cp_principal: "La Ràpita-Centre Històric",
+                        tipo_inmueble: "Locales",
+                        Precio_Venta: "72000"
+                    },
+                    tracking_marketing: { utm_source, utm_medium, utm_campaign }
+                })
+            }).catch(() => {});
+        }
+
+        document.getElementById("form-ficha-ciega").addEventListener("submit", function(e) {
+            e.preventDefault();
+            const lang = document.getElementById('language-selector').value;
+            const dic = obtenerDiccionarioActual();
+
+            const respUsuario = parseInt(document.getElementById("fc-captcha").value, 10);
+            if (respUsuario !== resultadoCaptcha) {
+                alert(dic.err_captcha);
+                generarCaptcha();
+                return;
             }
-        }
 
-        let captchaBajaRespuesta = 0;
-        function mostrarCaptchaBaja() {
-            document.getElementById('btn-show-baja').style.display = 'none';
-            document.getElementById('captcha-baja-container').style.display = 'block';
-            generarSumaBaja();
-        }
+            const btnSubmit = document.getElementById("btn-submit-modal");
+            const textoOriginal = btnSubmit.innerText;
+            btnSubmit.innerText = dic.m_btn_enviando;
+            btnSubmit.disabled = true;
 
-        function generarSumaBaja() {
-            const n1 = Math.floor(Math.random() * 9) + 1;
-            const n2 = Math.floor(Math.random() * 9) + 1;
-            captchaBajaRespuesta = n1 + n2;
-            document.getElementById('captcha-baja-q').innerText = `${n1} + ${n2}`;
-            const input = document.getElementById('captcha-baja-input');
-            input.value = "";
-            input.focus();
-        }
+            const nombre = document.getElementById("fc-nombre").value.trim();
+            const prefijo = document.getElementById("fc-prefijo").value.trim();
+            const numTel = document.getElementById("fc-telefono").value.replace(/\D/g, '');
+            const telefonoCompleto = prefijo + numTel;
+            const uso = document.getElementById("fc-uso").value;
 
-        function verificarBaja() {
-            const input = document.getElementById('captcha-baja-input');
-            if (parseInt(input.value) === captchaBajaRespuesta) {
-                document.getElementById('captcha-baja-container').innerHTML = "<span style='color: var(--accent-green); font-weight: bold; font-size: 13px;'>Redirigiendo a su gestor de correo...</span>";
-                window.location.href = "mailto:level@level.immo?subject=Baja%20de%20Suscripcion";
-            } else {
-                input.style.borderColor = "#ef4444";
-                setTimeout(() => input.style.borderColor = "var(--border-color)", 400);
-                generarSumaBaja();
-            }
-        }
+            visitasActuales++;
+            localStorage.setItem("visitas_" + REF_EXPERIMENTO, String(visitasActuales));
+            renderContadores();
+
+            const payloadMaestro = {
+                evento: "solicitud_ficha_ciega_rapita",
+                id_inmueble: REF_EXPERIMENTO,
+                metadatos_sistema: {
+                    origen_ingesta: "PROPIETARIO_AUTONOMO",
+                    origen_landing: "FICHA CIEGA LA RAPITA 72K",
+                    tipo_cta: "SOLICITAR VISITA PRIORITARIA",
+                    idioma_usuario: lang,
+                    id_sesion: sessionId,
+                    ip_cliente: clienteIP
+                },
+                datos_usuario: {
+                    nombre: nombre,
+                    telefono: telefonoCompleto,
+                    rol_asignar: "Comprador",
+                    acepto_legal: document.getElementById("fc-legal").checked
+                },
+                datos_inmueble_captacion: {
+                    id_inmueble: REF_EXPERIMENTO,
+                    codigo_postal: "43540",
+                    poblacion: "La Ràpita",
+                    barrio: "Centre Històric",
+                    id_cp_principal: "La Ràpita-Centre Històric",
+                    tipo_inmueble: "Locales",
+                    habitaciones: "2",
+                    banos: "1",
+                    Precio_Venta: "72000",
+                    descripcion_observaciones: `[FICHA CIEGA LA RÀPITA 72.000 €] Solicitud de visita prioritaria. Proyecto/Uso: ${uso}`
+                },
+                tracking_marketing: { utm_source, utm_medium, utm_campaign }
+            };
+
+            fetch(WEBHOOK_MAKE, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payloadMaestro)
+            }).finally(() => {
+                mostrarToast(dic.toast_visita);
+                this.reset();
+                document.getElementById("fc-prefijo").value = "+34";
+                btnSubmit.innerText = textoOriginal;
+                btnSubmit.disabled = false;
+                cerrarModal('modal-visita');
+            });
+        });
+
+        window.addEventListener("DOMContentLoaded", () => {
+            generarCaptcha();
+            cambiarIdioma();
+        });
     </script>
 </body>
 </html>
