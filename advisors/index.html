@@ -1,1 +1,525 @@
+<!DOCTYPE html>
+<html lang="es" id="html-root">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Level.immo | Únete al Equipo · Conviértete en Advisor</title>
+    <style>
+        :root {
+            --bg-base: #090d16; --bg-panel: #111827; --bg-card: #1f2937;
+            --accent-green: #10b981; --accent-blue: #3b82f6; --accent-gold: #C5A059;
+            --accent-orange: #f59e0b; --accent-red: #ef4444;
+            --text-main: #f9fafb; --text-muted: #9ca3af; --border-color: #374151;
+        }
 
+        html, body { margin: 0; padding: 0; min-height: 100vh; background-color: var(--bg-base); color: var(--text-main); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+        .goog-te-banner-frame.skiptranslate, .goog-te-gadget-icon, #goog-gt-tt, .goog-te-balloon-frame { display: none !important; }
+        body { top: 0px !important; }
+        .goog-text-highlight { background-color: transparent !important; box-shadow: none !important; }
+        ::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-track { background: var(--bg-panel); } ::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 10px; }
+
+        header {
+            position: sticky; top: 0; z-index: 1000; background-color: rgba(17, 24, 39, 0.95); backdrop-filter: blur(8px);
+            border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; padding: 12px 30px;
+        }
+        .brand-logo { display: flex; align-items: baseline; color: #ffffff; text-decoration: none; font-size: 20px; font-weight: 800; }
+        .brand-dot { width: 8px; height: 8px; background-color: var(--accent-green); border-radius: 50%; margin: 0 6px 0 3px; box-shadow: 0 0 10px var(--accent-green); }
+        .lang-select { background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-main); padding: 6px 10px; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer; outline: none; }
+
+        .container { max-width: 900px; margin: 40px auto; padding: 0 20px; }
+
+        .hero-section { text-align: center; margin-bottom: 40px; }
+        .hero-title { font-size: 30px; font-weight: 900; color: var(--accent-gold); margin-bottom: 15px; }
+        .hero-subtitle { font-size: 15px; color: var(--text-muted); line-height: 1.6; max-width: 700px; margin: 0 auto; }
+
+        .rules-box { background: linear-gradient(145deg, #121620, #090d16); border: 1px solid var(--accent-gold); border-radius: 12px; padding: 25px; margin-bottom: 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .rules-title { color: var(--accent-green); font-size: 16px; font-weight: 800; margin-top: 0; margin-bottom: 15px; text-transform: uppercase; }
+        .rules-list { font-size: 13.5px; line-height: 1.6; color: #d1d5db; padding-left: 20px; margin: 0; }
+        .rules-list li { margin-bottom: 10px; } .rules-list li b { color: #fff; }
+
+        .wizard-container { background: var(--bg-panel); border: 1px solid var(--border-color); border-radius: 14px; padding: 30px; position: relative; overflow: hidden; }
+        .step-indicator { display: flex; justify-content: space-between; margin-bottom: 30px; border-bottom: 2px solid var(--border-color); padding-bottom: 15px; }
+        .step-dot { font-size: 12px; font-weight: bold; color: var(--text-muted); text-transform: uppercase; transition: color 0.3s; }
+        .step-dot.active { color: var(--accent-gold); }
+
+        .step-panel { display: none; animation: fadeIn 0.4s ease; }
+        .step-panel.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .roles-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }
+        .role-card { background: var(--bg-base); border: 2px solid var(--border-color); border-radius: 10px; padding: 18px; text-align: center; cursor: pointer; transition: all 0.2s; }
+        .role-card:hover { border-color: var(--accent-gold); background: rgba(197, 160, 89, 0.05); }
+        .role-card.selected { border-color: var(--accent-green); background: rgba(16, 185, 129, 0.1); box-shadow: 0 0 15px rgba(16, 185, 129, 0.2); }
+        .role-icon { font-size: 28px; margin-bottom: 10px; }
+        .role-title { font-size: 14px; font-weight: 800; color: #fff; margin-bottom: 8px; }
+        .role-desc { font-size: 11.5px; color: var(--text-muted); margin-bottom: 8px; line-height: 1.4; }
+        .role-reward { font-size: 12.5px; color: var(--accent-gold); font-weight: bold; }
+
+        .form-group { margin-bottom: 16px; text-align: left; }
+        .form-group label { display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 6px; font-weight: bold; }
+        .form-input, .form-select { width: 100%; background: var(--bg-base); border: 1px solid var(--border-color); color: #fff; padding: 11px; border-radius: 8px; font-size: 13.5px; outline: none; }
+        .form-input:focus, .form-select:focus { border-color: var(--accent-gold); }
+        .grid-2 { display: grid; grid-template-columns: 1fr 2fr; gap: 15px; }
+        
+        /* Loading spinner para el CP */
+        .cp-loader { display: none; font-size: 11px; color: var(--accent-gold); margin-top: 5px; }
+
+        .test-question { background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); padding: 15px; border-radius: 8px; margin-bottom: 15px; }
+        .test-q-text { font-size: 13.5px; font-weight: bold; margin-bottom: 10px; color: #fff; line-height: 1.5; }
+        .test-options label { display: flex; align-items: flex-start; background: var(--bg-base); padding: 10px 12px; border-radius: 6px; margin-bottom: 8px; font-size: 12.5px; cursor: pointer; border: 1px solid transparent; transition: 0.2s; line-height: 1.4; }
+        .test-options label:hover { border-color: var(--accent-gold); }
+        .test-options input[type="radio"] { margin-right: 10px; margin-top: 2px; accent-color: var(--accent-green); }
+
+        .legal-check { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 12px; background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.2); padding: 12px; border-radius: 8px; }
+        .legal-check input { margin-top: 2px; accent-color: var(--accent-green); cursor: pointer; }
+        .legal-check label { font-size: 11.5px; color: var(--text-muted); line-height: 1.5; cursor: pointer; }
+
+        .wizard-footer { display: flex; justify-content: space-between; margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border-color); }
+        .btn { padding: 12px 22px; border-radius: 8px; font-size: 13.5px; font-weight: 800; cursor: pointer; border: none; transition: 0.2s; }
+        .btn-prev { background: var(--bg-card); color: var(--text-muted); border: 1px solid var(--border-color); }
+        .btn-prev:hover { color: #fff; }
+        .btn-next { background: var(--accent-green); color: #090d16; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3); }
+        .btn-next:hover { opacity: 0.9; transform: translateY(-1px); }
+        .btn-next:disabled { background: #374151; color: #9ca3af; cursor: not-allowed; box-shadow: none; transform: none; }
+
+        .success-panel { text-align: center; padding: 20px; }
+        .btn-whatsapp { display: inline-flex; align-items: center; justify-content: center; gap: 10px; background: #25D366; color: #fff; padding: 14px 28px; border-radius: 50px; font-size: 15px; font-weight: 900; text-decoration: none; margin-top: 20px; box-shadow: 0 10px 30px rgba(37, 211, 102, 0.3); transition: 0.2s; }
+        .btn-whatsapp:hover { transform: scale(1.05); }
+
+        @media (max-width: 768px) {
+            .grid-2 { grid-template-columns: 1fr; }
+            .step-indicator { flex-wrap: wrap; gap: 5px; }
+            .hero-title { font-size: 24px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="https://app.level-i.com" class="brand-logo" translate="no">L<span class="brand-dot"></span>Level.immo</a>
+        <div id="google_translate_element" style="display:none;"></div>
+        <select id="language-selector" class="lang-select" onchange="setLanguage(this.value)" translate="no">
+            <option value="es">🇪🇸 ES Español</option>
+            <option value="ca">🟨 CA Català</option>
+            <option value="en">🇬🇧 EN English</option>
+            <option value="fr">🇫🇷 FR Français</option>
+            <option value="de">🇩🇪 DE Deutsch</option>
+            <option value="it">🇮🇹 IT Italiano</option>
+            <option value="ar">🇦🇪 AR العربية</option>
+            <option value="zh-CN">🇨🇳 ZH 中文</option>
+        </select>
+    </header>
+
+    <div class="container">
+        
+        <div class="hero-section">
+            <h1 class="hero-title" data-i18n="hero_title">¿Hola aspirante a Level-i, cómo te llamas?</h1>
+            <p class="hero-subtitle" data-i18n="hero_sub">¿Tienes don de gentes? ¿Te comunicas bien? Hemos eliminado el hermetismo inmobiliario para ofrecer transparencia en tiempo récord con garantías de API Colegiado. Buscamos talento humano para expandir nuestra red.</p>
+        </div>
+
+        <div class="rules-box">
+            <h3 class="rules-title" data-i18n="rule_title">📜 Las Reglas del Juego (Transparencia Total)</h3>
+            <ul class="rules-list">
+                <li data-i18n="r1"><b>Honorarios Fijos y Claros:</b> Fijos hasta ventas de 200.000€. En adelante, un 3% (+ impuestos). Sin letra pequeña.</li>
+                <li data-i18n="r2"><b>Cero Competencia Interna:</b> Plazas únicas por población o barrio. Tu zona es tuya exclusivamente.</li>
+                <li data-i18n="r3"><b>Trato Humano + IA:</b> Elena IA trabaja 24/7 en 8 idiomas filtrando leads, pero la confianza final la cierras tú con trato humano.</li>
+            </ul>
+        </div>
+
+        <div class="wizard-container">
+            <div class="step-indicator">
+                <span class="step-dot active" id="dot-1" data-i18n="step1">1. Tu Rol</span>
+                <span class="step-dot" id="dot-2" data-i18n="step2">2. Perfil y Zona</span>
+                <span class="step-dot" id="dot-3" data-i18n="step3">3. El Test</span>
+                <span class="step-dot" id="dot-4" data-i18n="step4">4. Lealtad</span>
+            </div>
+
+            <form id="advisor-form" onsubmit="event.preventDefault(); submitFinal();">
+                
+                <!-- PASO 1: ROL -->
+                <div class="step-panel active" id="step-1">
+                    <h3 style="margin-top:0; color:var(--accent-gold);" data-i18n="role_title">¿Qué nivel de compromiso buscas?</h3>
+                    <p style="font-size:13px; color:var(--text-muted); margin-bottom: 20px;" data-i18n="role_sub">Selecciona tu rol en función del tiempo que le quieras destinar:</p>
+                    <div class="roles-grid">
+                        <div class="role-card" onclick="selectRole(this, 'Colaborador (Chivatazo)')">
+                            <div class="role-icon">🗣️</div>
+                            <div class="role-title" data-i18n="card1_t">Colaborador (Chivatazo)</div>
+                            <div class="role-desc" data-i18n="card1_d">Solo tienes que hablarnos de propiedades fuera de mercado. Pasas el enlace, nosotros cerramos.</div>
+                            <div class="role-reward" data-i18n="card1_r">🎁 500€ (Tarjeta) al vender</div>
+                        </div>
+                        <div class="role-card" onclick="selectRole(this, 'Verificador')">
+                            <div class="role-icon">🔍</div>
+                            <div class="role-title" data-i18n="card2_t">Verificador In Situ</div>
+                            <div class="role-desc" data-i18n="card2_d">Visitas inmuebles en tu zona para verificar su estado real y validar datos para la plataforma.</div>
+                            <div class="role-reward" data-i18n="card2_r">💶 30% Honorarios (~2.000€)</div>
+                        </div>
+                        <div class="role-card" onclick="selectRole(this, 'Advisor Independiente')">
+                            <div class="role-icon">🤝</div>
+                            <div class="role-title" data-i18n="card3_t">Advisor Independiente</div>
+                            <div class="role-desc" data-i18n="card3_d">Captación completa del propietario y visita final de cierre con los compradores cualificados por IA.</div>
+                            <div class="role-reward" data-i18n="card3_r">💰 40% Honorarios (~2.400€)</div>
+                        </div>
+                        <div class="role-card" onclick="selectRole(this, 'Advisor de Zona')">
+                            <div class="role-icon">👑</div>
+                            <div class="role-title" data-i18n="card4_t">Advisor de Zona (Advanced)</div>
+                            <div class="role-desc" data-i18n="card4_d">Titular exclusivo. Creas tu equipo, gestionas todo el flujo de tu territorio y lideras la plaza.</div>
+                            <div class="role-reward" data-i18n="card4_r">🏆 Hasta 60% + Exclusividad</div>
+                        </div>
+                    </div>
+                    <input type="hidden" id="selected_role" required>
+                </div>
+
+                <!-- PASO 2: PERFIL Y ZONA -->
+                <div class="step-panel" id="step-2">
+                    <h3 style="margin-top:0; color:var(--accent-gold);" data-i18n="prof_title">Queremos conocerte</h3>
+                    
+                    <div class="form-group">
+                        <label data-i18n="form_name">Nombre y Apellidos *</label>
+                        <input type="text" id="adv_nombre" class="form-input" placeholder="Ej. Marc Vidal" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label data-i18n="form_wp">WhatsApp *</label>
+                        <div style="display:flex; gap:10px;">
+                            <input type="text" id="adv_prefijo" class="form-input" value="+34" style="width:70px; text-align:center;" required>
+                            <input type="tel" id="adv_tel" class="form-input" placeholder="600 000 000" style="flex:1;" required>
+                        </div>
+                    </div>
+
+                    <!-- BUSCADOR CÓDIGO POSTAL Y MUNICIPIO -->
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label data-i18n="form_cp">Código Postal *</label>
+                            <input type="text" id="adv_cp" class="form-input" placeholder="Ej. 08001" maxlength="5" pattern="\d{5}" oninput="buscarMunicipioAPI()" required>
+                            <div id="loader-cp" class="cp-loader" data-i18n="cp_load">⏳ Buscando municipio...</div>
+                        </div>
+                        <div class="form-group">
+                            <label data-i18n="form_muni">Municipio / Plaza Asignada *</label>
+                            <input type="text" id="adv_municipio" class="form-input" placeholder="Se autocompleta con el CP..." required readonly style="background: rgba(255,255,255,0.05);">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label data-i18n="form_lang">Idiomas que dominas (Fluidamente) *</label>
+                        <input type="text" id="adv_idiomas" class="form-input" placeholder="Ej. Español, Catalán, Inglés, Árabe..." required>
+                    </div>
+
+                    <div class="form-group">
+                        <label data-i18n="form_exp">Experiencia previa (Ventas o Trato al público) *</label>
+                        <select id="adv_exp" class="form-select" required>
+                            <option value="" data-i18n="exp0">Selecciona una opción...</option>
+                            <option value="Sin experiencia" data-i18n="exp1">Ninguna, pero aprendo rápido</option>
+                            <option value="Trato al público" data-i18n="exp2">Trato al público (Comercio, Hostelería, etc.)</option>
+                            <option value="Ventas de otros sectores" data-i18n="exp3">Comercial de ventas (Otros sectores)</option>
+                            <option value="Experiencia Inmobiliaria" data-i18n="exp4">Agente Inmobiliario experimentado</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- PASO 3: EL TEST -->
+                <div class="step-panel" id="step-3">
+                    <h3 style="margin-top:0; color:var(--accent-gold);" data-i18n="test_title">El Test de Aptitud Level.immo</h3>
+                    <p style="font-size:13px; color:var(--text-muted); margin-bottom: 20px;" data-i18n="test_sub">Buscamos honradez, rapidez mental y facilidad de comunicación.</p>
+                    
+                    <div class="test-question">
+                        <div class="test-q-text" data-i18n="q1">1. Detectas un error en los honorarios que beneficia a la agencia y perjudica al cliente por 500€. ¿Qué haces?</div>
+                        <div class="test-options">
+                            <label><input type="radio" name="test1" value="A" required> <span data-i18n="q1a">A) Me callo, la agencia gana más dinero.</span></label>
+                            <label><input type="radio" name="test1" value="B"> <span data-i18n="q1b">B) Aviso de inmediato a central y al cliente para subsanarlo.</span></label>
+                            <label><input type="radio" name="test1" value="C"> <span data-i18n="q1c">C) Se lo digo al cliente a cambio de una propina.</span></label>
+                        </div>
+                    </div>
+                    <div class="test-question">
+                        <div class="test-q-text" data-i18n="q2">2. Un comprador con dinero quiere visitar YA una propiedad, pero está en "Ficha Ciega" sin documentar.</div>
+                        <div class="test-options">
+                            <label><input type="radio" name="test2" value="A" required> <span data-i18n="q2a">A) Le doy la dirección en secreto para no perder la venta.</span></label>
+                            <label><input type="radio" name="test2" value="B"> <span data-i18n="q2b">B) Le explico que garantizamos la legalidad y debe esperar a la validación.</span></label>
+                        </div>
+                    </div>
+                    <div class="test-question">
+                        <div class="test-q-text" data-i18n="q3">3. La dueña de la tienda de abajo quiere vender pero sin agencias pesadas ni carteles.</div>
+                        <div class="test-options">
+                            <label><input type="radio" name="test3" value="A" required> <span data-i18n="q3a">A) Le paso mi enlace Level.immo: Sube fotos ocultas y le llevamos al comprador filtrado.</span></label>
+                            <label><input type="radio" name="test3" value="B"> <span data-i18n="q3b">B) Le digo que pruebe suerte en Wallapop.</span></label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PASO 4: LEGAL -->
+                <div class="step-panel" id="step-4">
+                    <h3 style="margin-top:0; color:var(--accent-gold);" data-i18n="leg_title">Compromiso Level.immo</h3>
+                    <p style="font-size:13px; color:var(--text-muted); margin-bottom: 20px;" data-i18n="leg_sub">Acepta las reglas para acceder al Plan de Marketing y a la Zona Privada.</p>
+                    
+                    <div class="legal-check">
+                        <input type="checkbox" id="legal_reglas" required>
+                        <label data-i18n="legal1"><b>Acepto las "Reglas del Juego" y la Carta de Lealtad:</b> Actuaré con máxima honradez y representaré la marca con profesionalidad.</label>
+                    </div>
+                    <div class="legal-check">
+                        <input type="checkbox" id="legal_rgpd" required>
+                        <label data-i18n="legal2"><b>RGPD y Privacidad:</b> Consiento que Level.immo trate mis datos para evaluar mi candidatura y contactarme.</label>
+                    </div>
+
+                    <div style="background: rgba(59, 130, 246, 0.1); border: 1px solid var(--accent-blue); padding: 15px; border-radius: 8px; margin-top: 20px; font-size: 12.5px; color: #bfdbfe; text-align: center;" data-i18n="warn_audio">
+                        🎙️ <b>Atención:</b> Tras enviar esto, te pediremos un audio de presentación por WhatsApp (máx. 1 min).
+                    </div>
+                </div>
+
+                <div class="wizard-footer" id="wizard-controls">
+                    <button type="button" class="btn btn-prev" id="btn-prev" onclick="prevStep()" style="visibility:hidden;" data-i18n="btn_prev">← Atrás</button>
+                    <button type="button" class="btn btn-next" id="btn-next" onclick="nextStep()" disabled data-i18n="btn_next">Continuar →</button>
+                    <button type="submit" class="btn btn-next" id="btn-submit" style="display:none;" data-i18n="btn_submit">Enviar Candidatura 🚀</button>
+                </div>
+            </form>
+
+            <!-- ÉXITO / WHATSAPP -->
+            <div class="step-panel success-panel" id="step-success">
+                <div class="success-icon">🎙️</div>
+                <h2 style="color:var(--accent-green); margin-top:0;" data-i18n="succ_title">¡Solicitud Inicial Registrada!</h2>
+                <p style="font-size:14px; color:var(--text-muted); line-height:1.6;" data-i18n="succ_desc">Estás a un paso. Para evaluar tu comunicación, envíanos un <b>audio de WhatsApp de 1 minuto</b> respondiendo a:</p>
+                
+                <div style="background: var(--bg-base); padding: 15px; border-radius: 8px; display:inline-block; text-align:left; font-size:13.5px; color:var(--accent-gold); margin: 15px 0;" data-i18n="succ_box">
+                    1. ¿Cuál es tu meta en la vida?<br>
+                    2. ¿Por qué quieres formar parte de nuestra firma?
+                </div><br>
+                
+                <a href="#" id="link-whatsapp" target="_blank" class="btn-whatsapp" data-i18n="btn_wa">Abrir WhatsApp y Grabar Audio</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const WEBHOOK_MAKE = "https://hook.eu1.make.com/8xd81xb9t3mg2ycwez1czd3quwhf2nef"; 
+        const WA_PHONE = "34600000000"; 
+        let currentStep = 1; const totalSteps = 4;
+        let langCode = 'es';
+
+        // 1. DICCIONARIO COMPLETO DE LOS 8 IDIOMAS
+        const dict = {
+            es: {
+                hero_title: "¿Hola aspirante a Level-i, cómo te llamas?", hero_sub: "¿Tienes don de gentes? ¿Te comunicas bien? Hemos eliminado el hermetismo inmobiliario para ofrecer transparencia en tiempo récord con garantías de API Colegiado. Buscamos talento humano para expandir nuestra red.",
+                rule_title: "📜 Las Reglas del Juego (Transparencia Total)", r1: "<b>Honorarios Fijos y Claros:</b> Fijos hasta ventas de 200.000€. En adelante, un 3% (+ impuestos). Sin letra pequeña.", r2: "<b>Cero Competencia Interna:</b> Plazas únicas por población o barrio. Tu zona es tuya exclusivamente.", r3: "<b>Trato Humano + IA:</b> Elena IA trabaja 24/7 en 8 idiomas filtrando leads, pero la confianza final la cierras tú.",
+                step1: "1. Tu Rol", step2: "2. Perfil y Zona", step3: "3. El Test", step4: "4. Lealtad",
+                role_title: "¿Qué nivel de compromiso buscas?", role_sub: "Selecciona tu rol en función del tiempo que le quieras destinar:",
+                card1_t: "Colaborador (Chivatazo)", card1_d: "Solo tienes que hablarnos de propiedades fuera de mercado. Pasas el enlace, nosotros cerramos.", card1_r: "🎁 500€ (Tarjeta) al vender",
+                card2_t: "Verificador In Situ", card2_d: "Visitas inmuebles en tu zona para verificar su estado real y validar datos para la plataforma.", card2_r: "💶 30% Honorarios (~2.000€)",
+                card3_t: "Advisor Independiente", card3_d: "Captación completa del propietario y visita final de cierre con los compradores cualificados por IA.", card3_r: "💰 40% Honorarios (~2.400€)",
+                card4_t: "Advisor de Zona (Advanced)", card4_d: "Titular exclusivo. Creas tu equipo, gestionas todo el flujo de tu territorio y lideras la plaza.", card4_r: "🏆 Hasta 60% + Exclusividad",
+                prof_title: "Queremos conocerte", form_name: "Nombre y Apellidos *", form_wp: "WhatsApp *", form_cp: "Código Postal *", form_muni: "Municipio / Plaza Asignada *", cp_load: "⏳ Buscando municipio...", form_lang: "Idiomas que dominas (Fluidamente) *", form_exp: "Experiencia previa (Ventas/Público) *",
+                exp0: "Selecciona una opción...", exp1: "Ninguna, pero aprendo rápido", exp2: "Trato al público (Comercio, Hostelería)", exp3: "Comercial de ventas (Otros sectores)", exp4: "Agente Inmobiliario experimentado",
+                test_title: "El Test de Aptitud Level.immo", test_sub: "Buscamos honradez, rapidez mental y facilidad de comunicación.",
+                q1: "1. Detectas un error en los honorarios que beneficia a la agencia y perjudica al cliente por 500€. ¿Qué haces?", q1a: "A) Me callo, la agencia gana más dinero.", q1b: "B) Aviso de inmediato a central y al cliente para subsanarlo.", q1c: "C) Se lo digo al cliente a cambio de una propina.",
+                q2: "2. Un comprador con dinero quiere visitar YA una propiedad, pero está en 'Ficha Ciega' sin documentar.", q2a: "A) Le doy la dirección en secreto para no perder la venta.", q2b: "B) Le explico que garantizamos la legalidad y debe esperar a la validación.",
+                q3: "3. La dueña de la tienda de abajo quiere vender pero sin agencias pesadas ni carteles.", q3a: "A) Le paso mi enlace: Sube fotos ocultas y le llevamos al comprador filtrado.", q3b: "B) Le digo que pruebe suerte en Wallapop.",
+                leg_title: "Compromiso Level.immo", leg_sub: "Acepta las reglas para acceder al Plan de Marketing y a la Zona Privada.",
+                legal1: "<b>Acepto las 'Reglas del Juego' y la Carta de Lealtad:</b> Actuaré con máxima honradez y representaré la marca con profesionalidad.", legal2: "<b>RGPD y Privacidad:</b> Consiento que Level.immo trate mis datos para evaluar mi candidatura.", warn_audio: "🎙️ <b>Atención:</b> Tras enviar esto, te pediremos un audio de presentación por WhatsApp (máx. 1 min).",
+                btn_prev: "← Atrás", btn_next: "Continuar →", btn_submit: "Enviar Candidatura 🚀",
+                succ_title: "¡Solicitud Inicial Registrada!", succ_desc: "Estás a un paso. Para evaluar tu comunicación, envíanos un <b>audio de WhatsApp de 1 minuto</b> respondiendo a:", succ_box: "1. ¿Cuál es tu meta en la vida?<br>2. ¿Por qué quieres formar parte de nuestra firma?", btn_wa: "Abrir WhatsApp y Grabar Audio",
+                ph_name: "Ej. Marc Vidal", ph_cp: "Ej. 08001", ph_muni: "Se autocompleta con el CP...", ph_lang: "Ej. Español, Inglés..."
+            },
+            ca: {
+                hero_title: "Hola aspirant a Level-i, com et dius?", hero_sub: "Tens do de gents? Et comuniques bé? Hem eliminat l'hermetisme immobiliari per oferir transparència amb garanties d'API Col·legiat.",
+                rule_title: "📜 Les Regles del Joc", r1: "<b>Honoraris Fixos:</b> Fins a 200.000€. Després 3%.", r2: "<b>Zero Competència Interna:</b> Places úniques per població.", r3: "<b>Tracte Humà + IA:</b> L'Elena IA filtra, tu tanques el tracte.",
+                step1: "1. El teu Rol", step2: "2. Perfil i Zona", step3: "3. El Test", step4: "4. Lleialtat",
+                role_title: "Quin nivell de compromís busques?", role_sub: "Selecciona el teu rol en funció del temps que vulguis destinar-hi:",
+                card1_t: "Col·laborador (Xivatazo)", card1_d: "Només has de parlar-nos de propietats. Tu passes l'enllaç, nosaltres tanquem.", card1_r: "🎁 500€ (Targeta) al vendre",
+                card2_t: "Verificador In Situ", card2_d: "Visites immobles per verificar el seu estat i validar dades per a la plataforma.", card2_r: "💶 30% Honoraris (~2.000€)",
+                card3_t: "Advisor Independent", card3_d: "Captació completa i visita final de tancament amb compradors filtrats.", card3_r: "💰 40% Honoraris (~2.400€)",
+                card4_t: "Advisor de Zona", card4_d: "Titular exclusiu. Crees el teu equip i gestiones el flux del territori.", card4_r: "🏆 Fins a 60% + Exclusivitat",
+                prof_title: "Volem conèixer-te", form_name: "Nom i Cognoms *", form_wp: "WhatsApp *", form_cp: "Codi Postal *", form_muni: "Municipi / Plaça *", cp_load: "⏳ Buscant municipi...", form_lang: "Idiomes que domines *", form_exp: "Experiència prèvia *",
+                exp0: "Selecciona...", exp1: "Cap, però aprenc ràpid", exp2: "Tracte al públic", exp3: "Comercial de vendes", exp4: "Agent Immobiliari",
+                test_title: "El Test d'Aptitud", test_sub: "Busquem honradesa i rapidesa mental.",
+                q1: "1. Detectes un error d'honoraris que perjudica el client en 500€. Què fas?", q1a: "A) Callo, guanyem més.", q1b: "B) Aviso ràpid per esmenar-ho.", q1c: "C) Ho dic a canvi de propina.",
+                q2: "2. Un comprador vol visitar IA una Ficha Cega sense documentar.", q2a: "A) Li dono l'adreça per no perdre la venda.", q2b: "B) Li explico que cal esperar a la validació legal.",
+                q3: "3. La propietària de la botiga vol vendre sense agències.", q3a: "A) Li passo l'enllaç Level.immo per filtre IA.", q3b: "B) Li dic que provi Wallapop.",
+                leg_title: "Compromís Level-i", leg_sub: "Accepta les regles del joc.",
+                legal1: "<b>Accepto les Regles i la Carta de Lleialtat:</b> Actuaré amb honradesa.", legal2: "<b>RGPD i Privacitat:</b> Consenteixo el tractament de dades.", warn_audio: "🎙️ <b>Atenció:</b> Et demanarem un àudio de presentació de 1 min per WhatsApp.",
+                btn_prev: "← Enrere", btn_next: "Continuar →", btn_submit: "Enviar Candidatura 🚀",
+                succ_title: "Sol·licitud Registrada!", succ_desc: "Grava un <b>àudio de WhatsApp d'1 minut</b> responent:", succ_box: "1. Quina és la teva fita a la vida?<br>2. Per què vols formar part del nostre equip?", btn_wa: "Obrir WhatsApp i Gravar",
+                ph_name: "Ex. Marc Vidal", ph_cp: "Ex. 08001", ph_muni: "S'omple amb el CP...", ph_lang: "Ex. Català, Anglès..."
+            },
+            en: {
+                hero_title: "Hello Level-i applicant, what is your name?", hero_sub: "Do you have people skills? We eliminated real estate opacity to offer transparency with certified API guarantees. We need human talent.",
+                rule_title: "📜 Rules of the Game", r1: "<b>Fixed Fees:</b> Up to €200k. 3% onwards.", r2: "<b>Zero Internal Competition:</b> Exclusive zones.", r3: "<b>Human + AI:</b> Elena AI filters, you close.",
+                step1: "1. Role", step2: "2. Profile & Area", step3: "3. The Test", step4: "4. Loyalty",
+                role_title: "What commitment level?", role_sub: "Select your role based on time available:",
+                card1_t: "Collaborator", card1_d: "Tell us about off-market properties. You link, we close.", card1_r: "🎁 €500 Gift Card",
+                card2_t: "On-site Verifier", card2_d: "Visit properties to verify condition and validate data.", card2_r: "💶 30% Commission",
+                card3_t: "Independent Advisor", card3_d: "Full acquisition and closing visits with AI-qualified buyers.", card3_r: "💰 40% Commission",
+                card4_t: "Zone Advisor", card4_d: "Exclusive owner. Build your team and manage territory.", card4_r: "🏆 Up to 60% + Exclusivity",
+                prof_title: "Let's meet you", form_name: "Full Name *", form_wp: "WhatsApp *", form_cp: "Postal Code *", form_muni: "Municipality / Zone *", cp_load: "⏳ Searching city...", form_lang: "Fluent Languages *", form_exp: "Previous Experience *",
+                exp0: "Select...", exp1: "None, but I learn fast", exp2: "Customer Service/Retail", exp3: "Sales (Other sectors)", exp4: "Experienced Real Estate Agent",
+                test_title: "The Level-i Test", test_sub: "We look for honesty and quick thinking.",
+                q1: "1. You find a fee error costing the client €500 to the agency's benefit. You?", q1a: "A) Stay quiet.", q1b: "B) Notify HQ and client immediately to fix it.", q1c: "C) Tell the client for a tip.",
+                q2: "2. A rich buyer wants to visit an undocumented 'Blind Listing' NOW.", q2a: "A) Secretly give the address to secure sale.", q2b: "B) Explain they must wait for legal validation.",
+                q3: "3. A shop owner wants to sell without pushy agencies.", q3a: "A) Give my Level-i link for AI filtering.", q3b: "B) Tell her to try a local ads site.",
+                leg_title: "Level.immo Commitment", leg_sub: "Accept the rules to access our tools.",
+                legal1: "<b>I accept the Rules & Loyalty Charter:</b> I will act honestly.", legal2: "<b>GDPR:</b> I consent to data processing for my application.", warn_audio: "🎙️ <b>Note:</b> You must send a 1-min WhatsApp audio intro after this.",
+                btn_prev: "← Back", btn_next: "Next →", btn_submit: "Submit Application 🚀",
+                succ_title: "Application Logged!", succ_desc: "Send a <b>1-minute WhatsApp audio</b> answering:", succ_box: "1. What is your life goal?<br>2. Why join our firm?", btn_wa: "Open WhatsApp & Record",
+                ph_name: "E.g. Mark Vidal", ph_cp: "E.g. 08001", ph_muni: "Auto-fills via ZIP...", ph_lang: "E.g. English, Spanish..."
+            },
+            fr: { hero_title: "Bonjour candidat Level-i, quel est votre nom ?", hero_sub: "Avez-vous le sens du contact ? Nous cherchons des talents humains.", rule_title: "📜 Règles du jeu", r1: "<b>Honoraires Fixes</b>", r2: "<b>Zéro Concurrence</b>", r3: "<b>Humain + IA</b>", step1: "1. Rôle", step2: "2. Profil", step3: "3. Le Test", step4: "4. Loyauté", role_title: "Engagement ?", role_sub: "Choisissez votre rôle :", card1_t: "Collaborateur", card1_d: "Signalez des biens off-market.", card1_r: "🎁 500€", card2_t: "Vérificateur", card2_d: "Visitez et validez.", card2_r: "💶 30%", card3_t: "Advisor Indépendant", card3_d: "Captation et visites de clôture.", card3_r: "💰 40%", card4_t: "Advisor de Zone", card4_d: "Zone exclusive, créez votre équipe.", card4_r: "🏆 Jusqu'à 60%", prof_title: "Profil", form_name: "Nom complet *", form_wp: "WhatsApp *", form_cp: "Code Postal *", form_muni: "Ville *", cp_load: "⏳ Recherche...", form_lang: "Langues fluides *", form_exp: "Expérience *", exp0: "Choisir...", exp1: "Aucune", exp2: "Service client", exp3: "Vente", exp4: "Agent immobilier", test_title: "Le Test", test_sub: "Honnêteté et réactivité.", q1: "1. Erreur de 500€ au détriment du client ?", q1a: "A) Je me tais.", q1b: "B) Je signale immédiatement.", q1c: "C) Je demande un pourboire.", q2: "2. Acheteur pressé pour une Fiche Aveugle non validée ?", q2a: "A) Je donne l'adresse.", q2b: "B) J'explique qu'il faut attendre la validation.", q3: "3. Vendeur refusant les agences ?", q3a: "A) Lien Level.immo.", q3b: "B) Petites annonces.", leg_title: "Engagement", leg_sub: "Acceptez les règles.", legal1: "<b>Règles et Loyauté.</b>", legal2: "<b>RGPD.</b>", warn_audio: "🎙️ <b>Note:</b> Audio WhatsApp de 1 min requis.", btn_prev: "← Retour", btn_next: "Suivant →", btn_submit: "Envoyer 🚀", succ_title: "Enregistré !", succ_desc: "Envoyez un <b>audio WhatsApp (1 min)</b> :", succ_box: "1. Votre but dans la vie ?<br>2. Pourquoi nous rejoindre ?", btn_wa: "Ouvrir WhatsApp", ph_name: "Ex. Marc", ph_cp: "08001", ph_muni: "Auto...", ph_lang: "Français, Anglais..." },
+            de: { hero_title: "Hallo Level-i Bewerber, wie heißt du?", hero_sub: "Hast du Menschenkenntnis? Wir suchen Talente.", rule_title: "📜 Spielregeln", r1: "<b>Feste Gebühren</b>", r2: "<b>Null Konkurrenz</b>", r3: "<b>Mensch + KI</b>", step1: "1. Rolle", step2: "2. Profil", step3: "3. Test", step4: "4. Loyalität", role_title: "Engagement?", role_sub: "Wähle deine Rolle:", card1_t: "Mitarbeiter", card1_d: "Off-Market Immobilien melden.", card1_r: "🎁 500€", card2_t: "Prüfer", card2_d: "Besichtigen und validieren.", card2_r: "💶 30%", card3_t: "Unabhängiger Advisor", card3_d: "Akquisition und Abschluss.", card3_r: "💰 40%", card4_t: "Gebiets-Advisor", card4_d: "Exklusiv. Baue dein Team auf.", card4_r: "🏆 Bis 60%", prof_title: "Profil", form_name: "Name *", form_wp: "WhatsApp *", form_cp: "PLZ *", form_muni: "Stadt *", cp_load: "⏳ Suche...", form_lang: "Sprachen *", form_exp: "Erfahrung *", exp0: "Wählen...", exp1: "Keine", exp2: "Kundenservice", exp3: "Verkauf", exp4: "Makler", test_title: "Der Test", test_sub: "Ehrlichkeit gefragt.", q1: "1. 500€ Fehler zum Nachteil des Kunden?", q1a: "A) Schweigen.", q1b: "B) Sofort melden.", q1c: "C) Trinkgeld fordern.", q2: "2. Käufer will ungeprüftes Blind-Listing sehen?", q2a: "A) Adresse geben.", q2b: "B) Auf Validierung verweisen.", q3: "3. Verkäufer will keine Makler?", q3a: "A) Level.immo Link geben.", q3b: "B) Kleinanzeigen.", leg_title: "Verpflichtung", leg_sub: "Regeln akzeptieren.", legal1: "<b>Regeln & Loyalität.</b>", legal2: "<b>DSGVO.</b>", warn_audio: "🎙️ <b>Hinweis:</b> 1 Min WhatsApp Audio erforderlich.", btn_prev: "← Zurück", btn_next: "Weiter →", btn_submit: "Senden 🚀", succ_title: "Registriert!", succ_desc: "Sende ein <b>WhatsApp Audio (1 Min)</b>:", succ_box: "1. Dein Lebensziel?<br>2. Warum Level-i?", btn_wa: "WhatsApp öffnen", ph_name: "Max Mustermann", ph_cp: "08001", ph_muni: "Auto...", ph_lang: "Deutsch, Englisch..." },
+            it: { hero_title: "Ciao aspirante Level-i, come ti chiami?", hero_sub: "Hai capacità relazionali? Cerchiamo talenti.", rule_title: "📜 Regole", r1: "<b>Tariffe Fisse</b>", r2: "<b>Zero Concorrenza</b>", r3: "<b>Umano + IA</b>", step1: "1. Ruolo", step2: "2. Profilo", step3: "3. Test", step4: "4. Lealtà", role_title: "Impegno?", role_sub: "Scegli il tuo ruolo:", card1_t: "Collaboratore", card1_d: "Segnala immobili off-market.", card1_r: "🎁 500€", card2_t: "Verificatore", card2_d: "Visita e convalida.", card2_r: "💶 30%", card3_t: "Advisor Indipendente", card3_d: "Acquisizione e chiusura.", card3_r: "💰 40%", card4_t: "Advisor di Zona", card4_d: "Esclusiva. Crea il tuo team.", card4_r: "🏆 Fino al 60%", prof_title: "Profilo", form_name: "Nome *", form_wp: "WhatsApp *", form_cp: "CAP *", form_muni: "Città *", cp_load: "⏳ Ricerca...", form_lang: "Lingue *", form_exp: "Esperienza *", exp0: "Scegli...", exp1: "Nessuna", exp2: "Servizio clienti", exp3: "Vendita", exp4: "Agente imm.", test_title: "Il Test", test_sub: "Onestà e rapidità.", q1: "1. Errore di 500€ a danno del cliente?", q1a: "A) Sto zitto.", q1b: "B) Avviso subito.", q1c: "C) Chiedo mancia.", q2: "2. Acquirente vuole vedere Scheda Cieca non validata?", q2a: "A) Do l'indirizzo.", q2b: "B) Faccio attendere convalida.", q3: "3. Venditore non vuole agenzie?", q3a: "A) Link Level.immo.", q3b: "B) Annunci locali.", leg_title: "Impegno", leg_sub: "Accetta le regole.", legal1: "<b>Regole e Lealtà.</b>", legal2: "<b>GDPR.</b>", warn_audio: "🎙️ <b>Nota:</b> Richiesto audio WhatsApp 1 min.", btn_prev: "← Indietro", btn_next: "Avanti →", btn_submit: "Invia 🚀", succ_title: "Registrato!", succ_desc: "Invia un <b>audio WhatsApp (1 min)</b>:", succ_box: "1. Il tuo obiettivo?<br>2. Perché noi?", btn_wa: "Apri WhatsApp", ph_name: "Mario", ph_cp: "08001", ph_muni: "Auto...", ph_lang: "Italiano, Inglese..." },
+            ar: { hero_title: "مرحبًا بمرشح Level-i، ما اسمك؟", hero_sub: "هل لديك مهارات تواصل؟ نحن نبحث عن مواهب.", rule_title: "📜 قواعد اللعبة", r1: "<b>رسوم ثابتة</b>", r2: "<b>لا منافسة داخلية</b>", r3: "<b>بشر + ذكاء اصطناعي</b>", step1: "1. دورك", step2: "2. الملف", step3: "3. الاختبار", step4: "4. الولاء", role_title: "مستوى الالتزام؟", role_sub: "اختر دورك:", card1_t: "متعاون", card1_d: "أخبرنا عن عقارات خارج السوق.", card1_r: "🎁 500€", card2_t: "مدقق", card2_d: "زيارة العقارات للتحقق.", card2_r: "💶 30%", card3_t: "مستشار مستقل", card3_d: "استحواذ وإغلاق.", card3_r: "💰 40%", card4_t: "مستشار منطقة", card4_d: "منطقة حصرية. قم ببناء فريقك.", card4_r: "🏆 حتى 60%", prof_title: "ملفك", form_name: "الاسم *", form_wp: "واتساب *", form_cp: "الرمز البريدي *", form_muni: "المدينة *", cp_load: "⏳ جاري البحث...", form_lang: "اللغات *", form_exp: "الخبرة *", exp0: "اختر...", exp1: "لا توجد", exp2: "خدمة العملاء", exp3: "مبيعات", exp4: "وكيل عقاري", test_title: "الاختبار", test_sub: "الصدق وسرعة البديهة.", q1: "1. خطأ بـ 500€ يضر العميل؟", q1a: "أ) أصمت.", q1b: "ب) أبلغ فوراً.", q1c: "ج) أطلب إكرامية.", q2: "2. مشتري مستعجل لعقار غير مدقق؟", q2a: "أ) أعطيه العنوان.", q2b: "ب) أطلب منه الانتظار.", q3: "3. بائع لا يريد وكالات؟", q3a: "أ) رابط Level.immo.", q3b: "ب) إعلانات محلية.", leg_title: "الالتزام", leg_sub: "اقبل القواعد.", legal1: "<b>القواعد والولاء.</b>", legal2: "<b>الخصوصية.</b>", warn_audio: "🎙️ <b>ملاحظة:</b> مطلوب تسجيل صوتي واتساب لمدة دقيقة.", btn_prev: "← رجوع", btn_next: "التالي →", btn_submit: "إرسال 🚀", succ_title: "تم التسجيل!", succ_desc: "أرسل <b>تسجيلاً صوتياً (دقيقة واحدة)</b>:", succ_box: "1. ما هو هدفك؟<br>2. لماذا نحن؟", btn_wa: "افتح واتساب", ph_name: "أحمد", ph_cp: "08001", ph_muni: "تلقائي...", ph_lang: "عربي، إنجليزي..." },
+            zh: { hero_title: "你好，Level-i 申请人，你叫什么名字？", hero_sub: "你有沟通技巧吗？我们正在寻找人才。", rule_title: "📜 游戏规则", r1: "<b>固定费用</b>", r2: "<b>零内部竞争</b>", r3: "<b>人类 + AI</b>", step1: "1. 角色", step2: "2. 简介", step3: "3. 测试", step4: "4. 忠诚", role_title: "承诺水平？", role_sub: "选择你的角色：", card1_t: "合作者", card1_d: "报告场外房产。", card1_r: "🎁 500€", card2_t: "现场核验员", card2_d: "访问并验证数据。", card2_r: "💶 30%", card3_t: "独立顾问", card3_d: "全面获取和结束访问。", card3_r: "💰 40%", card4_t: "区域顾问", card4_d: "独家专区。建立团队。", card4_r: "🏆 最高 60%", prof_title: "简介", form_name: "姓名 *", form_wp: "WhatsApp *", form_cp: "邮政编码 *", form_muni: "城市 *", cp_load: "⏳ 搜索中...", form_lang: "语言 *", form_exp: "经验 *", exp0: "选择...", exp1: "无", exp2: "客户服务", exp3: "销售", exp4: "房地产经纪人", test_title: "测试", test_sub: "诚实和反应速度。", q1: "1. 损害客户 500€ 的错误？", q1a: "A) 保持沉默。", q1b: "B) 立即通知修复。", q1c: "C) 索要小费。", q2: "2. 买家急于查看未经验证的房产？", q2a: "A) 提供地址。", q2b: "B) 要求等待验证。", q3: "3. 卖家不想找中介？", q3a: "A) 提供 Level.immo 链接。", q3b: "B) 建议分类广告。", leg_title: "承诺", leg_sub: "接受规则。", legal1: "<b>规则与忠诚。</b>", legal2: "<b>隐私政策。</b>", warn_audio: "🎙️ <b>注意：</b>需要 1 分钟 WhatsApp 语音。", btn_prev: "← 返回", btn_next: "下一步 →", btn_submit: "提交 🚀", succ_title: "已注册！", succ_desc: "发送 <b>1 分钟 WhatsApp 语音</b> 回答：", succ_box: "1. 你的目标是什么？<br>2. 为什么加入我们？", btn_wa: "打开 WhatsApp", ph_name: "陈明", ph_cp: "08001", ph_muni: "自动填...", ph_lang: "中文, 英语..." }
+        };
+
+        function setLanguage(lang) {
+            langCode = lang;
+            const rt = document.getElementById('html-root');
+            rt.setAttribute('lang', lang);
+            rt.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
+            
+            const d = dict[lang] || dict['es'];
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const k = el.getAttribute('data-i18n');
+                if(d[k]) el.innerHTML = d[k];
+            });
+            // Placeholders
+            document.getElementById('adv_nombre').placeholder = d.ph_name;
+            document.getElementById('adv_cp').placeholder = d.ph_cp;
+            document.getElementById('adv_municipio').placeholder = d.ph_muni;
+            document.getElementById('adv_idiomas').placeholder = d.ph_lang;
+        }
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({ pageLanguage: 'es', includedLanguages: 'es,ca,en,fr,de,it,ar,zh-CN', autoDisplay: false }, 'google_translate_element');
+        }
+
+        // 2. BUSCADOR DE CÓDIGO POSTAL Y MUNICIPIO
+        let cpTimeout;
+        async function buscarMunicipioAPI() {
+            const cpInput = document.getElementById('adv_cp').value;
+            const loader = document.getElementById('loader-cp');
+            const muniInput = document.getElementById('adv_municipio');
+            clearTimeout(cpTimeout);
+            if (cpInput.length === 5) {
+                loader.style.display = 'block';
+                muniInput.value = "";
+                cpTimeout = setTimeout(async () => {
+                    try {
+                        const res = await fetch(`https://api.zippopotam.us/es/${cpInput}`);
+                        if (res.ok) {
+                            const data = await res.json();
+                            muniInput.value = data.places[0]['place name'] + " (" + data.places[0]['state abbreviation'] + ")";
+                        } else {
+                            muniInput.value = "";
+                            muniInput.placeholder = "CP no encontrado, escríbelo a mano...";
+                            muniInput.removeAttribute("readonly");
+                        }
+                    } catch (e) {
+                        muniInput.removeAttribute("readonly");
+                    }
+                    loader.style.display = 'none';
+                    validateStep();
+                }, 600);
+            } else {
+                muniInput.value = "";
+                loader.style.display = 'none';
+                muniInput.setAttribute("readonly", true);
+            }
+            validateStep();
+        }
+
+        // 3. WIZARD LOGIC
+        function selectRole(element, roleName) {
+            document.querySelectorAll('.role-card').forEach(c => c.classList.remove('selected'));
+            element.classList.add('selected');
+            document.getElementById('selected_role').value = roleName;
+            validateStep();
+        }
+
+        function updateUI() {
+            document.querySelectorAll('.step-panel').forEach((panel, index) => {
+                panel.classList.remove('active');
+                if (index + 1 === currentStep) panel.classList.add('active');
+            });
+            document.querySelectorAll('.step-dot').forEach((dot, index) => {
+                dot.classList.remove('active');
+                if (index + 1 <= currentStep) dot.classList.add('active');
+            });
+            document.getElementById('btn-prev').style.visibility = currentStep === 1 ? 'hidden' : 'visible';
+            
+            if (currentStep === totalSteps) {
+                document.getElementById('btn-next').style.display = 'none';
+                document.getElementById('btn-submit').style.display = 'block';
+            } else {
+                document.getElementById('btn-next').style.display = 'block';
+                document.getElementById('btn-submit').style.display = 'none';
+            }
+            validateStep();
+        }
+
+        function validateStep() {
+            let isValid = false;
+            if (currentStep === 1) {
+                isValid = document.getElementById('selected_role').value !== "";
+            } else if (currentStep === 2) {
+                const n = document.getElementById('adv_nombre').value;
+                const t = document.getElementById('adv_tel').value;
+                const cp = document.getElementById('adv_cp').value;
+                const m = document.getElementById('adv_municipio').value;
+                const i = document.getElementById('adv_idiomas').value;
+                const e = document.getElementById('adv_exp').value;
+                isValid = n && t.length >= 8 && cp.length === 5 && m && i && e;
+            } else if (currentStep === 3) {
+                const q1 = document.querySelector('input[name="test1"]:checked');
+                const q2 = document.querySelector('input[name="test2"]:checked');
+                const q3 = document.querySelector('input[name="test3"]:checked');
+                isValid = q1 && q2 && q3;
+            } else if (currentStep === 4) {
+                isValid = document.getElementById('legal_reglas').checked && document.getElementById('legal_rgpd').checked;
+            }
+            document.getElementById('btn-next').disabled = !isValid;
+            if(currentStep === totalSteps) document.getElementById('btn-submit').disabled = !isValid;
+        }
+
+        document.querySelectorAll('input, select').forEach(el => { el.addEventListener('input', validateStep); el.addEventListener('change', validateStep); });
+
+        function nextStep() { if (currentStep < totalSteps) { currentStep++; updateUI(); window.scrollTo(0,0); } }
+        function prevStep() { if (currentStep > 1) { currentStep--; updateUI(); window.scrollTo(0,0); } }
+
+        function submitFinal() {
+            const btn = document.getElementById('btn-submit');
+            const originalText = btn.innerText;
+            btn.innerText = "Procesando..."; btn.disabled = true;
+
+            const n = document.getElementById('adv_nombre').value;
+            const t = document.getElementById('adv_tel').value;
+            const pref = document.getElementById('adv_prefijo').value;
+            const rol = document.getElementById('selected_role').value;
+            const muni = document.getElementById('adv_municipio').value;
+            
+            const payload = {
+                evento: "solicitud_advisor_candidato",
+                metadatos_sistema: { idioma_usuario: langCode },
+                datos_candidato: {
+                    rol_solicitado: rol, nombre: n, telefono: pref + t.replace(/\D/g,''),
+                    codigo_postal: document.getElementById('adv_cp').value, municipio_plaza: muni,
+                    idiomas: document.getElementById('adv_idiomas').value, experiencia: document.getElementById('adv_exp').value
+                },
+                resultados_test: {
+                    q1_honradez: document.querySelector('input[name="test1"]:checked').value,
+                    q2_logica: document.querySelector('input[name="test2"]:checked').value,
+                    q3_comunicacion: document.querySelector('input[name="test3"]:checked').value,
+                }, aceptacion_legal: true
+            };
+
+            fetch(WEBHOOK_MAKE, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) })
+            .finally(() => {
+                mostrarPantallaExito(n, rol, muni);
+            });
+        }
+
+        function mostrarPantallaExito(nombre, rol, muni) {
+            document.getElementById('wizard-controls').style.display = 'none';
+            document.getElementById('step-4').classList.remove('active');
+            document.getElementById('step-success').classList.add('active');
+
+            const m = `Hola Elena, soy ${nombre}. Acabo de superar el Test para la plaza de ${rol} en ${muni}. Aquí tienes mi audio de presentación 🎙️:`;
+            document.getElementById('link-whatsapp').href = `https://wa.me/${WA_PHONE}?text=${encodeURIComponent(m)}`;
+        }
+    </script>
+    <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+</body>
+</html>
