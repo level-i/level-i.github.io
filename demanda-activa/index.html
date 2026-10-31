@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Level-i | Demanda Activa</title>
+    <title>Level-i Command Center | Demanda Activa</title>
     <style>
         :root {
             --bg-base: #090d16;
@@ -12,10 +12,11 @@
             --accent-green: #10b981;
             --accent-blue: #3b82f6;
             --accent-gold: #C5A059;
+            --accent-orange: #f59e0b;
+            --accent-red: #ef4444;
             --text-main: #f9fafb;
             --text-muted: #9ca3af;
             --border-color: #374151;
-            --accent-red: #ef4444;
         }
 
         html, body {
@@ -36,7 +37,9 @@
         ::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: var(--accent-green); }
 
-        /* SIDEBAR ESCRITORIO */
+        /* ==========================================
+           SIDEBAR ESCRITORIO
+           ========================================== */
         aside {
             width: 260px;
             background-color: var(--bg-panel);
@@ -50,25 +53,35 @@
         }
 
         .brand-container {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
             padding-bottom: 20px;
             margin-bottom: 20px;
         }
 
-        .brand-logo { color: #ffffff; font-size: 22px; font-weight: bold; display: flex; align-items: baseline; }
-        .brand-logo span { color: var(--accent-green); margin: 0 5px; }
+        .brand-logo { display: flex; align-items: baseline; color: #ffffff; text-decoration: none; }
+        .l-letter { font-size: 32px; font-weight: 900; line-height: 1; }
+        .brand-dot { width: 9px; height: 9px; background-color: var(--accent-green); border-radius: 50%; margin: 0 6px 0 2px; box-shadow: 0 0 10px rgba(16, 185, 129, 0.6); }
+        .logo-text { font-size: 22px; font-weight: 700; letter-spacing: 0.5px; }
+        .brand-clock { font-family: 'Courier New', Courier, monospace; font-size: 11px; color: var(--accent-green); font-weight: bold; letter-spacing: 0.5px; margin-top: 4px; }
 
-        .nav-menu { display: flex; flex-direction: column; gap: 6px; flex: 1; }
-        .nav-item { padding: 10px 14px; border-radius: 6px; color: var(--text-muted); text-decoration: none; font-size: 12.5px; font-weight: 600; transition: all 0.3s ease; border-left: 3px solid transparent; }
+        .nav-menu { display: flex; flex-direction: column; gap: 6px; overflow-y: auto; flex: 1; }
+        .nav-item { background: transparent; border: none; padding: 10px 14px; border-radius: 6px; color: var(--text-muted); text-decoration: none; font-size: 12.5px; font-weight: 600; transition: all 0.3s ease; border-left: 3px solid transparent; display: flex; align-items: center; gap: 10px; cursor: pointer; text-align: left; }
         .nav-item:hover { background-color: rgba(255, 255, 255, 0.03); color: #ffffff; }
         .nav-item.active { background: linear-gradient(90deg, rgba(16, 185, 129, 0.1) 0%, transparent 100%); color: #ffffff; border-left: 3px solid var(--accent-green); }
+
+        .promo-badge { background: rgba(197, 160, 89, 0.1); border: 1px dashed var(--accent-gold); padding: 10px; border-radius: 8px; font-size: 11px; color: var(--accent-gold); text-align: center; font-weight: bold; }
 
         .sidebar-footer { margin-top: auto; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.05); text-align: center; font-size: 10.5px; color: var(--text-muted); }
         .legal-links { display: flex; justify-content: center; gap: 12px; margin-top: 8px; font-size: 10px; flex-wrap: wrap; }
         .legal-links a { color: var(--text-muted); text-decoration: none; transition: color 0.2s; cursor: pointer; }
         .legal-links a:hover { color: var(--accent-green); }
 
-        /* MAIN Y CABECERA */
+        /* ==========================================
+           MAIN Y CABECERA
+           ========================================== */
         main { flex: 1; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
         header { background-color: var(--bg-panel); border-bottom: 1px solid var(--border-color); height: 60px; display: flex; align-items: center; padding: 0 30px; justify-content: space-between; flex-shrink: 0; }
         .header-title { font-size: 13.5px; color: var(--text-muted); }
@@ -87,74 +100,123 @@
         }
         .lang-selector:hover { color: var(--text-main); border-color: var(--accent-green); }
 
-        /* ÁREA DE CONTENIDO */
-        .content-area { display: grid; grid-template-columns: 370px 1fr; height: calc(100vh - 60px); overflow: hidden; }
-        .ingesta-panel { background-color: var(--bg-panel); border-right: 1px solid var(--border-color); padding: 25px; overflow-y: auto; }
-        .feed-panel { padding: 25px; overflow-y: auto; position: relative; }
+        /* ==========================================
+           ÁREA DE CONTENIDO Y FORMULARIOS
+           ========================================== */
+        .content-area { display: grid; grid-template-columns: 375px 1fr; height: calc(100vh - 60px); overflow: hidden; }
+        .ingesta-panel { background-color: var(--bg-panel); border-right: 1px solid var(--border-color); padding: 25px; overflow-y: auto; display: flex; flex-direction: column; gap: 14px; }
+        .ingesta-title { font-size: 16px; color: #fff; font-weight: 700; margin: 0; display: flex; align-items: center; gap: 8px; }
+        .ingesta-title::before { content: ''; display: inline-block; width: 8px; height: 8px; background-color: var(--accent-green); border-radius: 50%; box-shadow: 0 0 10px var(--accent-green); }
+        .ingesta-desc { font-size: 12px; color: var(--text-muted); line-height: 1.5; margin: 6px 0 0 0; }
 
-        /* FORMULARIOS */
-        .form-upload { background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 12px; margin-top: 15px; }
+        .feed-panel { padding: 25px; overflow-y: auto; position: relative; background-color: var(--bg-base); }
+        .feed-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.06); }
+        .feed-title { font-size: 20px; font-weight: 800; margin: 0; display: flex; align-items: center; gap: 10px; }
+        .live-indicator { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: bold; color: var(--accent-green); text-transform: uppercase; background: rgba(16, 185, 129, 0.1); padding: 4px 10px; border-radius: 20px; border: 1px solid rgba(16, 185, 129, 0.3); }
+        .live-dot { width: 6px; height: 6px; background-color: var(--accent-green); border-radius: 50%; animation: blink 1s infinite; }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+        .form-upload { background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 18px; display: flex; flex-direction: column; gap: 12px; }
         .form-group label { display: block; font-size: 11.5px; color: var(--text-muted); margin-bottom: 5px; font-weight: bold; }
         .form-group input, .form-group select, .form-group textarea { width: 100%; background-color: var(--bg-base); border: 1px solid var(--border-color); color: #ffffff; padding: 10px; border-radius: 6px; font-size: 13px; outline: none; transition: border-color 0.2s ease;}
         .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--accent-green); }
         .form-group textarea { resize: vertical; min-height: 50px; font-family: inherit; }
         .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 
-        .phone-group { display: grid; grid-template-columns: 80px 1fr; gap: 8px; }
+        .phone-group { display: grid; grid-template-columns: 78px 1fr; gap: 8px; }
 
-        .legal-check { display: flex; gap: 10px; align-items: flex-start; background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.2); padding: 12px; border-radius: 6px; margin-top: 5px; }
+        .cp-status-badge {
+            font-size: 11px;
+            padding: 8px 10px;
+            border-radius: 6px;
+            font-weight: 600;
+            display: none;
+            line-height: 1.35;
+        }
+        .cp-status-badge.presencial {
+            display: block;
+            background: rgba(16, 185, 129, 0.12);
+            border: 1px solid rgba(16, 185, 129, 0.35);
+            color: var(--accent-green);
+        }
+        .cp-status-badge.central {
+            display: block;
+            background: rgba(197, 160, 89, 0.12);
+            border: 1px solid rgba(197, 160, 89, 0.35);
+            color: var(--accent-gold);
+        }
+
+        .legal-check { display: flex; gap: 10px; align-items: flex-start; background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.2); padding: 12px; border-radius: 6px; margin-top: 4px; }
         .legal-check input[type="checkbox"] { margin-top: 2px; accent-color: var(--accent-green); cursor: pointer; }
         .legal-check label { font-size: 11px; color: var(--text-muted); line-height: 1.4; font-weight: normal; margin: 0; cursor: pointer; }
         .legal-check label b { color: var(--text-main); }
         .math-box { display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.2); padding: 10px 15px; border-radius: 6px; border: 1px dashed var(--border-color); }
 
-        .btn-submit { background-color: var(--accent-green); color: #ffffff; border: none; padding: 12px; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 10px; transition: all 0.2s ease; }
-        .btn-submit:hover { opacity: 0.9; }
+        .btn-submit { width: 100%; background-color: var(--accent-green); color: #ffffff; border: none; padding: 12px; border-radius: 6px; font-size: 13.5px; font-weight: bold; cursor: pointer; margin-top: 4px; transition: all 0.2s ease; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25); }
+        .btn-submit:hover { opacity: 0.9; transform: translateY(-1px); }
 
-        /* TARJETAS DE COMPRADORES */
-        .buyer-card { background-color: var(--bg-panel); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; margin-bottom: 20px; transition: transform 0.2s ease, box-shadow 0.2s ease; border-left: 4px solid var(--accent-green); }
+        /* ==========================================
+           TARJETAS DE COMPRADORES VERIFICADOS
+           ========================================== */
+        #feed-compradores-container { max-width: 820px; margin: 0 auto; padding-bottom: 50px; }
+        .buyer-card { background-color: var(--bg-panel); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; margin-bottom: 18px; transition: transform 0.2s ease, box-shadow 0.2s ease; border-left: 4px solid var(--accent-green); }
         .buyer-card:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4); }
         .buyer-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px; }
-        .buyer-name { font-size: 18px; font-weight: bold; color: #ffffff; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-        .buyer-id-tag { background: rgba(197, 160, 89, 0.15); color: var(--accent-gold); border: 1px solid rgba(197, 160, 89, 0.35); padding: 2px 8px; border-radius: 4px; font-size: 10.5px; font-family: monospace; }
+        .buyer-name { font-size: 17px; font-weight: bold; color: #ffffff; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+        .buyer-id-tag { background: rgba(197, 160, 89, 0.15); color: var(--accent-gold); border: 1px solid rgba(197, 160, 89, 0.35); padding: 2px 8px; border-radius: 4px; font-size: 11px; font-family: monospace; }
         .buyer-badge { background-color: rgba(16, 185, 129, 0.1); color: var(--accent-green); padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: bold; border: 1px solid rgba(16, 185, 129, 0.3); }
-        .buyer-budget { font-size: 24px; font-weight: 900; color: var(--accent-gold); margin-bottom: 15px; }
-        .buyer-tags { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
-        .tag { background-color: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-muted); padding: 5px 10px; border-radius: 4px; font-size: 12px; }
+        .buyer-budget { font-size: 23px; font-weight: 900; color: var(--accent-gold); margin-bottom: 14px; }
+        .buyer-tags { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; }
+        .tag { background-color: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-muted); padding: 5px 10px; border-radius: 4px; font-size: 11.5px; display: inline-flex; align-items: center; gap: 4px; }
 
-        .btn-offer { background-color: transparent; border: 1px solid var(--accent-blue); color: var(--accent-blue); width: 100%; padding: 12px; border-radius: 6px; font-weight: bold; cursor: pointer; transition: all 0.2s ease; }
+        .btn-offer { background-color: transparent; border: 1px solid var(--accent-blue); color: var(--accent-blue); width: 100%; padding: 11px; border-radius: 6px; font-size: 13px; font-weight: bold; cursor: pointer; transition: all 0.2s ease; }
         .btn-offer:hover { background-color: rgba(59, 130, 246, 0.1); }
 
-        /* MODALES */
+        /* ==========================================
+           MODALES Y CAJA DE FOTOS
+           ========================================== */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); display: none; justify-content: center; align-items: center; z-index: 999; opacity: 0; transition: opacity 0.3s; }
         .modal-overlay.active { display: flex; opacity: 1; }
-        .modal-content { background: var(--bg-panel); border: 1px solid var(--border-color); border-radius: 12px; padding: 30px; width: 90%; max-width: 600px; color: var(--text-main); position: relative; max-height: 85vh; overflow-y: auto; }
-        .modal-close { position: absolute; top: 15px; right: 20px; font-size: 24px; color: var(--text-muted); cursor: pointer; background: none; border: none; }
+        .modal-content { background: var(--bg-panel); border: 1px solid var(--border-color); border-radius: 12px; padding: 26px; width: 92%; max-width: 600px; color: var(--text-main); position: relative; max-height: 88vh; overflow-y: auto; }
+        .modal-close { position: absolute; top: 15px; right: 20px; font-size: 24px; color: var(--text-muted); cursor: pointer; background: none; border: none; z-index: 10; }
         .modal-close:hover { color: var(--accent-red); }
-        .modal-title { font-size: 20px; font-weight: bold; margin-bottom: 15px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; color: var(--accent-green); }
+        .modal-title { font-size: 19px; font-weight: bold; margin-bottom: 15px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; color: var(--accent-green); }
         .modal-body { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
 
-        .file-upload-box { border: 2px dashed var(--border-color); border-radius: 8px; padding: 20px; text-align: center; background: rgba(0,0,0,0.2); cursor: pointer; transition: all 0.2s; position: relative; }
+        .file-upload-box { border: 2px dashed var(--border-color); border-radius: 8px; padding: 16px; text-align: center; background: rgba(0,0,0,0.2); cursor: pointer; transition: all 0.2s; position: relative; }
         .file-upload-box:hover { border-color: var(--accent-blue); background: rgba(59, 130, 246, 0.05); }
         .file-upload-box input[type="file"] { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
-        .upload-icon { font-size: 24px; margin-bottom: 10px; display: block; }
-        .upload-text { font-size: 13px; color: var(--text-main); font-weight: bold; margin-bottom: 4px; }
+        .upload-icon { font-size: 22px; margin-bottom: 6px; display: block; }
+        .upload-text { font-size: 12.5px; color: var(--text-main); font-weight: bold; margin-bottom: 4px; }
+        .upload-subtext { font-size: 10.5px; color: var(--accent-red); font-weight: bold; line-height: 1.35; }
         
-        #preview-container { display: flex; gap: 8px; justify-content: center; margin-top: 15px; flex-wrap: wrap; }
-        .preview-thumb { width: 45px; height: 45px; object-fit: cover; border-radius: 6px; border: 1px solid var(--accent-green); box-shadow: 0 2px 8px rgba(16, 185, 129, 0.2); animation: popIn 0.3s ease-out; }
+        #preview-container { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 12px; }
+        .preview-thumb { width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 6px; border: 1px solid var(--accent-green); box-shadow: 0 2px 8px rgba(16, 185, 129, 0.2); animation: popIn 0.3s ease-out; }
         @keyframes popIn { 0% { transform: scale(0); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
-        #file-counter { font-size: 12px; color: var(--accent-green); margin-top: 10px; font-weight: bold; display: none; text-align: center; }
+        #file-counter { font-size: 11.5px; color: var(--accent-green); margin-top: 8px; font-weight: bold; display: none; text-align: center; }
 
-        /* ADAPTACIÓN MÓVIL */
+        /* ==========================================
+           ADAPTACIÓN MÓVIL UNIFICADA CON MERCADO REAL
+           ========================================== */
         @media (max-width: 900px) {
             html, body { height: 100%; overflow: hidden; }
             body { flex-direction: column; }
-            aside { display: none; }
+            
+            aside { display: none !important; }
 
             .mobile-top-bar {
-                position: fixed; top: 0; left: 0; width: 100%; height: 55px;
-                background-color: var(--bg-panel); border-bottom: 1px solid var(--border-color);
-                display: flex; align-items: center; justify-content: space-between; padding: 0 15px; z-index: 1000;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 55px;
+                background-color: var(--bg-panel);
+                border-bottom: 1px solid var(--border-color);
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 0 15px;
+                z-index: 1000;
             }
 
             .mobile-brand { font-size: 16px; font-weight: bold; color: #ffffff; }
@@ -162,18 +224,71 @@
 
             .mobile-nav-buttons { display: flex; gap: 8px; }
             .mobile-nav-btn {
-                background-color: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-muted);
-                padding: 6px 12px; border-radius: 6px; font-size: 11.5px; font-weight: 600; text-decoration: none;
+                background-color: var(--bg-card);
+                border: 1px solid var(--border-color);
+                color: var(--text-muted);
+                padding: 6px 12px;
+                border-radius: 6px;
+                font-size: 11.5px;
+                font-weight: 600;
+                text-decoration: none;
+                transition: all 0.2s;
             }
-            .mobile-nav-btn.active { background: rgba(16, 185, 129, 0.15); color: #ffffff; border-color: var(--accent-green); }
+            .mobile-nav-btn.active {
+                background: rgba(16, 185, 129, 0.15);
+                color: #ffffff;
+                border-color: var(--accent-green);
+            }
 
-            main { margin-top: 55px; height: calc(100vh - 55px); overflow: hidden; }
-            header { height: 45px; padding: 0 15px; }
-            .header-title { font-size: 11px; }
-            .content-area { display: flex; flex-direction: column; height: calc(100vh - 100px); overflow-y: auto; }
-            .ingesta-panel { width: 100%; height: auto; border-right: none; border-bottom: 1px solid var(--border-color); padding: 15px; }
-            .feed-panel { width: 100%; height: auto; padding: 15px; }
-            .feed-panel h1 { font-size: 20px !important; margin-bottom: 15px !important; }
+            main {
+                margin-top: 55px;
+                height: calc(100vh - 55px);
+                overflow: hidden;
+            }
+
+            header {
+                height: 45px;
+                padding: 0 15px;
+                flex-direction: row;
+            }
+            .header-title { font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+            .lang-selector { padding: 4px 8px; font-size: 11.5px; }
+
+            .content-area {
+                display: flex;
+                flex-direction: column;
+                height: calc(100vh - 100px);
+                overflow-y: auto;
+            }
+
+            .ingesta-panel {
+                width: 100%;
+                height: auto;
+                border-right: none;
+                border-bottom: 1px solid var(--border-color);
+                padding: 15px;
+                overflow: visible;
+                flex-shrink: 0;
+            }
+
+            .feed-panel {
+                width: 100%;
+                height: auto;
+                padding: 15px;
+                overflow: visible;
+                flex-shrink: 0;
+            }
+
+            .feed-header {
+                position: static;
+                margin-top: 0;
+                margin-bottom: 15px;
+                padding: 8px 0;
+            }
+            .feed-title { font-size: 18px; }
+            .buyer-card { padding: 16px; }
+            .buyer-budget { font-size: 20px; }
+            .modal-content { padding: 20px; width: 95%; }
         }
 
         @media (min-width: 901px) {
@@ -183,23 +298,44 @@
 </head>
 <body>
 
+    <!-- LISTA AUTOCOMPLETABLE COMPARTIDA CON LOS 94 CÓDIGOS POSTALES OFICIALES -->
+    <datalist id="lista-cps-oficiales"></datalist>
+
     <!-- BARRA SUPERIOR FIJA MÓVIL -->
     <div class="mobile-top-bar">
         <div class="mobile-brand">L<span>•</span> Level.immo</div>
         <div class="mobile-nav-buttons">
-            <a href="#" class="mobile-nav-btn active" data-i18n="nav_demanda">🎯 Demanda</a>
-            <a href="https://app.level-i.com/mercado-real" class="mobile-nav-btn" data-i18n="nav_mercado_real">📡 Mercado</a>
+            <a href="#" class="mobile-nav-btn active" data-i18n="nav_demanda_mob">🎯 Demanda</a>
+            <a href="https://app.level-i.com/mercado-real" class="mobile-nav-btn" data-i18n="nav_mercado_mob">📡 Mercado</a>
         </div>
     </div>
 
     <!-- SIDEBAR ESCRITORIO -->
     <aside>
         <div class="brand-container">
-            <div class="brand-logo">L<span>•</span> Level.immo</div>
+            <div class="brand-logo">
+                <span class="l-letter">L</span><span class="brand-dot"></span> <span class="logo-text">Level.immo</span>
+            </div>
+            <div class="brand-clock" id="live-clock">--/--/---- | --:--:--</div>
         </div>
+
         <div class="nav-menu">
             <a href="#" class="nav-item active" data-i18n="nav_demanda">🎯 Demanda Activa</a>
             <a href="https://app.level-i.com/mercado-real" class="nav-item" data-i18n="nav_mercado_real">📡 Mercado Real</a>
+            <a href="#" class="nav-item" onclick="alert('Área restringida. Solo acceso a usuarios verificados.')" data-i18n="nav_gestion">👥 Acceso a Usuarios</a>
+            
+            <div class="promo-badge" style="margin: 10px 0; cursor: pointer; text-align: left; padding: 10px 14px;" onclick="alert('Esta sección está en desarrollo.')">
+                <span data-i18n="nav_chivatazo" style="font-size: 13px; color: var(--accent-orange);">📣 Chivatazo Nacional</span>
+            </div>
+            
+            <a href="#" class="nav-item" onclick="alert('Información sobre los equipos comerciales pronto disponible.')" data-i18n="nav_equipos">💼 Únete al Equipo de Advisors en tu Zona</a>
+            
+            <div style="padding: 10px 14px;">
+                <div style="color: var(--text-muted); font-size: 12.5px; font-weight: 600; margin-bottom: 8px;" data-i18n="nav_poblaciones_titulo">📍 Servicios Presenciales en:</div>
+                <div style="font-size: 11px; color: var(--text-muted); line-height: 1.6; padding-left: 12px;">
+                    Alcanar, Les Cases d'Alcanar, La Ràpita, Amposta, Tortosa, Vinaròs, Benicarló, Tarragona, Barcelona, Terrassa, Sabadell, Castellar del Vallès, Matadepera, Cerdanyola del Vallès, Sant Cugat del Vallès, Rubí, Granollers, Mataró.
+                </div>
+            </div>
         </div>
 
         <div class="sidebar-footer">
@@ -225,7 +361,7 @@
                 <option value="fr">🇫🇷 Français</option>
                 <option value="de">🇩🇪 Deutsch</option>
                 <option value="it">🇮🇹 Italiano</option>
-                <option value="ar">🇸🇦 العربية</option>
+                <option value="ar">🇦🇪 العربية</option>
                 <option value="zh">🇨🇳 中文</option>
             </select>
         </header>
@@ -233,46 +369,88 @@
         <div class="content-area">
             <!-- PANEL IZQUIERDO: ALTA DE INVERSOR / COMPRADOR VERIFICADO -->
             <div class="ingesta-panel">
-                <h2 style="margin:0; font-size:16px;" data-i18n="unete_inversor">Únete como Inversor / Comprador</h2>
-                <p style="font-size:12px; color:var(--text-muted); line-height: 1.5; margin-top: 8px;" data-i18n="unete_desc">
-                    Verificamos tu presupuesto y te conseguimos propiedades fuera de mercado directo de particulares.
-                </p>
+                <div>
+                    <h2 class="ingesta-title" data-i18n="unete_inversor">Únete como Inversor / Comprador</h2>
+                    <p class="ingesta-desc" data-i18n="unete_desc">
+                        Verificamos tu presupuesto y te conseguimos propiedades fuera de mercado directo de particulares.
+                    </p>
+                </div>
                 
                 <form class="form-upload" id="form-alta-inversor">
                     <div class="form-group">
-                        <label data-i18n="lbl_nombre">Tu Nombre</label>
+                        <label data-i18n="lbl_nombre">Tu Nombre *</label>
                         <input type="text" id="inv-nombre" placeholder="Ej: Antonio G." data-i18n-placeholder="plc_nombre" required>
                     </div>
                     
+                    <!-- BUSCADOR CON DESPLEGABLE DE LOS 94 CÓDIGOS POSTALES OFICIALES -->
                     <div class="form-grid">
                         <div class="form-group">
-                            <label data-i18n="lbl_zonas_int">Zona de Interés</label>
-                            <select id="inv-zonas" required>
-                                <option value="">Selecciona...</option>
-                                <option value="Alcanar">Alcanar</option>
-                                <option value="Les Cases d'Alcanar">Les Cases d'Alcanar</option>
-                                <option value="La Ràpita">La Ràpita</option>
-                                <option value="Vinaròs">Vinaròs</option>
-                                <option value="Amposta / Tortosa">Amposta / Tortosa</option>
-                                <option value="Terrassa">Terrassa</option>
-                                <option value="Sabadell">Sabadell</option>
-                                <option value="Castellar del Vallès">Castellar del Vallès</option>
-                                <option value="Matadepera">Matadepera</option>
-                                <option value="Cerdanyola del Vallès">Cerdanyola del Vallès</option>
-                                <option value="Sant Cugat del Vallès">Sant Cugat del Vallès</option>
-                                <option value="Sant Quirze del Vallès">Sant Quirze del Vallès</option>
-                            </select>
+                            <label for="inv-cp" data-i18n="lbl_cp">Código Postal *</label>
+                            <input 
+                                type="text" 
+                                id="inv-cp" 
+                                list="lista-cps-oficiales"
+                                maxlength="5" 
+                                pattern="[0-9]{5}" 
+                                inputmode="numeric"
+                                autocomplete="off"
+                                placeholder="Escribe o elige CP..." 
+                                oninput="alEscribirCP(this.value, 'inv')"
+                                onchange="alEscribirCP(this.value, 'inv')"
+                                required
+                            >
                         </div>
 
                         <div class="form-group">
-                            <label data-i18n="lbl_tipo">Tipo de Inmueble</label>
-                            <select id="inv-tipo" required>
-                                <option value="Piso o Adosado">Piso o Adosado</option>
-                                <option value="Chalet independiente">Chalet independiente</option>
-                                <option value="Terreno / Suelo Urbano">Terreno / Suelo Urbano</option>
-                                <option value="Activo de Inversión / Flipping">Activo Inversión / Flipping</option>
-                            </select>
+                            <label for="inv-zona" data-i18n="lbl_zonas_int">Zona de Interés *</label>
+                            <input 
+                                type="text" 
+                                id="inv-zona" 
+                                placeholder="Se rellena con CP..." 
+                                readonly 
+                                style="background-color: #151c2c; color: var(--accent-gold); font-weight: bold;"
+                                required
+                            >
                         </div>
+                    </div>
+
+                    <!-- Etiqueta visual de estado del CP -->
+                    <div id="inv-cp-status" class="cp-status-badge"></div>
+
+                    <!-- Desplegable dinámico de BARRIO para el Comprador -->
+                    <div class="form-group" id="inv-barrio-wrapper" style="display: none;">
+                        <label for="inv-barrio" data-i18n="lbl_barrio">Barrio / Núcleo Urbano *</label>
+                        <select id="inv-barrio" onchange="actualizarIdCompuesto('inv')">
+                            <option value="">Selecciona barrio o urbanización...</option>
+                        </select>
+                    </div>
+
+                    <input type="hidden" id="inv-id-cp-principal" value="">
+
+                    <!-- LOS 18 TIPOS DE INMUEBLE OFICIALES -->
+                    <div class="form-group">
+                        <label for="inv-tipo" data-i18n="lbl_tipo">Tipo de Inmueble Buscado *</label>
+                        <select id="inv-tipo" required>
+                            <option value="" data-i18n="opt_sel">Selecciona...</option>
+                            <option value="Apartamento" data-i18n="opt_apt">Apartamento</option>
+                            <option value="Casa Adosada" data-i18n="opt_ado">Casa Adosada</option>
+                            <option value="Chalet" data-i18n="opt_cha">Chalet</option>
+                            <option value="CoWorking" data-i18n="opt_cow">CoWorking</option>
+                            <option value="Edificios" data-i18n="opt_edi">Edificios</option>
+                            <option value="Garajes y Parkings" data-i18n="opt_gar">Garajes y Parkings</option>
+                            <option value="Locales" data-i18n="opt_loc">Locales</option>
+                            <option value="Loft" data-i18n="opt_lof">Loft</option>
+                            <option value="Nave Industrial" data-i18n="opt_nav">Nave Industrial</option>
+                            <option value="Oficinas y Despachos" data-i18n="opt_ofi">Oficinas y Despachos</option>
+                            <option value="Piso" data-i18n="opt_piso">Piso</option>
+                            <option value="Suelo Agrícola" data-i18n="opt_sag">Suelo Agrícola</option>
+                            <option value="Suelo Agrícola con Casa" data-i18n="opt_sac">Suelo Agrícola con Casa</option>
+                            <option value="Suelo Industrial" data-i18n="opt_sin">Suelo Industrial</option>
+                            <option value="Suelo Urbanizable" data-i18n="opt_sur">Suelo Urbanizable</option>
+                            <option value="Suelo Urbano/Residencial" data-i18n="opt_suu">Suelo Urbano/Residencial</option>
+                            <option value="Terciario" data-i18n="opt_terc">Terciario</option>
+                            <option value="Otros" data-i18n="opt_otr">Otros</option>
+                        </select>
                     </div>
                     
                     <div class="form-grid">
@@ -291,7 +469,7 @@
                         </div>
                     </div>
 
-                    <div class="form-grid">
+                    <div class="form-grid" id="inv-bloque-caracteristicas">
                         <div class="form-group">
                             <label data-i18n="lbl_hab">Mín. Habitaciones</label>
                             <input type="number" id="inv-hab" min="0" value="2" required>
@@ -304,7 +482,7 @@
                     
                     <div class="form-group">
                         <label data-i18n="lbl_requisito">Requisito Clave</label>
-                        <input type="text" id="inv-requisito" placeholder="Ej: Vistas al mar, Ascensor, Piscina..." data-i18n-placeholder="plc_requisito" required>
+                        <input type="text" id="inv-requisito" placeholder="Ej: Vistas al mar, Ascensor..." data-i18n-placeholder="plc_requisito" required>
                     </div>
                     
                     <div class="form-group">
@@ -336,7 +514,9 @@
 
             <!-- PANEL DERECHO: MURO DE COMPRADORES VERIFICADOS -->
             <div class="feed-panel">
-                <h1 style="margin-top:0; margin-bottom: 20px;" data-i18n="comp_verificados">Compradores Verificados</h1>
+                <div class="feed-header">
+                    <h1 class="feed-title"><span data-i18n="comp_verificados">Compradores Verificados</span> <span class="live-indicator"><span class="live-dot"></span> <span data-i18n="en_directo">Demanda Real</span></span></h1>
+                </div>
                 
                 <div id="feed-compradores-container">
                     <div style="text-align:center; padding: 40px; color: var(--accent-green);" data-i18n="cargando_compradores">📡 Cargando compradores verificados...</div>
@@ -374,59 +554,100 @@
             <div class="modal-title">Aviso Legal de IA y Cookies</div>
             <div class="modal-body">
                 <p>Esta plataforma utiliza cookies técnicas estrictamente necesarias para mantener su sesión activa y asegurar el correcto funcionamiento del sistema multidioma.</p>
-                <p><strong>Uso de Inteligencia Artificial:</strong> Informamos a nuestros usuarios que los procesos de verificación, emparejamiento (Match), registro de asistencias y estructuración de datos son asistidos mediante algoritmos de Inteligencia Artificial (Elena IA) para agilizar la conexión entre oferta y demanda inmobiliaria.</p>
+                <p><strong>Uso de Inteligencia Artificial:</strong> Informamos a nuestros usuarios que los procesos de verificación, emparejamiento (Match), registro de asistencias y estructuración de datos pueden ser operados total o parcialmente mediante algoritmos de Inteligencia Artificial (Elena IA) para agilizar la conexión entre oferta y demanda inmobiliaria. Al utilizar Level.immo, acepta esta intermediación automatizada.</p>
             </div>
         </div>
     </div>
 
     <!-- MODAL DE OFERTA DE PROPIEDAD ("TENGO LO QUE BUSCAS") -->
     <div class="modal-overlay" id="modal-offer" onclick="if(event.target === this) closeModal('modal-offer')">
-        <div class="modal-content" style="margin-top: 20px;">
+        <div class="modal-content" style="margin-top: 10px;">
             <button class="modal-close" onclick="closeModal('modal-offer')">&times;</button>
             <div class="modal-title" data-i18n="modal_offer_title">Ofrecer mi propiedad al Comprador</div>
             <div class="modal-body">
-                <p id="offer-text" style="margin-bottom: 15px; font-weight: bold; color: var(--accent-gold);"></p>
+                <p id="offer-text" style="margin-bottom: 14px; font-weight: bold; color: var(--accent-gold);"></p>
                 
                 <form class="form-upload" id="form-offer" style="margin-top: 0;">
-                    <div class="form-group">
-                        <label data-i18n="lbl_zona">Zona / Población</label>
-                        <select id="offer-zona" required>
-                            <option value="">Selecciona...</option>
-                            <option value="Alcanar">Alcanar</option>
-                            <option value="Les Cases d'Alcanar">Les Cases d'Alcanar</option>
-                            <option value="La Ràpita">La Ràpita</option>
-                            <option value="Vinaròs">Vinaròs</option>
-                            <option value="Amposta / Tortosa">Amposta / Tortosa</option>
-                            <option value="Terrassa">Terrassa</option>
-                            <option value="Sabadell">Sabadell</option>
-                            <option value="Castellar del Vallès">Castellar del Vallès</option>
-                            <option value="Matadepera">Matadepera</option>
-                            <option value="Cerdanyola del Vallès">Cerdanyola del Vallès</option>
-                            <option value="Sant Cugat del Vallès">Sant Cugat del Vallès</option>
-                            <option value="Sant Quirze del Vallès">Sant Quirze del Vallès</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label data-i18n="lbl_tipo">Tipo de Inmueble</label>
-                        <select id="offer-tipo" required>
-                            <option value="">Selecciona...</option>
-                            <option value="Apartamento">Apartamento</option>
-                            <option value="Piso">Piso</option>
-                            <option value="Adosado">Adosado</option>
-                            <option value="Chalet">Chalet</option>
-                            <option value="Terreno o Parcela">Terreno o Parcela</option>
-                        </select>
-                    </div>
-
+                    
+                    <!-- BUSCADOR CON DESPLEGABLE DE LOS 94 CÓDIGOS POSTALES OFICIALES -->
                     <div class="form-grid">
                         <div class="form-group">
+                            <label for="offer-cp" data-i18n="lbl_cp">Código Postal *</label>
+                            <input 
+                                type="text" 
+                                id="offer-cp" 
+                                list="lista-cps-oficiales"
+                                maxlength="5" 
+                                pattern="[0-9]{5}" 
+                                inputmode="numeric"
+                                autocomplete="off"
+                                placeholder="Escribe o elige CP..." 
+                                oninput="alEscribirCP(this.value, 'offer')"
+                                onchange="alEscribirCP(this.value, 'offer')"
+                                required
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label for="offer-zona" data-i18n="lbl_zona">Zona / Población *</label>
+                            <input 
+                                type="text" 
+                                id="offer-zona" 
+                                placeholder="Se rellena con CP..." 
+                                readonly 
+                                style="background-color: #151c2c; color: var(--accent-gold); font-weight: bold;"
+                                required
+                            >
+                        </div>
+                    </div>
+
+                    <!-- Etiqueta de estado del CP -->
+                    <div id="offer-cp-status" class="cp-status-badge"></div>
+
+                    <!-- Desplegable dinámico de BARRIO para el Propietario Oferente -->
+                    <div class="form-group" id="offer-barrio-wrapper" style="display: none;">
+                        <label for="offer-barrio" data-i18n="lbl_barrio">Barrio / Núcleo Urbano *</label>
+                        <select id="offer-barrio" onchange="actualizarIdCompuesto('offer')">
+                            <option value="">Selecciona barrio o urbanización...</option>
+                        </select>
+                    </div>
+
+                    <input type="hidden" id="offer-id-cp-principal" value="">
+
+                    <!-- LOS 18 TIPOS DE INMUEBLE OFICIALES -->
+                    <div class="form-group">
+                        <label for="offer-tipo" data-i18n="lbl_tipo">Tipo de Inmueble *</label>
+                        <select id="offer-tipo" required>
+                            <option value="" data-i18n="opt_sel">Selecciona...</option>
+                            <option value="Apartamento" data-i18n="opt_apt">Apartamento</option>
+                            <option value="Casa Adosada" data-i18n="opt_ado">Casa Adosada</option>
+                            <option value="Chalet" data-i18n="opt_cha">Chalet</option>
+                            <option value="CoWorking" data-i18n="opt_cow">CoWorking</option>
+                            <option value="Edificios" data-i18n="opt_edi">Edificios</option>
+                            <option value="Garajes y Parkings" data-i18n="opt_gar">Garajes y Parkings</option>
+                            <option value="Locales" data-i18n="opt_loc">Locales</option>
+                            <option value="Loft" data-i18n="opt_lof">Loft</option>
+                            <option value="Nave Industrial" data-i18n="opt_nav">Nave Industrial</option>
+                            <option value="Oficinas y Despachos" data-i18n="opt_ofi">Oficinas y Despachos</option>
+                            <option value="Piso" data-i18n="opt_piso">Piso</option>
+                            <option value="Suelo Agrícola" data-i18n="opt_sag">Suelo Agrícola</option>
+                            <option value="Suelo Agrícola con Casa" data-i18n="opt_sac">Suelo Agrícola con Casa</option>
+                            <option value="Suelo Industrial" data-i18n="opt_sin">Suelo Industrial</option>
+                            <option value="Suelo Urbanizable" data-i18n="opt_sur">Suelo Urbanizable</option>
+                            <option value="Suelo Urbano/Residencial" data-i18n="opt_suu">Suelo Urbano/Residencial</option>
+                            <option value="Terciario" data-i18n="opt_terc">Terciario</option>
+                            <option value="Otros" data-i18n="opt_otr">Otros</option>
+                        </select>
+                    </div>
+
+                    <div class="form-grid" id="offer-bloque-caracteristicas">
+                        <div class="form-group">
                             <label data-i18n="lbl_hab">Habitaciones</label>
-                            <input type="number" id="offer-hab" min="0" placeholder="0" required>
+                            <input type="number" id="offer-hab" min="0" value="0" placeholder="0" required>
                         </div>
                         <div class="form-group">
                             <label data-i18n="lbl_banos">Baños</label>
-                            <input type="number" id="offer-banos" min="0" placeholder="0" required>
+                            <input type="number" id="offer-banos" min="0" value="0" placeholder="0" required>
                         </div>
                     </div>
 
@@ -436,14 +657,18 @@
                     </div>
 
                     <div class="form-group">
-                        <label data-i18n="lbl_precio">Precio de Venta Deseado (€)</label>
+                        <label data-i18n="lbl_precio">Precio Neto Propietario (€)</label>
                         <input type="text" id="offer-precio" placeholder="Ej: 145.000 €" required>
+                        <div style="font-size: 10.5px; color: var(--accent-gold); margin-top: 4px;" id="offer-honorarios-hint">
+                            * En la ficha se sumarán automáticamente los honorarios mínimos (6.000 € + IVA = 7.260 €).
+                        </div>
                     </div>
                     
                     <div class="form-group">
                         <div class="file-upload-box">
                             <span class="upload-icon">📸</span>
                             <div class="upload-text" data-i18n="lbl_fotos">Subir Fotos (Máx. 4)</div>
+                            <div class="upload-subtext" data-i18n="lbl_fotos_warn">⚠️ OBLIGATORIO: Solo interiores.<br>Cero fachadas o vistas a la calle.</div>
                             <input type="file" id="offer-fotos" accept="image/*" multiple required>
                             <div id="preview-container"></div>
                         </div>
@@ -465,16 +690,359 @@
                         </label>
                     </div>
 
-                    <button type="submit" class="btn-submit" data-i18n="btn_enviar_oferta">Enviar Propiedad al Comprador</button>
+                    <button type="submit" class="btn-submit" data-i18n="btn_enviar_oferta">Enviar a Cuarentena y Vincular al Comprador</button>
                 </form>
             </div>
         </div>
     </div>
 
     <script>
+        // ==========================================
+        // 1. CONFIGURACIÓN DE WEBHOOKS OFICIALES + CSV GOOGLE DRIVE
+        // ==========================================
         const WEBHOOK_MAKE = "https://hook.eu1.make.com/loy5kvv4qmnvo748fmxo2qvt48mbf986"; 
+        const WEBHOOK_FOTOS = "https://hook.eu1.make.com/2m0es5wfi84xf539fyoko870d2jip4b8";
         const WEBHOOK_SURTIDOR_COMPRADORES = "https://hook.eu1.make.com/bpb012er1137ocx0tcdk19muh6le4qpu"; 
 
+        // Enlace opcional "Publicar en la web (.csv)" de tu Google Sheet municipios_level_immo.csv
+        const URL_CSV_MUNICIPIOS_DRIVE = "https://docs.google.com/spreadsheets/d/e/TU_ID_PUBLICADO_AQUI/pub?output=csv";
+
+        const HONORARIOS_BASE_MIN = 6000;
+        const HONORARIOS_IVA_MIN = 1260;
+        const HONORARIOS_BRUTOS_MIN = 7260;
+
+        // ==========================================
+        // 1B. BASE COMPLETA DE TUS 94 CÓDIGOS POSTALES Y TODOS SUS BARRIOS
+        // ==========================================
+        let DICCIONARIO_CPS = {};
+
+        const BASE_COMPLETA_MUNICIPIOS = [
+            // ALCANAR Y LES CASES
+            ["43530", "Alcanar", "_otras zonas"],
+            ["43530", "Alcanar", "Alcanar Platja (Zona de urbanizaciones)"],
+            ["43530", "Alcanar", "Barri de Sant Miquel"],
+            ["43530", "Alcanar", "Barri del Calvari"],
+            ["43530", "Alcanar", "Centre Històric"],
+            ["43530", "Alcanar", "La Selleta (Urbanización)"],
+            ["43530", "Alcanar", "Les Mallades"],
+            ["43569", "Alcanar", "Les Cases d'Alcanar (Núcleo costero)"],
+            // AMPOSTA
+            ["43870", "Amposta", "_otras zonas"],
+            ["43870", "Amposta", "Balada (Núcleo adscrito)"],
+            ["43870", "Amposta", "Centre / Barri de la Vila"],
+            ["43870", "Amposta", "El Grau"],
+            ["43870", "Amposta", "L'Acollidora / La Collita"],
+            ["43870", "Amposta", "Les Quintanes"],
+            ["43870", "Amposta", "Urbanització Eucaliptus"],
+            ["43870", "Amposta", "Valletes"],
+            ["43549", "Amposta", "Poble Nou del Delta (Núcleo adscrito)"],
+            // LA RÀPITA
+            ["43540", "La Ràpita", "_otras zonas"],
+            ["43540", "La Ràpita", "Centre Històric"],
+            ["43540", "La Ràpita", "Zona Portuària"],
+            ["43540", "La Ràpita", "El Garbí / Zona Platges"],
+            ["43540", "La Ràpita", "Barri del Xicago"],
+            ["43540", "La Ràpita", "Horta Vella / Nord"],
+            // TORTOSA
+            ["43500", "Tortosa", "_otras zonas"],
+            ["43500", "Tortosa", "Centre / Nucli Antic"],
+            ["43500", "Tortosa", "Ferreries"],
+            ["43500", "Tortosa", "Remolins"],
+            ["43500", "Tortosa", "El Temple"],
+            ["43500", "Tortosa", "Sant Llàtzer"],
+            ["43500", "Tortosa", "Grup El Temple"],
+            ["43500", "Tortosa", "Castell / Raval de la Llet"],
+            ["43517", "Tortosa", "Vinallop"],
+            ["43518", "Tortosa", "Bítem"],
+            ["43527", "Tortosa", "Els Reguers"],
+            ["43590", "Tortosa", "Jesús"],
+            ["43897", "Tortosa", "Campredó"],
+            // VINARÒS Y BENICARLÓ
+            ["12500", "Vinaròs", "_otras zonas"],
+            ["12500", "Vinaròs", "Casco Urbano / Centro"],
+            ["12500", "Vinaròs", "Costa Norte (Amerador / Triador / Barbiguera)"],
+            ["12500", "Vinaròs", "Costa Sur (Cala Puntal / Aiguaoliva)"],
+            ["12500", "Vinaròs", "Boverals / Saldonar"],
+            ["12500", "Vinaròs", "Zona Ermita / Interior"],
+            ["12580", "Benicarló", "_otras zonas"],
+            ["12580", "Benicarló", "Casco Urbano / Centro"],
+            ["12580", "Benicarló", "Playa Morrongo / Puerto"],
+            ["12580", "Benicarló", "Zona Norte / Papa Luna"],
+            ["12580", "Benicarló", "Partidas Rurales / Interior"],
+            // TARRAGONA CAPITAL
+            ["43001", "Tarragona", "Centre / Eixample"],
+            ["43001", "Tarragona", "Rambla Nova"],
+            ["43002", "Tarragona", "Nou Eixample Nord / Via Imperi"],
+            ["43003", "Tarragona", "Part Alta / Casc Antic"],
+            ["43003", "Tarragona", "El Miracle / Passeig Marítim"],
+            ["43004", "Tarragona", "El Serrallo (Barri Marítim)"],
+            ["43004", "Tarragona", "Nou Eixample Sud"],
+            ["43005", "Tarragona", "Parc Central / Torres Jordi"],
+            ["43006", "Tarragona", "Ponent / Campclar / Torreforta / Bonavista"],
+            ["43007", "Tarragona", "Llevant / Vall de l'Arrabassada / Sant Pere i Sant Pau"],
+            ["43008", "Tarragona", "Cala Romana / Boscos / La Mora / Tamarit"],
+            // BARCELONA CAPITAL
+            ["08001", "Barcelona", "El Raval"],
+            ["08002", "Barcelona", "El Barri Gòtic"],
+            ["08003", "Barcelona", "Sant Pere, Santa Caterina i la Ribera (El Born)"],
+            ["08004", "Barcelona", "El Poble-sec"],
+            ["08005", "Barcelona", "El Poblenou, Vila Olímpica"],
+            ["08006", "Barcelona", "Sant Gervasi - Galvany / Gràcia"],
+            ["08007", "Barcelona", "La Dreta de l'Eixample (Passeig de Gràcia)"],
+            ["08008", "Barcelona", "L'Antiga Esquerra de l'Eixample"],
+            ["08009", "Barcelona", "La Dreta de l'Eixample"],
+            ["08010", "Barcelona", "El Fort Pienc"],
+            ["08011", "Barcelona", "L'Antiga Esquerra de l'Eixample / Sant Antoni"],
+            ["08012", "Barcelona", "La Vila de Gràcia"],
+            ["08013", "Barcelona", "La Sagrada Família, El Fort Pienc"],
+            ["08014", "Barcelona", "Sants, Hostafrancs, La Bordeta"],
+            ["08015", "Barcelona", "La Nova Esquerra de l'Eixample, Sant Antoni"],
+            ["08016", "Barcelona", "La Prosperitat, Vilapicina i la Torre Llobeta"],
+            ["08017", "Barcelona", "Sarrià, Les Tres Torres, Vallvidrera"],
+            ["08018", "Barcelona", "El Camp de l'Arpa del Clot, El Parc i la Llacuna del Poblenou"],
+            ["08019", "Barcelona", "Diagonal Mar i el Front Marítim del Poblenou, El Besòs"],
+            ["08020", "Barcelona", "La Verneda i la Pau, Sant Martí de Provençals"],
+            ["08021", "Barcelona", "Sant Gervasi - Galvany, Les Tres Torres"],
+            ["08022", "Barcelona", "Sant Gervasi - la Bonanova, El Putxet i el Farró"],
+            ["08023", "Barcelona", "Vallcarca i els Penitents, El Coll"],
+            ["08024", "Barcelona", "La Salut, Camp d'en Grassot i Gràcia Nova"],
+            ["08025", "Barcelona", "La Sagrada Família, Camp d'en Grassot"],
+            ["08026", "Barcelona", "El Clot, El Camp de l'Arpa del Clot"],
+            ["08027", "Barcelona", "La Sagrera, Navas, El Congrés i els Indians"],
+            ["08028", "Barcelona", "Les Corts, La Maternitat i Sant Ramon"],
+            ["08030", "Barcelona", "Sant Andreu, Bon Pastor, Baró de Viver"],
+            ["08031", "Barcelona", "Horta, La Vall d'Hebron, Montbau"],
+            ["08032", "Barcelona", "El Carmel, El Guinardó, Can Baró"],
+            ["08033", "Barcelona", "Ciutat Meridiana, Trinitat Nova, Torre Baró"],
+            ["08034", "Barcelona", "Pedralbes, Sarrià, Les Corts"],
+            ["08035", "Barcelona", "Sant Genís dels Agudells, La Teixonera, Montbau"],
+            ["08036", "Barcelona", "L'Antiga Esquerra de l'Eixample, La Nova Esquerra de l'Eixample"],
+            ["08037", "Barcelona", "La Dreta de l'Eixample, La Sagrada Família"],
+            ["08038", "Barcelona", "La Marina de Port, La Marina del Prat Vermell (Zona Franca)"],
+            ["08039", "Barcelona", "La Barceloneta, Port de Barcelona"],
+            ["08041", "Barcelona", "El Baix Guinardó, Can Baró, El Guinardó"],
+            ["08042", "Barcelona", "Canyelles, Les Roquetes, Verdum, La Guineueta"],
+            // SABADELL
+            ["08201", "Sabadell", "Centre"],
+            ["08202", "Sabadell", "La Creu Alta"],
+            ["08202", "Sabadell", "Torre-romeu"],
+            ["08203", "Sabadell", "Gràcia"],
+            ["08203", "Sabadell", "Can Feu"],
+            ["08204", "Sabadell", "La Creu de Barberà"],
+            ["08204", "Sabadell", "Can Puiggener"],
+            ["08205", "Sabadell", "Can Rull / Els Merinals"],
+            ["08206", "Sabadell", "Can Llong / Castellarnau"],
+            ["08206", "Sabadell", "Can Gambús"],
+            ["08207", "Sabadell", "Ca n'Oriac / Sant Julià"],
+            ["08208", "Sabadell", "La Concòrdia / Eix Macià / Can Deu"],
+            // TERRASSA
+            ["08221", "Terrassa", "Centre"],
+            ["08222", "Terrassa", "Antic Poble de Sant Pere / Vallparadís"],
+            ["08223", "Terrassa", "Segle XX / Les Arenes - La Grípia"],
+            ["08224", "Terrassa", "Ca n'Aurell / La Maurina / La Cogullada"],
+            ["08225", "Terrassa", "Can Boada / Sant Pere Nord / Sant Llorenç"],
+            ["08226", "Terrassa", "Can Tusell / Pla del Bon Aire"],
+            ["08227", "Terrassa", "Can Parellada / Les Fonts"],
+            ["08228", "Terrassa", "Can Palet / Xúquer / Guadalhorce"],
+            ["08288", "Terrassa", "Disseminats / Urbanitzacions"],
+            // SANT CUGAT DEL VALLÈS
+            ["08172", "Sant Cugat del Vallès", "Centre / Eixample"],
+            ["08172", "Sant Cugat del Vallès", "Sant Francesc - El Coll"],
+            ["08173", "Sant Cugat del Vallès", "Coll Favà / Volpelleres / Roquetes"],
+            ["08174", "Sant Cugat del Vallès", "Parc Central - El Colomer"],
+            ["08195", "Sant Cugat del Vallès", "Mira-sol"],
+            ["08197", "Sant Cugat del Vallès", "Valldoreix"],
+            ["08199", "Sant Cugat del Vallès", "La Floresta / Les Planes"],
+            // RESTO DEL VALLÈS Y MARESME
+            ["08191", "Rubí", "Centre / Zona Nord / Mercat"],
+            ["08191", "Rubí", "Les Torres / Ca n'Oriol"],
+            ["08191", "Rubí", "Castellnou - Can Mir - Can Solà"],
+            ["08192", "Sant Quirze del Vallès", "Casco Urbano / Los Rosales / Mas Duran"],
+            ["08192", "Sant Quirze del Vallès", "Vallsuau / Castellet / El Poble-sec"],
+            ["08290", "Cerdanyola del Vallès", "Centre - Cordelles"],
+            ["08290", "Cerdanyola del Vallès", "Serraperera - Canaletes - Banús"],
+            ["08290", "Cerdanyola del Vallès", "Montflorit - Guiera"],
+            ["08193", "Cerdanyola del Vallès", "Bellaterra"],
+            ["08211", "Castellar del Vallès", "Casco Urbano / Centre"],
+            ["08211", "Castellar del Vallès", "El Racó / Sant Feliu del Racó"],
+            ["08211", "Castellar del Vallès", "Airesol / Can Font / Ca n'Avellaneda"],
+            ["08230", "Matadepera", "Centre / Casco Urbano"],
+            ["08230", "Matadepera", "Cavall Bernat / Les Pedritxes / Can Solà"],
+            ["08213", "Polinyà", "Casco Urbano / Serra Maurina"],
+            ["08181", "Sentmenat", "Casco Urbano / Can Peric / Pedra Santa"],
+            ["08140", "Caldes de Montbui", "Casco Urbano / El Farell / Els Saulons"],
+            ["08401", "Granollers", "Centre / Congost"],
+            ["08402", "Granollers", "Tres Torres / Sud / Palou"],
+            ["08403", "Granollers", "Font Verda / Nord / Can Gili"],
+            ["08301", "Mataró", "Centre / Eixample / Havana"],
+            ["08302", "Mataró", "Peramàs / Via Europa / Cerdanyola"],
+            ["08303", "Mataró", "Rocafonda / El Palau / Escorxador"],
+            ["08304", "Mataró", "Cirera / Molins / Vista Alegre"]
+        ];
+
+        function construirDiccionarioYSelector() {
+            DICCIONARIO_CPS = {};
+            BASE_COMPLETA_MUNICIPIOS.forEach(fila => {
+                agregarAlDiccionario(fila[0], fila[1], fila[2]);
+            });
+            poblarDatalistCPs();
+        }
+
+        function agregarAlDiccionario(cp, municipio, barrio) {
+            if (!DICCIONARIO_CPS[cp]) {
+                DICCIONARIO_CPS[cp] = { municipio: municipio, barrios: [] };
+            }
+            if (barrio && !DICCIONARIO_CPS[cp].barrios.includes(barrio)) {
+                DICCIONARIO_CPS[cp].barrios.push(barrio);
+            }
+        }
+
+        function poblarDatalistCPs() {
+            const datalist = document.getElementById('lista-cps-oficiales');
+            if (!datalist) return;
+            datalist.innerHTML = '';
+
+            const cpsOrdenados = Object.keys(DICCIONARIO_CPS).sort();
+            cpsOrdenados.forEach(cp => {
+                const info = DICCIONARIO_CPS[cp];
+                const opt = document.createElement('option');
+                opt.value = cp;
+                const numBarrios = info.barrios.length;
+                opt.label = `${info.municipio} (${numBarrios > 1 ? numBarrios + ' zonas/barrios' : info.barrios[0] || 'Zona activa'})`;
+                datalist.appendChild(opt);
+            });
+        }
+
+        async function cargarMunicipiosDesdeDrive() {
+            construirDiccionarioYSelector();
+
+            if (!URL_CSV_MUNICIPIOS_DRIVE || URL_CSV_MUNICIPIOS_DRIVE.includes("TU_ID_PUBLICADO")) return;
+
+            try {
+                const res = await fetch(URL_CSV_MUNICIPIOS_DRIVE, { cache: "no-store" });
+                if (!res.ok) return;
+                const csvText = await res.text();
+                const filas = parsearCSV(csvText);
+
+                let contadorNuevos = 0;
+                for (let i = 1; i < filas.length; i++) {
+                    const col = filas[i];
+                    if (!col || col.length < 5) continue;
+
+                    const offset = (String(col[0] || "").trim() === "" && String(col[1] || "").trim() !== "") ? 1 : 0;
+                    let cp = String(col[offset] || "").trim().replace(/\D/g, "");
+                    if (cp.length === 4) cp = "0" + cp;
+
+                    let barrio = String(col[offset + 1] || "").trim();
+                    let poblacion = String(col[offset + 3] || "").trim();
+
+                    if (cp.length === 5 && poblacion) {
+                        agregarAlDiccionario(cp, poblacion, barrio);
+                        contadorNuevos++;
+                    }
+                }
+                if (contadorNuevos > 0) {
+                    poblarDatalistCPs();
+                }
+            } catch (err) {
+                console.warn("Usando base local integrada de 94 CPs.");
+            }
+        }
+
+        function parsearCSV(texto) {
+            const filas = [];
+            const lineas = texto.split(/\r?\n/);
+            for (let linea of lineas) {
+                if (!linea.trim()) continue;
+                const celdas = [];
+                let actual = "", enComillas = false;
+                for (let i = 0; i < linea.length; i++) {
+                    const char = linea[i];
+                    if (char === '"') enComillas = !enComillas;
+                    else if ((char === ',' || char === ';') && !enComillas) { celdas.push(actual); actual = ""; }
+                    else actual += char;
+                }
+                celdas.push(actual);
+                filas.push(celdas);
+            }
+            return filas;
+        }
+
+        function alEscribirCP(valor, prefijoId) {
+            const cpLimpio = String(valor || "").replace(/\D/g, "").slice(0, 5);
+            const inputCP = document.getElementById(`${prefijoId}-cp`);
+            const statusEl = document.getElementById(`${prefijoId}-cp-status`);
+            const inputZona = document.getElementById(`${prefijoId}-zona`);
+            const wrapperBarrio = document.getElementById(`${prefijoId}-barrio-wrapper`);
+            const selectBarrio = document.getElementById(`${prefijoId}-barrio`);
+            const inputIdCompuesto = document.getElementById(`${prefijoId}-id-cp-principal`);
+
+            if (inputCP) inputCP.value = cpLimpio;
+
+            if (cpLimpio.length < 5) {
+                statusEl.className = "cp-status-badge";
+                statusEl.innerText = "";
+                inputZona.value = "";
+                inputZona.readOnly = true;
+                inputZona.placeholder = "Se rellena con CP...";
+                wrapperBarrio.style.display = "none";
+                selectBarrio.required = false;
+                inputIdCompuesto.value = "";
+                return;
+            }
+
+            const infoCP = DICCIONARIO_CPS[cpLimpio];
+            if (infoCP) {
+                statusEl.className = "cp-status-badge presencial";
+                statusEl.innerHTML = `✅ <b>${infoCP.municipio} (${cpLimpio})</b> · Servicio Presencial y Advisor Asignado`;
+                inputZona.value = infoCP.municipio;
+                inputZona.readOnly = true;
+                selectBarrio.innerHTML = "";
+
+                if (infoCP.barrios.length > 1) {
+                    wrapperBarrio.style.display = "block";
+                    selectBarrio.required = true;
+                    selectBarrio.innerHTML = `<option value="">Selecciona tu Barrio / Zona en ${infoCP.municipio} (${infoCP.barrios.length} opciones)...</option>`;
+                    infoCP.barrios.forEach(b => {
+                        const opt = document.createElement("option");
+                        opt.value = b;
+                        opt.textContent = (b === "_otras zonas") ? "Resto del municipio / Otras zonas" : b;
+                        selectBarrio.appendChild(opt);
+                    });
+                    inputIdCompuesto.value = `${infoCP.municipio}-`;
+                } else if (infoCP.barrios.length === 1) {
+                    wrapperBarrio.style.display = "block";
+                    selectBarrio.required = true;
+                    const unicoBarrio = infoCP.barrios[0];
+                    selectBarrio.innerHTML = `<option value="${unicoBarrio}" selected>${unicoBarrio}</option>`;
+                    inputIdCompuesto.value = (unicoBarrio === "_otras zonas") ? `${infoCP.municipio}-` : `${infoCP.municipio}-${unicoBarrio}`;
+                } else {
+                    wrapperBarrio.style.display = "none";
+                    selectBarrio.required = false;
+                    inputIdCompuesto.value = `${infoCP.municipio}-`;
+                }
+            } else {
+                statusEl.className = "cp-status-badge central";
+                statusEl.innerHTML = `ℹ️ CP <b>${cpLimpio}</b> gestionado por Central Digital · Escribe tu población en la casilla derecha:`;
+                inputZona.value = "";
+                inputZona.readOnly = false;
+                inputZona.placeholder = "Escribe tu población...";
+                inputZona.focus();
+                wrapperBarrio.style.display = "none";
+                selectBarrio.required = false;
+                inputIdCompuesto.value = "";
+            }
+        }
+
+        function actualizarIdCompuesto(prefijoId) {
+            const municipio = document.getElementById(`${prefijoId}-zona`).value.trim();
+            const barrio = document.getElementById(`${prefijoId}-barrio`).value.trim();
+            document.getElementById(`${prefijoId}-id-cp-principal`).value = (barrio && barrio !== "_otras zonas") ? `${municipio}-${barrio}` : `${municipio}-`;
+        }
+
+        // ==========================================
+        // 2. BASE DE RESPALDO Y DICCIONARIO MULTIDIOMA
+        // ==========================================
         const COMPRADORES_REALES_BASE = [
             {
                 Cuarentena_ID: "COMP-V-0001",
@@ -483,7 +1051,7 @@
                 Capital_Aprobado_Acreditado: "Fondos Propios Acreditados",
                 "Presupuesto Maximo": 125000,
                 Zonas_Interes: "La Ràpita / Alcanar",
-                Tipo_Inmueble: "Piso o Adosado",
+                Tipo_Inmueble: "Piso",
                 "Requisito Clave": "Ascensor obligatorio",
                 Fecha_Alta: "Hace 1 día"
             },
@@ -493,8 +1061,8 @@
                 Estado_Verificacion: "Verificada",
                 Capital_Aprobado_Acreditado: "Hipoteca Preaprobada",
                 "Presupuesto Maximo": 210000,
-                Zonas_Interes: "Vinaròs / Les Cases",
-                Tipo_Inmueble: "Chalet independiente",
+                Zonas_Interes: "Vinaròs / Les Cases d'Alcanar",
+                Tipo_Inmueble: "Chalet",
                 "Requisito Clave": "Con parcela / jardín",
                 Fecha_Alta: "Hace 3 días"
             },
@@ -504,8 +1072,8 @@
                 Estado_Verificacion: "Verificado",
                 Capital_Aprobado_Acreditado: "Fondos Propios Acreditados",
                 "Presupuesto Maximo": 350000,
-                Zonas_Interes: "Sant Cugat / Terrassa",
-                Tipo_Inmueble: "Piso céntrico",
+                Zonas_Interes: "Sant Cugat del Vallès / Terrassa",
+                Tipo_Inmueble: "Piso",
                 "Requisito Clave": "Parking incluido",
                 Fecha_Alta: "Hace 5 días"
             }
@@ -513,76 +1081,92 @@
 
         const traducciones = {
             es: { 
-                nav_demanda: "🎯 Demanda Activa", nav_mercado_real: "📡 Mercado Real", header_title_da: "Consola PropTech · Reverse Market", unete_inversor: "Únete como Inversor / Comprador", 
-                unete_desc: "Verificamos tu presupuesto y te conseguimos propiedades fuera de mercado directo de particulares.", lbl_nombre: "Tu Nombre", plc_nombre: "Ej: Antonio G.", 
-                lbl_zonas_int: "Zona de Interés", lbl_presupuesto: "Presupuesto Máx. (€)", lbl_capital: "Solvencia / Capital", lbl_requisito: "Requisito Clave", plc_requisito: "Ej: Vistas al mar, Ascensor...", 
-                lbl_tel_oculto: "Teléfono Oculto (Conecta con Elena IA)", btn_solicitar_vip: "Solicitar Verificación VIP", comp_verificados: "Compradores Verificados", cargando_compradores: "📡 Cargando compradores verificados...",
-                badge_verificado: "✓ Verificado", modal_offer_title: "Ofrecer mi propiedad al Comprador", lbl_tipo: "Tipo de Inmueble", lbl_precio: "Precio de Venta Deseado (€)", lbl_fotos: "Subir Fotos (Máx. 4)", 
-                btn_enviar_oferta: "Enviar Propiedad al Comprador", lbl_condiciones_vip: "<b>Acepto las Condiciones y la Privacidad.</b> Autorizo el tratamiento de mis datos.", lbl_seguridad: "Anti-spam: ¿Cuánto es",
-                lbl_zona: "Zona / Población", lbl_hab: "Habitaciones", lbl_banos: "Baños", lbl_obs: "Descripción breve", lbl_tel: "Tu Teléfono", btn_tengo_buscas: "Tengo lo que buscas 🙋‍♂️"
+                nav_demanda: "🎯 Demanda Activa", nav_mercado_real: "📡 Mercado Real", nav_demanda_mob: "🎯 Demanda", nav_mercado_mob: "📡 Mercado", nav_gestion: "👥 Acceso a Usuarios", nav_chivatazo: "📣 Chivatazo Nacional", nav_equipos: "💼 Únete al Equipo de Advisors en tu Zona", nav_poblaciones_titulo: "📍 Servicios Presenciales en:", header_title_da: "Consola PropTech · Reverse Market", unete_inversor: "Únete como Inversor / Comprador", 
+                unete_desc: "Verificamos tu presupuesto y te conseguimos propiedades fuera de mercado directo de particulares.", lbl_nombre: "Tu Nombre *", plc_nombre: "Ej: Antonio G.", 
+                lbl_cp: "Código Postal *", lbl_zonas_int: "Zona de Interés *", lbl_barrio: "Barrio / Núcleo Urbano *", opt_sel: "Selecciona...", lbl_presupuesto: "Presupuesto Máx. (€)", lbl_capital: "Solvencia / Capital", lbl_requisito: "Requisito Clave", plc_requisito: "Ej: Vistas al mar, Ascensor...", 
+                lbl_tel_oculto: "Teléfono Oculto (Conecta con Elena IA)", btn_solicitar_vip: "Solicitar Verificación VIP", comp_verificados: "Compradores Verificados", en_directo: "Demanda Real", cargando_compradores: "📡 Cargando compradores verificados...",
+                badge_verificado: "✓ Verificado", modal_offer_title: "Ofrecer mi propiedad al Comprador", lbl_tipo: "Tipo de Inmueble *",
+                opt_apt: "Apartamento", opt_ado: "Casa Adosada", opt_cha: "Chalet", opt_cow: "CoWorking", opt_edi: "Edificios", opt_gar: "Garajes y Parkings", opt_loc: "Locales", opt_lof: "Loft", opt_nav: "Nave Industrial", opt_ofi: "Oficinas y Despachos", opt_piso: "Piso", opt_sag: "Suelo Agrícola", opt_sac: "Suelo Agrícola con Casa", opt_sin: "Suelo Industrial", opt_sur: "Suelo Urbanizable", opt_suu: "Suelo Urbano/Residencial", opt_terc: "Terciario", opt_otr: "Otros",
+                lbl_precio: "Precio Neto Propietario (€)", lbl_fotos: "Subir Fotos (Máx. 4)", lbl_fotos_warn: "⚠️ OBLIGATORIO: Solo interiores.<br>Cero fachadas o vistas a la calle.",
+                btn_enviar_oferta: "Enviar a Cuarentena y Vincular al Comprador", lbl_condiciones_vip: "<b>Acepto las Condiciones y la Privacidad.</b> Autorizo el tratamiento de mis datos.", lbl_seguridad: "Anti-spam: ¿Cuánto es",
+                lbl_zona: "Zona / Población *", lbl_hab: "Habitaciones", lbl_banos: "Baños", lbl_obs: "Descripción breve", lbl_tel: "Tu Teléfono (Propietario)", btn_tengo_buscas: "Tengo lo que buscas 🙋‍♂️"
             },
             ca: { 
-                nav_demanda: "🎯 Demanda Activa", nav_mercado_real: "📡 Mercat Real", header_title_da: "Consola PropTech · Reverse Market", unete_inversor: "Uneix-te com a Inversor / Comprador", 
-                unete_desc: "Verifiquem el teu pressupost i t'aconseguim propietats fora de mercat directe de particulars.", lbl_nombre: "El teu Nom", plc_nombre: "Ex: Antonio G.", 
-                lbl_zonas_int: "Zona d'Interès", lbl_presupuesto: "Pressupost Màx. (€)", lbl_capital: "Solvència / Capital", lbl_requisito: "Requisit Clau", plc_requisito: "Ex: Vistes al mar, Ascensor...", 
-                lbl_tel_oculto: "Telèfon Ocult (Connecta amb Elena IA)", btn_solicitar_vip: "Sol·licitar Verificació VIP", comp_verificados: "Compradors Verificats", cargando_compradores: "📡 Carregant compradors verificats...",
-                badge_verificado: "✓ Verificat", modal_offer_title: "Oferir la meva propietat", lbl_tipo: "Tipus d'Immoble", lbl_precio: "Preu de Venda Desitjat (€)", lbl_fotos: "Pujar Fotos (Màx. 4)", 
-                btn_enviar_oferta: "Enviar Propietat al Comprador", lbl_condiciones_vip: "<b>Accepto les Condicions i la Privacitat.</b> Autoritzo el tractament de les meves dades.", lbl_seguridad: "Anti-spam: Quant és",
-                lbl_zona: "Zona / Població", lbl_hab: "Habitacions", lbl_banos: "Banys", lbl_obs: "Descripció breu", lbl_tel: "El teu Telèfon", btn_tengo_buscas: "Tinc el que busques 🙋‍♂️"
+                nav_demanda: "🎯 Demanda Activa", nav_mercado_real: "📡 Mercat Real", nav_demanda_mob: "🎯 Demanda", nav_mercado_mob: "📡 Mercat", nav_gestion: "👥 Accés a Usuaris", nav_chivatazo: "📣 Chivatazo Nacional", nav_equipos: "💼 Uneix-te a l'Equip d'Advisors a la teva Zona", nav_poblaciones_titulo: "📍 Serveis Presencials a:", header_title_da: "Consola PropTech · Reverse Market", unete_inversor: "Uneix-te com a Inversor / Comprador", 
+                unete_desc: "Verifiquem el teu pressupost i t'aconseguim propietats fora de mercat directe de particulars.", lbl_nombre: "El teu Nom *", plc_nombre: "Ex: Antonio G.", 
+                lbl_cp: "Codi Postal *", lbl_zonas_int: "Zona d'Interès *", lbl_barrio: "Barri / Nucli Urbà *", opt_sel: "Selecciona...", lbl_presupuesto: "Pressupost Màx. (€)", lbl_capital: "Solvència / Capital", lbl_requisito: "Requisit Clau", plc_requisito: "Ex: Vistes al mar, Ascensor...", 
+                lbl_tel_oculto: "Telèfon Ocult (Connecta amb Elena IA)", btn_solicitar_vip: "Sol·licitar Verificació VIP", comp_verificados: "Compradors Verificats", en_directo: "Demanda Real", cargando_compradores: "📡 Carregant compradors verificats...",
+                badge_verificado: "✓ Verificat", modal_offer_title: "Oferir la meva propietat", lbl_tipo: "Tipus d'Immoble *",
+                opt_apt: "Apartament", opt_ado: "Casa Adossada", opt_cha: "Xalet", opt_cow: "CoWorking", opt_edi: "Edificis", opt_gar: "Garatges i Pàrquings", opt_loc: "Locals", opt_lof: "Loft", opt_nav: "Nau Industrial", opt_ofi: "Oficines i Despatxos", opt_piso: "Pis", opt_sag: "Sòl Agrícola", opt_sac: "Sòl Agrícola amb Casa", opt_sin: "Sòl Industrial", opt_sur: "Sòl Urbanitzable", opt_suu: "Sòl Urbà/Residencial", opt_terc: "Terciari", opt_otr: "Altres",
+                lbl_precio: "Preu Net Propietari (€)", lbl_fotos: "Pujar Fotos (Màx. 4)", lbl_fotos_warn: "⚠️ OBLIGATORI: Només interiors.",
+                btn_enviar_oferta: "Enviar a Quarantena i Vincular al Comprador", lbl_condiciones_vip: "<b>Accepto les Condicions i la Privacitat.</b> Autoritzo el tractament de les meves dades.", lbl_seguridad: "Anti-spam: Quant és",
+                lbl_zona: "Zona / Població *", lbl_hab: "Habitacions", lbl_banos: "Banys", lbl_obs: "Descripció breu", lbl_tel: "El teu Telèfon", btn_tengo_buscas: "Tinc el que busques 🙋‍♂️"
             },
             en: { 
-                nav_demanda: "🎯 Active Demand", nav_mercado_real: "📡 Real Market", header_title_da: "PropTech Console · Reverse Market", unete_inversor: "Join as an Investor / Buyer", 
-                unete_desc: "We verify your budget and find you off-market properties direct from owners.", lbl_nombre: "Your Name", plc_nombre: "E.g. Antonio G.", 
-                lbl_zonas_int: "Area of Interest", lbl_presupuesto: "Max Budget (€)", lbl_capital: "Solvency / Capital", lbl_requisito: "Key Requirement", plc_requisito: "E.g. Sea views, Elevator...", 
-                lbl_tel_oculto: "Hidden Phone", btn_solicitar_vip: "Request VIP Verification", comp_verificados: "Verified Buyers", cargando_compradores: "📡 Loading verified buyers...",
-                badge_verificado: "✓ Verified", modal_offer_title: "Offer my property", lbl_tipo: "Property Type", lbl_precio: "Desired Sale Price (€)", lbl_fotos: "Upload Photos (Max 4)", 
-                btn_enviar_oferta: "Send Property to Buyer", lbl_condiciones_vip: "<b>I accept the Terms and Privacy Policy.</b> I authorize the processing of my data.", lbl_seguridad: "Anti-spam: What is",
-                lbl_zona: "Area / City", lbl_hab: "Bedrooms", lbl_banos: "Bathrooms", lbl_obs: "Short description", lbl_tel: "Your Phone", btn_tengo_buscas: "I have what you're looking for 🙋‍♂️"
+                nav_demanda: "🎯 Active Demand", nav_mercado_real: "📡 Real Market", nav_demanda_mob: "🎯 Demand", nav_mercado_mob: "📡 Market", nav_gestion: "👥 User Access", nav_chivatazo: "📣 National Tip-off", nav_equipos: "💼 Join the Advisors Team", nav_poblaciones_titulo: "📍 In-Person Services in:", header_title_da: "PropTech Console · Reverse Market", unete_inversor: "Join as an Investor / Buyer", 
+                unete_desc: "We verify your budget and find you off-market properties direct from owners.", lbl_nombre: "Your Name *", plc_nombre: "E.g. Antonio G.", 
+                lbl_cp: "Postal Code *", lbl_zonas_int: "Area of Interest *", lbl_barrio: "Neighborhood *", opt_sel: "Select...", lbl_presupuesto: "Max Budget (€)", lbl_capital: "Solvency / Capital", lbl_requisito: "Key Requirement", plc_requisito: "E.g. Sea views, Elevator...", 
+                lbl_tel_oculto: "Hidden Phone", btn_solicitar_vip: "Request VIP Verification", comp_verificados: "Verified Buyers", en_directo: "Live Demand", cargando_compradores: "📡 Loading verified buyers...",
+                badge_verificado: "✓ Verified", modal_offer_title: "Offer my property", lbl_tipo: "Property Type *",
+                opt_apt: "Apartment", opt_ado: "Townhouse", opt_cha: "Villa / Chalet", opt_cow: "CoWorking", opt_edi: "Buildings", opt_gar: "Garages & Parking", opt_loc: "Commercial Premises", opt_lof: "Loft", opt_nav: "Industrial Warehouse", opt_ofi: "Offices", opt_piso: "Flat", opt_sag: "Agricultural Land", opt_sac: "Agricultural Land with House", opt_sin: "Industrial Land", opt_sur: "Developable Land", opt_suu: "Urban/Residential Land", opt_terc: "Tertiary", opt_otr: "Others",
+                lbl_precio: "Owner Net Price (€)", lbl_fotos: "Upload Photos (Max 4)", lbl_fotos_warn: "⚠️ MANDATORY: Only interiors.",
+                btn_enviar_oferta: "Send to Quarantine & Link to Buyer", lbl_condiciones_vip: "<b>I accept the Terms and Privacy Policy.</b> I authorize the processing of my data.", lbl_seguridad: "Anti-spam: What is",
+                lbl_zona: "Area / City *", lbl_hab: "Bedrooms", lbl_banos: "Bathrooms", lbl_obs: "Short description", lbl_tel: "Your Phone", btn_tengo_buscas: "I have what you're looking for 🙋‍♂️"
             },
             fr: { 
-                nav_demanda: "🎯 Demande Active", nav_mercado_real: "📡 Marché Réel", header_title_da: "Console PropTech · Reverse Market", unete_inversor: "Rejoignez en tant qu'Investisseur", 
-                unete_desc: "Nous vérifions votre budget et vous trouvons des biens hors marché directement auprès des propriétaires.", lbl_nombre: "Votre Nom", plc_nombre: "Ex. Antonio G.", 
-                lbl_zonas_int: "Zone d'Intérêt", lbl_presupuesto: "Budget Max (€)", lbl_capital: "Solvabilité / Capital", lbl_requisito: "Exigence Clé", plc_requisito: "Ex. Vue mer, Ascenseur...", 
-                lbl_tel_oculto: "Téléphone Masqué", btn_solicitar_vip: "Demander Vérification VIP", comp_verificados: "Acheteurs Vérifiés", cargando_compradores: "📡 Chargement des acheteurs...",
-                badge_verificado: "✓ Vérifié", modal_offer_title: "Offrir ma propriété", lbl_tipo: "Type de Propriété", lbl_precio: "Prix de Vente Souhaité (€)", lbl_fotos: "Télécharger Photos (Max 4)", 
-                btn_enviar_oferta: "Envoyer pour examen", lbl_condiciones_vip: "<b>J'accepte les Conditions et la Confidentialité.</b> J'autorise le traitement de mes données.", lbl_seguridad: "Anti-spam: Combien font",
-                lbl_zona: "Zone / Ville", lbl_hab: "Chambres", lbl_banos: "Salles de bain", lbl_obs: "Brève description", lbl_tel: "Votre Téléphone", btn_tengo_buscas: "J'ai ce que vous cherchez 🙋‍♂️"
+                nav_demanda: "🎯 Demande Active", nav_mercado_real: "📡 Marché Réel", nav_demanda_mob: "🎯 Demande", nav_mercado_mob: "📡 Marché", nav_gestion: "👥 Accès Utilisateurs", nav_chivatazo: "📣 Info Nationale", nav_equipos: "💼 Rejoignez l'équipe des Conseillers", nav_poblaciones_titulo: "📍 Services en personne à:", header_title_da: "Console PropTech · Reverse Market", unete_inversor: "Rejoignez en tant qu'Investisseur", 
+                unete_desc: "Nous vérifions votre budget et vous trouvons des biens hors marché directement auprès des propriétaires.", lbl_nombre: "Votre Nom *", plc_nombre: "Ex. Antonio G.", 
+                lbl_cp: "Code Postal *", lbl_zonas_int: "Zone d'Intérêt *", lbl_barrio: "Quartier *", opt_sel: "Sélectionnez...", lbl_presupuesto: "Budget Max (€)", lbl_capital: "Solvabilité / Capital", lbl_requisito: "Exigence Clé", plc_requisito: "Ex. Vue mer, Ascenseur...", 
+                lbl_tel_oculto: "Téléphone Masqué", btn_solicitar_vip: "Demander Vérification VIP", comp_verificados: "Acheteurs Vérifiés", en_directo: "Demande Réelle", cargando_compradores: "📡 Chargement des acheteurs...",
+                badge_verificado: "✓ Vérifié", modal_offer_title: "Offrir ma propriété", lbl_tipo: "Type de Propriété *",
+                opt_apt: "Appartement", opt_ado: "Maison mitoyenne", opt_cha: "Villa / Chalet", opt_cow: "CoWorking", opt_edi: "Immeubles", opt_gar: "Garages et Parkings", opt_loc: "Locaux commerciaux", opt_lof: "Loft", opt_nav: "Entrepôt industriel", opt_ofi: "Bureaux", opt_piso: "Appartement / Étage", opt_sag: "Terrain Agricole", opt_sac: "Terrain Agricole avec Maison", opt_sin: "Terrain Industriel", opt_sur: "Terrain Constructible", opt_suu: "Terrain Urbain/Résidentiel", opt_terc: "Tertiaire", opt_otr: "Autres",
+                lbl_precio: "Prix Net Propriétaire (€)", lbl_fotos: "Télécharger Photos (Max 4)", lbl_fotos_warn: "⚠️ OBLIGATOIRE: Uniquement à l'intérieur.",
+                btn_enviar_oferta: "Envoyer en Quarantaine", lbl_condiciones_vip: "<b>J'accepte les Conditions et la Confidentialité.</b> J'autorise le traitement de mes données.", lbl_seguridad: "Anti-spam: Combien font",
+                lbl_zona: "Zone / Ville *", lbl_hab: "Chambres", lbl_banos: "Salles de bain", lbl_obs: "Brève description", lbl_tel: "Votre Téléphone", btn_tengo_buscas: "J'ai ce que vous cherchez 🙋‍♂️"
             },
             de: { 
-                nav_demanda: "🎯 Aktive Nachfrage", nav_mercado_real: "📡 Echter Markt", header_title_da: "PropTech Konsole · Reverse Market", unete_inversor: "Als Investor beitreten", 
-                unete_desc: "Wir prüfen Ihr Budget und finden für Sie Off-Market-Immobilien direkt vom Eigentümer.", lbl_nombre: "Ihr Name", plc_nombre: "z.B. Antonio G.", 
-                lbl_zonas_int: "Interessengebiet", lbl_presupuesto: "Max. Budget (€)", lbl_capital: "Bonität / Kapital", lbl_requisito: "Hauptanforderung", plc_requisito: "z.B. Meerblick, Aufzug...", 
-                lbl_tel_oculto: "Verstecktes Telefon", btn_solicitar_vip: "VIP-Verifizierung anfordern", comp_verificados: "Verifizierte Käufer", cargando_compradores: "📡 Verifizierte Käufer werden geladen...",
-                badge_verificado: "✓ Verifiziert", modal_offer_title: "Meine Immobilie anbieten", lbl_tipo: "Immobilientyp", lbl_precio: "Gewünschter Verkaufspreis (€)", lbl_fotos: "Fotos hochladen (Max 4)", 
+                nav_demanda: "🎯 Aktive Nachfrage", nav_mercado_real: "📡 Echter Markt", nav_demanda_mob: "🎯 Nachfrage", nav_mercado_mob: "📡 Markt", nav_gestion: "👥 Benutzerzugang", nav_chivatazo: "📣 Nationaler Tipp", nav_equipos: "💼 Treten Sie dem Beraterteam bei", nav_poblaciones_titulo: "📍 Persönliche Dienstleistungen in:", header_title_da: "PropTech Konsole · Reverse Market", unete_inversor: "Als Investor beitreten", 
+                unete_desc: "Wir prüfen Ihr Budget und finden für Sie Off-Market-Immobilien direkt vom Eigentümer.", lbl_nombre: "Ihr Name *", plc_nombre: "z.B. Antonio G.", 
+                lbl_cp: "Postleitzahl *", lbl_zonas_int: "Interessengebiet *", lbl_barrio: "Stadtteil *", opt_sel: "Wählen...", lbl_presupuesto: "Max. Budget (€)", lbl_capital: "Bonität / Kapital", lbl_requisito: "Hauptanforderung", plc_requisito: "z.B. Meerblick, Aufzug...", 
+                lbl_tel_oculto: "Verstecktes Telefon", btn_solicitar_vip: "VIP-Verifizierung anfordern", comp_verificados: "Verifizierte Käufer", en_directo: "Live-Nachfrage", cargando_compradores: "📡 Verifizierte Käufer werden geladen...",
+                badge_verificado: "✓ Verifiziert", modal_offer_title: "Meine Immobilie anbieten", lbl_tipo: "Immobilienart *",
+                opt_apt: "Apartment", opt_ado: "Reihenhaus", opt_cha: "Villa / Chalet", opt_cow: "CoWorking", opt_edi: "Gebäude", opt_gar: "Garagen & Parkplätze", opt_loc: "Gewerberäume", opt_lof: "Loft", opt_nav: "Industriehalle", opt_ofi: "Büros", opt_piso: "Wohnung", opt_sag: "Agrarland", opt_sac: "Agrarland mit Haus", opt_sin: "Industriegelände", opt_sur: "Bauland", opt_suu: "Städtisches Wohnbauland", opt_terc: "Tertiär", opt_otr: "Andere",
+                lbl_precio: "Nettopreis Eigentümer (€)", lbl_fotos: "Fotos hochladen (Max 4)", lbl_fotos_warn: "⚠️ PFLICHT: Nur Innenräume.",
                 btn_enviar_oferta: "Zur Überprüfung senden", lbl_condiciones_vip: "<b>Ich akzeptiere die Bedingungen und den Datenschutz.</b> Ich stimme der Verarbeitung meiner Daten zu.", lbl_seguridad: "Anti-spam: Was ist",
-                lbl_zona: "Gebiet / Stadt", lbl_hab: "Schlafzimmer", lbl_banos: "Badezimmer", lbl_obs: "Kurze Beschreibung", lbl_tel: "Ihre Telefonnummer", btn_tengo_buscas: "Ich habe, was Sie suchen 🙋‍♂️"
+                lbl_zona: "Gebiet / Stadt *", lbl_hab: "Schlafzimmer", lbl_banos: "Badezimmer", lbl_obs: "Kurze Beschreibung", lbl_tel: "Ihre Telefonnummer", btn_tengo_buscas: "Ich habe, was Sie suchen 🙋‍♂️"
             },
             it: { 
-                nav_demanda: "🎯 Domanda Attiva", nav_mercado_real: "📡 Mercato Reale", header_title_da: "Console PropTech · Reverse Market", unete_inversor: "Unisciti come Investitore", 
-                unete_desc: "Verifichiamo il tuo budget e ti troviamo proprietà fuori mercato direttamente dai proprietari.", lbl_nombre: "Il tuo Nome", plc_nombre: "Es. Antonio G.", 
-                lbl_zonas_int: "Zona di Interesse", lbl_presupuesto: "Budget Max (€)", lbl_capital: "Solvibilità / Capitale", lbl_requisito: "Requisito Chiave", plc_requisito: "Es. Vista mare, Ascensore...", 
-                lbl_tel_oculto: "Telefono Nascosto", btn_solicitar_vip: "Richiedi Verifica VIP", comp_verificados: "Acquirenti Verificati", cargando_compradores: "📡 Caricamento acquirenti verificati...",
-                badge_verificado: "✓ Verificato", modal_offer_title: "Offri la mia proprietà", lbl_tipo: "Tipo di Immobile", lbl_precio: "Prezzo di Vendita Desiderato (€)", lbl_fotos: "Carica Foto (Max 4)", 
-                btn_enviar_oferta: "Invia per la revisione", lbl_condiciones_vip: "<b>Accetto le Condizioni e la Privacy.</b> Autorizzo il trattamento dei miei dati.", lbl_seguridad: "Anti-spam: Quanto fa",
-                lbl_zona: "Zona / Città", lbl_hab: "Camere", lbl_banos: "Bagni", lbl_obs: "Breve descrizione", lbl_tel: "Il tuo Telefono", btn_tengo_buscas: "Ho quello che cerchi 🙋‍♂️"
+                nav_demanda: "🎯 Domanda Attiva", nav_mercado_real: "📡 Mercato Reale", nav_demanda_mob: "🎯 Domanda", nav_mercado_mob: "📡 Mercato", nav_gestion: "👥 Accesso Utenti", nav_chivatazo: "📣 Soffiata Nazionale", nav_equipos: "💼 Unisciti al Team dei Consulenti", nav_poblaciones_titulo: "📍 Servizi di persona a:", header_title_da: "Console PropTech · Reverse Market", unete_inversor: "Unisciti come Investitore", 
+                unete_desc: "Verifichiamo il tuo budget e ti troviamo proprietà fuori mercato direttamente dai proprietari.", lbl_nombre: "Il tuo Nome *", plc_nombre: "Es. Antonio G.", 
+                lbl_cp: "Codice Postale *", lbl_zonas_int: "Zona di Interesse *", lbl_barrio: "Quartiere *", opt_sel: "Seleziona...", lbl_presupuesto: "Budget Max (€)", lbl_capital: "Solvibilità / Capitale", lbl_requisito: "Requisito Chiave", plc_requisito: "Es. Vista mare, Ascensore...", 
+                lbl_tel_oculto: "Telefono Nascosto", btn_solicitar_vip: "Richiedi Verifica VIP", comp_verificados: "Acquirenti Verificati", en_directo: "Domanda Reale", cargando_compradores: "📡 Caricamento acquirenti verificati...",
+                badge_verificado: "✓ Verificato", modal_offer_title: "Offri la mia proprietà", lbl_tipo: "Tipo di Immobile *",
+                opt_apt: "Monolocale / Appartamento", opt_ado: "Villetta a schiera", opt_cha: "Villa / Chalet", opt_cow: "CoWorking", opt_edi: "Edifici", opt_gar: "Garage e Parcheggi", opt_loc: "Locali commerciali", opt_lof: "Loft", opt_nav: "Capannone Industriale", opt_ofi: "Uffici", opt_piso: "Appartamento", opt_sag: "Terreno Agricolo", opt_sac: "Terreno Agricolo con Casa", opt_sin: "Terreno Industriale", opt_sur: "Terreno Edificabile", opt_suu: "Terreno Urbano/Residenziale", opt_terc: "Terziario", opt_otr: "Altri",
+                lbl_precio: "Prezzo Netto Proprietario (€)", lbl_fotos: "Carica Foto (Max 4)", lbl_fotos_warn: "⚠️ OBBLIGATORIO: Solo interni.",
+                btn_enviar_oferta: "Invia in Quarantena", lbl_condiciones_vip: "<b>Accetto le Condizioni e la Privacy.</b> Autorizzo il trattamento dei miei dati.", lbl_seguridad: "Anti-spam: Quanto fa",
+                lbl_zona: "Zona / Città *", lbl_hab: "Camere", lbl_banos: "Bagni", lbl_obs: "Breve descrizione", lbl_tel: "Il tuo Telefono", btn_tengo_buscas: "Ho quello che cerchi 🙋‍♂️"
             },
             ar: { 
-                nav_demanda: "🎯 الطلب النشط", nav_mercado_real: "📡 السوق الحقيقي", header_title_da: "وحدة تحكم التكنولوجيا العقارية", unete_inversor: "انضم كمستثمر", 
-                unete_desc: "نتحقق من ميزانيتك ونوفر لك عقارات خارج السوق مباشرة من المالكين.", lbl_nombre: "اسمك", plc_nombre: "مثال: أنطونيو ج.", 
-                lbl_zonas_int: "مناطق الاهتمام", lbl_presupuesto: "الميزانية القصوى (€)", lbl_capital: "الملاءة المالية", lbl_requisito: "المتطلب الرئيسي", plc_requisito: "مثال: إطلالة على البحر، مصعد...", 
-                lbl_tel_oculto: "هاتف مخفي", btn_solicitar_vip: "طلب التحقق VIP", comp_verificados: "مشترون مؤكدون", cargando_compradores: "📡 جاري تحميل المشترين المؤكدين...",
-                badge_verificado: "✓ مؤكد", modal_offer_title: "اعرض عقاري", lbl_tipo: "نوع العقار", lbl_precio: "سعر البيع المطلوب (€)", lbl_fotos: "رفع الصور (بحد أقصى 4)", 
+                nav_demanda: "🎯 الطلب النشط", nav_mercado_real: "📡 السوق الحقيقي", nav_demanda_mob: "🎯 الطلب", nav_mercado_mob: "📡 السوق", nav_gestion: "👥 وصول المستخدمين", nav_chivatazo: "📣 نصيحة وطنية", nav_equipos: "💼 انضم إلى فريق المستشارين", nav_poblaciones_titulo: "📍 الخدمات الشخصية في:", header_title_da: "وحدة تحكم التكنولوجيا العقارية", unete_inversor: "انضم كمستثمر", 
+                unete_desc: "نتحقق من ميزانيتك ونوفر لك عقارات خارج السوق مباشرة من المالكين.", lbl_nombre: "اسمك *", plc_nombre: "مثال: أنطونيو ج.", 
+                lbl_cp: "الرمز البريدي *", lbl_zonas_int: "مناطق الاهتمام *", lbl_barrio: "الحي *", opt_sel: "اختر...", lbl_presupuesto: "الميزانية القصوى (€)", lbl_capital: "الملاءة المالية", lbl_requisito: "المتطلب الرئيسي", plc_requisito: "مثال: إطلالة على البحر، مصعد...", 
+                lbl_tel_oculto: "هاتف مخفي", btn_solicitar_vip: "طلب التحقق VIP", comp_verificados: "مشترون مؤكدون", en_directo: "طلب حقيقي", cargando_compradores: "📡 جاري تحميل المشترين المؤكدين...",
+                badge_verificado: "✓ مؤكد", modal_offer_title: "اعرض عقاري", lbl_tipo: "نوع العقار *",
+                opt_apt: "شقة", opt_ado: "منزل متلاصق", opt_cha: "فيلا / شاليه", opt_cow: "مساحة عمل مشتركة", opt_edi: "مباني", opt_gar: "مرائب ومواقف سيارات", opt_loc: "محلات تجارية", opt_lof: "لوفت", opt_nav: "مستودع صناعي", opt_ofi: "مكاتب", opt_piso: "شقة سكنية", opt_sag: "أرض زراعية", opt_sac: "أرض زراعية مع منزل", opt_sin: "أرض صناعية", opt_sur: "أرض قابلة للتطوير", opt_suu: "أرض حضرية / سكنية", opt_terc: "خدمي / تجاري", opt_otr: "أخرى",
+                lbl_precio: "السعر الصافي للمالك (€)", lbl_fotos: "رفع الصور (بحد أقصى 4)", lbl_fotos_warn: "⚠️ إلزامي: التصميم الداخلي فقط.",
                 btn_enviar_oferta: "إرسال للمراجعة", lbl_condiciones_vip: "<b>أوافق على الشروط والخصوصية.</b> أوافق على معالجة بياناتي.", lbl_seguridad: "مكافحة الرسائل المزعجة: كم هو الناتج",
-                lbl_zona: "المنطقة / المدينة", lbl_hab: "غرف النوم", lbl_banos: "الحمامات", lbl_obs: "وصف قصير", lbl_tel: "هاتفك", btn_tengo_buscas: "لدي ما تبحث عنه 🙋‍♂️"
+                lbl_zona: "المنطقة / المدينة *", lbl_hab: "غرف النوم", lbl_banos: "الحمامات", lbl_obs: "وصف قصير", lbl_tel: "هاتفك", btn_tengo_buscas: "لدي ما تبحث عنه 🙋‍♂️"
             },
             zh: { 
-                nav_demanda: "🎯 活跃需求", nav_mercado_real: "📡 真实市场", header_title_da: "房产科技控制台 · 真实市场", unete_inversor: "作为投资者加入", 
-                unete_desc: "我们核实您的预算，为您直接从业主处获取场外优质房源。", lbl_nombre: "您的姓名", plc_nombre: "例如：安东尼奥 G.", 
-                lbl_zonas_int: "感兴趣的区域", lbl_presupuesto: "最高预算 (€)", lbl_capital: "资金证明", lbl_requisito: "关键要求", plc_requisito: "例如：海景、电梯...", 
-                lbl_tel_oculto: "隐藏电话", btn_solicitar_vip: "申请 VIP 验证", comp_verificados: "已验证买家", cargando_compradores: "📡 正在加载已验证买家...",
-                badge_verificado: "✓ 已验证", modal_offer_title: "出售我的房产", lbl_tipo: "房产类型", lbl_precio: "期望售价 (€)", lbl_fotos: "上传照片 (最多4张)", 
-                btn_enviar_oferta: "提交审核", lbl_condiciones_vip: "<b>我接受条款和隐私政策。</b> 我授权处理我的数据。", lbl_seguridad: "防垃圾验证：多少是",
-                lbl_zona: "区域/城市", lbl_hab: "卧室", lbl_banos: "浴室", lbl_obs: "简短描述", lbl_tel: "您的电话", btn_tengo_buscas: "我有您要找的房源 🙋‍♂️"
+                nav_demanda: "🎯 活跃需求", nav_mercado_real: "📡 真实市场", nav_demanda_mob: "🎯 需求", nav_mercado_mob: "📡 市场", nav_gestion: "👥 用户访问", nav_chivatazo: "📣 全国提示", nav_equipos: "💼 加入顾问团队", nav_poblaciones_titulo: "📍 面对面服务：", header_title_da: "房产科技控制台 · 真实市场", unete_inversor: "作为投资者加入", 
+                unete_desc: "我们核实您的预算，为您直接从业主处获取场外优质房源。", lbl_nombre: "您的姓名 *", plc_nombre: "例如：安东尼奥 G.", 
+                lbl_cp: "邮政编码 *", lbl_zonas_int: "感兴趣的区域 *", lbl_barrio: "街区 *", opt_sel: "选择...", lbl_presupuesto: "最高预算 (€)", lbl_capital: "资金证明", lbl_requisito: "关键要求", plc_requisito: "例如：海景、电梯...", 
+                lbl_tel_oculto: "隐藏电话", btn_solicitar_vip: "申请 VIP 验证", comp_verificados: "已验证买家", en_directo: "实时需求", cargando_compradores: "📡 正在加载已验证买家...",
+                badge_verificado: "✓ 已验证", modal_offer_title: "出售我的房产", lbl_tipo: "房产类型 *",
+                opt_apt: "公寓 (Apartamento)", opt_ado: "联排别墅", opt_cha: "独立别墅 (Chalet)", opt_cow: "共享办公", opt_edi: "整栋建筑", opt_gar: "车库和停车位", opt_loc: "商铺", opt_lof: "Loft公寓", opt_nav: "工业厂房", opt_ofi: "办公室", opt_piso: "住宅套房 (Piso)", opt_sag: "农业用地", opt_sac: "带房农业用地", opt_sin: "工业用地", opt_sur: "可开发土地", opt_suu: "城市/住宅用地", opt_terc: "第三产业用地", opt_otr: "其他",
+                lbl_precio: "业主净价 (€)", lbl_fotos: "上传照片 (最多4张)", lbl_fotos_warn: "⚠️ 必填：仅限室内。",
+                btn_enviar_oferta: "提交至隔离区审核", lbl_condiciones_vip: "<b>我接受条款和隐私政策。</b> 我授权处理我的数据。", lbl_seguridad: "防垃圾验证：多少是",
+                lbl_zona: "区域/城市 *", lbl_hab: "卧室", lbl_banos: "浴室", lbl_obs: "简短描述", lbl_tel: "您的电话", btn_tengo_buscas: "我有您要找的房源 🙋‍♂️"
             }
         };
 
@@ -590,6 +1174,12 @@
         let sessionId = 'usr_' + Math.random().toString(36).substr(2, 9);
         let clienteIP = "Desconocida";
         fetch('https://api.ipify.org?format=json').then(r => r.json()).then(data => { clienteIP = data.ip; }).catch(() => {});
+
+        function updateClock() {
+            const now = new Date();
+            const clk = document.getElementById('live-clock');
+            if(clk) clk.innerText = `${String(now.getDate()).padStart(2, '0')}/${String(now.getMonth() + 1).padStart(2, '0')}/${now.getFullYear()} | ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+        }
 
         function generarSumaSeguridad() {
             const num1 = Math.floor(Math.random() * 10) + 1;
@@ -609,7 +1199,38 @@
             });
         }
 
+        const TIPOS_SIN_HABITACIONES = new Set([
+            "CoWorking", "Garajes y Parkings", "Locales", "Nave Industrial",
+            "Oficinas y Despachos", "Suelo Agrícola", "Suelo Industrial",
+            "Suelo Urbanizable", "Suelo Urbano/Residencial", "Terciario"
+        ]);
+
+        function configurarOcultacionHabitaciones(idSelectTipo, idBloque, idHab, idBanos) {
+            const selectEl = document.getElementById(idSelectTipo);
+            const bloqueEl = document.getElementById(idBloque);
+            const habEl = document.getElementById(idHab);
+            const banosEl = document.getElementById(idBanos);
+            if (!selectEl || !bloqueEl) return;
+
+            selectEl.addEventListener('change', function() {
+                if (TIPOS_SIN_HABITACIONES.has(this.value)) {
+                    bloqueEl.style.display = 'none';
+                    habEl.value = "0";
+                    banosEl.value = "0";
+                    habEl.removeAttribute('required');
+                    banosEl.removeAttribute('required');
+                } else {
+                    bloqueEl.style.display = 'grid';
+                    habEl.setAttribute('required', 'true');
+                    banosEl.setAttribute('required', 'true');
+                }
+            });
+        }
+
         window.addEventListener('DOMContentLoaded', () => {
+            cargarMunicipiosDesdeDrive();
+            setInterval(updateClock, 1000);
+            updateClock();
             document.getElementById('year-copy').innerText = new Date().getFullYear();
             cambiarIdioma(); 
             generarSumaSeguridad();
@@ -617,6 +1238,8 @@
                 cambiarIdioma();
                 cargarCompradoresVerificados();
             });
+            configurarOcultacionHabitaciones('inv-tipo', 'inv-bloque-caracteristicas', 'inv-hab', 'inv-banos');
+            configurarOcultacionHabitaciones('offer-tipo', 'offer-bloque-caracteristicas', 'offer-hab', 'offer-banos');
             cargarCompradoresVerificados();
         });
 
@@ -646,12 +1269,15 @@
                         const paqueteDatos = JSON.parse(textoLimpio);
                         const extraidos = paqueteDatos.data ? paqueteDatos.data.items : (paqueteDatos.items || (Array.isArray(paqueteDatos) ? paqueteDatos : []));
                         if (Array.isArray(extraidos) && extraidos.length > 0) {
-                            listaCompradores = extraidos;
+                            listaCompradores = extraidos.filter(item => {
+                                const d = item.fields || item;
+                                return Boolean(d.Cuarentena_ID || d.Presupuesto_Maximo || d["Presupuesto Maximo"]);
+                            });
                         }
                     }
                 }
             } catch (e) {
-                console.warn("Aviso: Usando base de respaldo local de compradores verificados.");
+                console.warn("Usando base de respaldo local de compradores.");
             }
 
             if (listaCompradores.length === 0) {
@@ -697,6 +1323,9 @@
             });
         }
 
+        // ==========================================
+        // 3. ENVÍO DE ALTA DE INVERSOR / COMPRADOR VIP
+        // ==========================================
         document.getElementById('form-alta-inversor').addEventListener('submit', function(e) {
             e.preventDefault();
             const userAnswer = parseInt(document.getElementById('inv-math').value);
@@ -716,6 +1345,12 @@
             const prefijoInv = document.getElementById('inv-prefijo').value.trim();
             const numInv = document.getElementById('inv-tel').value.replace(/\D/g, '');
             const telefonoCompleto = prefijoInv + numInv;
+
+            const cpInv = document.getElementById('inv-cp').value.trim();
+            const zonaInv = document.getElementById('inv-zona').value.trim();
+            const barrioInv = document.getElementById('inv-barrio').value || "";
+            const idCpPrincipalInv = document.getElementById('inv-id-cp-principal').value || `${zonaInv}-`;
+            const zonaCompletaInteres = (barrioInv && barrioInv !== "_otras zonas") ? `${zonaInv} (${barrioInv})` : zonaInv;
 
             const urlParams = new URLSearchParams(window.location.search);
             const utm_source = urlParams.get('utm_source') || "";
@@ -739,12 +1374,18 @@
                     acepto_legal: document.getElementById('inv-legal').checked
                 },
                 datos_demanda_inversion: {
-                    zonas_interes: document.getElementById('inv-zonas').value,
+                    codigo_postal: cpInv,
+                    poblacion: zonaInv,
+                    barrio: barrioInv,
+                    id_cp_principal: idCpPrincipalInv,
+                    zonas_interes: zonaCompletaInteres,
                     tipo_inmueble: document.getElementById('inv-tipo').value,
+                    presupuesto_requisitos: document.getElementById('inv-presupuesto').value,
                     presupuesto_maximo: parseInt(document.getElementById('inv-presupuesto').value, 10) || 0,
                     capital_aprobado_acreditado: document.getElementById('inv-capital').value,
                     habitaciones_min: parseInt(document.getElementById('inv-hab').value, 10) || 0,
                     banos_min: parseInt(document.getElementById('inv-banos').value, 10) || 0,
+                    informacion_solicitada: document.getElementById('inv-requisito').value.trim(),
                     requisito_clave: document.getElementById('inv-requisito').value.trim(),
                     estado_verificacion: "En revisión",
                     estado_moderacion: "Cuarentena"
@@ -757,15 +1398,22 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payloadMaestro)
             }).then(() => {
-                alert("¡Solicitud enviada con éxito! Nuestro equipo PropTech y Elena IA validarán tu solvencia para publicarte en el muro.");
+                alert("¡Solicitud enviada con éxito! Nuestro equipo PropTech y el Advisor de la zona validarán tu perfil.");
                 this.reset();
                 document.getElementById('inv-prefijo').value = "+34";
+                const statusEl = document.getElementById('inv-cp-status');
+                statusEl.className = "cp-status-badge";
+                statusEl.innerText = "";
+                document.getElementById('inv-barrio-wrapper').style.display = "none";
                 generarSumaSeguridad();
                 btn.innerHTML = originalText;
                 btn.style.opacity = "1";
             }).catch(err => console.error("Error al enviar a Make:", err));
         });
 
+        // ==========================================
+        // 4. MODAL Y ENVÍO DE "TENGO LO QUE BUSCAS" (ALTA EN CUARENTENA + FOTOS)
+        // ==========================================
         let compradorIdActual = "";
         let compradorNombreActual = ""; 
 
@@ -774,16 +1422,25 @@
             compradorNombreActual = nombreComprador;
             const lang = document.getElementById('language-selector').value;
             const text = lang === 'es'
-                ? `Estás ofreciendo tu propiedad para el expediente ${cuarentenaId} (${nombreComprador}). Los datos pasarán a revisión.`
-                : `You are offering your property for file ${cuarentenaId} (${nombreComprador}). The data will go to review.`;
+                ? `Estás ofreciendo tu propiedad para el comprador ${nombreComprador} (${cuarentenaId}). Se avisará a los Verificadores y al Advisor de tu Código Postal.`
+                : `You are offering your property for buyer ${nombreComprador} (${cuarentenaId}). The data will go to review.`;
             document.getElementById('offer-text').innerText = text;
             openModal('modal-offer');
         }
 
         const offerPrecioInput = document.getElementById('offer-precio');
+        const offerHonorariosHint = document.getElementById('offer-honorarios-hint');
         offerPrecioInput.addEventListener('input', function(e) {
             let val = e.target.value.replace(/\D/g, ''); 
-            e.target.value = val ? parseInt(val, 10).toLocaleString('es-ES') + ' €' : '';
+            if (val) {
+                const neto = parseInt(val, 10);
+                const pvpFinal = neto + HONORARIOS_BRUTOS_MIN;
+                e.target.value = neto.toLocaleString('es-ES') + ' €';
+                offerHonorariosHint.innerHTML = `✅ Precio Venta Público (PVP): <strong>${pvpFinal.toLocaleString('es-ES')} €</strong> (Incluye 7.260 € de honorarios IVA incl.)`;
+            } else {
+                e.target.value = '';
+                offerHonorariosHint.innerHTML = `* En la ficha se sumarán automáticamente los honorarios mínimos (6.000 € + IVA = 7.260 €).`;
+            }
         });
 
         const offerFileInput = document.getElementById('offer-fotos');
@@ -803,7 +1460,7 @@
                 img.src = imgUrl; img.className = 'preview-thumb'; 
                 previewContainer.appendChild(img);
             }
-            if (rawOfferFiles.length > 0) { fileCounter.innerText = `✅ ${rawOfferFiles.length} archivo(s)`; fileCounter.style.display = 'block'; }
+            if (rawOfferFiles.length > 0) { fileCounter.innerText = `✅ ${rawOfferFiles.length}/4 foto(s) lista(s)`; fileCounter.style.display = 'block'; }
         });
 
         document.getElementById('form-offer').addEventListener('submit', function(e) {
@@ -812,9 +1469,13 @@
             const originalText = btn.innerHTML;
             btn.innerText = "Procesando...";
             btn.style.opacity = "0.7";
+            btn.disabled = true;
             const lang = document.getElementById('language-selector').value;
 
             try {
+                const now = new Date();
+                const refProvisional = `REF${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}${Math.floor(10000 + Math.random() * 90000)}`;
+
                 const urlParams = new URLSearchParams(window.location.search);
                 const utm_source = urlParams.get('utm_source') || "";
                 const utm_medium = urlParams.get('utm_medium') || "";
@@ -824,7 +1485,20 @@
                 const numOffer = document.getElementById('offer-tel').value.replace(/\D/g, '');
                 const telefonoCompletoOffer = prefijoOffer + numOffer;
 
+                const cpOffer = document.getElementById('offer-cp').value.trim();
+                const zonaOffer = document.getElementById('offer-zona').value.trim();
+                const barrioOffer = document.getElementById('offer-barrio').value || "";
+                const idCpPrincipalOffer = document.getElementById('offer-id-cp-principal').value || `${zonaOffer}-`;
+                const tipoOffer = document.getElementById('offer-tipo').value;
+                const habOffer = document.getElementById('offer-hab').value || "0";
+                const banosOffer = document.getElementById('offer-banos').value || "0";
+                const obsOffer = document.getElementById('offer-obs').value;
+
+                const precioDeseadoNum = parseInt(document.getElementById('offer-precio').value.replace(/\D/g, ''), 10) || 0;
+                const precioVentaFinalNum = precioDeseadoNum + HONORARIOS_BRUTOS_MIN;
+
                 const payloadMaestro = {
+                    id_inmueble: refProvisional,
                     evento: "match_propietario_a_comprador",
                     metadatos_sistema: {
                         origen_landing: "DEMANDA ACTIVA",
@@ -836,56 +1510,92 @@
                     },
                     datos_usuario: {
                         telefono: telefonoCompletoOffer,
+                        nombre: "",
                         rol_asignar: "Propietario vendedor",
                         acepto_legal: document.getElementById('offer-legal').checked
                     },
                     datos_demanda_inversion: {
                         comprador_cuarentena_id: compradorIdActual,
                         comprador_nombre: compradorNombreActual,
+                        zonas_interes: zonaOffer,
+                        presupuesto_requisitos: "",
                         informacion_solicitada: `${compradorIdActual} - ${compradorNombreActual}`
                     },
                     datos_inmueble_captacion: {
-                        poblacion: document.getElementById('offer-zona').value,
-                        tipo_inmueble: document.getElementById('offer-tipo').value,
-                        habitaciones: document.getElementById('offer-hab').value,
-                        banos: document.getElementById('offer-banos').value,
-                        descripcion_observaciones: document.getElementById('offer-obs').value,
-                        precio_deseado: document.getElementById('offer-precio').value,
+                        id_inmueble: refProvisional,
+                        codigo_postal: cpOffer,
+                        poblacion: zonaOffer,
+                        barrio: barrioOffer,
+                        id_cp_principal: idCpPrincipalOffer,
+                        tipo_inmueble: tipoOffer,
+                        habitaciones: habOffer,
+                        banos: banosOffer,
+                        descripcion_observaciones: `[MATCH PARA ${compradorIdActual}] ${obsOffer}`,
+                        precio_deseado: String(precioDeseadoNum),
+                        PRECIO_PROPIETARIO: String(precioDeseadoNum),
+                        HONORARIOS_BRUTOS: String(HONORARIOS_BRUTOS_MIN),
+                        HONORARIOS_BASE: String(HONORARIOS_BASE_MIN),
+                        IVA: String(HONORARIOS_IVA_MIN),
+                        Precio_Venta: String(precioVentaFinalNum),
                         fotos_subidas: rawOfferFiles.length
                     },
                     tracking_marketing: { utm_source, utm_medium, utm_campaign }
                 };
 
-                const formData = new FormData();
-                formData.append("payload_maestro", JSON.stringify(payloadMaestro));
+                const formDataIngesta = new FormData();
+                formDataIngesta.append("id_inmueble", refProvisional);
+                formDataIngesta.append("codigo_postal", cpOffer);
+                formDataIngesta.append("id_cp_principal", idCpPrincipalOffer);
+                formDataIngesta.append("comprador_cuarentena_id", compradorIdActual);
+                formDataIngesta.append("payload_maestro", JSON.stringify(payloadMaestro));
+                formDataIngesta.append("Precio Deseado", String(precioDeseadoNum));
+                formDataIngesta.append("PRECIO_PROPIETARIO", String(precioDeseadoNum));
+                formDataIngesta.append("HONORARIOS_BRUTOS", String(HONORARIOS_BRUTOS_MIN));
+                formDataIngesta.append("HONORARIOS_BASE", String(HONORARIOS_BASE_MIN));
+                formDataIngesta.append("IVA", String(HONORARIOS_IVA_MIN));
+                formDataIngesta.append("Precio Venta", String(precioVentaFinalNum));
                 rawOfferFiles.forEach((file, idx) => {
-                    formData.append(`array_fotos`, file, `oferta_${compradorIdActual}_${idx + 1}_${file.name}`);
+                    formDataIngesta.append(`array_fotos`, file, `${refProvisional}_foto_${idx + 1}_${file.name}`);
                 });
 
-                fetch(WEBHOOK_MAKE, {
-                    method: 'POST',
-                    body: formData
-                }).catch(err => console.warn("Aviso de red:", err));
+                const formDataFotos = new FormData();
+                formDataFotos.append("id_inmueble", refProvisional);
+                formDataFotos.append("codigo_postal", cpOffer);
+                formDataFotos.append("payload_maestro", JSON.stringify(payloadMaestro));
+                rawOfferFiles.forEach((file, idx) => {
+                    formDataFotos.append(`array_fotos`, file, `${refProvisional}_foto_${idx + 1}_${file.name}`);
+                });
 
-                setTimeout(() => {
-                    const alertText = lang === 'es' ? `¡Propiedad vinculada al comprador ${compradorIdActual} y enviada a revisión!` : "Property linked to buyer and sent for review!";
+                Promise.allSettled([
+                    fetch(WEBHOOK_MAKE, { method: 'POST', body: formDataIngesta }),
+                    fetch(WEBHOOK_FOTOS, { method: 'POST', body: formDataFotos })
+                ]).then(() => {
+                    const alertText = lang === 'es'
+                        ? `¡Propiedad ${refProvisional} enviada a revisión para el comprador ${compradorIdActual} y publicada provisionalmente en el Mercado Real!`
+                        : "Property sent for review and provisionally published in the Real Market!";
                     alert(alertText);
                     closeModal('modal-offer');
                     e.target.reset();
                     document.getElementById('offer-prefijo').value = "+34";
+                    const statusEl = document.getElementById('offer-cp-status');
+                    statusEl.className = "cp-status-badge";
+                    statusEl.innerText = "";
+                    document.getElementById('offer-barrio-wrapper').style.display = "none";
                     previewContainer.innerHTML = '';
                     fileCounter.style.display = 'none';
                     rawOfferFiles = [];
                     btn.innerHTML = originalText;
                     btn.style.opacity = "1";
+                    btn.disabled = false;
                     window.location.href = "https://app.level-i.com/mercado-real";
-                }, 1200);
+                });
 
             } catch (err) {
                 console.error("Error crítico en formulario de oferta:", err);
                 alert("Error al procesar el formulario. Revisa los campos e inténtalo de nuevo.");
                 btn.innerHTML = originalText;
                 btn.style.opacity = "1";
+                btn.disabled = false;
             }
         });
     </script>
