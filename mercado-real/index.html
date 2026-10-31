@@ -6,26 +6,53 @@
     <title>Level-i Command Center | Mercado Real</title>
     <style>
         :root {
-            --bg-base: #090d16; --bg-panel: #111827; --bg-card: #1f2937;
-            --accent-green: #10b981; --accent-blue: #3b82f6; --accent-gold: #C5A059;
-            --accent-orange: #f59e0b; --accent-red: #ef4444;
-            --text-main: #f9fafb; --text-muted: #9ca3af; --border-color: #374151;
+            --bg-base: #090d16;
+            --bg-panel: #111827;
+            --bg-card: #1f2937;
+            --accent-green: #10b981;
+            --accent-blue: #3b82f6;
+            --accent-gold: #C5A059;
+            --accent-orange: #f59e0b;
+            --accent-red: #ef4444;
+            --text-main: #f9fafb;
+            --text-muted: #9ca3af;
+            --border-color: #374151;
         }
         
-        html, body { margin: 0; padding: 0; height: 100%; width: 100%; }
-        * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; scrollbar-width: thin; scrollbar-color: var(--border-color) var(--bg-panel); }
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            display: flex;
+        }
+
+        * { box-sizing: border-box; scrollbar-width: thin; scrollbar-color: var(--border-color) var(--bg-panel); }
         
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: var(--bg-panel); border-left: 1px solid var(--border-color); }
         ::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: var(--accent-green); }
 
-        body { background-color: var(--bg-base); color: var(--text-main); display: flex; }
-        @media (min-width: 901px) { html, body { overflow: hidden; } }
-        
-        aside { width: 260px; background-color: var(--bg-panel); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; padding: 20px; flex-shrink: 0; z-index: 50; }
+        /* ==========================================
+           SIDEBAR ESCRITORIO
+           ========================================== */
+        aside {
+            width: 260px;
+            background-color: var(--bg-panel);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            flex-shrink: 0;
+            z-index: 50;
+            height: 100vh;
+        }
         .brand-container { display: flex; flex-direction: column; gap: 8px; padding-bottom: 20px; margin-bottom: 20px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
-        .brand-logo { display: flex; align-items: baseline; color: #ffffff; }
+        .brand-logo { display: flex; align-items: baseline; color: #ffffff; text-decoration: none; }
         .l-letter { font-size: 32px; font-weight: 900; line-height: 1; }
         .brand-dot { width: 9px; height: 9px; background-color: var(--accent-green); border-radius: 50%; margin: 0 6px 0 2px; box-shadow: 0 0 10px rgba(16, 185, 129, 0.6); }
         .logo-text { font-size: 22px; font-weight: 700; letter-spacing: 0.5px; }
@@ -41,165 +68,293 @@
         .legal-links a { color: var(--text-muted); text-decoration: none; transition: color 0.2s; cursor: pointer; }
         .legal-links a:hover { color: var(--accent-green); }
 
+        /* ==========================================
+           MAIN Y CABECERA
+           ========================================== */
         main { flex: 1; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
         header { background-color: var(--bg-panel); border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; padding: 0 30px; height: 60px; flex-shrink: 0; }
         .header-title { font-size: 13.5px; color: var(--text-muted); }
         .lang-selector { background-color: var(--bg-card); color: var(--text-muted); border: 1px solid var(--border-color); padding: 6px 10px; border-radius: 6px; font-size: 12.5px; font-weight: 600; outline: none; cursor: pointer; transition: all 0.2s; }
         .lang-selector:hover { color: var(--text-main); border-color: var(--accent-green); }
 
-        .content-area { display: grid; grid-template-columns: 360px 1fr; height: calc(100vh - 60px); overflow: hidden; }
+        .content-area { display: grid; grid-template-columns: 370px 1fr; height: calc(100vh - 60px); overflow: hidden; }
         
-        .ingesta-panel { background-color: var(--bg-panel); border-right: 1px solid var(--border-color); padding: 25px; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; }
+        /* ==========================================
+           PANEL IZQUIERDO: INGESTA DE PROPIEDADES
+           ========================================== */
+        .ingesta-panel { background-color: var(--bg-panel); border-right: 1px solid var(--border-color); padding: 25px; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; }
         .ingesta-title { font-size: 16px; color: #fff; font-weight: 700; margin: 0; display: flex; align-items: center; gap: 8px;}
         .ingesta-title::before { content: ''; display: inline-block; width: 8px; height: 8px; background-color: var(--accent-blue); border-radius: 50%; box-shadow: 0 0 10px var(--accent-blue); }
-        .ingesta-desc { font-size: 12.5px; color: var(--text-muted); line-height: 1.5; margin: 0; }
+        .ingesta-desc { font-size: 12px; color: var(--text-muted); line-height: 1.5; margin: 6px 0 0 0; }
         
         .promo-badge { background: rgba(197, 160, 89, 0.1); border: 1px dashed var(--accent-gold); padding: 10px; border-radius: 8px; font-size: 11px; color: var(--accent-gold); text-align: center; font-weight: bold; }
 
-        .form-upload { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 12px;}
+        .form-upload { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 18px; display: flex; flex-direction: column; gap: 12px;}
         .form-group label { display: block; font-size: 11.5px; color: var(--text-muted); margin-bottom: 5px; font-weight: bold; }
         .form-group input[type="text"], .form-group input[type="number"], .form-group input[type="tel"], .form-group select, .form-group textarea { width: 100%; background: var(--bg-base); border: 1px solid var(--border-color); color: var(--text-main); padding: 10px; border-radius: 6px; font-size: 13px; outline: none; transition: border-color 0.2s; }
         .form-group textarea { resize: vertical; min-height: 50px; font-family: inherit; }
         .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--accent-green); }
         .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+        .cp-status-badge {
+            font-size: 11px;
+            padding: 8px 10px;
+            border-radius: 6px;
+            font-weight: 600;
+            display: none;
+            line-height: 1.35;
+        }
+        .cp-status-badge.presencial {
+            display: block;
+            background: rgba(16, 185, 129, 0.12);
+            border: 1px solid rgba(16, 185, 129, 0.35);
+            color: var(--accent-green);
+        }
+        .cp-status-badge.central {
+            display: block;
+            background: rgba(197, 160, 89, 0.12);
+            border: 1px solid rgba(197, 160, 89, 0.35);
+            color: var(--accent-gold);
+        }
         
-        .file-upload-box { border: 2px dashed var(--border-color); border-radius: 8px; padding: 20px; text-align: center; background: rgba(0,0,0,0.2); cursor: pointer; transition: all 0.2s; position: relative; }
+        .file-upload-box { border: 2px dashed var(--border-color); border-radius: 8px; padding: 16px; text-align: center; background: rgba(0,0,0,0.2); cursor: pointer; transition: all 0.2s; position: relative; }
         .file-upload-box:hover { border-color: var(--accent-blue); background: rgba(59, 130, 246, 0.05); }
         .file-upload-box input[type="file"] { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
-        .upload-icon { font-size: 24px; margin-bottom: 10px; display: block; }
-        .upload-text { font-size: 13px; color: var(--text-main); font-weight: bold; margin-bottom: 4px; }
-        .upload-subtext { font-size: 11px; color: var(--accent-red); font-weight: bold; line-height: 1.4; }
+        .upload-icon { font-size: 22px; margin-bottom: 6px; display: block; }
+        .upload-text { font-size: 12.5px; color: var(--text-main); font-weight: bold; margin-bottom: 4px; }
+        .upload-subtext { font-size: 10.5px; color: var(--accent-red); font-weight: bold; line-height: 1.35; }
         
-        #preview-container { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 15px; }
+        #preview-container { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 12px; }
         .preview-thumb { width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 6px; border: 1px solid var(--accent-green); box-shadow: 0 2px 8px rgba(16, 185, 129, 0.2); animation: popIn 0.3s ease-out; }
         @keyframes popIn { 0% { transform: scale(0); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
-        #file-counter { font-size: 12px; color: var(--accent-green); margin-top: 10px; font-weight: bold; display: none; text-align: center; }
+        #file-counter { font-size: 11.5px; color: var(--accent-green); margin-top: 8px; font-weight: bold; display: none; text-align: center; }
 
-        .legal-check { display: flex; gap: 10px; align-items: flex-start; background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.2); padding: 12px; border-radius: 6px; margin-top: 5px; }
+        .legal-check { display: flex; gap: 10px; align-items: flex-start; background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.2); padding: 12px; border-radius: 6px; margin-top: 4px; }
         .legal-check input[type="checkbox"] { margin-top: 2px; accent-color: var(--accent-green); cursor: pointer; }
         .legal-check label { font-size: 11px; color: var(--text-muted); line-height: 1.4; font-weight: normal; margin: 0; }
         .legal-check label b { color: var(--text-main); }
         .legal-link { color: var(--accent-green); text-decoration: none; cursor: pointer; }
         .legal-link:hover { text-decoration: underline; }
 
-        .btn-submit { width: 100%; background-color: var(--accent-blue); color: #fff; padding: 12px; border-radius: 6px; font-size: 14px; font-weight: bold; border: none; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);}
+        .btn-submit { width: 100%; background-color: var(--accent-blue); color: #fff; padding: 12px; border-radius: 6px; font-size: 13.5px; font-weight: bold; border: none; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);}
         .btn-submit:hover { opacity: 0.9; transform: translateY(-1px); }
 
-        /* PANEL DERECHO: FEED */
+        /* ==========================================
+           PANEL DERECHO: FEED DINÁMICO
+           ========================================== */
         .feed-panel { padding: 25px; overflow-y: auto; background-color: var(--bg-base); position: relative; }
-        .feed-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; position: sticky; top: -25px; background: rgba(9, 13, 22, 0.95); backdrop-filter: blur(10px); padding: 15px 0; z-index: 10; border-bottom: 1px solid rgba(255,255,255,0.05); margin-top: -25px;}
+        .feed-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.06); }
         .feed-title { font-size: 20px; font-weight: 800; margin: 0; display: flex; align-items: center; gap: 10px; }
         .live-indicator { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: bold; color: var(--accent-green); text-transform: uppercase; background: rgba(16, 185, 129, 0.1); padding: 4px 10px; border-radius: 20px; border: 1px solid rgba(16, 185, 129, 0.3); }
         .live-dot { width: 6px; height: 6px; background-color: var(--accent-green); border-radius: 50%; animation: blink 1s infinite; }
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
         
-        .feed-container { display: flex; flex-direction: column; gap: 20px; max-width: 800px; margin: 0 auto; padding-bottom: 50px; }
+        .feed-container { display: flex; flex-direction: column; gap: 20px; max-width: 820px; margin: 0 auto; padding-bottom: 50px; }
         .property-card { background: var(--bg-panel); border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; transition: transform 0.2s, box-shadow 0.2s; }
         .property-card:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(0,0,0,0.4); border-color: rgba(255,255,255,0.1); }
         .slide-down-enter { animation: slideDownFade 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; border-color: var(--accent-orange); box-shadow: 0 0 20px rgba(245, 158, 11, 0.2); }
-        @keyframes slideDownFade { 0% { opacity: 0; transform: translateY(-30px) scale(0.98); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
+        @keyframes slideDownFade { 0% { opacity: 0; transform: translateY(-20px) scale(0.98); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
         
-        .card-header { padding: 15px 20px; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-between; align-items: center; }
-        .card-ref { font-family: monospace; font-size: 12px; color: var(--text-muted); }
+        .card-header { padding: 12px 18px; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; }
+        .card-ref { font-family: monospace; font-size: 11.5px; color: var(--text-muted); }
         .card-time { font-size: 11px; color: var(--text-muted); }
         
-        .card-body { padding: 20px; display: grid; grid-template-columns: 1.5fr 1fr; gap: 20px; }
-        .card-details h3 { font-size: 18px; margin: 0 0 5px 0; color: #fff; cursor: pointer; transition: color 0.2s; }
+        .card-body { padding: 18px; display: grid; grid-template-columns: 1.45fr 1fr; gap: 18px; }
+        .card-details h3 { font-size: 17px; margin: 0 0 5px 0; color: #fff; cursor: pointer; transition: color 0.2s; }
         .card-details h3:hover { color: var(--accent-blue); text-decoration: underline; }
-        .card-obs { font-size: 12px; color: var(--text-muted); margin-bottom: 12px; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
-        .card-tags { display: flex; gap: 8px; margin-bottom: 15px; flex-wrap: wrap; }
-        .tag { font-size: 11px; background: var(--bg-card); padding: 4px 10px; border-radius: 4px; color: var(--text-muted); border: 1px solid var(--border-color); display: flex; align-items: center; gap: 4px;}
+        .card-obs { font-size: 12.5px; color: var(--text-muted); margin-bottom: 12px; line-height: 1.45; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+        .card-tags { display: flex; gap: 6px; margin-bottom: 10px; flex-wrap: wrap; }
+        .tag { font-size: 11px; background: var(--bg-card); padding: 4px 9px; border-radius: 4px; color: var(--text-muted); border: 1px solid var(--border-color); display: inline-flex; align-items: center; gap: 4px;}
         
         .card-gallery { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; cursor: pointer; }
         .gallery-img { width: 100%; aspect-ratio: 4/3; background: var(--bg-base); border-radius: 6px; object-fit: cover; border: 1px solid var(--border-color); transition: opacity 0.2s; }
-        .gallery-img:hover { opacity: 0.8; }
-        .gallery-img.empty { display: flex; align-items: center; justify-content: center; font-size: 24px; color: rgba(255,255,255,0.05); }
+        .gallery-img:hover { opacity: 0.85; }
+        .gallery-img.empty { display: flex; align-items: center; justify-content: center; font-size: 22px; color: rgba(255,255,255,0.05); }
 
-        .card-footer { padding: 15px 20px; background: var(--bg-card); border-top: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
-        .likes-count { font-size: 13px; font-weight: bold; color: var(--accent-red); display: flex; align-items: center; gap: 6px; }
+        .card-footer { padding: 12px 18px; background: var(--bg-card); border-top: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+        .likes-count { font-size: 12px; font-weight: bold; color: var(--accent-red); display: flex; align-items: center; gap: 5px; }
         
-        .btn-actions-group { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
-        .btn-heart { background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); color: var(--text-muted); padding: 8px 12px; border-radius: 6px; font-size: 14px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center;}
+        .btn-actions-group { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+        .btn-heart { background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); color: var(--text-muted); padding: 6px 10px; border-radius: 6px; font-size: 13px; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; justify-content: center;}
         .btn-heart:hover { background: rgba(239, 68, 68, 0.1); border-color: var(--accent-red); }
         .btn-heart.liked { background: rgba(239, 68, 68, 0.15); border-color: var(--accent-red); color: var(--accent-red); }
         
-        .btn-share { background: transparent; border: 1px solid var(--accent-blue); color: var(--accent-blue); padding: 8px 12px; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 6px; }
+        .btn-share { background: transparent; border: 1px solid var(--accent-blue); color: var(--accent-blue); padding: 6px 11px; border-radius: 6px; font-size: 11.5px; font-weight: bold; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 5px; }
         .btn-share:hover { background: rgba(59, 130, 246, 0.1); }
         
-        .btn-like { background: transparent; border: 1px solid var(--accent-green); color: var(--accent-green); padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: bold; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 8px; }
+        .btn-like { background: transparent; border: 1px solid var(--accent-green); color: var(--accent-green); padding: 6px 13px; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 6px; }
         .btn-like:hover { background: rgba(16, 185, 129, 0.1); box-shadow: 0 0 10px rgba(16,185,129,0.2); }
         .btn-like.liked { background: var(--accent-green); color: #fff; }
 
-        /* WIDGET ELENA AI FLOTANTE */
-        .elena-widget { position: fixed; bottom: 30px; right: 30px; width: 340px; background: rgba(17, 24, 39, 0.95); backdrop-filter: blur(10px); border: 1px solid var(--accent-green); border-radius: 16px; box-shadow: 0 15px 40px rgba(0,0,0,0.6); display: none; flex-direction: column; z-index: 1000; overflow: hidden; transform: translateY(20px); opacity: 0; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+        /* ==========================================
+           WIDGET ELENA AI FLOTANTE Y MODALES
+           ========================================== */
+        .elena-widget { position: fixed; bottom: 30px; right: 30px; width: 340px; background: rgba(17, 24, 39, 0.96); backdrop-filter: blur(10px); border: 1px solid var(--accent-green); border-radius: 16px; box-shadow: 0 15px 40px rgba(0,0,0,0.6); display: none; flex-direction: column; z-index: 1000; overflow: hidden; transform: translateY(20px); opacity: 0; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
         .elena-widget.active { display: flex; transform: translateY(0); opacity: 1; }
-        .elena-header { background: linear-gradient(90deg, rgba(16, 185, 129, 0.15), transparent); padding: 15px 20px; border-bottom: 1px solid rgba(16, 185, 129, 0.2); display: flex; justify-content: space-between; align-items: center; }
+        .elena-header { background: linear-gradient(90deg, rgba(16, 185, 129, 0.15), transparent); padding: 14px 18px; border-bottom: 1px solid rgba(16, 185, 129, 0.2); display: flex; justify-content: space-between; align-items: center; }
         .elena-title { color: var(--accent-green); font-weight: bold; display: flex; align-items: center; gap: 8px; font-size: 14px; }
         .elena-close { color: var(--text-muted); cursor: pointer; font-size: 18px; border: none; background: none; }
         .elena-close:hover { color: var(--text-main); }
-        .elena-body { padding: 20px; display: flex; flex-direction: column; gap: 15px; font-size: 13px; max-height: 300px; overflow-y: auto; }
-        .chat-bubble { background: rgba(255,255,255,0.05); padding: 12px 15px; border-radius: 12px; border-bottom-left-radius: 2px; color: var(--text-main); border-left: 3px solid var(--accent-green); line-height: 1.5; }
+        .elena-body { padding: 18px; display: flex; flex-direction: column; gap: 12px; font-size: 13px; max-height: 280px; overflow-y: auto; }
+        .chat-bubble { background: rgba(255,255,255,0.05); padding: 11px 14px; border-radius: 12px; border-bottom-left-radius: 2px; color: var(--text-main); border-left: 3px solid var(--accent-green); line-height: 1.45; }
         .chat-bubble.user { background: rgba(59, 130, 246, 0.1); border-left: none; border-right: 3px solid var(--accent-blue); border-bottom-left-radius: 12px; border-bottom-right-radius: 2px; text-align: right; }
-        .elena-footer { padding: 15px; border-top: 1px solid var(--border-color); display: flex; flex-direction: column; gap: 10px; background: var(--bg-panel); }
-        .elena-input { width: 100%; background: var(--bg-base); border: 1px solid var(--border-color); color: var(--text-main); padding: 12px; border-radius: 8px; outline: none; font-size: 13px; }
+        .elena-footer { padding: 14px; border-top: 1px solid var(--border-color); display: flex; flex-direction: column; gap: 8px; background: var(--bg-panel); }
+        .elena-input { width: 100%; background: var(--bg-base); border: 1px solid var(--border-color); color: var(--text-main); padding: 11px; border-radius: 8px; outline: none; font-size: 13px; }
         .elena-input:focus { border-color: var(--accent-green); }
-        .elena-btn-send { background: var(--accent-green); color: #fff; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.2s; font-size: 13px; }
-        .elena-btn-send:hover { opacity: 0.9; transform: translateY(-1px); }
+        .elena-btn-send { background: var(--accent-green); color: #fff; border: none; padding: 11px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.2s; font-size: 13px; }
+        .elena-btn-send:hover { opacity: 0.9; }
 
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); display: none; justify-content: center; align-items: center; z-index: 999; opacity: 0; transition: opacity 0.3s; }
         .modal-overlay.active { display: flex; opacity: 1; }
-        .modal-content { background: var(--bg-panel); border: 1px solid var(--border-color); border-radius: 12px; padding: 30px; width: 90%; max-width: 800px; color: var(--text-main); position: relative; max-height: 90vh; overflow-y: auto; }
+        .modal-content { background: var(--bg-panel); border: 1px solid var(--border-color); border-radius: 12px; padding: 28px; width: 92%; max-width: 800px; color: var(--text-main); position: relative; max-height: 88vh; overflow-y: auto; }
         .modal-close { position: absolute; top: 15px; right: 20px; font-size: 24px; color: var(--text-muted); cursor: pointer; background: none; border: none; z-index: 10; }
         .modal-close:hover { color: var(--accent-red); }
-        .modal-title { font-size: 20px; font-weight: bold; margin-bottom: 15px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; color: var(--accent-green); }
+        .modal-title { font-size: 19px; font-weight: bold; margin-bottom: 15px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; color: var(--accent-green); }
         .modal-body { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
 
         /* DISEÑO DE LA FICHA DE INMUEBLE */
         .ficha-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid var(--border-color); padding-bottom: 15px; flex-wrap: wrap; gap: 12px; }
-        .ficha-title { font-size: 24px; color: #fff; margin: 0; }
-        .ficha-price { font-size: 22px; font-weight: 800; padding: 6px 15px; border-radius: 8px; white-space: nowrap; }
+        .ficha-title { font-size: 22px; color: #fff; margin: 0; }
+        .ficha-price { font-size: 20px; font-weight: 800; padding: 6px 14px; border-radius: 8px; white-space: nowrap; }
         .ficha-price.active { color: var(--accent-green); background: rgba(16,185,129,0.1); }
-        .ficha-price.teaser { color: var(--accent-orange); background: rgba(245,158,11,0.1); font-size: 15px; }
-        .badge-validacion { display: inline-flex; align-items: center; gap: 6px; background: rgba(245, 158, 11, 0.15); border: 1px solid var(--accent-orange); color: var(--accent-orange); font-size: 12px; font-weight: 800; padding: 6px 12px; border-radius: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .ficha-price.teaser { color: var(--accent-orange); background: rgba(245,158,11,0.1); font-size: 14px; }
+        .badge-validacion { display: inline-flex; align-items: center; gap: 6px; background: rgba(245, 158, 11, 0.15); border: 1px solid var(--accent-orange); color: var(--accent-orange); font-size: 11px; font-weight: 800; padding: 5px 10px; border-radius: 6px; text-transform: uppercase; }
         
-        .ficha-gallery { display: flex; overflow-x: auto; gap: 15px; padding-bottom: 15px; margin-bottom: 25px; scroll-snap-type: x mandatory; }
-        .ficha-gallery::-webkit-scrollbar { height: 8px; }
-        .ficha-img { height: 350px; border-radius: 12px; object-fit: cover; min-width: 85%; scroll-snap-align: center; border: 1px solid var(--border-color); }
-        .ficha-img.empty { display: flex; align-items: center; justify-content: center; font-size: 30px; color: rgba(255,255,255,0.05); background: var(--bg-base); flex-direction: column; gap: 15px; border: 2px dashed var(--border-color); }
+        .ficha-gallery { display: flex; overflow-x: auto; gap: 12px; padding-bottom: 12px; margin-bottom: 20px; scroll-snap-type: x mandatory; }
+        .ficha-img { height: 320px; border-radius: 10px; object-fit: cover; min-width: 85%; scroll-snap-align: center; border: 1px solid var(--border-color); }
+        .ficha-img.empty { display: flex; align-items: center; justify-content: center; font-size: 26px; color: rgba(255,255,255,0.05); background: var(--bg-base); flex-direction: column; gap: 12px; border: 2px dashed var(--border-color); }
         
-        .ficha-details-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 30px; }
-        .ficha-desc-title { font-size: 16px; color: #fff; font-weight: bold; margin-bottom: 10px; }
-        .ficha-desc { font-size: 14px; line-height: 1.7; color: var(--text-muted); }
-        .ficha-panel-right { background: var(--bg-card); padding: 20px; border-radius: 12px; border: 1px solid var(--border-color); height: fit-content; }
-        .ficha-tags { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
-        .ficha-btn-elena { width: 100%; background: var(--accent-green); color: #fff; border: none; padding: 15px; border-radius: 8px; font-size: 15px; font-weight: bold; cursor: pointer; transition: 0.2s; display: flex; justify-content: center; align-items: center; gap: 8px; box-shadow: 0 4px 15px rgba(16,185,129,0.3); }
-        .ficha-btn-elena:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(16,185,129,0.4); }
+        .ficha-details-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 24px; }
+        .ficha-desc-title { font-size: 15px; color: #fff; font-weight: bold; margin-bottom: 8px; }
+        .ficha-desc { font-size: 13.5px; line-height: 1.65; color: var(--text-muted); }
+        .ficha-panel-right { background: var(--bg-card); padding: 18px; border-radius: 12px; border: 1px solid var(--border-color); height: fit-content; }
+        .ficha-tags { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+        .ficha-btn-elena { width: 100%; background: var(--accent-green); color: #fff; border: none; padding: 13px; border-radius: 8px; font-size: 14px; font-weight: bold; cursor: pointer; transition: 0.2s; display: flex; justify-content: center; align-items: center; gap: 8px; box-shadow: 0 4px 15px rgba(16,185,129,0.3); }
 
-        /* Toast Notificaciones */
-        .toast-notification { position: fixed; top: 20px; right: 20px; background: var(--accent-blue); color: white; padding: 12px 20px; border-radius: 8px; font-weight: bold; font-size: 13px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); transform: translateX(150%); transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1); z-index: 2000; }
+        .toast-notification { position: fixed; top: 65px; right: 20px; background: var(--accent-blue); color: white; padding: 11px 18px; border-radius: 8px; font-weight: bold; font-size: 12.5px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); transform: translateX(150%); transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1); z-index: 2000; }
         .toast-notification.show { transform: translateX(0); }
 
+        /* ==========================================
+           ADAPTACIÓN MÓVIL IDÉNTICA A DEMANDA-ACTIVA
+           ========================================== */
         @media (max-width: 900px) {
-            html, body { height: auto; overflow-y: auto; overflow-x: hidden; }
+            html, body { height: 100%; overflow: hidden; }
             body { flex-direction: column; }
-            aside { width: 100%; border-right: none; border-bottom: 1px solid var(--border-color); height: auto; padding: 15px; flex-shrink: 0; }
-            .nav-menu { flex-direction: row; overflow-x: auto; padding-bottom: 10px; }
-            .nav-item { white-space: nowrap; flex-shrink: 0; }
-            main { display: flex; flex-direction: column; height: auto; overflow: visible; flex: 1; }
-            header { flex-direction: column; gap: 15px; height: auto; padding: 15px; text-align: center; }
-            .content-area { display: flex; flex-direction: column; height: auto; overflow: visible; padding: 0; }
-            .ingesta-panel { width: 100%; height: auto; border-right: none; border-bottom: 1px solid var(--border-color); overflow: visible; padding: 20px; flex-shrink: 0; }
-            .feed-panel { width: 100%; height: auto; border-right: none; overflow: visible; padding: 20px; flex-shrink: 0; }
-            .card-body { grid-template-columns: 1fr; }
+            
+            aside { display: none !important; }
+
+            .mobile-top-bar {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 55px;
+                background-color: var(--bg-panel);
+                border-bottom: 1px solid var(--border-color);
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 0 15px;
+                z-index: 1000;
+            }
+
+            .mobile-brand { font-size: 16px; font-weight: bold; color: #ffffff; }
+            .mobile-brand span { color: var(--accent-green); }
+
+            .mobile-nav-buttons { display: flex; gap: 8px; }
+            .mobile-nav-btn {
+                background-color: var(--bg-card);
+                border: 1px solid var(--border-color);
+                color: var(--text-muted);
+                padding: 6px 12px;
+                border-radius: 6px;
+                font-size: 11.5px;
+                font-weight: 600;
+                text-decoration: none;
+                transition: all 0.2s;
+            }
+            .mobile-nav-btn.active {
+                background: rgba(16, 185, 129, 0.15);
+                color: #ffffff;
+                border-color: var(--accent-green);
+            }
+
+            main {
+                margin-top: 55px;
+                height: calc(100vh - 55px);
+                overflow: hidden;
+            }
+
+            header {
+                height: 45px;
+                padding: 0 15px;
+                flex-direction: row;
+            }
+            .header-title { font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+            .lang-selector { padding: 4px 8px; font-size: 11.5px; }
+
+            .content-area {
+                display: flex;
+                flex-direction: column;
+                height: calc(100vh - 100px);
+                overflow-y: auto;
+            }
+
+            .ingesta-panel {
+                width: 100%;
+                height: auto;
+                border-right: none;
+                border-bottom: 1px solid var(--border-color);
+                padding: 15px;
+                overflow: visible;
+                flex-shrink: 0;
+            }
+
+            .feed-panel {
+                width: 100%;
+                height: auto;
+                padding: 15px;
+                overflow: visible;
+                flex-shrink: 0;
+            }
+
+            .feed-header {
+                position: static;
+                margin-top: 0;
+                margin-bottom: 15px;
+                padding: 8px 0;
+            }
+            .feed-title { font-size: 18px; }
+
+            .card-body { grid-template-columns: 1fr; padding: 14px; gap: 12px; }
+            .card-header, .card-footer { padding: 10px 14px; }
+            .btn-actions-group { width: 100%; justify-content: flex-end; gap: 6px; }
+            .btn-share, .btn-like { padding: 6px 10px; font-size: 11px; }
+
             .elena-widget { bottom: 0; right: 0; width: 100%; border-radius: 16px 16px 0 0; }
             .ficha-details-grid { grid-template-columns: 1fr; }
-            .ficha-header { flex-direction: column; align-items: flex-start; gap: 15px; }
-            .ficha-img { height: 250px; min-width: 90%; }
+            .ficha-header { flex-direction: column; align-items: flex-start; gap: 10px; }
+            .ficha-img { height: 220px; min-width: 92%; }
+            #ficha-dinamica-content { padding: 20px !important; }
+        }
+
+        @media (min-width: 901px) {
+            .mobile-top-bar { display: none; }
         }
     </style>
 </head>
 <body>
 
+    <!-- BARRA SUPERIOR FIJA MÓVIL (IDÉNTICA A DEMANDA ACTIVA) -->
+    <div class="mobile-top-bar">
+        <div class="mobile-brand">L<span>•</span> Level.immo</div>
+        <div class="mobile-nav-buttons">
+            <a href="https://app.level-i.com/demanda-activa" class="mobile-nav-btn" data-i18n="nav_demanda_mob">🎯 Demanda</a>
+            <a href="#" class="mobile-nav-btn active" data-i18n="nav_mercado_mob">📡 Mercado</a>
+        </div>
+    </div>
+
+    <!-- SIDEBAR ESCRITORIO -->
     <aside>
         <div class="brand-container">
             <div class="brand-logo">
@@ -209,7 +364,7 @@
         </div>
 
         <div class="nav-menu">
-            <a href="/demanda-activa" class="nav-item" data-i18n="nav_demanda">🎯 Demanda Activa</a>
+            <a href="https://app.level-i.com/demanda-activa" class="nav-item" data-i18n="nav_demanda">🎯 Demanda Activa</a>
             <a href="#" class="nav-item active" data-i18n="nav_mercado_real">📡 Mercado Real</a>
             <a href="#" class="nav-item" onclick="alert('Área restringida. Solo acceso a usuarios verificados.')" data-i18n="nav_gestion">👥 Acceso a Usuarios</a>
             
@@ -221,8 +376,8 @@
             
             <div style="padding: 10px 14px;">
                 <div style="color: var(--text-muted); font-size: 12.5px; font-weight: 600; margin-bottom: 8px;" data-i18n="nav_poblaciones_titulo">📍 Servicios Presenciales en:</div>
-                <div style="font-size: 11px; color: var(--text-muted); line-height: 1.6; padding-left: 20px;">
-                    Alcanar, Les Cases d'Alcanar, La Ràpita, Vinaròs, Terrassa, Sabadell, Castellar del Vallès, Matadepera, Cerdanyola del Vallès, Sant Cugat del Vallès, Sant Quirze del Vallès.
+                <div style="font-size: 11px; color: var(--text-muted); line-height: 1.6; padding-left: 12px;">
+                    Alcanar, Les Cases d'Alcanar, La Ràpita, Amposta, Tortosa, Vinaròs, Benicarló, Tarragona, Barcelona, Terrassa, Sabadell, Castellar del Vallès, Matadepera, Cerdanyola del Vallès, Sant Cugat del Vallès, Rubí, Granollers, Mataró.
                 </div>
             </div>
         </div>
@@ -247,13 +402,14 @@
                 <option value="fr">🇫🇷 Français</option>
                 <option value="de">🇩🇪 Deutsch</option>
                 <option value="it">🇮🇹 Italiano</option>
-                <option value="ar">🇦🇪 العربية (Árabe)</option>
-                <option value="zh">🇨🇳 中文 (Mandarín)</option>
+                <option value="ar">🇦🇪 العربية</option>
+                <option value="zh">🇨🇳 中文</option>
             </select>
         </header>
 
         <div class="content-area">
             
+            <!-- PANEL IZQUIERDO: FORMULARIO DE ALTA EN CUARENTENA -->
             <div class="ingesta-panel">
                 <div>
                     <h2 class="ingesta-title" data-i18n="ingesta_titulo">Añadir Inmueble al Radar</h2>
@@ -265,34 +421,78 @@
                 </div>
                 
                 <form class="form-upload" id="form-mercado-real">
-                    <div class="form-group">
-                        <label data-i18n="lbl_zona">Zona / Población</label>
-                        <select id="prop-zona" required>
-                            <option value="" data-i18n="opt_sel">Selecciona...</option>
-                            <option value="Alcanar">Alcanar</option>
-                            <option value="Les Cases d'Alcanar">Les Cases d'Alcanar</option>
-                            <option value="La Ràpita">La Ràpita</option>
-                            <option value="Vinaròs">Vinaròs</option>
-                            <option value="Terrassa">Terrassa</option>
-                            <option value="Sabadell">Sabadell</option>
-                            <option value="Castellar del Vallès">Castellar del Vallès</option>
-                            <option value="Matadepera">Matadepera</option>
-                            <option value="Cerdanyola del Vallès">Cerdanyola del Vallès</option>
-                            <option value="Sant Cugat del Vallès">Sant Cugat del Vallès</option>
-                            <option value="Sant Quirze del Vallès">Sant Quirze del Vallès</option>
+                    
+                    <!-- BUSCADOR CON DESPLEGABLE DE LOS 94 CÓDIGOS POSTALES OFICIALES -->
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="prop-cp" data-i18n="lbl_cp">Código Postal *</label>
+                            <input 
+                                type="text" 
+                                id="prop-cp" 
+                                list="lista-cps-oficiales"
+                                maxlength="5" 
+                                pattern="[0-9]{5}" 
+                                inputmode="numeric"
+                                autocomplete="off"
+                                placeholder="Escribe o elige CP..." 
+                                oninput="alEscribirCP(this.value, 'prop')"
+                                onchange="alEscribirCP(this.value, 'prop')"
+                                required
+                            >
+                            <!-- Lista autocompletable que se llena sola con los 94 CPs y poblaciones -->
+                            <datalist id="lista-cps-oficiales"></datalist>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="prop-zona" data-i18n="lbl_zona">Zona / Población *</label>
+                            <input 
+                                type="text" 
+                                id="prop-zona" 
+                                placeholder="Se rellena con CP..." 
+                                readonly 
+                                style="background-color: #151c2c; color: var(--accent-gold); font-weight: bold;"
+                                required
+                            >
+                        </div>
+                    </div>
+
+                    <!-- Etiqueta de estado del Código Postal -->
+                    <div id="prop-cp-status" class="cp-status-badge"></div>
+
+                    <!-- Desplegable dinámico de BARRIO (Se muestra automáticamente al elegir CP) -->
+                    <div class="form-group" id="prop-barrio-wrapper" style="display: none;">
+                        <label for="prop-barrio" data-i18n="lbl_barrio">Barrio / Núcleo Urbano *</label>
+                        <select id="prop-barrio" onchange="actualizarIdCompuesto('prop')">
+                            <option value="">Selecciona tu barrio o urbanización...</option>
                         </select>
                     </div>
 
+                    <!-- Guarda el ID compuesto exacto para Lark Base: "Municipio-Barrio" -->
+                    <input type="hidden" id="prop-id-cp-principal" value="">
+
+                    <!-- LOS 18 TIPOS DE INMUEBLE OFICIALES UNIFICADOS CON LARK BASE -->
                     <div class="form-group">
-                        <label data-i18n="lbl_tipo">Tipo de Inmueble</label>
+                        <label data-i18n="lbl_tipo">Tipo de Inmueble *</label>
                         <select id="prop-tipo" required>
                             <option value="" data-i18n="opt_sel">Selecciona...</option>
                             <option value="Apartamento" data-i18n="opt_apt">Apartamento</option>
-                            <option value="Piso" data-i18n="opt_piso">Piso</option>
-                            <option value="Adosado" data-i18n="opt_ado">Adosado</option>
+                            <option value="Casa Adosada" data-i18n="opt_ado">Casa Adosada</option>
                             <option value="Chalet" data-i18n="opt_cha">Chalet</option>
-                            <option value="Local" data-i18n="opt_loc">Local</option>
-                            <option value="Terreno o Parcela" data-i18n="opt_ter">Terreno o Parcela</option>
+                            <option value="CoWorking" data-i18n="opt_cow">CoWorking</option>
+                            <option value="Edificios" data-i18n="opt_edi">Edificios</option>
+                            <option value="Garajes y Parkings" data-i18n="opt_gar">Garajes y Parkings</option>
+                            <option value="Locales" data-i18n="opt_loc">Locales</option>
+                            <option value="Loft" data-i18n="opt_lof">Loft</option>
+                            <option value="Nave Industrial" data-i18n="opt_nav">Nave Industrial</option>
+                            <option value="Oficinas y Despachos" data-i18n="opt_ofi">Oficinas y Despachos</option>
+                            <option value="Piso" data-i18n="opt_piso">Piso</option>
+                            <option value="Suelo Agrícola" data-i18n="opt_sag">Suelo Agrícola</option>
+                            <option value="Suelo Agrícola con Casa" data-i18n="opt_sac">Suelo Agrícola con Casa</option>
+                            <option value="Suelo Industrial" data-i18n="opt_sin">Suelo Industrial</option>
+                            <option value="Suelo Urbanizable" data-i18n="opt_sur">Suelo Urbanizable</option>
+                            <option value="Suelo Urbano/Residencial" data-i18n="opt_suu">Suelo Urbano/Residencial</option>
+                            <option value="Terciario" data-i18n="opt_terc">Terciario</option>
+                            <option value="Otros" data-i18n="opt_otr">Otros</option>
                         </select>
                     </div>
                     
@@ -320,7 +520,7 @@
                         </div>
                     </div>
 
-                    <div class="form-group" style="margin-top: 5px;">
+                    <div class="form-group" style="margin-top: 4px;">
                         <div class="file-upload-box">
                             <span class="upload-icon">📸</span>
                             <div class="upload-text" data-i18n="lbl_fotos">Subir Fotos (Máx. 4)</div>
@@ -387,7 +587,7 @@
     <div class="modal-overlay" id="modal-ficha-inmueble" onclick="if(event.target === this) closeModal('modal-ficha-inmueble')">
         <div class="modal-content" style="max-width: 900px; padding: 0; overflow: hidden; display: flex; flex-direction: column;">
             <button class="modal-close" onclick="closeModal('modal-ficha-inmueble')" style="background: rgba(0,0,0,0.5); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white;">&times;</button>
-            <div id="ficha-dinamica-content" style="padding: 40px; overflow-y: auto; max-height: 85vh;">
+            <div id="ficha-dinamica-content" style="padding: 35px; overflow-y: auto; max-height: 85vh;">
                 <!-- EL CONTENIDO SE INYECTA AQUÍ -->
             </div>
         </div>
@@ -402,7 +602,7 @@
             <button class="modal-close" onclick="closeModal('modal-legal')">&times;</button>
             <div class="modal-title">Aviso Legal y Condiciones</div>
             <div class="modal-body">
-                <p>En cumplimiento con la Ley de Servicios de la Sociedad de la Información, se informa que Level.immo está operada por un agente registrado (API 4173 · AICAT 14200).</p>
+                <p>En cumplimiento con la Ley de Servicios de la Sociedad de la Información, se informa que Level.immo está operada por LEVEL PUNTO IMMO 24365 SLU (API 4173 · AICAT 14200).</p>
                 <p>El uso de esta plataforma implica la aceptación de las normas de publicación. Toda información proporcionada por los usuarios será verificada minuciosamente antes de su exposición pública.</p>
             </div>
         </div>
@@ -432,12 +632,15 @@
 
     <script>
         // ==========================================
-        // 1. CONFIGURACIÓN DE LOS 4 WEBHOOKS OFICIALES
+        // 1. CONFIGURACIÓN DE LOS 4 WEBHOOKS OFICIALES + CSV GOOGLE DRIVE
         // ==========================================
         const WEBHOOK_INGESTA  = "https://hook.eu1.make.com/loy5kvv4qmnvo748fmxo2qvt48mbf986"; 
         const WEBHOOK_FOTOS    = "https://hook.eu1.make.com/2m0es5wfi84xf539fyoko870d2jip4b8"; 
         const WEBHOOK_SURTIDOR = "https://hook.eu1.make.com/bpb012er1137ocx0tcdk19muh6le4qpu"; 
         const WEBHOOK_ELENA    = "https://hook.eu1.make.com/3w2wmbbcc3evnvg8ajo3kjkucrd6dfkw"; 
+
+        // Enlace opcional "Publicar en la web (.csv)" de tu Google Sheet municipios_level_immo.csv
+        const URL_CSV_MUNICIPIOS_DRIVE = "https://docs.google.com/spreadsheets/d/e/TU_ID_PUBLICADO_AQUI/pub?output=csv";
 
         const HONORARIOS_BASE_MIN = 6000;
         const HONORARIOS_IVA_MIN = 1260;
@@ -445,11 +648,341 @@
 
         const STORAGE_PROVISIONAL_KEY = "level_inmuebles_provisionales_v2";
 
-        // Respaldo de seguridad con las 5 propiedades reales principales de Lark por si el surtidor de Make sufre un HTTP 500
+        // ==========================================
+        // 1B. BASE COMPLETA DE TUS 94 CÓDIGOS POSTALES Y TODOS SUS BARRIOS (DE TU TABLA MUNICIPIOS)
+        // ==========================================
+        let DICCIONARIO_CPS = {};
+
+        const BASE_COMPLETA_MUNICIPIOS = [
+            // ALCANAR Y LES CASES
+            ["43530", "Alcanar", "_otras zonas"],
+            ["43530", "Alcanar", "Alcanar Platja (Zona de urbanizaciones)"],
+            ["43530", "Alcanar", "Barri de Sant Miquel"],
+            ["43530", "Alcanar", "Barri del Calvari"],
+            ["43530", "Alcanar", "Centre Històric"],
+            ["43530", "Alcanar", "La Selleta (Urbanización)"],
+            ["43530", "Alcanar", "Les Mallades"],
+            ["43569", "Alcanar", "Les Cases d'Alcanar (Núcleo costero)"],
+            // AMPOSTA
+            ["43870", "Amposta", "_otras zonas"],
+            ["43870", "Amposta", "Balada (Núcleo adscrito)"],
+            ["43870", "Amposta", "Centre / Barri de la Vila"],
+            ["43870", "Amposta", "El Grau"],
+            ["43870", "Amposta", "L'Acollidora / La Collita"],
+            ["43870", "Amposta", "Les Quintanes"],
+            ["43870", "Amposta", "Urbanització Eucaliptus"],
+            ["43870", "Amposta", "Valletes"],
+            ["43549", "Amposta", "Poble Nou del Delta (Núcleo adscrito)"],
+            // LA RÀPITA
+            ["43540", "La Ràpita", "_otras zonas"],
+            ["43540", "La Ràpita", "Centre Històric"],
+            ["43540", "La Ràpita", "Zona Portuària"],
+            ["43540", "La Ràpita", "El Garbí / Zona Platges"],
+            ["43540", "La Ràpita", "Barri del Xicago"],
+            ["43540", "La Ràpita", "Horta Vella / Nord"],
+            // TORTOSA
+            ["43500", "Tortosa", "_otras zonas"],
+            ["43500", "Tortosa", "Centre / Nucli Antic"],
+            ["43500", "Tortosa", "Ferreries"],
+            ["43500", "Tortosa", "Remolins"],
+            ["43500", "Tortosa", "El Temple"],
+            ["43500", "Tortosa", "Sant Llàtzer"],
+            ["43500", "Tortosa", "Grup El Temple"],
+            ["43500", "Tortosa", "Castell / Raval de la Llet"],
+            ["43517", "Tortosa", "Vinallop"],
+            ["43518", "Tortosa", "Bítem"],
+            ["43527", "Tortosa", "Els Reguers"],
+            ["43590", "Tortosa", "Jesús"],
+            ["43897", "Tortosa", "Campredó"],
+            // VINARÒS Y BENICARLÓ
+            ["12500", "Vinaròs", "_otras zonas"],
+            ["12500", "Vinaròs", "Casco Urbano / Centro"],
+            ["12500", "Vinaròs", "Costa Norte (Amerador / Triador / Barbiguera)"],
+            ["12500", "Vinaròs", "Costa Sur (Cala Puntal / Aiguaoliva)"],
+            ["12500", "Vinaròs", "Boverals / Saldonar"],
+            ["12500", "Vinaròs", "Zona Ermita / Interior"],
+            ["12580", "Benicarló", "_otras zonas"],
+            ["12580", "Benicarló", "Casco Urbano / Centro"],
+            ["12580", "Benicarló", "Playa Morrongo / Puerto"],
+            ["12580", "Benicarló", "Zona Norte / Papa Luna"],
+            ["12580", "Benicarló", "Partidas Rurales / Interior"],
+            // TARRAGONA CAPITAL
+            ["43001", "Tarragona", "Centre / Eixample"],
+            ["43001", "Tarragona", "Rambla Nova"],
+            ["43002", "Tarragona", "Nou Eixample Nord / Via Imperi"],
+            ["43003", "Tarragona", "Part Alta / Casc Antic"],
+            ["43003", "Tarragona", "El Miracle / Passeig Marítim"],
+            ["43004", "Tarragona", "El Serrallo (Barri Marítim)"],
+            ["43004", "Tarragona", "Nou Eixample Sud"],
+            ["43005", "Tarragona", "Parc Central / Torres Jordi"],
+            ["43006", "Tarragona", "Ponent / Campclar / Torreforta / Bonavista"],
+            ["43007", "Tarragona", "Llevant / Vall de l'Arrabassada / Sant Pere i Sant Pau"],
+            ["43008", "Tarragona", "Cala Romana / Boscos / La Mora / Tamarit"],
+            // BARCELONA CAPITAL
+            ["08001", "Barcelona", "El Raval"],
+            ["08002", "Barcelona", "El Barri Gòtic"],
+            ["08003", "Barcelona", "Sant Pere, Santa Caterina i la Ribera (El Born)"],
+            ["08004", "Barcelona", "El Poble-sec"],
+            ["08005", "Barcelona", "El Poblenou, Vila Olímpica"],
+            ["08006", "Barcelona", "Sant Gervasi - Galvany / Gràcia"],
+            ["08007", "Barcelona", "La Dreta de l'Eixample (Passeig de Gràcia)"],
+            ["08008", "Barcelona", "L'Antiga Esquerra de l'Eixample"],
+            ["08009", "Barcelona", "La Dreta de l'Eixample"],
+            ["08010", "Barcelona", "El Fort Pienc"],
+            ["08011", "Barcelona", "L'Antiga Esquerra de l'Eixample / Sant Antoni"],
+            ["08012", "Barcelona", "La Vila de Gràcia"],
+            ["08013", "Barcelona", "La Sagrada Família, El Fort Pienc"],
+            ["08014", "Barcelona", "Sants, Hostafrancs, La Bordeta"],
+            ["08015", "Barcelona", "La Nova Esquerra de l'Eixample, Sant Antoni"],
+            ["08016", "Barcelona", "La Prosperitat, Vilapicina i la Torre Llobeta"],
+            ["08017", "Barcelona", "Sarrià, Les Tres Torres, Vallvidrera"],
+            ["08018", "Barcelona", "El Camp de l'Arpa del Clot, El Parc i la Llacuna del Poblenou"],
+            ["08019", "Barcelona", "Diagonal Mar i el Front Marítim del Poblenou, El Besòs"],
+            ["08020", "Barcelona", "La Verneda i la Pau, Sant Martí de Provençals"],
+            ["08021", "Barcelona", "Sant Gervasi - Galvany, Les Tres Torres"],
+            ["08022", "Barcelona", "Sant Gervasi - la Bonanova, El Putxet i el Farró"],
+            ["08023", "Barcelona", "Vallcarca i els Penitents, El Coll"],
+            ["08024", "Barcelona", "La Salut, Camp d'en Grassot i Gràcia Nova"],
+            ["08025", "Barcelona", "La Sagrada Família, Camp d'en Grassot"],
+            ["08026", "Barcelona", "El Clot, El Camp de l'Arpa del Clot"],
+            ["08027", "Barcelona", "La Sagrera, Navas, El Congrés i els Indians"],
+            ["08028", "Barcelona", "Les Corts, La Maternitat i Sant Ramon"],
+            ["08030", "Barcelona", "Sant Andreu, Bon Pastor, Baró de Viver"],
+            ["08031", "Barcelona", "Horta, La Vall d'Hebron, Montbau"],
+            ["08032", "Barcelona", "El Carmel, El Guinardó, Can Baró"],
+            ["08033", "Barcelona", "Ciutat Meridiana, Trinitat Nova, Torre Baró"],
+            ["08034", "Barcelona", "Pedralbes, Sarrià, Les Corts"],
+            ["08035", "Barcelona", "Sant Genís dels Agudells, La Teixonera, Montbau"],
+            ["08036", "Barcelona", "L'Antiga Esquerra de l'Eixample, La Nova Esquerra de l'Eixample"],
+            ["08037", "Barcelona", "La Dreta de l'Eixample, La Sagrada Família"],
+            ["08038", "Barcelona", "La Marina de Port, La Marina del Prat Vermell (Zona Franca)"],
+            ["08039", "Barcelona", "La Barceloneta, Port de Barcelona"],
+            ["08041", "Barcelona", "El Baix Guinardó, Can Baró, El Guinardó"],
+            ["08042", "Barcelona", "Canyelles, Les Roquetes, Verdum,La Guineueta"],
+            // SABADELL
+            ["08201", "Sabadell", "Centre"],
+            ["08202", "Sabadell", "La Creu Alta"],
+            ["08202", "Sabadell", "Torre-romeu"],
+            ["08203", "Sabadell", "Gràcia"],
+            ["08203", "Sabadell", "Can Feu"],
+            ["08204", "Sabadell", "La Creu de Barberà"],
+            ["08204", "Sabadell", "Can Puiggener"],
+            ["08205", "Sabadell", "Can Rull / Els Merinals"],
+            ["08206", "Sabadell", "Can Llong / Castellarnau"],
+            ["08206", "Sabadell", "Can Gambús"],
+            ["08207", "Sabadell", "Ca n'Oriac / Sant Julià"],
+            ["08208", "Sabadell", "La Concòrdia / Eix Macià / Can Deu"],
+            // TERRASSA
+            ["08221", "Terrassa", "Centre"],
+            ["08222", "Terrassa", "Antic Poble de Sant Pere / Vallparadís"],
+            ["08223", "Terrassa", "Segle XX / Les Arenes - La Grípia"],
+            ["08224", "Terrassa", "Ca n'Aurell / La Maurina / La Cogullada"],
+            ["08225", "Terrassa", "Can Boada / Sant Pere Nord / Sant Llorenç"],
+            ["08226", "Terrassa", "Can Tusell / Pla del Bon Aire"],
+            ["08227", "Terrassa", "Can Parellada / Les Fonts"],
+            ["08228", "Terrassa", "Can Palet / Xúquer / Guadalhorce"],
+            ["08288", "Terrassa", "Disseminats / Urbanitzacions"],
+            // SANT CUGAT DEL VALLÈS
+            ["08172", "Sant Cugat del Vallès", "Centre / Eixample"],
+            ["08172", "Sant Cugat del Vallès", "Sant Francesc - El Coll"],
+            ["08173", "Sant Cugat del Vallès", "Coll Favà / Volpelleres / Roquetes"],
+            ["08174", "Sant Cugat del Vallès", "Parc Central - El Colomer"],
+            ["08195", "Sant Cugat del Vallès", "Mira-sol"],
+            ["08197", "Sant Cugat del Vallès", "Valldoreix"],
+            ["08199", "Sant Cugat del Vallès", "La Floresta / Les Planes"],
+            // RESTO DEL VALLÈS Y MARESME
+            ["08191", "Rubí", "Centre / Zona Nord / Mercat"],
+            ["08191", "Rubí", "Les Torres / Ca n'Oriol"],
+            ["08191", "Rubí", "Castellnou - Can Mir - Can Solà"],
+            ["08192", "Sant Quirze del Vallès", "Casco Urbano / Los Rosales / Mas Duran"],
+            ["08192", "Sant Quirze del Vallès", "Vallsuau / Castellet / El Poble-sec"],
+            ["08290", "Cerdanyola del Vallès", "Centre - Cordelles"],
+            ["08290", "Cerdanyola del Vallès", "Serraperera - Canaletes - Banús"],
+            ["08290", "Cerdanyola del Vallès", "Montflorit - Guiera"],
+            ["08193", "Cerdanyola del Vallès", "Bellaterra"],
+            ["08211", "Castellar del Vallès", "Casco Urbano / Centre"],
+            ["08211", "Castellar del Vallès", "El Racó / Sant Feliu del Racó"],
+            ["08211", "Castellar del Vallès", "Airesol / Can Font / Ca n'Avellaneda"],
+            ["08230", "Matadepera", "Centre / Casco Urbano"],
+            ["08230", "Matadepera", "Cavall Bernat / Les Pedritxes / Can Solà"],
+            ["08213", "Polinyà", "Casco Urbano / Serra Maurina"],
+            ["08181", "Sentmenat", "Casco Urbano / Can Peric / Pedra Santa"],
+            ["08140", "Caldes de Montbui", "Casco Urbano / El Farell / Els Saulons"],
+            ["08401", "Granollers", "Centre / Congost"],
+            ["08402", "Granollers", "Tres Torres / Sud / Palou"],
+            ["08403", "Granollers", "Font Verda / Nord / Can Gili"],
+            ["08301", "Mataró", "Centre / Eixample / Havana"],
+            ["08302", "Mataró", "Peramàs / Via Europa / Cerdanyola"],
+            ["08303", "Mataró", "Rocafonda / El Palau / Escorxador"],
+            ["08304", "Mataró", "Cirera / Molins / Vista Alegre"]
+        ];
+
+        function construirDiccionarioYSelector() {
+            DICCIONARIO_CPS = {};
+            BASE_COMPLETA_MUNICIPIOS.forEach(fila => {
+                agregarAlDiccionario(fila[0], fila[1], fila[2]);
+            });
+            poblarDatalistCPs();
+        }
+
+        function agregarAlDiccionario(cp, municipio, barrio) {
+            if (!DICCIONARIO_CPS[cp]) {
+                DICCIONARIO_CPS[cp] = { municipio: municipio, barrios: [] };
+            }
+            if (barrio && !DICCIONARIO_CPS[cp].barrios.includes(barrio)) {
+                DICCIONARIO_CPS[cp].barrios.push(barrio);
+            }
+        }
+
+        function poblarDatalistCPs() {
+            const datalist = document.getElementById('lista-cps-oficiales');
+            if (!datalist) return;
+            datalist.innerHTML = '';
+
+            // Ordenamos para que primero salgan Terres de l'Ebre / Vinaròs y luego Barcelona / Vallès
+            const cpsOrdenados = Object.keys(DICCIONARIO_CPS).sort();
+            cpsOrdenados.forEach(cp => {
+                const info = DICCIONARIO_CPS[cp];
+                const opt = document.createElement('option');
+                opt.value = cp;
+                const numBarrios = info.barrios.length;
+                opt.label = `${info.municipio} (${numBarrios > 1 ? numBarrios + ' zonas/barrios' : info.barrios[0] || 'Zona activa'})`;
+                datalist.appendChild(opt);
+            });
+        }
+
+        async function cargarMunicipiosDesdeDrive() {
+            construirDiccionarioYSelector();
+
+            if (!URL_CSV_MUNICIPIOS_DRIVE || URL_CSV_MUNICIPIOS_DRIVE.includes("TU_ID_PUBLICADO")) return;
+
+            try {
+                const res = await fetch(URL_CSV_MUNICIPIOS_DRIVE, { cache: "no-store" });
+                if (!res.ok) return;
+                const csvText = await res.text();
+                const filas = parsearCSV(csvText);
+
+                let contadorNuevos = 0;
+                for (let i = 1; i < filas.length; i++) {
+                    const col = filas[i];
+                    if (!col || col.length < 5) continue;
+
+                    const offset = (String(col[0] || "").trim() === "" && String(col[1] || "").trim() !== "") ? 1 : 0;
+                    let cp = String(col[offset] || "").trim().replace(/\D/g, "");
+                    if (cp.length === 4) cp = "0" + cp;
+
+                    let barrio = String(col[offset + 1] || "").trim();
+                    let poblacion = String(col[offset + 3] || "").trim();
+
+                    if (cp.length === 5 && poblacion) {
+                        agregarAlDiccionario(cp, poblacion, barrio);
+                        contadorNuevos++;
+                    }
+                }
+                if (contadorNuevos > 0) {
+                    poblarDatalistCPs();
+                }
+            } catch (err) {
+                console.warn("Usando base local integrada de 94 CPs.");
+            }
+        }
+
+        function parsearCSV(texto) {
+            const filas = [];
+            const lineas = texto.split(/\r?\n/);
+            for (let linea of lineas) {
+                if (!linea.trim()) continue;
+                const celdas = [];
+                let actual = "", enComillas = false;
+                for (let i = 0; i < linea.length; i++) {
+                    const char = linea[i];
+                    if (char === '"') enComillas = !enComillas;
+                    else if ((char === ',' || char === ';') && !enComillas) { celdas.push(actual); actual = ""; }
+                    else actual += char;
+                }
+                celdas.push(actual);
+                filas.push(celdas);
+            }
+            return filas;
+        }
+
+        function alEscribirCP(valor, prefijoId) {
+            const cpLimpio = String(valor || "").replace(/\D/g, "").slice(0, 5);
+            const inputCP = document.getElementById(`${prefijoId}-cp`);
+            const statusEl = document.getElementById(`${prefijoId}-cp-status`);
+            const inputZona = document.getElementById(`${prefijoId}-zona`);
+            const wrapperBarrio = document.getElementById(`${prefijoId}-barrio-wrapper`);
+            const selectBarrio = document.getElementById(`${prefijoId}-barrio`);
+            const inputIdCompuesto = document.getElementById(`${prefijoId}-id-cp-principal`);
+
+            if (inputCP) inputCP.value = cpLimpio;
+
+            if (cpLimpio.length < 5) {
+                statusEl.className = "cp-status-badge";
+                statusEl.innerText = "";
+                inputZona.value = "";
+                inputZona.readOnly = true;
+                inputZona.placeholder = "Se rellena con CP...";
+                wrapperBarrio.style.display = "none";
+                selectBarrio.required = false;
+                inputIdCompuesto.value = "";
+                return;
+            }
+
+            const infoCP = DICCIONARIO_CPS[cpLimpio];
+            if (infoCP) {
+                statusEl.className = "cp-status-badge presencial";
+                statusEl.innerHTML = `✅ <b>${infoCP.municipio} (${cpLimpio})</b> · Servicio Presencial y Advisor Asignado`;
+                inputZona.value = infoCP.municipio;
+                inputZona.readOnly = true;
+                selectBarrio.innerHTML = "";
+
+                if (infoCP.barrios.length > 1) {
+                    wrapperBarrio.style.display = "block";
+                    selectBarrio.required = true;
+                    selectBarrio.innerHTML = `<option value="">Selecciona tu Barrio / Zona en ${infoCP.municipio} (${infoCP.barrios.length} opciones)...</option>`;
+                    infoCP.barrios.forEach(b => {
+                        const opt = document.createElement("option");
+                        opt.value = b;
+                        opt.textContent = (b === "_otras zonas") ? "Resto del municipio / Otras zonas" : b;
+                        selectBarrio.appendChild(opt);
+                    });
+                    inputIdCompuesto.value = `${infoCP.municipio}-`;
+                } else if (infoCP.barrios.length === 1) {
+                    wrapperBarrio.style.display = "block";
+                    selectBarrio.required = true;
+                    const unicoBarrio = infoCP.barrios[0];
+                    selectBarrio.innerHTML = `<option value="${unicoBarrio}" selected>${unicoBarrio}</option>`;
+                    inputIdCompuesto.value = (unicoBarrio === "_otras zonas") ? `${infoCP.municipio}-` : `${infoCP.municipio}-${unicoBarrio}`;
+                } else {
+                    wrapperBarrio.style.display = "none";
+                    selectBarrio.required = false;
+                    inputIdCompuesto.value = `${infoCP.municipio}-`;
+                }
+            } else {
+                statusEl.className = "cp-status-badge central";
+                statusEl.innerHTML = `ℹ️ CP <b>${cpLimpio}</b> gestionado por Central Digital · Escribe tu población en la casilla derecha:`;
+                inputZona.value = "";
+                inputZona.readOnly = false;
+                inputZona.placeholder = "Escribe tu población...";
+                inputZona.focus();
+                wrapperBarrio.style.display = "none";
+                selectBarrio.required = false;
+                inputIdCompuesto.value = "";
+            }
+        }
+
+        function actualizarIdCompuesto(prefijoId) {
+            const municipio = document.getElementById(`${prefijoId}-zona`).value.trim();
+            const barrio = document.getElementById(`${prefijoId}-barrio`).value.trim();
+            document.getElementById(`${prefijoId}-id-cp-principal`).value = (barrio && barrio !== "_otras zonas") ? `${municipio}-${barrio}` : `${municipio}-`;
+        }
+
+        // Respaldo de seguridad con las 5 propiedades reales principales de Lark
         const INMUEBLES_REALES_BASE = [
             {
                 ID_Inmueble: "REF2026102600060",
-                "Tipo Propiedad": "Terreno o Parcela",
+                "Tipo Propiedad": "Suelo Agrícola con Casa",
                 "Población": "Alcanar",
                 N_Habitaciones: 2,
                 N_wc: 1,
@@ -468,7 +1001,7 @@
             },
             {
                 ID_Inmueble: "REF2026062000009",
-                "Tipo Propiedad": "Terreno o Parcela",
+                "Tipo Propiedad": "Suelo Urbano/Residencial",
                 "Población": "Alcanar",
                 N_Habitaciones: 0,
                 N_wc: 0,
@@ -496,7 +1029,7 @@
             },
             {
                 ID_Inmueble: "REF2026052500007",
-                "Tipo Propiedad": "Local",
+                "Tipo Propiedad": "Locales",
                 "Población": "La Ràpita",
                 N_Habitaciones: 0,
                 N_wc: 1,
@@ -508,7 +1041,7 @@
             },
             {
                 ID_Inmueble: "REF2026040300001",
-                "Tipo Propiedad": "Planta Baja con Jardín",
+                "Tipo Propiedad": "Apartamento",
                 "Población": "La Ràpita",
                 N_Habitaciones: 3,
                 N_wc: 2,
@@ -587,14 +1120,46 @@
         // DICCIONARIO MULTIDIOMA
         // ==========================================
         const traducciones = {
-            es: { nav_demanda: "🎯 Demanda Activa", nav_mercado_real: "📡 Mercado Real", nav_gestion: "👥 Acceso a Usuarios", nav_chivatazo: "📣 Chivatazo Nacional", nav_equipos: "💼 Únete al Equipo de Advisors en tu Zona", nav_poblaciones_titulo: "📍 Servicios Presenciales en:", header_title: "Consola Central PropTech · Feed Cronológico", ingesta_titulo: "Añadir Inmueble al Radar", ingesta_desc: "Tu propiedad se previsualizará al instante y se publicará de forma anónima tras ser verificada.", lbl_zona: "Zona / Población", opt_sel: "Selecciona...", lbl_tipo: "Tipo de Inmueble", opt_apt: "Apartamento", opt_piso: "Piso", opt_ado: "Adosado", opt_cha: "Chalet", opt_loc: "Local", opt_ter: "Terreno o Parcela", lbl_hab: "Habitaciones", lbl_banos: "Baños", lbl_obs: "Observaciones", plc_obs: "Reformado, vistas, ascensor...", lbl_precio: "Precio Neto Propietario (€)", lbl_fotos: "Subir Fotos (Máx. 4)", lbl_fotos_warn: "⚠️ OBLIGATORIO: Solo interiores.<br>Cero fachadas.", lbl_tel: "Tu Teléfono (No se publicará)", plc_tel: "Para gestión interna...", btn_cuarentena: "Previsualizar y Subir a Cuarentena 🔒", btn_procesando: "Procesando...", titulo_feed: "Mercado Real", en_directo: "En Directo", btn_interesa: "Me Interesa", btn_compartir: "Compartir" },
-            ca: { nav_demanda: "🎯 Demanda Activa", nav_mercado_real: "📡 Mercat Real", nav_gestion: "👥 Accés a Usuaris", nav_chivatazo: "📣 Chivatazo Nacional", nav_equipos: "💼 Uneix-te a l'Equip d'Advisors a la teva Zona", nav_poblaciones_titulo: "📍 Serveis Presencials a:", header_title: "Consola Central PropTech", ingesta_titulo: "Afegir Immoble al Radar", ingesta_desc: "La teva propietat es previsualitzarà a l'instant i es publicarà després de ser verificada.", lbl_zona: "Zona / Població", opt_sel: "Selecciona...", lbl_tipo: "Tipus d'Immoble", opt_apt: "Apartament", opt_piso: "Pis", opt_ado: "Adossat", opt_cha: "Xalet", opt_loc: "Local", opt_ter: "Terreny", lbl_hab: "Habitacions", lbl_banos: "Banys", lbl_obs: "Observacions", plc_obs: "Reformat, vistes...", lbl_precio: "Preu Net Propietari (€)", lbl_fotos: "Pujar Fotos (Màx. 4)", lbl_fotos_warn: "⚠️ OBLIGATORI: Només interiors.", lbl_tel: "El teu Telèfon (No es publicarà)", plc_tel: "Per a gestió interna...", btn_cuarentena: "Previsualitzar i Pujar a Quarantena 🔒", btn_procesando: "Processant...", titulo_feed: "Mercat Real", en_directo: "En Directe", btn_interesa: "M'Interessa", btn_compartir: "Compartir" },
-            en: { nav_demanda: "🎯 Active Demand", nav_mercado_real: "📡 Real Market", nav_gestion: "👥 User Access", nav_chivatazo: "📣 National Tip-off", nav_equipos: "💼 Join the Advisors Team in your Area", nav_poblaciones_titulo: "📍 In-Person Services in:", header_title: "PropTech Central Console", ingesta_titulo: "Add Property to Radar", ingesta_desc: "Your property will be previewed instantly and published anonymously after verification.", lbl_zona: "Area / City", opt_sel: "Select...", lbl_tipo: "Property Type", opt_apt: "Apartment", opt_piso: "Flat", opt_ado: "Townhouse", opt_cha: "Villa", opt_loc: "Commercial", opt_ter: "Land", lbl_hab: "Bedrooms", lbl_banos: "Bathrooms", lbl_obs: "Remarks", plc_obs: "Renovated, views...", lbl_precio: "Owner Net Price (€)", lbl_fotos: "Upload Photos (Max 4)", lbl_fotos_warn: "⚠️ MANDATORY: Only interiors.", lbl_tel: "Your Phone (Will not be published)", plc_tel: "For internal management...", btn_cuarentena: "Preview & Upload to Quarantine 🔒", btn_procesando: "Processing...", titulo_feed: "Real Market", en_directo: "Live", btn_interesa: "I'm Interested", btn_compartir: "Share" },
-            fr: { nav_demanda: "🎯 Demande Active", nav_mercado_real: "📡 Marché Réel", nav_gestion: "👥 Accès Utilisateurs", nav_chivatazo: "📣 Info Nationale", nav_equipos: "💼 Rejoignez l'équipe des Conseillers", nav_poblaciones_titulo: "📍 Services en personne à:", header_title: "Console Centrale PropTech", ingesta_titulo: "Ajouter une propriété", ingesta_desc: "Votre propriété sera prévisualisée et publiée anonymement après vérification.", lbl_zona: "Zone / Ville", opt_sel: "Sélectionnez...", lbl_tipo: "Type de Propriété", opt_apt: "Appartement", opt_piso: "Étage", opt_ado: "Maison de ville", opt_cha: "Villa", opt_loc: "Commercial", opt_ter: "Terrain", lbl_hab: "Chambres", lbl_banos: "Salles de bain", lbl_obs: "Remarques", plc_obs: "Rénové, vue...", lbl_precio: "Prix Net Propriétaire (€)", lbl_fotos: "Télécharger Photos (Max 4)", lbl_fotos_warn: "⚠️ OBLIGATOIRE: Uniquement à l'intérieur.", lbl_tel: "Votre téléphone (Non publié)", plc_tel: "Pour la gestion interne...", btn_cuarentena: "Prévisualiser & Mettre en Quarantaine 🔒", btn_procesando: "Traitement...", titulo_feed: "Marché Réel", en_directo: "En Direct", btn_interesa: "Je suis intéressé", btn_compartir: "Partager" },
-            de: { nav_demanda: "🎯 Aktive Nachfrage", nav_mercado_real: "📡 Realer Markt", nav_gestion: "👥 Benutzerzugang", nav_chivatazo: "📣 Nationaler Tipp", nav_equipos: "💼 Treten Sie dem Beraterteam bei", nav_poblaciones_titulo: "📍 Persönliche Dienstleistungen in:", header_title: "PropTech Zentralkonsole", ingesta_titulo: "Immobilie zum Radar hinzufügen", ingesta_desc: "Ihre Immobilie wird sofort in der Vorschau angezeigt und nach Überprüfung veröffentlicht.", lbl_zona: "Bereich / Stadt", opt_sel: "Wählen...", lbl_tipo: "Immobilienart", opt_apt: "Wohnung", opt_piso: "Etage", opt_ado: "Reihenhaus", opt_cha: "Villa", opt_loc: "Gewerbe", opt_ter: "Grundstück", lbl_hab: "Schlafzimmer", lbl_banos: "Badezimmer", lbl_obs: "Bemerkungen", plc_obs: "Renoviert, Aussicht...", lbl_precio: "Nettopreis Eigentümer (€)", lbl_fotos: "Fotos hochladen (Max 4)", lbl_fotos_warn: "⚠️ PFLICHT: Nur Innenräume.", lbl_tel: "Ihr Telefon (wird nicht veröffentlicht)", plc_tel: "Für internes Management...", btn_cuarentena: "Vorschau & In Quarantäne hochladen 🔒", btn_procesando: "Verarbeitung...", titulo_feed: "Realer Markt", en_directo: "Live", btn_interesa: "Ich bin interessiert", btn_compartir: "Teilen" },
-            it: { nav_demanda: "🎯 Domanda Attiva", nav_mercado_real: "📡 Mercato Reale", nav_gestion: "👥 Accesso Utenti", nav_chivatazo: "📣 Soffiata Nazionale", nav_equipos: "💼 Unisciti al Team dei Consulenti", nav_poblaciones_titulo: "📍 Servizi di persona a:", header_title: "Console Centrale PropTech", ingesta_titulo: "Aggiungi Immobile al Radar", ingesta_desc: "La tua proprietà sarà visualizzata in anteprima e pubblicata dopo la verifica.", lbl_zona: "Zona / Città", opt_sel: "Seleziona...", lbl_tipo: "Tipo di Immobile", opt_apt: "Appartamento", opt_piso: "Piano", opt_ado: "Villetta a schiera", opt_cha: "Villa", opt_loc: "Commerciale", opt_ter: "Terreno", lbl_hab: "Camere da letto", lbl_banos: "Bagni", lbl_obs: "Osservazioni", plc_obs: "Ristrutturato, vista...", lbl_precio: "Prezzo Netto Proprietario (€)", lbl_fotos: "Carica Foto (Max 4)", lbl_fotos_warn: "⚠️ OBBLIGATORIO: Solo interni.", lbl_tel: "Il tuo Telefono (Non sarà pubblicato)", plc_tel: "Per la gestione interna...", btn_cuarentena: "Anteprima & Carica in Quarantena 🔒", btn_procesando: "Elaborazione...", titulo_feed: "Mercato Reale", en_directo: "In Diretta", btn_interesa: "Mi Interessa", btn_compartir: "Condividi" },
-            ar: { nav_demanda: "🎯 الطلب النشط", nav_mercado_real: "📡 السوق الحقيقي", nav_gestion: "👥 وصول المستخدمين", nav_chivatazo: "📣 نصيحة وطنية", nav_equipos: "💼 انضم إلى فريق المستشارين", nav_poblaciones_titulo: "📍 الخدمات الشخصية في:", header_title: "وحدة التحكم المركزية PropTech", ingesta_titulo: "إضافة عقار إلى الرادار", ingesta_desc: "سيتم معاينة عقارك ونشره بشكل مجهول بعد التحقق.", lbl_zona: "المنطقة / المدينة", opt_sel: "اختر...", lbl_tipo: "نوع العقار", opt_apt: "شقة", opt_piso: "طابق", opt_ado: "منزل مستقل", opt_cha: "فيلا", opt_loc: "تجاري", opt_ter: "أرض", lbl_hab: "غرف النوم", lbl_banos: "الحمامات", lbl_obs: "ملاحظات", plc_obs: "مجدد، إطلالة...", lbl_precio: "السعر الصافي للمالك (€)", lbl_fotos: "تحميل الصور (بحد أقصى 4)", lbl_fotos_warn: "⚠️ إلزامي: التصميم الداخلي فقط.", lbl_tel: "هاتفك (لن يتم نشره)", plc_tel: "للإدارة الداخلية...", btn_cuarentena: "معاينة وتحميل إلى الحجر الصحي 🔒", btn_procesando: "جارٍ المعالجة...", titulo_feed: "السوق الحقيقي", en_directo: "مباشر", btn_interesa: "أنا مهتم", btn_compartir: "مشاركة" },
-            zh: { nav_demanda: "🎯 活跃需求", nav_mercado_real: "📡 真实市场", nav_gestion: "👥 用户访问", nav_chivatazo: "📣 全国提示", nav_equipos: "💼 加入顾问团队", nav_poblaciones_titulo: "📍 面对面服务：", header_title: "PropTech 中央控制台", ingesta_titulo: "将房产添加到雷达", ingesta_desc: "您的房产将立即预览，并在核实后匿名发布。", lbl_zona: "区域/城市", opt_sel: "选择...", lbl_tipo: "房产类型", opt_apt: "公寓", opt_piso: "楼层", opt_ado: "联排别墅", opt_cha: "别墅", opt_loc: "商业", opt_ter: "土地", lbl_hab: "卧室", lbl_banos: "浴室", lbl_obs: "备注", plc_obs: "翻新，景观...", lbl_precio: "业主净价（€）", lbl_fotos: "上传照片（最多 4 张）", lbl_fotos_warn: "⚠️ 必填：仅限室内。", lbl_tel: "您的电话（不会公开）", plc_tel: "用于内部管理...", btn_cuarentena: "预览并上传至隔离区 🔒", btn_procesando: "处理中...", titulo_feed: "真实市场", en_directo: "直播", btn_interesa: "我感兴趣", btn_compartir: "分享" }
+            es: {
+                nav_demanda: "🎯 Demanda Activa", nav_mercado_real: "📡 Mercado Real", nav_demanda_mob: "🎯 Demanda", nav_mercado_mob: "📡 Mercado", nav_gestion: "👥 Acceso a Usuarios", nav_chivatazo: "📣 Chivatazo Nacional", nav_equipos: "💼 Únete al Equipo de Advisors en tu Zona", nav_poblaciones_titulo: "📍 Servicios Presenciales en:", header_title: "Consola Central PropTech · Feed Cronológico", ingesta_titulo: "Añadir Inmueble al Radar", ingesta_desc: "Tu propiedad se previsualizará al instante y se publicará de forma anónima tras ser verificada.", lbl_cp: "Código Postal *", lbl_zona: "Zona / Población *", lbl_barrio: "Barrio / Núcleo Urbano *", opt_sel: "Selecciona...", lbl_tipo: "Tipo de Inmueble *",
+                opt_apt: "Apartamento", opt_ado: "Casa Adosada", opt_cha: "Chalet", opt_cow: "CoWorking", opt_edi: "Edificios", opt_gar: "Garajes y Parkings", opt_loc: "Locales", opt_lof: "Loft", opt_nav: "Nave Industrial", opt_ofi: "Oficinas y Despachos", opt_piso: "Piso", opt_sag: "Suelo Agrícola", opt_sac: "Suelo Agrícola con Casa", opt_sin: "Suelo Industrial", opt_sur: "Suelo Urbanizable", opt_suu: "Suelo Urbano/Residencial", opt_terc: "Terciario", opt_otr: "Otros",
+                lbl_hab: "Habitaciones", lbl_banos: "Baños", lbl_obs: "Observaciones", plc_obs: "Reformado, vistas, ascensor...", lbl_precio: "Precio Neto Propietario (€)", lbl_fotos: "Subir Fotos (Máx. 4)", lbl_fotos_warn: "⚠️ OBLIGATORIO: Solo interiores.<br>Cero fachadas.", lbl_tel: "Tu Teléfono (No se publicará)", plc_tel: "Para gestión interna...", btn_cuarentena: "Previsualizar y Subir a Cuarentena 🔒", btn_procesando: "Procesando...", titulo_feed: "Mercado Real", en_directo: "En Directo", btn_interesa: "Me Interesa", btn_compartir: "Compartir"
+            },
+            ca: {
+                nav_demanda: "🎯 Demanda Activa", nav_mercado_real: "📡 Mercat Real", nav_demanda_mob: "🎯 Demanda", nav_mercado_mob: "📡 Mercat", nav_gestion: "👥 Accés a Usuaris", nav_chivatazo: "📣 Chivatazo Nacional", nav_equipos: "💼 Uneix-te a l'Equip d'Advisors a la teva Zona", nav_poblaciones_titulo: "📍 Serveis Presencials a:", header_title: "Consola Central PropTech", ingesta_titulo: "Afegir Immoble al Radar", ingesta_desc: "La teva propietat es previsualitzarà a l'instant i es publicarà després de ser verificada.", lbl_cp: "Codi Postal *", lbl_zona: "Zona / Població *", lbl_barrio: "Barri / Nucli Urbà *", opt_sel: "Selecciona...", lbl_tipo: "Tipus d'Immoble *",
+                opt_apt: "Apartament", opt_ado: "Casa Adossada", opt_cha: "Xalet", opt_cow: "CoWorking", opt_edi: "Edificis", opt_gar: "Garatges i Pàrquings", opt_loc: "Locals", opt_lof: "Loft", opt_nav: "Nau Industrial", opt_ofi: "Oficines i Despatxos", opt_piso: "Pis", opt_sag: "Sòl Agrícola", opt_sac: "Sòl Agrícola amb Casa", opt_sin: "Sòl Industrial", opt_sur: "Sòl Urbanitzable", opt_suu: "Sòl Urbà/Residencial", opt_terc: "Terciari", opt_otr: "Altres",
+                lbl_hab: "Habitacions", lbl_banos: "Banys", lbl_obs: "Observacions", plc_obs: "Reformat, vistes...", lbl_precio: "Preu Net Propietari (€)", lbl_fotos: "Pujar Fotos (Màx. 4)", lbl_fotos_warn: "⚠️ OBLIGATORI: Només interiors.", lbl_tel: "El teu Telèfon (No es publicarà)", plc_tel: "Per a gestió interna...", btn_cuarentena: "Previsualitzar i Pujar a Quarantena 🔒", btn_procesando: "Processant...", titulo_feed: "Mercat Real", en_directo: "En Directe", btn_interesa: "M'Interessa", btn_compartir: "Compartir"
+            },
+            en: {
+                nav_demanda: "🎯 Active Demand", nav_mercado_real: "📡 Real Market", nav_demanda_mob: "🎯 Demand", nav_mercado_mob: "📡 Market", nav_gestion: "👥 User Access", nav_chivatazo: "📣 National Tip-off", nav_equipos: "💼 Join the Advisors Team", nav_poblaciones_titulo: "📍 In-Person Services in:", header_title: "PropTech Central Console", ingesta_titulo: "Add Property to Radar", ingesta_desc: "Your property will be previewed instantly and published anonymously after verification.", lbl_cp: "Postal Code *", lbl_zona: "Area / City *", lbl_barrio: "Neighborhood / District *", opt_sel: "Select...", lbl_tipo: "Property Type *",
+                opt_apt: "Apartment", opt_ado: "Townhouse", opt_cha: "Villa / Chalet", opt_cow: "CoWorking", opt_edi: "Buildings", opt_gar: "Garages & Parking", opt_loc: "Commercial Premises", opt_lof: "Loft", opt_nav: "Industrial Warehouse", opt_ofi: "Offices", opt_piso: "Flat", opt_sag: "Agricultural Land", opt_sac: "Agricultural Land with House", opt_sin: "Industrial Land", opt_sur: "Developable Land", opt_suu: "Urban/Residential Land", opt_terc: "Tertiary", opt_otr: "Others",
+                lbl_hab: "Bedrooms", lbl_banos: "Bathrooms", lbl_obs: "Remarks", plc_obs: "Renovated, views...", lbl_precio: "Owner Net Price (€)", lbl_fotos: "Upload Photos (Max 4)", lbl_fotos_warn: "⚠️ MANDATORY: Only interiors.", lbl_tel: "Your Phone (Will not be published)", plc_tel: "For internal management...", btn_cuarentena: "Preview & Upload to Quarantine 🔒", btn_procesando: "Processing...", titulo_feed: "Real Market", en_directo: "Live", btn_interesa: "I'm Interested", btn_compartir: "Share"
+            },
+            fr: {
+                nav_demanda: "🎯 Demande Active", nav_mercado_real: "📡 Marché Réel", nav_demanda_mob: "🎯 Demande", nav_mercado_mob: "📡 Marché", nav_gestion: "👥 Accès Utilisateurs", nav_chivatazo: "📣 Info Nationale", nav_equipos: "💼 Rejoignez l'équipe des Conseillers", nav_poblaciones_titulo: "📍 Services en personne à:", header_title: "Console Centrale PropTech", ingesta_titulo: "Ajouter une propriété", ingesta_desc: "Votre propriété sera prévisualisée et publiée anonymement après vérification.", lbl_cp: "Code Postal *", lbl_zona: "Zone / Ville *", lbl_barrio: "Quartier *", opt_sel: "Sélectionnez...", lbl_tipo: "Type de Propriété *",
+                opt_apt: "Appartement", opt_ado: "Maison mitoyenne", opt_cha: "Villa / Chalet", opt_cow: "CoWorking", opt_edi: "Immeubles", opt_gar: "Garages et Parkings", opt_loc: "Locaux commerciaux", opt_lof: "Loft", opt_nav: "Entrepôt industriel", opt_ofi: "Bureaux", opt_piso: "Appartement / Étage", opt_sag: "Terrain Agricole", opt_sac: "Terrain Agricole avec Maison", opt_sin: "Terrain Industriel", opt_sur: "Terrain Constructible", opt_suu: "Terrain Urbain/Résidentiel", opt_terc: "Tertiaire", opt_otr: "Autres",
+                lbl_hab: "Chambres", lbl_banos: "Salles de bain", lbl_obs: "Remarques", plc_obs: "Rénové, vue...", lbl_precio: "Prix Net Propriétaire (€)", lbl_fotos: "Télécharger Photos (Max 4)", lbl_fotos_warn: "⚠️ OBLIGATOIRE: Uniquement à l'intérieur.", lbl_tel: "Votre téléphone (Non publié)", plc_tel: "Pour la gestion interne...", btn_cuarentena: "Prévisualiser & Mettre en Quarantaine 🔒", btn_procesando: "Traitement...", titulo_feed: "Marché Réel", en_directo: "En Direct", btn_interesa: "Je suis intéressé", btn_compartir: "Partager"
+            },
+            de: {
+                nav_demanda: "🎯 Aktive Nachfrage", nav_mercado_real: "📡 Realer Markt", nav_demanda_mob: "🎯 Nachfrage", nav_mercado_mob: "📡 Markt", nav_gestion: "👥 Benutzerzugang", nav_chivatazo: "📣 Nationaler Tipp", nav_equipos: "💼 Treten Sie dem Beraterteam bei", nav_poblaciones_titulo: "📍 Persönliche Dienstleistungen in:", header_title: "PropTech Zentralkonsole", ingesta_titulo: "Immobilie zum Radar hinzufügen", ingesta_desc: "Ihre Immobilie wird sofort in der Vorschau angezeigt und nach Überprüfung veröffentlicht.", lbl_cp: "Postleitzahl *", lbl_zona: "Bereich / Stadt *", lbl_barrio: "Stadtteil *", opt_sel: "Wählen...", lbl_tipo: "Immobilienart *",
+                opt_apt: "Apartment", opt_ado: "Reihenhaus", opt_cha: "Villa / Chalet", opt_cow: "CoWorking", opt_edi: "Gebäude", opt_gar: "Garagen & Parkplätze", opt_loc: "Gewerberäume", opt_lof: "Loft", opt_nav: "Industriehalle", opt_ofi: "Büros", opt_piso: "Wohnung", opt_sag: "Agrarland", opt_sac: "Agrarland mit Haus", opt_sin: "Industriegelände", opt_sur: "Bauland", opt_suu: "Städtisches Wohnbauland", opt_terc: "Tertiär", opt_otr: "Andere",
+                lbl_hab: "Schlafzimmer", lbl_banos: "Badezimmer", lbl_obs: "Bemerkungen", plc_obs: "Renoviert, Aussicht...", lbl_precio: "Nettopreis Eigentümer (€)", lbl_fotos: "Fotos hochladen (Max 4)", lbl_fotos_warn: "⚠️ PFLICHT: Nur Innenräume.", lbl_tel: "Ihr Telefon (wird nicht veröffentlicht)", plc_tel: "Für internes Management...", btn_cuarentena: "Vorschau & In Quarantäne hochladen 🔒", btn_procesando: "Verarbeitung...", titulo_feed: "Realer Markt", en_directo: "Live", btn_interesa: "Ich bin interessiert", btn_compartir: "Teilen"
+            },
+            it: {
+                nav_demanda: "🎯 Domanda Attiva", nav_mercado_real: "📡 Mercato Reale", nav_demanda_mob: "🎯 Domanda", nav_mercado_mob: "📡 Mercato", nav_gestion: "👥 Accesso Utenti", nav_chivatazo: "📣 Soffiata Nazionale", nav_equipos: "💼 Unisciti al Team dei Consulenti", nav_poblaciones_titulo: "📍 Servizi di persona a:", header_title: "Console Centrale PropTech", ingesta_titulo: "Aggiungi Immobile al Radar", ingesta_desc: "La tua proprietà sarà visualizzata in anteprima e pubblicata dopo la verifica.", lbl_cp: "Codice Postale *", lbl_zona: "Zona / Città *", lbl_barrio: "Quartiere *", opt_sel: "Seleziona...", lbl_tipo: "Tipo di Immobile *",
+                opt_apt: "Monolocale / Appartamento", opt_ado: "Villetta a schiera", opt_cha: "Villa / Chalet", opt_cow: "CoWorking", opt_edi: "Edifici", opt_gar: "Garage e Parcheggi", opt_loc: "Locali commerciali", opt_lof: "Loft", opt_nav: "Capannone Industriale", opt_ofi: "Uffici", opt_piso: "Appartamento", opt_sag: "Terreno Agricolo", opt_sac: "Terreno Agricolo con Casa", opt_sin: "Terreno Industriale", opt_sur: "Terreno Edificabile", opt_suu: "Terreno Urbano/Residenziale", opt_terc: "Terziario", opt_otr: "Altri",
+                lbl_hab: "Camere da letto", lbl_banos: "Bagni", lbl_obs: "Osservazioni", plc_obs: "Ristrutturato, vista...", lbl_precio: "Prezzo Netto Proprietario (€)", lbl_fotos: "Carica Foto (Max 4)", lbl_fotos_warn: "⚠️ OBBLIGATORIO: Solo interni.", lbl_tel: "Il tuo Telefono (Non sarà pubblicato)", plc_tel: "Per la gestione interna...", btn_cuarentena: "Anteprima & Carica in Quarantena 🔒", btn_procesando: "Elaborazione...", titulo_feed: "Mercato Reale", en_directo: "In Diretta", btn_interesa: "Mi Interessa", btn_compartir: "Condividi"
+            },
+            ar: {
+                nav_demanda: "🎯 الطلب النشط", nav_mercado_real: "📡 السوق الحقيقي", nav_demanda_mob: "🎯 الطلب", nav_mercado_mob: "📡 السوق", nav_gestion: "👥 وصول المستخدمين", nav_chivatazo: "📣 نصيحة وطنية", nav_equipos: "💼 انضم إلى فريق المستشارين", nav_poblaciones_titulo: "📍 الخدمات الشخصية في:", header_title: "وحدة التحكم المركزية PropTech", ingesta_titulo: "إضافة عقار إلى الرادار", ingesta_desc: "سيتم معاينة عقارك ونشره بشكل مجهول بعد التحقق.", lbl_cp: "الرمز البريدي *", lbl_zona: "المنطقة / المدينة *", lbl_barrio: "الحي *", opt_sel: "اختر...", lbl_tipo: "نوع العقار *",
+                opt_apt: "شقة", opt_ado: "منزل متلاصق", opt_cha: "فيلا / شاليه", opt_cow: "مساحة عمل مشتركة", opt_edi: "مباني", opt_gar: "مرائب ومواقف سيارات", opt_loc: "محلات تجارية", opt_lof: "لوفت", opt_nav: "مستودع صناعي", opt_ofi: "مكاتب", opt_piso: "شقة سكنية", opt_sag: "أرض زراعية", opt_sac: "أرض زراعية مع منزل", opt_sin: "أرض صناعية", opt_sur: "أرض قابلة للتطوير", opt_suu: "أرض حضرية / سكنية", opt_terc: "خدمي / تجاري", opt_otr: "أخرى",
+                lbl_hab: "غرف النوم", lbl_banos: "الحمامات", lbl_obs: "ملاحظات", plc_obs: "مجدد، إطلالة...", lbl_precio: "السعر الصافي للمالك (€)", lbl_fotos: "تحميل الصور (بحد أقصى 4)", lbl_fotos_warn: "⚠️ إلزامي: التصميم الداخلي فقط.", lbl_tel: "هاتفك (لن يتم نشره)", plc_tel: "للإدارة الداخلية...", btn_cuarentena: "معاينة وتحميل إلى الحجر الصحي 🔒", btn_procesando: "جارٍ المعالجة...", titulo_feed: "السوق الحقيقي", en_directo: "مباشر", btn_interesa: "أنا مهتم", btn_compartir: "مشاركة"
+            },
+            zh: {
+                nav_demanda: "🎯 活跃需求", nav_mercado_real: "📡 真实市场", nav_demanda_mob: "🎯 需求", nav_mercado_mob: "📡 市场", nav_gestion: "👥 用户访问", nav_chivatazo: "📣 全国提示", nav_equipos: "💼 加入顾问团队", nav_poblaciones_titulo: "📍 面对面服务：", header_title: "PropTech 中央控制台", ingesta_titulo: "将房产添加到雷达", ingesta_desc: "您的房产将立即预览，并在核实后匿名发布。", lbl_cp: "邮政编码 *", lbl_zona: "区域/城市 *", lbl_barrio: "街区 *", opt_sel: "选择...", lbl_tipo: "房产类型 *",
+                opt_apt: "公寓 (Apartamento)", opt_ado: "联排别墅", opt_cha: "独立别墅 (Chalet)", opt_cow: "共享办公", opt_edi: "整栋建筑", opt_gar: "车库和停车位", opt_loc: "商铺", opt_lof: "Loft公寓", opt_nav: "工业厂房", opt_ofi: "办公室", opt_piso: "住宅套房 (Piso)", opt_sag: "农业用地", opt_sac: "带房农业用地", opt_sin: "工业用地", opt_sur: "可开发土地", opt_suu: "城市/住宅用地", opt_terc: "第三产业用地", opt_otr: "其他",
+                lbl_hab: "卧室", lbl_banos: "浴室", lbl_obs: "备注", plc_obs: "翻新，景观...", lbl_precio: "业主净价（€）", lbl_fotos: "上传照片（最多 4 张）", lbl_fotos_warn: "⚠️ 必填：仅限室内。", lbl_tel: "您的电话（不会公开）", plc_tel: "用于内部管理...", btn_cuarentena: "预览并上传至隔离区 🔒", btn_procesando: "处理中...", titulo_feed: "真实市场", en_directo: "直播", btn_interesa: "我感兴趣", btn_compartir: "分享"
+            }
         };
 
         function cambiarIdioma() {
@@ -737,8 +1302,8 @@
             const esActivo = (datos.Cuarentena || "") === "Apto / Activo";
             const esProvisionalLocal = datos.esProvisionalLocal === true;
             
-            const tipoStr = datos['Tipo Propiedad'] || "Inmueble";
-            const poblacionStr = datos['Población'] || "";
+            const tipoStr = datos['Tipo Propiedad'] || datos['Tipo_Inmueble'] || "Inmueble";
+            const poblacionStr = datos['Población'] || datos['Poblacion'] || "";
             let tituloStr = `${tipoStr} en ${poblacionStr}`; 
             if (!poblacionStr) tituloStr = tipoStr;
 
@@ -786,6 +1351,9 @@
             const banosVal = parseInt(datos.N_wc);
             const banosStr = (!isNaN(banosVal) && banosVal > 0) ? `<span class="tag" style="font-size:13px; padding:8px 12px;">🛁 ${banosVal} Baños</span>` : '';
             let zonaCompleta = poblacionStr || 'Ubicación reservada';
+            if (datos.Barrio && datos.Barrio !== "_otras zonas") {
+                zonaCompleta += ` · ${datos.Barrio}`;
+            }
 
             let botonesAccionModalHTML = "";
             if (esProvisionalLocal) {
@@ -840,7 +1408,7 @@
                             ${habsStr}
                             ${banosStr}
                         </div>
-                        <div style="margin-top: 30px;">
+                        <div style="margin-top: 24px;">
                             ${botonesAccionModalHTML}
                         </div>
                     </div>
@@ -853,8 +1421,8 @@
         function crearElementoTarjeta(prop) {
             const datos = prop.fields || prop; 
             const refID = datos.ID_Inmueble || datos.referencia || "REF-ND";
-            const tipoStr = datos['Tipo Propiedad'] || "Inmueble";
-            const poblacionStr = datos['Población'] || "";
+            const tipoStr = datos['Tipo Propiedad'] || datos['Tipo_Inmueble'] || "Inmueble";
+            const poblacionStr = datos['Población'] || datos['Poblacion'] || "";
             const estadoCuarentena = datos.Cuarentena || "";
             const esActivo = estadoCuarentena === "Apto / Activo";
             const esProvisionalLocal = datos.esProvisionalLocal === true;
@@ -881,7 +1449,7 @@
                 if (datos['Precio Deseado']) {
                     let numNeto = parseInt(String(datos['Precio Deseado']).replace(/\D/g, ''), 10);
                     if (!isNaN(numNeto) && numNeto > 0) {
-                        subPrecioCardHTML = `<div style="font-size:10.5px; color:var(--accent-gold); text-align:right; margin-top:3px;">(Neto Prop.: ${numNeto.toLocaleString('es-ES')} € + Hon. IVA incl.)</div>`;
+                        subPrecioCardHTML = `<div style="font-size:10px; color:var(--accent-gold); text-align:right; margin-top:3px;">(Neto Prop.: ${numNeto.toLocaleString('es-ES')} € + Hon.)</div>`;
                     }
                 }
                 obsStr = datos['Descripcion inicial'] || "";
@@ -894,20 +1462,20 @@
                 }
 
                 footerHTML = `
-                    <div class="likes-count" style="color: var(--accent-orange);">🔒 Pendiente de validación documental por Level.immo</div>
+                    <div class="likes-count" style="color: var(--accent-orange);">🔒 Pendiente de validación documental</div>
                     <div class="btn-actions-group">
-                        <button type="button" class="btn-like" onclick="abrirFichaInmueble('${refID}')">👁️ Revisar / Confirmar Ficha</button>
+                        <button type="button" class="btn-like" onclick="abrirFichaInmueble('${refID}')">👁️ Revisar Ficha</button>
                     </div>
                 `;
             } else if (!esActivo) {
                 precioStr = "PRÓXIMAMENTE";
-                obsStr = "🔒 <i>Propiedad en proceso de verificación documental por nuestro equipo. Únete a la lista de espera para ser de los primeros en recibir los detalles.</i>";
-                galeriaHTML = `<div class="gallery-img empty" style="grid-column: span 2; background: rgba(245, 158, 11, 0.05); border: 1px dashed var(--accent-orange); color: var(--accent-orange); font-size: 13px; text-align: center; flex-direction: column; gap: 10px;" onclick="abrirFichaInmueble('${refID}')">
-                    <span style="font-size: 24px;">📸</span><span>Ver Ficha en Revisión</span>
+                obsStr = "🔒 <i>Propiedad en proceso de verificación documental por nuestro equipo. Únete a la lista de espera para recibir los detalles.</i>";
+                galeriaHTML = `<div class="gallery-img empty" style="grid-column: span 2; background: rgba(245, 158, 11, 0.05); border: 1px dashed var(--accent-orange); color: var(--accent-orange); font-size: 12.5px; text-align: center; flex-direction: column; gap: 8px;" onclick="abrirFichaInmueble('${refID}')">
+                    <span style="font-size: 22px;">📸</span><span>Ver Ficha en Revisión</span>
                 </div>`;
-                etiquetaEstado = `<span class="card-time" style="color: var(--accent-orange); font-weight: bold;">⏳ EN ESTADO DE VALIDACIÓN</span>`;
+                etiquetaEstado = `<span class="card-time" style="color: var(--accent-orange); font-weight: bold;">⏳ EN VALIDACIÓN</span>`;
                 footerHTML = `
-                    <div class="likes-count" style="color: var(--accent-orange);">👥 <span id="contador-int-${refID}">${totalInteresados}</span> <span style="margin-left: 5px;">en espera</span></div>
+                    <div class="likes-count" style="color: var(--accent-orange);">👥 <span id="contador-int-${refID}">${totalInteresados}</span> <span style="margin-left: 4px;">en espera</span></div>
                     <div class="btn-actions-group">
                         <button type="button" class="btn-like" onclick="abrirChatElena('${refID}')">✨ <span data-i18n="btn_interesa">Me Interesa</span></button>
                     </div>
@@ -935,22 +1503,22 @@
                 if (fotoPublicaActiva && imagenUrl && imagenUrl !== "undefined") {
                     const listaUrls = String(imagenUrl).split(',').map(u => u.trim()).filter(Boolean);
                     if (listaUrls.length === 1) {
-                        galeriaHTML = `<img src="${listaUrls[0]}" class="gallery-img" style="grid-column: span 2; height: 100%; max-height: 220px;" alt="${tituloStr}" onerror="this.src='https://placehold.co/400x300/1f2937/10b981?text=Activo+Verificado';" onclick="abrirFichaInmueble('${refID}')">`;
+                        galeriaHTML = `<img src="${listaUrls[0]}" class="gallery-img" style="grid-column: span 2; height: 100%; max-height: 210px;" alt="${tituloStr}" onerror="this.src='https://placehold.co/400x300/1f2937/10b981?text=Activo+Verificado';" onclick="abrirFichaInmueble('${refID}')">`;
                     } else {
                         galeriaHTML = listaUrls.slice(0, 4).map(u => 
                             `<img src="${u}" class="gallery-img" alt="${tituloStr}" onerror="this.src='https://placehold.co/400x300/1f2937/10b981?text=Activo+Verificado';" onclick="abrirFichaInmueble('${refID}')">`
                         ).join('');
                     }
                 } else {
-                    galeriaHTML = `<div class="gallery-img empty" style="grid-column: span 2; background: rgba(16, 185, 129, 0.05); border: 1px dashed var(--accent-green); color: var(--accent-green); font-size: 12.5px; text-align: center; flex-direction: column; gap: 6px; padding: 15px;" onclick="abrirFichaInmueble('${refID}')">
+                    galeriaHTML = `<div class="gallery-img empty" style="grid-column: span 2; background: rgba(16, 185, 129, 0.05); border: 1px dashed var(--accent-green); color: var(--accent-green); font-size: 12px; text-align: center; flex-direction: column; gap: 6px; padding: 15px;" onclick="abrirFichaInmueble('${refID}')">
                         <span style="font-size: 22px;">🏡</span><span>Activo Verificado · Ver Ficha</span>
                     </div>`;
                 }
 
                 footerHTML = `
-                    <div class="likes-count">🔥 <span id="contador-int-${refID}">${totalInteresados}</span> <span style="margin-left: 5px;">interesados</span></div>
+                    <div class="likes-count">🔥 <span id="contador-int-${refID}">${totalInteresados}</span> <span style="margin-left: 4px;">interesados</span></div>
                     <div class="btn-actions-group">
-                        <span style="font-size: 12px; color: var(--text-muted);">❤️ <span id="contador-likes-${refID}">${totalLikes}</span></span>
+                        <span style="font-size: 11.5px; color: var(--text-muted);">❤️ <span id="contador-likes-${refID}">${totalLikes}</span></span>
                         <button type="button" class="btn-heart" onclick="darLikeVacio(this, 'contador-likes-${refID}', '${refID}')" title="Me Gusta">🤍</button>
                         <button type="button" class="btn-share" onclick="compartirPropiedad('${refID}')">🔗 <span data-i18n="btn_compartir">Compartir</span></button>
                         <button type="button" class="btn-like" onclick="abrirChatElena('${refID}')">✨ <span data-i18n="btn_interesa">Me Interesa</span></button>
@@ -963,6 +1531,9 @@
             const banosVal = parseInt(datos.N_wc);
             const banosStr = (!isNaN(banosVal) && banosVal > 0) ? `<span class="tag">🛁 ${banosVal} Baños</span>` : '';
             let zonaCompleta = poblacionStr || 'Ubicación reservada';
+            if (datos.Barrio && datos.Barrio !== "_otras zonas") {
+                zonaCompleta += ` (${datos.Barrio})`;
+            }
 
             const card = document.createElement('div');
             card.className = 'property-card slide-down-enter';
@@ -975,15 +1546,15 @@
                 </div>
                 <div class="card-body">
                     <div class="card-details">
-                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                            <h3 style="font-size: 16px; margin-right: 10px;" onclick="abrirFichaInmueble('${refID}')">${tituloStr}</h3>
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 8px;">
+                            <h3 style="font-size: 16px; margin: 0;" onclick="abrirFichaInmueble('${refID}')">${tituloStr}</h3>
                             <div>
-                                <span style="font-size: 15px; font-weight: 800; color: ${(esActivo || esProvisionalLocal) ? 'var(--accent-green)' : 'var(--accent-orange)'}; background: ${(esActivo || esProvisionalLocal) ? 'rgba(16,185,129,0.1)' : 'rgba(245,158,11,0.1)'}; padding: 4px 10px; border-radius: 6px; white-space: nowrap; display:inline-block;">${precioStr}</span>
+                                <span style="font-size: 14.5px; font-weight: 800; color: ${(esActivo || esProvisionalLocal) ? 'var(--accent-green)' : 'var(--accent-orange)'}; background: ${(esActivo || esProvisionalLocal) ? 'rgba(16,185,129,0.1)' : 'rgba(245,158,11,0.1)'}; padding: 4px 9px; border-radius: 6px; white-space: nowrap; display:inline-block;">${precioStr}</span>
                                 ${subPrecioCardHTML}
                             </div>
                         </div>
                         <p class="card-obs" style="margin-top: 10px; cursor:pointer;" onclick="abrirFichaInmueble('${refID}')">${obsStr}</p>
-                        <div class="card-tags" style="margin-top: 15px;">
+                        <div class="card-tags" style="margin-top: 12px;">
                             <span class="tag">📍 ${zonaCompleta}</span>
                             ${habsStr}
                             ${banosStr}
@@ -1028,7 +1599,6 @@
                 console.warn("Aviso al conectar con el surtidor:", error);
             }
 
-            // Si hay un error HTTP 500 en Make, activamos automáticamente el respaldo con las propiedades reales de Lark
             if (inmueblesServidor.length === 0) {
                 inmueblesServidor = INMUEBLES_REALES_BASE;
             }
@@ -1050,7 +1620,14 @@
             }
         }
 
+        const TIPOS_SIN_HABITACIONES = new Set([
+            "CoWorking", "Garajes y Parkings", "Locales", "Nave Industrial",
+            "Oficinas y Despachos", "Suelo Agrícola", "Suelo Industrial",
+            "Suelo Urbanizable", "Suelo Urbano/Residencial", "Terciario"
+        ]);
+
         window.addEventListener('DOMContentLoaded', () => {
+            cargarMunicipiosDesdeDrive();
             setInterval(updateClock, 1000); 
             updateClock(); 
             cambiarIdioma(); 
@@ -1066,7 +1643,7 @@
             if(selectorTipo) {
                 selectorTipo.addEventListener('change', function() {
                     const tipo = this.value;
-                    if (tipo === 'Local' || tipo === 'Terreno o Parcela') {
+                    if (TIPOS_SIN_HABITACIONES.has(tipo)) {
                         bloqueCaracteristicas.style.display = 'none';
                         inputHab.value = "0";
                         inputBanos.value = "0";
@@ -1163,7 +1740,10 @@
             const now = new Date();
             const refProvisional = `REF${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}${Math.floor(10000 + Math.random() * 90000)}`;
 
-            const zonaVal = document.getElementById('prop-zona').value;
+            const cpVal = document.getElementById('prop-cp').value.trim();
+            const zonaVal = document.getElementById('prop-zona').value.trim();
+            const barrioVal = document.getElementById('prop-barrio').value || "";
+            const idCpPrincipalVal = document.getElementById('prop-id-cp-principal').value || `${zonaVal}-`;
             const tipoVal = document.getElementById('prop-tipo').value;
             const habVal = document.getElementById('prop-hab').value || "0";
             const banosVal = document.getElementById('prop-banos').value || "0";
@@ -1180,7 +1760,10 @@
                 datos_demanda_inversion: { zonas_interes: "", presupuesto_requisitos: "", informacion_solicitada: "" },
                 datos_inmueble_captacion: {
                     id_inmueble: refProvisional,
+                    codigo_postal: cpVal,
                     poblacion: zonaVal,
+                    barrio: barrioVal,
+                    id_cp_principal: idCpPrincipalVal,
                     tipo_inmueble: tipoVal,
                     habitaciones: habVal,
                     banos: banosVal,
@@ -1198,6 +1781,8 @@
 
             const formDataIngesta = new FormData();
             formDataIngesta.append("id_inmueble", refProvisional);
+            formDataIngesta.append("codigo_postal", cpVal);
+            formDataIngesta.append("id_cp_principal", idCpPrincipalVal);
             formDataIngesta.append("payload_maestro", JSON.stringify(payloadMaestro));
             formDataIngesta.append("Precio Deseado", String(precioDeseadoNum));
             formDataIngesta.append("PRECIO_PROPIETARIO", String(precioDeseadoNum));
@@ -1211,6 +1796,7 @@
 
             const formDataFotos = new FormData();
             formDataFotos.append("id_inmueble", refProvisional);
+            formDataFotos.append("codigo_postal", cpVal);
             formDataFotos.append("payload_maestro", JSON.stringify(payloadMaestro));
             rawFiles.forEach((file, index) => {
                 formDataFotos.append("array_fotos", file, `${refProvisional}_foto_${index + 1}_${file.name}`);
@@ -1226,6 +1812,9 @@
                     ID_Inmueble: refProvisional,
                     'Tipo Propiedad': tipoVal,
                     'Población': zonaVal,
+                    Barrio: barrioVal,
+                    CP: cpVal,
+                    ID_CP_PRINCIPAL: idCpPrincipalVal,
                     N_Habitaciones: habVal,
                     N_wc: banosVal,
                     'Descripcion inicial': obsVal,
@@ -1251,6 +1840,10 @@
                 mostrarToast(`✅ Ficha provisional ${refProvisional} creada (PVP: ${precioVentaFinalNum.toLocaleString('es-ES')} €).`);
                 
                 this.reset(); 
+                const statusEl = document.getElementById('prop-cp-status');
+                statusEl.className = 'cp-status-badge';
+                statusEl.innerText = '';
+                document.getElementById('prop-barrio-wrapper').style.display = 'none';
                 hintHonorarios.innerHTML = `* En la ficha se sumarán automáticamente los honorarios mínimos (6.000 € + IVA = 7.260 €).`;
                 previewContainer.innerHTML = ''; 
                 fileCounter.style.display = 'none'; 
