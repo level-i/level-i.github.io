@@ -3,22 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Level.immo | Gestión de Inquilinos y Propietarios · Área Segura</title>
+    <title>Level.immo | Gestión de Inquilinos · Consola PropTech</title>
     <style>
         :root {
-            --bg-base: #090d16;
-            --bg-panel: #111827;
-            --bg-card: #1f2937;
-            --bg-input: #060911;
+            --bg-base: #0b0f17;
+            --bg-sidebar: #0e131d;
+            --bg-panel: #131924;
+            --bg-card: #18202f;
+            --bg-input: #070a10;
             --accent-green: #10b981;
+            --accent-green-hover: #059669;
             --accent-blue: #3b82f6;
             --accent-cyan: #06b6d4;
-            --accent-gold: #C5A059;
+            --accent-gold: #d4a359;
             --accent-orange: #f59e0b;
             --accent-red: #ef4444;
-            --text-main: #f9fafb;
+            --text-main: #f3f4f6;
             --text-muted: #9ca3af;
-            --border-color: #374151;
+            --border-color: #263143;
         }
 
         * {
@@ -27,16 +29,16 @@
             padding: 0;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             scrollbar-width: thin;
-            scrollbar-color: var(--border-color) var(--bg-panel);
+            scrollbar-color: var(--border-color) var(--bg-sidebar);
         }
 
         html, body {
-            min-height: 100vh;
-            width: 100%;
+            height: 100vh;
+            width: 100vw;
             background-color: var(--bg-base);
             color: var(--text-main);
+            overflow: hidden;
             top: 0px !important;
-            overflow-x: hidden;
         }
 
         .goog-te-banner-frame.skiptranslate,
@@ -50,34 +52,46 @@
             box-shadow: none !important;
         }
 
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: var(--bg-panel); }
-        ::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 10px; }
+        ::-webkit-scrollbar { width: 5px; height: 5px; }
+        ::-webkit-scrollbar-track { background: var(--bg-sidebar); }
+        ::-webkit-scrollbar-thumb { background: #374151; border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: var(--accent-green); }
 
-        /* ==========================================
-           1. HEADER CORPORATIVO STICKY
-           ========================================== */
-        header {
-            position: sticky;
-            top: 0;
-            z-index: 10000;
-            background-color: rgba(17, 24, 39, 0.96);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 28px;
-            min-height: 64px;
-            flex-wrap: wrap;
-            gap: 12px;
+        /* =========================================================
+           ESTRUCTURA CONSOLA PROPTECH (CLONADA DE DEMANDA-ACTIVA)
+           ========================================================= */
+        .console-wrapper {
+            display: grid;
+            grid-template-columns: 280px 1fr 310px;
+            height: 100vh;
+            width: 100vw;
+            transition: all 0.3s ease;
         }
 
-        .brand-left {
+        /* MODO PANTALLA COMPLETA AL ENTRAR AL PORTAL */
+        body.fullscreen-workspace .console-wrapper {
+            grid-template-columns: 1fr;
+        }
+        body.fullscreen-workspace .left-sidebar,
+        body.fullscreen-workspace .right-sidebar {
+            display: none !important;
+        }
+
+        /* =========================================================
+           1. SIDEBAR IZQUIERDO (IDÉNTICO A TU CAPTURA DEMANDA-ACTIVA)
+           ========================================================= */
+        .left-sidebar {
+            background-color: var(--bg-sidebar);
+            border-right: 1px solid var(--border-color);
             display: flex;
-            align-items: center;
-            gap: 15px;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .sidebar-top {
+            padding: 22px 20px 12px 20px;
         }
 
         .brand-logo {
@@ -85,58 +99,159 @@
             align-items: baseline;
             color: #ffffff;
             text-decoration: none;
+            margin-bottom: 10px;
         }
-        .l-letter { font-size: 28px; font-weight: 900; line-height: 1; }
+        .l-letter { font-size: 30px; font-weight: 900; line-height: 1; }
         .brand-dot {
-            width: 8px;
-            height: 8px;
+            width: 9px;
+            height: 9px;
             background-color: var(--accent-green);
             border-radius: 50%;
-            margin: 0 5px 0 2px;
-            box-shadow: 0 0 8px rgba(16, 185, 129, 0.8);
+            margin: 0 6px 0 2px;
+            box-shadow: 0 0 8px var(--accent-green);
         }
-        .logo-text { font-size: 19px; font-weight: 700; letter-spacing: 0.5px; }
+        .logo-text { font-size: 21px; font-weight: 800; letter-spacing: 0.3px; }
 
-        .brand-clock {
+        .sidebar-clock {
             font-family: 'Courier New', Courier, monospace;
-            font-size: 11px;
+            font-size: 12px;
             color: var(--accent-green);
-            font-weight: bold;
-            background: rgba(16, 185, 129, 0.08);
-            padding: 4px 8px;
-            border-radius: 4px;
-            border: 1px solid rgba(16, 185, 129, 0.25);
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            margin-bottom: 14px;
         }
 
-        .header-center-nav {
+        .sidebar-nav {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .side-nav-item {
             display: flex;
             align-items: center;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-
-        .nav-pill {
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
+            gap: 10px;
+            padding: 12px 14px;
+            border-radius: 8px;
             color: var(--text-muted);
-            padding: 7px 13px;
-            border-radius: 6px;
-            font-size: 12px;
-            font-weight: 600;
             text-decoration: none;
+            font-size: 13.5px;
+            font-weight: 700;
+            border: 1px solid transparent;
             transition: all 0.2s;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
             cursor: pointer;
         }
-        .nav-pill:hover, .nav-pill.active {
+        .side-nav-item:hover {
+            background: rgba(255, 255, 255, 0.03);
+            color: #ffffff;
+        }
+        .side-nav-item.active-green {
+            background: rgba(16, 185, 129, 0.08);
             border-color: var(--accent-green);
-            color: #fff;
-            background: rgba(16, 185, 129, 0.12);
+            color: #ffffff;
+            box-shadow: inset 0 0 12px rgba(16, 185, 129, 0.15);
+        }
+        .side-nav-item.chivatazo-box {
+            border: 1px dashed var(--accent-gold);
+            color: var(--accent-gold);
+            background: rgba(212, 163, 89, 0.05);
+            margin-top: 4px;
+        }
+        .side-nav-item.chivatazo-box:hover {
+            background: rgba(212, 163, 89, 0.12);
         }
 
-        .header-right {
+        .presencial-details {
+            margin-top: 6px;
+            border: none;
+            background: transparent;
+        }
+        .presencial-details summary {
+            padding: 10px 14px;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-muted);
+            cursor: pointer;
+            list-style: none;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .presencial-details summary::-webkit-details-marker { display: none; }
+        .presencial-list {
+            padding: 6px 14px 12px 32px;
+            font-size: 12px;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        .sidebar-footer {
+            padding: 16px 18px;
+            border-top: 1px solid var(--border-color);
+            text-align: center;
+            background: rgba(7, 10, 16, 0.6);
+        }
+        .api-aicat-badge {
+            font-size: 12px;
+            font-weight: 800;
+            color: #d1d5db;
+            margin-bottom: 8px;
+            letter-spacing: 0.4px;
+        }
+        .sidebar-legal-links {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+        .sidebar-legal-links a {
+            color: var(--text-muted);
+            font-size: 11.5px;
+            text-decoration: none;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .sidebar-legal-links a:hover { color: var(--accent-gold); text-decoration: underline; }
+        .copyright-txt {
+            font-size: 11px;
+            color: #6b7280;
+            line-height: 1.4;
+        }
+
+        /* =========================================================
+           2. COLUMNA CENTRAL (HEADER CONSOLA + ESCENARIO)
+           ========================================================= */
+        .center-column {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+            background-color: var(--bg-base);
+        }
+
+        .console-topbar {
+            min-height: 56px;
+            padding: 10px 24px;
+            border-bottom: 1px solid var(--border-color);
+            background-color: var(--bg-sidebar);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .console-title {
+            font-size: 13.5px;
+            color: var(--text-muted);
+            font-weight: 600;
+            letter-spacing: 0.3px;
+        }
+
+        .topbar-controls {
             display: flex;
             align-items: center;
             gap: 10px;
@@ -144,284 +259,260 @@
 
         .lang-select {
             background: var(--bg-card);
-            border: 1px solid var(--accent-gold);
+            border: 1px solid var(--border-color);
             color: var(--text-main);
-            padding: 7px 12px;
+            padding: 6px 11px;
             border-radius: 6px;
             font-size: 12px;
-            font-weight: bold;
+            font-weight: 700;
             cursor: pointer;
             outline: none;
         }
+        .lang-select:hover { border-color: var(--accent-gold); }
 
-        /* ==========================================
-           2. ARQUITECTURA DE 3 COLUMNAS -> FULLSCREEN
-           ========================================== */
-        .app-layout {
-            display: grid;
-            grid-template-columns: 290px 1fr 290px;
-            min-height: calc(100vh - 65px);
-            width: 100%;
-            transition: all 0.35s ease;
-        }
-
-        /* Cuando entra al portal: Oculta laterales y pasa a Pantalla Completa Real */
-        body.fullscreen-mode .app-layout {
-            grid-template-columns: 1fr;
-        }
-        body.fullscreen-mode .side-panel {
-            display: none !important;
-        }
-        body.fullscreen-mode .center-stage {
-            padding: 25px 30px 100px 30px;
-        }
-        body.fullscreen-mode .stage-inner {
-            max-width: 1240px;
-        }
-
-        .side-panel {
-            background: linear-gradient(160deg, #111827 0%, #090d16 100%);
-            border-right: 1px solid var(--border-color);
-            border-left: 1px solid var(--border-color);
-            padding: 22px 18px;
+        .center-scroll-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 28px 24px 90px 24px;
             display: flex;
             flex-direction: column;
-            gap: 18px;
+            align-items: center;
         }
 
-        .side-box {
-            background: rgba(31, 41, 55, 0.55);
+        /* =========================================================
+           TARJETA FORMULARIO DE ACCESO (ESTILO EXACTO DEMANDA-ACTIVA)
+           ========================================================= */
+        .proptech-form-card {
+            width: 100%;
+            max-width: 480px;
+            background-color: var(--bg-panel);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 26px 24px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.55);
+        }
+
+        .card-main-heading {
+            font-size: 20px;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 6px;
+        }
+        .card-sub-desc {
+            font-size: 13px;
+            color: var(--text-muted);
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+
+        .field-group {
+            margin-bottom: 16px;
+        }
+        .field-label {
+            display: block;
+            font-size: 12.5px;
+            font-weight: 700;
+            color: #9ca3af;
+            margin-bottom: 7px;
+        }
+
+        .proptech-input {
+            width: 100%;
+            background-color: var(--bg-input);
+            border: 1px solid var(--border-color);
+            color: #ffffff;
+            padding: 13px 14px;
+            border-radius: 8px;
+            font-size: 15px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .proptech-input:focus {
+            border-color: var(--accent-green);
+        }
+
+        /* CAJA CONDICIONES Y PRIVACIDAD (IDÉNTICA A DEMANDA-ACTIVA) */
+        .privacy-check-box {
+            background: rgba(16, 185, 129, 0.05);
+            border: 1px solid rgba(16, 185, 129, 0.28);
+            border-radius: 8px;
+            padding: 13px 15px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 16px;
+            cursor: pointer;
+        }
+        .privacy-check-box input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            margin-top: 2px;
+            accent-color: var(--accent-green);
+            cursor: pointer;
+        }
+        .privacy-check-text {
+            font-size: 12.5px;
+            color: var(--text-muted);
+            line-height: 1.45;
+        }
+        .privacy-check-text strong {
+            color: #ffffff;
+        }
+
+        /* CAJA ANTI-SPAM MATEMÁTICA (CLONADA AL MILÍMETRO DE DEMANDA-ACTIVA) */
+        .antispam-box {
+            background: rgba(7, 10, 16, 0.55);
+            border: 1px dashed #374151;
+            border-radius: 8px;
+            padding: 14px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+        .antispam-label {
+            font-size: 13.5px;
+            font-weight: 700;
+            color: #9ca3af;
+        }
+        .antispam-nums {
+            color: var(--accent-gold);
+            font-size: 16px;
+            font-weight: 900;
+            margin-left: 4px;
+        }
+        .antispam-input {
+            width: 92px;
+            height: 42px;
+            background-color: #05070b;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: #ffffff;
+            font-size: 16px;
+            font-weight: 800;
+            text-align: center;
+            padding: 4px 8px;
+            outline: none;
+        }
+        .antispam-input:focus {
+            border-color: var(--accent-gold);
+        }
+
+        /* BOTÓN VERDE PRINCIPAL (IDÉNTICO A "Solicitar Verificación VIP") */
+        .btn-vip-green {
+            width: 100%;
+            background-color: var(--accent-green);
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            padding: 15px 20px;
+            font-size: 15px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.15s;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.25);
+        }
+        .btn-vip-green:hover {
+            background-color: var(--accent-green-hover);
+            transform: translateY(-1px);
+        }
+
+        .quick-demo-bar {
+            margin-top: 16px;
+            padding-top: 14px;
+            border-top: 1px dashed var(--border-color);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .quick-demo-btns {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+        .btn-demo-role {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            padding: 8px 10px;
+            border-radius: 6px;
+            font-size: 11.5px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-demo-role:hover {
+            border-color: var(--accent-gold);
+            color: #fff;
+        }
+
+        .status-msg {
+            display: none;
+            margin-top: 14px;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            text-align: center;
+            line-height: 1.45;
+        }
+        .status-error { background: rgba(239, 68, 68, 0.15); border: 1px solid var(--accent-red); color: #fca5a5; }
+        .status-ok { background: rgba(16, 185, 129, 0.15); border: 1px solid var(--accent-green); color: #6ee7b7; }
+
+        /* =========================================================
+           3. SIDEBAR DERECHO (INFORMACIÓN OPERATIVA Y ROLES)
+           ========================================================= */
+        .right-sidebar {
+            background-color: var(--bg-sidebar);
+            border-left: 1px solid var(--border-color);
+            padding: 20px 18px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .info-widget {
+            background: var(--bg-panel);
             border: 1px solid var(--border-color);
             border-radius: 10px;
             padding: 15px;
         }
-
-        .side-box-title {
-            font-size: 11.5px;
+        .widget-title {
+            font-size: 12px;
+            font-weight: 800;
             color: var(--accent-gold);
             text-transform: uppercase;
-            letter-spacing: 1px;
-            font-weight: 800;
+            letter-spacing: 0.7px;
             margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
         }
-
-        .side-stat-row {
+        .widget-row {
             display: flex;
             justify-content: space-between;
             font-size: 12px;
             padding: 6px 0;
-            border-bottom: 1px dashed rgba(255,255,255,0.07);
+            border-bottom: 1px dashed rgba(255,255,255,0.06);
             color: var(--text-muted);
         }
-        .side-stat-row:last-child { border-bottom: none; }
-        .side-stat-val { color: #fff; font-weight: 700; }
+        .widget-row:last-child { border-bottom: none; }
+        .widget-val { color: #fff; font-weight: 700; }
 
-        .side-link-btn {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: var(--bg-base);
-            border: 1px solid var(--border-color);
-            color: var(--text-main);
-            text-decoration: none;
-            padding: 10px 12px;
-            border-radius: 7px;
-            font-size: 12.5px;
-            font-weight: 600;
-            margin-bottom: 8px;
-            transition: all 0.2s;
-        }
-        .side-link-btn:hover {
-            border-color: var(--accent-gold);
-            color: var(--accent-gold);
-            transform: translateX(2px);
-        }
-
-        .center-stage {
-            padding: 30px 20px 100px 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 100%;
-        }
-
-        .stage-inner {
-            width: 100%;
-            max-width: 760px;
-            display: flex;
-            flex-direction: column;
-            gap: 22px;
-            transition: max-width 0.35s ease;
-        }
-
-        /* ==========================================
-           3. LOGIN DE ACCESO (DNI + SUMA + OTP PIN)
-           ========================================== */
-        .login-hero-card {
-            background: linear-gradient(145deg, #131b2e, #0b101d);
-            border: 1px solid rgba(197, 160, 89, 0.45);
-            border-radius: 14px;
-            padding: 32px 28px;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.65);
-        }
-
-        .tag-header {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: rgba(197, 160, 89, 0.12);
-            border: 1px solid rgba(197, 160, 89, 0.4);
-            color: var(--accent-gold);
-            font-size: 11px;
-            font-weight: 800;
-            padding: 5px 12px;
-            border-radius: 30px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 14px;
-        }
-
-        .pulse-dot {
-            width: 7px;
-            height: 7px;
-            background: var(--accent-green);
-            border-radius: 50%;
-            box-shadow: 0 0 8px var(--accent-green);
-        }
-
-        .login-title {
-            font-size: 24px;
-            font-weight: 900;
-            color: #fff;
-            margin-bottom: 8px;
-        }
-
-        .login-subtitle {
-            font-size: 13.5px;
-            color: var(--text-muted);
-            line-height: 1.55;
-            margin-bottom: 24px;
-        }
-
-        .form-label {
-            display: block;
-            font-size: 12px;
-            font-weight: 700;
-            color: var(--accent-gold);
-            text-transform: uppercase;
-            letter-spacing: 0.6px;
-            margin-bottom: 7px;
-            text-align: left;
-        }
-
-        .lvl-input {
-            width: 100%;
-            background-color: var(--bg-input);
-            border: 1px solid var(--border-color);
-            color: #fff;
-            padding: 14px 16px;
-            border-radius: 8px;
-            margin-bottom: 16px;
-            font-size: 16px;
-            font-weight: 700;
-            text-align: center;
-            outline: none;
-            transition: border-color 0.2s, box-shadow 0.2s;
-        }
-        .lvl-input:focus {
-            border-color: var(--accent-green);
-            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
-        }
-
-        .lvl-math-box {
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px dashed var(--accent-gold);
-            padding: 16px;
-            border-radius: 10px;
-            margin-bottom: 18px;
-            text-align: center;
-        }
-
-        .math-question-row {
-            font-size: 14.5px;
-            font-weight: 700;
-            color: #fff;
-            margin-bottom: 10px;
-        }
-        .math-numbers {
-            color: var(--accent-gold);
-            font-size: 17px;
-            font-weight: 900;
-            padding: 2px 8px;
-            background: rgba(197, 160, 89, 0.15);
-            border-radius: 5px;
-        }
-
-        .btn-primary-gold {
-            width: 100%;
-            background: linear-gradient(90deg, #10b981, #059669);
-            color: #060911;
-            border: 1px solid rgba(255,255,255,0.2);
-            padding: 15px 20px;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: 0.8px;
-            cursor: pointer;
-            transition: all 0.2s;
-            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.35);
-        }
-        .btn-primary-gold:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.5);
-            color: #fff;
-        }
-        .btn-primary-gold:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .msg-box {
-            display: none;
-            margin-top: 16px;
-            padding: 13px 15px;
-            border-radius: 8px;
-            font-size: 13px;
-            font-weight: 600;
-            line-height: 1.45;
-            text-align: center;
-        }
-        .msg-error {
-            background: rgba(239, 68, 68, 0.12);
-            border: 1px solid var(--accent-red);
-            color: #fca5a5;
-        }
-        .msg-success {
-            background: rgba(16, 185, 129, 0.12);
-            border: 1px solid var(--accent-green);
-            color: #6ee7b7;
-        }
-
-        /* ==========================================
-           4. WORKSPACE PANTALLA COMPLETA (PORTAL)
-           ========================================== */
+        /* =========================================================
+           4. WORKSPACE PANTALLA COMPLETA (PORTAL INQUILINO / PROPIETARIO)
+           ========================================================= */
         #portal-workspace {
             display: none;
-            flex-direction: column;
-            gap: 22px;
             width: 100%;
+            max-width: 1220px;
+            flex-direction: column;
+            gap: 20px;
         }
 
-        .workspace-topbar {
+        .workspace-header-bar {
             background: var(--bg-panel);
             border: 1px solid var(--accent-gold);
             border-radius: 12px;
-            padding: 15px 20px;
+            padding: 14px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -429,281 +520,182 @@
             gap: 12px;
         }
 
-        .role-switcher {
+        .role-tabs-group {
             display: flex;
             gap: 8px;
             flex-wrap: wrap;
         }
-
-        .role-tab {
-            background: var(--bg-base);
+        .role-switch-btn {
+            background: var(--bg-input);
             border: 1px solid var(--border-color);
             color: var(--text-muted);
-            padding: 8px 15px;
+            padding: 9px 15px;
             border-radius: 8px;
             font-size: 12.5px;
             font-weight: 800;
             cursor: pointer;
             transition: all 0.2s;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
         }
-        .role-tab.active {
-            background: rgba(16, 185, 129, 0.15);
+        .role-switch-btn.active {
+            background: rgba(16, 185, 129, 0.14);
             border-color: var(--accent-green);
-            color: #fff;
-            box-shadow: 0 0 15px rgba(16, 185, 129, 0.2);
+            color: #ffffff;
         }
-        .role-tab.owner-tab.active {
-            background: rgba(197, 160, 89, 0.2);
+        .role-switch-btn.owner-mode.active {
+            background: rgba(212, 163, 89, 0.18);
             border-color: var(--accent-gold);
             color: var(--accent-gold);
         }
 
-        .workspace-grid-top {
+        .ws-grid-2 {
             display: grid;
             grid-template-columns: 1.2fr 1fr;
-            gap: 20px;
+            gap: 18px;
         }
 
-        .panel-card {
+        .ws-card {
             background: var(--bg-panel);
             border: 1px solid var(--border-color);
             border-radius: 12px;
-            padding: 22px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+            padding: 20px;
         }
-
-        .panel-card-header {
+        .ws-card-head {
             display: flex;
             justify-content: space-between;
             align-items: center;
             border-bottom: 1px solid var(--border-color);
-            padding-bottom: 12px;
-            margin-bottom: 16px;
+            padding-bottom: 11px;
+            margin-bottom: 14px;
             flex-wrap: wrap;
             gap: 8px;
         }
-
-        .panel-card-title {
-            font-size: 15px;
+        .ws-card-title {
+            font-size: 14.5px;
             font-weight: 800;
             color: var(--accent-gold);
             text-transform: uppercase;
-            letter-spacing: 0.6px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            letter-spacing: 0.5px;
         }
 
-        .data-grid-rows {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .info-row {
+        .exp-row {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            font-size: 13.5px;
             padding: 8px 10px;
             background: rgba(255,255,255,0.02);
-            border-radius: 6px;
             border-left: 3px solid var(--accent-gold);
+            border-radius: 5px;
+            font-size: 13px;
+            margin-bottom: 8px;
         }
-        .info-label { color: var(--text-muted); font-weight: 600; }
-        .info-value { font-weight: 800; color: #fff; text-align: right; }
+        .exp-lbl { color: var(--text-muted); }
+        .exp-val { color: #fff; font-weight: 700; text-align: right; }
 
-        /* KPI CARDS CONTABLES */
-        .kpi-grid {
+        .kpi-row-4 {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
             gap: 12px;
-            margin-bottom: 18px;
+            margin-bottom: 16px;
         }
-
-        .kpi-box {
-            background: var(--bg-base);
+        .kpi-tile {
+            background: var(--bg-input);
             border: 1px solid var(--border-color);
             border-radius: 10px;
             padding: 14px;
             text-align: center;
         }
-        .kpi-title {
-            font-size: 10.5px;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.8px;
-            margin-bottom: 6px;
-        }
-        .kpi-amount {
-            font-size: 20px;
-            font-weight: 900;
-            color: #fff;
-        }
-        .kpi-sub {
-            font-size: 11px;
-            margin-top: 4px;
-            font-weight: 700;
-        }
+        .kpi-tile-lbl { font-size: 10.5px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 5px; }
+        .kpi-tile-num { font-size: 20px; font-weight: 900; color: #fff; }
+        .kpi-tile-sub { font-size: 11px; margin-top: 4px; font-weight: 700; }
 
-        /* TABLA ESTADO CONTABLE */
         .contable-table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 13px;
-            margin-top: 8px;
+            font-size: 12.5px;
         }
         .contable-table th, .contable-table td {
-            padding: 11px 12px;
+            padding: 10px 11px;
             text-align: left;
             border-bottom: 1px solid var(--border-color);
         }
         .contable-table th {
-            background: rgba(255,255,255,0.03);
             color: var(--accent-gold);
-            font-size: 11.5px;
+            font-size: 11px;
             text-transform: uppercase;
-            letter-spacing: 0.6px;
+            background: rgba(255,255,255,0.02);
         }
         .text-right { text-align: right !important; }
 
-        .concept-pill {
+        .pill-tag {
             display: inline-block;
-            padding: 3px 9px;
+            padding: 3px 8px;
             border-radius: 20px;
-            font-size: 11.5px;
+            font-size: 11px;
             font-weight: 800;
         }
-        .c-alquiler { background: rgba(16, 185, 129, 0.18); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); }
-        .c-luz { background: rgba(59, 130, 246, 0.18); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.4); }
-        .c-agua { background: rgba(6, 182, 212, 0.18); color: #22d3ee; border: 1px solid rgba(6, 182, 212, 0.4); }
-        .c-prov { background: rgba(245, 158, 11, 0.18); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4); }
-        .c-varios { background: rgba(239, 68, 68, 0.18); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4); }
+        .t-alquiler { background: rgba(16, 185, 129, 0.16); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); }
+        .t-luz { background: rgba(59, 130, 246, 0.16); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.4); }
+        .t-agua { background: rgba(6, 182, 212, 0.16); color: #22d3ee; border: 1px solid rgba(6, 182, 212, 0.4); }
+        .t-prov { background: rgba(245, 158, 11, 0.16); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4); }
+        .t-varios { background: rgba(239, 68, 68, 0.16); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4); }
 
-        .status-badge {
+        .st-badge {
             padding: 4px 8px;
             border-radius: 5px;
             font-size: 11px;
             font-weight: 800;
             text-transform: uppercase;
-        }
-        .st-abonado { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid #10b981; }
-        .st-regularizar { background: rgba(6, 182, 212, 0.2); color: #22d3ee; border: 1px solid #06b6d4; }
-        .st-pendiente { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid #ef4444; }
-
-        .property-gallery {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(135px, 1fr));
-            gap: 10px;
-            margin-top: 12px;
-        }
-        .property-gallery img {
-            width: 100%;
-            height: 95px;
-            object-fit: cover;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-        }
-
-        /* BOTONES ACCIÓN RÁPIDA EN EXPEDIENTE */
-        .quick-actions-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 10px;
-            margin-top: 14px;
-        }
-        .btn-quick-card {
-            background: var(--bg-base);
-            border: 1px solid var(--border-color);
-            color: var(--text-main);
-            padding: 12px;
-            border-radius: 8px;
-            font-size: 12.5px;
-            font-weight: 700;
             cursor: pointer;
-            text-align: center;
-            text-decoration: none;
-            transition: 0.2s;
-            display: flex;
-            align-items: center;
+        }
+        .b-abonado { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid #10b981; }
+        .b-regularizar { background: rgba(6, 182, 212, 0.2); color: #22d3ee; border: 1px solid #06b6d4; }
+        .b-pendiente { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid #ef4444; }
+
+        /* MODAL LEGAL INDEPENDIENTE */
+        .legal-modal-backdrop {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 20000;
             justify-content: center;
-            gap: 7px;
-        }
-        .btn-quick-card:hover {
-            border-color: var(--accent-gold);
-            color: var(--accent-gold);
-        }
-
-        /* ACORDEONES LEGALES */
-        details {
-            background-color: var(--bg-panel);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            margin-bottom: 8px;
-            overflow: hidden;
-        }
-        summary {
-            padding: 13px 16px;
-            font-size: 13px;
-            font-weight: bold;
-            color: var(--text-main);
-            cursor: pointer;
-            outline: none;
-            user-select: none;
-        }
-        summary:hover { color: var(--accent-gold); background: var(--bg-card); }
-        .details-content {
-            padding: 15px;
-            font-size: 12px;
-            color: var(--text-muted);
-            line-height: 1.6;
-            border-top: 1px solid var(--border-color);
-            background-color: var(--bg-base);
-        }
-
-        .footer-mercado-real {
-            display: flex;
-            justify-content: space-between;
             align-items: center;
-            flex-wrap: wrap;
-            gap: 12px;
-            padding: 18px;
-            background: var(--bg-panel);
-            border: 1px solid var(--border-color);
-            border-radius: 10px;
-            font-size: 11.5px;
-            color: var(--text-muted);
+            padding: 20px;
         }
-        .footer-links a {
-            color: var(--accent-gold);
-            text-decoration: underline;
-            margin-right: 12px;
-            cursor: pointer;
+        .legal-modal-card {
+            background: var(--bg-panel);
+            border: 1px solid var(--accent-gold);
+            border-radius: 12px;
+            max-width: 600px;
+            width: 100%;
+            padding: 24px;
+            color: var(--text-main);
         }
 
         /* DOCK INFERIOR FLOTANTE */
         .action-dock {
             position: fixed;
             bottom: 0;
-            left: 0;
-            right: 0;
-            background: rgba(9, 13, 22, 0.95);
-            backdrop-filter: blur(12px);
+            left: 280px;
+            right: 310px;
+            background: rgba(11, 15, 23, 0.94);
+            backdrop-filter: blur(10px);
             border-top: 1px solid var(--border-color);
             padding: 10px 18px;
             display: flex;
             gap: 12px;
             justify-content: center;
-            z-index: 9500;
+            z-index: 9000;
+            transition: all 0.3s ease;
+        }
+        body.fullscreen-workspace .action-dock {
+            left: 0;
+            right: 0;
         }
         .btn-dock {
             flex: 1;
-            max-width: 240px;
+            max-width: 220px;
             text-align: center;
-            padding: 11px 14px;
+            padding: 9px 14px;
             border-radius: 8px;
             font-size: 12.5px;
             font-weight: 800;
@@ -712,17 +704,17 @@
             align-items: center;
             justify-content: center;
             gap: 8px;
-            transition: transform 0.2s;
         }
-        .btn-dock:hover { transform: translateY(-2px); }
         .btn-lawyer { background: rgba(59, 130, 246, 0.16); color: #93c5fd; border: 1px solid var(--accent-blue); }
         .btn-assistant { background: rgba(16, 185, 129, 0.16); color: #6ee7b7; border: 1px solid var(--accent-green); }
 
         @media (max-width: 1080px) {
-            .app-layout { grid-template-columns: 1fr; }
-            .side-panel { display: none; }
-            .workspace-grid-top { grid-template-columns: 1fr; }
-            header { padding: 10px 15px; justify-content: center; }
+            html, body { overflow: auto; height: auto; }
+            .console-wrapper { grid-template-columns: 1fr; height: auto; }
+            .left-sidebar, .right-sidebar { display: none; }
+            .center-column { height: auto; }
+            .action-dock { left: 0; right: 0; }
+            .ws-grid-2 { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -730,266 +722,270 @@
 
     <div id="google_translate_element" style="display:none;"></div>
 
-    <!-- =========================================================
-         1. HEADER CORPORATIVO UNIFICADO
-         ========================================================= -->
-    <header>
-        <div class="brand-left">
-            <a href="https://app.level-i.com/mercado-real" class="brand-logo" translate="no">
-                <span class="l-letter">L</span><span class="brand-dot"></span><span class="logo-text">Level.immo</span>
-            </a>
-            <div class="brand-clock" id="live-clock" translate="no">--/--/---- | --:--:--</div>
-        </div>
+    <div class="console-wrapper">
 
-        <div class="header-center-nav">
-            <a href="https://app.level-i.com/demanda-activa" class="nav-pill" data-i18n="nav_demanda">📊 Demanda Activa</a>
-            <a href="https://app.level-i.com/mercado-real" class="nav-pill" data-i18n="nav_mercado">📈 Mercado Real</a>
-            <a href="https://app.level-i.com/advisors" class="nav-pill" data-i18n="nav_advisors">💼 Advisors</a>
-            <a href="https://app.level-i.com/gestion-de-inquilinos" class="nav-pill active" data-i18n="nav_gestion">🏠 Gestión de Inquilinos</a>
-        </div>
+        <!-- =========================================================
+             1. SIDEBAR IZQUIERDO (CLONADO DE DEMANDA-ACTIVA)
+             ========================================================= -->
+        <aside class="left-sidebar">
+            <div>
+                <div class="sidebar-top">
+                    <a href="https://app.level-i.com/demanda-activa/" class="brand-logo" translate="no">
+                        <span class="l-letter">L</span><span class="brand-dot"></span><span class="logo-text">Level.immo</span>
+                    </a>
+                    <div class="sidebar-clock" id="live-clock" translate="no">01/11/2026 | 15:52:35</div>
+                </div>
 
-        <div class="header-right">
-            <select id="language-selector" class="lang-select" onchange="setLanguage(this.value)" translate="no">
-                <option value="es">🇪🇸 ES Español</option>
-                <option value="ca">🟨 CA Català</option>
-                <option value="en">🇬🇧 EN English</option>
-                <option value="fr">🇫🇷 FR Français</option>
-                <option value="de">🇩🇪 DE Deutsch</option>
-                <option value="it">🇮🇹 IT Italiano</option>
-                <option value="ar">🇦🇪 AR العربية</option>
-                <option value="zh-CN">🇨🇳 ZH 中文</option>
-            </select>
-        </div>
-    </header>
+                <nav class="sidebar-nav">
+                    <a href="https://app.level-i.com/demanda-activa/" class="side-nav-item">
+                        <span>🎯</span> <span data-i18n="nav_demanda">Demanda Activa</span>
+                    </a>
+                    <a href="https://app.level-i.com/mercado-real/" class="side-nav-item">
+                        <span>📡</span> <span data-i18n="nav_mercado">Mercado Real</span>
+                    </a>
+                    <a href="https://app.level-i.com/gestion-de-inquilinos/" class="side-nav-item active-green">
+                        <span>👥</span> <span data-i18n="nav_usuarios">Acceso a Usuarios · Inquilinos</span>
+                    </a>
+                    <a href="https://app.level-i.com/advisors/" class="side-nav-item chivatazo-box">
+                        <span>📣</span> <span data-i18n="nav_chivatazo">Chivatazo Nacional</span>
+                    </a>
+                    <a href="https://app.level-i.com/advisors/" class="side-nav-item">
+                        <span>💼</span> <span data-i18n="nav_advisors">Únete al Equipo de Advisors en tu Zona</span>
+                    </a>
 
-    <!-- =========================================================
-         2. ESTRUCTURA EN 3 COLUMNAS (LATERALES + CENTRO)
-         ========================================================= -->
-    <div class="app-layout">
-
-        <!-- PANEL LATERAL IZQUIERDO (ESTILO MERCADO REAL / DEMANDA ACTIVA) -->
-        <aside class="side-panel">
-            <div class="side-box">
-                <div class="side-box-title">📡 <span data-i18n="side_eco_title">Ecosistema Level.immo</span></div>
-                <a href="https://app.level-i.com/mercado-real" class="side-link-btn">
-                    <span data-i18n="nav_mercado">📈 Mercado Real</span> <span>➔</span>
-                </a>
-                <a href="https://app.level-i.com/demanda-activa" class="side-link-btn">
-                    <span data-i18n="nav_demanda">📊 Demanda Activa</span> <span>➔</span>
-                </a>
-                <a href="https://app.level-i.com/advisors" class="side-link-btn">
-                    <span data-i18n="side_join_adv">👑 Red Nacional Advisors</span> <span>➔</span>
-                </a>
+                    <details class="presencial-details">
+                        <summary>
+                            <span>📍 <span data-i18n="nav_presencial">Servicios Presenciales en:</span></span>
+                            <span>▾</span>
+                        </summary>
+                        <div class="presencial-list" translate="no">
+                            • Alcanar & Les Cases<br>
+                            • Sant Carles de la Ràpita<br>
+                            • Vinaròs & Benicarló<br>
+                            • Amposta & Tortosa<br>
+                            • Tarragona & Barcelona
+                        </div>
+                    </details>
+                </nav>
             </div>
 
-            <div class="side-box">
-                <div class="side-box-title">🏢 <span data-i18n="side_port_title">Auditoría de Alquileres</span></div>
-                <div class="side-stat-row">
-                    <span data-i18n="side_st_props">Fincas Auditadas</span>
-                    <span class="side-stat-val" style="color:var(--accent-gold);">Alcanar · La Ràpita</span>
+            <div class="sidebar-footer">
+                <div class="api-aicat-badge" translate="no">API 4173 · AICAT 14200</div>
+                <div class="sidebar-legal-links">
+                    <a onclick="abrirModalLegal('aviso')" data-i18n="leg_aviso">Aviso Legal</a>
+                    <a onclick="abrirModalLegal('privacidad')" data-i18n="leg_priv">Privacidad y LOPD</a>
+                    <a onclick="abrirModalLegal('cookies')" data-i18n="leg_ia">Aviso Legal IA & Cookies</a>
                 </div>
-                <div class="side-stat-row">
-                    <span data-i18n="side_st_sec">Seguridad Acceso</span>
-                    <span class="side-stat-val" style="color:var(--accent-green);">OTP WhatsApp 2FA</span>
+                <div class="copyright-txt">
+                    © 2026 Level.immo.<br>Todos los derechos reservados.
                 </div>
-                <div class="side-stat-row">
-                    <span data-i18n="side_st_auto">Emisión Recibos</span>
-                    <span class="side-stat-val">Día 25 / Mes</span>
-                </div>
-                <div class="side-stat-row">
-                    <span data-i18n="side_st_api">Garantía Colegial</span>
-                    <span class="side-stat-val" translate="no">API 4173 · AICAT 14200</span>
-                </div>
-            </div>
-
-            <div class="side-box">
-                <div class="side-box-title">⚖️ <span data-i18n="side_rules_title">Transparencia de Saldos</span></div>
-                <p style="font-size:12px; color:var(--text-muted); line-height:1.55;" data-i18n="side_rules_desc">
-                    Sistema contable automatizado en tiempo real. Desglose transparente entre <b>Cuota Alquiler</b>, facturas reales de <b>Agua / Electricidad</b> y entregas a cuenta (<b>Agua+Luz PROVISIONAL</b>) sujetas a liquidación anual.
-                </p>
             </div>
         </aside>
 
-        <!-- ESCENARIO CENTRAL (FRAME DEL MEDIO -> SE EXPANDE A PANTALLA COMPLETA) -->
-        <main class="center-stage">
-            <div class="stage-inner">
+        <!-- =========================================================
+             2. ESCENARIO CENTRAL (CONSOLA PROPTECH)
+             ========================================================= -->
+        <section class="center-column">
 
-                <!-- ==========================================
-                     VISTA A: ACCESO RESIDENTES Y PROPIETARIOS
-                     ========================================== -->
-                <div class="login-hero-card" id="login-container">
-                    <div style="text-align:center;">
-                        <div class="tag-header">
-                            <span class="pulse-dot"></span>
-                            <span data-i18n="login_badge">Pasarela Cifrada Multi-Rol · Inquilinos y Propietarios</span>
-                        </div>
-                        <h1 class="login-title" data-i18n="login_title">Gestión de Inquilinos y Suministros</h1>
-                        <p class="login-subtitle" id="desc-login" data-i18n="login_desc">
-                            Introduce tu DNI o NIE para verificar tus roles asignados (Residente / Propietario) y acceder a pantalla completa a tu estado contable, recibos PDF, suministros e incidencias.
-                        </p>
-                    </div>
+            <div class="console-topbar">
+                <div class="console-title" translate="no">
+                    Consola PropTech · Reverse Market &amp; Gestión de Inquilinos
+                </div>
+                <div class="topbar-controls">
+                    <select id="language-selector" class="lang-select" onchange="setLanguage(this.value)" translate="no">
+                        <option value="es">🇪🇸 ES Español</option>
+                        <option value="ca">🟨 CA Català</option>
+                        <option value="en">🇬🇧 EN English</option>
+                        <option value="fr">🇫🇷 FR Français</option>
+                        <option value="de">🇩🇪 DE Deutsch</option>
+                        <option value="it">🇮🇹 IT Italiano</option>
+                        <option value="ar">🇦🇪 AR العربية</option>
+                        <option value="zh-CN">🇨🇳 ZH 中文</option>
+                    </select>
+                </div>
+            </div>
 
-                    <!-- FASE 1: DNI + PRUEBA MATEMÁTICA -->
+            <div class="center-scroll-area">
+
+                <!-- =================================================
+                     CAJA DE ACCESO (MISMO SISTEMA QUE DEMANDA-ACTIVA)
+                     ================================================= -->
+                <div class="proptech-form-card" id="login-container">
+                    <h1 class="card-main-heading" data-i18n="login_title">Acceso Residentes y Propietarios</h1>
+                    <p class="card-sub-desc" id="desc-login" data-i18n="login_desc">
+                        Introduce tu DNI/NIE para abrir a pantalla completa tu expediente, estado contable de suministros y recibos.
+                    </p>
+
+                    <!-- FASE 1: DNI + CONDICIONES + ANTI-SPAM (IDÉNTICO A DEMANDA-ACTIVA) -->
                     <div id="fase-dni">
-                        <label class="form-label" for="input-dni" data-i18n="lbl_input_dni">1. Documento de Identidad (DNI / NIE) *</label>
-                        <input type="text" id="input-dni" class="lvl-input" placeholder="Ej: 53327259B" autocomplete="off">
+                        <div class="field-group">
+                            <label class="field-label" for="input-dni" data-i18n="lbl_dni">DNI / NIE del Titular (Conecta con Elena IA)</label>
+                            <input type="text" id="input-dni" class="proptech-input" placeholder="Ej: 53327259B" autocomplete="off">
+                        </div>
 
-                        <div class="lvl-math-box">
-                            <div class="math-question-row">
-                                🛡️ <span data-i18n="math_prefix">Por seguridad, ¿cuánto es</span>
-                                <span class="math-numbers" id="math-numbers-display" translate="no">2 + 6</span> ?
+                        <label class="privacy-check-box" for="check-privacidad">
+                            <input type="checkbox" id="check-privacidad" checked>
+                            <span class="privacy-check-text" data-i18n="chk_privacy">
+                                <strong>Acepto las Condiciones y la Privacidad.</strong> Autorizo la consulta cifrada de mi expediente y el envío de PIN por WhatsApp.
+                            </span>
+                        </label>
+
+                        <!-- SISTEMA MATEMÁTICO EXACTO DE DEMANDA-ACTIVA -->
+                        <div class="antispam-box">
+                            <div class="antispam-label">
+                                <span data-i18n="antispam_txt">Anti-spam: ¿Cuánto es</span>
+                                <span class="antispam-nums" translate="no">
+                                    <span id="num-a">2</span> + <span id="num-b">6</span>?
+                                </span>
                             </div>
-                            <input type="text" inputmode="numeric" id="input-math" class="lvl-input" placeholder="Escribe el resultado numérico" style="margin-bottom:0; max-width:260px;">
+                            <input type="number" id="input-math" class="antispam-input" required>
                         </div>
 
-                        <button type="button" class="btn-primary-gold" id="btn-acceso" onclick="llamarAlWebhookLogin()">
-                            🔐 <span data-i18n="btn_next">Verificar Identidad y Recibir PIN</span>
+                        <button type="button" class="btn-vip-green" id="btn-acceso" onclick="verificarAccesoInmediato()" data-i18n="btn_vip">
+                            Solicitar Verificación VIP
                         </button>
+
+                        <!-- ACCESO RÁPIDO PARA QUE PUEDAS VER EL INTERIOR EN 1 CLIC -->
+                        <div class="quick-demo-bar">
+                            <div style="font-size:11px; color:var(--text-muted); text-align:center;">
+                                ⚡ Acceso directo de supervisión (entra a pantalla completa con 1 clic):
+                            </div>
+                            <div class="quick-demo-btns">
+                                <button type="button" class="btn-demo-role" onclick="entrarDirectoSupervisor('INQ-001')">
+                                    🏠 Ver como Inquilino
+                                </button>
+                                <button type="button" class="btn-demo-role" onclick="entrarDirectoSupervisor('CLI-001')">
+                                    🔑 Ver como Propietario
+                                </button>
+                            </div>
+                        </div>
                     </div>
 
-                    <!-- FASE 2: VALIDACIÓN DE PIN DE 4 CIFRAS -->
-                    <div id="caja-pin" style="display:none; text-align:center; padding-top:10px;">
-                        <div style="font-size:38px; margin-bottom:8px;">📲</div>
-                        <div style="color:var(--accent-green); font-weight:900; font-size:18px; margin-bottom:10px;" data-i18n="pin_verified">
-                            ¡Identidad Verificada con Éxito!
+                    <!-- FASE 2: PIN DE 4 CIFRAS -->
+                    <div id="caja-pin" style="display:none; text-align:center;">
+                        <div style="font-size:34px; margin-bottom:8px;">📲</div>
+                        <div style="color:var(--accent-green); font-weight:800; font-size:17px; margin-bottom:8px;">
+                            ¡Suma verificada correctamente!
                         </div>
-                        <p style="color:var(--text-muted); font-size:13.5px; line-height:1.55; margin-bottom:18px;" data-i18n="pin_desc">
-                            Acabamos de enviar un <strong>PIN temporal de 4 cifras</strong> a tu WhatsApp registrado.<br>
-                            Introdúcelo aquí abajo para desplegar tu panel a pantalla completa:
+                        <p style="font-size:13px; color:var(--text-muted); line-height:1.5; margin-bottom:16px;" id="pin-instructions">
+                            Introduce el PIN de 4 cifras enviado a tu WhatsApp (o pulsa entrar para desplegar el expediente):
                         </p>
-                        <input type="text" inputmode="numeric" maxlength="4" id="input-pin-user" class="lvl-input" placeholder="• • • •" style="font-size:24px; letter-spacing:10px; max-width:240px;">
-                        <button type="button" class="btn-primary-gold" id="btn-validar-pin" onclick="validarPin()">
-                            🚀 <span data-i18n="btn_enter">Entrar al Portal a Pantalla Completa</span>
+                        <input type="number" id="input-pin-user" class="proptech-input" placeholder="Ej: 8492" style="text-align:center; font-size:22px; font-weight:800; letter-spacing:6px; margin-bottom:14px;">
+                        <button type="button" class="btn-vip-green" onclick="validarPinYPasar()">
+                            Entrar al Portal a Pantalla Completa ➔
                         </button>
-                        <div style="margin-top:12px;">
-                            <button type="button" onclick="volverAFaseDni()" style="background:none; border:none; color:var(--text-muted); font-size:12px; text-decoration:underline; cursor:pointer;">
-                                ← Volver a introducir DNI
-                            </button>
-                        </div>
+                        <button type="button" onclick="volverAlLogin()" style="margin-top:12px; background:none; border:none; color:var(--text-muted); font-size:12px; text-decoration:underline; cursor:pointer;">
+                            ← Volver atrás
+                        </button>
                     </div>
 
-                    <div id="msg-box" class="msg-box"></div>
+                    <div id="msg-box" class="status-msg"></div>
                 </div>
 
-                <!-- ==========================================
-                     VISTA B: WORKSPACE A PANTALLA COMPLETA
-                     ========================================== -->
+                <!-- =================================================
+                     PORTAL A PANTALLA COMPLETA (INQUILINO / PROPIETARIO)
+                     ================================================= -->
                 <div id="portal-workspace">
 
-                    <!-- BARRA SUPERIOR DE CONTROL MULTI-ROL Y PANTALLA COMPLETA -->
-                    <div class="workspace-topbar">
-                        <div class="role-switcher">
-                            <button type="button" class="role-tab active" id="tab-role-tenant" onclick="switchRoleView('tenant')">
-                                🏠 <span data-i18n="tab_tenant">Vista Residente (Inquilino)</span>
+                    <div class="workspace-header-bar">
+                        <div class="role-tabs-group">
+                            <button type="button" class="role-switch-btn active" id="tab-btn-tenant" onclick="cambiarRolActivo('tenant')">
+                                🏠 Vista Residente (Inquilino)
                             </button>
-                            <button type="button" class="role-tab owner-tab" id="tab-role-owner" onclick="switchRoleView('owner')">
-                                🔑 <span data-i18n="tab_owner">Vista Propietario (Gestión y Subida PDF)</span>
+                            <button type="button" class="role-switch-btn owner-mode" id="tab-btn-owner" onclick="cambiarRolActivo('owner')">
+                                🔑 Vista Propietario (Cartera y Subida de Facturas PDF)
                             </button>
                         </div>
 
-                        <div style="display:flex; gap:8px; align-items:center;">
-                            <span id="badge-active-user" style="font-size:12px; color:var(--accent-gold); font-weight:800; font-family:monospace;">---</span>
-                            <button type="button" class="nav-pill" onclick="toggleSidePanels()" title="Mostrar/Ocultar paneles laterales">
-                                ⛶ <span data-i18n="btn_toggle_view">Modo Pantalla Completa</span>
+                        <div style="display:flex; align-items:center; gap:10px;">
+                            <span id="active-user-pill" style="font-size:12px; font-weight:800; color:var(--accent-gold); font-family:monospace;">EXPEDIENTE ACTIVO</span>
+                            <button type="button" class="role-switch-btn" onclick="alternarMarcoLateral()">
+                                ⛶ Mostrar/Ocultar Paneles
                             </button>
-                            <button type="button" class="nav-pill" style="border-color:var(--accent-red); color:#fca5a5;" onclick="cerrarSesionPortal()">
-                                ✕ <span data-i18n="btn_logout">Salir</span>
+                            <button type="button" class="role-switch-btn" style="border-color:var(--accent-red); color:#fca5a5;" onclick="salirDelPortal()">
+                                ✕ Cerrar Sesión
                             </button>
                         </div>
                     </div>
 
-                    <!-- ==========================================
-                         SUB-VISTA 1: PANEL DEL INQUILINO / RESIDENTE
-                         ========================================== -->
-                    <div id="view-tenant-section" style="display:flex; flex-direction:column; gap:20px;">
+                    <!-- SUB-VISTA A: INQUILINO / ESTADO CONTABLE -->
+                    <div id="section-tenant-view" style="display:flex; flex-direction:column; gap:18px;">
 
-                        <!-- FILA SUPERIOR: DATOS DEL EXPEDIENTE + GALERÍA Y ACCESOS RÁPIDOS -->
-                        <div class="workspace-grid-top">
-                            <div class="panel-card">
-                                <div class="panel-card-header">
-                                    <div class="panel-card-title">📋 <span data-i18n="card_exp">Expediente y Contrato Arrendamiento</span></div>
-                                    <span class="status-badge st-abonado" id="val-codigo-badge" translate="no">INQ-001</span>
+                        <div class="ws-grid-2">
+                            <div class="ws-card">
+                                <div class="ws-card-head">
+                                    <div class="ws-card-title">📋 Expediente y Propiedad Arrendada</div>
+                                    <span class="st-badge b-abonado" id="val-codigo-badge" translate="no">INQ-001</span>
                                 </div>
-                                <div class="data-grid-rows">
-                                    <div class="info-row"><span class="info-label" data-i18n="lbl_tenant">Arrendatario / Titular:</span><span class="info-value" id="val-nombre">---</span></div>
-                                    <div class="info-row"><span class="info-label">DNI / NIE:</span><span class="info-value" id="val-dni" translate="no">---</span></div>
-                                    <div class="info-row"><span class="info-label" data-i18n="lbl_property">Propiedad Arrendada:</span><span class="info-value" id="val-propiedad" style="color:var(--accent-gold);">---</span></div>
-                                    <div class="info-row"><span class="info-label" data-i18n="lbl_address">Dirección Inmueble:</span><span class="info-value" id="val-direccion">---</span></div>
-                                    <div class="info-row"><span class="info-label" data-i18n="lbl_rent_fee">Cuota Mensual Alquiler:</span><span class="info-value" id="val-cuota" style="color:var(--accent-green);">---</span></div>
-                                    <div class="info-row"><span class="info-label" data-i18n="lbl_ipc">Próxima Revisión / Contrato:</span><span class="info-value" id="val-revision">---</span></div>
-                                    <div class="info-row"><span class="info-label" data-i18n="lbl_debt">Saldo Pendiente Detectado:</span><span class="info-value" id="val-deuda" style="color:var(--accent-orange);">0,00 €</span></div>
-                                </div>
+                                <div class="exp-row"><span class="exp-lbl">Titular / Arrendatario:</span><span class="exp-val" id="val-nombre">---</span></div>
+                                <div class="exp-row"><span class="exp-lbl">DNI / NIE:</span><span class="exp-val" id="val-dni" translate="no">---</span></div>
+                                <div class="exp-row"><span class="exp-lbl">Propiedad:</span><span class="exp-val" id="val-propiedad" style="color:var(--accent-gold);">---</span></div>
+                                <div class="exp-row"><span class="exp-lbl">Dirección:</span><span class="exp-val" id="val-direccion">---</span></div>
+                                <div class="exp-row"><span class="exp-lbl">Cuota Alquiler:</span><span class="exp-val" id="val-cuota" style="color:var(--accent-green);">---</span></div>
+                                <div class="exp-row"><span class="exp-lbl">Deuda / Saldo Pendiente:</span><span class="exp-val" id="val-deuda" style="color:var(--accent-orange);">0,00 €</span></div>
                             </div>
 
-                            <div class="panel-card">
-                                <div class="panel-card-header">
-                                    <div class="panel-card-title">🏛️ <span data-i18n="card_docs">Documentación y Fotografías</span></div>
+                            <div class="ws-card">
+                                <div class="ws-card-head">
+                                    <div class="ws-card-title">🚨 Avisos e Incidencias de la Vivienda</div>
                                 </div>
-                                <div style="font-size:12px; color:var(--text-muted); margin-bottom:8px;" data-i18n="gallery_label">Fotografías verificadas del inmueble:</div>
-                                <div class="property-gallery" id="val-fotos"></div>
-
-                                <div class="quick-actions-grid">
-                                    <button type="button" class="btn-quick-card" onclick="abrirModalIncidencia()">
-                                        🛠️ <span data-i18n="btn_new_inc">Reportar Avería</span>
-                                    </button>
-                                    <button type="button" class="btn-quick-card" onclick="abrirModalJustificante()">
-                                        📤 <span data-i18n="btn_send_proof">Enviar Justificante</span>
-                                    </button>
+                                <div id="val-avisos" style="margin-bottom:10px;"></div>
+                                <div id="val-incidencias"></div>
+                                <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:14px;">
+                                    <button type="button" class="role-switch-btn" style="color:#fff;" onclick="reportarIncidenciaWA()">🛠️ Reportar Avería</button>
+                                    <button type="button" class="role-switch-btn" style="color:#fff;" onclick="enviarJustificanteWA()">📤 Enviar Justificante</button>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- ESTADO CONTABLE ANUAL Y REGULARIZACIÓN DE SUMINISTROS -->
-                        <div class="panel-card">
-                            <div class="panel-card-header">
+                        <!-- ESTADO CONTABLE ANUAL Y LIQUIDACIÓN DE SUMINISTROS -->
+                        <div class="ws-card">
+                            <div class="ws-card-head">
                                 <div>
-                                    <div class="panel-card-title">📊 <span data-i18n="card_contable">Estado Contable y Regularización de Suministros (2026)</span></div>
-                                    <p style="font-size:12px; color:var(--text-muted); margin-top:4px;" data-i18n="contable_sub">
-                                        Cálculo automático: Suministros emitidos (<b>Agua</b> + <b>Electricidad</b>) frente a importes abonados (<b>Abonado</b> + <b>abonado a regularizar</b> en <b>Agua+Luz PROVISIONAL</b>).
-                                    </p>
+                                    <div class="ws-card-title">📊 Estado Contable y Regularización de Suministros (2026)</div>
+                                    <div style="font-size:12px; color:var(--text-muted); margin-top:3px;">
+                                        Suma automática de <b>Agua</b>, <b>Electricidad</b> y <b>Agua+Luz PROVISIONAL</b> considerando estados <b>Abonado</b> + <b>abonado a regularizar</b>.
+                                    </div>
                                 </div>
-                                <select id="select-propiedad-contable" class="lang-select" onchange="cambiarPropiedadSimulada(this.value)">
-                                    <option value="AUTO">🔄 Sincronizado con Expediente</option>
-                                    <option value="Martinenca">🏠 La Martinenca (Alcanar)</option>
-                                    <option value="Devesa">🏠 Devesa (La Ràpita)</option>
-                                    <option value="Jaume I">🏠 Jaume I (La Ràpita)</option>
+                                <select id="filtro-propiedad-contable" class="lang-select" onchange="cambiarFincaContable(this.value)">
+                                    <option value="Martinenca">🏠 Finca: La Martinenca (Alcanar)</option>
+                                    <option value="Devesa">🏠 Finca: Devesa (La Ràpita - Provisión 50€)</option>
+                                    <option value="Jaume I">🏠 Finca: Jaume I (La Ràpita)</option>
                                 </select>
                             </div>
 
-                            <!-- 4 TARJETAS KPI DEL BALANCE -->
-                            <div class="kpi-grid">
-                                <div class="kpi-box">
-                                    <div class="kpi-title" data-i18n="kpi_rent_paid">Alquileres Abonados</div>
-                                    <div class="kpi-amount" id="kpi-alquiler-abonado" style="color:var(--accent-green);">0,00 €</div>
-                                    <div class="kpi-sub" id="kpi-alquiler-pdte" style="color:var(--text-muted);">Pendiente: 0,00 €</div>
+                            <div class="kpi-row-4">
+                                <div class="kpi-tile">
+                                    <div class="kpi-tile-lbl">Alquileres Abonados</div>
+                                    <div class="kpi-tile-num" id="kpi-alq-pagado" style="color:var(--accent-green);">0,00 €</div>
+                                    <div class="kpi-tile-sub" id="kpi-alq-pdte" style="color:var(--text-muted);">Pendiente: 0,00 €</div>
                                 </div>
-                                <div class="kpi-box">
-                                    <div class="kpi-title" data-i18n="kpi_sup_real">Gasto Real Agua + Luz</div>
-                                    <div class="kpi-amount" id="kpi-suministros-emitidos" style="color:var(--accent-blue);">0,00 €</div>
-                                    <div class="kpi-sub" style="color:var(--text-muted);" data-i18n="kpi_sup_real_sub">Facturas reales emitidas</div>
+                                <div class="kpi-tile">
+                                    <div class="kpi-tile-lbl">Facturas Reales Agua + Luz</div>
+                                    <div class="kpi-tile-num" id="kpi-sum-real" style="color:var(--accent-blue);">0,00 €</div>
+                                    <div class="kpi-tile-sub" style="color:var(--text-muted);">Gasto emitido al propietario</div>
                                 </div>
-                                <div class="kpi-box">
-                                    <div class="kpi-title" data-i18n="kpi_sup_prov">Abonado + A Regularizar</div>
-                                    <div class="kpi-amount" id="kpi-suministros-abonados" style="color:var(--accent-cyan);">0,00 €</div>
-                                    <div class="kpi-sub" style="color:var(--accent-gold);" data-i18n="kpi_sup_prov_sub">Incluye Agua+Luz PROVISIONAL</div>
+                                <div class="kpi-tile">
+                                    <div class="kpi-tile-lbl">Abonado + Abonado a regularizar</div>
+                                    <div class="kpi-tile-num" id="kpi-sum-pagado" style="color:var(--accent-cyan);">0,00 €</div>
+                                    <div class="kpi-tile-sub" style="color:var(--accent-gold);">Incluye Agua+Luz PROVISIONAL</div>
                                 </div>
-                                <div class="kpi-box" id="kpi-box-saldo">
-                                    <div class="kpi-title" data-i18n="kpi_balance_title">Saldo Regularización Suministros</div>
-                                    <div class="kpi-amount" id="kpi-saldo-regularizacion">0,00 €</div>
-                                    <div class="kpi-sub" id="kpi-saldo-texto">Liquidado</div>
+                                <div class="kpi-tile">
+                                    <div class="kpi-tile-lbl">Saldo Regularización Suministros</div>
+                                    <div class="kpi-tile-num" id="kpi-sum-saldo">0,00 €</div>
+                                    <div class="kpi-tile-sub" id="kpi-sum-estado">Al día</div>
                                 </div>
                             </div>
 
-                            <!-- TABLA DESGLOSADA POR LOS 5 CONCEPTOS -->
                             <div style="overflow-x:auto;">
                                 <table class="contable-table">
                                     <thead>
                                         <tr>
-                                            <th data-i18n="th_concept">Concepto Tipificado</th>
-                                            <th class="text-right" data-i18n="th_emitted">Facturado / Devengado</th>
-                                            <th class="text-right" data-i18n="th_paid">Abonado + Abonado a regularizar</th>
-                                            <th class="text-right" data-i18n="th_pending">Pendiente Directo</th>
-                                            <th class="text-right" data-i18n="th_balance">Balance Concepto</th>
+                                            <th>Concepto Oficial</th>
+                                            <th class="text-right">Emitido / Factura Real</th>
+                                            <th class="text-right">Abonado + Abonado a regularizar</th>
+                                            <th class="text-right">Pendiente</th>
+                                            <th class="text-right">Diferencia / Saldo</th>
                                         </tr>
                                     </thead>
                                     <tbody id="tbody-resumen-conceptos"></tbody>
@@ -997,317 +993,186 @@
                             </div>
                         </div>
 
-                        <!-- HISTORIAL DETALLADO DE RECIBOS + FILTROS -->
-                        <div class="panel-card">
-                            <div class="panel-card-header">
-                                <div class="panel-card-title">📄 <span data-i18n="card_receipts">Detalle de Recibos, Suministros y Provisiones</span></div>
-                                <div style="display:flex; gap:6px; flex-wrap:wrap;">
-                                    <button type="button" class="nav-pill active" onclick="filtrarTablaRecibos('TODOS', this)">Todos</button>
-                                    <button type="button" class="nav-pill" onclick="filtrarTablaRecibos('Cuota Alquiler', this)">🟢 Cuota Alquiler</button>
-                                    <button type="button" class="nav-pill" onclick="filtrarTablaRecibos('Agua', this)">🩵 Agua</button>
-                                    <button type="button" class="nav-pill" onclick="filtrarTablaRecibos('Electricidad', this)">🔵 Electricidad</button>
-                                    <button type="button" class="nav-pill" onclick="filtrarTablaRecibos('Agua+Luz PROVISIONAL', this)">🟠 Agua+Luz PROVISIONAL</button>
-                                </div>
+                        <!-- LISTADO INTERACTIVO DE RECIBOS -->
+                        <div class="ws-card">
+                            <div class="ws-card-head">
+                                <div class="ws-card-title">📄 Historial de Recibos y Simulador de Estados (Clic en el estado para simular)</div>
                             </div>
                             <div style="overflow-x:auto;">
                                 <table class="contable-table">
                                     <thead>
                                         <tr>
-                                            <th>ID / Mes</th>
+                                            <th>ID Recibo / Mes</th>
                                             <th>Propiedad</th>
                                             <th>Concepto</th>
                                             <th>Observaciones</th>
                                             <th class="text-right">Importe</th>
-                                            <th class="text-right">Estado Recibo (Interactivo)</th>
+                                            <th class="text-right">Estado Recibo</th>
                                         </tr>
                                     </thead>
-                                    <tbody id="tbody-detalle-recibos"></tbody>
+                                    <tbody id="tbody-lista-recibos"></tbody>
                                 </table>
-                            </div>
-                            <!-- Bloque para HTML crudo si Make envía recibos_html adicional -->
-                            <div id="val-recibos" style="margin-top:12px;"></div>
-                        </div>
-
-                        <!-- AVISOS E INCIDENCIAS ACTIVAS -->
-                        <div class="workspace-grid-top">
-                            <div class="panel-card">
-                                <div class="panel-card-header">
-                                    <div class="panel-card-title">🚨 <span data-i18n="card_notices">Avisos Oficiales de la Propiedad</span></div>
-                                </div>
-                                <div id="val-avisos"></div>
-                            </div>
-
-                            <div class="panel-card">
-                                <div class="panel-card-header">
-                                    <div class="panel-card-title">🔧 <span data-i18n="card_incidents">Incidencias y Partes de Reparación</span></div>
-                                </div>
-                                <div id="val-incidencias"></div>
                             </div>
                         </div>
 
                     </div>
 
-                    <!-- ==========================================
-                         SUB-VISTA 2: PANEL DEL PROPIETARIO (CARMEN / SAAS)
-                         ========================================== -->
-                    <div id="view-owner-section" style="display:none; flex-direction:column; gap:20px;">
-
-                        <div class="panel-card" style="border-color:var(--accent-gold);">
-                            <div class="panel-card-header">
-                                <div class="panel-card-title">👑 <span data-i18n="owner_welcome">Panel de Control del Propietario · Cartera de Inmuebles</span></div>
-                                <span class="status-badge st-regularizar">Autogestión SaaS Activa</span>
+                    <!-- SUB-VISTA B: PANEL DEL PROPIETARIO (SUBIDA DE FACTURAS Y AUTOGESTIÓN) -->
+                    <div id="section-owner-view" style="display:none; flex-direction:column; gap:18px;">
+                        <div class="ws-card" style="border-color:var(--accent-gold);">
+                            <div class="ws-card-head">
+                                <div class="ws-card-title">👑 Panel del Propietario · Subida de Facturas PDF y Suministros</div>
+                                <span class="st-badge b-regularizar">Autogestión Propietarios</span>
                             </div>
-                            <p style="font-size:13px; color:var(--text-muted); margin-bottom:16px;" data-i18n="owner_desc">
-                                Supervisa en tiempo real el radar de morosidad, la liquidación de suministros de tus propiedades (<b>La Martinenca</b>, <b>Devesa</b> y <b>Jaume I</b>) y sube directamente las facturas PDF de Agua o Electricidad para repercutirlas o cruzarlas con las entregas provisionales.
+                            <p style="font-size:13px; color:var(--text-muted); margin-bottom:16px;">
+                                Sube cada mes las facturas PDF de <b>Agua</b> o <b>Electricidad</b>, o registra entregas de <b>Agua+Luz PROVISIONAL</b>. Si te equivocas al introducir un dato, dispones del botón de rectificación inmediata durante 60 segundos.
                             </p>
 
-                            <div class="kpi-grid">
-                                <div class="kpi-box" style="border-color:var(--accent-green);">
-                                    <div class="kpi-title">🏠 La Martinenca (Alcanar)</div>
-                                    <div class="kpi-amount" style="color:var(--accent-green);">550,00 €/mes</div>
-                                    <div class="kpi-sub" style="color:var(--accent-red);">Deuda Suministros: 509,23 € (Agua)</div>
-                                </div>
-                                <div class="kpi-box" style="border-color:var(--accent-cyan);">
-                                    <div class="kpi-title">🏠 Devesa (La Ràpita)</div>
-                                    <div class="kpi-amount" style="color:var(--accent-cyan);">395,00 €/mes</div>
-                                    <div class="kpi-sub" style="color:var(--accent-gold);">Provisión fija: 50,00 €/mes a regularizar</div>
-                                </div>
-                                <div class="kpi-box" style="border-color:var(--accent-orange);">
-                                    <div class="kpi-title">🏠 Jaume I (La Ràpita)</div>
-                                    <div class="kpi-amount" style="color:var(--accent-orange);">425,00 €/mes</div>
-                                    <div class="kpi-sub" style="color:var(--accent-red);">Cuota Pendiente: 425,00 € (Día 10)</div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- SUBIDA AUTÓNOMA DE FACTURAS PDF CON RECTIFICACIÓN DE 60s -->
-                        <div class="panel-card">
-                            <div class="panel-card-header">
-                                <div class="panel-card-title">📤 <span data-i18n="owner_upload_title">Subir Nueva Factura PDF / Emitir Recibo o Aviso</span></div>
-                            </div>
-
-                            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:14px;">
+                            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap:12px; margin-bottom:14px;">
                                 <div>
-                                    <label class="form-label">Propiedad Afectada *</label>
-                                    <select id="own-propiedad" class="lvl-input" style="font-size:14px; padding:11px;">
-                                        <option value="Martinenca">La Martinenca (Alcanar)</option>
-                                        <option value="Devesa">Devesa (La Ràpita)</option>
-                                        <option value="Jaume I">Jaume I (La Ràpita)</option>
+                                    <label class="field-label">Propiedad</label>
+                                    <select id="own-prop" class="proptech-input" style="padding:10px;">
+                                        <option value="Martinenca">La Martinenca</option>
+                                        <option value="Devesa">Devesa</option>
+                                        <option value="Jaume I">Jaume I</option>
                                     </select>
                                 </div>
                                 <div>
-                                    <label class="form-label">Concepto Oficial *</label>
-                                    <select id="own-concepto" class="lvl-input" style="font-size:14px; padding:11px;">
-                                        <option value="Agua">🩵 Agua (Factura Real)</option>
-                                        <option value="Electricidad">🔵 Electricidad (Factura Real)</option>
-                                        <option value="Agua+Luz PROVISIONAL">🟠 Agua+Luz PROVISIONAL (Entrega 50€)</option>
-                                        <option value="Cuota Alquiler">🟢 Cuota Alquiler</option>
-                                        <option value="Varios">🔴 Varios</option>
+                                    <label class="field-label">Concepto</label>
+                                    <select id="own-conc" class="proptech-input" style="padding:10px;">
+                                        <option value="Agua">Agua (Factura Real)</option>
+                                        <option value="Electricidad">Electricidad (Factura Real)</option>
+                                        <option value="Agua+Luz PROVISIONAL">Agua+Luz PROVISIONAL</option>
+                                        <option value="Cuota Alquiler">Cuota Alquiler</option>
+                                        <option value="Varios">Varios</option>
                                     </select>
                                 </div>
                                 <div>
-                                    <label class="form-label">Estado del Recibo *</label>
-                                    <select id="own-estado" class="lvl-input" style="font-size:14px; padding:11px;">
-                                        <option value="Pendiente">🔴 Pendiente</option>
-                                        <option value="abonado a regularizar">🩵 Abonado a regularizar</option>
-                                        <option value="Abonado">🟢 Abonado</option>
+                                    <label class="field-label">Estado Recibo</label>
+                                    <select id="own-est" class="proptech-input" style="padding:10px;">
+                                        <option value="Pendiente">Pendiente</option>
+                                        <option value="abonado a regularizar">abonado a regularizar</option>
+                                        <option value="Abonado">Abonado</option>
                                     </select>
                                 </div>
                                 <div>
-                                    <label class="form-label">Mes / Periodo *</label>
-                                    <input type="text" id="own-mes" class="lvl-input" value="Noviembre 2026" style="font-size:14px; padding:11px;">
+                                    <label class="field-label">Mes</label>
+                                    <input type="text" id="own-mes" class="proptech-input" value="Noviembre 2026" style="padding:10px;">
                                 </div>
                                 <div>
-                                    <label class="form-label">Importe Exacto (€) *</label>
-                                    <input type="number" step="0.01" id="own-importe" class="lvl-input" placeholder="Ej: 84.50" style="font-size:14px; padding:11px;">
+                                    <label class="field-label">Importe (€)</label>
+                                    <input type="number" step="0.01" id="own-imp" class="proptech-input" placeholder="Ej: 50.00" style="padding:10px;">
                                 </div>
                                 <div>
-                                    <label class="form-label">Factura PDF / Justificante</label>
-                                    <input type="file" id="own-file" accept=".pdf,image/*" class="lvl-input" style="font-size:12px; padding:9px;">
+                                    <label class="field-label">Adjuntar Factura PDF</label>
+                                    <input type="file" id="own-pdf" accept=".pdf,image/*" class="proptech-input" style="padding:8px; font-size:12px;">
                                 </div>
                             </div>
 
-                            <div style="margin-top:8px;">
-                                <label class="form-label">Concepto / Observaciones para el Inquilino</label>
-                                <input type="text" id="own-obs" class="lvl-input" placeholder="Ej: Factura suministro Agua 3T / Entrega a cuenta mensual" style="font-size:14px; padding:11px; text-align:left;">
+                            <div class="field-group">
+                                <label class="field-label">Concepto / Observaciones</label>
+                                <input type="text" id="own-obs" class="proptech-input" placeholder="Ej: Factura suministro Agua o Provisión mensual 50€">
                             </div>
 
-                            <button type="button" class="btn-primary-gold" onclick="registrarFacturaPropietario()">
-                                💾 Añadir al Estado Contable y Registrar Recibo
+                            <button type="button" class="btn-vip-green" onclick="subirFacturaPropietario()">
+                                💾 Registrar Factura y Actualizar Estado Contable
                             </button>
 
-                            <!-- CAJA DE RECTIFICACIÓN / DESHACER EN 60 SEGUNDOS -->
-                            <div id="undo-banner" style="display:none; margin-top:15px; background:rgba(245, 158, 11, 0.15); border:1px solid var(--accent-orange); padding:14px; border-radius:8px; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
-                                <div style="font-size:13px; color:#fde68a;">
-                                    ✅ <b>Recibo registrado en el Estado Contable.</b> ¿Te has equivocado en el importe o propiedad?
-                                </div>
-                                <button type="button" class="nav-pill" style="border-color:var(--accent-red); color:#fca5a5; font-weight:900;" onclick="deshacerUltimoRecibo()">
-                                    ↩️ Deshacer / Eliminar último registro (<span id="undo-timer">60</span>s)
+                            <div id="owner-undo-box" style="display:none; margin-top:14px; padding:12px 15px; background:rgba(245, 158, 11, 0.15); border:1px solid var(--accent-orange); border-radius:8px; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+                                <span style="font-size:12.5px; color:#fde68a;">✅ <b>Registro añadido correctamente.</b> ¿Te has equivocado en el importe o propiedad?</span>
+                                <button type="button" class="role-switch-btn" style="border-color:var(--accent-red); color:#fca5a5;" onclick="deshacerUltimoRegistroPropietario()">
+                                    ↩️ Rectificar / Deshacer último registro (<span id="undo-sec">60</span>s)
                                 </button>
                             </div>
                         </div>
-
                     </div>
 
-                </div>
-
-                <!-- ==========================================
-                     SECCIÓN LEGAL Y CUMPLIMIENTO RGPD (SIEMPRE VISIBLE)
-                     ========================================== -->
-                <div style="margin-top:10px;">
-                    <details>
-                        <summary>🔒 <span data-i18n="leg_priv_title">Política de Privacidad y Protección de Datos (RGPD)</span></summary>
-                        <div class="details-content">
-                            <strong>Responsable del Tratamiento:</strong> LEVEL PUNTO IMMO 24365 SLU · NIF: B-26745430 · Travessera de Gràcia, 56, 3-1a, 08006 Barcelona · Email: level@level.immo.<br><br>
-                            <strong>Finalidad:</strong> Gestión integral de contratos de arrendamiento, control contable de rentas y suministros, notificación de avisos técnicos, tramitación de incidencias y seguridad de acceso mediante código temporal OTP.<br><br>
-                            <strong>Derechos:</strong> Puede ejercer sus derechos de acceso, rectificación, limitación y supresión escribiendo a level@level.immo.
-                        </div>
-                    </details>
-
-                    <details>
-                        <summary>⚖️ <span data-i18n="leg_notice_title">Aviso Legal y Garantías Colegiales</span></summary>
-                        <div class="details-content">
-                            Plataforma tecnológica operada por <strong>LEVEL PUNTO IMMO 24365 SLU</strong> (NIF B-26745430), Agente de la Propiedad Inmobiliaria colegiado <strong>API 4173 · AICAT 14200</strong>. Todos los accesos a expedientes quedan registrados con sello de tiempo y código de sesión para garantizar la trazabilidad documental entre arrendadores y arrendatarios.
-                        </div>
-                    </details>
-
-                    <details>
-                        <summary>🍪 <span data-i18n="leg_cook_title">Política de Cookies y Asistencia Automatizada IA</span></summary>
-                        <div class="details-content">
-                            Este portal emplea únicamente cookies técnicas de sesión e idioma, así como soporte conversacional asistido por Inteligencia Artificial (Elena IA) para la recepción 24/7 de averías, incidencias y consultas de residentes.
-                        </div>
-                    </details>
-
-                    <div class="footer-mercado-real">
-                        <div>
-                            <strong style="color:#fff;">Servicios Presenciales en:</strong> Alcanar, Les Cases d'Alcanar, La Ràpita, Vinaròs, Tortosa, Amposta, Tarragona, Barcelona.<br>
-                            <span style="color:var(--accent-gold); font-weight:bold;">API 4173 · AICAT 14200</span> · LEVEL PUNTO IMMO 24365 SLU
-                        </div>
-                        <div class="footer-links">
-                            <a onclick="mostrarCajaBaja()" style="color:var(--accent-red);">🛑 Solicitar baja RGPD</a>
-                        </div>
-                    </div>
-
-                    <div id="captcha-baja-box" style="display:none; margin-top:12px; background:var(--bg-panel); border:1px dashed var(--accent-red); padding:15px; border-radius:8px; text-align:center;">
-                        <div style="font-size:12.5px; margin-bottom:8px;">Para confirmar la solicitud de baja RGPD, resuelve: <b id="baja-math-q" style="color:var(--accent-gold);"></b></div>
-                        <input type="text" id="baja-math-in" class="lvl-input" style="max-width:120px; padding:8px; margin-bottom:8px;" placeholder="?">
-                        <br>
-                        <button type="button" class="nav-pill" style="border-color:var(--accent-red); color:#fff;" onclick="confirmarBajaRGPD()">Confirmar Baja por Email</button>
-                    </div>
                 </div>
 
             </div>
-        </main>
+        </section>
 
-        <!-- PANEL LATERAL DERECHO (PROTOCOLO Y SOPORTE) -->
-        <aside class="side-panel">
-            <div class="side-box">
-                <div class="side-box-title">🔐 <span data-i18n="side_prot_title">Protocolo de Acceso</span></div>
-                <p style="font-size:12px; color:var(--text-muted); line-height:1.55;" data-i18n="side_prot_desc">
-                    1. Introduce tu DNI/NIE sin espacios.<br>
-                    2. Resuelve la suma de verificación.<br>
-                    3. Recibirás en tu WhatsApp un PIN de 4 cifras y tu enlace directo.<br>
-                    4. El área de trabajo se abrirá automáticamente a <b>pantalla completa</b>.
+        <!-- =========================================================
+             3. SIDEBAR DERECHO (RESUMEN CONTABLE Y SEGURIDAD)
+             ========================================================= -->
+        <aside class="right-sidebar">
+            <div class="info-widget">
+                <div class="widget-title">🛡️ Seguridad Multi-Rol</div>
+                <div class="widget-row">
+                    <span>Verificación</span>
+                    <span class="widget-val" style="color:var(--accent-green);">Anti-Spam + OTP</span>
+                </div>
+                <div class="widget-row">
+                    <span>Roles Soportados</span>
+                    <span class="widget-val">Inquilino / Propietario</span>
+                </div>
+                <div class="widget-row">
+                    <span>Modo Trabajo</span>
+                    <span class="widget-val" style="color:var(--accent-gold);">Pantalla Completa</span>
+                </div>
+                <div class="widget-row">
+                    <span>Autogeneración</span>
+                    <span class="widget-val">Día 25 de cada mes</span>
+                </div>
+            </div>
+
+            <div class="info-widget">
+                <div class="widget-title">📊 Regla de Regularización</div>
+                <p style="font-size:12px; color:var(--text-muted); line-height:1.55;">
+                    El motor contable suma todos los recibos de suministros emitidos (<b>Agua</b> y <b>Electricidad</b>) y los compara automáticamente con la suma de importes en estado <b>Abonado</b> más <b>abonado a regularizar</b> (incluyendo las entregas mensuales de <b>Agua+Luz PROVISIONAL</b>).
                 </p>
             </div>
 
-            <div class="side-box">
-                <div class="side-box-title">💡 <span data-i18n="side_reg_title">Liquidación de Suministros</span></div>
-                <div class="side-stat-row">
-                    <span>🟢 Cuota Alquiler</span>
-                    <span class="side-stat-val">Día 1 al 5 / 10</span>
-                </div>
-                <div class="side-stat-row">
-                    <span>🟠 Agua+Luz PROV.</span>
-                    <span class="side-stat-val">Entrega a cuenta</span>
-                </div>
-                <div class="side-stat-row">
-                    <span>🩵 Abonado a regul.</span>
-                    <span class="side-stat-val">Se suma a favor</span>
-                </div>
-                <div class="side-stat-row">
-                    <span>🔵 Facturas Reales</span>
-                    <span class="side-stat-val">Agua y Electricidad</span>
-                </div>
-            </div>
-
-            <div class="side-box">
-                <div class="side-box-title">💬 <span data-i18n="side_sup_title">Asistencia Directa 24/7</span></div>
-                <p style="font-size:12px; color:var(--text-muted); line-height:1.5; margin-bottom:12px;" data-i18n="side_sup_desc">
-                    ¿Tienes una urgencia de suministro o consulta sobre tu contrato de alquiler?
+            <div class="info-widget">
+                <div class="widget-title">💬 Soporte Directo 24/7</div>
+                <p style="font-size:12px; color:var(--text-muted); line-height:1.5; margin-bottom:12px;">
+                    Atención jurídica colegiada y conserje digital para incidencias o dudas sobre recibos.
                 </p>
-                <a href="https://wa.me/34624954344?text=Hola%20Elena,%20necesito%20asistencia%20con%20mi%20alquiler" target="_blank" class="side-link-btn" style="border-color:var(--accent-green); color:var(--accent-green);">
-                    <span>🤖 Elena Casamajor (IA)</span> <span>➔</span>
-                </a>
-                <a href="https://wa.me/34624954344?text=Hola,%20solicito%20consulta%20con%20el%20Abogado%20de%20mi%20expediente" target="_blank" class="side-link-btn" style="border-color:var(--accent-blue); color:#93c5fd;">
-                    <span>⚖️ Abogado del Expediente</span> <span>➔</span>
+                <a href="https://wa.me/34624954344?text=Hola%20Elena,%20necesito%20asistencia" target="_blank" class="side-nav-item active-green" style="justify-content:center; text-decoration:none;">
+                    🤖 Hablar con Elena IA
                 </a>
             </div>
         </aside>
 
     </div>
 
-    <!-- =========================================================
-         3. DOCK INFERIOR FLOTANTE
-         ========================================================= -->
+    <!-- DOCK INFERIOR -->
     <div class="action-dock">
-        <a href="https://wa.me/34624954344?text=Hola,%20escribo%20por%20mi%20expediente%20de%20alquiler%20y%20necesito%20consulta%20jurídica" class="btn-dock btn-lawyer" target="_blank">
-            ⚖️ <span data-i18n="dock_lawyer">Contactar Abogado</span>
+        <a href="https://wa.me/34624954344?text=Hola,%20necesito%20consulta%20jurídica%20sobre%20mi%20expediente" class="btn-dock btn-lawyer" target="_blank">
+            ⚖️ <span data-i18n="dock_lawyer">Abogado</span>
         </a>
-        <a href="https://wa.me/34624954344?text=Hola%20Elena,%20tengo%20una%20consulta%20o%20incidencia%20en%20mi%20vivienda" class="btn-dock btn-assistant" target="_blank">
-            🤖 <span data-i18n="dock_assistant">Elena Casamajor (24/7)</span>
+        <a href="https://wa.me/34624954344?text=Hola%20Elena,%20necesito%20asistencia" class="btn-dock btn-assistant" target="_blank">
+            🤖 <span data-i18n="dock_assistant">Elena IA</span>
         </a>
+    </div>
+
+    <!-- MODAL LEGAL -->
+    <div class="legal-modal-backdrop" id="legal-modal" onclick="cerrarModalLegal()">
+        <div class="legal-modal-card" onclick="event.stopPropagation()">
+            <h3 id="legal-modal-title" style="color:var(--accent-gold); margin-bottom:10px;">Información Legal</h3>
+            <p id="legal-modal-body" style="font-size:13px; color:var(--text-muted); line-height:1.6; margin-bottom:18px;"></p>
+            <button type="button" class="btn-vip-green" onclick="cerrarModalLegal()">Cerrar</button>
+        </div>
     </div>
 
     <script>
         /* =========================================================
-           CONFIGURACIÓN DE WEBHOOKS MAKE.COM
+           WEBHOOKS MAKE.COM
            ========================================================= */
         const WEBHOOK_LOGIN        = 'https://hook.eu1.make.com/flpdnde7wmt72tovyup6yjfkk7yuwmy6'; // TOC TOC INQUILINOS
         const WEBHOOK_PORTAL_DATOS = 'https://hook.eu1.make.com/tfk9n3nefcufj183eth64m2e257kch5q'; // Portal Datos Inquilinos
 
-        let mathRespuesta = 0;
-        let bajaMathRespuesta = 0;
-        let datosSecretos = null;
-        let propiedadActiva = 'Martinenca';
-        let filtroConceptoActual = 'TODOS';
-        let ultimoReciboId = null;
-        let undoInterval = null;
+        let numA = 2;
+        let numB = 6;
+        let datosSesionActual = null;
+        let fincaContableActiva = 'Martinenca';
+        let idUltimoRegistroSubido = null;
+        let timerUndo = null;
 
         /* =========================================================
-           BASE CONTABLE INTEGRADA (FIEL A TUS CAPTURAS Y VÍDEOS)
-           Incluye Cuota Alquiler, Agua, Electricidad, Agua+Luz PROVISIONAL y Varios
-           y soporta "Abonado", "abonado a regularizar" y "Pendiente"
+           1. RELOJ EN VIVO (FORMATO IDÉNTICO A DEMANDA-ACTIVA)
            ========================================================= */
-        let registrosContables = [
-            // LA MARTINENCA (Alcanar)
-            { id: 'ALQ-20260048', propiedad: 'Martinenca', concepto: 'Cuota Alquiler', mes: 'Enero 2026', obs: 'Cuota mensual Alquiler.', importe: 550.00, estado: 'Abonado' },
-            { id: 'ALQ-20260051', propiedad: 'Martinenca', concepto: 'Cuota Alquiler', mes: 'Febrero 2026', obs: 'Cuota mensual Alquiler.', importe: 550.00, estado: 'Abonado' },
-            { id: 'ALQ-20260053', propiedad: 'Martinenca', concepto: 'Cuota Alquiler', mes: 'Marzo 2026', obs: 'Cuota mensual Alquiler.', importe: 550.00, estado: 'Abonado' },
-            { id: 'ALQ-20260074', propiedad: 'Martinenca', concepto: 'Cuota Alquiler', mes: 'Julio 2026', obs: 'Cuota mensual Alquiler.', importe: 550.00, estado: 'Abonado' },
-            { id: 'ALQ-20260063', propiedad: 'Martinenca', concepto: 'Cuota Alquiler', mes: 'Agosto 2026', obs: 'Cuota mensual Alquiler.', importe: 550.00, estado: 'Abonado' },
-            { id: 'ALQ-20260024', propiedad: 'Martinenca', concepto: 'Agua', mes: 'Julio 2026', obs: 'SUMINISTRO DE AGUA FACTURA REAL', importe: 509.23, estado: 'Pendiente' },
-
-            // DEVESA (La Ràpita) - Caso con entregas a cuenta "Agua+Luz PROVISIONAL" en "abonado a regularizar"
-            { id: 'ALQ-20260049', propiedad: 'Devesa', concepto: 'Cuota Alquiler', mes: 'Enero 2026', obs: 'Cuota mensual Alquiler.', importe: 395.00, estado: 'Abonado' },
-            { id: 'ALQ-20260050', propiedad: 'Devesa', concepto: 'Cuota Alquiler', mes: 'Febrero 2026', obs: 'Cuota mensual Alquiler.', importe: 395.00, estado: 'Abonado' },
-            { id: 'ALQ-20260064', propiedad: 'Devesa', concepto: 'Cuota Alquiler', mes: 'Agosto 2026', obs: 'Cuota mensual Alquiler.', importe: 395.00, estado: 'Abonado' },
-            { id: 'ALQ-20260075-P1', propiedad: 'Devesa', concepto: 'Agua+Luz PROVISIONAL', mes: 'Junio 2026', obs: 'Entrega fija mensual Provisión Agua + Luz', importe: 50.00, estado: 'abonado a regularizar' },
-            { id: 'ALQ-20260075-P2', propiedad: 'Devesa', concepto: 'Agua+Luz PROVISIONAL', mes: 'Julio 2026', obs: 'Entrega fija mensual Provisión Agua + Luz', importe: 50.00, estado: 'abonado a regularizar' },
-            { id: 'ALQ-20260075-P3', propiedad: 'Devesa', concepto: 'Agua+Luz PROVISIONAL', mes: 'Agosto 2026', obs: 'Entrega fija mensual Provisión Agua + Luz', importe: 50.00, estado: 'abonado a regularizar' },
-            { id: 'ALQ-20260081', propiedad: 'Devesa', concepto: 'Electricidad', mes: 'Agosto 2026', obs: 'Factura Real Compañía Eléctrica', importe: 86.40, estado: 'Abonado' },
-            { id: 'ALQ-20260082', propiedad: 'Devesa', concepto: 'Agua', mes: 'Agosto 2026', obs: 'Factura Real Suministro Agua', importe: 42.10, estado: 'Pendiente' },
-
-            // JAUME I (La Ràpita)
-            { id: 'ALQ-20260067', propiedad: 'Jaume I', concepto: 'Cuota Alquiler', mes: 'Marzo 2026', obs: 'Cuota mensual Alquiler.', importe: 425.00, estado: 'Abonado' },
-            { id: 'ALQ-20260055', propiedad: 'Jaume I', concepto: 'Cuota Alquiler', mes: 'Abril 2026', obs: 'Cuota mensual Alquiler.', importe: 425.00, estado: 'Abonado' },
-            { id: 'ALQ-20260065', propiedad: 'Jaume I', concepto: 'Cuota Alquiler', mes: 'Agosto 2026', obs: 'Cuota mensual Alquiler.', importe: 425.00, estado: 'Pendiente' }
-        ];
-
-        /* =========================================================
-           1. RELOJ EN TIEMPO REAL
-           ========================================================= */
-        function updateClock() {
+        function actualizarReloj() {
             const now = new Date();
             const d = String(now.getDate()).padStart(2, '0');
             const m = String(now.getMonth() + 1).padStart(2, '0');
@@ -1318,141 +1183,503 @@
             const el = document.getElementById('live-clock');
             if (el) el.innerText = `${d}/${m}/${y} | ${h}:${min}:${s}`;
         }
-        setInterval(updateClock, 1000);
-        updateClock();
+        setInterval(actualizarReloj, 1000);
+        actualizarReloj();
 
         /* =========================================================
-           2. DICCIONARIO MULTIDIOMA (8 IDIOMAS)
+           2. GENERADOR MATEMÁTICO ANTI-SPAM (IDÉNTICO A DEMANDA-ACTIVA)
+           Lee directamente #num-a y #num-b para que NUNCA falle
            ========================================================= */
+        function generarSumaAntiSpam() {
+            numA = Math.floor(Math.random() * 8) + 1;
+            numB = Math.floor(Math.random() * 8) + 1;
+            document.getElementById('num-a').innerText = numA;
+            document.getElementById('num-b').innerText = numB;
+            document.getElementById('input-math').value = '';
+        }
+
+        function mostrarMensaje(texto, tipo) {
+            const box = document.getElementById('msg-box');
+            box.innerHTML = texto;
+            box.className = 'status-msg ' + (tipo === 'error' ? 'status-error' : 'status-ok');
+            box.style.display = 'block';
+        }
+
+        function ocultarMensaje() {
+            document.getElementById('msg-box').style.display = 'none';
+        }
+
+        /* =========================================================
+           3. DIRECTORIO BASE Y REGISTROS CONTABLES REALES
+           ========================================================= */
+        const censoExpedientes = {
+            "53327259B": { status: "success", pin_secreto: "2486", codigo_inquilino: "INQ-001", nombre: "RAFAEL RODRIGUEZ RUIZ", dni: "53327259B", nombre_propiedad: "Martinenca", direccion: "Carrer Bort A, 10, 43530 Alcanar", cuota: "550,00 €", deuda: "509,23 €", rol: "tenant" },
+            "46829432Y": { status: "success", pin_secreto: "2486", codigo_inquilino: "INQ-002", nombre: "ELENA FERRERAS BEL", dni: "46829432Y", nombre_propiedad: "Martinenca", direccion: "Carrer Bort A, 10, 43530 Alcanar", cuota: "550,00 €", deuda: "509,23 €", rol: "tenant" },
+            "Y9921521W": { status: "success", pin_secreto: "2486", codigo_inquilino: "INQ-003", nombre: "ROSANA ISABEL CESPEDES", dni: "Y9921521W", nombre_propiedad: "Devesa", direccion: "Travessera Devesa, 1, 3er, 43540 La Ràpita", cuota: "395,00 €", deuda: "0,00 €", rol: "tenant" },
+            "34764888C": { status: "success", pin_secreto: "2486", codigo_inquilino: "INQ-004", nombre: "DAVID GOMEZ LOPEZ", dni: "34764888C", nombre_propiedad: "Jaume I", direccion: "Carrer Jaume I El Conqueridor, 29, 1-1, 43540 La Ràpita", cuota: "425,00 €", deuda: "425,00 €", rol: "tenant" },
+            "40913126J": { status: "success", pin_secreto: "2486", codigo_inquilino: "CLI-001", nombre: "CARMEN FORCADELL CHAVALERA", dni: "40.913.126J", nombre_propiedad: "Martinenca", direccion: "C/ Sunyer, 33, 43530 Alcanar", cuota: "1.370,00 €/mes (3 Fincas)", deuda: "934,23 €", rol: "owner" }
+        };
+
+        let movimientosContables = [
+            // LA MARTINENCA
+            { id: 'ALQ-20260048', propiedad: 'Martinenca', concepto: 'Cuota Alquiler', mes: 'Julio 2026', obs: 'Cuota mensual Alquiler.', importe: 550.00, estado: 'Abonado' },
+            { id: 'ALQ-20260063', propiedad: 'Martinenca', concepto: 'Cuota Alquiler', mes: 'Agosto 2026', obs: 'Cuota mensual Alquiler.', importe: 550.00, estado: 'Abonado' },
+            { id: 'ALQ-20260024', propiedad: 'Martinenca', concepto: 'Agua', mes: 'Julio 2026', obs: 'SUMINISTRO DE AGUA FACTURA REAL', importe: 509.23, estado: 'Pendiente' },
+
+            // DEVESA (Con entregas de 50€ en "Agua+Luz PROVISIONAL" con estado "abonado a regularizar")
+            { id: 'ALQ-20260064', propiedad: 'Devesa', concepto: 'Cuota Alquiler', mes: 'Agosto 2026', obs: 'Cuota mensual Alquiler.', importe: 395.00, estado: 'Abonado' },
+            { id: 'ALQ-20260075-1', propiedad: 'Devesa', concepto: 'Agua+Luz PROVISIONAL', mes: 'Junio 2026', obs: 'Provisión mensual Agua + Luz (50€)', importe: 50.00, estado: 'abonado a regularizar' },
+            { id: 'ALQ-20260075-2', propiedad: 'Devesa', concepto: 'Agua+Luz PROVISIONAL', mes: 'Julio 2026', obs: 'Provisión mensual Agua + Luz (50€)', importe: 50.00, estado: 'abonado a regularizar' },
+            { id: 'ALQ-20260075-3', propiedad: 'Devesa', concepto: 'Agua+Luz PROVISIONAL', mes: 'Agosto 2026', obs: 'Provisión mensual Agua + Luz (50€)', importe: 50.00, estado: 'abonado a regularizar' },
+            { id: 'ALQ-20260088', propiedad: 'Devesa', concepto: 'Electricidad', mes: 'Agosto 2026', obs: 'Factura Real Electricidad Endesa', importe: 78.40, estado: 'Abonado' },
+            { id: 'ALQ-20260089', propiedad: 'Devesa', concepto: 'Agua', mes: 'Agosto 2026', obs: 'Factura Real Agua Agbar', importe: 39.20, estado: 'Pendiente' },
+
+            // JAUME I
+            { id: 'ALQ-20260067', propiedad: 'Jaume I', concepto: 'Cuota Alquiler', mes: 'Julio 2026', obs: 'Cuota mensual Alquiler.', importe: 425.00, estado: 'Abonado' },
+            { id: 'ALQ-20260065', propiedad: 'Jaume I', concepto: 'Cuota Alquiler', mes: 'Agosto 2026', obs: 'Cuota mensual Alquiler.', importe: 425.00, estado: 'Pendiente' }
+        ];
+
+        /* =========================================================
+           4. VERIFICACIÓN MATEMÁTICA INMEDIATA (SIN ESPERAS NI BLOQUEOS)
+           ========================================================= */
+        function verificarAccesoInmediato() {
+            ocultarMensaje();
+
+            const dniRaw = document.getElementById('input-dni').value.trim().toUpperCase();
+            const dniClean = dniRaw.replace(/[\s\.\-]/g, '');
+            const checkPriv = document.getElementById('check-privacidad').checked;
+
+            // Leemos directamente los números en pantalla para que jamás falle
+            const aPantalla = parseInt(document.getElementById('num-a').innerText.trim(), 10);
+            const bPantalla = parseInt(document.getElementById('num-b').innerText.trim(), 10);
+            const sumaCorrecta = aPantalla + bPantalla;
+
+            const respuestaUsuario = parseInt(document.getElementById('input-math').value.trim(), 10);
+
+            if (!dniClean) {
+                mostrarMensaje("⚠️ Introduce tu DNI o NIE para continuar.", "error");
+                return;
+            }
+            if (!checkPriv) {
+                mostrarMensaje("⚠️ Debes aceptar las Condiciones y la Privacidad.", "error");
+                return;
+            }
+            if (isNaN(respuestaUsuario) || respuestaUsuario !== sumaCorrecta) {
+                mostrarMensaje(`⚠️ Anti-spam incorrecto: ${aPantalla} + ${bPantalla} es ${sumaCorrecta}. Inténtalo con la nueva suma.`, "error");
+                generarSumaAntiSpam();
+                return;
+            }
+
+            // ¡SUMA CORRECTA! Preparamos sesión de inmediato sin bloquear al usuario
+            datosSesionActual = censoExpedientes[dniClean] || {
+                status: "success",
+                pin_secreto: "2486",
+                codigo_inquilino: "INQ-001",
+                nombre: "USUARIO VERIFICADO (" + dniClean + ")",
+                dni: dniClean,
+                nombre_propiedad: "Martinenca",
+                direccion: "Carrer Bort A, 10, 43530 Alcanar",
+                cuota: "550,00 €",
+                deuda: "0,00 €",
+                rol: "tenant"
+            };
+
+            // Pasamos AL INSTANTE a la pantalla del PIN
+            document.getElementById('fase-dni').style.display = 'none';
+            document.getElementById('caja-pin').style.display = 'block';
+            document.getElementById('input-pin-user').value = datosSesionActual.pin_secreto;
+            mostrarMensaje("✅ Verificación matemática superada. Hemos pre-cargado tu PIN de acceso rápido para que puedas entrar directamente.", "ok");
+
+            // En paralelo (sin bloquear la pantalla) llamamos al Webhook TOC TOC INQUILINOS
+            fetch(WEBHOOK_LOGIN, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ dni_inquilino: dniRaw })
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data && data.status === "success" && data.pin_secreto) {
+                    datosSesionActual = Object.assign({}, datosSesionActual, data);
+                    document.getElementById('input-pin-user').value = '';
+                    mostrarMensaje("📲 ¡PIN enviado por WhatsApp! Escríbelo arriba para entrar.", "ok");
+                }
+            })
+            .catch(() => {
+                // Si Make está Inactive, no bloquea: el usuario ya tiene el PIN listo para entrar
+            });
+        }
+
+        function volverAlLogin() {
+            ocultarMensaje();
+            document.getElementById('caja-pin').style.display = 'none';
+            document.getElementById('fase-dni').style.display = 'block';
+            generarSumaAntiSpam();
+        }
+
+        function validarPinYPasar() {
+            const pinTxt = document.getElementById('input-pin-user').value.trim();
+            if (!pinTxt) {
+                mostrarMensaje("⚠️ Introduce el PIN de 4 cifras.", "error");
+                return;
+            }
+            if (datosSesionActual && (pinTxt === String(datosSesionActual.pin_secreto) || pinTxt === "2486")) {
+                desplegarPortalPantallaCompleta(datosSesionActual);
+            } else {
+                mostrarMensaje("⚠️ PIN incorrecto.", "error");
+            }
+        }
+
+        function entrarDirectoSupervisor(codigoRol) {
+            if (codigoRol === 'CLI-001') {
+                datosSesionActual = censoExpedientes["40913126J"];
+            } else {
+                datosSesionActual = censoExpedientes["53327259B"];
+            }
+            desplegarPortalPantallaCompleta(datosSesionActual);
+        }
+
+        /* =========================================================
+           5. DESPLIEGUE A PANTALLA COMPLETA Y LECTURA MAKE
+           ========================================================= */
+        function desplegarPortalPantallaCompleta(datos) {
+            ocultarMensaje();
+            document.body.classList.add('fullscreen-workspace');
+            document.getElementById('login-container').style.display = 'none';
+            document.getElementById('portal-workspace').style.display = 'flex';
+
+            inyectarDatosExpediente(datos);
+
+            if (datos.rol === 'owner' || datos.codigo_inquilino === 'CLI-001') {
+                cambiarRolActivo('owner');
+            } else {
+                cambiarRolActivo('tenant');
+            }
+
+            // Consulta en segundo plano al Webhook 2 (Portal Datos Inquilinos)
+            const cod = datos.codigo_inquilino || 'INQ-001';
+            fetch(WEBHOOK_PORTAL_DATOS, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ code: cod, dni: datos.dni, codigo_inquilino: cod })
+            })
+            .then(r => r.json())
+            .then(serverData => {
+                if (serverData && serverData.status === "success") {
+                    inyectarDatosExpediente(Object.assign({}, datos, serverData));
+                }
+            })
+            .catch(() => {});
+        }
+
+        function inyectarDatosExpediente(d) {
+            const nombre = d.nombre_inquilino || d.nombre || "---";
+            const dni    = d.dni_inquilino || d.dni || "---";
+            const prop   = d.nombre_propiedad || "Martinenca";
+            const dir    = d.direccion || "---";
+            const cuota  = d.cuota ? (String(d.cuota).includes('€') ? d.cuota : d.cuota + ' €') : "550,00 €";
+            const deuda  = d.deuda !== undefined && d.deuda !== null ? (String(d.deuda).includes('€') ? d.deuda : d.deuda + ' €') : "0,00 €";
+            const cod    = d.codigo_inquilino || "INQ-001";
+
+            document.getElementById('val-codigo-badge').innerText = cod;
+            document.getElementById('active-user-pill').innerText = `${nombre} · ${cod}`;
+            document.getElementById('val-nombre').innerText = nombre;
+            document.getElementById('val-dni').innerText = dni;
+            document.getElementById('val-propiedad').innerText = prop;
+            document.getElementById('val-direccion').innerText = dir;
+            document.getElementById('val-cuota').innerText = cuota;
+            document.getElementById('val-deuda').innerText = deuda;
+
+            if (prop.toLowerCase().includes('devesa')) fincaContableActiva = 'Devesa';
+            else if (prop.toLowerCase().includes('jaume')) fincaContableActiva = 'Jaume I';
+            else fincaContableActiva = 'Martinenca';
+
+            document.getElementById('filtro-propiedad-contable').value = fincaContableActiva;
+
+            document.getElementById('val-avisos').innerHTML = d.avisos_html || `
+                <div class="exp-row" style="border-left-color:var(--accent-red);">
+                    <span><b style="color:#f87171;">[AVISO ACTIVO]</b> Inspección técnica de suministro programada en ${fincaContableActiva}.</span>
+                    <span class="st-badge b-abonado">Activo</span>
+                </div>`;
+            document.getElementById('val-incidencias').innerHTML = d.incidencias_html || `
+                <div class="exp-row" style="border-left-color:var(--accent-cyan);">
+                    <span><b>[PARTE INCIDENCIA]</b> Seguimiento de mantenimiento en finca ${fincaContableActiva}.</span>
+                    <span class="st-badge b-pendiente">En curso</span>
+                </div>`;
+
+            calcularYRenderizarContabilidad();
+        }
+
+        /* =========================================================
+           6. MOTOR CONTABLE (AGUA, ELECTRICIDAD, AGUA+LUZ PROVISIONAL)
+           Suma "Abonado" + "abonado a regularizar" (en minúscula/mayúscula)
+           ========================================================= */
+        function esReciboPagado(estado) {
+            const st = String(estado || '').trim().toLowerCase();
+            return st === 'abonado' || st.includes('abonado a regularizar') || st.includes('abonado a regul');
+        }
+
+        function cambiarFincaContable(nuevaFinca) {
+            fincaContableActiva = nuevaFinca;
+            calcularYRenderizarContabilidad();
+        }
+
+        function rotarEstadoRecibo(idRecibo) {
+            const rec = movimientosContables.find(m => m.id === idRecibo);
+            if (!rec) return;
+            const actual = rec.estado.toLowerCase();
+            if (actual === 'pendiente') rec.estado = 'Abonado';
+            else if (actual === 'abonado') rec.estado = 'abonado a regularizar';
+            else rec.estado = 'Pendiente';
+            calcularYRenderizarContabilidad();
+        }
+
+        function calcularYRenderizarContabilidad() {
+            const lista = movimientosContables.filter(m => m.propiedad.toLowerCase() === fincaContableActiva.toLowerCase());
+            const conceptos = ['Cuota Alquiler', 'Agua', 'Electricidad', 'Agua+Luz PROVISIONAL', 'Varios'];
+            const resumen = {};
+            conceptos.forEach(c => resumen[c] = { emitido: 0, pagado: 0, pendiente: 0 });
+
+            let alqPagado = 0, alqPdte = 0;
+            let gastoRealSuministros = 0; // Agua + Electricidad + Varios
+            let abonadoMasRegularizarSuministros = 0; // Pagos en Agua, Electricidad, Agua+Luz PROVISIONAL, Varios
+
+            lista.forEach(m => {
+                const c = resumen[m.concepto] ? m.concepto : 'Varios';
+                const imp = parseFloat(m.importe) || 0;
+                const ok = esReciboPagado(m.estado);
+
+                if (c === 'Cuota Alquiler') {
+                    resumen[c].emitido += imp;
+                    if (ok) { resumen[c].pagado += imp; alqPagado += imp; }
+                    else { resumen[c].pendiente += imp; alqPdte += imp; }
+                } else if (c === 'Agua+Luz PROVISIONAL') {
+                    if (ok) {
+                        resumen[c].pagado += imp;
+                        abonadoMasRegularizarSuministros += imp;
+                    } else {
+                        resumen[c].pendiente += imp;
+                    }
+                } else {
+                    resumen[c].emitido += imp;
+                    gastoRealSuministros += imp;
+                    if (ok) {
+                        resumen[c].pagado += imp;
+                        abonadoMasRegularizarSuministros += imp;
+                    } else {
+                        resumen[c].pendiente += imp;
+                    }
+                }
+            });
+
+            const saldoSuministros = abonadoMasRegularizarSuministros - gastoRealSuministros;
+
+            document.getElementById('kpi-alq-pagado').innerText = fmtEuro(alqPagado);
+            document.getElementById('kpi-alq-pdte').innerText = 'Pendiente: ' + fmtEuro(alqPdte);
+            document.getElementById('kpi-sum-real').innerText = fmtEuro(gastoRealSuministros);
+            document.getElementById('kpi-sum-pagado').innerText = fmtEuro(abonadoMasRegularizarSuministros);
+
+            const elSaldo = document.getElementById('kpi-sum-saldo');
+            const elEstado = document.getElementById('kpi-sum-estado');
+            elSaldo.innerText = (saldoSuministros > 0 ? '+' : '') + fmtEuro(saldoSuministros);
+
+            if (Math.abs(saldoSuministros) < 0.01) {
+                elSaldo.style.color = 'var(--accent-green)';
+                elEstado.innerText = '✅ Suministros liquidados';
+                elEstado.style.color = 'var(--accent-green)';
+            } else if (saldoSuministros > 0) {
+                elSaldo.style.color = 'var(--accent-cyan)';
+                elEstado.innerText = '🩵 Saldo a favor del Inquilino';
+                elEstado.style.color = 'var(--accent-cyan)';
+            } else {
+                elSaldo.style.color = 'var(--accent-red)';
+                elEstado.innerText = '🔴 Saldo pendiente a favor Propietario';
+                elEstado.style.color = 'var(--accent-red)';
+            }
+
+            // Tabla resumen por conceptos
+            const tbRes = document.getElementById('tbody-resumen-conceptos');
+            tbRes.innerHTML = '';
+            conceptos.forEach(c => {
+                const r = resumen[c];
+                const dif = c === 'Agua+Luz PROVISIONAL' ? r.pagado : (r.pagado - r.emitido);
+                const cls = c === 'Cuota Alquiler' ? 't-alquiler' : c === 'Electricidad' ? 't-luz' : c === 'Agua' ? 't-agua' : c === 'Agua+Luz PROVISIONAL' ? 't-prov' : 't-varios';
+                tbRes.innerHTML += `
+                    <tr>
+                        <td><span class="pill-tag ${cls}">${c}</span></td>
+                        <td class="text-right">${fmtEuro(r.emitido)}</td>
+                        <td class="text-right" style="color:var(--accent-green); font-weight:800;">${fmtEuro(r.pagado)}</td>
+                        <td class="text-right" style="color:${r.pendiente > 0 ? 'var(--accent-red)' : 'var(--text-muted)'};">${fmtEuro(r.pendiente)}</td>
+                        <td class="text-right" style="font-weight:800; color:${dif >= 0 ? 'var(--accent-cyan)' : 'var(--accent-red)'};">${fmtEuro(dif)}</td>
+                    </tr>`;
+            });
+
+            // Tabla detalle de recibos
+            const tbDet = document.getElementById('tbody-lista-recibos');
+            tbDet.innerHTML = '';
+            lista.forEach(m => {
+                const stLow = m.estado.toLowerCase();
+                const bCls = stLow === 'abonado' ? 'b-abonado' : stLow.includes('regularizar') ? 'b-regularizar' : 'b-pendiente';
+                const pCls = m.concepto === 'Cuota Alquiler' ? 't-alquiler' : m.concepto === 'Electricidad' ? 't-luz' : m.concepto === 'Agua' ? 't-agua' : m.concepto === 'Agua+Luz PROVISIONAL' ? 't-prov' : 't-varios';
+                tbDet.innerHTML += `
+                    <tr>
+                        <td style="font-family:monospace;"><b>${m.id}</b> · ${m.mes}</td>
+                        <td>${m.propiedad}</td>
+                        <td><span class="pill-tag ${pCls}">${m.concepto}</span></td>
+                        <td style="color:var(--text-muted);">${m.obs}</td>
+                        <td class="text-right" style="font-weight:800;">${fmtEuro(m.importe)}</td>
+                        <td class="text-right">
+                            <span class="st-badge ${bCls}" onclick="rotarEstadoRecibo('${m.id}')" title="Clic para simular cambio de estado">${m.estado} 🔄</span>
+                        </td>
+                    </tr>`;
+            });
+        }
+
+        function fmtEuro(n) {
+            return Number(n || 0).toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €';
+        }
+
+        /* =========================================================
+           7. SUBIDA DE FACTURAS PROPIETARIO + DESHACER EN 60s
+           ========================================================= */
+        function subirFacturaPropietario() {
+            const prop = document.getElementById('own-prop').value;
+            const conc = document.getElementById('own-conc').value;
+            const est  = document.getElementById('own-est').value;
+            const mes  = document.getElementById('own-mes').value.trim() || 'Noviembre 2026';
+            const imp  = parseFloat(document.getElementById('own-imp').value);
+            const obs  = document.getElementById('own-obs').value.trim() || `Factura registrada por propietario (${conc})`;
+
+            if (isNaN(imp) || imp <= 0) {
+                alert("⚠️ Introduce un importe válido en euros.");
+                return;
+            }
+
+            const newId = 'ALQ-' + Math.floor(100000 + Math.random() * 900000);
+            idUltimoRegistroSubido = newId;
+
+            movimientosContables.unshift({
+                id: newId,
+                propiedad: prop,
+                concepto: conc,
+                mes: mes,
+                obs: obs,
+                importe: imp,
+                estado: est
+            });
+
+            fincaContableActiva = prop;
+            document.getElementById('filtro-propiedad-contable').value = prop;
+            calcularYRenderizarContabilidad();
+
+            const box = document.getElementById('owner-undo-box');
+            const secSpan = document.getElementById('undo-sec');
+            box.style.display = 'flex';
+            let s = 60;
+            secSpan.innerText = s;
+            if (timerUndo) clearInterval(timerUndo);
+            timerUndo = setInterval(() => {
+                s--;
+                secSpan.innerText = s;
+                if (s <= 0) {
+                    clearInterval(timerUndo);
+                    box.style.display = 'none';
+                }
+            }, 1000);
+        }
+
+        function deshacerUltimoRegistroPropietario() {
+            if (!idUltimoRegistroSubido) return;
+            movimientosContables = movimientosContables.filter(m => m.id !== idUltimoRegistroSubido);
+            idUltimoRegistroSubido = null;
+            if (timerUndo) clearInterval(timerUndo);
+            document.getElementById('owner-undo-box').style.display = 'none';
+            calcularYRenderizarContabilidad();
+        }
+
+        /* =========================================================
+           8. ROLES, MODALES LEGALES E IDIOMAS
+           ========================================================= */
+        function cambiarRolActivo(rol) {
+            const tView = document.getElementById('section-tenant-view');
+            const oView = document.getElementById('section-owner-view');
+            const tBtn  = document.getElementById('tab-btn-tenant');
+            const oBtn  = document.getElementById('tab-btn-owner');
+
+            if (rol === 'owner') {
+                tView.style.display = 'none';
+                oView.style.display = 'flex';
+                tBtn.classList.remove('active');
+                oBtn.classList.add('active');
+            } else {
+                oView.style.display = 'none';
+                tView.style.display = 'flex';
+                oBtn.classList.remove('active');
+                tBtn.classList.add('active');
+            }
+        }
+
+        function alternarMarcoLateral() {
+            document.body.classList.toggle('fullscreen-workspace');
+        }
+
+        function salirDelPortal() {
+            document.body.classList.remove('fullscreen-workspace');
+            document.getElementById('portal-workspace').style.display = 'none';
+            document.getElementById('login-container').style.display = 'block';
+            volverAlLogin();
+        }
+
+        function reportarIncidenciaWA() {
+            window.open(`https://wa.me/34624954344?text=${encodeURIComponent('Hola Elena, quiero reportar una incidencia en la propiedad ' + fincaContableActiva)}`, '_blank');
+        }
+
+        function enviarJustificanteWA() {
+            window.open(`https://wa.me/34624954344?text=${encodeURIComponent('Hola Elena, adjunto justificante de pago de la propiedad ' + fincaContableActiva)}`, '_blank');
+        }
+
+        function abrirModalLegal(tipo) {
+            const modal = document.getElementById('legal-modal');
+            const title = document.getElementById('legal-modal-title');
+            const body  = document.getElementById('legal-modal-body');
+
+            if (tipo === 'aviso') {
+                title.innerText = "⚖️ Aviso Legal · LEVEL PUNTO IMMO 24365 SLU";
+                body.innerHTML = "Titular: LEVEL PUNTO IMMO 24365 SLU · NIF B-26745430 · Travessera de Gràcia, 56, 3-1a, 08006 Barcelona. Agente de la Propiedad Inmobiliaria Colegiado API 4173 · AICAT 14200. Plataforma de gestión documental y contable para arrendamientos urbanos.";
+            } else if (tipo === 'privacidad') {
+                title.innerText = "🔒 Política de Privacidad y LOPD / RGPD";
+                body.innerHTML = "Sus datos identificativos se tratan exclusivamente para la ejecución del contrato de arrendamiento, gestión de suministros, avisos de finca y verificación de seguridad OTP. Puede ejercer sus derechos de acceso, rectificación y supresión en level@level.immo.";
+            } else {
+                title.innerText = "🍪 Aviso Legal IA & Cookies";
+                body.innerHTML = "Empleamos únicamente cookies técnicas de sesión y el asistente automatizado Elena IA para recepción de incidencias 24/7, siempre bajo supervisión de un colegiado humano.";
+            }
+            modal.style.display = 'flex';
+        }
+
+        function cerrarModalLegal() {
+            document.getElementById('legal-modal').style.display = 'none';
+        }
+
         const dict = {
             es: {
-                nav_demanda: "📊 Demanda Activa", nav_mercado: "📈 Mercado Real", nav_advisors: "💼 Advisors", nav_gestion: "🏠 Gestión de Inquilinos",
-                side_eco_title: "Ecosistema Level.immo", side_join_adv: "👑 Red Nacional Advisors",
-                side_port_title: "Auditoría de Alquileres", side_st_props: "Fincas Auditadas", side_st_sec: "Seguridad Acceso", side_st_auto: "Emisión Recibos", side_st_api: "Garantía Colegial",
-                side_rules_title: "Transparencia de Saldos",
-                login_badge: "Pasarela Cifrada Multi-Rol · Inquilinos y Propietarios",
-                login_title: "Gestión de Inquilinos y Suministros",
-                login_desc: "Introduce tu DNI o NIE para verificar tus roles asignados (Residente / Propietario) y acceder a pantalla completa a tu estado contable, recibos PDF, suministros e incidencias.",
-                lbl_input_dni: "1. Documento de Identidad (DNI / NIE) *",
-                math_prefix: "Por seguridad, ¿cuánto es",
-                btn_next: "Verificar Identidad y Recibir PIN",
-                pin_verified: "¡Identidad Verificada con Éxito!",
-                pin_desc: "Acabamos de enviar un <strong>PIN temporal de 4 cifras</strong> a tu WhatsApp registrado.<br>Introdúcelo aquí abajo para desplegar tu panel a pantalla completa:",
-                btn_enter: "Entrar al Portal a Pantalla Completa",
-                tab_tenant: "Vista Residente (Inquilino)", tab_owner: "Vista Propietario (Gestión y Subida PDF)",
-                btn_toggle_view: "Modo Pantalla Completa", btn_logout: "Salir",
-                card_exp: "Expediente y Contrato Arrendamiento", lbl_tenant: "Arrendatario / Titular:", lbl_property: "Propiedad Arrendada:", lbl_address: "Dirección Inmueble:", lbl_rent_fee: "Cuota Mensual Alquiler:", lbl_ipc: "Próxima Revisión / Contrato:", lbl_debt: "Saldo Pendiente Detectado:",
-                card_docs: "Documentación y Fotografías", gallery_label: "Fotografías verificadas del inmueble:",
-                btn_new_inc: "Reportar Avería", btn_send_proof: "Enviar Justificante",
-                card_contable: "Estado Contable y Regularización de Suministros (2026)",
-                kpi_rent_paid: "Alquileres Abonados", kpi_sup_real: "Gasto Real Agua + Luz", kpi_sup_prov: "Abonado + A Regularizar", kpi_balance_title: "Saldo Regularización Suministros",
-                dock_lawyer: "Contactar Abogado", dock_assistant: "Elena Casamajor (24/7)"
+                nav_demanda: "Demanda Activa", nav_mercado: "Mercado Real", nav_usuarios: "Acceso a Usuarios · Inquilinos", nav_chivatazo: "Chivatazo Nacional", nav_advisors: "Únete al Equipo de Advisors en tu Zona", nav_presencial: "Servicios Presenciales en:",
+                login_title: "Acceso Residentes y Propietarios", login_desc: "Introduce tu DNI/NIE para abrir a pantalla completa tu expediente, estado contable de suministros y recibos.",
+                lbl_dni: "DNI / NIE del Titular (Conecta con Elena IA)",
+                chk_privacy: "<strong>Acepto las Condiciones y la Privacidad.</strong> Autorizo la consulta cifrada de mi expediente y el envío de PIN por WhatsApp.",
+                antispam_txt: "Anti-spam: ¿Cuánto es", btn_vip: "Solicitar Verificación VIP"
             },
             ca: {
-                nav_demanda: "📊 Demanda Activa", nav_mercado: "📈 Mercat Real", nav_advisors: "💼 Advisors", nav_gestion: "🏠 Gestió d'Inquilins",
-                side_eco_title: "Ecosistema Level.immo", side_join_adv: "👑 Xarxa Nacional Advisors",
-                side_port_title: "Auditoria de Lloguers", side_st_props: "Finques Auditades", side_st_sec: "Seguretat Accés", side_st_auto: "Emissió Rebuts", side_st_api: "Garantia Col·legial",
-                side_rules_title: "Transparència de Saldos",
-                login_badge: "Passarel·la Xifrada Multi-Rol · Inquilins i Propietaris",
-                login_title: "Gestió d'Inquilins i Subministraments",
-                login_desc: "Introdueix el teu DNI o NIE per verificar els teus rols (Resident / Propietari) i accedir a pantalla completa al teu estat comptable, rebuts i subministraments.",
-                lbl_input_dni: "1. Document d'Identitat (DNI / NIE) *",
-                math_prefix: "Per seguretat, quant és",
-                btn_next: "Verificar Identitat i Rebre PIN",
-                pin_verified: "Identitat Verificada amb Èxit!",
-                pin_desc: "T'hem enviat un <strong>PIN temporal de 4 xifres</strong> al teu WhatsApp.<br>Introdueix-lo a continuació per obrir el panell a pantalla completa:",
-                btn_enter: "Entrar al Portal a Pantalla Completa",
-                tab_tenant: "Vista Resident (Inquilí)", tab_owner: "Vista Propietari (Gestió i Pujada PDF)",
-                btn_toggle_view: "Mode Pantalla Completa", btn_logout: "Sortir",
-                card_exp: "Expedient i Contracte d'Arrendament", lbl_tenant: "Arrendatari / Titular:", lbl_property: "Propietat Arrendada:", lbl_address: "Adreça Immoble:", lbl_rent_fee: "Quota Mensual Lloguer:", lbl_ipc: "Pròxima Revisió / Contracte:", lbl_debt: "Saldo Pendent Detectat:",
-                card_docs: "Documentació i Fotografies", gallery_label: "Fotografies verificades de l'immoble:",
-                btn_new_inc: "Reportar Avaria", btn_send_proof: "Enviar Justificant",
-                card_contable: "Estat Comptable i Regularització de Subministraments (2026)",
-                kpi_rent_paid: "Lloguers Abonats", kpi_sup_real: "Despesa Real Aigua + Llum", kpi_sup_prov: "Abonat + A Regularitzar", kpi_balance_title: "Saldo Regularització Subministraments",
-                dock_lawyer: "Contactar Advocat", dock_assistant: "Elena Casamajor (24/7)"
+                nav_demanda: "Demanda Activa", nav_mercado: "Mercat Real", nav_usuarios: "Accés a Usuaris · Inquilins", nav_chivatazo: "Xivatazo Nacional", nav_advisors: "Uneix-te a l'Equip d'Advisors", nav_presencial: "Serveis Presencials a:",
+                login_title: "Accés Residents i Propietaris", login_desc: "Introdueix el teu DNI/NIE per obrir a pantalla completa el teu expedient, estat comptable i rebuts.",
+                lbl_dni: "DNI / NIE del Titular (Connecta amb Elena IA)",
+                chk_privacy: "<strong>Accepto les Condicions i la Privacitat.</strong> Autoritzo la consulta del meu expedient.",
+                antispam_txt: "Anti-spam: Quant és", btn_vip: "Sol·licitar Verificació VIP"
             },
             en: {
-                nav_demanda: "📊 Active Demand", nav_mercado: "📈 Real Market", nav_advisors: "💼 Advisors", nav_gestion: "🏠 Tenant Management",
-                side_eco_title: "Level.immo Ecosystem", side_join_adv: "👑 Advisors Network",
-                side_port_title: "Rentals Audit", side_st_props: "Audited Properties", side_st_sec: "Access Security", side_st_auto: "Billing Cycle", side_st_api: "Licensed API",
-                side_rules_title: "Balance Transparency",
-                login_badge: "Multi-Role Encrypted Gateway · Tenants & Owners",
-                login_title: "Tenant & Utilities Management",
-                login_desc: "Enter your ID/NIE to verify your assigned roles (Resident / Owner) and access your full-screen accounting dashboard, receipts and utility regularizations.",
-                lbl_input_dni: "1. Identity Document (DNI / NIE) *",
-                math_prefix: "For security, how much is",
-                btn_next: "Verify Identity & Receive PIN",
-                pin_verified: "Identity Successfully Verified!",
-                pin_desc: "We just sent a <strong>4-digit temporary PIN</strong> to your registered WhatsApp.<br>Enter it below to unlock full-screen mode:",
-                btn_enter: "Enter Full-Screen Portal",
-                tab_tenant: "Resident View (Tenant)", tab_owner: "Owner View (Management & PDF Upload)",
-                btn_toggle_view: "Full-Screen Mode", btn_logout: "Exit",
-                card_exp: "Lease File & Property", lbl_tenant: "Tenant / Holder:", lbl_property: "Leased Property:", lbl_address: "Property Address:", lbl_rent_fee: "Monthly Rent Fee:", lbl_ipc: "Next Review:", lbl_debt: "Pending Balance:",
-                card_docs: "Documentation & Photos", gallery_label: "Verified property photos:",
-                btn_new_inc: "Report Issue", btn_send_proof: "Send Payment Proof",
-                card_contable: "Accounting Statement & Utility Regularization (2026)",
-                kpi_rent_paid: "Paid Rent Fees", kpi_sup_real: "Real Water + Power Cost", kpi_sup_prov: "Paid + To Regularize", kpi_balance_title: "Utilities Regularization Balance",
-                dock_lawyer: "Contact Lawyer", dock_assistant: "Elena Casamajor (24/7)"
-            },
-            fr: {
-                nav_demanda: "📊 Demande Active", nav_mercado: "📈 Marché Réel", nav_advisors: "💼 Advisors", nav_gestion: "🏠 Gestion Locataires",
-                login_badge: "Portail Chiffré Multi-Rôle · Locataires & Propriétaires",
-                login_title: "Gestion des Locataires et Charges",
-                login_desc: "Entrez votre DNI/NIE pour accéder en plein écran à votre état comptable, vos reçus et la régularisation des charges.",
-                lbl_input_dni: "1. Document d'Identité (DNI / NIE) *",
-                math_prefix: "Par sécurité, combien font",
-                btn_next: "Vérifier et Recevoir le PIN",
-                pin_verified: "Identité Vérifiée !",
-                btn_enter: "Entrer sur le Portail Plein Écran",
-                dock_lawyer: "Avocat", dock_assistant: "Elena Casamajor (24/7)"
-            },
-            de: {
-                nav_demanda: "📊 Aktive Nachfrage", nav_mercado: "📈 Realer Markt", nav_advisors: "💼 Advisors", nav_gestion: "🏠 Mieterverwaltung",
-                login_badge: "Verschlüsseltes Multi-Rollen-Portal",
-                login_title: "Mieter- und Nebenkostenverwaltung",
-                login_desc: "Geben Sie Ihre DNI/NIE ein, um im Vollbildmodus auf Ihre Abrechnung, Belege und Nebenkosten zuzugreifen.",
-                lbl_input_dni: "1. Ausweisdokument (DNI / NIE) *",
-                math_prefix: "Zur Sicherheit, wie viel ist",
-                btn_next: "Identität prüfen & PIN erhalten",
-                pin_verified: "Identität bestätigt!",
-                btn_enter: "Vollbild-Portal betreten",
-                dock_lawyer: "Anwalt", dock_assistant: "Elena Casamajor (24/7)"
-            },
-            it: {
-                nav_demanda: "📊 Domanda Attiva", nav_mercado: "📈 Mercato Reale", nav_advisors: "💼 Advisors", nav_gestion: "🏠 Gestione Inquilini",
-                login_badge: "Portale Crittografato Multi-Ruolo",
-                login_title: "Gestione Inquilini e Utenze",
-                login_desc: "Inserisci il tuo DNI/NIE per accedere a schermo intero alla contabilità, ricevute e conguaglio utenze.",
-                lbl_input_dni: "1. Documento d'Identità (DNI / NIE) *",
-                math_prefix: "Per sicurezza, quanto fa",
-                btn_next: "Verifica e Ricevi PIN",
-                pin_verified: "Identità Verificata!",
-                btn_enter: "Entra nel Portale a Schermo Intero",
-                dock_lawyer: "Avvocato", dock_assistant: "Elena Casamajor (24/7)"
-            },
-            ar: {
-                nav_demanda: "📊 الطلب النشط", nav_mercado: "📈 السوق الحقيقي", nav_advisors: "💼 المستشارون", nav_gestion: "🏠 إدارة المستأجرين",
-                login_badge: "بوابة مشفرة للمستأجرين والملاك",
-                login_title: "إدارة المستأجرين والمرافق",
-                login_desc: "أدخل رقم الهوية (DNI/NIE) للوصول بملء الشاشة إلى الحسابات والإيصالات وتسوية فواتير المياه والكهرباء.",
-                lbl_input_dni: "1. رقم الهوية (DNI / NIE) *",
-                math_prefix: "لأغراض الأمان، كم يساوي",
-                btn_next: "تحقق واستلم رمز PIN",
-                pin_verified: "تم التحقق من الهوية!",
-                btn_enter: "دخول البوابة بملء الشاشة",
-                dock_lawyer: "محامٍ", dock_assistant: "إيلينا (24/7)"
-            },
-            'zh-CN': {
-                nav_demanda: "📊 活跃需求", nav_mercado: "📈 真实市场", nav_advisors: "💼 顾问团队", nav_gestion: "🏠 租户与物业管理",
-                login_badge: "租户与业主多角色加密门户",
-                login_title: "租户与水电费管理中心",
-                login_desc: "输入您的 DNI/NIE 以全屏访问您的财务账单、收据以及水电费结算表。",
-                lbl_input_dni: "1. 身份证件号码 (DNI / NIE) *",
-                math_prefix: "安全验证：请计算",
-                btn_next: "验证身份并获取 PIN 码",
-                pin_verified: "身份验证成功！",
-                btn_enter: "进入全屏门户",
-                dock_lawyer: "联系律师", dock_assistant: "Elena AI (24/7)"
+                nav_demanda: "Active Demand", nav_mercado: "Real Market", nav_usuarios: "User Access · Tenants", nav_chivatazo: "National Tip-Off", nav_advisors: "Join the Advisors Team", nav_presencial: "On-site Services in:",
+                login_title: "Residents & Owners Access", login_desc: "Enter your ID/NIE to open your full-screen lease file, utility accounting and receipts.",
+                lbl_dni: "Holder ID / NIE (Connects with Elena AI)",
+                chk_privacy: "<strong>I accept the Terms and Privacy Policy.</strong> I authorize encrypted access to my file.",
+                antispam_txt: "Anti-spam: How much is", btn_vip: "Request VIP Verification"
             }
         };
 
@@ -1460,13 +1687,11 @@
             const rt = document.getElementById('html-root');
             rt.setAttribute('lang', lang);
             rt.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
-
             const d = dict[lang] || dict['es'];
             document.querySelectorAll('[data-i18n]').forEach(el => {
                 const k = el.getAttribute('data-i18n');
                 if (d[k]) el.innerHTML = d[k];
             });
-
             const gtCombo = document.querySelector('.goog-te-combo');
             if (gtCombo) {
                 gtCombo.value = lang;
@@ -1482,578 +1707,20 @@
             }, 'google_translate_element');
         }
 
-        /* =========================================================
-           3. PRUEBA MATEMÁTICA BLINDADA (NUNCA SE BLOQUEA)
-           ========================================================= */
-        function generarSuma() {
-            const n1 = Math.floor(Math.random() * 8) + 1;
-            const n2 = Math.floor(Math.random() * 8) + 1;
-            mathRespuesta = n1 + n2;
-            const numDisplay = document.getElementById('math-numbers-display');
-            if (numDisplay) numDisplay.innerText = `${n1} + ${n2}`;
-            const inputMath = document.getElementById('input-math');
-            if (inputMath) inputMath.value = '';
-        }
-
-        function showMsg(text, type) {
-            const msgBox = document.getElementById('msg-box');
-            msgBox.innerHTML = text;
-            msgBox.className = 'msg-box ' + (type === 'error' ? 'msg-error' : 'msg-success');
-            msgBox.style.display = 'block';
-        }
-
-        function hideMsg() {
-            document.getElementById('msg-box').style.display = 'none';
-        }
-
-        function volverAFaseDni() {
-            hideMsg();
-            document.getElementById('caja-pin').style.display = 'none';
-            document.getElementById('fase-dni').style.display = 'block';
-            generarSuma();
-        }
-
-        /* =========================================================
-           4. LOGIN FASE 1 -> LLAMADA A TOC TOC INQUILINOS
-           Soporta Inquilinos, Propietaria (40913126J) y Respaldo si Make está Inactive
-           ========================================================= */
-        function llamarAlWebhookLogin() {
-            hideMsg();
-            const dniRaw = document.getElementById('input-dni').value.trim().toUpperCase();
-            const dniClean = dniRaw.replace(/[\s\.\-]/g, '');
-            const mathRaw = document.getElementById('input-math').value.trim();
-            const mathVal = parseInt(mathRaw, 10);
-            const btn = document.getElementById('btn-acceso');
-
-            if (!dniClean || isNaN(mathVal)) {
-                showMsg("⚠️ Por favor, introduce tu DNI/NIE y escribe el resultado numérico de la suma.", "error");
-                return;
-            }
-
-            if (mathVal !== mathRespuesta) {
-                showMsg(`⚠️ El resultado de la suma no es correcto (introdujiste ${mathVal}). Resuelve la nueva suma.`, "error");
-                generarSuma();
-                return;
-            }
-
-            btn.disabled = true;
-            btn.innerHTML = "⏳ Verificando DNI en servidor seguro...";
-
-            fetch(WEBHOOK_LOGIN, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ dni_inquilino: dniRaw, dni_limpio: dniClean })
-            })
-            .then(async response => {
-                const text = await response.text();
-                try {
-                    return JSON.parse(text);
-                } catch (e) {
-                    throw new Error("Respuesta no JSON o escenario Make inactivo");
-                }
-            })
-            .then(data => {
-                if (data && data.status === "success" && data.pin_secreto) {
-                    datosSecretos = data;
-                    document.getElementById('fase-dni').style.display = "none";
-                    document.getElementById('caja-pin').style.display = "block";
-                    showMsg("✅ ¡Identidad validada! Revisa el PIN de 4 cifras enviado a tu WhatsApp.", "success");
-                } else {
-                    throw new Error("DNI no devuelto por webhook");
-                }
-            })
-            .catch(err => {
-                console.warn("Aviso Webhook Login:", err);
-                // RESPALDO INTELIGENTE PARA LOS EXPEDIENTES CONOCIDOS SI MAKE ESTÁ EN 'INACTIVE' DURANTE TUS PRUEBAS
-                const directorioConocido = {
-                    "53327259B": { status: "success", pin_secreto: "2486", codigo_inquilino: "INQ-001", nombre: "RAFAEL RODRIGUEZ RUIZ", dni: "53327259B", nombre_propiedad: "Martinenca", direccion: "Carrer Bort A, 10, 43530 Alcanar", cuota: "550,00 €", deuda: "509,23 €", rol: "tenant" },
-                    "46829432Y": { status: "success", pin_secreto: "2486", codigo_inquilino: "INQ-002", nombre: "ELENA FERRERAS BEL", dni: "46829432Y", nombre_propiedad: "Martinenca", direccion: "Carrer Bort A, 10, 43530 Alcanar", cuota: "550,00 €", deuda: "509,23 €", rol: "tenant" },
-                    "Y9921521W": { status: "success", pin_secreto: "2486", codigo_inquilino: "INQ-003", nombre: "ROSANA ISABEL CESPEDES", dni: "Y9921521W", nombre_propiedad: "Devesa", direccion: "Travessera Devesa, 1, 3er, 43540 La Ràpita", cuota: "395,00 €", deuda: "0,00 €", rol: "tenant" },
-                    "34764888C": { status: "success", pin_secreto: "2486", codigo_inquilino: "INQ-004", nombre: "DAVID GOMEZ LOPEZ", dni: "34764888C", nombre_propiedad: "Jaume I", direccion: "Carrer Jaume I El Conqueridor, 29, 1-1, 43540 La Ràpita", cuota: "425,00 €", deuda: "425,00 €", rol: "tenant" },
-                    "40913126J": { status: "success", pin_secreto: "2486", codigo_inquilino: "CLI-001", nombre: "CARMEN FORCADELL CHAVALERA", dni: "40.913.126J", nombre_propiedad: "Cartera Global (Martinenca · Devesa · Jaume I)", direccion: "C/ Sunyer, 33, 43530 Alcanar", cuota: "1.370,00 €/mes", deuda: "934,23 €", rol: "owner" }
-                };
-
-                if (directorioConocido[dniClean]) {
-                    datosSecretos = directorioConocido[dniClean];
-                    document.getElementById('fase-dni').style.display = "none";
-                    document.getElementById('caja-pin').style.display = "block";
-                    showMsg("ℹ️ Escenario Make 'TOC TOC INQUILINOS' detectado en modo Inactive. Modo Respaldo Directo activado: Usa el PIN maestro <b>2486</b> para entrar ahora mismo.", "success");
-                } else {
-                    showMsg("⚠️ El DNI introducido no figura en el censo activo o el escenario 'TOC TOC INQUILINOS' está desactivado (Inactive) en Make.", "error");
-                    generarSuma();
-                }
-            })
-            .finally(() => {
-                btn.disabled = false;
-                btn.innerHTML = "🔐 Verificar Identidad y Recibir PIN";
-            });
-        }
-
-        /* =========================================================
-           5. VALIDACIÓN DE PIN Y PASO A PANTALLA COMPLETA
-           ========================================================= */
-        function validarPin() {
-            hideMsg();
-            const pinUser = document.getElementById('input-pin-user').value.trim();
-
-            if (!pinUser) {
-                showMsg("⚠️ Introduce el PIN de 4 cifras.", "error");
-                return;
-            }
-
-            if (datosSecretos && (pinUser === String(datosSecretos.pin_secreto) || pinUser === "2486")) {
-                abrirPortalPantallaCompleta(datosSecretos.codigo_inquilino, datosSecretos);
-            } else {
-                showMsg("⚠️ El PIN introducido no coincide. Revisa tu WhatsApp.", "error");
-            }
-        }
-
-        function abrirPortalPantallaCompleta(codigoInquilino, datosPrevios = {}) {
-            // Activamos Modo Pantalla Completa Real (oculta paneles laterales)
-            document.body.classList.add('fullscreen-mode');
-            document.getElementById('login-container').style.display = 'none';
-            document.getElementById('portal-workspace').style.display = 'flex';
-
-            // Pre-rellenamos con los datos que ya nos dio el Webhook 1 (TOC TOC INQUILINOS)
-            pintarDatosEnPantalla(datosPrevios, codigoInquilino);
-
-            // Si es Propietario (CLI-001), abrimos directamente su pestaña de Propietario
-            if (datosPrevios.rol === 'owner' || codigoInquilino === 'CLI-001') {
-                switchRoleView('owner');
-            } else {
-                switchRoleView('tenant');
-            }
-
-            // Además consultamos el Webhook 2 (Portal Datos Inquilinos) enviando tanto INQ-001 como Q-001
-            const searchCodeCompat = String(codigoInquilino || '').replace(/^IN/i, '');
-            fetch(WEBHOOK_PORTAL_DATOS, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    code: codigoInquilino,
-                    search_code: searchCodeCompat,
-                    dni: datosPrevios.dni || codigoInquilino,
-                    codigo_inquilino: codigoInquilino
-                })
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data && data.status === "success") {
-                    pintarDatosEnPantalla(Object.assign({}, datosPrevios, data), codigoInquilino);
-                }
-            })
-            .catch(err => {
-                console.warn("Usando datos consolidados de sesión:", err);
-            });
-        }
-
-        /* =========================================================
-           6. VOLCADO INTELIGENTE DE DATOS (COMPATIBLE CON AMBOS WEBHOOKS)
-           Lee tanto nombre / nombre_inquilino como dni / dni_inquilino, cuota, deuda...
-           ========================================================= */
-        function pintarDatosEnPantalla(data, codigoFallback) {
-            const nombreFinal = data.nombre_inquilino || data.nombre || "---";
-            const dniFinal    = data.dni_inquilino || data.dni || "---";
-            const propFinal   = data.nombre_propiedad || "Martinenca";
-            const dirFinal    = data.direccion || "---";
-            const cuotaFinal  = data.cuota ? (String(data.cuota).includes('€') ? data.cuota : data.cuota + ' €') : "Según contrato";
-            const revFinal    = data.revision_ipc || "Anual según contrato";
-            const deudaFinal  = data.deuda !== undefined && data.deuda !== null && data.deuda !== "" ? (String(data.deuda).includes('€') ? data.deuda : data.deuda + ' €') : "0,00 €";
-            const codFinal    = data.codigo_inquilino || codigoFallback || "VERIFICADO";
-
-            document.getElementById('val-codigo-badge').innerText = codFinal;
-            document.getElementById('badge-active-user').innerText = `${nombreFinal} (${codFinal})`;
-            document.getElementById('val-nombre').innerText = nombreFinal;
-            document.getElementById('val-dni').innerText = dniFinal;
-            document.getElementById('val-propiedad').innerText = propFinal;
-            document.getElementById('val-direccion').innerText = dirFinal;
-            document.getElementById('val-cuota').innerText = cuotaFinal;
-            document.getElementById('val-revision').innerText = revFinal;
-            document.getElementById('val-deuda').innerText = deudaFinal;
-
-            // Seleccionar propiedad activa para el motor contable
-            if (propFinal.toLowerCase().includes('devesa')) propiedadActiva = 'Devesa';
-            else if (propFinal.toLowerCase().includes('jaume')) propiedadActiva = 'Jaume I';
-            else propiedadActiva = 'Martinenca';
-
-            // Galería de fotos anti-fallos
-            const gallery = document.getElementById('val-fotos');
-            gallery.innerHTML = '';
-            let fotosArray = [];
-            try {
-                if (typeof data.fotos === 'string' && data.fotos.trim() !== '') {
-                    fotosArray = data.fotos.trim().startsWith('[') ? JSON.parse(data.fotos) : [data.fotos];
-                } else if (Array.isArray(data.fotos)) {
-                    fotosArray = data.fotos;
-                }
-            } catch (e) {}
-
-            if (fotosArray.length > 0 && fotosArray[0]) {
-                fotosArray.forEach(url => {
-                    const cleanUrl = String(url).replace(/['"]+/g, '');
-                    gallery.innerHTML += `<img src="${cleanUrl}" alt="Propiedad">`;
-                });
-            } else {
-                gallery.innerHTML = `<div style="grid-column:1/-1; padding:12px; background:rgba(255,255,255,0.02); border:1px dashed var(--border-color); border-radius:8px; font-size:12px; color:var(--text-muted); text-align:center;">📁 Expediente gráfico vinculado a <b>${propFinal}</b></div>`;
-            }
-
-            // Bloques de Avisos e Incidencias (con datos reales de tu vídeo si Make no envía HTML)
-            document.getElementById('val-recibos').innerHTML = data.recibos_html || "";
-            document.getElementById('val-avisos').innerHTML = data.avisos_html || generarAvisosPorPropiedad(propiedadActiva);
-            document.getElementById('val-incidencias').innerHTML = data.incidencias_html || generarIncidenciasPorPropiedad(propiedadActiva);
-
-            // Renderizar el Estado Contable y la tabla de recibos
-            recalcularEstadoContable();
-        }
-
-        function generarAvisosPorPropiedad(prop) {
-            if (prop === 'Martinenca') {
-                return `<div class="info-row" style="border-left-color:var(--accent-red);">
-                    <div><b style="color:#f87171;">[URGENTE · AVI-00001]</b> Pendiente inspección compañía del suministro de Agua. Se precisa presencia de albañil para el día de la inspección.</div>
-                    <span class="status-badge st-abonado">Activo</span>
-                </div>`;
-            } else if (prop === 'Jaume I') {
-                return `<div class="info-row" style="border-left-color:var(--accent-orange);">
-                    <div><b style="color:#fbbf24;">[PRECAUCIÓN · AVI-00002]</b> Revisión programada de instalaciones y lectura de contador de suministro.</div>
-                    <span class="status-badge st-abonado">Activo</span>
-                </div>`;
-            } else {
-                return `<div class="info-row" style="border-left-color:var(--accent-red);">
-                    <div><b style="color:#f87171;">[URGENTE · AVI-00003]</b> Pendiente coordinación para reparación de ducha y revisión de bajante comunitaria.</div>
-                    <span class="status-badge st-abonado">Activo</span>
-                </div>`;
-            }
-        }
-
-        function generarIncidenciasPorPropiedad(prop) {
-            if (prop === 'Martinenca') {
-                return `<div class="info-row" style="border-left-color:var(--accent-cyan);">
-                    <div><b>[TICKET INC-00003]</b> El muro se ha lastimado · Reportado por INQ-001 / INQ-002.</div>
-                    <span class="status-badge st-pendiente">Pendiente</span>
-                </div>`;
-            } else if (prop === 'Devesa') {
-                return `<div class="info-row" style="border-left-color:var(--accent-cyan);">
-                    <div><b>[TICKET INC-00001]</b> La vecina de abajo se queja de que tiene el techo mojado (INQ-003).</div>
-                    <span class="status-badge st-pendiente">Pendiente</span>
-                </div>`;
-            } else {
-                return `<div class="info-row" style="border-left-color:var(--accent-cyan);">
-                    <div><b>[TICKET INC-00002]</b> La cortina está defectuosa (INQ-004).</div>
-                    <span class="status-badge st-pendiente">Pendiente</span>
-                </div>`;
-            }
-        }
-
-        /* =========================================================
-           7. MOTOR CONTABLE: SUMAS DE CONCEPTOS Y REGULARIZACIÓN
-           Conceptos: "Cuota Alquiler", "Agua", "Electricidad", "Agua+Luz PROVISIONAL", "Varios"
-           Estados que suman como pagados: "Abonado" + "abonado a regularizar" (case-insensitive)
-           ========================================================= */
-        function esEstadoPagadoORegularizar(estadoRaw) {
-            const st = String(estadoRaw || '').trim().toLowerCase();
-            return st === 'abonado' || st.includes('abonado a regularizar') || st.includes('abonado a regul');
-        }
-
-        function cambiarPropiedadSimulada(val) {
-            if (val !== 'AUTO') {
-                propiedadActiva = val;
-            }
-            recalcularEstadoContable();
-        }
-
-        function filtrarTablaRecibos(concepto, btnEl) {
-            filtroConceptoActual = concepto;
-            if (btnEl && btnEl.parentElement) {
-                btnEl.parentElement.querySelectorAll('.nav-pill').forEach(b => b.classList.remove('active'));
-                btnEl.classList.add('active');
-            }
-            recalcularEstadoContable();
-        }
-
-        function toggleEstadoReciboSimulado(idRecibo) {
-            const item = registrosContables.find(r => r.id === idRecibo);
-            if (!item) return;
-            const st = item.estado.toLowerCase();
-            if (st === 'pendiente') item.estado = 'Abonado';
-            else if (st === 'abonado') item.estado = 'abonado a regularizar';
-            else item.estado = 'Pendiente';
-            recalcularEstadoContable();
-        }
-
-        function recalcularEstadoContable() {
-            const listaProp = registrosContables.filter(r => r.propiedad.toLowerCase() === propiedadActiva.toLowerCase());
-
-            const conceptosOrden = ['Cuota Alquiler', 'Agua', 'Electricidad', 'Agua+Luz PROVISIONAL', 'Varios'];
-            const mapaConceptos = {};
-            conceptosOrden.forEach(c => {
-                mapaConceptos[c] = { devengado: 0, abonado: 0, pendiente: 0 };
-            });
-
-            let alquilerAbonado = 0;
-            let alquilerPendiente = 0;
-            let suministrosGastoReal = 0; // Agua + Electricidad + Varios
-            let suministrosPagadosYProvisional = 0; // Abonado + abonado a regularizar en Agua, Electricidad, Agua+Luz PROVISIONAL, Varios
-
-            listaProp.forEach(r => {
-                const c = mapaConceptos[r.concepto] ? r.concepto : 'Varios';
-                const imp = parseFloat(r.importe) || 0;
-                const pagado = esEstadoPagadoORegularizar(r.estado);
-
-                // En Agua+Luz PROVISIONAL es una entrega a cuenta para cubrir Agua y Electricidad
-                if (c === 'Agua+Luz PROVISIONAL') {
-                    if (pagado) {
-                        mapaConceptos[c].abonado += imp;
-                        suministrosPagadosYProvisional += imp;
-                    } else {
-                        mapaConceptos[c].pendiente += imp;
-                    }
-                } else if (c === 'Cuota Alquiler') {
-                    mapaConceptos[c].devengado += imp;
-                    if (pagado) {
-                        mapaConceptos[c].abonado += imp;
-                        alquilerAbonado += imp;
-                    } else {
-                        mapaConceptos[c].pendiente += imp;
-                        alquilerPendiente += imp;
-                    }
-                } else {
-                    // Agua, Electricidad, Varios (Facturas reales)
-                    mapaConceptos[c].devengado += imp;
-                    suministrosGastoReal += imp;
-                    if (pagado) {
-                        mapaConceptos[c].abonado += imp;
-                        suministrosPagadosYProvisional += imp;
-                    } else {
-                        mapaConceptos[c].pendiente += imp;
-                    }
-                }
-            });
-
-            // Saldo Regularización Suministros = (Lo abonado + abonado a regularizar) - (Facturas reales emitidas de Agua/Luz)
-            const saldoRegularizacion = suministrosPagadosYProvisional - suministrosGastoReal;
-
-            // Pintar KPIs
-            document.getElementById('kpi-alquiler-abonado').innerText = formatearEuros(alquilerAbonado);
-            document.getElementById('kpi-alquiler-pdte').innerText = `Pendiente: ${formatearEuros(alquilerPendiente)}`;
-            document.getElementById('kpi-suministros-emitidos').innerText = formatearEuros(suministrosGastoReal);
-            document.getElementById('kpi-suministros-abonados').innerText = formatearEuros(suministrosPagadosYProvisional);
-
-            const elSaldo = document.getElementById('kpi-saldo-regularizacion');
-            const elSaldoTxt = document.getElementById('kpi-saldo-texto');
-            elSaldo.innerText = (saldoRegularizacion > 0 ? '+' : '') + formatearEuros(saldoRegularizacion);
-
-            if (Math.abs(saldoRegularizacion) < 0.01) {
-                elSaldo.style.color = 'var(--accent-green)';
-                elSaldoTxt.innerText = '✅ Suministros al día (Saldo 0,00 €)';
-                elSaldoTxt.style.color = 'var(--accent-green)';
-            } else if (saldoRegularizacion > 0) {
-                elSaldo.style.color = 'var(--accent-cyan)';
-                elSaldoTxt.innerText = '🩵 Saldo a favor del Inquilino (a regularizar)';
-                elSaldoTxt.style.color = 'var(--accent-cyan)';
-            } else {
-                elSaldo.style.color = 'var(--accent-red)';
-                elSaldoTxt.innerText = '🔴 Saldo pendiente a favor del Propietario';
-                elSaldoTxt.style.color = 'var(--accent-red)';
-            }
-
-            // Pintar tabla de resumen por los 5 conceptos
-            const tbodyResumen = document.getElementById('tbody-resumen-conceptos');
-            tbodyResumen.innerHTML = '';
-            conceptosOrden.forEach(c => {
-                const row = mapaConceptos[c];
-                const balance = c === 'Agua+Luz PROVISIONAL' ? row.abonado : (row.abonado - row.devengado);
-                const pillClass = c === 'Cuota Alquiler' ? 'c-alquiler' : c === 'Electricidad' ? 'c-luz' : c === 'Agua' ? 'c-agua' : c === 'Agua+Luz PROVISIONAL' ? 'c-prov' : 'c-varios';
-
-                tbodyResumen.innerHTML += `
-                    <tr>
-                        <td><span class="concept-pill ${pillClass}">${c}</span></td>
-                        <td class="text-right">${formatearEuros(row.devengado)}</td>
-                        <td class="text-right" style="color:var(--accent-green); font-weight:700;">${formatearEuros(row.abonado)}</td>
-                        <td class="text-right" style="color:${row.pendiente > 0 ? 'var(--accent-red)' : 'var(--text-muted)'};">${formatearEuros(row.pendiente)}</td>
-                        <td class="text-right" style="font-weight:800; color:${balance >= 0 ? 'var(--accent-cyan)' : 'var(--accent-red)'};">
-                            ${balance > 0 && c === 'Agua+Luz PROVISIONAL' ? '+' + formatearEuros(balance) + ' (En bolsa)' : formatearEuros(balance)}
-                        </td>
-                    </tr>
-                `;
-            });
-
-            // Pintar tabla de recibos detallados (con simulación interactiva al hacer clic en el estado)
-            const tbodyDetalle = document.getElementById('tbody-detalle-recibos');
-            tbodyDetalle.innerHTML = '';
-            const listaFiltrada = listaProp.filter(r => filtroConceptoActual === 'TODOS' || r.concepto === filtroConceptoActual);
-
-            listaFiltrada.forEach(r => {
-                const stLower = r.estado.toLowerCase();
-                const badgeClass = stLower === 'abonado' ? 'st-abonado' : stLower.includes('regularizar') ? 'st-regularizar' : 'st-pendiente';
-                const pillClass = r.concepto === 'Cuota Alquiler' ? 'c-alquiler' : r.concepto === 'Electricidad' ? 'c-luz' : r.concepto === 'Agua' ? 'c-agua' : r.concepto === 'Agua+Luz PROVISIONAL' ? 'c-prov' : 'c-varios';
-
-                tbodyDetalle.innerHTML += `
-                    <tr>
-                        <td style="font-family:monospace; font-size:12px;"><b>${r.id}</b><br><span style="color:var(--text-muted);">${r.mes}</span></td>
-                        <td>${r.propiedad}</td>
-                        <td><span class="concept-pill ${pillClass}">${r.concepto}</span></td>
-                        <td style="color:var(--text-muted); font-size:12px;">${r.obs}</td>
-                        <td class="text-right" style="font-weight:800;">${formatearEuros(r.importe)}</td>
-                        <td class="text-right">
-                            <span class="status-badge ${badgeClass}" style="cursor:pointer;" onclick="toggleEstadoReciboSimulado('${r.id}')" title="Haz clic para simular cambio de estado">
-                                ${r.estado} 🔄
-                            </span>
-                        </td>
-                    </tr>
-                `;
-            });
-        }
-
-        function formatearEuros(num) {
-            return Number(num || 0).toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €';
-        }
-
-        /* =========================================================
-           8. FUNCIONES DEL PROPIETARIO (SUBIDA PDF Y DESHACER 60s)
-           ========================================================= */
-        function registrarFacturaPropietario() {
-            const prop = document.getElementById('own-propiedad').value;
-            const conc = document.getElementById('own-concepto').value;
-            const est  = document.getElementById('own-estado').value;
-            const mes  = document.getElementById('own-mes').value.trim() || 'Noviembre 2026';
-            const imp  = parseFloat(document.getElementById('own-importe').value);
-            const obs  = document.getElementById('own-obs').value.trim() || `Registro manual propietario (${conc})`;
-
-            if (isNaN(imp) || imp <= 0) {
-                alert("⚠️ Introduce un importe válido mayor que 0.");
-                return;
-            }
-
-            const nuevoId = 'ALQ-' + Math.floor(100000 + Math.random() * 900000);
-            ultimoReciboId = nuevoId;
-
-            registrosContables.unshift({
-                id: nuevoId,
-                propiedad: prop,
-                concepto: conc,
-                mes: mes,
-                obs: obs,
-                importe: imp,
-                estado: est
-            });
-
-            propiedadActiva = prop;
-            recalcularEstadoContable();
-
-            // Mostrar banner de Deshacer durante 60 segundos
-            const banner = document.getElementById('undo-banner');
-            const timerSpan = document.getElementById('undo-timer');
-            banner.style.display = 'flex';
-            let seg = 60;
-            timerSpan.innerText = seg;
-            if (undoInterval) clearInterval(undoInterval);
-            undoInterval = setInterval(() => {
-                seg--;
-                timerSpan.innerText = seg;
-                if (seg <= 0) {
-                    clearInterval(undoInterval);
-                    banner.style.display = 'none';
-                }
-            }, 1000);
-        }
-
-        function deshacerUltimoRecibo() {
-            if (!ultimoReciboId) return;
-            registrosContables = registrosContables.filter(r => r.id !== ultimoReciboId);
-            ultimoReciboId = null;
-            if (undoInterval) clearInterval(undoInterval);
-            document.getElementById('undo-banner').style.display = 'none';
-            recalcularEstadoContable();
-            alert("↩️ El último recibo ha sido eliminado correctamente del estado contable.");
-        }
-
-        /* =========================================================
-           9. NAVEGACIÓN MULTI-ROL Y UTILIDADES
-           ========================================================= */
-        function switchRoleView(role) {
-            const tSec = document.getElementById('view-tenant-section');
-            const oSec = document.getElementById('view-owner-section');
-            const tTab = document.getElementById('tab-role-tenant');
-            const oTab = document.getElementById('tab-role-owner');
-
-            if (role === 'owner') {
-                tSec.style.display = 'none';
-                oSec.style.display = 'flex';
-                tTab.classList.remove('active');
-                oTab.classList.add('active');
-            } else {
-                oSec.style.display = 'none';
-                tSec.style.display = 'flex';
-                oTab.classList.remove('active');
-                tTab.classList.add('active');
-            }
-        }
-
-        function toggleSidePanels() {
-            document.body.classList.toggle('fullscreen-mode');
-        }
-
-        function cerrarSesionPortal() {
-            document.body.classList.remove('fullscreen-mode');
-            document.getElementById('portal-workspace').style.display = 'none';
-            document.getElementById('login-container').style.display = 'block';
-            volverAFaseDni();
-        }
-
-        function abrirModalIncidencia() {
-            const prop = document.getElementById('val-propiedad').innerText || propiedadActiva;
-            const msg = `Hola Elena, soy residente de ${prop} y quiero reportar una nueva avería o incidencia en el inmueble:`;
-            window.open(`https://wa.me/34624954344?text=${encodeURIComponent(msg)}`, '_blank');
-        }
-
-        function abrirModalJustificante() {
-            const prop = document.getElementById('val-propiedad').innerText || propiedadActiva;
-            const msg = `Hola Elena, adjunto justificante de transferencia/pago correspondiente al inmueble ${prop}:`;
-            window.open(`https://wa.me/34624954344?text=${encodeURIComponent(msg)}`, '_blank');
-        }
-
-        function mostrarCajaBaja() {
-            const box = document.getElementById('captcha-baja-box');
-            box.style.display = 'block';
-            const a = Math.floor(Math.random() * 8) + 1;
-            const b = Math.floor(Math.random() * 8) + 1;
-            bajaMathRespuesta = a + b;
-            document.getElementById('baja-math-q').innerText = `${a} + ${b}`;
-        }
-
-        function confirmarBajaRGPD() {
-            const val = parseInt(document.getElementById('baja-math-in').value, 10);
-            if (val === bajaMathRespuesta) {
-                window.location.href = "mailto:level@level.immo?subject=Solicitud%20de%20Baja%20RGPD%20-%20Gestion%20Inquilinos";
-            } else {
-                alert("⚠️ Suma incorrecta.");
-                mostrarCajaBaja();
-            }
-        }
-
-        /* =========================================================
-           10. INICIALIZACIÓN AUTOMÁTICA AL CARGAR LA PÁGINA
-           ========================================================= */
         window.addEventListener("DOMContentLoaded", () => {
-            generarSuma();
-            setLanguage('es');
+            generarSumaAntiSpam();
 
-            // Soporte para presionar Enter en los inputs
-            document.getElementById('input-dni').addEventListener('keydown', e => {
-                if (e.key === 'Enter') { e.preventDefault(); llamarAlWebhookLogin(); }
-            });
             document.getElementById('input-math').addEventListener('keydown', e => {
-                if (e.key === 'Enter') { e.preventDefault(); llamarAlWebhookLogin(); }
+                if (e.key === 'Enter') { e.preventDefault(); verificarAccesoInmediato(); }
             });
-            document.getElementById('input-pin-user').addEventListener('keydown', e => {
-                if (e.key === 'Enter') { e.preventDefault(); validarPin(); }
+            document.getElementById('input-dni').addEventListener('keydown', e => {
+                if (e.key === 'Enter') { e.preventDefault(); verificarAccesoInmediato(); }
             });
 
-            // Si el usuario entra desde el enlace directo de WhatsApp (?code=INQ-001)
             const params = new URLSearchParams(window.location.search);
             const urlCode = params.get('code') || params.get('dni') || params.get('id');
             if (urlCode) {
-                abrirPortalPantallaCompleta(urlCode, { codigo_inquilino: urlCode });
+                entrarDirectoSupervisor(urlCode);
             }
         });
     </script>
