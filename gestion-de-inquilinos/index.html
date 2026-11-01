@@ -6,111 +6,163 @@
     <title>Level.immo | Gestión de Inquilinos y Propietarios</title>
     <style>
         :root {
-            --bg-base: #05050a;
-            --bg-panel: rgba(10, 15, 30, 0.85);
-            --accent-cyan: #00f3ff;
-            --accent-green: #00ff66;
-            --accent-orange: #ffaa00;
-            --accent-red: #ff453a;
-            --text-main: #e0e6ed;
-            --text-muted: #8892b0;
-            --border-glow: rgba(0, 243, 255, 0.3);
+            --bg-base: #090d16;
+            --bg-panel: #111827;
+            --bg-card: #1f2937;
+            --accent-green: #10b981;
+            --accent-blue: #3b82f6;
+            --accent-gold: #C5A059;
+            --accent-orange: #f59e0b;
+            --accent-red: #ef4444;
+            --text-main: #f9fafb;
+            --text-muted: #9ca3af;
+            --border-color: #374151;
         }
 
-        html, body { margin: 0; padding: 0; min-height: 100vh; background-color: var(--bg-base); color: var(--text-main); font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
+        html, body {
+            margin: 0; padding: 0; min-height: 100vh;
+            background-color: var(--bg-base); color: var(--text-main);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            overflow-x: hidden;
+        }
+
         .goog-te-banner-frame.skiptranslate, .goog-te-gadget-icon, #goog-gt-tt, .goog-te-balloon-frame { display: none !important; }
         body { top: 0px !important; }
         .goog-text-highlight { background-color: transparent !important; box-shadow: none !important; }
-        ::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-track { background: var(--bg-base); } ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg-panel); }
+        ::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 10px; }
 
-        /* HEADER STICKY */
+        /* HEADER SUPERIOR STICKY */
         header {
-            position: sticky; top: 0; z-index: 10000; background-color: rgba(17, 24, 39, 0.95); backdrop-filter: blur(8px);
-            border-bottom: 1px solid var(--border-glow); display: flex; justify-content: space-between; align-items: center; padding: 12px 30px;
+            position: sticky; top: 0; z-index: 1000;
+            background-color: rgba(17, 24, 39, 0.95); backdrop-filter: blur(8px);
+            border-bottom: 1px solid var(--border-color);
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 12px 30px; flex-wrap: wrap; gap: 12px;
         }
+
+        .brand-left { display: flex; align-items: center; gap: 16px; }
         .brand-logo { display: flex; align-items: baseline; color: #ffffff; text-decoration: none; font-size: 20px; font-weight: 800; }
         .brand-dot { width: 8px; height: 8px; background-color: var(--accent-green); border-radius: 50%; margin: 0 6px 0 3px; box-shadow: 0 0 10px var(--accent-green); }
-        .lang-select { background: #1f2937; border: 1px solid var(--accent-cyan); color: var(--text-main); padding: 6px 10px; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer; outline: none; }
 
-        .container { max-width: 600px; margin: 30px auto; padding: 0 20px; }
-
-        /* LOGIN STYLES */
-        #login-container {
-            background: var(--bg-panel); border: 1px solid #333; border-radius: 12px;
-            padding: 40px 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); backdrop-filter: blur(10px); text-align: center;
+        .header-center-nav { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+        .nav-pill {
+            background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-muted);
+            padding: 7px 14px; border-radius: 6px; font-size: 12px; font-weight: 600; text-decoration: none;
+            transition: all 0.2s; display: flex; align-items: center; gap: 6px; cursor: pointer;
         }
-        .lvl-title { font-size: 24px; font-weight: 600; margin-bottom: 10px; color: #fff; }
-        .lvl-desc { color: var(--text-muted); font-size: 14px; margin-bottom: 25px; line-height: 1.5; }
+        .nav-pill:hover, .nav-pill.active { border-color: var(--accent-green); color: #fff; background: rgba(16, 185, 129, 0.1); }
+
+        .lang-select { background: var(--bg-card); border: 1px solid var(--accent-gold); color: var(--text-main); padding: 7px 12px; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer; outline: none; }
+
+        /* LAYOUT DE 3 COLUMNAS */
+        .app-layout {
+            display: grid;
+            grid-template-columns: 260px 1fr 260px;
+            min-height: calc(100vh - 65px);
+            width: 100vw;
+        }
+
+        .side-panel {
+            background: linear-gradient(145deg, #121620, #090d16);
+            border-right: 1px solid var(--border-color);
+            border-left: 1px solid var(--border-color);
+            padding: 22px 16px; font-size: 13px; color: var(--text-muted);
+            display: flex; flex-direction: column; gap: 15px;
+        }
+        .side-panel h3 { font-size: 13.5px; color: var(--accent-gold); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 5px; border-bottom: 1px solid var(--border-color); padding-bottom: 6px; }
+        .side-link { color: var(--text-main); text-decoration: none; padding: 9px 12px; border-radius: 6px; background: var(--bg-base); display: block; transition: 0.2s; border: 1px solid transparent; }
+        .side-link:hover { border-color: var(--accent-green); color: #fff; }
+
+        .center-stage {
+            padding: 35px 25px; display: flex; flex-direction: column; align-items: center; overflow-y: auto;
+        }
+        .container { max-width: 680px; width: 100%; margin: 0 auto; padding-bottom: 90px; }
+
+        /* TARJETAS Y LOGIN */
+        .card {
+            background: var(--bg-panel); border: 1px solid var(--border-color);
+            border-radius: 12px; padding: 25px; margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .card h2 { font-size: 17px; color: var(--accent-gold); margin-bottom: 15px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+
         .lvl-input {
-            width: 100%; background-color: #000; border: 1px solid #444; color: #fff;
-            padding: 15px; border-radius: 8px; margin-bottom: 15px; font-size: 16px; text-align: center; outline: none; transition: border-color 0.3s;
+            width: 100%; background-color: var(--bg-base); border: 1px solid var(--border-color);
+            color: #fff; padding: 14px; border-radius: 8px; margin-bottom: 15px; font-size: 15px; text-align: center; outline: none;
         }
-        .lvl-input:focus { border-color: var(--accent-cyan); }
+        .lvl-input:focus { border-color: var(--accent-green); }
+
         .lvl-btn {
-            width: 100%; background-color: var(--accent-cyan); color: #000; border: none;
-            padding: 15px; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: background 0.3s, transform 0.2s;
+            width: 100%; background-color: var(--accent-green); color: #090d16; border: none;
+            padding: 15px; border-radius: 8px; font-size: 15px; font-weight: 900; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px;
+            transition: 0.2s; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
         }
-        .lvl-btn:hover { background-color: #00c4cc; transform: translateY(-2px); }
-        .lvl-btn:disabled { background-color: #444; color: #888; cursor: not-allowed; transform: none; }
+        .lvl-btn:hover { background-color: #059669; color: #fff; transform: translateY(-1px); }
 
-        .lvl-math-box { background-color: rgba(0,0,0,0.5); padding: 15px; border-radius: 8px; margin-bottom: 15px; border: 1px dashed #555; }
-        #lvl-math-question { font-size: 14px; margin-bottom: 10px; color: #ddd; }
+        .lvl-math-box { background-color: var(--bg-base); padding: 15px; border-radius: 8px; margin-bottom: 15px; border: 1px dashed var(--border-color); text-align: center; }
+        #lvl-math-question { font-size: 14px; margin-bottom: 10px; font-weight: bold; color: #fff; }
 
-        .msg-box { display: none; margin-top: 20px; padding: 15px; border-radius: 8px; font-size: 14px; }
-        .msg-error { background-color: rgba(255, 69, 58, 0.1); border: 1px solid var(--accent-red); color: var(--accent-red); }
-        .msg-success { background-color: rgba(0, 255, 102, 0.1); border: 1px solid var(--accent-green); color: var(--accent-green); }
+        .msg-box { display: none; margin-top: 15px; padding: 12px; border-radius: 6px; font-size: 13.5px; font-weight: bold; text-align: center; }
+        .msg-error { background-color: rgba(239, 68, 68, 0.15); border: 1px solid var(--accent-red); color: var(--accent-red); }
+        .msg-success { background-color: rgba(16, 185, 129, 0.15); border: 1px solid var(--accent-green); color: var(--accent-green); }
 
-        /* PORTAL STYLES */
-        #portal-container { display: none; padding-bottom: 80px; }
-        .portal-header { text-align: center; margin-bottom: 25px; border-bottom: 1px solid var(--border-glow); padding-bottom: 15px; }
-        .portal-header h1 { font-size: 1.3rem; color: var(--accent-cyan); text-shadow: 0 0 10px rgba(0, 243, 255, 0.4); }
-        .portal-header p { font-size: 0.8rem; color: var(--text-muted); margin-top: 5px; }
-
-        .card { background: var(--bg-panel); border: 1px solid var(--border-glow); border-radius: 12px; padding: 20px; margin-bottom: 20px; backdrop-filter: blur(10px); }
-        .card h2 { font-size: 1rem; color: var(--accent-cyan); margin-bottom: 15px; border-bottom: 1px solid #333; padding-bottom: 8px; }
-
-        .info-row { display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 8px; }
+        /* PORTAL DEL RESIDENTE / PROPIETARIO */
+        #portal-container { display: none; width: 100%; }
+        .info-row { display: flex; justify-content: space-between; font-size: 13.5px; margin-bottom: 10px; border-bottom: 1px dashed rgba(255,255,255,0.05); padding-bottom: 6px; }
         .info-label { color: var(--text-muted); }
-        .info-value { font-weight: 600; color: var(--text-main); text-align: right; }
+        .info-value { font-weight: 700; color: #fff; text-align: right; }
 
-        .property-gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px; margin-top: 15px; }
-        .property-gallery img { width: 100%; height: 100px; object-fit: cover; border-radius: 6px; border: 1px solid #444; }
-
-        .contable-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.85rem; }
-        .contable-table th, .contable-table td { padding: 8px 10px; text-align: left; border-bottom: 1px solid #222; }
-        .contable-table th { color: var(--accent-cyan); font-weight: 600; }
+        .contable-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13px; }
+        .contable-table th, .contable-table td { padding: 10px; text-align: left; border-bottom: 1px solid var(--border-color); }
+        .contable-table th { color: var(--accent-gold); font-weight: bold; }
         .text-right { text-align: right !important; }
 
-        /* ACTION DOCK INFERIOR */
+        /* FOOTER Y AVISO LEGAL */
+        .footer-legal { text-align: center; font-size: 11.5px; color: var(--text-muted); margin-top: 40px; border-top: 1px solid var(--border-color); padding-top: 20px; line-height: 1.6; }
+        .footer-legal a { color: var(--accent-gold); text-decoration: underline; cursor: pointer; margin: 0 5px; }
+
+        /* DOCK INFERIOR */
         .action-dock {
-            position: fixed; bottom: 0; left: 0; right: 0; background: rgba(5, 5, 10, 0.95); backdrop-filter: blur(15px);
-            border-top: 1px solid var(--border-glow); padding: 12px; display: flex; gap: 10px; justify-content: center; z-index: 1000;
+            position: fixed; bottom: 0; left: 0; right: 0; background: rgba(17, 24, 39, 0.95); backdrop-filter: blur(8px);
+            border-top: 1px solid var(--border-color); padding: 12px; display: flex; gap: 12px; justify-content: center; z-index: 1000;
         }
         .btn-dock {
-            flex: 1; max-width: 200px; text-align: center; padding: 10px; border-radius: 8px;
-            font-size: 0.8rem; font-weight: bold; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 6px;
+            flex: 1; max-width: 210px; text-align: center; padding: 11px; border-radius: 8px;
+            font-size: 13px; font-weight: bold; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px;
+            border: 1px solid var(--border-color); transition: 0.2s; color: #fff;
         }
-        .btn-lawyer { background: rgba(176, 0, 255, 0.2); color: #d880ff; border: 1px solid #b000ff; }
-        .btn-assistant { background: rgba(0, 255, 102, 0.2); color: var(--accent-green); border: 1px solid var(--accent-green); }
+        .btn-lawyer { background: rgba(59, 130, 246, 0.15); border-color: var(--accent-blue); }
+        .btn-assistant { background: rgba(16, 185, 129, 0.15); border-color: var(--accent-green); }
+        .btn-dock:hover { transform: translateY(-2px); }
 
         .loading-overlay {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--bg-base); z-index: 9999; justify-content: center; align-items: center; color: var(--accent-cyan); font-size: 1.2rem; font-weight: bold; flex-direction: column;
+            background: var(--bg-base); z-index: 9999; justify-content: center; align-items: center; color: var(--accent-gold); font-size: 15px; font-weight: bold; flex-direction: column;
         }
-        .spinner {
-            width: 40px; height: 40px; border: 4px solid rgba(0, 243, 255, 0.2);
-            border-top-color: var(--accent-cyan); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px;
-        }
+        .spinner { width: 40px; height: 40px; border: 4px solid rgba(197, 160, 89, 0.2); border-top-color: var(--accent-gold); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 15px; }
         @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        @media (max-width: 1024px) {
+            .app-layout { grid-template-columns: 1fr; }
+            .side-panel { display: none; }
+        }
     </style>
 </head>
 <body>
 
     <header>
-        <div class="brand-left" style="display:flex; align-items:center; gap:12px; padding-left: 10px;">
+        <div class="brand-left">
             <a href="https://app.level-i.com" class="brand-logo" translate="no">L<span class="brand-dot"></span>Level.immo</a>
         </div>
         
+        <div class="header-center-nav">
+            <a href="https://app.level-i.com/demanda-activa" class="nav-pill" data-i18n="nav_demanda">📊 Demanda Activa</a>
+            <a href="https://app.level-i.com/mercado-real" class="nav-pill" data-i18n="nav_mercado">📈 Mercado Real</a>
+            <a href="https://app.level-i.com/gestion-de-inquilinos" class="nav-pill active" data-i18n="nav_gestion">🏠 Gestión Alquileres</a>
+        </div>
+
         <div id="google_translate_element" style="display:none;"></div>
         <select id="language-selector" class="lang-select" onchange="setLanguage(this.value)" translate="no">
             <option value="es">🇪🇸 ES Español</option>
@@ -124,82 +176,114 @@
         </select>
     </header>
 
-    <div class="container">
+    <div class="app-layout">
         
-        <!-- FASE 1 Y 2: LOGIN Y VERIFICACIÓN OTP -->
-        <div id="login-container">
-            <div class="lvl-title" data-i18n="login_title">Acceso Residentes</div>
-            <div class="lvl-desc" id="desc-login" data-i18n="login_desc">Introduce tu DNI/NIE para acceder de forma segura a tu panel privado.</div>
-            
-            <div id="fase-dni">
-                <input type="text" id="input-dni" class="lvl-input" placeholder="Tu DNI / NIE (ej. 12345678X)" onkeydown="return event.key != 'Enter';">
-                
-                <div class="lvl-math-box" id="caja-mates">
-                    <div id="lvl-math-question">Por seguridad, ¿cuánto es ...?</div>
-                    <input type="number" id="input-math" class="lvl-input" placeholder="Tu respuesta" style="margin-bottom: 0;" onkeydown="return event.key != 'Enter';">
-                </div>
-                
-                <button class="lvl-btn" id="btn-acceso" onclick="llamarAlWebhookLogin()" data-i18n="btn_next">Siguiente</button>
-            </div>
-            
-            <div id="caja-pin" style="display: none;">
-                <div style="font-size: 40px; margin-bottom: 10px;">🔐</div>
-                <div style="color: var(--accent-green); font-weight: bold; margin-bottom: 15px; font-size: 18px;" data-i18n="pin_verified">¡Identidad verificada!</div>
-                <p style="color: #ccc; font-size: 14px; margin-bottom: 25px; line-height: 1.5;" data-i18n="pin_desc">
-                    Te hemos enviado un <strong>PIN temporal de 4 cifras</strong> a tu WhatsApp registrado.<br><br>Introdúcelo a continuación para acceder al portal.
-                </p>
-                <input type="number" id="input-pin-user" class="lvl-input" placeholder="Ej: 8492" style="font-size: 24px; letter-spacing: 8px; font-weight: bold;" onkeydown="return event.key != 'Enter';">
-                <button class="lvl-btn" id="btn-validar-pin" onclick="validarPin()" data-i18n="btn_enter">Entrar al Portal</button>
-            </div>
-            
-            <div id="msg-box" class="msg-box"></div>
+        <!-- PANEL IZQUIERDO -->
+        <div class="side-panel">
+            <h3 data-i18n="side_shortcuts">📌 Accesos Directos</h3>
+            <a href="https://app.level-i.com/demanda-activa" class="side-link" data-i18n="side_demanda">📊 Radar Demanda Activa</a>
+            <a href="https://app.level-i.com/mercado-real" class="side-link" data-i18n="side_mercado">📈 Inteligencia Mercado Real</a>
+            <a href="https://app.level-i.com/advisors" class="side-link" data-i18n="side_advisors">💼 Únete como Advisor</a>
+            <h3 style="margin-top: 15px;" data-i18n="side_sec_title">🔒 Seguridad API</h3>
+            <p style="font-size: 11.5px; line-height: 1.4;" data-i18n="side_sec_desc">Acceso cifrado exclusivo para residentes y propietarios verificados mediante doble factor (OTP WhatsApp).</p>
         </div>
 
-        <!-- FASE 3: PORTAL DEL RESIDENTE -->
-        <div id="portal-container">
-            <div class="portal-header">
-                <h1 data-i18n="portal_title">Level.immo | Gestión de Alquileres</h1>
-                <p data-i18n="portal_sub">Portal del Residente · Área Segura</p>
-            </div>
-
-            <div class="card">
-                <h2 data-i18n="card_exp">📋 EXPEDIENTE Y PROPIEDAD</h2>
-                <div class="info-row"><span class="info-label" data-i18n="lbl_tenant">Titular / Inquilino:</span><span class="info-value" id="val-nombre">---</span></div>
-                <div class="info-row"><span class="info-label">DNI/NIE:</span><span class="info-value" id="val-dni">---</span></div>
-                <div class="info-row"><span class="info-label" data-i18n="lbl_property">Inmueble:</span><span class="info-value" id="val-propiedad">---</span></div>
-                <div class="info-row"><span class="info-label" data-i18n="lbl_address">Dirección:</span><span class="info-value" id="val-direccion">---</span></div>
-            </div>
-
-            <div class="card">
-                <h2 data-i18n="card_contable">📊 ESTADO CONTABLE Y SUMINISTROS</h2>
-                <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 12px;" data-i18n="contable_sub">Control unificado de Cuotas, Agua, Electricidad y Provisiones (Abonado + Abonado a regularizar).</p>
-                <div style="overflow-x: auto;">
-                    <table class="contable-table">
-                        <thead>
-                            <tr>
-                                <th data-i18n="th_concept">Concepto</th>
-                                <th class="text-right" data-i18n="th_emitted">Emitido / Gasto</th>
-                                <th class="text-right" data-i18n="th_paid">Abonado / Provisiones</th>
-                                <th class="text-right" data-i18n="th_balance">Saldo / Estado</th>
-                            </tr>
-                        </thead>
-                        <tbody id="val-tabla-contable"></tbody>
-                    </table>
+        <!-- CENTRO (STAGE) -->
+        <div class="center-stage">
+            <div class="container">
+                
+                <!-- LOGIN Y VERIFICACIÓN MATEMÁTICA / OTP -->
+                <div class="card" id="login-container">
+                    <h2 style="border:none; justify-content: center; font-size: 20px; color: #fff;">🔑 <span data-i18n="login_title">Acceso Residentes y Propietarios</span></h2>
+                    <p class="lvl-desc" id="desc-login" data-i18n="login_desc" style="text-align: center; color: var(--text-muted); font-size: 13.5px; margin-bottom: 20px;">Introduce tu DNI/NIE para acceder de forma segura a tu panel privado.</p>
+                    
+                    <div id="fase-dni">
+                        <input type="text" id="input-dni" class="lvl-input" placeholder="Tu DNI / NIE (ej. 12345678X)" onkeydown="if(event.key === 'Enter') llamarAlWebhookLogin();">
+                        
+                        <div class="lvl-math-box">
+                            <div id="lvl-math-question">Por seguridad, ¿cuánto es ...?</div>
+                            <input type="number" id="input-math" class="lvl-input" placeholder="Tu respuesta" style="margin-bottom: 0;" onkeydown="if(event.key === 'Enter') llamarAlWebhookLogin();">
+                        </div>
+                        
+                        <button type="button" class="lvl-btn" id="btn-acceso" onclick="llamarAlWebhookLogin()" data-i18n="btn_next">Siguiente ➔</button>
+                    </div>
+                    
+                    <div id="caja-pin" style="display: none; text-align: center;">
+                        <div style="font-size: 35px; margin-bottom: 10px;">🛡️</div>
+                        <div style="color: var(--accent-green); font-weight: bold; margin-bottom: 12px; font-size: 17px;" data-i18n="pin_verified">¡Identidad verificada!</div>
+                        <p style="color: var(--text-muted); font-size: 13.5px; margin-bottom: 20px; line-height: 1.5;" data-i18n="pin_desc">
+                            Te hemos enviado un <strong>PIN temporal de 4 cifras</strong> a tu WhatsApp registrado.<br>Introdúcelo aquí abajo:
+                        </p>
+                        <input type="number" id="input-pin-user" class="lvl-input" placeholder="Ej: 8492" style="font-size: 22px; letter-spacing: 6px; font-weight: bold;" onkeydown="if(event.key === 'Enter') validarPin();">
+                        <button type="button" class="lvl-btn" id="btn-validar-pin" onclick="validarPin()" data-i18n="btn_enter">Entrar al Portal 🚀</button>
+                    </div>
+                    
+                    <div id="msg-box" class="msg-box"></div>
                 </div>
-            </div>
 
-            <div class="card">
-                <h2 data-i18n="card_receipts">📄 HISTORIAL DE RECIBOS</h2>
-                <div id="val-recibos"></div>
-            </div>
+                <!-- PORTAL EXPEDIENTE (PANTALLA COMPLETA TRAS LOGIN) -->
+                <div id="portal-container">
+                    
+                    <div class="card">
+                        <h2>📋 <span data-i18n="card_exp">Expediente y Propiedad</span></h2>
+                        <div class="info-row"><span class="info-label" data-i18n="lbl_tenant">Titular / Inquilino:</span><span class="info-value" id="val-nombre">---</span></div>
+                        <div class="info-row"><span class="info-label">DNI/NIE:</span><span class="info-value" id="val-dni">---</span></div>
+                        <div class="info-row"><span class="info-label" data-i18n="lbl_property">Inmueble:</span><span class="info-value" id="val-propiedad">---</span></div>
+                        <div class="info-row"><span class="info-label" data-i18n="lbl_address">Dirección:</span><span class="info-value" id="val-direccion">---</span></div>
+                    </div>
 
-            <div class="card">
-                <h2 data-i18n="card_notices">🔔 AVISOS E INCIDENCIAS</h2>
-                <div id="val-avisos"></div>
+                    <div class="card">
+                        <h2>📊 <span data-i18n="card_contable">Estado Contable y Suministros</span></h2>
+                        <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 10px;" data-i18n="contable_sub">Desglose de Cuotas, Agua, Electricidad y Agua+Luz PROVISIONAL (Abonado + Abonado a regularizar).</p>
+                        <div style="overflow-x: auto;">
+                            <table class="contable-table">
+                                <thead>
+                                    <tr>
+                                        <th data-i18n="th_concept">Concepto</th>
+                                        <th class="text-right" data-i18n="th_emitted">Emitido / Gasto</th>
+                                        <th class="text-right" data-i18n="th_paid">Abonado / Provisiones</th>
+                                        <th class="text-right" data-i18n="th_balance">Saldo / Estado</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="val-tabla-contable"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h2>📄 <span data-i18n="card_receipts">Historial de Recibos</span></h2>
+                        <div id="val-recibos"></div>
+                    </div>
+
+                    <div class="card">
+                        <h2>🔔 <span data-i18n="card_notices">Avisos e Incidencias</span></h2>
+                        <div id="val-avisos"></div>
+                    </div>
+                </div>
+
+                <!-- FOOTER LEGAL -->
+                <div class="footer-legal">
+                    <div>LEVEL PUNTO IMMO 24365 SLU · NIF B-26745430 · API 4173 · AICAT 14200</div>
+                    <div style="margin-top: 8px;">
+                        <a onclick="alert('Política de Privacidad y RGPD: Tratamiento de datos seguro bajo consentimiento cifrado.')" data-i18n="footer_priv">Privacidad</a> | 
+                        <a onclick="alert('Aviso Legal: LEVEL PUNTO IMMO 24365 SLU - Travessera de Gràcia, 56, Barcelona.')" data-i18n="footer_legal">Aviso Legal</a> | 
+                        <a onclick="alert('Cookies técnicas y de sesión activa obligatorias.')" data-i18n="footer_cookies">Cookies e IA</a>
+                    </div>
+                </div>
+
             </div>
         </div>
+
+        <!-- PANEL DERECHO -->
+        <div class="side-panel">
+            <h3 data-i18n="side_sup_title">💬 Soporte Inquilinos</h3>
+            <p style="font-size: 11.5px; line-height: 1.4;" data-i18n="side_sup_desc">Atención automatizada 24/7 y asistencia jurídica colegiada para la resolución de incidencias en finca.</p>
+            <a href="https://wa.me/34600000000?text=Hola,%20necesito%20asistencia%20en%20mi%20vivienda" class="side-link" target="_blank" style="background: rgba(16, 185, 129, 0.1); border: 1px solid var(--accent-green); color: var(--accent-green); text-align: center; font-weight: bold;" data-i18n="side_chat_elena">🤖 Abrir Chat con Elena IA</a>
+        </div>
+
     </div>
 
+    <!-- DOCK INFERIOR -->
     <div class="action-dock">
         <a href="https://wa.me/34600000000?text=Hola,%20necesito%20consulta%20jurídica" class="btn-dock btn-lawyer" target="_blank">⚖️ <span data-i18n="dock_lawyer">Abogado</span></a>
         <a href="https://wa.me/34600000000?text=Hola%20Elena,%20necesito%20asistencia" class="btn-dock btn-assistant" target="_blank">🤖 <span data-i18n="dock_assistant">Elena IA</span></a>
@@ -207,7 +291,7 @@
 
     <div id="loading-overlay" class="loading-overlay">
         <div class="spinner"></div>
-        <div id="loading-text" data-i18n="load_secure">Conectando de forma segura...</div>
+        <div id="loading-text" data-i18n="load_secure">Conectando de forma segura con Lark...</div>
     </div>
 
     <script>
@@ -218,43 +302,51 @@
         let datosSecretos = null;
         let langCode = 'es';
 
-        // DICCIONARIO MULTIDIOMA (8 IDIOMAS)
         const dict = {
             es: {
-                login_title: "Acceso Residentes", login_desc: "Introduce tu DNI/NIE para acceder de forma segura a tu panel privado.",
-                btn_next: "Siguiente", pin_verified: "¡Identidad verificada!", pin_desc: "Te hemos enviado un <strong>PIN temporal de 4 cifras</strong> a tu WhatsApp registrado.<br><br>Introdúcelo a continuación para acceder al portal.", btn_enter: "Entrar al Portal",
-                portal_title: "Level.immo | Gestión de Alquileres", portal_sub: "Portal del Residente · Área Segura",
-                card_exp: "📋 EXPEDIENTE Y PROPIEDAD", lbl_tenant: "Titular / Inquilino:", lbl_property: "Inmueble:", lbl_address: "Dirección:",
-                card_contable: "📊 ESTADO CONTABLE Y SUMINISTROS", contable_sub: "Control unificado de Cuotas, Agua, Electricidad y Provisiones (Abonado + Abonado a regularizar).",
+                nav_demanda: "📊 Demanda Activa", nav_mercado: "📈 Mercado Real", nav_gestion: "🏠 Gestión Alquileres",
+                side_shortcuts: "📌 Accesos Directos", side_demanda: "📊 Radar Demanda Activa", side_mercado: "📈 Inteligencia Mercado Real", side_advisors: "💼 Únete como Advisor", side_sec_title: "🔒 Seguridad API", side_sec_desc: "Acceso cifrado exclusivo para residentes y propietarios verificados mediante doble factor (OTP WhatsApp).",
+                login_title: "Acceso Residentes y Propietarios", login_desc: "Introduce tu DNI/NIE para acceder de forma segura a tu panel privado.",
+                btn_next: "Siguiente ➔", pin_verified: "¡Identidad verificada!", pin_desc: "Te hemos enviado un <strong>PIN temporal de 4 cifras</strong> a tu WhatsApp registrado.<br>Introdúcelo aquí abajo:", btn_enter: "Entrar al Portal 🚀",
+                card_exp: "Expediente y Propiedad", lbl_tenant: "Titular / Inquilino:", lbl_property: "Inmueble:", lbl_address: "Dirección:",
+                card_contable: "Estado Contable y Suministros", contable_sub: "Desglose de Cuotas, Agua, Electricidad y Agua+Luz PROVISIONAL (Abonado + Abonado a regularizar).",
                 th_concept: "Concepto", th_emitted: "Emitido / Gasto", th_paid: "Abonado / Provisiones", th_balance: "Saldo / Estado",
-                card_receipts: "📄 HISTORIAL DE RECIBOS", card_notices: "🔔 AVISOS E INCIDENCIAS",
-                dock_lawyer: "Abogado", dock_assistant: "Elena IA", load_secure: "Conectando de forma segura..."
+                card_receipts: "Historial de Recibos", card_notices: "Avisos e Incidencias",
+                side_sup_title: "💬 Soporte Inquilinos", side_sup_desc: "Atención automatizada 24/7 y asistencia jurídica colegiada para la resolución de incidencias en finca.", side_chat_elena: "🤖 Abrir Chat con Elena IA",
+                dock_lawyer: "Abogado", dock_assistant: "Elena IA", load_secure: "Conectando de forma segura con Lark...",
+                footer_priv: "Privacidad", footer_legal: "Aviso Legal", footer_cookies: "Cookies e IA"
             },
             ca: {
-                login_title: "Accés Residents", login_desc: "Introdueix el teu DNI/NIE per accedir de manera segura.",
-                btn_next: "Següent", pin_verified: "Identitat verificada!", pin_desc: "T'hem enviat un <strong>PIN temporal de 4 xifres</strong> al teu WhatsApp.<br><br>Introdueix-lo a continuació.", btn_enter: "Entrar al Portal",
-                portal_title: "Level.immo | Gestió de Lloguers", portal_sub: "Portal del Resident",
-                card_exp: "📋 EXPEDIENT I PROPIETAT", lbl_tenant: "Titular / Inquilí:", lbl_property: "Immoble:", lbl_address: "Adreça:",
-                card_contable: "📊 ESTAT COMPTABLE I SUBMINISTRAMENTS", contable_sub: "Control unificat de Quotes, Aigua, Llum i Provisions (Abonat + Abonat a regularitzar).",
+                nav_demanda: "📊 Demanda Activa", nav_mercado: "📈 Mercat Real", nav_gestion: "🏠 Gestió Lloguers",
+                side_shortcuts: "📌 Accessos Directes", side_demanda: "📊 Radar Demanda Activa", side_mercado: "📈 Intel·ligència Mercat", side_advisors: "💼 Uneix-te com a Advisor", side_sec_title: "🔒 Seguretat API", side_sec_desc: "Accés xifrat exclusiu per a residents i propietaris verificats.",
+                login_title: "Accés Residents i Propietaris", login_desc: "Introdueix el teu DNI/NIE per accedir al teu panell.",
+                btn_next: "Següent ➔", pin_verified: "Identitat verificada!", pin_desc: "T'hem enviat un <strong>PIN temporal de 4 xifres</strong> al teu WhatsApp.<br>Introdueix-lo aquí:", btn_enter: "Entrar al Portal 🚀",
+                card_exp: "Expedient i Propietat", lbl_tenant: "Titular / Inquilí:", lbl_property: "Immoble:", lbl_address: "Adreça:",
+                card_contable: "Estat Comptable i Subministraments", contable_sub: "Desglossament de Quotes, Aigua, Llum i Provisions (Abonat + Abonat a regularitzar).",
                 th_concept: "Concepte", th_emitted: "Emès / Despesa", th_paid: "Abonat / Provisions", th_balance: "Saldo / Estat",
-                card_receipts: "📄 HISTÒRIC DE RECEIPTS", card_notices: "🔔 AVISOS I INCIDÈNCIES",
-                dock_lawyer: "Advocat", dock_assistant: "Elena IA", load_secure: "Connectant de manera segura..."
+                card_receipts: "Històric de Rebuts", card_notices: "Avisos i Incidències",
+                side_sup_title: "💬 Suport Inquilins", side_sup_desc: "Atenció automatitzada 24/7.", side_chat_elena: "🤖 Obrir Xat amb Elena IA",
+                dock_lawyer: "Advocat", dock_assistant: "Elena IA", load_secure: "Connectant de manera segura...",
+                footer_priv: "Privacitat", footer_legal: "Avís Legal", footer_cookies: "Cookies i IA"
             },
             en: {
-                login_title: "Resident Access", login_desc: "Enter your ID to securely access your private panel.",
-                btn_next: "Next", pin_verified: "Identity Verified!", pin_desc: "We sent a <strong>4-digit temporary PIN</strong> to your WhatsApp.<br><br>Enter it below.", btn_enter: "Enter Portal",
-                portal_title: "Level.immo | Rentals Management", portal_sub: "Resident Portal · Secure Area",
-                card_exp: "📋 FILE & PROPERTY", lbl_tenant: "Tenant:", lbl_property: "Property:", lbl_address: "Address:",
-                card_contable: "📊 ACCOUNTING & UTILITIES", contable_sub: "Unified control of Fees, Water, Electricity and Provisions.",
+                nav_demanda: "📊 Active Demand", nav_mercado: "📈 Real Market", nav_gestion: "🏠 Rentals Management",
+                side_shortcuts: "📌 Shortcuts", side_demanda: "📊 Active Demand", side_mercado: "📈 Real Market", side_advisors: "💼 Join as Advisor", side_sec_title: "🔒 API Security", side_sec_desc: "Encrypted access for verified residents and owners (WhatsApp OTP).",
+                login_title: "Residents & Owners Access", login_desc: "Enter your ID to securely access your private panel.",
+                btn_next: "Next ➔", pin_verified: "Identity Verified!", pin_desc: "We sent a <strong>4-digit temporary PIN</strong> to your WhatsApp.<br>Enter it below:", btn_enter: "Enter Portal 🚀",
+                card_exp: "File & Property", lbl_tenant: "Tenant:", lbl_property: "Property:", lbl_address: "Address:",
+                card_contable: "Accounting & Utilities", contable_sub: "Breakdown of Fees, Water, Electricity and Provisions (Paid + To regularize).",
                 th_concept: "Concept", th_emitted: "Emitted / Cost", th_paid: "Paid / Provisions", th_balance: "Balance / Status",
-                card_receipts: "📄 RECEIPTS HISTORY", card_notices: "🔔 NOTICES & INCIDENTS",
-                dock_lawyer: "Lawyer", dock_assistant: "Elena AI", load_secure: "Connecting securely..."
+                card_receipts: "Receipts History", card_notices: "Notices & Incidents",
+                side_sup_title: "💬 Tenant Support", side_sup_desc: "Automated 24/7 assistance.", side_chat_elena: "🤖 Open Elena AI Chat",
+                dock_lawyer: "Lawyer", dock_assistant: "Elena AI", load_secure: "Connecting securely with Lark...",
+                footer_priv: "Privacy", footer_legal: "Legal Notice", footer_cookies: "Cookies & AI"
             },
-            fr: { login_title: "Accès Résidents", login_desc: "Entrez votre ID pour accéder à votre espace.", btn_next: "Suivant", pin_verified: "Identité vérifiée !", pin_desc: "PIN envoyé par WhatsApp.", btn_enter: "Entrer", portal_title: "Level.immo | Gestion", portal_sub: "Espace Résident", card_exp: "📋 DOSSIER", lbl_tenant: "Locataire :", lbl_property: "Bien :", lbl_address: "Adresse :", card_contable: "📊 COMPTABILITÉ", contable_sub: "Contrôle unifié.", th_concept: "Concept", th_emitted: "Émis", th_paid: "Payé", th_balance: "Solde", card_receipts: "📄 REÇUS", card_notices: "🔔 AVIS", dock_lawyer: "Avocat", dock_assistant: "Elena IA", load_secure: "Connexion..." },
-            de: { login_title: "Anwohner-Zugang", login_desc: "ID eingeben.", btn_next: "Weiter", pin_verified: "Identität verifiziert!", pin_desc: "PIN per WhatsApp gesendet.", btn_enter: "Portal betreten", portal_title: "Level.immo | Vermietung", portal_sub: "Anwohnerportal", card_exp: "📋 AKTE", lbl_tenant: "Mieter:", lbl_property: "Immobilie:", lbl_address: "Adresse:", card_contable: "📊 BUCHHALTUNG", contable_sub: "Einheitliche Kontrolle.", th_concept: "Konzept", th_emitted: "Ausgestellt", th_paid: "Bezahlt", th_balance: "Saldo", card_receipts: "📄 BELEGE", card_notices: "🔔 HINWEISE", dock_lawyer: "Anwalt", dock_assistant: "Elena KI", load_secure: "Verbindung..." },
-            it: { login_title: "Accesso Residenti", login_desc: "Inserisci il tuo ID.", btn_next: "Avanti", pin_verified: "Identità verificata!", pin_desc: "PIN inviato su WhatsApp.", btn_enter: "Entra", portal_title: "Level.immo | Affitti", portal_sub: "Area Riservata", card_exp: "📋 FASCICOLO", lbl_tenant: "Inquilino:", lbl_property: "Immobile:", lbl_address: "Indirizzo:", card_contable: "📊 CONTABILITÀ", contable_sub: "Controllo unificato.", th_concept: "Concetto", th_emitted: "Emesso", th_paid: "Pagato", th_balance: "Saldo", card_receipts: "📄 RICEVUTE", card_notices: "🔔 AVVISI", dock_lawyer: "Avvocato", dock_assistant: "Elena IA", load_secure: "Connessione..." },
-            ar: { login_title: "دخول المقيمين", login_desc: "أدخل رقم الهوية.", btn_next: "التالي", pin_verified: "تم التحقق!", pin_desc: "تم إرسال رمز PIN عبر واتساب.", btn_enter: "دخول", portal_title: "Level.immo | إدارة الإيجارات", portal_sub: "بوابة المقيم", card_exp: "📋 الملف", lbl_tenant: "المستأجر:", lbl_property: "العقار:", lbl_address: "العنوان:", card_contable: "📊 المحاسبة", contable_sub: "تحكم موحد.", th_concept: "المفهوم", th_emitted: "الصادر", th_paid: "المسدد", th_balance: "الرصيد", card_receipts: "📄 الإيصالات", card_notices: "🔔 الإشعارات", dock_lawyer: "محامٍ", dock_assistant: "إيلينا", load_secure: "جاري الاتصال..." },
-            zh: { login_title: "居民登录", login_desc: "输入您的身份证件。", btn_next: "下一步", pin_verified: "身份已验证！", pin_desc: "验证码已发送至 WhatsApp。", btn_enter: "进入", portal_title: "Level.immo | 租赁管理", portal_sub: "居民门户", card_exp: "📋 档案", lbl_tenant: "租户：", lbl_property: "房产：", lbl_address: "地址：", card_contable: "📊 财务与公用事业", contable_sub: "统一控制。", th_concept: "概念", th_emitted: "已出具", th_paid: "已付", th_balance: "余额", card_receipts: "📄 收据", card_notices: "🔔 通知", dock_lawyer: "律师", dock_assistant: "Elena AI", load_secure: "正在连接..." }
+            fr: { nav_demanda: "📊 Demande", nav_mercado: "📈 Marché", nav_gestion: "🏠 Locations", side_shortcuts: "📌 Raccourcis", side_demanda: "📊 Demande", side_mercado: "📈 Marché", side_advisors: "💼 Advisor", side_sec_title: "🔒 Sécurité", side_sec_desc: "Accès chiffré OTP.", login_title: "Accès Résidents", login_desc: "Entrez votre ID.", btn_next: "Suivant ➔", pin_verified: "Vérifié !", pin_desc: "PIN envoyé par WhatsApp.", btn_enter: "Entrer 🚀", card_exp: "Dossier", lbl_tenant: "Locataire :", lbl_property: "Bien :", lbl_address: "Adresse :", card_contable: "Comptabilité", contable_sub: "Détails.", th_concept: "Concept", th_emitted: "Émis", th_paid: "Payé", th_balance: "Solde", card_receipts: "Reçus", card_notices: "Avis", side_sup_title: "Support", side_sup_desc: "24/7.", side_chat_elena: "🤖 Chat Elena", dock_lawyer: "Avocat", dock_assistant: "Elena IA", load_secure: "Connexion...", footer_priv: "Confidentialité", footer_legal: "Mentions légales", footer_cookies: "Cookies" },
+            de: { nav_demanda: "📊 Nachfrage", nav_mercado: "📈 Markt", nav_gestion: "🏠 Mieten", side_shortcuts: "📌 Shortcuts", side_demanda: "📊 Nachfrage", side_mercado: "📈 Markt", side_advisors: "💼 Advisor", side_sec_title: "🔒 Sicherheit", side_sec_desc: "OTP Zugang.", login_title: "Zugang", login_desc: "ID eingeben.", btn_next: "Weiter ➔", pin_verified: "Verifiziert!", pin_desc: "PIN per WhatsApp gesendet.", btn_enter: "Betreten 🚀", card_exp: "Akte", lbl_tenant: "Mieter:", lbl_property: "Immobilie:", lbl_address: "Adresse:", card_contable: "Buchhaltung", contable_sub: "Details.", th_concept: "Konzept", th_emitted: "Ausgestellt", th_paid: "Bezahlt", th_balance: "Saldo", card_receipts: "Belege", card_notices: "Hinweise", side_sup_title: "Support", side_sup_desc: "24/7.", side_chat_elena: "🤖 Chat Elena", dock_lawyer: "Anwalt", dock_assistant: "Elena KI", load_secure: "Verbindung...", footer_priv: "Datenschutz", footer_legal: "Impressum", footer_cookies: "Cookies" },
+            it: { nav_demanda: "📊 Domanda", nav_mercado: "📈 Mercato", nav_gestion: "🏠 Affitti", side_shortcuts: "📌 Scorciatoie", side_demanda: "📊 Domanda", side_mercado: "📈 Mercato", side_advisors: "💼 Advisor", side_sec_title: "🔒 Sicurezza", side_sec_desc: "Accesso protetto.", login_title: "Accesso", login_desc: "Inserisci ID.", btn_next: "Avanti ➔", pin_verified: "Verificato!", pin_desc: "PIN inviato su WhatsApp.", btn_enter: "Entra 🚀", card_exp: "Fascicolo", lbl_tenant: "Inquilino:", lbl_property: "Immobile:", lbl_address: "Indirizzo:", card_contable: "Contabilità", contable_sub: "Dettagli.", th_concept: "Concetto", th_emitted: "Emesso", th_paid: "Pagato", th_balance: "Saldo", card_receipts: "Ricevute", card_notices: "Avvisi", side_sup_title: "Supporto", side_sup_desc: "24/7.", side_chat_elena: "🤖 Chat Elena", dock_lawyer: "Avvocato", dock_assistant: "Elena IA", load_secure: "Connessione...", footer_priv: "Privacy", footer_legal: "Note Legali", footer_cookies: "Cookies" },
+            ar: { nav_demanda: "📊 الطلب", nav_mercado: "📈 السوق", nav_gestion: "🏠 إدارة الإيجارات", side_shortcuts: "📌 اختصارات", side_demanda: "📊 الطلب", side_mercado: "📈 السوق", side_advisors: "💼 انضم كـ Advisor", side_sec_title: "🔒 الأمان", side_sec_desc: "تشفير كامل.", login_title: "دخول المقيمين", login_desc: "أدخل رقم الهوية.", btn_next: "التالي ➔", pin_verified: "تم التحقق!", pin_desc: "تم إرسال PIN عبر واتساب.", btn_enter: "دخول 🚀", card_exp: "الملف والعقار", lbl_tenant: "المستأجر:", lbl_property: "العقار:", lbl_address: "العنوان:", card_contable: "الحسابات والمرافق", contable_sub: "تفاصيل الرسوم.", th_concept: "المفهوم", th_emitted: "الصادر", th_paid: "المسدد", th_balance: "الرصيد", card_receipts: "الإيصالات", card_notices: "الإشعارات", side_sup_title: "الدعم", side_sup_desc: "24/7.", side_chat_elena: "🤖 شات إيلينا", dock_lawyer: "محامٍ", dock_assistant: "إيلينا", load_secure: "جاري الاتصال...", footer_priv: "الخصوصية", footer_legal: "إشعار قانوني", footer_cookies: "ملفات تعريف الارتباط" },
+            zh: { nav_demanda: "📊 活跃需求", nav_mercado: "📈 真实市场", nav_gestion: "🏠 租赁管理", side_shortcuts: "📌 快捷方式", side_demanda: "📊 活跃需求", side_mercado: "📈 真实市场", side_advisors: "💼 加入顾问", side_sec_title: "🔒 安全", side_sec_desc: "加密访问。", login_title: "居民登录", login_desc: "输入身份证件。", btn_next: "下一步 ➔", pin_verified: "已验证！", pin_desc: "验证码已发送。", btn_enter: "进入 🚀", card_exp: "档案与房产", lbl_tenant: "租户：", lbl_property: "房产：", lbl_address: "地址：", card_contable: "财务与公用事业", contable_sub: "明细。", th_concept: "概念", th_emitted: "已出具", th_paid: "已付", th_balance: "余额", card_receipts: "收据", card_notices: "通知", side_sup_title: "支持", side_sup_desc: "24/7.", side_chat_elena: "🤖 Elena AI", dock_lawyer: "律师", dock_assistant: "Elena AI", load_secure: "正在连接...", footer_priv: "隐私", footer_legal: "法律声明", footer_cookies: "Cookie" }
         };
 
         function setLanguage(lang) {
@@ -268,6 +360,12 @@
                 const k = el.getAttribute('data-i18n');
                 if(d[k]) el.innerHTML = d[k];
             });
+
+            const gtCombo = document.querySelector('.goog-te-combo');
+            if (gtCombo) {
+                gtCombo.value = lang;
+                gtCombo.dispatchEvent(new Event('change'));
+            }
         }
         function googleTranslateElementInit() {
             new google.translate.TranslateElement({ pageLanguage: 'es', includedLanguages: 'es,ca,en,fr,de,it,ar,zh-CN', autoDisplay: false }, 'google_translate_element');
@@ -283,8 +381,8 @@
         function hideMsg() { document.getElementById('msg-box').style.display = 'none'; }
 
         function generarSuma() {
-            const n1 = Math.floor(Math.random() * 9) + 1;
-            const n2 = Math.floor(Math.random() * 9) + 1;
+            const n1 = Math.floor(Math.random() * 8) + 1;
+            const n2 = Math.floor(Math.random() * 8) + 1;
             mathRespuesta = n1 + n2;
             document.getElementById('lvl-math-question').innerText = `Por seguridad, ¿cuánto es ${n1} + ${n2}?`;
             document.getElementById('input-math').value = '';
@@ -297,16 +395,16 @@
             const btn = document.getElementById('btn-acceso');
 
             if (!dniInput || isNaN(mathInput)) {
-                showMsg("Por favor, rellena tu DNI y resuelve la suma.", "error");
+                showMsg("Por favor, introduce tu DNI y resuelve la suma.", "error");
                 return;
             }
             if (mathInput !== mathRespuesta) {
-                showMsg("La suma no es correcta.", "error");
+                showMsg("La suma matemática no es correcta. Inténtalo de nuevo.", "error");
                 generarSuma();
                 return;
             }
 
-            btn.innerText = "Conectando...";
+            btn.innerText = "Conectando con Make...";
             btn.disabled = true;
 
             fetch(WEBHOOK_LOGIN, {
@@ -321,17 +419,17 @@
                     document.getElementById('fase-dni').style.display = "none";
                     document.getElementById('desc-login').style.display = "none";
                     document.getElementById('caja-pin').style.display = "block";
-                    showMsg("PIN enviado por WhatsApp.", "success");
+                    showMsg("¡PIN enviado con éxito a tu WhatsApp!", "success");
                 } else {
-                    throw new Error("DNI no válido");
+                    throw new Error("DNI no encontrado");
                 }
             })
             .catch(() => {
-                showMsg("DNI no registrado o error de conexión.", "error");
+                showMsg("DNI no registrado o error de conexión con el servidor.", "error");
                 generarSuma();
             })
             .finally(() => {
-                btn.innerText = "Siguiente";
+                btn.innerText = "Siguiente ➔";
                 btn.disabled = false;
             });
         }
@@ -344,17 +442,17 @@
             if (!pinUser) { showMsg("Introduce el PIN de 4 cifras.", "error"); return; }
 
             if (datosSecretos && pinUser === datosSecretos.pin_secreto.toString()) {
-                btnPin.innerText = "¡Correcto! Accediendo...";
+                btnPin.innerText = "¡Correcto! Entrando...";
                 btnPin.style.backgroundColor = "var(--accent-green)";
-                btnPin.style.color = "#000";
+                btnPin.style.color = "#090d16";
                 
                 setTimeout(() => {
                     document.getElementById('login-container').style.display = 'none';
                     document.getElementById('loading-overlay').style.display = 'flex';
                     cargarDatosPortal(datosSecretos.codigo_inquilino);
-                }, 800);
+                }, 700);
             } else {
-                showMsg("PIN incorrecto. Revisa tu WhatsApp.", "error");
+                showMsg("PIN incorrecto. Revisa el mensaje en tu WhatsApp.", "error");
             }
         }
 
@@ -362,7 +460,7 @@
             fetch(WEBHOOK_PORTAL_DATOS, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ codigo_inquilino: codigoInquilino })
+                body: JSON.stringify({ code: codigoInquilino, dni: codigoInquilino, codigo_inquilino: codigoInquilino })
             })
             .then(res => res.json())
             .then(data => {
@@ -372,9 +470,9 @@
                     document.getElementById('val-propiedad').innerText = data.nombre_propiedad || "---";
                     document.getElementById('val-direccion').innerText = data.direccion || "---";
 
-                    document.getElementById('val-tabla-contable').innerHTML = data.tabla_contable_html || "<tr><td colspan='4' style='text-align:center; color:var(--text-muted);'>Sin registros.</td></tr>";
-                    document.getElementById('val-recibos').innerHTML = data.recibos_html || "<div style='font-size:0.8rem; color:var(--text-muted);'>Sin recibos.</div>";
-                    document.getElementById('val-avisos').innerHTML = data.avisos_html || "<div style='font-size:0.8rem; color:var(--text-muted);'>No hay avisos.</div>";
+                    document.getElementById('val-tabla-contable').innerHTML = data.tabla_contable_html || "<tr><td colspan='4' style='text-align:center; color:var(--text-muted);'>Sin registros contables.</td></tr>";
+                    document.getElementById('val-recibos').innerHTML = data.recibos_html || "<div style='font-size:0.8rem; color:var(--text-muted);'>Sin recibos recientes.</div>";
+                    document.getElementById('val-avisos').innerHTML = data.avisos_html || "<div style='font-size:0.8rem; color:var(--text-muted);'>No hay avisos ni incidencias.</div>";
 
                     document.getElementById('loading-overlay').style.display = 'none';
                     document.getElementById('portal-container').style.display = 'block';
@@ -383,7 +481,7 @@
                 }
             })
             .catch(() => {
-                document.getElementById('loading-text').innerText = "Error al cargar los datos del expediente.";
+                document.getElementById('loading-text').innerText = "Error crítico al cargar los datos del expediente.";
             });
         }
 
@@ -392,7 +490,7 @@
             generarSuma();
 
             const params = new URLSearchParams(window.location.search);
-            const urlCode = params.get('code');
+            const urlCode = params.get('code') || params.get('dni') || params.get('id');
             if (urlCode) {
                 document.getElementById('login-container').style.display = 'none';
                 document.getElementById('loading-overlay').style.display = 'flex';
