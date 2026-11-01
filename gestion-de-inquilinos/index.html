@@ -941,7 +941,7 @@ const I18N = {
     exp_box_title: "🏠 EXPEDIENT I PROPIETAT", avisos_box_title: "📢 AVISOS GENERALS",
     inc_box_title: "🛠️ INCIDÈNCIES ACTIVES", recibos_box_title: "🧾 REBUTS, SUBMINISTRAMENTS I PAGAMENTS",
     btn_talk_elena: "💬 Parlar amb Elena IA",
-    chat_welcome: "Hola, sóc l'Elena IA. En què puc ajudar-te avui amb el teu contracte de lloguer, subministraments o incidències?"
+    chat_welcome: "Hola, sóc l'Elena IA. En què puc ajudar-te avui con el teu contracte de lloguer, subministraments o incidències?"
   },
   en: {
     nav_inquilinos: "🔑 User & Tenant Access",
@@ -1050,7 +1050,6 @@ document.addEventListener("DOMContentLoaded", function() {
     if (el) el.textContent = ahora.toLocaleDateString("es-ES") + " | " + ahora.toLocaleTimeString("es-ES");
   }, 1000);
 
-  // BLINDAJE: Solo carga automática si la URL trae un parámetro de código válido y NO vacío
   const params = new URLSearchParams(window.location.search);
   const identificadorUrl = params.get("code") || params.get("dni") || params.get("id");
   if (identificadorUrl && identificadorUrl.trim() !== "") {
@@ -1058,8 +1057,10 @@ document.addEventListener("DOMContentLoaded", function() {
   }
 });
 
+// FASE 1: LLAMAR AL WEBHOOK 1 (TOC TOC INQUILINOS) CON DNI BLINDADO
 window.llamarAlWebhook = function() {
-  var dniRaw = document.getElementById("input-dni").value.trim().toUpperCase().replace(/[^A-Z0-9]/g, "");
+  var inputDniElem = document.getElementById("input-dni");
+  var dniRaw = inputDniElem ? inputDniElem.value.trim().toUpperCase().replace(/[^A-Z0-9]/g, "") : "";
   var chkPriv = document.getElementById("chk-privacidad").checked;
   var mathUser = parseInt(document.getElementById("input-math").value.trim(), 10);
   var btn = document.getElementById("btn-acceso");
@@ -1075,8 +1076,8 @@ window.llamarAlWebhook = function() {
     return;
   }
 
-  if (!dniRaw || isNaN(mathUser)) {
-    msjError.innerText = "Por favor, rellena tu DNI/NIE y la suma de seguridad.";
+  if (!dniRaw || dniRaw === "" || isNaN(mathUser)) {
+    msjError.innerText = "Por favor, introduce un DNI/NIE válido y la suma de seguridad.";
     msjError.style.display = "block";
     return;
   }
@@ -1091,10 +1092,16 @@ window.llamarAlWebhook = function() {
   btn.innerText = "Conectando al servidor...";
   btn.disabled = true;
 
+  var payloadData = {
+    dni_inquilino: dniRaw,
+    referencia_origen: "PORTAL_INQUILINOS_LEVEL",
+    origen: "web_github"
+  };
+
   fetch(URL_WEBHOOK_TOC_TOC, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ dni_inquilino: dniRaw })
+    body: JSON.stringify(payloadData)
   })
   .then(function(response) { return response.text(); })
   .then(function(textResponse) {
