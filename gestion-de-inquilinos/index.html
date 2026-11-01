@@ -3,15 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Level.immo · Consola PropTech - Reverse Market & Gestión</title>
+<title>Level.immo · Consola PropTech - Reverse Market & Gestión de Alquileres</title>
 <style>
   :root {
     --bg-main: #060a12;
     --bg-panel: #0d1322;
     --bg-card: #131c31;
-    --bg-input: #090e1a;
+    --bg-input: #080c17;
     --border: #1e293b;
-    --border-highlight: #2dd4bf33;
     --emerald: #10b981;
     --emerald-hover: #059669;
     --emerald-soft: rgba(16, 185, 129, 0.14);
@@ -20,6 +19,8 @@
     --danger: #ef4444;
     --danger-soft: rgba(239, 68, 68, 0.15);
     --blue: #38bdf8;
+    --neon-cyan: #00f3ff;
+    --neon-green: #00ff66;
     --text-main: #f8fafc;
     --text-muted: #94a3b8;
     --font: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -36,12 +37,12 @@
     overflow-x: hidden;
   }
 
-  /* LAYOUT 3 COLUMNAS */
+  /* ESTRUCTURA 3 COLUMNAS */
   .app-layout {
     display: grid;
-    grid-template-columns: 250px 1fr 310px;
-    min-height: calc(100vh - 60px);
-    padding-bottom: 64px;
+    grid-template-columns: 255px 1fr 310px;
+    min-height: calc(100vh - 58px);
+    padding-bottom: 62px;
   }
   .app-layout.fullscreen-mode {
     grid-template-columns: 0px 1fr 0px;
@@ -81,15 +82,11 @@
     font-family: monospace;
     font-size: 12px;
     color: var(--text-muted);
-    margin-bottom: 24px;
+    margin-bottom: 22px;
     padding-bottom: 14px;
     border-bottom: 1px solid var(--border);
   }
-  .nav-menu {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
+  .nav-menu { display: flex; flex-direction: column; gap: 10px; }
   .nav-link {
     display: flex;
     align-items: center;
@@ -103,12 +100,9 @@
     border: 1px solid transparent;
     transition: all 0.2s;
   }
-  .nav-link:hover {
-    background: var(--bg-card);
-    color: #fff;
-  }
+  .nav-link:hover { background: var(--bg-card); color: #fff; }
   .nav-link.active {
-    background: rgba(245, 158, 11, 0.12);
+    background: var(--amber-soft);
     border-color: var(--amber);
     color: var(--amber);
   }
@@ -132,12 +126,8 @@
   }
   .sidebar-footer a:hover { color: var(--emerald); text-decoration: underline; }
 
-  /* COLUMNA CENTRAL */
-  .main-stage {
-    display: flex;
-    flex-direction: column;
-    background: var(--bg-main);
-  }
+  /* ZONA CENTRAL */
+  .main-stage { display: flex; flex-direction: column; background: var(--bg-main); }
   .topbar {
     height: 60px;
     border-bottom: 1px solid var(--border);
@@ -145,18 +135,10 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background: rgba(13, 19, 34, 0.8);
+    background: rgba(13, 19, 34, 0.85);
   }
-  .topbar-title {
-    font-size: 13.5px;
-    color: var(--text-muted);
-    font-weight: 500;
-  }
-  .topbar-right {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
+  .topbar-title { font-size: 13.5px; color: var(--text-muted); font-weight: 500; }
+  .topbar-right { display: flex; align-items: center; gap: 12px; }
   .badge-private {
     background: var(--amber-soft);
     border: 1px solid rgba(245, 158, 11, 0.4);
@@ -182,41 +164,26 @@
   }
 
   .stage-content {
-    padding: 32px 28px;
-    max-width: 1120px;
+    padding: 30px 26px;
+    max-width: 1100px;
     width: 100%;
     margin: 0 auto;
   }
 
-  /* TARJETA DE LOGIN */
+  /* TARJETA DE ACCESO (UNIFICADA CON TU LÓGICA DE TOC-TOC) */
   .login-card {
-    max-width: 540px;
+    max-width: 500px;
     margin: 20px auto;
     background: var(--bg-panel);
     border: 1px solid var(--border);
     border-radius: 16px;
     padding: 32px;
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.55);
   }
-  .login-card h1 {
-    font-size: 24px;
-    font-weight: 800;
-    margin-bottom: 10px;
-  }
-  .login-card p.lead {
-    font-size: 13.5px;
-    color: var(--text-muted);
-    line-height: 1.55;
-    margin-bottom: 24px;
-  }
-  .form-group { margin-bottom: 18px; }
-  .form-label {
-    display: block;
-    font-size: 12.5px;
-    font-weight: 600;
-    color: #cbd5e1;
-    margin-bottom: 8px;
-  }
+  .login-card h1 { font-size: 24px; font-weight: 800; margin-bottom: 10px; }
+  .login-card p.lead { font-size: 13.5px; color: var(--text-muted); line-height: 1.55; margin-bottom: 22px; }
+  .form-group { margin-bottom: 16px; }
+  .form-label { display: block; font-size: 12.5px; font-weight: 600; color: #cbd5e1; margin-bottom: 8px; }
   .form-input {
     width: 100%;
     background: var(--bg-input);
@@ -238,7 +205,7 @@
     display: flex;
     align-items: flex-start;
     gap: 10px;
-    margin-bottom: 18px;
+    margin-bottom: 16px;
     font-size: 12.5px;
     color: var(--text-muted);
     line-height: 1.45;
@@ -250,28 +217,19 @@
     accent-color: var(--emerald);
     cursor: pointer;
   }
-  .privacy-link {
-    color: var(--emerald);
-    font-weight: 600;
-    text-decoration: underline;
-    cursor: pointer;
-  }
+  .privacy-link { color: var(--emerald); font-weight: 600; text-decoration: underline; cursor: pointer; }
 
   .spam-box {
     background: var(--bg-input);
-    border: 1px solid var(--border);
-    padding: 10px 16px;
+    border: 1px dashed #334155;
+    padding: 12px 16px;
     border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     margin-bottom: 20px;
   }
-  .spam-question {
-    font-size: 13.5px;
-    font-weight: 700;
-    color: var(--amber);
-  }
+  .spam-question { font-size: 13.5px; font-weight: 700; color: var(--amber); }
   .spam-input {
     width: 90px;
     background: var(--bg-panel);
@@ -294,57 +252,47 @@
     font-size: 15px;
     font-weight: 800;
     cursor: pointer;
-    transition: background 0.2s, transform 0.1s;
+    transition: background 0.2s;
   }
   .btn-primary:hover { background: var(--emerald-hover); color: #fff; }
-  .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+  .btn-primary:disabled { opacity: 0.55; cursor: not-allowed; }
 
-  .status-alert {
-    margin-top: 16px;
-    padding: 12px 14px;
-    border-radius: 10px;
-    font-size: 13px;
-    font-weight: 600;
+  /* FASE 2: CAJA PIN */
+  #caja-pin {
     display: none;
-    line-height: 1.4;
-  }
-  .status-alert.error { display: block; background: var(--danger-soft); border: 1px solid var(--danger); color: #fca5a5; }
-  .status-alert.success { display: block; background: var(--emerald-soft); border: 1px solid var(--emerald); color: #6ee7b7; }
-  .status-alert.info { display: block; background: rgba(56, 189, 248, 0.12); border: 1px solid var(--blue); color: #bae6fd; }
-
-  /* CAJA DE PIN (PASO 2) */
-  #step-pin-box {
-    display: none;
-    margin-top: 20px;
-    padding-top: 20px;
+    margin-top: 15px;
+    padding-top: 18px;
     border-top: 1px solid var(--border);
     text-align: center;
   }
-  .pin-input-large {
+  .pin-input-big {
     width: 220px;
-    letter-spacing: 10px;
-    font-size: 24px;
+    font-size: 22px;
+    letter-spacing: 8px;
     font-weight: 800;
     text-align: center;
-    padding: 12px;
     margin: 14px auto;
     display: block;
     background: var(--bg-input);
     border: 2px solid var(--emerald);
     color: #fff;
-    border-radius: 12px;
-  }
-  .btn-back-link {
-    background: transparent;
-    border: none;
-    color: var(--text-muted);
-    font-size: 12.5px;
-    margin-top: 12px;
-    cursor: pointer;
-    text-decoration: underline;
+    padding: 12px;
+    border-radius: 10px;
   }
 
-  /* DASHBOARD VERIFICADO */
+  #msg-exito, #msg-error {
+    display: none;
+    margin-top: 16px;
+    padding: 13px 15px;
+    border-radius: 10px;
+    font-size: 13.5px;
+    font-weight: 600;
+    line-height: 1.4;
+  }
+  #msg-exito { background: var(--emerald-soft); border: 1px solid var(--emerald); color: #6ee7b7; }
+  #msg-error { background: var(--danger-soft); border: 1px solid var(--danger); color: #fca5a5; }
+
+  /* DASHBOARD DEL RESIDENTE Y PROPIETARIA */
   #portal-dashboard { display: none; }
   .dash-toolbar {
     background: var(--bg-panel);
@@ -369,28 +317,18 @@
     font-weight: 700;
     cursor: pointer;
   }
-  .tab-btn.active-res {
+  .tab-btn.active {
     background: var(--emerald-soft);
     border-color: var(--emerald);
     color: var(--emerald);
   }
-  .tab-btn.active-own {
+  .tab-btn.owner-tab {
     background: var(--amber-soft);
     border-color: var(--amber);
     color: var(--amber);
   }
-  .session-controls {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex-wrap: wrap;
-  }
-  .verified-pill {
-    font-size: 12px;
-    font-weight: 800;
-    color: var(--amber);
-    letter-spacing: 0.4px;
-  }
+  .session-controls { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .verified-pill { font-size: 12px; font-weight: 800; color: var(--amber); }
   .btn-outline-sm {
     background: var(--bg-input);
     color: var(--text-main);
@@ -428,6 +366,7 @@
     border: 1px solid var(--border);
     border-radius: 14px;
     padding: 20px;
+    margin-bottom: 20px;
   }
   .panel-header {
     display: flex;
@@ -441,7 +380,7 @@
     padding-bottom: 12px;
     border-bottom: 1px solid var(--border);
   }
-  .data-row {
+  .info-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -449,61 +388,85 @@
     border-bottom: 1px solid rgba(30, 41, 59, 0.6);
     font-size: 13.5px;
   }
-  .data-row:last-child { border-bottom: none; }
-  .data-label { color: var(--text-muted); }
-  .data-val { font-weight: 700; color: #fff; text-align: right; }
-  .data-val.green { color: var(--emerald); }
-  .data-val.amber { color: var(--amber); }
+  .info-row:last-child { border-bottom: none; }
+  .info-label { color: var(--text-muted); }
+  .info-value { font-weight: 700; color: #fff; text-align: right; }
 
-  /* KPIs CONTABLES */
-  .kpi-grid {
+  /* GALERÍA DE FOTOS DEL INMUEBLE (DE TU SCRIPT 5) */
+  .property-gallery {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 14px;
-    margin: 18px 0;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 10px;
+    margin-top: 12px;
   }
-  @media (max-width: 768px) { .kpi-grid { grid-template-columns: 1fr 1fr; } }
-  .kpi-card {
-    background: var(--bg-input);
+  .property-gallery img {
+    width: 100%;
+    height: 105px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    cursor: pointer;
+    transition: transform 0.2s;
+  }
+  .property-gallery img:hover { transform: scale(1.03); border-color: var(--emerald); }
+
+  /* ESTILOS COMPATIBLES CON EL HTML QUE INYECTA MAKE (item-row, badge, etc.) */
+  .item-row {
+    background: rgba(0, 0, 0, 0.35);
+    border-left: 3px solid var(--neon-green);
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+  }
+  .item-warning { border-left-color: #ffaa00; }
+  .item-info { border-left-color: var(--neon-cyan); }
+  .badge { padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; }
+  .badge-success { background: rgba(0, 255, 102, 0.15); color: var(--neon-green); border: 1px solid rgba(0, 255, 102, 0.3); }
+  .badge-pending { background: rgba(255, 170, 0, 0.15); color: #ffaa00; border: 1px solid rgba(255, 170, 0, 0.3); }
+  .badge-info { background: rgba(0, 243, 255, 0.15); color: var(--neon-cyan); border: 1px solid rgba(0, 243, 255, 0.3); }
+
+  /* TARJETAS DEL PANEL DE PROPIETARIA (CARMEN FORCADELL - SCRIPT 3) */
+  .owner-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 18px;
+    margin-top: 14px;
+  }
+  .owner-card {
+    background: var(--bg-card);
     border: 1px solid var(--border);
     border-radius: 12px;
-    padding: 16px;
+    padding: 22px;
     text-align: center;
   }
-  .kpi-title { font-size: 11px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; }
-  .kpi-amount { font-size: 22px; font-weight: 800; margin-bottom: 4px; }
-  .kpi-sub { font-size: 11px; color: var(--text-muted); }
-
-  /* TABLAS */
-  .data-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 13px;
-    margin-top: 10px;
-  }
-  .data-table th {
-    text-align: left;
-    padding: 12px;
-    color: var(--text-muted);
-    font-size: 11.5px;
-    text-transform: uppercase;
-    border-bottom: 1px solid var(--border);
-  }
-  .data-table td {
-    padding: 13px 12px;
-    border-bottom: 1px solid rgba(30, 41, 59, 0.6);
-  }
-  .tag-pill {
+  .owner-card h3 { font-size: 17px; margin-bottom: 8px; color: #fff; }
+  .owner-card p { font-size: 13px; color: var(--text-muted); margin-bottom: 18px; line-height: 1.5; }
+  .btn-radar-alert {
     display: inline-block;
-    padding: 4px 10px;
-    border-radius: 6px;
-    font-size: 11.5px;
+    background: #c0392b;
+    color: #fff;
+    padding: 11px 20px;
+    border-radius: 8px;
     font-weight: 700;
+    font-size: 13px;
+    border: none;
+    cursor: pointer;
   }
-  .tag-green { background: var(--emerald-soft); color: var(--emerald); border: 1px solid rgba(16,185,129,0.3); }
-  .tag-blue { background: rgba(56,189,248,0.15); color: var(--blue); border: 1px solid rgba(56,189,248,0.3); }
-  .tag-amber { background: var(--amber-soft); color: var(--amber); border: 1px solid rgba(245,158,11,0.3); }
-  .tag-red { background: var(--danger-soft); color: #fca5a5; border: 1px solid rgba(239,68,68,0.35); }
+  .btn-radar-info {
+    display: inline-block;
+    background: #2980b9;
+    color: #fff;
+    padding: 11px 20px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 13px;
+    border: none;
+    cursor: pointer;
+  }
 
   /* SIDEBAR DERECHA */
   .sidebar-right {
@@ -520,20 +483,10 @@
     border-radius: 12px;
     padding: 16px;
   }
-  .info-widget h4 {
-    font-size: 12px;
-    font-weight: 800;
-    color: var(--emerald);
-    text-transform: uppercase;
-    margin-bottom: 12px;
-  }
-  .info-widget p {
-    font-size: 12.5px;
-    color: var(--text-muted);
-    line-height: 1.55;
-  }
+  .info-widget h4 { font-size: 12px; font-weight: 800; color: var(--emerald); text-transform: uppercase; margin-bottom: 12px; }
+  .info-widget p { font-size: 12.5px; color: var(--text-muted); line-height: 1.55; }
 
-  /* BARRA FIJA INFERIOR (SOLO ELENA IA CON AVATAR) */
+  /* BARRA INFERIOR (SOLO ELENA IA CON AVATAR) */
   .bottom-bar {
     position: fixed;
     bottom: 0;
@@ -570,12 +523,12 @@
     border: 2px solid #fff;
   }
 
-  /* MODALES Y WIDGET DE CHAT */
+  /* MODALES Y VISOR DE DOCUMENTOS */
   .modal-backdrop {
     display: none;
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.78);
+    background: rgba(0, 0, 0, 0.82);
     z-index: 2000;
     align-items: center;
     justify-content: center;
@@ -589,6 +542,13 @@
     width: 100%;
     padding: 26px;
   }
+  .modal-card.large-viewer {
+    max-width: 960px;
+    height: 82vh;
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+  }
   #elena-chat-window {
     display: none;
     position: fixed;
@@ -599,7 +559,7 @@
     background: var(--bg-panel);
     border: 1px solid var(--emerald);
     border-radius: 16px;
-    box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.85);
     z-index: 1800;
     flex-direction: column;
     overflow: hidden;
@@ -615,7 +575,7 @@
       <a href="https://app.level.immo/" class="brand-logo">
         L<span class="brand-dot"></span>Level.immo
       </a>
-      <div class="live-clock" id="live-clock">01/11/2026 | 22:50:00</div>
+      <div class="live-clock" id="live-clock">01/11/2026 | 23:00:00</div>
 
       <nav class="nav-menu">
         <a href="https://app.level.immo/demanda-activa/" class="nav-link" data-i18n="nav_demanda">📡 Demanda Activa</a>
@@ -638,7 +598,6 @@
 
   <!-- ================= COLUMNA CENTRAL ================= -->
   <main class="main-stage">
-    <!-- TOPBAR CON SELECTOR DE IDIOMAS COMPLETO -->
     <header class="topbar">
       <div class="topbar-title" data-i18n="topbar_title">Consola PropTech - Reverse Market & Gestión de Inquilinos</div>
       <div class="topbar-right">
@@ -656,21 +615,23 @@
     </header>
 
     <div class="stage-content">
-      <!-- VISTA 1: FORMULARIO DE ACCESO Y VERIFICACIÓN REAL -->
+      <!-- ====================================================
+           SECCIÓN 1: LOGIN (CONECTADO A TOC-TOC INQUILINOS)
+           ==================================================== -->
       <section id="login-section" class="login-card">
         <h1 data-i18n="login_title">Acceso Residentes y Propietarios</h1>
-        <p class="lead" data-i18n="login_desc">
-          Introduce tu documento identificativo para verificar tu identidad en nuestra base de datos y recibir tu código PIN único por WhatsApp.
+        <p class="lead" id="desc-login" data-i18n="login_desc">
+          Introduce tu DNI/NIE para acceder de forma segura a tu panel privado y recibir tu PIN temporal de 4 cifras por WhatsApp.
         </p>
 
-        <div id="step-dni-box">
+        <!-- FASE 1: PEDIR DNI -->
+        <div id="fase-dni">
           <div class="form-group">
             <label class="form-label" data-i18n="label_dni">DNI / NIE del Titular (Conecta con Elena IA)</label>
-            <input type="text" id="input-dni" class="form-input" placeholder="Ej: 00000000X / X0000000T" autocomplete="off">
+            <input type="text" id="input-dni" class="form-input" placeholder="Ej: 00000000X / Y0000000Z" autocomplete="off">
           </div>
 
           <div class="privacy-box">
-            <!-- DESMARCADO POR DEFECTO -->
             <input type="checkbox" id="chk-privacidad">
             <label for="chk-privacidad">
               <span data-i18n="chk_accept_prefix">Acepto las</span>
@@ -679,209 +640,157 @@
             </label>
           </div>
 
-          <div class="spam-box">
-            <span class="spam-question" id="spam-label">Anti-spam: ¿Cuánto es 4 + 2?</span>
-            <input type="number" id="input-spam" class="spam-input" placeholder="?">
+          <div class="spam-box" id="caja-mates">
+            <span class="spam-question" id="lvl-math-question">Por seguridad, ¿cuánto es ...?</span>
+            <input type="number" id="input-math" class="spam-input" placeholder="?">
           </div>
 
-          <button type="button" id="btn-solicitar-pin" class="btn-primary" onclick="solicitarPinMake()" data-i18n="btn_request_pin">
+          <button type="button" class="btn-primary" id="btn-acceso" onclick="llamarAlWebhook()" data-i18n="btn_request_pin">
             Solicitar Verificación VIP →
           </button>
         </div>
 
-        <!-- PASO 2: INTRODUCIR EL PIN DE 4 DÍGITOS RECIBIDO EN WHATSAPP -->
-        <div id="step-pin-box">
-          <p style="color:var(--emerald); font-weight:700; font-size:14px; margin-bottom:6px;" data-i18n="pin_sent_title">
-            ¡Documento verificado! Revisa tu WhatsApp
+        <!-- FASE 2: PEDIR PIN ENVIADO POR MAKE -->
+        <div id="caja-pin">
+          <div style="font-size: 34px; margin-bottom: 8px;">📲</div>
+          <div style="color: var(--emerald); font-weight: 800; font-size: 16px; margin-bottom: 10px;" data-i18n="pin_sent_title">
+            ¡Identidad verificada!
+          </div>
+          <p style="color: var(--text-muted); font-size: 13.5px; margin-bottom: 16px; line-height: 1.5;" data-i18n="pin_sent_desc">
+            Te acabamos de enviar un enlace y un <strong>PIN temporal de 4 cifras</strong> a tu WhatsApp. Introduce el PIN aquí abajo para abrir tu expediente a pantalla completa:
           </p>
-          <p style="color:var(--text-muted); font-size:12.5px;" data-i18n="pin_sent_desc">
-            Introduce el código PIN de 4 dígitos que acabamos de enviarte por WhatsApp para abrir tu expediente:
-          </p>
-          <input type="text" id="input-pin" class="pin-input-large" maxlength="4" placeholder="••••" autocomplete="one-time-code">
-          <button type="button" id="btn-validar-pin" class="btn-primary" onclick="validarPinMake()" data-i18n="btn_enter_portal">
+          <input type="number" id="input-pin-user" class="pin-input-big" placeholder="••••">
+          <button type="button" class="btn-primary" id="btn-validar-pin" onclick="validarPin()" data-i18n="btn_enter_portal">
             Entrar al Portal a Pantalla Completa →
           </button>
-          <button type="button" class="btn-back-link" onclick="volverAlPasoDni()" data-i18n="btn_back">← Volver atrás</button>
+          <button type="button" onclick="volverFaseDni()" style="background:transparent; border:none; color:var(--text-muted); margin-top:12px; text-decoration:underline; cursor:pointer; font-size:12.5px;" data-i18n="btn_back">
+            ← Volver atrás
+          </button>
         </div>
 
-        <div id="login-alert" class="status-alert"></div>
+        <div id="msg-exito"></div>
+        <div id="msg-error"></div>
       </section>
 
-      <!-- VISTA 2: DASHBOARD CON DATOS REALES DE LARK -->
+      <!-- ====================================================
+           SECCIÓN 2: PORTAL DEL RESIDENTE Y PROPIETARIA
+           (CONECTADO A PORTAL DATOS INQUILINOS)
+           ==================================================== -->
       <section id="portal-dashboard">
         <div class="dash-toolbar">
           <div class="role-tabs">
-            <button type="button" id="tab-residente-btn" class="tab-btn active-res" onclick="cambiarPestanaRol('residente')" data-i18n="tab_resident">
-              🏠 Vista Residente (Inquilino)
+            <button type="button" id="btn-tab-residente" class="tab-btn active" onclick="mostrarVistaInterna('residente')" data-i18n="tab_resident">
+              🏠 Expediente del Residente
             </button>
-            <button type="button" id="tab-propietario-btn" class="tab-btn" style="display:none;" onclick="cambiarPestanaRol('propietario')" data-i18n="tab_owner">
-              💼 Vista Propietario (Cartera y Subida de Facturas PDF)
+            <button type="button" id="btn-tab-propietaria" class="tab-btn owner-tab" style="display:none;" onclick="mostrarVistaInterna('propietaria')" data-i18n="tab_owner">
+              💼 Área Propietaria (Radar de Morosidad y Cartera)
             </button>
           </div>
 
           <div class="session-controls">
-            <span class="verified-pill" id="badge-titular-top">TITULAR VERIFICADO</span>
+            <span class="verified-pill" id="badge-titular-activo">VERIFICADO</span>
             <button type="button" class="btn-outline-sm" onclick="alternarPantallaCompleta()" data-i18n="btn_toggle_sidebars">
               ⛶ Mostrar/Ocultar Paneles Laterales
             </button>
-            <button type="button" class="btn-logout" onclick="cerrarSesionPortal()" data-i18n="btn_logout">
+            <button type="button" class="btn-logout" onclick="cerrarSesion()" data-i18n="btn_logout">
               ✕ Cerrar Sesión
             </button>
           </div>
         </div>
 
-        <!-- SUBVISTA PROPIETARIO: SUBIDA DE FACTURAS -->
-        <div id="owner-upload-panel" class="panel-box" style="display:none; margin-bottom:22px; border-color:var(--amber);">
+        <!-- SUBVISTA EXCLUSIVA PROPIETARIA (CARMEN FORCADELL - SCRIPT 3) -->
+        <div id="vista-propietaria-carmen" class="panel-box" style="display:none; border-color:var(--amber);">
           <div class="panel-header">
-            <span data-i18n="owner_panel_title">📂 PANEL DEL PROPIETARIO · SUBIDA DE FACTURAS PDF Y SUMINISTROS</span>
-            <span class="tag-pill tag-green">AUTOGESTIÓN PROPIETARIOS</span>
+            <span>👑 ÁREA SEGURA DEL PROPIETARIO · GESTIÓN EN TIEMPO REAL</span>
+            <span class="badge badge-info">3 PROPIEDADES · 4 INQUILINOS</span>
           </div>
-          <form id="form-subir-factura" onsubmit="subirFacturaPropietario(event)">
-            <div class="grid-2col" style="margin-bottom:14px;">
-              <div>
-                <label class="form-label" data-i18n="lbl_property">Propiedad</label>
-                <select name="propiedad" id="select-propiedad-owner" class="form-input" required></select>
-              </div>
-              <div>
-                <label class="form-label" data-i18n="lbl_concept">Concepto</label>
-                <select name="concepto" class="form-input" required>
-                  <option value="Agua">Agua (Factura Real)</option>
-                  <option value="Electricidad">Electricidad (Factura Real)</option>
-                  <option value="Agua+Luz PROVISIONAL">Agua+Luz PROVISIONAL</option>
-                  <option value="Cuota Alquiler">Cuota Alquiler</option>
-                  <option value="Varios">Varios</option>
-                </select>
-              </div>
-              <div>
-                <label class="form-label" data-i18n="lbl_status">Estado Recibo</label>
-                <select name="estado" class="form-input" required>
-                  <option value="Pendiente">Pendiente</option>
-                  <option value="Abonado a regularizar">Abonado a regularizar</option>
-                  <option value="Abonado">Abonado</option>
-                </select>
-              </div>
-              <div>
-                <label class="form-label" data-i18n="lbl_month">Mes</label>
-                <input type="text" name="mes" class="form-input" placeholder="Ej: Noviembre 2026" required>
-              </div>
-              <div>
-                <label class="form-label" data-i18n="lbl_amount">Importe (€)</label>
-                <input type="number" step="0.01" name="importe" class="form-input" placeholder="Ej: 50.00" required>
-              </div>
-              <div>
-                <label class="form-label" data-i18n="lbl_pdf">Adjuntar Factura PDF</label>
-                <input type="file" name="archivo_pdf" accept=".pdf,image/*" class="form-input">
-              </div>
-            </div>
-            <div class="form-group">
-              <label class="form-label" data-i18n="lbl_notes">Concepto / Observaciones</label>
-              <input type="text" name="observaciones" class="form-input" placeholder="Detalle del recibo o suministro">
-            </div>
-            <button type="submit" class="btn-primary" data-i18n="btn_upload_invoice">💾 Registrar Factura y Actualizar Estado Contable</button>
-          </form>
-        </div>
-
-        <!-- DATOS REALES DEL EXPEDIENTE -->
-        <div class="grid-2col">
-          <div class="panel-box">
-            <div class="panel-header">
-              <span data-i18n="exp_box_title">🏠 EXPEDIENTE Y PROPIEDAD ARRENDADA</span>
-              <span class="tag-pill tag-green" id="exp-id-badge">—</span>
-            </div>
-            <div class="data-row">
-              <span class="data-label" data-i18n="lbl_tenant">Titular / Arrendatario:</span>
-              <span class="data-val" id="val-titular">—</span>
-            </div>
-            <div class="data-row">
-              <span class="data-label">DNI / NIE:</span>
-              <span class="data-val" id="val-dni">—</span>
-            </div>
-            <div class="data-row">
-              <span class="data-label" data-i18n="lbl_property">Propiedad:</span>
-              <span class="data-val green" id="val-propiedad">—</span>
-            </div>
-            <div class="data-row">
-              <span class="data-label" data-i18n="lbl_address">Dirección Exacta:</span>
-              <span class="data-val" id="val-direccion">—</span>
-            </div>
-            <div class="data-row">
-              <span class="data-label" data-i18n="lbl_rent_fee">Cuota Alquiler:</span>
-              <span class="data-val green" id="val-cuota">—</span>
-            </div>
-            <div class="data-row">
-              <span class="data-label" data-i18n="lbl_contract_date">Fecha del Contrato:</span>
-              <span class="data-val" id="val-fecha-contrato">—</span>
-            </div>
-            <div class="data-row">
-              <span class="data-label" data-i18n="lbl_pending_debt">Deuda / Saldo Pendiente:</span>
-              <span class="data-val amber" id="val-deuda">—</span>
-            </div>
-          </div>
-
-          <div class="panel-box">
-            <div class="panel-header">
-              <span data-i18n="inc_box_title">🔔 AVISOS, INCIDENCIAS Y COMUNICACIÓN</span>
-            </div>
-            <div id="contenedor-avisos-reales" style="margin-bottom:18px; font-size:13px; color:var(--text-muted);">
-              <!-- Se llena dinámicamente desde Make -->
-            </div>
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-              <button type="button" class="btn-outline-sm" style="padding:12px; font-weight:700;" onclick="abrirChatElenaConAsunto('Reportar Avería')" data-i18n="btn_report_issue">
-                🛠️ Reportar Avería
+          <p style="font-size:14px; color:var(--text-muted); margin-bottom:14px;">
+            Hola, <strong style="color:#fff;" id="owner-greeting-name">Propietario</strong>. Selecciona qué información de tus inmuebles deseas consultar en tiempo real:
+          </p>
+          <div class="owner-cards-grid">
+            <div class="owner-card">
+              <h3>🚨 Radar de Morosidad</h3>
+              <p>Control de recibos pendientes, impagos y estado de los cobros en tiempo real.</p>
+              <button type="button" class="btn-radar-alert" onclick="abrirVisorSeguro('Radar de Morosidad - Recibos Pendientes', 'shrjprJA7wQQktpJi5V0OeaWXE2')">
+                Ver Recibos Pendientes
               </button>
-              <button type="button" class="btn-outline-sm" style="padding:12px; font-weight:700;" onclick="abrirChatElenaConAsunto('Enviar Justificante de Pago')" data-i18n="btn_send_receipt">
-                📎 Enviar Justificante
+            </div>
+            <div class="owner-card">
+              <h3>🏛️ Cartera de Inmuebles</h3>
+              <p>Estado de los contratos actuales, fechas de revisión e información de inquilinos.</p>
+              <button type="button" class="btn-radar-info" onclick="abrirVisorSeguro('Cartera de Inmuebles y Estado de Contratos', 'shrjp3R5xaNNmgVEIQPewpnzgte')">
+                Ver Estado de Contratos
               </button>
             </div>
           </div>
         </div>
 
-        <!-- RESUMEN CONTABLE REAL -->
-        <div class="panel-box" style="margin-bottom:22px;">
-          <div class="panel-header">
-            <span data-i18n="acc_box_title">📊 ESTADO CONTABLE Y REGULARIZACIÓN DE SUMINISTROS</span>
-          </div>
-          <div class="kpi-grid">
-            <div class="kpi-card">
-              <div class="kpi-title" data-i18n="kpi_rent_paid">ALQUILERES ABONADOS</div>
-              <div class="kpi-amount" style="color:var(--emerald);" id="kpi-alquileres">0,00 €</div>
-            </div>
-            <div class="kpi-card">
-              <div class="kpi-title" data-i18n="kpi_utilities_real">FACTURAS REALES AGUA + LUZ</div>
-              <div class="kpi-amount" style="color:var(--blue);" id="kpi-suministros">0,00 €</div>
-            </div>
-            <div class="kpi-card">
-              <div class="kpi-title" data-i18n="kpi_provisional">ABONADO A REGULARIZAR</div>
-              <div class="kpi-amount" style="color:var(--emerald);" id="kpi-provisional">0,00 €</div>
-            </div>
-            <div class="kpi-card">
-              <div class="kpi-title" data-i18n="kpi_balance">SALDO PENDIENTE</div>
-              <div class="kpi-amount" style="color:var(--danger);" id="kpi-saldo">0,00 €</div>
-            </div>
-          </div>
-        </div>
+        <!-- SUBVISTA EXPEDIENTE DEL RESIDENTE (SCRIPT 5 + ACCESOS RÁPIDOS SCRIPT 1) -->
+        <div id="vista-residente-contenido">
+          <div class="grid-2col">
+            <!-- TARJETA 1: EXPEDIENTE Y GALERÍA DE FOTOS -->
+            <div class="panel-box" style="margin-bottom:0;">
+              <div class="panel-header">
+                <span data-i18n="exp_box_title">🏠 EXPEDIENTE Y PROPIEDAD</span>
+                <span class="badge badge-success">ACTIVO</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label" data-i18n="lbl_tenant">Inquilino / Titular:</span>
+                <span class="info-value" id="val-nombre">---</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">DNI / NIE:</span>
+                <span class="info-value" id="val-dni">---</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label" data-i18n="lbl_property">Inmueble:</span>
+                <span class="info-value" style="color:var(--emerald);" id="val-propiedad">---</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label" data-i18n="lbl_address">Dirección:</span>
+                <span class="info-value" id="val-direccion">---</span>
+              </div>
 
-        <!-- HISTORIAL DE RECIBOS REALES DE LARK -->
-        <div class="panel-box">
-          <div class="panel-header">
-            <span data-i18n="hist_box_title">🧾 HISTORIAL DE RECIBOS Y SUMINISTROS EN BASE DE DATOS</span>
+              <div style="margin-top: 14px; font-size: 12.5px; font-weight:600; color: var(--text-muted);" data-i18n="lbl_photos">
+                Fotografías del Inmueble:
+              </div>
+              <div class="property-gallery" id="val-fotos"></div>
+
+              <!-- BOTONES DE CONSULTA DOCUMENTAL (SCRIPT 1) -->
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:16px; padding-top:14px; border-top:1px solid var(--border);">
+                <button type="button" class="btn-outline-sm" style="padding:10px; font-weight:700;" onclick="abrirVisorSeguro('Consulta de Contrato y Propiedad', 'shrjprjr3T8Ue0wso7uj435u9Th')">
+                  📄 Tu Contrato de Alquiler
+                </button>
+                <button type="button" class="btn-outline-sm" style="padding:10px; font-weight:700;" onclick="abrirChatElenaConAsunto('Reportar Avería o Consulta')">
+                  🛠️ ¿Dudas o Averías? Conserje 24/7
+                </button>
+              </div>
+            </div>
+
+            <!-- TARJETA 2: AVISOS GENERALES E INCIDENCIAS ACTIVAS (HTML DINÁMICO DE MAKE) -->
+            <div style="display:flex; flex-direction:column; gap:20px;">
+              <div class="panel-box" style="margin-bottom:0;">
+                <div class="panel-header">
+                  <span data-i18n="avisos_box_title">📢 AVISOS GENERALES</span>
+                </div>
+                <div id="val-avisos" style="font-size:13.5px; color:var(--text-muted);">---</div>
+              </div>
+
+              <div class="panel-box" style="margin-bottom:0;">
+                <div class="panel-header">
+                  <span data-i18n="inc_box_title">🛠️ INCIDENCIAS ACTIVAS</span>
+                </div>
+                <div id="val-incidencias" style="font-size:13.5px; color:var(--text-muted);">---</div>
+              </div>
+            </div>
           </div>
-          <div style="overflow-x:auto;">
-            <table class="data-table">
-              <thead>
-                <tr>
-                  <th>ID RECIBO / MES</th>
-                  <th data-i18n="lbl_property">PROPIEDAD</th>
-                  <th data-i18n="lbl_concept">CONCEPTO</th>
-                  <th data-i18n="lbl_notes">OBSERVACIONES</th>
-                  <th data-i18n="lbl_amount">IMPORTE</th>
-                  <th data-i18n="lbl_status">ESTADO</th>
-                </tr>
-              </thead>
-              <tbody id="tabla-recibos-body">
-                <!-- Filas inyectadas únicamente desde Lark/Make -->
-              </tbody>
-            </table>
+
+          <!-- TARJETA 3: RECIBOS Y PAGOS (HTML DINÁMICO DE MAKE) -->
+          <div class="panel-box">
+            <div class="panel-header">
+              <span data-i18n="recibos_box_title">🧾 RECIBOS, SUMINISTROS Y PAGOS</span>
+            </div>
+            <div id="val-recibos" style="font-size:13.5px; color:var(--text-muted);">---</div>
           </div>
         </div>
       </section>
@@ -892,31 +801,31 @@
   <aside class="sidebar-right">
     <div class="info-widget">
       <h4 data-i18n="side_sec_title">🛡️ SEGURIDAD MULTI-ROL</h4>
-      <div class="data-row">
-        <span class="data-label" data-i18n="side_verif">Verificación:</span>
-        <span class="tag-pill tag-green">PIN WhatsApp</span>
+      <div class="info-row">
+        <span class="info-label" data-i18n="side_verif">Verificación:</span>
+        <span class="badge badge-success">PIN WhatsApp 4 cifras</span>
       </div>
-      <div class="data-row">
-        <span class="data-label" data-i18n="side_roles">Roles:</span>
-        <span class="data-val" style="font-size:12px;">Inquilino / Propietario</span>
+      <div class="info-row">
+        <span class="info-label" data-i18n="side_roles">Roles Soportados:</span>
+        <span class="info-value" style="font-size:12px;">Inquilino / Propietario</span>
       </div>
-      <div class="data-row">
-        <span class="data-label" data-i18n="side_autogen">Autogeneración:</span>
-        <span class="data-val" style="font-size:12px;">Día 25 de cada mes</span>
+      <div class="info-row">
+        <span class="info-label" data-i18n="side_autogen">Autogeneración:</span>
+        <span class="info-value" style="font-size:12px;">Día 25 de cada mes</span>
       </div>
     </div>
 
     <div class="info-widget">
       <h4 data-i18n="side_rule_title">⚖️ REGLA DE REGULARIZACIÓN</h4>
       <p data-i18n="side_rule_desc">
-        El motor contable suma todos los recibos de suministros emitidos (Agua y Electricidad) y los compara automáticamente con la suma de importes en estado Abonado más Abonado a regularizar.
+        El motor contable suma todos los recibos de suministros emitidos (Agua y Electricidad) y los compara con los importes en estado Abonado más Abonado a regularizar.
       </p>
     </div>
 
     <div class="info-widget">
-      <h4 data-i18n="side_sup_title">💬 SOPORTE DIRECTO 24/7</h4>
+      <h4 data-i18n="side_sup_title">💬 CONSERJE DIGITAL 24/7</h4>
       <p style="margin-bottom:14px;" data-i18n="side_sup_desc">
-        Asistencia digital inmediata para consultas de alquiler, incidencias o dudas sobre recibos.
+        Atención automática para propietarios e inquilinos sobre incidencias, avisos o estado de recibos.
       </p>
       <button type="button" class="btn-primary" onclick="abrirChatElena()" data-i18n="btn_talk_elena">
         💬 Hablar con Elena IA
@@ -939,8 +848,8 @@
     <div style="display:flex; align-items:center; gap:10px;">
       <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=120&q=80" alt="Elena IA" style="width:36px; height:36px; border-radius:50%; object-fit:cover; border:2px solid var(--emerald);">
       <div>
-        <div style="font-weight:800; font-size:13.5px; color:#fff;">Elena IA · Gestión Alquileres</div>
-        <div id="chat-role-indicator" style="font-size:11px; color:var(--emerald);">● En línea (Filtro Activo)</div>
+        <div style="font-weight:800; font-size:13.5px; color:#fff;">Elena Casamajor · IA Alquileres</div>
+        <div id="chat-role-indicator" style="font-size:11px; color:var(--emerald);">● Conserje Digital 24/7</div>
       </div>
     </div>
     <button type="button" onclick="cerrarChatElena()" style="background:transparent; border:none; color:var(--text-muted); font-size:18px; cursor:pointer;">✕</button>
@@ -948,7 +857,7 @@
 
   <div id="chat-messages-box" style="flex:1; padding:14px; overflow-y:auto; display:flex; flex-direction:column; gap:10px; font-size:13px;">
     <div style="background:#1e293b; color:#e2e8f0; padding:10px 12px; border-radius:12px 12px 12px 2px; max-width:86%; line-height:1.45;" data-i18n="chat_welcome">
-      Hola, soy Elena IA. ¿En qué puedo ayudarte respecto a tu alquiler, suministros o incidencias de la propiedad?
+      Hola, soy Elena IA. ¿En qué puedo ayudarte hoy con tu contrato de alquiler, suministros o incidencias de la vivienda?
     </div>
   </div>
 
@@ -956,6 +865,17 @@
     <input type="text" id="chat-input-text" class="form-input" style="padding:9px 12px; font-size:13px;" placeholder="Escribe tu mensaje..." required>
     <button type="submit" id="chat-send-btn" style="background:var(--emerald); color:#042f2e; border:none; padding:0 16px; border-radius:8px; font-weight:800; cursor:pointer;">➤</button>
   </form>
+</div>
+
+<!-- ================= VISOR SEGURO INTEGRADO (SIN EXPONER URL EXTERNA) ================= -->
+<div id="modal-visor-seguro" class="modal-backdrop">
+  <div class="modal-card large-viewer">
+    <div style="display:flex; justify-content:space-between; align-items:center; padding-bottom:10px; border-bottom:1px solid var(--border); margin-bottom:10px;">
+      <strong id="visor-titulo" style="color:var(--emerald); font-size:14px;">Consulta Cifrada en Tiempo Real</strong>
+      <button type="button" class="btn-logout" onclick="cerrarVisorSeguro()">✕ Cerrar Visor</button>
+    </div>
+    <iframe id="visor-iframe" src="about:blank" style="flex:1; width:100%; border:none; border-radius:8px; background:#090d16;"></iframe>
+  </div>
 </div>
 
 <!-- ================= MODALES LEGALES ================= -->
@@ -975,134 +895,137 @@
     <h3 style="color:var(--emerald); margin-bottom:12px;">Condiciones de Acceso y Política de Privacidad (RGPD)</h3>
     <p style="font-size:13.5px; color:var(--text-muted); line-height:1.6; margin-bottom:18px;">
       <strong>Responsable:</strong> LEVEL PUNTO IMMO 24365 SLU (NIF B-26745430).<br><br>
-      <strong>Finalidad:</strong> Verificar la identidad del titular (inquilino o propietario) mediante el envío de un código PIN temporal a su teléfono móvil vía WhatsApp y mostrar el estado contable real de rentas, suministros e incidencias.<br><br>
-      <strong>Seguridad:</strong> Acceso estrictamente restringido a documentos previamente dados de alta en la base de datos de gestión.
+      <strong>Finalidad:</strong> Verificar la identidad del residente o propietario mediante código PIN enviado a su WhatsApp y mostrar únicamente la información correspondiente a su expediente de arrendamiento.<br><br>
+      <strong>Seguridad:</strong> Acceso exclusivo para personal y usuarios autorizados registrados en nuestra base de datos.
     </p>
     <button type="button" class="btn-primary" onclick="cerrarModal('modal-privacidad')">Entendido y Cerrar</button>
   </div>
 </div>
 
-<!-- ================= LÓGICA JAVASCRIPT Y MULTIDIOMA ================= -->
+<!-- =========================================================================
+     MOTOR JAVASCRIPT UNIFICADO (EXACTO A TUS WEBHOOKS DE MAKE DEL INFORME TS.PDF)
+     ========================================================================= -->
 <script>
-/**
- * 1. TUS 3 WEBHOOKS OFICIALES EN MAKE (EU1)
- */
-const MAKE_WEBHOOKS = {
-  TOC_TOC_INQUILINOS: "https://hook.eu1.make.com/flpdnde7wmt72tovyup6yjfkk7yuwmy6",
-  PORTAL_DATOS_INQUILINOS: "https://hook.eu1.make.com/tfk9n3nefcufj183eth64m2e257kch5q",
-  BOT_CHAT: "https://hook.eu1.make.com/8xd81xb9t3mg2ycwez1czd3quwhf2nef"
+const URL_WEBHOOK_TOC_TOC = "https://hook.eu1.make.com/flpdnde7wmt72tovyup6yjfkk7yuwmy6";
+const URL_WEBHOOK_PORTAL_DATOS = "https://hook.eu1.make.com/tfk9n3nefcufj183eth64m2e257kch5q";
+const URL_WEBHOOK_BOT_CHAT = "https://hook.eu1.make.com/8xd81xb9t3mg2ycwez1czd3quwhf2nef";
+
+// Variables globales idénticas a tu Script 4 para compatibilidad total con Make
+window.respuestaCorrectaLevel = 0;
+window.datosEnSecreto = null;
+window.sesionActiva = {
+  dni: "",
+  codigo_inquilino: "",
+  rol: "INQUILINO", // "INQUILINO" | "PROPIETARIO"
+  tabla_filtro: "PROPERTY_INQUILINOS", // Para tu filtro en BOT CHAT
+  propiedad: "",
+  idioma: "es"
 };
 
-/**
- * 2. DICCIONARIO COMPLETO DE IDIOMAS (ES, CA, EN, FR, DE, NL, RU)
- */
+// Diccionario Multiidioma Completo (7 idiomas)
 const I18N = {
   es: {
     nav_demanda: "📡 Demanda Activa", nav_mercado: "🏢 Mercado Real", nav_inquilinos: "🔑 Acceso a Usuarios - Inquilinos",
     nav_chivatazo: "🔥 Chivatazo Nacional", nav_advisors: "💼 Únete al Equipo de Advisors en tu Zona",
     topbar_title: "Consola PropTech - Reverse Market & Gestión de Inquilinos", badge_private: "Área Privada Verificada",
     login_title: "Acceso Residentes y Propietarios",
-    login_desc: "Introduce tu documento identificativo para verificar tu identidad en nuestra base de datos y recibir tu código PIN único por WhatsApp.",
+    login_desc: "Introduce tu DNI/NIE para acceder de forma segura a tu panel privado y recibir tu PIN temporal de 4 cifras por WhatsApp.",
     label_dni: "DNI / NIE del Titular (Conecta con Elena IA)",
     chk_accept_prefix: "Acepto las", chk_accept_link: "Condiciones y la Privacidad",
     chk_accept_suffix: "Autorizo la consulta cifrada de mi expediente y el envío de PIN por WhatsApp.",
     btn_request_pin: "Solicitar Verificación VIP →",
-    pin_sent_title: "¡Documento verificado! Revisa tu WhatsApp",
-    pin_sent_desc: "Introduce el código PIN de 4 dígitos que acabamos de enviarte por WhatsApp para abrir tu expediente:",
+    pin_sent_title: "¡Identidad verificada!",
+    pin_sent_desc: "Te acabamos de enviar un enlace y un PIN temporal de 4 cifras a tu WhatsApp. Introduce el PIN aquí abajo para abrir tu expediente:",
     btn_enter_portal: "Entrar al Portal a Pantalla Completa →", btn_back: "← Volver atrás",
-    tab_resident: "🏠 Vista Residente (Inquilino)", tab_owner: "💼 Vista Propietario (Cartera y Subida de Facturas PDF)",
+    tab_resident: "🏠 Expediente del Residente", tab_owner: "💼 Área Propietaria (Radar de Morosidad y Cartera)",
     btn_toggle_sidebars: "⛶ Mostrar/Ocultar Paneles Laterales", btn_logout: "✕ Cerrar Sesión",
-    exp_box_title: "🏠 EXPEDIENTE Y PROPIEDAD ARRENDADA", inc_box_title: "🔔 AVISOS, INCIDENCIAS Y COMUNICACIÓN",
-    acc_box_title: "📊 ESTADO CONTABLE Y REGULARIZACIÓN DE SUMINISTROS", hist_box_title: "🧾 HISTORIAL DE RECIBOS Y SUMINISTROS EN BASE DE DATOS",
+    exp_box_title: "🏠 EXPEDIENTE Y PROPIEDAD", avisos_box_title: "📢 AVISOS GENERALES",
+    inc_box_title: "🛠️ INCIDENCIAS ACTIVAS", recibos_box_title: "🧾 RECIBOS, SUMINISTROS Y PAGOS",
     btn_talk_elena: "💬 Hablar con Elena IA",
-    chat_welcome: "Hola, soy Elena IA. ¿En qué puedo ayudarte respecto a tu alquiler, suministros o incidencias de la propiedad?"
+    chat_welcome: "Hola, soy Elena IA. ¿En qué puedo ayudarte hoy con tu contrato de alquiler, suministros o incidencias de la vivienda?"
   },
   ca: {
     nav_demanda: "📡 Demanda Activa", nav_mercado: "🏢 Mercat Real", nav_inquilinos: "🔑 Accés a Usuaris - Llogaters",
     nav_chivatazo: "🔥 Chivatazo Nacional", nav_advisors: "💼 Uneix-te a l'Equip d'Advisors a la teva Zona",
     topbar_title: "Consola PropTech - Reverse Market & Gestió de Llogaters", badge_private: "Àrea Privada Verificada",
     login_title: "Accés Residents i Propietaris",
-    login_desc: "Introdueix el teu document identificatiu per verificar la teva identitat a la base de dades i rebre el teu codi PIN únic per WhatsApp.",
+    login_desc: "Introdueix el teu DNI/NIE per accedir de forma segura al teu panell privat i rebre el teu PIN temporal de 4 xifres per WhatsApp.",
     label_dni: "DNI / NIE del Titular (Connecta amb Elena IA)",
     chk_accept_prefix: "Accepto les", chk_accept_link: "Condicions i la Privacitat",
     chk_accept_suffix: "Autoritzo la consulta xifrada del meu expedient i l'enviament del PIN per WhatsApp.",
     btn_request_pin: "Sol·licitar Verificació VIP →",
-    pin_sent_title: "Document verificat! Revisa el teu WhatsApp",
-    pin_sent_desc: "Introdueix el codi PIN de 4 dígits que t'acabem d'enviar per WhatsApp per obrir el teu expedient:",
+    pin_sent_title: "Identitat verificada!",
+    pin_sent_desc: "T'acabem d'enviar un enllaç i un PIN temporal de 4 xifres al teu WhatsApp. Introdueix el PIN aquí sota:",
     btn_enter_portal: "Entrar al Portal a Pantalla Completa →", btn_back: "← Tornar enrere",
-    tab_resident: "🏠 Vista Resident (Llogater)", tab_owner: "💼 Vista Propietari (Cartera i Pujada de Factures PDF)",
+    tab_resident: "🏠 Expedient del Resident", tab_owner: "💼 Àrea Propietària (Radar de Morositat i Cartera)",
     btn_toggle_sidebars: "⛶ Mostrar/Ocultar Panells Laterals", btn_logout: "✕ Tancar Sessió",
-    exp_box_title: "🏠 EXPEDIENT I PROPIETAT ARRENDADA", inc_box_title: "🔔 AVISOS, INCIDÈNCIES I COMUNICACIÓ",
-    acc_box_title: "📊 ESTAT COMPTABLE I REGULARITZACIÓ DE SUBMINISTRAMENTS", hist_box_title: "🧾 HISTORIAL DE REBUTS I SUBMINISTRAMENTS",
+    exp_box_title: "🏠 EXPEDIENT I PROPIETAT", avisos_box_title: "📢 AVISOS GENERALS",
+    inc_box_title: "🛠️ INCIDÈNCIES ACTIVES", recibos_box_title: "🧾 REBUTS, SUBMINISTRAMENTS I PAGAMENTS",
     btn_talk_elena: "💬 Parlar amb Elena IA",
-    chat_welcome: "Hola, sóc l'Elena IA. En què puc ajudar-te respecte al teu lloguer, subministraments o incidències?"
+    chat_welcome: "Hola, sóc l'Elena IA. En què puc ajudar-te avui amb el teu contracte de lloguer, subministraments o incidències?"
   },
   en: {
     nav_demanda: "📡 Active Demand", nav_mercado: "🏢 Real Market", nav_inquilinos: "🔑 User & Tenant Access",
     nav_chivatazo: "🔥 National Tip-Off", nav_advisors: "💼 Join the Advisors Team in your Area",
     topbar_title: "PropTech Console - Reverse Market & Tenant Management", badge_private: "Verified Private Area",
     login_title: "Residents & Owners Access",
-    login_desc: "Enter your ID document to verify your record in our database and receive your unique 4-digit PIN code via WhatsApp.",
+    login_desc: "Enter your ID/NIE to securely access your private panel and receive your temporary 4-digit PIN via WhatsApp.",
     label_dni: "Holder ID / NIE (Connects with Elena AI)",
     chk_accept_prefix: "I accept the", chk_accept_link: "Terms and Privacy Policy",
     chk_accept_suffix: "I authorize the encrypted query of my file and receiving the PIN via WhatsApp.",
     btn_request_pin: "Request VIP Verification →",
-    pin_sent_title: "ID Verified! Check your WhatsApp",
-    pin_sent_desc: "Enter the 4-digit PIN sent to your WhatsApp to open your file:",
+    pin_sent_title: "Identity verified!",
+    pin_sent_desc: "We just sent a link and a 4-digit temporary PIN to your WhatsApp. Enter the PIN below to open your file:",
     btn_enter_portal: "Enter Fullscreen Portal →", btn_back: "← Go back",
-    tab_resident: "🏠 Resident View (Tenant)", tab_owner: "💼 Owner View (Portfolio & PDF Invoice Upload)",
+    tab_resident: "🏠 Resident File", tab_owner: "💼 Owner Area (Delinquency Radar & Portfolio)",
     btn_toggle_sidebars: "⛶ Show/Hide Side Panels", btn_logout: "✕ Log Out",
-    exp_box_title: "🏠 LEASED PROPERTY & FILE", inc_box_title: "🔔 NOTICES, INCIDENTS & SUPPORT",
-    acc_box_title: "📊 ACCOUNTING STATUS & UTILITIES REGULARIZATION", hist_box_title: "🧾 RECEIPTS & UTILITIES HISTORY",
+    exp_box_title: "🏠 FILE & PROPERTY", avisos_box_title: "📢 GENERAL NOTICES",
+    inc_box_title: "🛠️ ACTIVE INCIDENTS", recibos_box_title: "🧾 RECEIPTS, UTILITIES & PAYMENTS",
     btn_talk_elena: "💬 Chat with Elena AI",
-    chat_welcome: "Hello, I am Elena AI. How can I help you today regarding your lease, utilities, or property incidents?"
+    chat_welcome: "Hello, I am Elena AI. How can I help you today with your lease agreement, utilities, or property incidents?"
   },
   fr: {
-    nav_demanda: "📡 Demande Active", nav_mercado: "🏢 Marché Réel", nav_inquilinos: "🔑 Accès Locataires & Propriétaires",
+    nav_demanda: "📡 Demande Active", nav_mercado: "🏢 Marché Réel", nav_inquilinos: "🔑 Accès Locataires",
     nav_chivatazo: "🔥 Alerte Nationale", nav_advisors: "💼 Rejoindre l'équipe d'Advisors",
-    topbar_title: "Console PropTech - Reverse Market & Gestion Locative", badge_private: "Espace Privé Vérifié",
+    topbar_title: "Console PropTech - Gestion Locative", badge_private: "Espace Privé Vérifié",
     login_title: "Accès Résidents et Propriétaires",
-    login_desc: "Saisissez votre pièce d'identité pour vérifier votre dossier et recevoir votre code PIN par WhatsApp.",
+    login_desc: "Saisissez votre DNI/NIE pour accéder à votre espace privé et recevoir votre code PIN à 4 chiffres par WhatsApp.",
     label_dni: "DNI / NIE du Titulaire (Connecté à Elena IA)",
     chk_accept_prefix: "J'accepte les", chk_accept_link: "Conditions et la Confidentialité",
     chk_accept_suffix: "J'autorise la consultation chiffrée de mon dossier et l'envoi du PIN par WhatsApp.",
     btn_request_pin: "Demander la Vérification VIP →",
-    pin_sent_title: "Document vérifié ! Vérifiez votre WhatsApp",
-    pin_sent_desc: "Saisissez le code PIN à 4 chiffres envoyé sur votre WhatsApp :",
+    pin_sent_title: "Identité vérifiée !",
+    pin_sent_desc: "Nous venons d'envoyer un code PIN temporaire à 4 chiffres sur votre WhatsApp. Saisissez-le ci-dessous :",
     btn_enter_portal: "Accéder au Portail Plein Écran →", btn_back: "← Retour",
-    tab_resident: "🏠 Vue Résident (Locataire)", tab_owner: "💼 Vue Propriétaire (Factures PDF)",
+    tab_resident: "🏠 Dossier du Résident", tab_owner: "💼 Espace Propriétaire (Radar Impayés & Portefeuille)",
     btn_toggle_sidebars: "⛶ Afficher/Masquer les Panneaux", btn_logout: "✕ Déconnexion",
-    exp_box_title: "🏠 DOSSIER ET BIEN LOUÉ", inc_box_title: "🔔 AVIS, INCIDENTS ET ASSISTANCE",
-    acc_box_title: "📊 ÉTAT COMPTABLE ET CHARGES", hist_box_title: "🧾 HISTORIQUE DES QUITTANCES ET CHARGES",
+    exp_box_title: "🏠 DOSSIER ET BIEN LOUÉ", avisos_box_title: "📢 AVIS GÉNÉRAUX",
+    inc_box_title: "🛠️ INCIDENTS ACTIFS", recibos_box_title: "🧾 QUITTANCES ET CHARGES",
     btn_talk_elena: "💬 Parler avec Elena IA",
     chat_welcome: "Bonjour, je suis Elena IA. Comment puis-je vous aider concernant votre location ou vos charges ?"
   },
   de: {
-    nav_demanda: "📡 Aktive Nachfrage", nav_mercado: "🏢 Realer Markt", nav_inquilinos: "🔑 Mieter- & Eigentümerzugang",
-    nav_chivatazo: "🔥 Nationaler Tipp", nav_advisors: "💼 Werden Sie Advisor in Ihrer Region",
-    topbar_title: "PropTech-Konsole - Reverse Market & Mietverwaltung", badge_private: "Verifizierter Bereich",
+    nav_demanda: "📡 Aktive Nachfrage", nav_mercado: "🏢 Realer Markt", nav_inquilinos: "🔑 Mieterzugang",
+    nav_chivatazo: "🔥 Nationaler Tipp", nav_advisors: "💼 Werden Sie Advisor",
+    topbar_title: "PropTech-Konsole - Mietverwaltung", badge_private: "Verifizierter Bereich",
     login_title: "Zugang für Mieter und Eigentümer",
-    login_desc: "Geben Sie Ihre Ausweisnummer ein, um Ihre Akte zu prüfen und Ihren 4-stelligen PIN-Code per WhatsApp zu erhalten.",
+    login_desc: "Geben Sie Ihre Ausweisnummer (DNI/NIE) ein, um Ihren 4-stelligen PIN-Code per WhatsApp zu erhalten.",
     label_dni: "DNI / NIE des Inhabers (Verbunden mit Elena KI)",
     chk_accept_prefix: "Ich akzeptiere die", chk_accept_link: "AGB und Datenschutzrichtlinien",
     chk_accept_suffix: "Ich autorisiere die verschlüsselte Abfrage und den PIN-Versand per WhatsApp.",
     btn_request_pin: "VIP-Verifizierung anfordern →",
-    pin_sent_title: "Ausweis bestätigt! Prüfen Sie Ihr WhatsApp",
-    pin_sent_desc: "Geben Sie den 4-stelligen PIN-Code ein, den wir Ihnen per WhatsApp gesendet haben:",
+    pin_sent_title: "Identität bestätigt!",
+    pin_sent_desc: "Wir haben Ihnen einen 4-stelligen PIN-Code per WhatsApp gesendet. Geben Sie ihn unten ein:",
     btn_enter_portal: "Portal im Vollbild öffnen →", btn_back: "← Zurück",
-    tab_resident: "🏠 Mieteransicht", tab_owner: "💼 Eigentümeransicht (PDF-Rechnungen)",
-    btn_toggle_sidebars: "⛶ Seitenleisten ein-/ausblenden", btn_logout: "✕ Abmelden",
-    exp_box_title: "🏠 MIETAKTE & IMMOBILIE", inc_box_title: "🔔 MITTEILUNGEN & STÖRUNGEN",
-    acc_box_title: "📊 BUCHHALTUNG & NEBENKOSTEN", hist_box_title: "🧾 BELEG- UND NEBENKOSTENVERLAUF",
     btn_talk_elena: "💬 Mit Elena KI sprechen",
     chat_welcome: "Hallo, ich bin Elena KI. Wie kann ich Ihnen bei Ihrem Mietvertrag oder den Nebenkosten helfen?"
   },
   nl: {
-    nav_demanda: "📡 Actieve Vraag", nav_mercado: "🏢 Reële Markt", nav_inquilinos: "🔑 Toegang Huurders & Eigenaars",
-    nav_chivatazo: "🔥 Nationale Tip", nav_advisors: "💼 Word Advisor in uw Regio",
-    topbar_title: "PropTech Console - Reverse Market & Huurbeheer", badge_private: "Geverifieerde Omgeving",
+    nav_demanda: "📡 Actieve Vraag", nav_mercado: "🏢 Reële Markt", nav_inquilinos: "🔑 Toegang Huurders",
+    nav_chivatazo: "🔥 Nationale Tip", nav_advisors: "💼 Word Advisor",
+    topbar_title: "PropTech Console - Huurbeheer", badge_private: "Geverifieerde Omgeving",
     login_title: "Toegang Bewoners en Eigenaars",
-    login_desc: "Voer uw ID/NIE-nummer in om uw dossier te verifiëren en uw 4-cijferige pincode via WhatsApp te ontvangen.",
+    login_desc: "Voer uw DNI/NIE in om veilig toegang te krijgen en uw 4-cijferige pincode via WhatsApp te ontvangen.",
     label_dni: "DNI / NIE van de Houder (Verbonden met Elena AI)",
     chk_accept_prefix: "Ik accepteer de", chk_accept_link: "Voorwaarden en Privacy",
     chk_accept_suffix: "Ik geef toestemming voor versleutelde raadpleging en ontvangst van de PIN via WhatsApp.",
@@ -1113,293 +1036,274 @@ const I18N = {
   },
   ru: {
     nav_demanda: "📡 Активный спрос", nav_mercado: "🏢 Реальный рынок", nav_inquilinos: "🔑 Доступ для арендаторов",
-    nav_chivatazo: "🔥 Национальный инсайд", nav_advisors: "💼 Присоединяйтесь к команде Advisors",
+    nav_chivatazo: "🔥 Национальный инсайд", nav_advisors: "💼 Команда Advisors",
     topbar_title: "Консоль PropTech - Управление арендой", badge_private: "Защищенная зона",
     login_title: "Доступ для жильцов и собственников",
-    login_desc: "Введите номер документа (DNI/NIE), чтобы получить 4-значный PIN-код в WhatsApp.",
+    login_desc: "Введите номер DNI/NIE, чтобы получить временный 4-значный PIN-код в WhatsApp.",
     label_dni: "DNI / NIE владельца (Связь с Elena AI)",
     chk_accept_prefix: "Я принимаю", chk_accept_link: "Условия и Политику конфиденциальности",
     chk_accept_suffix: "Я разрешаю зашифрованный запрос досье и отправку PIN в WhatsApp.",
     btn_request_pin: "Запросить VIP-проверку →",
     btn_enter_portal: "Открыть портал на весь экран →", btn_back: "← Назад",
     btn_talk_elena: "💬 Чат с Elena AI",
-    chat_welcome: "Здравствуйте, я Elena AI. Чем я могу помочь вам по вопросам аренды или коммунальных счетов?"
+    chat_welcome: "Здравствуйте, я Elena AI. Чем я могу помочь вам по вопросам аренды или счетов?"
   }
 };
 
-// Estado de la sesión (100% vacío de datos de prueba)
-let SESION = {
-  autenticado: false,
-  dni: "",
-  rol: "", // "PROPIETARIO" | "INQUILINO"
-  tabla_destino: "SIN_IDENTIFICAR", // "PROPERTY_PROPIETARIOS" | "PROPERTY_INQUILINOS"
-  propiedad_activa: "",
-  idioma: "es",
-  n1: 4,
-  n2: 2
+// 1. Pintar la suma de seguridad (igual que en tu Script 4)
+window.pintarSumaLevel = function() {
+  var qElem = document.getElementById("lvl-math-question");
+  var iElem = document.getElementById("input-math");
+  if (qElem) {
+    var n1 = Math.floor(Math.random() * 9) + 1;
+    var n2 = Math.floor(Math.random() * 9) + 1;
+    window.respuestaCorrectaLevel = n1 + n2;
+    qElem.innerText = "Por seguridad, ¿cuánto es " + n1 + " + " + n2 + "?";
+    if (iElem) iElem.value = "";
+    return true;
+  }
+  return false;
 };
 
-document.addEventListener("DOMContentLoaded", () => {
-  // Asegurar que la casilla de condiciones arranca SIEMPRE desmarcada
-  const chk = document.getElementById("chk-privacidad");
+document.addEventListener("DOMContentLoaded", function() {
+  // Asegurar casilla de condiciones desmarcada al iniciar
+  var chk = document.getElementById("chk-privacidad");
   if (chk) chk.checked = false;
 
-  generarAntiSpam();
-  iniciarReloj();
+  window.pintarSumaLevel();
+
+  // Reloj en tiempo real
+  setInterval(function() {
+    var ahora = new Date();
+    var el = document.getElementById("live-clock");
+    if (el) el.textContent = ahora.toLocaleDateString("es-ES") + " | " + ahora.toLocaleTimeString("es-ES");
+  }, 1000);
+
+  // SI EL USUARIO ENTRA DESDE EL ENLACE DIRECTO DE WHATSAPP (?code=...) COMO EN TU SCRIPT 5
+  const params = new URLSearchParams(window.location.search);
+  const identificadorUrl = params.get("code") || params.get("dni") || params.get("id");
+  if (identificadorUrl) {
+    cargarExpedienteDesdeMake(identificadorUrl);
+  }
 });
 
-function iniciarReloj() {
-  const el = document.getElementById("live-clock");
-  setInterval(() => {
-    const ahora = new Date();
-    el.textContent = ahora.toLocaleDateString("es-ES") + " | " + ahora.toLocaleTimeString("es-ES");
-  }, 1000);
-}
+// 2. FASE 1: LLAMAR AL WEBHOOK 1 (TOC TOC INQUILINOS) ENVIANDO { dni_inquilino: dni }
+window.llamarAlWebhook = function() {
+  var dniRaw = document.getElementById("input-dni").value.trim().toUpperCase().replace(/[^A-Z0-9]/g, "");
+  var chkPriv = document.getElementById("chk-privacidad").checked;
+  var mathUser = parseInt(document.getElementById("input-math").value.trim(), 10);
+  var btn = document.getElementById("btn-acceso");
+  var msjError = document.getElementById("msg-error");
+  var msjExito = document.getElementById("msg-exito");
 
-function generarAntiSpam() {
-  SESION.n1 = Math.floor(Math.random() * 5) + 1;
-  SESION.n2 = Math.floor(Math.random() * 5) + 1;
-  const lbl = document.getElementById("spam-label");
-  if (lbl) lbl.textContent = `Anti-spam: ¿Cuánto es ${SESION.n1} + ${SESION.n2}?`;
-  const inp = document.getElementById("input-spam");
-  if (inp) inp.value = "";
-}
+  msjError.style.display = "none";
+  msjExito.style.display = "none";
 
-function cambiarIdioma(lang) {
-  SESION.idioma = lang;
-  const dict = I18N[lang] || I18N.es;
-  document.querySelectorAll("[data-i18n]").forEach(el => {
-    const key = el.getAttribute("data-i18n");
-    if (dict[key]) el.textContent = dict[key];
+  if (!chkPriv) {
+    msjError.innerText = "Debes aceptar las Condiciones y la Privacidad para continuar.";
+    msjError.style.display = "block";
+    return;
+  }
+
+  if (!dniRaw || isNaN(mathUser)) {
+    msjError.innerText = "Por favor, rellena tu DNI/NIE y la suma de seguridad.";
+    msjError.style.display = "block";
+    return;
+  }
+
+  if (mathUser !== window.respuestaCorrectaLevel) {
+    msjError.innerText = "La suma de seguridad no es correcta.";
+    msjError.style.display = "block";
+    window.pintarSumaLevel();
+    return;
+  }
+
+  btn.innerText = "Conectando al servidor...";
+  btn.disabled = true;
+
+  // Llamada exacta a tu escenario TOC TOC INQUILINOS
+  fetch(URL_WEBHOOK_TOC_TOC, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ dni_inquilino: dniRaw })
+  })
+  .then(function(response) { return response.text(); })
+  .then(function(textResponse) {
+    var data = JSON.parse(textResponse);
+    if (data && data.status === "success" && data.pin_secreto) {
+      window.datosEnSecreto = data;
+      window.sesionActiva.dni = dniRaw;
+      window.sesionActiva.codigo_inquilino = data.codigo_inquilino || dniRaw;
+
+      // Detectar si es la propietaria Carmen Forcadell (40913126J) o si Make envía rol propietario
+      if (dniRaw === "40913126J" || (data.rol && String(data.rol).toUpperCase().includes("PROPIETARIO"))) {
+        window.sesionActiva.rol = "PROPIETARIO";
+        window.sesionActiva.tabla_filtro = "PROPERTY_PROPIETARIOS";
+      } else {
+        window.sesionActiva.rol = "INQUILINO";
+        window.sesionActiva.tabla_filtro = "PROPERTY_INQUILINOS";
+      }
+
+      document.getElementById("fase-dni").style.display = "none";
+      document.getElementById("desc-login").style.display = "none";
+      document.getElementById("caja-pin").style.display = "block";
+      document.getElementById("input-pin-user").value = "";
+      document.getElementById("input-pin-user").focus();
+    } else {
+      throw new Error("DNI no registrado");
+    }
+  })
+  .catch(function(error) {
+    msjError.innerText = "DNI no registrado en la base de datos o error de conexión.";
+    msjError.style.display = "block";
+    btn.innerText = "Solicitar Verificación VIP →";
+    btn.disabled = false;
+    window.pintarSumaLevel();
+  });
+};
+
+// 3. FASE 2: VALIDAR EL PIN DE 4 CIFRAS RECIBIDO EN WHATSAPP
+window.validarPin = function() {
+  var pinUser = document.getElementById("input-pin-user").value.trim();
+  var msjError = document.getElementById("msg-error");
+  var btnPin = document.getElementById("btn-validar-pin");
+
+  msjError.style.display = "none";
+
+  if (!pinUser) {
+    msjError.innerText = "Escribe el PIN de 4 cifras que has recibido en tu WhatsApp.";
+    msjError.style.display = "block";
+    return;
+  }
+
+  if (window.datosEnSecreto && pinUser === window.datosEnSecreto.pin_secreto.toString()) {
+    btnPin.innerText = "¡Correcto! Cargando tu expediente...";
+    btnPin.disabled = true;
+    var codigo = window.datosEnSecreto.codigo_inquilino || window.sesionActiva.dni;
+    cargarExpedienteDesdeMake(codigo);
+  } else {
+    msjError.innerText = "PIN incorrecto. Revisa el mensaje enviado a tu WhatsApp.";
+    msjError.style.display = "block";
+  }
+};
+
+// 4. FASE 3: DESCARGAR DATOS REALES DESDE WEBHOOK 2 ("Portal Datos Inquilinos")
+function cargarExpedienteDesdeMake(identificador) {
+  var msjError = document.getElementById("msg-error");
+  var msjExito = document.getElementById("msg-exito");
+  msjError.style.display = "none";
+  msjExito.innerText = "Cargando expediente seguro en tiempo real...";
+  msjExito.style.display = "block";
+
+  var payload = {
+    code: identificador,
+    dni: window.sesionActiva.dni || identificador,
+    codigo_inquilino: identificador
+  };
+
+  fetch(URL_WEBHOOK_PORTAL_DATOS, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload)
+  })
+  .then(function(response) { return response.json(); })
+  .then(function(data) {
+    if (data && data.status === "success") {
+      // Ocultar login y abrir consola a pantalla completa
+      document.getElementById("login-section").style.display = "none";
+      document.getElementById("portal-dashboard").style.display = "block";
+      document.getElementById("main-layout").classList.add("fullscreen-mode");
+
+      // Volcar campos exactos de tu Script 5
+      var nombreReal = data.nombre || "Titular Verificado";
+      var dniReal = data.dni || window.sesionActiva.dni || identificador;
+      var propReal = data.nombre_propiedad || "---";
+      var dirReal = data.direccion || "---";
+
+      window.sesionActiva.propiedad = propReal;
+      document.getElementById("badge-titular-activo").innerText = nombreReal + " (" + dniReal + ")";
+      document.getElementById("val-nombre").innerText = nombreReal;
+      document.getElementById("val-dni").innerText = dniReal;
+      document.getElementById("val-propiedad").innerText = propReal;
+      document.getElementById("val-direccion").innerText = dirReal;
+
+      // Si es la propietaria Carmen, activar su pestaña de Radar de Morosidad y Cartera
+      if (window.sesionActiva.rol === "PROPIETARIO" || String(dniReal).toUpperCase() === "40913126J") {
+        window.sesionActiva.rol = "PROPIETARIO";
+        window.sesionActiva.tabla_filtro = "PROPERTY_PROPIETARIOS";
+        document.getElementById("btn-tab-propietaria").style.display = "inline-block";
+        document.getElementById("owner-greeting-name").innerText = nombreReal;
+      }
+
+      // Actualizar indicador del chat de Elena IA
+      document.getElementById("chat-role-indicator").innerText = "● Conectado (" + window.sesionActiva.tabla_filtro + ")";
+
+      // Cargar galería de fotos con tu sistema anti-fallos del Script 5
+      var gallery = document.getElementById("val-fotos");
+      gallery.innerHTML = "";
+      var fotosArray = [];
+      try {
+        if (typeof data.fotos === "string") {
+          fotosArray = data.fotos.startsWith("[") ? JSON.parse(data.fotos) : [data.fotos];
+        } else if (Array.isArray(data.fotos)) {
+          fotosArray = data.fotos;
+        }
+      } catch (e) {
+        console.warn("Formato de fotos no válido:", e);
+      }
+
+      if (fotosArray.length > 0 && fotosArray[0] !== "") {
+        fotosArray.forEach(function(url) {
+          var cleanUrl = String(url).replace(/['"]+/g, "");
+          gallery.innerHTML += '<img src="' + cleanUrl + '" alt="Propiedad" onclick="window.open(\'' + cleanUrl + '\', \'_blank\')">';
+        });
+      } else {
+        gallery.innerHTML = "<span style='font-size:12px; color:var(--text-muted);'>Sin imágenes disponibles.</span>";
+      }
+
+      // Inyectar los bloques HTML dinámicos que devuelve tu escenario de Make
+      document.getElementById("val-recibos").innerHTML = data.recibos_html || "<div style='color:var(--text-muted);'>Sin recibos pendientes.</div>";
+      document.getElementById("val-avisos").innerHTML = data.avisos_html || "<div style='color:var(--text-muted);'>No hay avisos generales.</div>";
+      document.getElementById("val-incidencias").innerHTML = data.incidencias_html || "<div style='color:var(--text-muted);'>Sin incidencias activas.</div>";
+
+    } else {
+      throw new Error("Expediente no encontrado");
+    }
+  })
+  .catch(function(error) {
+    console.error("Error cargando expediente:", error);
+    msjExito.style.display = "none";
+    msjError.innerText = "Expediente no encontrado para este identificador o error de conexión.";
+    msjError.style.display = "block";
+    var btnPin = document.getElementById("btn-validar-pin");
+    if (btnPin) {
+      btnPin.innerText = "Entrar al Portal a Pantalla Completa →";
+      btnPin.disabled = false;
+    }
   });
 }
 
-/**
- * VALIDADOR OFICIAL DEL MINISTERIO DEL INTERIOR (MÓDULO 23)
- * Impide que entren DNIs inventados como 55555555L o 99888999P
- */
-function esDocumentoEspanolValido(doc) {
-  const limpio = (doc || "").trim().toUpperCase().replace(/[^A-Z0-9]/g, "");
-  if (!/^[0-9XYZ][0-9]{7}[A-Z]$/.test(limpio)) return false;
-  const letras = "TRWAGMYFPDXBNJZSQVHLCKE";
-  const numStr = limpio.slice(0, 8).replace("X", "0").replace("Y", "1").replace("Z", "2");
-  const letraCorrecta = letras.charAt(parseInt(numStr, 10) % 23);
-  return limpio.charAt(8) === letraCorrecta;
+function volverFaseDni() {
+  document.getElementById("caja-pin").style.display = "none";
+  document.getElementById("fase-dni").style.display = "block";
+  document.getElementById("desc-login").style.display = "block";
+  document.getElementById("msg-error").style.display = "none";
+  document.getElementById("msg-exito").style.display = "none";
+  var btn = document.getElementById("btn-acceso");
+  btn.innerText = "Solicitar Verificación VIP →";
+  btn.disabled = false;
+  window.pintarSumaLevel();
 }
 
-function mostrarAlertaLogin(mensaje, tipo) {
-  const box = document.getElementById("login-alert");
-  box.className = "status-alert " + tipo;
-  box.textContent = mensaje;
-}
-
-/**
- * PASO 1: ENVIAR DNI AL ESCENARIO "TOC TOC INQUILINOS"
- */
-async function solicitarPinMake() {
-  const dniRaw = document.getElementById("input-dni").value.trim().toUpperCase().replace(/[^A-Z0-9]/g, "");
-  const chk = document.getElementById("chk-privacidad").checked;
-  const respSpam = parseInt(document.getElementById("input-spam").value, 10);
-  const btn = document.getElementById("btn-solicitar-pin");
-
-  if (!chk) {
-    mostrarAlertaLogin("⚠️ Debes marcar la casilla 'Acepto las Condiciones y la Privacidad' antes de continuar.", "error");
-    return;
-  }
-
-  if (!esDocumentoEspanolValido(dniRaw)) {
-    mostrarAlertaLogin("⛔ El DNI/NIE introducido no es un documento válido (la letra no coincide). Verifica tus datos.", "error");
-    return;
-  }
-
-  if (respSpam !== (SESION.n1 + SESION.n2)) {
-    mostrarAlertaLogin(`⛔ Suma anti-spam incorrecta (${SESION.n1} + ${SESION.n2} = ${SESION.n1 + SESION.n2}).`, "error");
-    generarAntiSpam();
-    return;
-  }
-
-  btn.disabled = true;
-  mostrarAlertaLogin("🔄 Consultando base de datos en Lark y enviando PIN de 4 dígitos a tu WhatsApp...", "info");
-
-  try {
-    const res = await fetch(MAKE_WEBHOOKS.TOC_TOC_INQUILINOS, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        accion: "SOLICITAR_PIN",
-        dni: dniRaw,
-        idioma: SESION.idioma,
-        timestamp: new Date().toISOString()
-      })
-    });
-
-    const rawText = await res.text();
-    let data = {};
-    try { data = JSON.parse(rawText); } catch (_) {}
-
-    // Si Make devuelve {"existe": false} o error HTTP, NO dejamos pasar
-    if (!res.ok || data.existe === false || data.success === false) {
-      mostrarAlertaLogin("⛔ Acceso denegado: Este DNI/NIE no consta como titular activo en nuestra base de datos.", "error");
-      btn.disabled = false;
-      return;
-    }
-
-    SESION.dni = dniRaw;
-    if (data.rol) configurarRolSesion(data.rol);
-
-    // Pasar al Paso 2 (Input de PIN limpio, sin código 2486)
-    document.getElementById("step-dni-box").style.display = "none";
-    document.getElementById("step-pin-box").style.display = "block";
-    document.getElementById("input-pin").value = "";
-    document.getElementById("input-pin").focus();
-    mostrarAlertaLogin("✅ Código PIN enviado a tu WhatsApp. Introdúcelo arriba para desencriptar tu ficha.", "success");
-
-  } catch (err) {
-    mostrarAlertaLogin("⛔ Error al conectar con el escenario 'TOC TOC INQUILINOS' en Make.", "error");
-  } finally {
-    btn.disabled = false;
-  }
-}
-
-function volverAlPasoDni() {
-  document.getElementById("step-pin-box").style.display = "none";
-  document.getElementById("step-dni-box").style.display = "block";
-  document.getElementById("login-alert").style.display = "none";
-  generarAntiSpam();
-}
-
-/**
- * PASO 2: VALIDAR PIN CONTRA "PORTAL DATOS INQUILINOS" Y TRAER DATOS DE LARK
- */
-async function validarPinMake() {
-  const pin = document.getElementById("input-pin").value.trim();
-  const btn = document.getElementById("btn-validar-pin");
-
-  if (!/^[0-9]{4}$/.test(pin) || pin === "2486") {
-    mostrarAlertaLogin("⛔ Introduce el código PIN real de 4 dígitos que has recibido en tu WhatsApp.", "error");
-    return;
-  }
-
-  btn.disabled = true;
-  mostrarAlertaLogin("🔄 Verificando código PIN y descargando tu expediente real de Lark...", "info");
-
-  try {
-    const res = await fetch(MAKE_WEBHOOKS.PORTAL_DATOS_INQUILINOS, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        accion: "VALIDAR_PIN_Y_CARGAR_DATOS",
-        dni: SESION.dni,
-        pin: pin
-      })
-    });
-
-    const datos = await res.json();
-
-    if (!res.ok || !datos || datos.success === false || datos.pin_valido === false) {
-      mostrarAlertaLogin("⛔ El código PIN introducido es incorrecto o ha caducado.", "error");
-      btn.disabled = false;
-      return;
-    }
-
-    // Autenticación superada con datos reales de Make
-    SESION.autenticado = true;
-    configurarRolSesion(datos.rol || "INQUILINO");
-    poblarDashboardConDatosDeLark(datos);
-
-  } catch (err) {
-    mostrarAlertaLogin("⛔ El escenario 'Portal Datos Inquilinos' de Make no devolvió un JSON válido con el expediente.", "error");
-  } finally {
-    btn.disabled = false;
-  }
-}
-
-function configurarRolSesion(rolTexto) {
-  const r = String(rolTexto).toUpperCase();
-  if (r.includes("PROPIETARIO") || r.includes("OWNER")) {
-    SESION.rol = "PROPIETARIO";
-    SESION.tabla_destino = "PROPERTY_PROPIETARIOS";
+function mostrarVistaInterna(vista) {
+  var panelCarmen = document.getElementById("vista-propietaria-carmen");
+  var panelRes = document.getElementById("vista-residente-contenido");
+  if (vista === "propietaria") {
+    panelCarmen.style.display = "block";
+    panelRes.style.display = "none";
   } else {
-    SESION.rol = "INQUILINO";
-    SESION.tabla_destino = "PROPERTY_INQUILINOS";
-  }
-  const ind = document.getElementById("chat-role-indicator");
-  if (ind) ind.textContent = `● Conectado (${SESION.tabla_destino})`;
-}
-
-/**
- * 3. RENDERIZAR ÚNICAMENTE DATOS REALES ENVIADOS POR MAKE
- */
-function poblarDashboardConDatosDeLark(data) {
-  document.getElementById("login-section").style.display = "none";
-  document.getElementById("portal-dashboard").style.display = "block";
-  document.getElementById("main-layout").classList.add("fullscreen-mode");
-
-  // Mostrar pestaña de Propietario solo si su rol en Lark es PROPIETARIO
-  const btnOwn = document.getElementById("tab-propietario-btn");
-  btnOwn.style.display = (SESION.rol === "PROPIETARIO") ? "inline-block" : "none";
-
-  SESION.propiedad_activa = data.propiedad || "";
-
-  document.getElementById("badge-titular-top").textContent = `${data.nombre_titular || "VERIFICADO"} (${SESION.dni})`;
-  document.getElementById("exp-id-badge").textContent = data.id_expediente || "ACTIVO";
-  document.getElementById("val-titular").textContent = data.nombre_titular || "—";
-  document.getElementById("val-dni").textContent = SESION.dni;
-  document.getElementById("val-propiedad").textContent = data.propiedad || "—";
-  document.getElementById("val-direccion").textContent = data.direccion_exacta || "—";
-  document.getElementById("val-cuota").textContent = euro(data.cuota_alquiler);
-  document.getElementById("val-fecha-contrato").textContent = data.fecha_contrato || "—";
-  document.getElementById("val-deuda").textContent = euro(data.saldo_pendiente);
-
-  // KPIs
-  document.getElementById("kpi-alquileres").textContent = euro(data.total_alquileres_abonados);
-  document.getElementById("kpi-suministros").textContent = euro(data.total_suministros_reales);
-  document.getElementById("kpi-provisional").textContent = euro(data.total_provisional);
-  document.getElementById("kpi-saldo").textContent = euro(data.saldo_pendiente);
-
-  // Selector de propiedades del propietario
-  const selProp = document.getElementById("select-propiedad-owner");
-  selProp.innerHTML = "";
-  const listaProps = Array.isArray(data.propiedades_lista) ? data.propiedades_lista : (data.propiedad ? [data.propiedad] : []);
-  listaProps.forEach(p => {
-    const opt = document.createElement("option");
-    opt.value = p;
-    opt.textContent = p;
-    selProp.appendChild(opt);
-  });
-
-  // Tabla de recibos reales
-  const tbody = document.getElementById("tabla-recibos-body");
-  tbody.innerHTML = "";
-  const recibos = Array.isArray(data.recibos) ? data.recibos : [];
-
-  if (recibos.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-muted);">No hay recibos registrados para este expediente.</td></tr>`;
-  } else {
-    recibos.forEach(r => {
-      const est = String(r.estado || "Pendiente");
-      const claseEstado = est.toLowerCase().includes("abonado") ? "tag-green" : "tag-red";
-      const claseConcepto = String(r.concepto).toLowerCase().includes("agua") ? "tag-blue" : "tag-green";
-      tbody.innerHTML += `
-        <tr>
-          <td><strong>${escapar(r.id || "—")}</strong> · ${escapar(r.mes || "")}</td>
-          <td>${escapar(r.propiedad || data.propiedad || "—")}</td>
-          <td><span class="tag-pill ${claseConcepto}">${escapar(r.concepto || "—")}</span></td>
-          <td>${escapar(r.observaciones || "—")}</td>
-          <td><strong>${euro(r.importe)}</strong></td>
-          <td><span class="tag-pill ${claseEstado}">${escapar(est.toUpperCase())}</span></td>
-        </tr>
-      `;
-    });
-  }
-}
-
-function cambiarPestanaRol(vista) {
-  const panelOwner = document.getElementById("owner-upload-panel");
-  if (vista === "propietario" && SESION.rol === "PROPIETARIO") {
-    panelOwner.style.display = "block";
-  } else {
-    panelOwner.style.display = "none";
+    panelCarmen.style.display = "none";
+    panelRes.style.display = "block";
   }
 }
 
@@ -1407,54 +1311,38 @@ function alternarPantallaCompleta() {
   document.getElementById("main-layout").classList.toggle("fullscreen-mode");
 }
 
-function cerrarSesionPortal() {
-  SESION.autenticado = false;
-  SESION.dni = "";
-  SESION.rol = "";
-  SESION.tabla_destino = "SIN_IDENTIFICAR";
+function cerrarSesion() {
+  window.datosEnSecreto = null;
+  window.sesionActiva.dni = "";
+  window.sesionActiva.codigo_inquilino = "";
   document.getElementById("portal-dashboard").style.display = "none";
   document.getElementById("login-section").style.display = "block";
   document.getElementById("main-layout").classList.remove("fullscreen-mode");
-  volverAlPasoDni();
+  volverFaseDni();
 }
 
-/**
- * 4. SUBIDA DE FACTURAS DEL PROPIETARIO -> PORTAL DATOS INQUILINOS
- */
-async function subirFacturaPropietario(e) {
-  e.preventDefault();
-  if (!SESION.autenticado || SESION.rol !== "PROPIETARIO") return;
-
-  const form = e.target;
-  const fd = new FormData(form);
-  fd.append("accion", "SUBIR_FACTURA_PROPIETARIO");
-  fd.append("dni_propietario", SESION.dni);
-  fd.append("tabla_destino", "PROPERTY_SUMINISTROS");
-
-  try {
-    const res = await fetch(MAKE_WEBHOOKS.PORTAL_DATOS_INQUILINOS, {
-      method: "POST",
-      body: fd
-    });
-    if (!res.ok) throw new Error();
-    alert("✅ Factura enviada correctamente a tu escenario de Make y registrada en Lark.");
-    form.reset();
-  } catch (_) {
-    alert("⛔ No se pudo subir la factura. Verifica tu escenario en Make.");
-  }
+// 5. VISOR DOCUMENTAL CIFRADO (OCULTA LA MARCA Y ENLACE EXTERNO DE LA BASE DE DATOS)
+function abrirVisorSeguro(titulo, viewToken) {
+  var baseHost = atob("aHR0cHM6Ly9kanBxMHM2MHNsbm0uanAubGFya3N1aXRlLmNvbS9zaGFyZS9iYXNlL3ZpZXcv");
+  document.getElementById("visor-titulo").innerText = titulo;
+  document.getElementById("visor-iframe").src = baseHost + viewToken;
+  document.getElementById("modal-visor-seguro").style.display = "flex";
 }
 
-/**
- * 5. CHAT EN PANTALLA ELENA IA -> ESCENARIO "BOT CHAT" CON FILTRO DE TABLA
- */
+function cerrarVisorSeguro() {
+  document.getElementById("visor-iframe").src = "about:blank";
+  document.getElementById("modal-visor-seguro").style.display = "none";
+}
+
+// 6. CHAT EN PANTALLA ELENA IA -> WEBHOOK "BOT CHAT" (CON FILTRO PROPIETARIOS / INQUILINOS)
 function abrirChatElena() {
   document.getElementById("elena-chat-window").style.display = "flex";
 }
 
 function abrirChatElenaConAsunto(asunto) {
   abrirChatElena();
-  const inp = document.getElementById("chat-input-text");
-  inp.value = `[${asunto}] `;
+  var inp = document.getElementById("chat-input-text");
+  inp.value = "[" + asunto + "] ";
   inp.focus();
 }
 
@@ -1464,73 +1352,66 @@ function cerrarChatElena() {
 
 async function enviarMensajeBotChat(e) {
   e.preventDefault();
-  const inp = document.getElementById("chat-input-text");
-  const box = document.getElementById("chat-messages-box");
-  const btn = document.getElementById("chat-send-btn");
-  const msg = inp.value.trim();
-  if (!msg) return;
+  var inp = document.getElementById("chat-input-text");
+  var box = document.getElementById("chat-messages-box");
+  var btn = document.getElementById("chat-send-btn");
+  var texto = inp.value.trim();
+  if (!texto) return;
 
-  box.innerHTML += `
-    <div style="background:var(--emerald); color:#042f2e; padding:9px 12px; border-radius:12px 12px 2px 12px; max-width:85%; align-self:flex-end; font-weight:700;">
-      ${escapar(msg)}
-    </div>
-  `;
+  box.innerHTML += '<div style="background:var(--emerald); color:#042f2e; padding:9px 12px; border-radius:12px 12px 2px 12px; max-width:85%; align-self:flex-end; font-weight:700;">' + escaparHTML(texto) + '</div>';
   inp.value = "";
   btn.disabled = true;
   box.scrollTop = box.scrollHeight;
 
   try {
-    const res = await fetch(MAKE_WEBHOOKS.BOT_CHAT, {
+    var res = await fetch(URL_WEBHOOK_BOT_CHAT, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        origen: "PORTAL_ALQUILERES",
-        tabla_destino: SESION.tabla_destino, // En Make filtras por "PROPERTY_PROPIETARIOS" o "PROPERTY_INQUILINOS"
-        rol_usuario: SESION.rol || "VISITANTE",
-        dni_usuario: SESION.dni || "NO_VERIFICADO",
-        propiedad_actual: SESION.propiedad_activa || "SIN_ASIGNAR",
-        idioma: SESION.idioma,
-        mensaje: msg,
-        timestamp: new Date().toISOString()
+        origen: "PORTAL_ALQUILERES_LEVEL",
+        tabla_destino: window.sesionActiva.tabla_filtro, // "PROPERTY_PROPIETARIOS" o "PROPERTY_INQUILINOS"
+        rol: window.sesionActiva.rol,
+        dni: window.sesionActiva.dni || "NO_IDENTIFICADO",
+        codigo_inquilino: window.sesionActiva.codigo_inquilino || "",
+        propiedad: window.sesionActiva.propiedad || "",
+        idioma: window.sesionActiva.idioma,
+        mensaje: texto
       })
     });
 
-    const raw = await res.text();
-    let respuestaTexto = "He recibido tu consulta y la he vinculado a tu expediente.";
+    var raw = await res.text();
+    var contestacion = "He recibido tu mensaje y lo he registrado en el expediente.";
     try {
-      const json = JSON.parse(raw);
-      respuestaTexto = json.respuesta || json.message || json.output || respuestaTexto;
+      var j = JSON.parse(raw);
+      contestacion = j.respuesta || j.message || j.output || contestacion;
     } catch (_) {
-      if (raw && raw !== "Accepted") respuestaTexto = raw;
+      if (raw && raw !== "Accepted") contestacion = raw;
     }
 
-    box.innerHTML += `
-      <div style="background:#1e293b; color:#e2e8f0; padding:10px 12px; border-radius:12px 12px 12px 2px; max-width:86%; line-height:1.45;">
-        ${escapar(respuestaTexto)}
-      </div>
-    `;
-  } catch (_) {
-    box.innerHTML += `
-      <div style="background:var(--danger-soft); color:#fca5a5; padding:8px 12px; border-radius:8px; font-size:12px;">
-        Error de conexión con el escenario BOT CHAT.
-      </div>
-    `;
+    box.innerHTML += '<div style="background:#1e293b; color:#e2e8f0; padding:10px 12px; border-radius:12px 12px 12px 2px; max-width:86%; line-height:1.45;">' + escaparHTML(contestacion) + '</div>';
+  } catch (err) {
+    box.innerHTML += '<div style="background:var(--danger-soft); color:#fca5a5; padding:8px 12px; border-radius:8px; font-size:12px;">No se pudo conectar con el asistente en este momento.</div>';
   } finally {
     btn.disabled = false;
     box.scrollTop = box.scrollHeight;
   }
 }
 
-function abrirModal(id) { document.getElementById(id).style.display = "flex"; }
-function cerrarModal(id) { document.getElementById(id).style.display = "none"; }
-
-function euro(val) {
-  const n = parseFloat(val) || 0;
-  return n.toLocaleString("es-ES", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " €";
+function cambiarIdioma(lang) {
+  window.sesionActiva.idioma = lang;
+  var dict = I18N[lang] || I18N.es;
+  document.querySelectorAll("[data-i18n]").forEach(function(el) {
+    var k = el.getAttribute("data-i18n");
+    if (dict[k]) el.textContent = dict[k];
+  });
 }
 
-function escapar(str) {
-  return String(str).replace(/[&<>'"]/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', "'":'&#39;', '"':'&quot;' }[c]));
+function abrirModal(id) { document.getElementById(id).style.display = "flex"; }
+function cerrarModal(id) { document.getElementById(id).style.display = "none"; }
+function escaparHTML(s) {
+  return String(s).replace(/[&<>'"]/g, function(c) {
+    return { '&':'&amp;', '<':'&lt;', '>':'&gt;', "'":'&#39;', '"':'&quot;' }[c];
+  });
 }
 </script>
 </body>
