@@ -1,1 +1,1158 @@
+<!DOCTYPE html>
+<html lang="es" id="html-root">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Level.immo | Activo Àngels · Ciutat Vella (Barcelona) · Ficha Ciega</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #0b111a;
+      color: #e2e8f0;
+      overflow-x: hidden;
+    }
+    .gold-badge {
+      background: linear-gradient(90deg, rgba(217,119,6,0.2) 0%, rgba(245,158,11,0.1) 100%);
+      border: 1px solid rgba(245,158,11,0.45);
+      color: #fbbf24;
+    }
+    .emerald-glow {
+      box-shadow: 0 0 25px rgba(16, 185, 129, 0.35);
+    }
+    .card-panel {
+      background-color: #111926;
+      border: 1px solid #1e293b;
+      border-radius: 0.75rem;
+    }
+    .video-blur {
+      filter: blur(16px) brightness(0.75);
+      transition: filter 0.6s ease;
+    }
+    .video-unblurred {
+      filter: blur(0px) brightness(1);
+    }
+    input[type="number"]::-webkit-inner-spin-button,
+    input[type="number"]::-webkit-outer-spin-button {
+      opacity: 1;
+    }
+    /* Scrollbar corporativo */
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: #0b111a; }
+    ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #10b981; }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between">
 
+  <!-- ================= PANTALLA 1: GATEKEEPER ANTI-CHAFARDEROS ================= -->
+  <div id="gatekeeper-screen" class="fixed inset-0 z-50 bg-[#0b111a] flex items-center justify-center p-4 bg-cover bg-center" style="background-image: linear-gradient(to right, rgba(11,17,26,0.94) 35%, rgba(11,17,26,0.78) 100%), url('https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1920&q=80');">
+    
+    <!-- Selector de Idioma en Gatekeeper -->
+    <div class="absolute top-6 right-6 z-20">
+      <select id="lang-select-gate" onchange="changeLanguage(this.value)" class="bg-[#111926] border border-slate-700 text-slate-200 text-xs font-semibold rounded-lg px-3 py-2 focus:outline-none focus:border-emerald-500 cursor-pointer">
+        <option value="es">ES Español</option>
+        <option value="ca">CA Català</option>
+        <option value="en">GB English</option>
+        <option value="fr">FR Français</option>
+        <option value="de">DE Deutsch</option>
+        <option value="it">IT Italiano</option>
+        <option value="ar">AE العربية</option>
+        <option value="zh">CN 中文</option>
+      </select>
+    </div>
+
+    <div class="max-w-5xl w-full grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+      <!-- Columna Izquierda: Presentación y Filtro Matemático -->
+      <div class="lg:col-span-7 space-y-5">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full gold-badge text-xs font-bold tracking-wider uppercase">
+          <span>🔒</span> <span data-i18n="gate_badge">EXCLUSIVA LEVEL.IMMO · FICHA CIEGA PATRIMONIAL</span>
+        </div>
+
+        <h1 class="text-3xl sm:text-5xl font-extrabold text-white leading-tight" data-i18n="gate_title">
+          Activo Comercial Singular en Ciutat Vella · Eje Àngels
+        </h1>
+
+        <p class="text-slate-300 text-sm sm:text-base leading-relaxed" data-i18n="gate_subtitle">
+          547 m² distribuidos en 3 niveles (Planta 1ª de 334 m², Bodega histórica abovedada de 110 m² y Planta Baja + Terraza/Patio privado de 103 m²). Ascensor. Venta sin condición suspensiva de cambio de uso.
+        </p>
+
+        <!-- Caja de Verificación Matemática -->
+        <div class="card-panel p-6 max-w-md shadow-2xl border-slate-800 bg-[#0f1722]/95">
+          <div class="flex items-center gap-2 text-amber-400 text-xs font-bold uppercase tracking-wider mb-3">
+            <span>🛡️</span> <span data-i18n="gate_security_title">Verificación de Seguridad (Filtro Anti-Curiosos)</span>
+          </div>
+          <p class="text-xs text-slate-400 mb-4" data-i18n="gate_security_desc">
+            Resuelve la validación para desbloquear el estudio económico de viabilidad y la Ficha Ciega:
+          </p>
+          <div class="flex items-center gap-3">
+            <div class="bg-[#182232] border border-slate-700 rounded-lg px-4 py-2.5 text-sm font-bold text-white whitespace-nowrap">
+              <span data-i18n="gate_math_label">¿Cuánto es</span> <span id="gate-num1">6</span> + <span id="gate-num2">4</span>?
+            </div>
+            <input type="number" id="gate-math-input" placeholder="?" class="w-20 bg-[#0b111a] border border-slate-700 rounded-lg px-3 py-2.5 text-center text-white font-bold focus:outline-none focus:border-emerald-500" />
+            <button onclick="verifyGatekeeper()" class="flex-1 bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-xs sm:text-sm py-3 px-4 rounded-lg transition uppercase tracking-wider" data-i18n="gate_btn_access">
+              ACCEDER
+            </button>
+          </div>
+          <p id="gate-error" class="text-rose-400 text-xs mt-2 hidden" data-i18n="gate_error_msg">Resultado incorrecto. Inténtalo de nuevo.</p>
+
+          <div class="mt-5 pt-4 border-t border-slate-800/80 flex flex-wrap items-center justify-between text-[11px] text-slate-400 gap-2">
+            <span class="font-semibold text-slate-300">API 4173 · AICAT 14200</span>
+            <div class="flex gap-3">
+              <button onclick="openLegalModal('aviso')" class="hover:text-white underline" data-i18n="footer_legal">Aviso Legal</button>
+              <button onclick="openLegalModal('privacidad')" class="hover:text-white underline" data-i18n="footer_privacy">Privacidad y RGPD</button>
+              <button onclick="openLegalModal('cookies')" class="hover:text-white underline" data-i18n="footer_cookies">Cookies e IA</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Columna Derecha: Resumen Volumétrico Visual -->
+      <div class="lg:col-span-5">
+        <div class="card-panel p-6 border-slate-700/80 bg-[#111926]/90 shadow-2xl space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+            <span class="text-xs font-bold uppercase tracking-wider text-emerald-400" data-i18n="gate_box_header">VOLUMETRÍA OFICIAL DEL ACTIVO</span>
+            <span class="text-xs bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 px-2.5 py-0.5 rounded font-semibold">Ref. BCN-ANGELS</span>
+          </div>
+
+          <div class="space-y-3 text-xs">
+            <div class="p-3 rounded-lg bg-[#162030] border border-slate-800 flex justify-between items-center">
+              <div>
+                <div class="font-bold text-white text-sm" data-i18n="level_p1_title">Planta Primera (Loft / Oficinas / Atelier)</div>
+                <div class="text-slate-400" data-i18n="level_p1_desc">Luz natural, modular, ascensor directo, opción suite/cocina</div>
+              </div>
+              <span class="text-base font-extrabold text-amber-400">334 m²</span>
+            </div>
+
+            <div class="p-3 rounded-lg bg-[#162030] border border-slate-800 flex justify-between items-center">
+              <div>
+                <div class="font-bold text-white text-sm" data-i18n="level_pb_title">Planta Baja + Terraza / Patio Interior</div>
+                <div class="text-slate-400" data-i18n="level_pb_desc">Acceso comercial + Oasis privado de 103 m² en centro histórico</div>
+              </div>
+              <span class="text-base font-extrabold text-emerald-400">103 m²</span>
+            </div>
+
+            <div class="p-3 rounded-lg bg-[#162030] border border-slate-800 flex justify-between items-center">
+              <div>
+                <div class="font-bold text-white text-sm" data-i18n="level_sot_title">Planta Sótano / Bodega Histórica (Cellar)</div>
+                <div class="text-slate-400" data-i18n="level_sot_desc">Bóvedas de ladrillo visto original para Showroom o Galería</div>
+              </div>
+              <span class="text-base font-extrabold text-sky-400">110 m²</span>
+            </div>
+          </div>
+
+          <div class="pt-3 border-t border-slate-800 flex items-center justify-between">
+            <div>
+              <span class="text-[11px] uppercase tracking-wider text-slate-400 block" data-i18n="gate_price_label">PRECIO DE VENTA (SIN CONDICIÓN)</span>
+              <span class="text-2xl font-extrabold text-white">780.000 €</span>
+            </div>
+            <div class="text-right">
+              <span class="text-[11px] uppercase tracking-wider text-slate-400 block" data-i18n="gate_yield_label">YIELD BRUTO EST.</span>
+              <span class="text-lg font-extrabold text-emerald-400">6,8% - 8,3%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= BARRA DE NAVEGACIÓN SUPERIOR CORPORATIVA ================= -->
+  <header class="sticky top-0 z-30 bg-[#0b111a]/95 backdrop-blur border-b border-slate-800 px-4 lg:px-8 py-3">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center gap-4">
+        <a href="https://app.level-i.com/mercado-real" class="flex items-center gap-2 text-white font-extrabold text-xl tracking-tight">
+          <span class="inline-flex items-center justify-center w-7 h-7 rounded bg-white text-slate-950 font-black">L</span>
+          <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 -ml-1.5 mt-2"></span>
+          <span>Level.immo</span>
+        </a>
+        <span class="text-xs text-emerald-400 font-mono hidden sm:inline" id="live-clock">02/11/2026 | 22:25:00</span>
+      </div>
+
+      <nav class="flex items-center gap-2 sm:gap-3 text-xs font-semibold">
+        <a href="https://app.level-i.com/demanda-activa" class="px-3 py-1.5 rounded-lg bg-[#151f2e] hover:bg-slate-800 text-slate-200 border border-slate-700/70 transition flex items-center gap-1.5">
+          <span>🎯</span> <span data-i18n="nav_demand">Demanda Activa</span>
+        </a>
+        <a href="https://app.level-i.com/mercado-real" class="px-3 py-1.5 rounded-lg bg-[#151f2e] hover:bg-slate-800 text-slate-200 border border-slate-700/70 transition flex items-center gap-1.5">
+          <span>📡</span> <span data-i18n="nav_market">Mercado Real</span>
+        </a>
+        <button onclick="openElenaModal()" class="px-3 py-1.5 rounded-lg bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 border border-amber-500/30 transition flex items-center gap-1.5">
+          <span>🔐</span> <span data-i18n="nav_private">Zona Privada Inversor</span>
+        </button>
+
+        <select id="lang-select-main" onchange="changeLanguage(this.value)" class="bg-[#151f2e] border border-slate-700 text-slate-200 text-xs font-semibold rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-emerald-500 cursor-pointer">
+          <option value="es">ES Español</option>
+          <option value="ca">CA Català</option>
+          <option value="en">GB English</option>
+          <option value="fr">FR Français</option>
+          <option value="de">DE Deutsch</option>
+          <option value="it">IT Italiano</option>
+          <option value="ar">AE العربية</option>
+          <option value="zh">CN 中文</option>
+        </select>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ================= CONTENIDO PRINCIPAL: FICHA CIEGA & SIMULADOR ================= -->
+  <main class="max-w-7xl mx-auto w-full px-4 lg:px-8 py-8 space-y-8">
+
+    <!-- Cabecera de Ruta y Estado Documental -->
+    <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-800/80 pb-5">
+      <div>
+        <div class="flex items-center gap-2 text-xs text-slate-400 font-mono mb-1">
+          <span>app.level-i.com</span> <span>/</span> <span>barcelona</span> <span>/</span> <span>ciutat-vella</span> <span>/</span> <span class="text-emerald-400 font-semibold">activo-angels</span>
+        </div>
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-white" data-i18n="main_header_title">
+          Barcelona · Ciutat Vella (Eje Plaça dels Àngels) | Activo Comercial Singular 547 m²
+        </h2>
+      </div>
+      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full gold-badge text-xs font-bold uppercase">
+        <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+        <span data-i18n="main_status_badge">FICHA CIEGA · AUDITORÍA PATRIMONIAL VERIFICADA</span>
+      </div>
+    </div>
+
+    <!-- Grid Principal: Izquierda (Vídeo + Descripción + Perfiles) | Derecha (Calculadora + Costes + CTA Elena) -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+
+      <!-- COLUMNA IZQUIERDA (7 Cols) -->
+      <div class="lg:col-span-7 space-y-6">
+
+        <!-- 4 KPIs Superiores (Estilo La Ràpita) -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div class="card-panel p-4 text-center">
+            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block" data-i18n="kpi_1_label">PVP INVERSIÓN</span>
+            <span class="text-xl font-extrabold text-emerald-400 mt-1 block">780.000 €</span>
+            <span class="text-[11px] text-slate-400 mt-0.5 block" data-i18n="kpi_1_sub">+ 1.425 €/m² global</span>
+          </div>
+          <div class="card-panel p-4 text-center">
+            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block" data-i18n="kpi_2_label">CONFIGURACIÓN</span>
+            <span class="text-base font-extrabold text-white mt-1 block" data-i18n="kpi_2_val">P1 + PB + Sótano</span>
+            <span class="text-[11px] text-emerald-400 mt-0.5 block" data-i18n="kpi_2_sub">+ Ascensor y Patio</span>
+          </div>
+          <div class="card-panel p-4 text-center">
+            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block" data-i18n="kpi_3_label">SUPERFICIE TOTAL</span>
+            <span class="text-base font-extrabold text-white mt-1 block">547 m²</span>
+            <span class="text-[11px] text-amber-400 mt-0.5 block">334 + 103 + 110 m²</span>
+          </div>
+          <div class="card-panel p-4 text-center">
+            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block" data-i18n="kpi_4_label">CONDICIÓN DE VENTA</span>
+            <span class="text-base font-extrabold text-white mt-1 block" data-i18n="kpi_4_val">Uso Comercial</span>
+            <span class="text-[11px] text-emerald-400 mt-0.5 block" data-i18n="kpi_4_sub">Sin cond. cambio uso</span>
+          </div>
+        </div>
+
+        <!-- Reproductor de Vídeo Vertical Optimizado con Modo Confidencialidad (Blur) -->
+        <div class="card-panel overflow-hidden relative bg-slate-950 border-slate-800">
+          <div class="flex items-center justify-between px-4 py-3 bg-[#141d2d] border-b border-slate-800">
+            <div class="flex items-center gap-2 text-xs font-bold text-slate-200">
+              <span class="text-emerald-400">▶</span>
+              <span data-i18n="video_header_title">RECORRIDO AUDIOVISUAL Y PROYECCIÓN DE INTERIORISMO (9:16 MÓVIL FULLSCREEN)</span>
+            </div>
+            <button onclick="toggleVideoBlur()" id="btn-toggle-blur" class="text-[11px] bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 px-2.5 py-1 rounded font-semibold transition">
+              👁️ <span data-i18n="video_btn_unblur">Alternar Filtro Confidencial</span>
+            </button>
+          </div>
+
+          <div class="relative flex justify-center bg-black py-4">
+            <!-- Contenedor formato móvil 9:16 limpio sin barras laterales -->
+            <div class="relative w-full max-w-[340px] aspect-[9/16] rounded-xl overflow-hidden border border-slate-800 shadow-2xl">
+              <video id="property-video" class="w-full h-full object-cover video-blur" controls loop playsinline poster="https://images.unsplash.com/photo-1497366811353-6870744d04b2?auto=format&fit=crop&w=800&q=80">
+                <source src="joaquin costa-macba.mp4" type="video/mp4">
+              </video>
+
+              <!-- Etiqueta Flotante de Confidencialidad -->
+              <div id="confidential-overlay" class="absolute inset-0 flex flex-col items-center justify-center p-6 text-center bg-slate-950/60 backdrop-blur-sm transition-opacity">
+                <div class="px-4 py-2.5 rounded-lg bg-amber-500 text-slate-950 font-extrabold text-xs uppercase tracking-wider shadow-lg mb-3">
+                  🔒 <span data-i18n="video_overlay_badge">CONFIDENCIALIDAD ACTIVA (FICHA CIEGA)</span>
+                </div>
+                <p class="text-xs text-slate-200 mb-4 max-w-xs" data-i18n="video_overlay_desc">
+                  Para proteger la privacidad de la propiedad en Ciutat Vella, la previsualización inicial se muestra difuminada.
+                </p>
+                <button onclick="unlockVideo()" class="px-4 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs uppercase tracking-wider transition shadow-lg">
+                  ✨ <span data-i18n="video_overlay_btn">VER VÍDEO EN ALTA DEFINICIÓN</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Descripción Corporativa y Propuesta de Valor "Fino Filipino" -->
+        <div class="card-panel p-6 space-y-5">
+          <h3 class="text-lg font-bold text-white border-b border-slate-800 pb-2" data-i18n="desc_title">
+            Descripción Ejecutiva del Activo y Posicionamiento Estratégico
+          </h3>
+          <p class="text-sm text-slate-300 leading-relaxed" data-i18n="desc_p1">
+            Ubicado estratégicamente en el triángulo de mayor proyección cultural de <strong>Ciutat Vella (Barcelona)</strong>, a escasos pasos de la Plaça dels Àngels, Las Ramblas y Plaça Catalunya. Este inmueble de uso comercial —antiguo centro educativo/parvulario— ofrece una volumetría irrepetible de <strong>547 m²</strong> distribuida en tres niveles conectados y dotados de ascensor.
+          </p>
+          <p class="text-sm text-slate-300 leading-relaxed" data-i18n="desc_p2">
+            <strong>La Joya del Activo (Visión Atelier de Moda & Showroom Corporativo):</strong> Su configuración permite albergar un espectacular <em>Showroom</em> de recepción de clientes en la Planta Baja y en su fascinante <strong>Bodega subterránea de 110 m² con bóvedas de ladrillo histórico</strong>, reservando los <strong>334 m² de la Planta Primera</strong> para talleres de diseño, despachos de dirección y un área privada adaptada para pernoctación ejecutiva (con cocina, lavandería y salida a un <strong>patio/terraza de 103 m²</strong> que constituye un auténtico oasis de silencio en pleno centro de Barcelona).
+          </p>
+
+          <!-- Píldoras de Perfiles de Comprador Ideal -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+            <div class="p-3.5 rounded-lg bg-[#162032] border border-slate-800">
+              <div class="text-xs font-bold text-amber-400 uppercase mb-1" data-i18n="target_1_title">👗 Atelier de Moda, Diseño & Showroom</div>
+              <p class="text-xs text-slate-300" data-i18n="target_1_desc">Exposición en PB y bóvedas históricas; atelier creativo, oficinas y zona de descanso con cocina y patio privado en planta superior.</p>
+            </div>
+            <div class="p-3.5 rounded-lg bg-[#162032] border border-slate-800">
+              <div class="text-xs font-bold text-emerald-400 uppercase mb-1" data-i18n="target_2_title">🏥 Centro Médico, Clínica Estética o Bienestar</div>
+              <p class="text-xs text-slate-300" data-i18n="target_2_desc">Amplitud para boxes sanitarios en Planta 1ª, recepción a pie de calle, ascensor y patio interior terapéutico para pacientes.</p>
+            </div>
+            <div class="p-3.5 rounded-lg bg-[#162032] border border-slate-800">
+              <div class="text-xs font-bold text-sky-400 uppercase mb-1" data-i18n="target_3_title">💻 Sede Corporativa, Tech Hub o Coworking</div>
+              <p class="text-xs text-slate-300" data-i18n="target_3_desc">Salas de trabajo diáfanas, salas de juntas en bóvedas subterráneas y terraza privada de 103 m² para eventos corporativos.</p>
+            </div>
+            <div class="p-3.5 rounded-lg bg-[#162032] border border-slate-800">
+              <div class="text-xs font-bold text-purple-400 uppercase mb-1" data-i18n="target_4_title">🏛️ Inversor Patrimonial / Entidad Social</div>
+              <p class="text-xs text-slate-300" data-i18n="target_4_desc">Se transmite como uso comercial sin condición suspensiva a cambio de uso. Libertad absoluta para explotar en renta o reconfigurar.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Acordeón de Consultoría Técnica / FAQs (Filtro Anti-Curiosos) -->
+        <div class="card-panel p-6 space-y-3">
+          <div class="text-xs font-bold uppercase tracking-wider text-amber-400 mb-2" data-i18n="faq_sup">
+            ● CONSULTORÍA TÉCNICA | PREGUNTAS FRECUENTES DEL INVERSOR
+          </div>
+          <h3 class="text-lg font-bold text-white mb-4" data-i18n="faq_title">
+            Todo lo que debes saber sobre el Activo Àngels en Ciutat Vella
+          </h3>
+
+          <details class="group bg-[#151f2e] border border-slate-800 rounded-lg p-4 cursor-pointer">
+            <summary class="font-semibold text-sm text-white flex justify-between items-center">
+              <span data-i18n="faq_q1">¿En qué condiciones urbanísticas se transmite el inmueble por 780.000 €?</span>
+              <span class="text-emerald-400 group-open:rotate-180 transition">▼</span>
+            </summary>
+            <p class="text-xs text-slate-300 mt-3 leading-relaxed" data-i18n="faq_a1">
+              El activo se vende como local/edificio de uso comercial (antiguo parvulario) libre de cargas y <strong>sin condición suspensiva de cambio de uso</strong>. Cualquier inversor que desee tramitar licencias específicas o explorar un cambio de uso futuro lo hará por su propia cuenta y ventura tras la adquisición.
+            </p>
+          </details>
+
+          <details class="group bg-[#151f2e] border border-slate-800 rounded-lg p-4 cursor-pointer">
+            <summary class="font-semibold text-sm text-white flex justify-between items-center">
+              <span data-i18n="faq_q2">¿Por qué no se publica la calle ni el número exacto en abierto?</span>
+              <span class="text-emerald-400 group-open:rotate-180 transition">▼</span>
+            </summary>
+            <p class="text-xs text-slate-300 mt-3 leading-relaxed" data-i18n="faq_a2">
+              En Level.immo protegemos rigurosamente el patrimonio de nuestros propietarios frente al "chafardero" inmobiliario. La dirección exacta, planos acotados y nota simple únicamente se habilitan tras cualificar el perfil financiero y el proyecto con nuestro sistema Elena IA.
+            </p>
+          </details>
+
+          <details class="group bg-[#151f2e] border border-slate-800 rounded-lg p-4 cursor-pointer">
+            <summary class="font-semibold text-sm text-white flex justify-between items-center">
+              <span data-i18n="faq_q3">¿Cuál es el comportamiento del mercado de alquiler comercial en este eje de Ciutat Vella?</span>
+              <span class="text-emerald-400 group-open:rotate-180 transition">▼</span>
+            </summary>
+            <p class="text-xs text-slate-300 mt-3 leading-relaxed" data-i18n="faq_a3">
+              Los espacios singulares rehabilitables con terraza privada de más de 100 m² y carácter arquitectónico (bóvedas históricas) escasean en el centro de Barcelona. La horquilla de arrendamiento para sedes creativas, clínicas o showrooms oscila entre los 4.800 € y los 6.500 € mensuales según nivel de equipamiento, arrojando rentabilidades brutas superiores al mercado residencial y sin topes legales de renta.
+            </p>
+          </details>
+        </div>
+
+      </div>
+
+      <!-- COLUMNA DERECHA (5 Cols): ESTUDIO DE COSTES + RENTABILIDAD + AGENDA ELENA IA -->
+      <div class="lg:col-span-5 space-y-6 lg:sticky lg:top-20">
+
+        <!-- Tarjeta Interactiva de Costes y Estudio de Alquiler (Estilo Alcanar + Les Cases) -->
+        <div class="card-panel p-6 border-slate-700/90 shadow-2xl space-y-5">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+            <span class="text-sm font-bold text-amber-400 flex items-center gap-2">
+              <span>📊</span> <span data-i18n="calc_header">Precio de Venta & Estudio Económico</span>
+            </span>
+            <span class="text-[11px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded font-mono">547 m² Totales</span>
+          </div>
+
+          <!-- Selector de Actividad para Simulación -->
+          <div>
+            <label class="text-[11px] font-bold uppercase tracking-wider text-slate-400 block mb-2" data-i18n="calc_select_activity">
+              1. SELECCIONA LA ACTIVIDAD OBJETIVO PARA SIMULAR COSTES Y ALQUILER:
+            </label>
+            <div class="grid grid-cols-3 gap-2">
+              <button onclick="setActivityPreset('moda')" id="btn-act-moda" class="p-2.5 rounded-lg border border-amber-500 bg-amber-500/15 text-amber-300 text-xs font-bold transition text-center">
+                👗 <span data-i18n="act_btn_moda">Atelier Moda</span>
+              </button>
+              <button onclick="setActivityPreset('medico')" id="btn-act-medico" class="p-2.5 rounded-lg border border-slate-700 bg-[#151f2e] text-slate-300 hover:border-slate-500 text-xs font-bold transition text-center">
+                🏥 <span data-i18n="act_btn_medico">Centro Médico</span>
+              </button>
+              <button onclick="setActivityPreset('oficina')" id="btn-act-oficina" class="p-2.5 rounded-lg border border-slate-700 bg-[#151f2e] text-slate-300 hover:border-slate-500 text-xs font-bold transition text-center">
+                💻 <span data-i18n="act_btn_oficina">Sede / Loft</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Desglose de Adquisición Base -->
+          <div class="space-y-2 text-xs border-b border-slate-800 pb-4">
+            <div class="flex justify-between text-slate-300">
+              <span data-i18n="calc_base_price">Precio de Adquisición (Venta):</span>
+              <span class="font-bold text-white">780.000 €</span>
+            </div>
+            <div class="flex justify-between text-slate-400">
+              <span data-i18n="calc_taxes">Impuestos Estimados (ITP/AJD ~10%):</span>
+              <span class="font-semibold text-slate-200">78.000 €</span>
+            </div>
+            <div class="flex justify-between text-slate-400">
+              <span data-i18n="calc_notary">Notaría, Registro y Gestoría (est.):</span>
+              <span class="font-semibold text-slate-200">4.500 €</span>
+            </div>
+          </div>
+
+          <!-- Inputs Interactivos de Reforma por Niveles (Editables en vivo) -->
+          <div class="space-y-3">
+            <div class="text-[11px] font-bold uppercase tracking-wider text-amber-400" data-i18n="calc_custom_title">
+              🛠️ 2. PERSONALIZA TU ESTIMACIÓN DE ADECUACIÓN (EDITABLE):
+            </div>
+
+            <div class="flex items-center justify-between gap-2 text-xs">
+              <span class="text-slate-300" data-i18n="calc_item_1">+ Adecuación P1 (334 m² Talleres / Suite / Cocina):</span>
+              <div class="flex items-center gap-1">
+                <input type="number" id="cost-p1" value="65000" step="1000" oninput="recalculateEconomics()" class="w-24 bg-[#0b111a] border border-slate-700 rounded px-2 py-1 text-right text-white font-bold focus:border-emerald-500 focus:outline-none" />
+                <span class="text-slate-400">€</span>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between gap-2 text-xs">
+              <span class="text-slate-300" data-i18n="calc_item_2">+ Showroom PB y Bóvedas Sótano (110 m²):</span>
+              <div class="flex items-center gap-1">
+                <input type="number" id="cost-sotano" value="25000" step="1000" oninput="recalculateEconomics()" class="w-24 bg-[#0b111a] border border-slate-700 rounded px-2 py-1 text-right text-white font-bold focus:border-emerald-500 focus:outline-none" />
+                <span class="text-slate-400">€</span>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between gap-2 text-xs">
+              <span class="text-slate-300" data-i18n="calc_item_3">+ Paisajismo Patio/Terraza (103 m²) y Clima:</span>
+              <div class="flex items-center gap-1">
+                <input type="number" id="cost-patio" value="18000" step="1000" oninput="recalculateEconomics()" class="w-24 bg-[#0b111a] border border-slate-700 rounded px-2 py-1 text-right text-white font-bold focus:border-emerald-500 focus:outline-none" />
+                <span class="text-slate-400">€</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Suma Total Coste Real -->
+          <div class="p-4 rounded-xl bg-[#162234] border border-emerald-500/30 flex items-center justify-between">
+            <div>
+              <span class="text-[11px] font-bold uppercase tracking-wider text-emerald-400 block" data-i18n="calc_total_label">SUMA TOTAL INVERSIÓN REAL:</span>
+              <span class="text-[11px] text-slate-400" id="cost-per-m2-label">1.774 € / m² llave en mano</span>
+            </div>
+            <span class="text-2xl font-extrabold text-emerald-400" id="total-investment-display">970.500 €</span>
+          </div>
+
+          <!-- Estudio de Mercado de Alquiler y Rentabilidad -->
+          <div class="p-4 rounded-xl bg-[#141d2b] border border-slate-800 space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-white" data-i18n="rent_study_title">📈 Estudio de Mercado de Alquiler (Ciutat Vella)</span>
+              <span class="text-xs font-bold text-amber-400" id="rent-unit-price">~10,6 € / m²</span>
+            </div>
+
+            <div class="flex items-center justify-between text-xs">
+              <span class="text-slate-300" data-i18n="rent_monthly_label">Renta Mensual Estimada (Editable):</span>
+              <div class="flex items-center gap-1">
+                <input type="number" id="est-monthly-rent" value="5800" step="100" oninput="recalculateEconomics()" class="w-24 bg-[#0b111a] border border-slate-700 rounded px-2 py-1 text-right text-emerald-400 font-bold focus:border-emerald-500 focus:outline-none" />
+                <span class="text-slate-400">€/mes</span>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2 pt-2 border-t border-slate-800/80 text-center">
+              <div class="p-2 rounded bg-[#0f1722]">
+                <span class="text-[10px] uppercase text-slate-400 block" data-i18n="rent_annual_label">INGRESOS ANUALES</span>
+                <span class="text-sm font-extrabold text-white" id="annual-rent-display">69.600 € / año</span>
+              </div>
+              <div class="p-2 rounded bg-[#0f1722]">
+                <span class="text-[10px] uppercase text-slate-400 block" data-i18n="rent_yield_label">RENTABILIDAD BRUTA</span>
+                <span class="text-sm font-extrabold text-emerald-400" id="gross-yield-display">7,17 % Anual</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Botones de Interacción Social y Apertura de Elena IA -->
+          <div class="space-y-3 pt-2">
+            <div class="flex items-center justify-between text-xs text-slate-400 px-1">
+              <span>❤️ <strong class="text-white" id="likes-count">19</strong> <span data-i18n="social_likes">Inversores interesados</span></span>
+              <span>📋 <strong class="text-emerald-400">4</strong> <span data-i18n="social_visits">Solicitudes en análisis</span></span>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2">
+              <button onclick="registerLike()" id="btn-like" class="py-2.5 px-3 rounded-lg bg-[#162032] hover:bg-slate-800 border border-slate-700 text-xs font-semibold text-slate-200 transition flex items-center justify-center gap-1.5">
+                <span>🤍</span> <span data-i18n="btn_like_text">Me Gusta este Activo</span>
+              </button>
+              <button onclick="copyShareLink()" class="py-2.5 px-3 rounded-lg bg-[#162032] hover:bg-slate-800 border border-slate-700 text-xs font-semibold text-slate-200 transition flex items-center justify-center gap-1.5">
+                <span>🔗</span> <span id="share-btn-text" data-i18n="btn_share_text">Compartir Ficha</span>
+              </button>
+            </div>
+
+            <button onclick="openElenaModal()" class="w-full py-4 px-5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold text-xs sm:text-sm uppercase tracking-wider transition emerald-glow flex items-center justify-center gap-2">
+              <span>💬</span> <span data-i18n="cta_main_elena">SOLICITAR DOSSIER, PLANOS Y AGENDAR CON ELENA IA</span>
+            </button>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ================= MODAL DE CUALIFICACIÓN: ELENA | AI ADVISOR LEVEL-I ================= -->
+  <div id="elena-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden items-center justify-center p-4">
+    <div class="card-panel max-w-lg w-full overflow-hidden border-slate-700 shadow-2xl bg-[#111926]">
+      
+      <!-- Cabecera de Elena IA -->
+      <div class="px-5 py-4 bg-[#162032] border-b border-slate-800 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-lg bg-emerald-500 text-slate-950 font-black flex items-center justify-center text-lg">
+            E
+          </div>
+          <div>
+            <div class="text-sm font-bold text-white">Elena | AI Advisor Level-i</div>
+            <div class="text-[11px] text-emerald-400 flex items-center gap-1.5">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
+              <span data-i18n="elena_sub">Recepción & Filtro de Inversores · Barcelona Ciutat Vella (08001)</span>
+            </div>
+          </div>
+        </div>
+        <button onclick="closeElenaModal()" class="text-slate-400 hover:text-white text-xs font-semibold px-2 py-1 rounded">✕ Cerrar</button>
+      </div>
+
+      <!-- Cuerpo Conversacional por Pasos -->
+      <div class="p-5 max-h-[80vh] overflow-y-auto space-y-4">
+
+        <!-- PASO 0: VERIFICACIÓN DE SEGURIDAD Y RGPD -->
+        <div id="elena-step-0" class="space-y-4">
+          <div class="p-4 rounded-xl bg-[#162032] border border-slate-700/80 space-y-3">
+            <div class="text-xs font-bold text-amber-400 flex items-center gap-1.5">
+              <span>🛡️</span> <span data-i18n="elena_sec_title">Verificación de Seguridad y Confidencialidad:</span>
+            </div>
+            <p class="text-xs text-slate-300" data-i18n="elena_sec_desc">
+              Para iniciar con Elena IA y registrar tu solicitud prioritaria en el Activo Àngels (780.000 €), resuelve la suma:
+            </p>
+            <div class="flex items-center gap-3">
+              <span class="text-sm font-bold text-white bg-[#0b111a] px-3 py-2 rounded border border-slate-700">
+                <span id="elena-num1">7</span> + <span id="elena-num2">6</span> =
+              </span>
+              <input type="number" id="elena-math-input" placeholder="Escribe el resultado..." class="flex-1 bg-[#0b111a] border border-slate-700 rounded-lg px-3 py-2 text-sm text-white font-bold focus:outline-none focus:border-emerald-500" />
+            </div>
+
+            <label class="flex items-start gap-2.5 text-[11px] text-slate-300 cursor-pointer pt-2">
+              <input type="checkbox" id="elena-rgpd-check" class="mt-0.5 rounded border-slate-600 text-emerald-500 focus:ring-emerald-500" />
+              <span>
+                <span data-i18n="elena_rgpd_1">He leído y acepto la</span>
+                <button type="button" onclick="openLegalModal('privacidad')" class="text-emerald-400 underline">Política de Privacidad</button>,
+                <button type="button" onclick="openLegalModal('aviso')" class="text-emerald-400 underline">Aviso Legal</button>
+                <span data-i18n="elena_rgpd_2">y consiento ser atendido de forma automatizada por el sistema de IA de Level.immo.</span>
+              </span>
+            </label>
+
+            <p id="elena-step0-error" class="text-rose-400 text-xs hidden">Verifica la suma matemática y acepta la casilla de Privacidad RGPD.</p>
+
+            <button onclick="completeElenaStep0()" class="w-full py-3 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold text-xs uppercase tracking-wider transition">
+              ✔ <span data-i18n="elena_btn_start">Verificar y Hablar con Elena IA</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- PASO 1: FILTRO DE PROYECTO / PERFIL DE INVERSOR -->
+        <div id="elena-step-1" class="space-y-4 hidden">
+          <div class="p-4 rounded-xl bg-[#182334] border border-slate-700 text-xs text-slate-200 space-y-2 leading-relaxed">
+            <p data-i18n="elena_greet_1">
+              Hola, soy <strong>Elena, AI Advisor de Level.immo</strong>. Este activo comercial singular de <strong>547 m² en Ciutat Vella - Eje Àngels (780.000 €)</strong> se gestiona bajo estricto protocolo de Ficha Ciega.
+            </p>
+            <p class="font-semibold text-white" data-i18n="elena_greet_2">
+              Para asignarte expediente en tu Zona Privada y habilitar los planos, dime primero: ¿Qué proyecto o enfoque tienes previsto para esta propiedad?
+            </p>
+          </div>
+
+          <div class="space-y-2">
+            <button onclick="selectElenaUse('Showroom & Atelier de Moda + Zona Privada con Patio')" class="w-full text-left p-3 rounded-lg bg-[#151f2e] hover:bg-emerald-500/20 border border-slate-700 hover:border-emerald-500 text-xs font-semibold text-slate-200 transition">
+              👗 <span data-i18n="elena_opt_1">Showroom & Taller de Moda + Suite/Cocina y Patio de 103 m²</span>
+            </button>
+            <button onclick="selectElenaUse('Centro Médico, Clínica o Sede Corporativa / Coworking')" class="w-full text-left p-3 rounded-lg bg-[#151f2e] hover:bg-emerald-500/20 border border-slate-700 hover:border-emerald-500 text-xs font-semibold text-slate-200 transition">
+              🏥 <span data-i18n="elena_opt_2">Centro Médico, Clínica, Oficinas Corporativas o Coworking</span>
+            </button>
+            <button onclick="selectElenaUse('Inversión Patrimonial para Rentabilidad en Alquiler')" class="w-full text-left p-3 rounded-lg bg-[#151f2e] hover:bg-emerald-500/20 border border-slate-700 hover:border-emerald-500 text-xs font-semibold text-slate-200 transition">
+              📈 <span data-i18n="elena_opt_3">Inversión Patrimonial para Rentabilidad en Alquiler (Yield >7%)</span>
+            </button>
+            <button onclick="selectElenaUse('Entidad Social o Proyecto de Reconfiguración (Sin condición)')" class="w-full text-left p-3 rounded-lg bg-[#151f2e] hover:bg-emerald-500/20 border border-slate-700 hover:border-emerald-500 text-xs font-semibold text-slate-200 transition">
+              🏛️ <span data-i18n="elena_opt_4">Entidad Cultural/Social o Exploración de Cambio de Uso (Sin condición)</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- PASO 2: CAPACIDAD FINANCIERA Y CAMPO DE ZONA BLOQUEADO (CORREGIDO) -->
+        <div id="elena-step-2" class="space-y-4 hidden">
+          <div class="flex justify-end">
+            <div id="user-selected-use-bubble" class="bg-emerald-500 text-slate-950 font-bold text-xs px-3.5 py-2 rounded-xl max-w-xs"></div>
+          </div>
+
+          <div class="p-4 rounded-xl bg-[#182334] border border-slate-700 text-xs text-slate-200 space-y-2">
+            <p data-i18n="elena_step2_q">
+              Excelente enfoque corporativo. ¿Cómo tienes previsto estructurar la operación de adquisición (780.000 € + adecuación)?
+            </p>
+          </div>
+
+          <div class="space-y-3">
+            <div>
+              <label class="text-[10px] font-bold uppercase text-slate-400 block mb-1" data-i18n="elena_fin_label">ESTRUCTURA FINANCIERA DEL COMPRADOR:</label>
+              <select id="elena-finance-select" class="w-full bg-[#0b111a] border border-slate-700 rounded-lg px-3 py-2.5 text-xs font-semibold text-white focus:outline-none focus:border-emerald-500">
+                <option value="Fondos Propios Disponibles / Al Contado" data-i18n="fin_opt_1">💳 Fondos Propios Disponibles / Al Contado</option>
+                <option value="Liquidez + Financiación Bancaria / Hipotecaria" data-i18n="fin_opt_2">🏦 Liquidez + Financiación Bancaria / Hipotecaria</option>
+                <option value="Reposición Patrimonial / Venta de otro activo" data-i18n="fin_opt_3">🔄 Reposición Patrimonial / Desinversión previa</option>
+              </select>
+            </div>
+
+            <!-- CAMPO DE ZONA ESTRICTAMENTE BLOQUEADO (READONLY + DISABLED) -->
+            <div>
+              <label class="text-[10px] font-bold uppercase text-slate-400 block mb-1" data-i18n="elena_zone_label">EXPEDIENTE Y ZONA ASIGNADA (FIJO):</label>
+              <input type="text" value="Barcelona - Ciutat Vella (08001) · Activo Àngels" readonly disabled class="w-full bg-[#0f1722] border border-slate-800 rounded-lg px-3 py-2.5 text-xs font-bold text-emerald-400 cursor-not-allowed select-none opacity-90" />
+            </div>
+
+            <button onclick="completeElenaStep2()" class="w-full py-3 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold text-xs uppercase tracking-wider transition">
+              <span data-i18n="elena_btn_continue">Continuar →</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- PASO 3: DATOS DE CONTACTO Y AGENDA DE LLAMADA -->
+        <div id="elena-step-3" class="space-y-4 hidden">
+          <div class="flex justify-end">
+            <div id="user-selected-fin-bubble" class="bg-emerald-500 text-slate-950 font-bold text-xs px-3.5 py-2 rounded-xl max-w-xs"></div>
+          </div>
+
+          <div class="p-4 rounded-xl bg-[#182334] border border-slate-700 text-xs text-slate-200">
+            <p data-i18n="elena_step3_q">
+              Estupendo. Indícame tu <strong>nombre</strong>, tu número de <strong>WhatsApp</strong>, tu <strong>correo corporativo</strong> y el <strong>día y hora</strong> en que prefieres que el Responsable de Ventas de Barcelona te llame y active tu Zona Privada:
+            </p>
+          </div>
+
+          <div class="space-y-3 text-xs">
+            <input type="text" id="lead-name" placeholder="Nombre completo o Razón Social" class="w-full bg-[#0b111a] border border-slate-700 rounded-lg px-3 py-2.5 text-white focus:border-emerald-500 focus:outline-none" />
+            
+            <div class="flex gap-2">
+              <select id="lead-prefix" class="bg-[#0b111a] border border-slate-700 rounded-lg px-2.5 py-2.5 text-white font-semibold">
+                <option value="+34">ES +34</option>
+                <option value="+33">FR +33</option>
+                <option value="+44">UK +44</option>
+                <option value="+49">DE +49</option>
+                <option value="+39">IT +39</option>
+                <option value="+41">CH +41</option>
+                <option value="+971">AE +971</option>
+                <option value="+86">CN +86</option>
+                <option value="+1">US +1</option>
+              </select>
+              <input type="tel" id="lead-phone" placeholder="WhatsApp (Ej: 600123456)" class="flex-1 bg-[#0b111a] border border-slate-700 rounded-lg px-3 py-2.5 text-white focus:border-emerald-500 focus:outline-none" />
+            </div>
+
+            <input type="email" id="lead-email" placeholder="Correo electrónico (para dossier y Zona Privada)" class="w-full bg-[#0b111a] border border-slate-700 rounded-lg px-3 py-2.5 text-white focus:border-emerald-500 focus:outline-none" />
+
+            <div class="grid grid-cols-2 gap-2 pt-1">
+              <div>
+                <label class="text-[10px] font-bold uppercase text-slate-400 block mb-1">📅 Fecha de la llamada</label>
+                <input type="date" id="lead-date" value="2026-11-04" class="w-full bg-[#0b111a] border border-slate-700 rounded-lg px-2.5 py-2 text-white focus:border-emerald-500 focus:outline-none" />
+              </div>
+              <div>
+                <label class="text-[10px] font-bold uppercase text-slate-400 block mb-1">⏰ Franja horaria</label>
+                <select id="lead-time" class="w-full bg-[#0b111a] border border-slate-700 rounded-lg px-2.5 py-2 text-white focus:border-emerald-500 focus:outline-none">
+                  <option value="10:00h - 11:00h">10:00h - 11:00h</option>
+                  <option value="11:00h - 12:00h">11:00h - 12:00h</option>
+                  <option value="12:00h - 13:00h">12:00h - 13:00h</option>
+                  <option value="16:00h - 17:00h">16:00h - 17:00h</option>
+                  <option value="17:00h - 18:00h">17:00h - 18:00h</option>
+                  <option value="18:00h - 19:00h">18:00h - 19:00h</option>
+                </select>
+              </div>
+            </div>
+
+            <p id="elena-step3-error" class="text-rose-400 text-xs hidden">Por favor, completa nombre, teléfono válido y correo electrónico.</p>
+
+            <button onclick="submitElenaLead()" class="w-full py-3.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold text-xs uppercase tracking-wider transition">
+              ✔ <span data-i18n="elena_btn_confirm">Confirmar Solicitud de Dossier y Llamada</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- PASO 4: CONFIRMACIÓN DE EXPEDIENTE -->
+        <div id="elena-step-4" class="space-y-4 hidden">
+          <div class="p-4 rounded-xl bg-emerald-500/15 border border-emerald-500/40 text-xs text-slate-200 space-y-2">
+            <div class="text-sm font-extrabold text-emerald-400">
+              ✅ ¡Solicitud prioritaria y llamada confirmada!
+            </div>
+            <p id="confirmation-summary" class="text-slate-300 leading-relaxed"></p>
+            <p class="text-[11px] text-slate-400">
+              🔓 Hemos desbloqueado además la visualización en Alta Definición del vídeo del activo en esta Ficha Ciega.
+            </p>
+          </div>
+
+          <button onclick="closeElenaModal(); unlockVideo();" class="w-full py-3 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold text-xs uppercase tracking-wider transition">
+            Finalizar y Volver a la Ficha Ciega
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= MODAL TEXTOS LEGALES (RGPD / AVISO LEGAL / COOKIES) ================= -->
+  <div id="legal-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="card-panel max-w-lg w-full p-6 border-slate-700 bg-[#111926] space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <h4 id="legal-modal-title" class="text-base font-bold text-emerald-400">Aviso Legal y Privacidad</h4>
+        <button onclick="closeLegalModal()" class="text-slate-400 hover:text-white text-sm font-bold">✕</button>
+      </div>
+      <div id="legal-modal-body" class="text-xs text-slate-300 leading-relaxed space-y-2"></div>
+    </div>
+  </div>
+
+  <!-- ================= FOOTER CORPORATIVO LEVEL.IMMO ================= -->
+  <footer class="border-t border-slate-800/80 bg-[#080d14] px-4 lg:px-8 py-6 mt-12">
+    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-xs text-slate-400">
+      <div class="space-y-1">
+        <div class="text-slate-200 font-semibold">
+          Servicios Presenciales en: <span class="font-normal text-slate-400">Barcelona, Ciutat Vella, Sabadell, Terrassa, Sant Cugat del Vallès, Granollers, Mataró, Tarragona, La Ràpita, Alcanar, Les Cases d'Alcanar, Vinaròs, Tortosa, Amposta.</span>
+        </div>
+        <div class="font-mono text-[11px] text-slate-400">
+          API 4173 · AICAT 14200 · LEVEL PUNTO IMMO 24365 SLU (NIF B-26745430 · Travessera de Gràcia, 56, 3-1a, 08006 Barcelona)
+        </div>
+      </div>
+      <div class="flex gap-4">
+        <button onclick="openLegalModal('aviso')" class="hover:text-white underline" data-i18n="footer_legal">Aviso Legal</button>
+        <button onclick="openLegalModal('privacidad')" class="hover:text-white underline" data-i18n="footer_privacy">Privacidad y RGPD</button>
+        <button onclick="openLegalModal('cookies')" class="hover:text-white underline" data-i18n="footer_cookies">Cookies e IA</button>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ================= LÓGICA REACTIVA, CALCULADORA Y DICCIONARIO 8 IDIOMAS ================= -->
+  <script>
+    // Reloj en tiempo real
+    setInterval(() => {
+      const now = new Date();
+      const pad = n => String(n).padStart(2, '0');
+      const str = `${pad(now.getDate())}/${pad(now.getMonth()+1)}/${now.getFullYear()} | ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+      const el = document.getElementById('live-clock');
+      if (el) el.textContent = str;
+    }, 1000);
+
+    // Sumas matemáticas dinámicas
+    let gateSum = 10, elenaSum = 13;
+    function initMathChallenges() {
+      const g1 = Math.floor(Math.random() * 5) + 3;
+      const g2 = Math.floor(Math.random() * 5) + 2;
+      gateSum = g1 + g2;
+      document.getElementById('gate-num1').textContent = g1;
+      document.getElementById('gate-num2').textContent = g2;
+
+      const e1 = Math.floor(Math.random() * 6) + 4;
+      const e2 = Math.floor(Math.random() * 5) + 3;
+      elenaSum = e1 + e2;
+      document.getElementById('elena-num1').textContent = e1;
+      document.getElementById('elena-num2').textContent = e2;
+    }
+    initMathChallenges();
+
+    function verifyGatekeeper() {
+      const val = parseInt(document.getElementById('gate-math-input').value, 10);
+      if (val === gateSum) {
+        document.getElementById('gatekeeper-screen').classList.add('hidden');
+      } else {
+        document.getElementById('gate-error').classList.remove('hidden');
+      }
+    }
+
+    // Control de Blur de Confidencialidad del Vídeo
+    let videoUnlocked = false;
+    function unlockVideo() {
+      const v = document.getElementById('property-video');
+      const ov = document.getElementById('confidential-overlay');
+      v.classList.remove('video-blur');
+      v.classList.add('video-unblurred');
+      ov.classList.add('hidden');
+      videoUnlocked = true;
+      v.play().catch(() => {});
+    }
+    function toggleVideoBlur() {
+      const v = document.getElementById('property-video');
+      const ov = document.getElementById('confidential-overlay');
+      if (videoUnlocked) {
+        v.classList.remove('video-unblurred');
+        v.classList.add('video-blur');
+        ov.classList.remove('hidden');
+        videoUnlocked = false;
+      } else {
+        unlockVideo();
+      }
+    }
+
+    // Calculadora Financiera Interactiva por Actividad
+    const BASE_PRICE = 780000;
+    const BASE_TAXES = 78000;
+    const BASE_NOTARY = 4500;
+    const TOTAL_SQM = 547;
+
+    function setActivityPreset(type) {
+      const btnModa = document.getElementById('btn-act-moda');
+      const btnMed = document.getElementById('btn-act-medico');
+      const btnOfi = document.getElementById('btn-act-oficina');
+
+      [btnModa, btnMed, btnOfi].forEach(b => {
+        b.className = "p-2.5 rounded-lg border border-slate-700 bg-[#151f2e] text-slate-300 hover:border-slate-500 text-xs font-bold transition text-center";
+      });
+
+      const activeClass = "p-2.5 rounded-lg border border-amber-500 bg-amber-500/15 text-amber-300 text-xs font-bold transition text-center";
+
+      if (type === 'moda') {
+        btnModa.className = activeClass;
+        document.getElementById('cost-p1').value = 65000;
+        document.getElementById('cost-sotano').value = 25000;
+        document.getElementById('cost-patio').value = 18000;
+        document.getElementById('est-monthly-rent').value = 5800;
+      } else if (type === 'medico') {
+        btnMed.className = activeClass;
+        document.getElementById('cost-p1').value = 95000;
+        document.getElementById('cost-sotano').value = 30000;
+        document.getElementById('cost-patio').value = 20000;
+        document.getElementById('est-monthly-rent').value = 6400;
+      } else {
+        btnOfi.className = activeClass;
+        document.getElementById('cost-p1').value = 45000;
+        document.getElementById('cost-sotano').value = 18000;
+        document.getElementById('cost-patio').value = 15000;
+        document.getElementById('est-monthly-rent').value = 5200;
+      }
+      recalculateEconomics();
+    }
+
+    function recalculateEconomics() {
+      const cP1 = parseFloat(document.getElementById('cost-p1').value) || 0;
+      const cSot = parseFloat(document.getElementById('cost-sotano').value) || 0;
+      const cPat = parseFloat(document.getElementById('cost-patio').value) || 0;
+      const rentMonth = parseFloat(document.getElementById('est-monthly-rent').value) || 0;
+
+      const totalInv = BASE_PRICE + BASE_TAXES + BASE_NOTARY + cP1 + cSot + cPat;
+      const perSqm = Math.round(totalInv / TOTAL_SQM);
+      const annualRent = rentMonth * 12;
+      const yieldPct = totalInv > 0 ? ((annualRent / totalInv) * 100).toFixed(2) : "0.00";
+      const rentPerSqm = (rentMonth / TOTAL_SQM).toFixed(1);
+
+      const fmt = n => n.toLocaleString('es-ES');
+      document.getElementById('total-investment-display').textContent = `${fmt(totalInv)} €`;
+      document.getElementById('cost-per-m2-label').textContent = `${fmt(perSqm)} € / m² llave en mano`;
+      document.getElementById('annual-rent-display').textContent = `${fmt(annualRent)} € / año`;
+      document.getElementById('gross-yield-display').textContent = `${yieldPct.replace('.', ',')} % Anual`;
+      document.getElementById('rent-unit-price').textContent = `~${rentPerSqm.replace('.', ',')} € / m²`;
+    }
+
+    // Interacciones Sociales
+    let liked = false;
+    function registerLike() {
+      if (!liked) {
+        liked = true;
+        const c = document.getElementById('likes-count');
+        c.textContent = parseInt(c.textContent, 10) + 1;
+        document.getElementById('btn-like').innerHTML = `<span>❤️</span> <span>Guardado en Favoritos</span>`;
+      }
+    }
+    function copyShareLink() {
+      const url = "https://app.level-i.com/barcelona/ciutat-vella/activo-angels";
+      navigator.clipboard.writeText(url).catch(() => {});
+      const btn = document.getElementById('share-btn-text');
+      const old = btn.textContent;
+      btn.textContent = "¡Enlace copiado!";
+      setTimeout(() => { btn.textContent = old; }, 2000);
+    }
+
+    // Flujo de Elena IA
+    let selectedUse = "";
+    let selectedFin = "";
+
+    function openElenaModal() {
+      document.getElementById('elena-modal').classList.remove('hidden');
+      document.getElementById('elena-modal').classList.add('flex');
+    }
+    function closeElenaModal() {
+      document.getElementById('elena-modal').classList.add('hidden');
+      document.getElementById('elena-modal').classList.remove('flex');
+    }
+
+    function completeElenaStep0() {
+      const val = parseInt(document.getElementById('elena-math-input').value, 10);
+      const chk = document.getElementById('elena-rgpd-check').checked;
+      if (val === elenaSum && chk) {
+        document.getElementById('elena-step0-error').classList.add('hidden');
+        document.getElementById('elena-step-0').classList.add('hidden');
+        document.getElementById('elena-step-1').classList.remove('hidden');
+      } else {
+        document.getElementById('elena-step0-error').classList.remove('hidden');
+      }
+    }
+
+    function selectElenaUse(useText) {
+      selectedUse = useText;
+      document.getElementById('user-selected-use-bubble').textContent = useText;
+      document.getElementById('elena-step-1').classList.add('hidden');
+      document.getElementById('elena-step-2').classList.remove('hidden');
+    }
+
+    function completeElenaStep2() {
+      selectedFin = document.getElementById('elena-finance-select').value;
+      document.getElementById('user-selected-fin-bubble').textContent = `${selectedFin} · Barcelona Ciutat Vella (08001)`;
+      document.getElementById('elena-step-2').classList.add('hidden');
+      document.getElementById('elena-step-3').classList.remove('hidden');
+    }
+
+    function submitElenaLead() {
+      const name = document.getElementById('lead-name').value.trim();
+      const prefix = document.getElementById('lead-prefix').value;
+      const phone = document.getElementById('lead-phone').value.trim();
+      const email = document.getElementById('lead-email').value.trim();
+      const date = document.getElementById('lead-date').value;
+      const time = document.getElementById('lead-time').value;
+
+      if (!name || phone.length < 6 || !email.includes('@')) {
+        document.getElementById('elena-step3-error').classList.remove('hidden');
+        return;
+      }
+      document.getElementById('elena-step3-error').classList.add('hidden');
+      document.getElementById('elena-step-3').classList.add('hidden');
+      document.getElementById('elena-step-4').classList.remove('hidden');
+
+      document.getElementById('confirmation-summary').innerHTML = `
+        Gracias, <strong>${name}</strong>. Hemos registrado tu expediente prioritario para <strong>Activo Àngels (Ciutat Vella · 780.000 €)</strong> bajo el enfoque <em>"${selectedUse}"</em>.<br><br>
+        📞 Llamada agendada para el <strong>${date} (${time})</strong> al WhatsApp <strong>${prefix} ${phone}</strong> y envío de credenciales a <strong>${email}</strong>.
+      `;
+    }
+
+    // Modales Legales Oficiales
+    function openLegalModal(type) {
+      const title = document.getElementById('legal-modal-title');
+      const body = document.getElementById('legal-modal-body');
+      if (type === 'aviso') {
+        title.textContent = "Aviso Legal y Condiciones";
+        body.innerHTML = `<p>En cumplimiento con la Ley de Servicios de la Sociedad de la Información (LSSI-CE), se informa que <strong>Level.immo</strong> está operada por <strong>LEVEL PUNTO IMMO 24365 SLU</strong> (NIF B-26745430 · Travessera de Gràcia, 56, 3-1a, 08006 Barcelona) y agente registrado (<strong>API 4173 · AICAT 14200</strong>).</p><p>El activo comercial referenciado se comercializa sin condición suspensiva de cambio de uso. Las simulaciones de costes de reforma y rentas tienen carácter estrictamente orientativo.</p>`;
+      } else if (type === 'privacidad') {
+        title.textContent = "Política de Privacidad y RGPD";
+        body.innerHTML = `<p><strong>Responsable:</strong> LEVEL PUNTO IMMO 24365 SLU (NIF B-26745430 · Travessera de Gràcia, 56, 3-1a, 08006 Barcelona · Email: level@level.immo).</p><p>Sus datos personales serán tratados con estricta confidencialidad con la única finalidad de validar su identidad como inversor, gestionar su acceso a la Ficha Ciega y agendar su sesión técnica con nuestro equipo de Advisors.</p>`;
+      } else {
+        title.textContent = "Política de Cookies e Inteligencia Artificial";
+        body.innerHTML = `<p>Esta plataforma emplea un sistema automatizado de cualificación (<strong>Elena | AI Advisor Level-i</strong>) para proteger la privacidad de los propietarios y filtrar consultas comerciales legítimas.</p>`;
+      }
+      document.getElementById('legal-modal').classList.remove('hidden');
+      document.getElementById('legal-modal').classList.add('flex');
+    }
+    function closeLegalModal() {
+      document.getElementById('legal-modal').classList.add('hidden');
+      document.getElementById('legal-modal').classList.remove('flex');
+    }
+
+    // Diccionario Multilingüe Oficial (8 Idiomas: ES, CA, EN, FR, DE, IT, AR, ZH)
+    const i18n = {
+      es: {
+        gate_badge: "EXCLUSIVA LEVEL.IMMO · FICHA CIEGA PATRIMONIAL",
+        gate_title: "Activo Comercial Singular en Ciutat Vella · Eje Àngels",
+        gate_subtitle: "547 m² distribuidos en 3 niveles (Planta 1ª de 334 m², Bodega histórica abovedada de 110 m² y Planta Baja + Terraza/Patio privado de 103 m²). Ascensor. Venta sin condición suspensiva de cambio de uso.",
+        gate_security_title: "Verificación de Seguridad (Filtro Anti-Curiosos)",
+        gate_security_desc: "Resuelve la validación para desbloquear el estudio económico de viabilidad y la Ficha Ciega:",
+        gate_math_label: "¿Cuánto es",
+        gate_btn_access: "ACCEDER",
+        gate_box_header: "VOLUMETRÍA OFICIAL DEL ACTIVO",
+        level_p1_title: "Planta Primera (Loft / Oficinas / Atelier)",
+        level_p1_desc: "Luz natural, modular, ascensor directo, opción suite/cocina",
+        level_pb_title: "Planta Baja + Terraza / Patio Interior",
+        level_pb_desc: "Acceso comercial + Oasis privado de 103 m² en centro histórico",
+        level_sot_title: "Planta Sótano / Bodega Histórica (Cellar)",
+        level_sot_desc: "Bóvedas de ladrillo visto original para Showroom o Galería",
+        gate_price_label: "PRECIO DE VENTA (SIN CONDICIÓN)",
+        nav_demand: "Demanda Activa",
+        nav_market: "Mercado Real",
+        nav_private: "Zona Privada Inversor",
+        main_header_title: "Barcelona · Ciutat Vella (Eje Plaça dels Àngels) | Activo Comercial Singular 547 m²",
+        main_status_badge: "FICHA CIEGA · AUDITORÍA PATRIMONIAL VERIFICADA",
+        kpi_1_label: "PVP INVERSIÓN",
+        kpi_2_label: "CONFIGURACIÓN",
+        kpi_2_val: "P1 + PB + Sótano",
+        kpi_2_sub: "+ Ascensor y Patio",
+        kpi_3_label: "SUPERFICIE TOTAL",
+        kpi_4_label: "CONDICIÓN DE VENTA",
+        kpi_4_val: "Uso Comercial",
+        kpi_4_sub: "Sin cond. cambio uso",
+        video_header_title: "RECORRIDO AUDIOVISUAL Y PROYECCIÓN DE INTERIORISMO (9:16 MÓVIL FULLSCREEN)",
+        video_overlay_badge: "CONFIDENCIALIDAD ACTIVA (FICHA CIEGA)",
+        video_overlay_btn: "VER VÍDEO EN ALTA DEFINICIÓN",
+        desc_title: "Descripción Ejecutiva del Activo y Posicionamiento Estratégico",
+        calc_header: "Precio de Venta & Estudio Económico",
+        calc_select_activity: "1. SELECCIONA LA ACTIVIDAD OBJETIVO PARA SIMULAR COSTES Y ALQUILER:",
+        act_btn_moda: "Atelier Moda",
+        act_btn_medico: "Centro Médico",
+        act_btn_oficina: "Sede / Loft",
+        calc_total_label: "SUMA TOTAL INVERSIÓN REAL:",
+        rent_study_title: "📈 Estudio de Mercado de Alquiler (Ciutat Vella)",
+        cta_main_elena: "SOLICITAR DOSSIER, PLANOS Y AGENDAR CON ELENA IA"
+      },
+      ca: {
+        gate_badge: "EXCLUSIVA LEVEL.IMMO · FITXA CEGA PATRIMONIAL",
+        gate_title: "Actiu Comercial Singular a Ciutat Vella · Eix Àngels",
+        gate_subtitle: "547 m² distribuïts en 3 nivells (Planta 1a de 334 m², Celler històric de volta de 110 m² i Planta Baixa + Terrassa/Pati privat de 103 m²). Ascensor. Venda sense condició suspensiva de canvi d'ús.",
+        gate_security_title: "Verificació de Seguretat (Filtre Anti-Xafarders)",
+        gate_security_desc: "Resol la validació per desbloquejar l'estudi econòmic de viabilitat i la Fitxa Cega:",
+        gate_math_label: "Quant és",
+        gate_btn_access: "ACCEDIR",
+        gate_box_header: "VOLUMETRIA OFICIAL DE L'ACTIU",
+        level_p1_title: "Planta Primera (Loft / Oficines / Atelier)",
+        level_p1_desc: "Llum natural, modular, ascensor directe, opció suite/cuina",
+        level_pb_title: "Planta Baixa + Terrassa / Pati Interior",
+        level_pb_desc: "Accés comercial + Oasi privat de 103 m² al centre històric",
+        level_sot_title: "Planta Soterrani / Celler Històric (Cellar)",
+        level_sot_desc: "Voltes de maó vist original per a Showroom o Galeria",
+        gate_price_label: "PREU DE VENDA (SENSE CONDICIÓ)",
+        nav_demand: "Demanda Activa",
+        nav_market: "Mercat Real",
+        nav_private: "Zona Privada Inversor",
+        main_header_title: "Barcelona · Ciutat Vella (Eix Plaça dels Àngels) | Actiu Comercial Singular 547 m²",
+        main_status_badge: "FITXA CEGA · AUDITORIA PATRIMONIAL VERIFICADA",
+        kpi_1_label: "PVP INVERSIÓ",
+        kpi_2_label: "CONFIGURACIÓ",
+        kpi_2_val: "P1 + PB + Soterrani",
+        kpi_2_sub: "+ Ascensor i Pati",
+        kpi_3_label: "SUPERFÍCIE TOTAL",
+        kpi_4_label: "CONDICIÓ DE VENDA",
+        kpi_4_val: "Ús Comercial",
+        kpi_4_sub: "Sense cond. canvi ús",
+        video_header_title: "RECORREGUT AUDIOVISUAL I PROJECCIÓ D'INTERIORISME (9:16 MÒBIL)",
+        video_overlay_badge: "CONFIDENCIALITAT ACTIVA (FITXA CEGA)",
+        video_overlay_btn: "VEURE VÍDEO EN ALTA DEFINICIÓ",
+        desc_title: "Descripció Executiva de l'Actiu i Posicionament Estratègic",
+        calc_header: "Preu de Venda & Estudi Econòmic",
+        calc_select_activity: "1. SELECCIONA L'ACTIVITAT OBJECTIU PER SIMULAR COSTOS I LLOGUER:",
+        act_btn_moda: "Atelier Moda",
+        act_btn_medico: "Centre Mèdic",
+        act_btn_oficina: "Seu / Loft",
+        calc_total_label: "SUMA TOTAL INVERSIÓ REAL:",
+        rent_study_title: "📈 Estudi de Mercat de Lloguer (Ciutat Vella)",
+        cta_main_elena: "SOL·LICITAR DOSSIER, PLÀNOLS I AGENDAR AMB ELENA IA"
+      },
+      en: {
+        gate_badge: "LEVEL.IMMO EXCLUSIVE · BLIND ASSET PROFILE",
+        gate_title: "Unique Commercial Asset in Ciutat Vella · Àngels Axis",
+        gate_subtitle: "547 sqm across 3 levels (334 sqm 1st Floor Loft/Offices, 110 sqm vaulted historic Cellar & 103 sqm Ground Floor + private Courtyard/Terrace). Elevator. Sold unconditionally regarding change of use.",
+        gate_security_title: "Security Verification (Qualified Investor Filter)",
+        gate_security_desc: "Solve the validation to unlock the financial feasibility study and Blind Profile:",
+        gate_math_label: "What is",
+        gate_btn_access: "UNLOCK",
+        gate_box_header: "OFFICIAL ASSET VOLUMETRY",
+        level_p1_title: "First Floor (Loft / Offices / Fashion Atelier)",
+        level_p1_desc: "Natural light, modular layout, direct elevator, kitchen/suite option",
+        level_pb_title: "Ground Floor + Private Courtyard / Terrace",
+        level_pb_desc: "Commercial entrance + 103 sqm private oasis in historic center",
+        level_sot_title: "Basement / Historic Vaulted Cellar",
+        level_sot_desc: "Original exposed brick vaults ideal for Showroom or Gallery",
+        gate_price_label: "ASKING PRICE (UNCONDITIONAL)",
+        nav_demand: "Active Demand",
+        nav_market: "Live Market",
+        nav_private: "Investor Private Area",
+        main_header_title: "Barcelona · Ciutat Vella (Àngels Axis) | Unique Commercial Asset 547 sqm",
+        main_status_badge: "BLIND LISTING · VERIFIED ASSET AUDIT",
+        kpi_1_label: "INVESTMENT PRICE",
+        kpi_2_label: "CONFIGURATION",
+        kpi_2_val: "1st Fl + GF + Cellar",
+        kpi_2_sub: "+ Elevator & Patio",
+        kpi_3_label: "TOTAL AREA",
+        kpi_4_label: "SALE CONDITION",
+        kpi_4_val: "Commercial Use",
+        kpi_4_sub: "Unconditional sale",
+        video_header_title: "AUDIOVISUAL TOUR & INTERIOR DESIGN PROJECTION (9:16 FULLSCREEN)",
+        video_overlay_badge: "ACTIVE CONFIDENTIALITY (BLIND PROFILE)",
+        video_overlay_btn: "WATCH HD VIDEO TOUR",
+        desc_title: "Executive Asset Summary & Strategic Positioning",
+        calc_header: "Sale Price & Financial Feasibility Study",
+        calc_select_activity: "1. SELECT TARGET ACTIVITY TO SIMULATE CAPEX & RENTAL YIELD:",
+        act_btn_moda: "Fashion Atelier",
+        act_btn_medico: "Medical Clinic",
+        act_btn_oficina: "HQ / Loft",
+        calc_total_label: "TOTAL TURNKEY INVESTMENT:",
+        rent_study_title: "📈 Commercial Rental Market Study (Ciutat Vella)",
+        cta_main_elena: "REQUEST DOSSIER, FLOORPLANS & SCHEDULE WITH ELENA AI"
+      },
+      fr: {
+        gate_badge: "EXCLUSIVITÉ LEVEL.IMMO · DOSSIER CONFIDENTIEL",
+        gate_title: "Actif Commercial d'Exception à Ciutat Vella · Axe Àngels",
+        gate_subtitle: "547 m² sur 3 niveaux (1er étage de 334 m², Sous-sol voûté historique de 110 m² et Rez-de-chaussée + Terrasse/Patio privé de 103 m²). Ascenseur. Vente sans condition suspensive.",
+        gate_security_title: "Vérification de Sécurité (Filtre Investisseurs)",
+        gate_security_desc: "Résolvez le calcul pour débloquer l'étude financière et la Fiche Confidentielle :",
+        gate_math_label: "Combien font",
+        gate_btn_access: "ACCÉDER",
+        gate_box_header: "VOLUMÉTRIE OFFICIELLE DE L'ACTIF",
+        level_p1_title: "Premier Étage (Loft / Bureaux / Atelier de Mode)",
+        level_pb_title: "Rez-de-Chaussée + Terrasse / Patio Intérieur",
+        level_sot_title: "Sous-sol / Cave Historique Voûtée (110 m²)",
+        gate_price_label: "PRIX DE VENTE (SANS CONDITION)",
+        nav_demand: "Demande Active",
+        nav_market: "Marché Réel",
+        nav_private: "Espace Privé Investisseur",
+        main_header_title: "Barcelone · Ciutat Vella (Axe Àngels) | Actif Commercial 547 m²",
+        main_status_badge: "FICHE CONFIDENTIELLE · AUDIT VÉRIFIÉ",
+        calc_header: "Prix de Vente & Étude Économique",
+        cta_main_elena: "DEMANDER LE DOSSIER ET PLANIFIER AVEC ELENA IA"
+      },
+      de: {
+        gate_badge: "LEVEL.IMMO EXKLUSIV · DISKRETES OBJEKTPROFIL",
+        gate_title: "Einzigartiges Gewerbeobjekt in Ciutat Vella · Achse Àngels",
+        gate_subtitle: "547 m² auf 3 Ebenen (1. OG mit 334 m², historischer Gewölbekeller mit 110 m² & EG + privater Innenhof/Terrasse mit 103 m²). Aufzug. Verkauf ohne aufschiebende Bedingung.",
+        gate_security_title: "Sicherheitsprüfung (Investorenfilter)",
+        gate_math_label: "Was ergibt",
+        gate_btn_access: "ZUGANG",
+        main_header_title: "Barcelona · Ciutat Vella (Achse Àngels) | Gewerbeimmobilie 547 m²",
+        calc_header: "Kaufpreis & Wirtschaftlichkeitsberechnung",
+        cta_main_elena: "EXPOSÉ ANFORDERN & TERMIN MIT ELENA KI VEREINBAREN"
+      },
+      it: {
+        gate_badge: "ESCLUSIVA LEVEL.IMMO · SCHEDA CONFIDENZIALE",
+        gate_title: "Immobile Commerciale Unico a Ciutat Vella · Asse Àngels",
+        gate_subtitle: "547 m² su 3 livelli (1° Piano di 334 m², Cantina storica a volte di 110 m² e Piano Terra + Terrazza/Patio privato di 103 m²). Ascensore. Vendita senza condizioni sospensive.",
+        gate_security_title: "Verifica di Sicurezza (Filtro Investitori)",
+        gate_math_label: "Quanto fa",
+        gate_btn_access: "ACCEDI",
+        main_header_title: "Barcellona · Ciutat Vella (Asse Àngels) | Immobile Commerciale 547 m²",
+        calc_header: "Prezzo di Vendita & Studio Economico",
+        cta_main_elena: "RICHIEDI DOSSIER E PRENOTA CON ELENA IA"
+      },
+      ar: {
+        gate_badge: "حصرياً لدى LEVEL.IMMO · ملف استثماري سري",
+        gate_title: "أصل تجاري فريد في سيوتات فيلا (برشلونة) · محور أنخيلز",
+        gate_subtitle: "547 متر مربع موزعة على 3 طوابق (الطابق الأول 334 م²، قبو تاريخي مقبب 110 م²، والطابق الأرضي مع تراس وفناء خاص 103 م²). مصعد متوفر. بيع بدون شروط معلقة.",
+        gate_security_title: "التحقق الأمني (فلتر المستثمرين المؤهلين)",
+        gate_math_label: "كم يساوي",
+        gate_btn_access: "دخول",
+        main_header_title: "برشلونة · سيوتات فيلا | عقار تجاري استثنائي 547 م²",
+        calc_header: "سعر البيع والدراسة الاقتصادية والعائد الإيجاري",
+        cta_main_elena: "طلب الملف الكامل وتحديد موعد عبر المستشارة الذكية ELENA"
+      },
+      zh: {
+        gate_badge: "LEVEL.IMMO 独家 · 保密资产档案",
+        gate_title: "巴塞罗那老城区 (Ciutat Vella · Àngels) 稀缺商业资产",
+        gate_subtitle: "总面积 547 平方米，共 3 层（二层 334 平方米办公/工作室，110 平方米历史拱顶地下展厅，以及首层 + 103 平方米私属庭院露台）。配电梯。无条件现状出售。",
+        gate_security_title: "安全验证（合格投资者筛选）",
+        gate_math_label: "请计算",
+        gate_btn_access: "进入档案",
+        main_header_title: "巴塞罗那 · 老城区核心轴线 | 547 m² 独栋商业资产",
+        calc_header: "售价与改造及租金回报测算",
+        cta_main_elena: "索取完整卷宗并与 ELENA AI 预约通话"
+      }
+    };
+
+    function changeLanguage(lang) {
+      document.getElementById('lang-select-gate').value = lang;
+      document.getElementById('lang-select-main').value = lang;
+      const root = document.getElementById('html-root');
+      root.lang = lang;
+      root.dir = (lang === 'ar') ? 'rtl' : 'ltr';
+
+      const dict = i18n[lang] || i18n.es;
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (dict[key]) el.textContent = dict[key];
+        else if (i18n.es[key]) el.textContent = i18n.es[key];
+      });
+    }
+  </script>
+</body>
+</html>
