@@ -1598,6 +1598,16 @@
                 btn.disabled = false;
             }
         });
+        // Sincronización automática de idioma en toda la consola app.level-i.com
+(function syncLevelLanguage() {
+  const urlLang = new URLSearchParams(window.location.search).get('lang');
+  const savedLang = localStorage.getItem('level_lang');
+  const activeLang = urlLang || savedLang;
+  if (activeLang) {
+    localStorage.setItem('level_lang', activeLang);
+    if (typeof changeLanguage === 'function') changeLanguage(activeLang);
+  }
+})();
     </script>
 </body>
 </html>
