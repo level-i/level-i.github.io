@@ -6,8 +6,6 @@
   <title>Level.immo | Activo Àngels · Ciutat Vella (Barcelona) · Ficha Ciega Patrimonial</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <style>
     body {
       font-family: 'Inter', sans-serif;
@@ -53,26 +51,36 @@
 </head>
 <body class="min-h-screen flex flex-col justify-between">
 
-  <!-- ================= PANTALLA 1: PORTADA CORPORATIVA (GATEKEEPER) ================= -->
+  <!-- ================= PANTALLA 1: PORTADA WELCOME (VÍDEO DÍA-NOCHE A PANTALLA COMPLETA RESPONSIVE) ================= -->
   <div id="gatekeeper-screen" class="fixed inset-0 z-50 bg-[#080d14] overflow-y-auto">
-    <div class="min-h-screen max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col justify-between">
+    
+    <!-- Vídeo de Fondo Responsive en Bucle (Día a Noche con Periquitos) -->
+    <div class="absolute inset-0 overflow-hidden pointer-events-none">
+      <video autoplay muted loop playsinline class="w-full h-full object-cover filter brightness-[0.55] contrast-[1.05]">
+        <source src="dia-noche.mp4" type="video/mp4">
+        <source src="https://level-i.github.io/barcelona/ciutat-vella/activo-angels/dia-noche.mp4" type="video/mp4">
+      </video>
+      <div class="absolute inset-0 bg-gradient-to-t from-[#080d14] via-[#080d14]/70 to-[#080d14]/50"></div>
+    </div>
+
+    <div class="relative z-10 min-h-screen max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col justify-between">
       
       <!-- Topbar de Portada -->
-      <div class="flex items-center justify-between border-b border-slate-800/80 pb-4">
+      <div class="flex items-center justify-between border-b border-slate-700/60 pb-4 backdrop-blur-md bg-slate-950/30 px-4 rounded-xl">
         <div class="flex items-center gap-3">
           <div class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-white text-slate-950 font-black text-xl">L</div>
           <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 -ml-2 mt-3"></span>
           <span class="font-extrabold text-white text-lg tracking-tight">Level.immo</span>
-          <span class="hidden sm:inline-block text-[11px] font-mono text-slate-400 border-l border-slate-700 pl-3">
+          <span class="hidden sm:inline-block text-[11px] font-mono text-slate-300 border-l border-slate-700 pl-3">
             API 4173 · AICAT 14200
           </span>
         </div>
 
         <div class="flex items-center gap-3">
-          <button onclick="openCollaboratorModal()" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/40 text-amber-300 text-xs font-bold transition">
+          <button onclick="openCollaboratorModal()" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/50 text-amber-300 text-xs font-bold transition backdrop-blur">
             <span>🤝</span> <span data-i18n="btn_collab_top">Colaborador Simpatizante (500 €)</span>
           </button>
-          <select id="lang-select-gate" onchange="changeLanguage(this.value)" class="bg-[#101826] border border-slate-700 text-slate-200 text-xs font-semibold rounded-lg px-3 py-2 focus:outline-none focus:border-emerald-500 cursor-pointer">
+          <select id="lang-select-gate" onchange="changeLanguage(this.value)" class="bg-slate-900/90 border border-slate-700 text-slate-200 text-xs font-semibold rounded-lg px-3 py-2 focus:outline-none focus:border-emerald-500 cursor-pointer backdrop-blur">
             <option value="es">ES Español</option>
             <option value="ca">CA Català</option>
             <option value="en">GB English</option>
@@ -85,89 +93,61 @@
         </div>
       </div>
 
-      <!-- Cuerpo Central Portada: Izquierda (Acceso + Carrusel 1:1) | Derecha (Vídeo Vertical 9:16 Fullscreen) -->
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 py-6 items-center my-auto">
-        
-        <!-- Columna Izquierda (7 cols en Desktop) -->
-        <div class="lg:col-span-7 space-y-5 order-2 lg:order-1">
-          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full gold-badge text-[11px] font-bold tracking-wider uppercase">
-            <span>🔒</span> <span data-i18n="gate_badge">EXCLUSIVA LEVEL.IMMO · FICHA CIEGA PATRIMONIAL</span>
-          </div>
-
-          <h1 class="text-2xl sm:text-4xl lg:text-5xl font-black text-white leading-tight tracking-tight" data-i18n="gate_title">
-            Activo Comercial Singular en Ciutat Vella · Eje Àngels
-          </h1>
-
-          <p class="text-slate-300 text-xs sm:text-sm leading-relaxed" data-i18n="gate_subtitle">
-            Finca histórica de 1900 junto a Plaça dels Àngels y el mural de Keith Haring. <strong>577 m² operativos</strong> (<strong>474 m² registrales</strong> en 2 entidades unidas: Planta 1ª de 334 m², Planta Baja de 37 m² y Bodega abovedada de 103 m² + <strong>~103 m² de Patio/Terraza interior</strong>). Ascensor y accesibilidad universal. Venta sin condición suspensiva de cambio de uso.
-          </p>
-
-          <!-- Validador Matemático Anti-Chafarderos -->
-          <div class="card-panel p-5 border-slate-700/90 bg-[#101826]/95 shadow-2xl space-y-3">
-            <div class="flex items-center justify-between">
-              <div class="flex items-center gap-2 text-amber-400 text-xs font-bold uppercase tracking-wider">
-                <span>🛡️</span> <span data-i18n="gate_security_title">Filtro de Seguridad (Acceso Inversor Cualificado)</span>
-              </div>
-              <span class="text-lg font-black text-emerald-400">780.000 €</span>
-            </div>
-
-            <p class="text-xs text-slate-400" data-i18n="gate_security_desc">
-              Resuelve la suma para desbloquear el estudio económico, los datos registrales/ITE y la Ficha Ciega en tu idioma:
-            </p>
-
-            <div class="flex flex-wrap sm:flex-nowrap items-center gap-3">
-              <div class="bg-[#182336] border border-slate-700 rounded-lg px-4 py-2.5 text-sm font-bold text-white whitespace-nowrap">
-                <span data-i18n="gate_math_label">¿Cuánto es</span> <span id="gate-num1">5</span> + <span id="gate-num2">4</span>?
-              </div>
-              <input type="number" id="gate-math-input" placeholder="?" onkeydown="if(event.key==='Enter') verifyGatekeeper()" class="w-24 bg-[#080d14] border border-slate-700 rounded-lg px-3 py-2.5 text-center text-white font-bold focus:outline-none focus:border-emerald-500" />
-              <button onclick="verifyGatekeeper()" class="flex-1 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs sm:text-sm py-3 px-5 rounded-lg transition uppercase tracking-wider shadow-lg" data-i18n="gate_btn_access">
-                ACCEDER AL DOSSIER
-              </button>
-            </div>
-            <p id="gate-error" class="text-rose-400 text-xs hidden" data-i18n="gate_error_msg">Resultado incorrecto. Inténtalo de nuevo.</p>
-          </div>
-
-          <!-- Carrusel Horizontal de Fotografías 1:1 (1080x1080) debajo en portada -->
-          <div class="space-y-2 pt-1">
-            <div class="flex items-center justify-between text-xs text-slate-400">
-              <span class="font-bold uppercase tracking-wider text-slate-300" data-i18n="gate_carousel_title">📸 Galería 1:1 · Estado Actual y Proyecciones de Uso (Atelier / Loft / Clínica)</span>
-              <div class="flex gap-1.5">
-                <button onclick="scrollCarousel('gate-carousel', -260)" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-white font-bold">◀</button>
-                <button onclick="scrollCarousel('gate-carousel', 260)" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-white font-bold">▶</button>
-              </div>
-            </div>
-
-            <div id="gate-carousel" class="flex gap-3 overflow-x-auto no-scrollbar pb-2 snap-x snap-mandatory">
-              <!-- Imágenes generadas dinámicamente por JS desde ff1.jpg a ff99.jpg -->
-            </div>
-          </div>
+      <!-- Cuerpo Central Portada Welcome -->
+      <div class="max-w-4xl mx-auto py-8 space-y-6 text-center my-auto">
+        <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full gold-badge text-[11px] font-bold tracking-wider uppercase backdrop-blur">
+          <span>🔒</span> <span data-i18n="gate_badge">EXCLUSIVA LEVEL.IMMO · FICHA CIEGA PATRIMONIAL</span>
         </div>
 
-        <!-- Columna Derecha (5 cols en Desktop): Vídeo Vertical 9:16 a Pantalla Completa Móvil -->
-        <div class="lg:col-span-5 flex flex-col items-center order-1 lg:order-2">
-          <div class="relative w-full max-w-[330px] sm:max-w-[350px] aspect-[9/16] rounded-2xl overflow-hidden border-2 border-slate-700/80 shadow-2xl bg-black">
-            <video id="gate-video" class="w-full h-full object-cover" autoplay muted loop playsinline controls poster="ff1.jpg">
-              <source src="joaquin costa-angels.mp4" type="video/mp4">
-              <source src="https://level-i.github.io/barcelona/ciutat-vella/activo-angels/joaquin costa-angels.mp4" type="video/mp4">
-            </video>
-            <div class="absolute top-3 left-3 right-3 flex items-center justify-between pointer-events-none">
-              <span class="px-2.5 py-1 rounded-md bg-slate-950/80 backdrop-blur text-[10px] font-bold text-amber-400 border border-amber-500/30 uppercase">
-                9:16 Fullscreen Mobile
-              </span>
-              <span class="px-2.5 py-1 rounded-md bg-emerald-500 text-slate-950 text-[11px] font-black">
-                780.000 €
-              </span>
+        <h1 class="text-3xl sm:text-5xl lg:text-6xl font-black text-white leading-tight tracking-tight drop-shadow-lg" data-i18n="gate_title">
+          Activo Comercial Singular en Ciutat Vella · Eje Àngels
+        </h1>
+
+        <p class="text-slate-200 text-sm sm:text-base leading-relaxed max-w-2xl mx-auto drop-shadow-md" data-i18n="gate_subtitle">
+          Finca clásica de 1900 junto a Plaça dels Àngels y el mural de Keith Haring. <strong>577 m² operativos</strong> (<strong>474 m² registrales</strong> en 2 entidades unidas: Planta 1ª de 334 m², Planta Baja de 37 m² y Bodega abovedada de 103 m² + <strong>~103 m² de Patio/Terraza interior</strong>). Ascensor y accesibilidad universal. Venta sin condición suspensiva de cambio de uso.
+        </p>
+
+        <!-- Validador Matemático Anti-Chafarderos -->
+        <div class="card-panel p-6 border-slate-700 bg-[#101826]/90 backdrop-blur-md shadow-2xl max-w-xl mx-auto space-y-3 text-left">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2 text-amber-400 text-xs font-bold uppercase tracking-wider">
+              <span>🛡️</span> <span data-i18n="gate_security_title">Filtro de Seguridad (Acceso Inversor Cualificado)</span>
+            </div>
+            <span class="text-lg font-black text-emerald-400">780.000 €</span>
+          </div>
+
+          <p class="text-xs text-slate-300" data-i18n="gate_security_desc">
+            Resuelve la suma para desbloquear el estudio económico, los datos registrales/ITE y la Ficha Ciega en el idioma seleccionado:
+          </p>
+
+          <div class="flex flex-wrap sm:flex-nowrap items-center gap-3">
+            <div class="bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-sm font-bold text-white whitespace-nowrap">
+              <span data-i18n="gate_math_label">¿Cuánto es</span> <span id="gate-num1">5</span> + <span id="gate-num2">4</span>?
+            </div>
+            <input type="number" id="gate-math-input" placeholder="?" onkeydown="if(event.key==='Enter') verifyGatekeeper()" class="w-24 bg-[#080d14] border border-slate-700 rounded-lg px-3 py-2.5 text-center text-white font-bold focus:outline-none focus:border-emerald-500" />
+            <button onclick="verifyGatekeeper()" class="flex-1 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs sm:text-sm py-3 px-5 rounded-lg transition uppercase tracking-wider shadow-lg" data-i18n="gate_btn_access">
+              ACCEDER AL DOSSIER
+            </button>
+          </div>
+          <p id="gate-error" class="text-rose-400 text-xs hidden" data-i18n="gate_error_msg">Resultado incorrecto. Inténtalo de nuevo.</p>
+        </div>
+
+        <!-- Carrusel de Fotografías 1:1 en Portada -->
+        <div class="space-y-2 pt-2 text-left max-w-4xl mx-auto">
+          <div class="flex items-center justify-between text-xs text-slate-300">
+            <span class="font-bold uppercase tracking-wider" data-i18n="gate_carousel_title">📸 Galería 1:1 (1080×1080 px) · Fachadas, Interior y Proyección de Uso</span>
+            <div class="flex gap-1.5">
+              <button onclick="scrollCarousel('gate-carousel', -260)" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-white font-bold">◀</button>
+              <button onclick="scrollCarousel('gate-carousel', 260)" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-white font-bold">▶</button>
             </div>
           </div>
-          <button onclick="toggleMute('gate-video', this)" class="mt-2.5 text-xs text-emerald-400 hover:text-emerald-300 font-semibold flex items-center gap-1.5">
-            <span>🔊</span> <span data-i18n="btn_unmute">Activar/Silenciar audio del vídeo</span>
-          </button>
+          <div id="gate-carousel" class="flex gap-3 overflow-x-auto no-scrollbar pb-2 snap-x snap-mandatory"></div>
         </div>
 
       </div>
 
       <!-- Footer de Portada -->
-      <div class="border-t border-slate-800/80 pt-4 flex flex-wrap items-center justify-between text-[11px] text-slate-400 gap-2">
+      <div class="border-t border-slate-700/60 pt-4 flex flex-wrap items-center justify-between text-[11px] text-slate-300 gap-2 backdrop-blur-md bg-slate-950/30 px-4 rounded-xl">
         <span>LEVEL PUNTO IMMO 24365 SLU · Travessera de Gràcia, 56, 3-1a, 08006 Barcelona</span>
         <div class="flex gap-4">
           <button onclick="openLegalModal('aviso')" class="hover:text-white underline" data-i18n="footer_legal">Aviso Legal</button>
@@ -188,7 +168,7 @@
           <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 -ml-1.5 mt-2"></span>
           <span>Level.immo</span>
         </a>
-        <span class="text-xs text-emerald-400 font-mono hidden md:inline" id="live-clock">02/11/2026 | 23:50:00</span>
+        <span class="text-xs text-emerald-400 font-mono hidden md:inline" id="live-clock">03/11/2026 | 00:25:00</span>
       </div>
 
       <nav class="flex flex-wrap items-center gap-2 text-xs font-semibold">
@@ -222,7 +202,6 @@
   <!-- ================= CONTENIDO PRINCIPAL: FICHA CIEGA ACTIVO ÀNGELS ================= -->
   <main class="max-w-7xl mx-auto w-full px-4 lg:px-8 py-8 space-y-8">
 
-    <!-- Migas de pan y Estado de Verificación Registral / ITE -->
     <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-800/80 pb-5">
       <div>
         <div class="flex items-center gap-2 text-xs text-slate-400 font-mono mb-1">
@@ -240,10 +219,9 @@
 
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
 
-      <!-- COLUMNA IZQUIERDA (7 Cols): KPIs, Vídeo + Carrusel 1:1, Datos Registrales/ITE, Mapa Silencioso -->
       <div class="lg:col-span-7 space-y-6">
 
-        <!-- 4 KPIs Oficiales (Datos Notas Simples + ITE) -->
+        <!-- 4 KPIs Oficiales -->
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
           <div class="card-panel p-4 text-center">
             <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block" data-i18n="kpi_1_label">PRECIO DE VENTA</span>
@@ -267,7 +245,7 @@
           </div>
         </div>
 
-        <!-- Módulo Multimedia Principal: Vídeo Vertical 9:16 + Carrusel Cuadrado 1:1 debajo -->
+        <!-- Módulo Multimedia Principal -->
         <div class="card-panel overflow-hidden bg-slate-950 border-slate-800">
           <div class="flex flex-wrap items-center justify-between gap-2 px-4 py-3 bg-[#141e30] border-b border-slate-800">
             <div class="flex items-center gap-2 text-xs font-bold text-slate-200">
@@ -279,15 +257,13 @@
             </button>
           </div>
 
-          <!-- Vídeo Vertical 9:16 -->
           <div class="relative flex justify-center bg-black py-5 px-4">
             <div class="relative w-full max-w-[350px] aspect-[9/16] rounded-xl overflow-hidden border border-slate-700 shadow-2xl">
-              <video id="property-video" class="w-full h-full object-cover video-unblurred" controls loop playsinline poster="ff1.jpg">
+              <video id="property-video" class="w-full h-full object-cover video-unblurred" controls loop playsinline poster="principal.jpg">
                 <source src="joaquin costa-angels.mp4" type="video/mp4">
-                <source src="https://level-i.github.io/barcelona/ciutat-vella/activo-angels/joaquin costa-angels.mp4" type="video/mp4">
+                <source src="https://level-i.github.io/barcelona/ciutat-vella/activo-angels/joaquin%20costa-angels.mp4" type="video/mp4">
               </video>
 
-              <!-- Capa Blur Opcional -->
               <div id="confidential-overlay" class="hidden absolute inset-0 flex flex-col items-center justify-center p-6 text-center bg-slate-950/65 backdrop-blur-sm">
                 <div class="px-4 py-2 rounded-lg bg-amber-500 text-slate-950 font-extrabold text-xs uppercase tracking-wider mb-3">
                   🔒 <span data-i18n="video_overlay_badge">CONFIDENCIALIDAD ACTIVA</span>
@@ -299,24 +275,21 @@
             </div>
           </div>
 
-          <!-- Carrusel de Fotos 1:1 (1080x1080) integrado debajo del vídeo -->
           <div class="p-4 bg-[#0d1420] border-t border-slate-800 space-y-2.5">
             <div class="flex items-center justify-between text-xs">
               <span class="font-bold text-amber-400 uppercase tracking-wider" data-i18n="main_carousel_label">
-                🖼️ Galería Formato 1:1 (Pulsa sobre cualquier imagen para ampliar a pantalla completa)
+                🖼️ Galería Completa 1:1 (Pulsa sobre cualquier imagen para ampliar)
               </span>
               <div class="flex gap-1.5">
                 <button onclick="scrollCarousel('main-carousel', -300)" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-white font-bold">◀</button>
                 <button onclick="scrollCarousel('main-carousel', 300)" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-white font-bold">▶</button>
               </div>
             </div>
-            <div id="main-carousel" class="flex gap-3 overflow-x-auto no-scrollbar pb-1 snap-x snap-mandatory">
-              <!-- Imágenes ff1.jpg a ff99.jpg inyectadas por JS -->
-            </div>
+            <div id="main-carousel" class="flex gap-3 overflow-x-auto no-scrollbar pb-1 snap-x snap-mandatory"></div>
           </div>
         </div>
 
-        <!-- Dossier Ejecutivo Enriquecido con Datos Reales (Notas Simples + ITE) -->
+        <!-- Dossier Ejecutivo Enriquecido -->
         <div class="card-panel p-6 space-y-5">
           <div class="flex items-center justify-between border-b border-slate-800 pb-3">
             <h3 class="text-lg font-bold text-white" data-i18n="desc_title">
@@ -331,7 +304,6 @@
             Enclavado en una <strong>finca clásica del año 1900</strong> con fachada principal de 20 metros revestida en piedra natural en su zócalo y grandes portales en arco de medio punto (orientación Suroeste), y cuya fachada posterior linda directamente con la <strong>Plaça de Joan Coromines y el icónico mural original de Keith Haring</strong>, junto al polo cultural contemporáneo de Ciutat Vella.
           </p>
 
-          <!-- Desglose exacto de las 2 Entidades Registrales + Patio -->
           <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
             <div class="p-4 rounded-xl bg-[#151f30] border border-slate-800 space-y-1.5">
               <span class="text-[10px] font-mono uppercase text-amber-400 block">ENTIDAD REGISTRAL 1 (CUOTA 15%)</span>
@@ -358,7 +330,6 @@
             </div>
           </div>
 
-          <!-- Perfiles de Comprador / Actividad -->
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
             <div class="p-3.5 rounded-lg bg-[#141d2d] border border-slate-800">
               <div class="text-xs font-bold text-amber-400 uppercase mb-1" data-i18n="target_1_title">👗 Atelier de Moda, Diseño & Showroom</div>
@@ -379,25 +350,41 @@
           </div>
         </div>
 
-        <!-- Mapa Silencioso Fino Filipino (Coordenadas Exactas con Círculo Discreto) -->
-        <div class="card-panel p-6 space-y-3">
-          <div class="flex items-center justify-between">
+        <!-- Módulo Google Earth 3D & Vista Satelital (41.382736, 2.165658) -->
+        <div class="card-panel p-6 space-y-4">
+          <div class="flex flex-wrap items-center justify-between gap-3">
             <div>
               <span class="text-[11px] font-bold uppercase tracking-wider text-amber-400 block" data-i18n="map_sup">
-                📍 GEOLOCALIZACIÓN PATRIMONIAL (PROTOCOLO FICHA CIEGA)
+                🌍 GOOGLE EARTH 3D · VUELO ORBITAL SILENCIOSO
               </span>
               <h3 class="text-base font-bold text-white" data-i18n="map_title">
-                Entorno Inmediato · Eje Plaça dels Àngels / Plaça Joan Coromines (08001 Barcelona)
+                Barcelona · Ciutat Vella · Eje Plaça dels Àngels / Joan Coromines
               </h3>
             </div>
-            <span class="text-xs font-mono text-slate-400">41.382736, 2.165658</span>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-mono text-slate-400 bg-[#0b111a] px-2.5 py-1.5 rounded border border-slate-800">
+                41.382736, 2.165658[cite: 121]
+              </span>
+              <a href="https://earth.google.com/web/@41.382736,2.165658,45a,280d,35y,0h,60t,0r" target="_blank" rel="noopener noreferrer" class="px-3.5 py-1.5 rounded-lg bg-sky-500/20 hover:bg-sky-500/30 border border-sky-500/40 text-sky-300 text-xs font-extrabold transition flex items-center gap-1.5">
+                <span>🌍</span> <span data-i18n="btn_earth_3d">Vuelo 3D Google Earth</span>
+              </a>
+            </div>
           </div>
-          <div id="silent-map" class="w-full h-64 rounded-xl border border-slate-800 z-10"></div>
+
+          <div class="w-full h-72 rounded-xl overflow-hidden border border-slate-800 relative bg-slate-950">
+            <iframe
+              class="w-full h-full border-0"
+              loading="lazy"
+              allowfullscreen
+              referrerpolicy="no-referrer-when-downgrade"
+              src="https://maps.google.com/maps?ll=41.382736,2.165658&z=19&t=k&hl=es&output=embed">
+            </iframe>
+          </div>
         </div>
 
       </div>
 
-      <!-- COLUMNA DERECHA (5 Cols): SIMULADOR DE COSTES (ITE + ACTIVIDAD) Y RENTABILIDAD -->
+      <!-- COLUMNA DERECHA (5 Cols): SIMULADOR DE COSTES Y RENTABILIDAD -->
       <div class="lg:col-span-5 space-y-6 lg:sticky lg:top-20">
 
         <div class="card-panel p-6 border-slate-700/90 shadow-2xl space-y-5">
@@ -408,7 +395,6 @@
             <span class="text-[11px] bg-slate-800 text-emerald-400 px-2.5 py-0.5 rounded font-mono font-bold">474 m² Reg. + 103 m² Patio</span>
           </div>
 
-          <!-- Selector de Actividad -->
           <div>
             <label class="text-[11px] font-bold uppercase tracking-wider text-slate-400 block mb-2" data-i18n="calc_select_activity">
               1. ELIGE LA ACTIVIDAD PARA SIMULAR ADECUACIÓN Y RENTA DE MERCADO:
@@ -426,7 +412,6 @@
             </div>
           </div>
 
-          <!-- Costes de Adquisición Base -->
           <div class="space-y-2 text-xs border-b border-slate-800 pb-4">
             <div class="flex justify-between text-slate-300">
               <span data-i18n="calc_base_price">Precio de Adquisición (2 Fincas Registrales):</span>
@@ -442,7 +427,6 @@
             </div>
           </div>
 
-          <!-- Partidas Técnicas Reales (Editables por el usuario) -->
           <div class="space-y-3">
             <div class="text-[11px] font-bold uppercase tracking-wider text-amber-400" data-i18n="calc_custom_title">
               🛠️ 2. PARTIDAS DE ADECUACIÓN E ITE (100% EDITABLES EN VIVO):
@@ -473,7 +457,6 @@
             </div>
           </div>
 
-          <!-- Suma Total Coste Real -->
           <div class="p-4 rounded-xl bg-[#162234] border border-emerald-500/30 flex items-center justify-between">
             <div>
               <span class="text-[11px] font-bold uppercase tracking-wider text-emerald-400 block" data-i18n="calc_total_label">SUMA TOTAL INVERSIÓN REAL:</span>
@@ -482,7 +465,6 @@
             <span class="text-2xl font-extrabold text-emerald-400" id="total-investment-display">970.500 €</span>
           </div>
 
-          <!-- Estudio de Mercado de Alquiler -->
           <div class="p-4 rounded-xl bg-[#141d2b] border border-slate-800 space-y-3">
             <div class="flex items-center justify-between">
               <span class="text-xs font-bold text-white" data-i18n="rent_study_title">📈 Estudio de Alquiler en Ciutat Vella</span>
@@ -509,7 +491,6 @@
             </div>
           </div>
 
-          <!-- Botones de Acción: Me gusta, Compartir (Colaborador Simpatizante 500€) y Elena IA -->
           <div class="space-y-3 pt-1">
             <div class="grid grid-cols-2 gap-2">
               <button onclick="registerLike()" id="btn-like" class="py-2.5 px-3 rounded-lg bg-[#162032] hover:bg-slate-800 border border-slate-700 text-xs font-semibold text-slate-200 transition flex items-center justify-center gap-1.5">
@@ -532,7 +513,7 @@
     </div>
   </main>
 
-  <!-- ================= MODAL: PROGRAMA DE COLABORADORES SIMPATIZANTES (TARJETA 500€ + PANEL DE SEGUIMIENTO) ================= -->
+  <!-- ================= MODAL: COLABORADORES SIMPATIZANTES (TARJETA 500€ + SEGUIMIENTO) ================= -->
   <div id="collaborator-modal" class="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md hidden items-center justify-center p-4">
     <div class="card-panel max-w-2xl w-full overflow-hidden border-amber-500/40 shadow-2xl bg-[#101826]">
       
@@ -549,7 +530,6 @@
 
       <div class="p-6 max-h-[82vh] overflow-y-auto space-y-5">
 
-        <!-- Pestañas: 1. Alta y Enlace Único | 2. Panel de Control de Contactos Invitados -->
         <div class="grid grid-cols-2 gap-2 bg-[#0b111a] p-1 rounded-xl border border-slate-800">
           <button onclick="switchCollabTab('register')" id="tab-collab-reg" class="py-2 rounded-lg bg-amber-500 text-slate-950 font-extrabold text-xs uppercase transition">
             1. Activar Enlace y Compartir
@@ -559,15 +539,14 @@
           </button>
         </div>
 
-        <!-- VISTA 1: FORMULARIO DE ALTA DE COLABORADOR SIMPATIZANTE -->
         <div id="collab-view-register" class="space-y-4">
           <div class="p-4 rounded-xl bg-[#152033] border border-slate-700/80 text-xs text-slate-300 space-y-2 leading-relaxed">
-            <p class="font-bold text-white">✨ Política de Cero Molestias y Transparencia Total:</p>
+            <p class="font-bold text-white">✨ Compromiso de Cero Molestias y Transparencia Total:</p>
             <p>
-              Al registrarte como <strong>Colaborador Simpatizante</strong>, jamás te enviaremos correos comerciales ni spam. Únicamente activaremos tu acceso al <strong>Panel de Seguimiento de Contactos Invitados</strong> para que visualices en tiempo real en qué fase se encuentra la persona o empresa a la que compartiste el enlace, preservando al 100% la confidencialidad RGPD.
+              Al activar tu suscripción como <strong>Colaborador Simpatizante</strong>, no te molestaremos con ningún correo no formal ni comercial. Te daremos acceso directo al <strong>Panel de Seguimiento de tus Contactos Invitados</strong> para que visualices todo su progreso sin exponer ningún dato confidencial.
             </p>
             <p class="text-amber-300 font-semibold">
-              🎁 Obsequio por Éxito: Si tu Contacto Invitado adquiere el activo dentro de los 90 días siguientes al envío, Level.immo te obsequiará con una Tarjeta Regalo a elegir valorada en 500 € (sujeta a los límites y retenciones fiscales previstos en la Legislación Española Vigente).
+              🎁 En caso de venta dentro de los 90 días, Level.immo te obsequiará con una Tarjeta Regalo a elegir por valor de 500 €, con el máximo y condiciones que estipule la Legislación Vigente.
             </p>
           </div>
 
@@ -583,39 +562,37 @@
                 <option value="+971">AE +971</option>
                 <option value="+86">CN +86</option>
               </select>
-              <input type="tel" id="collab-phone" placeholder="Tu WhatsApp (requerido)" class="flex-1 bg-[#080d14] border border-slate-700 rounded-lg px-3 py-2.5 text-white focus:border-amber-500 focus:outline-none" />
+              <input type="tel" id="collab-phone" placeholder="Tu número de móvil / WhatsApp" class="flex-1 bg-[#080d14] border border-slate-700 rounded-lg px-3 py-2.5 text-white focus:border-amber-500 focus:outline-none" />
             </div>
-            <input type="email" id="collab-email" placeholder="Tu Correo (solo notificaciones formales de estado)" class="sm:col-span-2 bg-[#080d14] border border-slate-700 rounded-lg px-3 py-2.5 text-white focus:border-amber-500 focus:outline-none" />
+            <input type="email" id="collab-email" placeholder="Tu Correo (exclusivamente para avisos formales de cambio de estado)" class="sm:col-span-2 bg-[#080d14] border border-slate-700 rounded-lg px-3 py-2.5 text-white focus:border-amber-500 focus:outline-none" />
           </div>
 
           <label class="flex items-start gap-2.5 text-[11px] text-slate-300 cursor-pointer">
             <input type="checkbox" id="collab-legal-check" class="mt-0.5 rounded border-slate-600 text-amber-500 focus:ring-amber-500" />
             <span>
-              Acepto las condiciones del programa de <strong>Colaboradores Simpatizantes</strong>: vigencia de trazabilidad de <strong>90 días</strong> (pasando a estado <em>"Visto"</em> tras dicho plazo), ausencia de facultades de mediación inmobiliaria (exclusivas de API 4173 · AICAT 14200) y entrega de Tarjeta Regalo de <strong>500 €</strong> en caso de firma de compraventa, conforme a la normativa fiscal y mercantil vigente (Ley 11/2021 y RIRPF).
+              Acepto las condiciones de <strong>Colaborador Simpatizante</strong>: los estados visibles serán <em>Enlace enviado hace (X días) / Visita / Contrato / Firma</em> y, transcurridos <strong>90 días</strong> sin cierre, pasará a estado <em>"Visto"</em> caducando el derecho a obsequio. En caso de venta efectiva, Level.immo entregará una Tarjeta Regalo a elegir por valor de <strong>500 €</strong> (sujeta a los límites y retenciones de la Legislación Española Vigente: Ley 11/2021 y RIRPF).
             </span>
           </label>
 
-          <p id="collab-error" class="text-rose-400 text-xs hidden">Por favor, introduce tu nombre, número de WhatsApp y acepta las condiciones del programa.</p>
+          <p id="collab-error" class="text-rose-400 text-xs hidden">Por favor, introduce tu nombre, número de teléfono y acepta la casilla de condiciones.</p>
 
           <button onclick="activateCollaboratorLink()" class="w-full py-3.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs uppercase tracking-wider transition shadow-lg">
             🔗 ACTIVAR SUSCRIPCIÓN Y GENERAR ENLACE DE COLABORADOR
           </button>
 
-          <!-- Caja de Enlace Generado -->
           <div id="collab-link-result" class="hidden p-4 rounded-xl bg-emerald-500/15 border border-emerald-500/40 space-y-3 text-xs">
-            <div class="font-bold text-emerald-400">✅ ¡Suscripción activada! Aquí tienes tu enlace trazable de Colaborador:</div>
+            <div class="font-bold text-emerald-400">✅ ¡Suscripción activada! Comparte este enlace único con tu Contacto Invitado:</div>
             <div class="flex gap-2">
               <input type="text" id="collab-generated-url" readonly class="flex-1 bg-[#080d14] border border-slate-700 rounded-lg px-3 py-2 text-emerald-300 font-mono text-xs" />
               <button onclick="copyCollabUrl()" class="px-4 py-2 rounded-lg bg-emerald-500 text-slate-950 font-extrabold">Copiar</button>
             </div>
             <div class="flex flex-wrap gap-2 pt-1">
               <a id="collab-wa-share" href="#" target="_blank" class="px-3 py-2 rounded-lg bg-[#25D366]/20 border border-[#25D366]/50 text-[#25D366] font-bold">📲 Compartir por WhatsApp</a>
-              <button onclick="switchCollabTab('dashboard')" class="px-3 py-2 rounded-lg bg-slate-800 text-white font-bold">📊 Ir al Panel de Seguimiento →</button>
+              <button onclick="switchCollabTab('dashboard')" class="px-3 py-2 rounded-lg bg-slate-800 text-white font-bold">📊 Ver Panel de Seguimiento →</button>
             </div>
           </div>
         </div>
 
-        <!-- VISTA 2: PANEL DE CONTROL DE CONTACTOS INVITADOS (SIN DATOS CONFIDENCIALES) -->
         <div id="collab-view-dashboard" class="hidden space-y-4">
           <div class="flex flex-wrap items-center justify-between gap-2 bg-[#141e30] p-3.5 rounded-xl border border-slate-800 text-xs">
             <div>
@@ -623,69 +600,31 @@
               <span class="font-mono font-bold text-amber-400" id="dash-collab-id">SIMP-BCN-8492</span>
             </div>
             <div class="text-right">
-              <span class="text-slate-400 block">Recompensa por Cierre en Plazo (<90 días):</span>
+              <span class="text-slate-400 block">Obsequio por Venta (<90 días):</span>
               <span class="font-extrabold text-emerald-400">Tarjeta Regalo 500 € (Máx. Legal Vigente)</span>
             </div>
           </div>
 
           <div class="text-xs text-slate-400">
-            🔒 <strong>Privacidad RGPD Garantizada:</strong> Este panel muestra en tiempo real el avance de tus <em>Contactos Invitados</em> mediante códigos anónimos, sin exponer datos personales confidenciales de los compradores.
+            🔒 <strong>Privacidad Total:</strong> Visualización en tiempo real del estado de tus <em>Contactos Invitados</em> sin exponer datos personales confidenciales.
           </div>
 
-          <!-- Lista de Estados de Contactos Invitados -->
           <div class="space-y-3 text-xs" id="collab-tracking-list">
-            
-            <!-- Ejemplo 1: En fase de Visita -->
             <div class="p-4 rounded-xl bg-[#152033] border border-slate-700/80 space-y-3">
               <div class="flex items-center justify-between">
                 <span class="font-mono font-bold text-white">Contacto Invitado #INV-9041 · Activo Àngels</span>
                 <span class="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-bold text-[11px]">
-                  Vigencia: Día 12 de 90
+                  Enlace enviado hace 12 días
                 </span>
               </div>
               <div class="grid grid-cols-5 gap-1.5 text-[10px] font-bold text-center">
-                <div class="p-2 rounded bg-emerald-500 text-slate-950">✓ Enlace (hace 12 d)</div>
-                <div class="p-2 rounded bg-amber-500 text-slate-950 animate-pulse">● Visita Agendada</div>
-                <div class="p-2 rounded bg-slate-800 text-slate-400">Contrato / Arras</div>
-                <div class="p-2 rounded bg-slate-800 text-slate-400">Firma Notaría (500€)</div>
+                <div class="p-2 rounded bg-emerald-500 text-slate-950">✓ Enlace (12 d)</div>
+                <div class="p-2 rounded bg-amber-500 text-slate-950 animate-pulse">● Visita</div>
+                <div class="p-2 rounded bg-slate-800 text-slate-400">Contrato</div>
+                <div class="p-2 rounded bg-slate-800 text-slate-400">Firma (500€)</div>
                 <div class="p-2 rounded bg-slate-900 text-slate-500">Visto (>90 d)</div>
               </div>
             </div>
-
-            <!-- Ejemplo 2: Recién enviado -->
-            <div class="p-4 rounded-xl bg-[#152033] border border-slate-700/80 space-y-3">
-              <div class="flex items-center justify-between">
-                <span class="font-mono font-bold text-white">Contacto Invitado #INV-9108 · Activo Àngels</span>
-                <span class="px-2.5 py-0.5 rounded-full bg-sky-500/20 text-sky-300 border border-sky-500/40 font-bold text-[11px]">
-                  Vigencia: Día 2 de 90
-                </span>
-              </div>
-              <div class="grid grid-cols-5 gap-1.5 text-[10px] font-bold text-center">
-                <div class="p-2 rounded bg-emerald-500 text-slate-950">● Enlace (hace 2 d)</div>
-                <div class="p-2 rounded bg-slate-800 text-slate-400">Visita</div>
-                <div class="p-2 rounded bg-slate-800 text-slate-400">Contrato / Arras</div>
-                <div class="p-2 rounded bg-slate-800 text-slate-400">Firma Notaría (500€)</div>
-                <div class="p-2 rounded bg-slate-900 text-slate-500">Visto (>90 d)</div>
-              </div>
-            </div>
-
-            <!-- Ejemplo 3: Expirado (>90 días -> Estado "Visto") -->
-            <div class="p-4 rounded-xl bg-[#0e1522] border border-slate-800/80 space-y-3 opacity-75">
-              <div class="flex items-center justify-between">
-                <span class="font-mono font-bold text-slate-400">Contacto Invitado #INV-7812 · Ciutat Vella</span>
-                <span class="px-2.5 py-0.5 rounded-full bg-slate-800 text-slate-400 border border-slate-700 font-bold text-[11px]">
-                  Plazo Superado (94 días)
-                </span>
-              </div>
-              <div class="grid grid-cols-5 gap-1.5 text-[10px] font-bold text-center">
-                <div class="p-2 rounded bg-slate-800 text-slate-500">Enlace (hace 94 d)</div>
-                <div class="p-2 rounded bg-slate-800 text-slate-500">Visita</div>
-                <div class="p-2 rounded bg-slate-800 text-slate-500">Contrato</div>
-                <div class="p-2 rounded bg-slate-800 text-slate-500">Firma</div>
-                <div class="p-2 rounded bg-rose-500/20 border border-rose-500/40 text-rose-300">👁️ VISTO (>90 días)</div>
-              </div>
-            </div>
-
           </div>
         </div>
 
@@ -693,7 +632,7 @@
     </div>
   </div>
 
-  <!-- ================= MODAL LIGHTBOX 1:1 PARA FOTOS DEL CARRUSEL ================= -->
+  <!-- ================= MODAL LIGHTBOX 1:1 ================= -->
   <div id="lightbox-modal" onclick="closeLightbox()" class="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-md hidden items-center justify-center p-4 cursor-zoom-out">
     <div class="relative max-w-2xl w-full square-1-1 rounded-2xl overflow-hidden border border-slate-700 shadow-2xl bg-black">
       <img id="lightbox-img" src="" alt="Vista Ampliada 1:1" class="w-full h-full object-cover" />
@@ -701,7 +640,7 @@
     </div>
   </div>
 
-  <!-- ================= MODAL DE CUALIFICACIÓN: ELENA | AI ADVISOR LEVEL-I ================= -->
+  <!-- ================= MODAL ELENA IA ================= -->
   <div id="elena-modal" class="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md hidden items-center justify-center p-4">
     <div class="card-panel max-w-lg w-full overflow-hidden border-slate-700 shadow-2xl bg-[#101826]">
       
@@ -721,7 +660,6 @@
 
       <div class="p-5 max-h-[80vh] overflow-y-auto space-y-4">
 
-        <!-- PASO 0: VERIFICACIÓN DE SEGURIDAD Y RGPD -->
         <div id="elena-step-0" class="space-y-4">
           <div class="p-4 rounded-xl bg-[#162032] border border-slate-700/80 space-y-3">
             <div class="text-xs font-bold text-amber-400 flex items-center gap-1.5">
@@ -755,7 +693,6 @@
           </div>
         </div>
 
-        <!-- PASO 1: FILTRO DE PROYECTO -->
         <div id="elena-step-1" class="space-y-4 hidden">
           <div class="p-4 rounded-xl bg-[#182334] border border-slate-700 text-xs text-slate-200 space-y-2 leading-relaxed">
             <p>
@@ -782,7 +719,6 @@
           </div>
         </div>
 
-        <!-- PASO 2: CAPACIDAD FINANCIERA Y ZONA BLOQUEADA (INTOCABLE) -->
         <div id="elena-step-2" class="space-y-4 hidden">
           <div class="flex justify-end">
             <div id="user-selected-use-bubble" class="bg-emerald-500 text-slate-950 font-bold text-xs px-3.5 py-2 rounded-xl max-w-xs"></div>
@@ -799,7 +735,7 @@
               <option value="Reposición Patrimonial / Venta de otro activo">🔄 Reposición Patrimonial / Desinversión previa</option>
             </select>
 
-            <!-- CAMPO DE ZONA ESTRICTAMENTE BLOQUEADO (READONLY + DISABLED) -->
+            <!-- ZONA ESTRICTAMENTE BLOQUEADA -->
             <div>
               <label class="text-[10px] font-bold uppercase text-slate-400 block mb-1">ZONA Y EXPEDIENTE ASIGNADO (INTOCABLE):</label>
               <input type="text" value="Barcelona - Ciutat Vella (08001) · Activo Àngels" readonly disabled class="w-full bg-[#0b121e] border border-slate-800 rounded-lg px-3 py-2.5 text-xs font-bold text-emerald-400 cursor-not-allowed select-none opacity-90" />
@@ -811,7 +747,6 @@
           </div>
         </div>
 
-        <!-- PASO 3: DATOS DE CONTACTO Y AGENDA -->
         <div id="elena-step-3" class="space-y-4 hidden">
           <div class="flex justify-end">
             <div id="user-selected-fin-bubble" class="bg-emerald-500 text-slate-950 font-bold text-xs px-3.5 py-2 rounded-xl max-w-xs"></div>
@@ -864,7 +799,6 @@
           </div>
         </div>
 
-        <!-- PASO 4: CONFIRMACIÓN -->
         <div id="elena-step-4" class="space-y-4 hidden">
           <div class="p-4 rounded-xl bg-emerald-500/15 border border-emerald-500/40 text-xs text-slate-200 space-y-2">
             <div class="text-sm font-extrabold text-emerald-400">✅ ¡Expediente prioritario registrado con éxito!</div>
@@ -879,7 +813,7 @@
     </div>
   </div>
 
-  <!-- ================= MODAL TEXTOS LEGALES ================= -->
+  <!-- ================= MODAL LEGAL ================= -->
   <div id="legal-modal" class="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-sm hidden items-center justify-center p-4">
     <div class="card-panel max-w-lg w-full p-6 border-slate-700 bg-[#101826] space-y-4">
       <div class="flex items-center justify-between border-b border-slate-800 pb-3">
@@ -890,7 +824,7 @@
     </div>
   </div>
 
-  <!-- ================= FOOTER CORPORATIVO ================= -->
+  <!-- ================= FOOTER ================= -->
   <footer class="border-t border-slate-800/80 bg-[#060a10] px-4 lg:px-8 py-6 mt-12">
     <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-xs text-slate-400">
       <div class="space-y-1">
@@ -909,34 +843,38 @@
     </div>
   </footer>
 
-  <!-- ================= LÓGICA JAVASCRIPT INTEGRAL ================= -->
+  <!-- ================= LÓGICA JAVASCRIPT ================= -->
   <script>
-    // 1. Galería 1:1 enlazada con los archivos exactos subidos a tu GitHub
     const GITHUB_CDN = "https://level-i.github.io/barcelona/ciutat-vella/activo-angels/";
     const galleryItems = [
-      { file: "ff1.jpg", label: "Vista 1 · Espacio Diáfano & Luz Natural" },
-      { file: "ff2.jpg", label: "Vista 2 · Bóvedas Históricas de Ladrillo (Sótano 103 m²)" },
-      { file: "ff3.jpg", label: "Vista 3 · Planta Primera (334 m² Modulares)" },
-      { file: "ff4.jpg", label: "Vista 4 · Proyección Interiorismo Loft / Showroom" },
-      { file: "ff6.jpg", label: "Vista 5 · Proyección Zona Día & Cocina Ejecutiva" },
-      { file: "ff7.jpg", label: "Vista 6 · Proyección Terraza / Patio Privado (~103 m²)" },
-      { file: "ff8.jpg", label: "Vista 7 · Proyección Suite / Despacho de Dirección" },
-      { file: "ff9.jpg", label: "Vista 8 · Acceso Planta Baja Comercial" },
-      { file: "ff99.jpg", label: "Vista 9 · Entorno Eje Cultural Plaça dels Àngels" }
+      { file: "principal.jpg", label: "Fachada Histórica 1900 · Piedra Natural y Balconada" },
+      { file: "activo-angels-fachada b.jpg", label: "Fachada Posterior · Plaça Joan Coromines & Mural Keith Haring" },
+      { file: "ff1.jpg", label: "Planta Primera (334 m²) · Espacio Diáfano & Luz Natural" },
+      { file: "ff2.jpg", label: "Sótano (103 m²) · Bóvedas Catalanas de Ladrillo Visto" },
+      { file: "ff3.jpg", label: "Planta Primera · Divisiones Modulares para Despachos/Ateliers" },
+      { file: "ff4.jpg", label: "Proyección Interiorismo · Showroom & Loft de Autor" },
+      { file: "ff6.jpg", label: "Proyección Interiorismo · Zona Ejecutiva con Cocina" },
+      { file: "ff7.jpg", label: "Proyección Interiorismo · Terraza / Patio Privado (~103 m²)" },
+      { file: "ff8.jpg", label: "Proyección Interiorismo · Suite Privada / Dirección" },
+      { file: "ff9.jpg", label: "Planta Baja Comercial · Acceso Directo" },
+      { file: "ff99.jpg", label: "Entorno Cultural · Eje Plaça dels Àngels · Barcelona" }
     ];
 
     function renderCarousels() {
       const gateContainer = document.getElementById('gate-carousel');
       const mainContainer = document.getElementById('main-carousel');
 
-      const html = galleryItems.map(item => `
-        <div onclick="openLightbox('${item.file}', '${item.label}')" class="snap-start shrink-0 w-36 sm:w-44 square-1-1 rounded-xl overflow-hidden border border-slate-700/80 hover:border-amber-400 transition cursor-pointer relative group bg-slate-900">
-          <img src="${item.file}" onerror="this.onerror=null;this.src='${GITHUB_CDN}${item.file}';" alt="${item.label}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" />
-          <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950/90 via-slate-950/50 to-transparent p-2">
-            <span class="text-[10px] font-semibold text-slate-200 line-clamp-1">${item.label}</span>
+      const html = galleryItems.map(item => {
+        const encodedFile = encodeURI(item.file);
+        return `
+          <div onclick="openLightbox('${encodedFile}', '${item.label}')" class="snap-start shrink-0 w-36 sm:w-44 square-1-1 rounded-xl overflow-hidden border border-slate-700/80 hover:border-amber-400 transition cursor-pointer relative group bg-slate-900">
+            <img src="${encodedFile}" onerror="this.onerror=null;this.src='${GITHUB_CDN}${encodedFile}';" alt="${item.label}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" />
+            <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950/90 via-slate-950/50 to-transparent p-2">
+              <span class="text-[10px] font-semibold text-slate-200 line-clamp-1">${item.label}</span>
+            </div>
           </div>
-        </div>
-      `).join('');
+        `;
+      }).join('');
 
       gateContainer.innerHTML = html;
       mainContainer.innerHTML = html;
@@ -963,14 +901,6 @@
       modal.classList.remove('flex');
     }
 
-    function toggleMute(videoId, btn) {
-      const v = document.getElementById(videoId);
-      if (!v) return;
-      v.muted = !v.muted;
-      btn.innerHTML = v.muted ? '<span>🔇</span> <span>Audio silenciado (Pulsa para activar)</span>' : '<span>🔊</span> <span>Audio activo</span>';
-    }
-
-    // 2. Reloj en vivo
     setInterval(() => {
       const now = new Date();
       const pad = n => String(n).padStart(2, '0');
@@ -978,7 +908,6 @@
       if (el) el.textContent = `${pad(now.getDate())}/${pad(now.getMonth()+1)}/${now.getFullYear()} | ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
     }, 1000);
 
-    // 3. Retos Matemáticos (Gatekeeper + Elena IA)
     let gateSum = 9, elenaSum = 13;
     function initMathChallenges() {
       const g1 = Math.floor(Math.random() * 5) + 3;
@@ -995,42 +924,15 @@
     }
     initMathChallenges();
 
-    // 4. Mapa Silencioso con Latitud/Longitud exacta (41.382736, 2.165658)
-    let mapInitialized = false;
-    function initSilentMap() {
-      if (mapInitialized) return;
-      mapInitialized = true;
-      const lat = 41.382736;
-      const lon = 2.165658;
-      const map = L.map('silent-map', {
-        center: [lat, lon],
-        zoom: 17,
-        scrollWheelZoom: false
-      });
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-        attribution: '&copy; OpenStreetMap &copy; CARTO'
-      }).addTo(map);
-      L.circle([lat, lon], {
-        color: '#10b981',
-        fillColor: '#10b981',
-        fillOpacity: 0.22,
-        radius: 65
-      }).addTo(map);
-    }
-
     function verifyGatekeeper() {
       const val = parseInt(document.getElementById('gate-math-input').value, 10);
       if (val === gateSum) {
-        const gv = document.getElementById('gate-video');
-        if (gv) gv.pause();
         document.getElementById('gatekeeper-screen').classList.add('hidden');
-        setTimeout(initSilentMap, 150);
       } else {
         document.getElementById('gate-error').classList.remove('hidden');
       }
     }
 
-    // 5. Control Blur del Vídeo Interior
     let videoBlurred = false;
     function unlockVideo() {
       const v = document.getElementById('property-video');
@@ -1053,7 +955,6 @@
       }
     }
 
-    // 6. Simulador Económico (474 m² Registrales + 103 m² Patio = 577 m² Operativos)
     const BASE_PRICE = 780000;
     const BASE_TAXES = 78000;
     const BASE_NOTARY = 4500;
@@ -1114,7 +1015,6 @@
       document.getElementById('rent-unit-price').textContent = `~${rentPerRegSqm.replace('.', ',')} € / m² reg.`;
     }
 
-    // 7. Programa de Colaboradores Simpatizantes y Panel de Seguimiento
     function openCollaboratorModal() {
       document.getElementById('collaborator-modal').classList.remove('hidden');
       document.getElementById('collaborator-modal').classList.add('flex');
@@ -1162,19 +1062,18 @@
       document.getElementById('collab-wa-share').href = `https://wa.me/?text=${waText}`;
       document.getElementById('collab-link-result').classList.remove('hidden');
 
-      // Añadimos fila en vivo en el Panel de Seguimiento
       const list = document.getElementById('collab-tracking-list');
       const newCard = document.createElement('div');
       newCard.className = "p-4 rounded-xl bg-emerald-950/30 border border-emerald-500/50 space-y-3";
       newCard.innerHTML = `
         <div class="flex items-center justify-between">
-          <span class="font-mono font-bold text-emerald-300">Contacto Invitado #${code} · Enlace Recién Generado</span>
+          <span class="font-mono font-bold text-emerald-300">Contacto Invitado #${code} · Activo Àngels</span>
           <span class="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-bold text-[11px]">
-            Vigencia: Día 0 de 90
+            Enlace enviado hace 0 días
           </span>
         </div>
         <div class="grid grid-cols-5 gap-1.5 text-[10px] font-bold text-center">
-          <div class="p-2 rounded bg-emerald-500 text-slate-950">● Enlace (hace 0 d)</div>
+          <div class="p-2 rounded bg-emerald-500 text-slate-950">● Enlace (0 d)</div>
           <div class="p-2 rounded bg-slate-800 text-slate-400">Visita</div>
           <div class="p-2 rounded bg-slate-800 text-slate-400">Contrato</div>
           <div class="p-2 rounded bg-slate-800 text-slate-400">Firma (500€)</div>
@@ -1189,7 +1088,6 @@
       navigator.clipboard.writeText(input.value).catch(() => {});
     }
 
-    // 8. Me Gusta
     let liked = false;
     function registerLike() {
       if (!liked) {
@@ -1200,9 +1098,6 @@
       }
     }
 
-    // 9. Flujo Conversacional Elena IA
-    let selectedUse = "";
-    let selectedFin = "";
     function openElenaModal() {
       document.getElementById('elena-modal').classList.remove('hidden');
       document.getElementById('elena-modal').classList.add('flex');
@@ -1256,7 +1151,6 @@
       `;
     }
 
-    // 10. Modales Legales
     function openLegalModal(type) {
       const title = document.getElementById('legal-modal-title');
       const body = document.getElementById('legal-modal-body');
@@ -1265,7 +1159,7 @@
         body.innerHTML = `<p>En cumplimiento de la Ley 34/2002 (LSSI-CE), se informa que <strong>Level.immo</strong> está operada por <strong>LEVEL PUNTO IMMO 24365 SLU</strong> (NIF B-26745430 · Travessera de Gràcia, 56, 3-1a, 08006 Barcelona · API 4173 · AICAT 14200).</p><p>El inmueble comercial se compone de dos entidades registrales (474 m² registrales + ~103 m² de patio) y se transmite como cuerpo cierto y uso comercial, sin condición suspensiva de cambio de uso.</p>`;
       } else if (type === 'privacidad') {
         title.textContent = "Política de Privacidad y RGPD";
-        body.innerHTML = `<p><strong>Responsable:</strong> LEVEL PUNTO IMMO 24365 SLU (Email: level@level.immo).</p><p>Sus datos personales se tratan con estricta confidencialidad para gestionar el acceso a la Ficha Ciega, el programa de Colaboradores Simpatizantes (sin envíos publicitarios no deseados) y la agenda con nuestros Advisors.</p>`;
+        body.innerHTML = `<p><strong>Responsable:</strong> LEVEL PUNTO IMMO 24365 SLU (Email: level@level.immo).</p><p>Sus datos personales se tratan con estricta confidencialidad para gestionar el acceso a la Ficha Ciega, el programa de Colaboradores Simpatizantes (sin envíos publicitarios no formales) y la agenda con nuestros Advisors.</p>`;
       } else {
         title.textContent = "Política de Cookies e Inteligencia Artificial";
         body.innerHTML = `<p>Esta web utiliza el asistente automatizado <strong>Elena | AI Advisor Level-i</strong> para cualificar perfiles inversores y preservar la confidencialidad de la propiedad.</p>`;
@@ -1278,23 +1172,23 @@
       document.getElementById('legal-modal').classList.remove('flex');
     }
 
-    // 11. Diccionario Multilingüe Persistente (8 Idiomas: ES, CA, EN, FR, DE, IT, AR, ZH)
     const i18n = {
       es: {
         btn_collab_top: "Colaborador Simpatizante (500 €)",
         gate_badge: "EXCLUSIVA LEVEL.IMMO · FICHA CIEGA PATRIMONIAL",
         gate_title: "Activo Comercial Singular en Ciutat Vella · Eje Àngels",
         gate_security_title: "Filtro de Seguridad (Acceso Inversor Cualificado)",
-        gate_security_desc: "Resuelve la suma para desbloquear el estudio económico, los datos registrales/ITE y la Ficha Ciega en tu idioma:",
+        gate_security_desc: "Resuelve la suma para desbloquear el estudio económico, los datos registrales/ITE y la Ficha Ciega en el idioma seleccionado:",
         gate_math_label: "¿Cuánto es",
         gate_btn_access: "ACCEDER AL DOSSIER",
-        gate_carousel_title: "📸 Galería 1:1 · Estado Actual y Proyecciones de Uso (Atelier / Loft / Clínica)",
+        gate_carousel_title: "📸 Galería 1:1 (1080×1080 px) · Fachadas, Interior y Proyección de Uso",
         nav_demand: "Demanda Activa",
         nav_market: "Mercado Real",
         nav_collab: "Colaboradores (Tarjeta 500€)",
         nav_private: "Zona Privada",
         main_header_title: "Barcelona · Ciutat Vella (Eje Àngels) | Activo Comercial 3 Niveles + Patio (577 m² Operativos)",
         main_status_badge: "2 FINCAS REGISTRALES + ITE AUDITADA · VENTA SIN CONDICIÓN",
+        btn_earth_3d: "Vuelo 3D Google Earth",
         calc_header: "Simulador de Costes (ITE/Actividad) & Alquiler",
         btn_share_collab: "Compartir y Ganar 500€",
         cta_main_elena: "SOLICITAR NOTAS SIMPLES, ITE Y VISITA CON ELENA IA"
@@ -1304,16 +1198,17 @@
         gate_badge: "EXCLUSIVA LEVEL.IMMO · FITXA CEGA PATRIMONIAL",
         gate_title: "Actiu Comercial Singular a Ciutat Vella · Eix Àngels",
         gate_security_title: "Filtre de Seguretat (Accés Inversor Qualificat)",
-        gate_security_desc: "Resol la suma per desbloquejar l'estudi econòmic, les dades registrals/ITE i la Fitxa Cega en el teu idioma:",
+        gate_security_desc: "Resol la suma per desbloquejar l'estudi econòmic, les dades registrals/ITE i la Fitxa Cega en l'idioma seleccionat:",
         gate_math_label: "Quant és",
         gate_btn_access: "ACCEDIR AL DOSSIER",
-        gate_carousel_title: "📸 Galeria 1:1 · Estat Actual i Projeccions d'Ús (Atelier / Loft / Clínica)",
+        gate_carousel_title: "📸 Galeria 1:1 (1080×1080 px) · Façanes, Interior i Projecció d'Ús",
         nav_demand: "Demanda Activa",
         nav_market: "Mercat Real",
         nav_collab: "Col·laboradors (Targeta 500€)",
         nav_private: "Zona Privada",
         main_header_title: "Barcelona · Ciutat Vella (Eix Àngels) | Actiu Comercial 3 Nivells + Pati (577 m² Operatius)",
         main_status_badge: "2 FINQUES REGISTRALS + ITE AUDITADA · VENDA SENSE CONDICIÓ",
+        btn_earth_3d: "Vol 3D Google Earth",
         calc_header: "Simulador de Costos (ITE/Activitat) & Lloguer",
         btn_share_collab: "Compartir i Guanyar 500€",
         cta_main_elena: "SOL·LICITAR NOTES SIMPLES, ITE I VISITA AMB ELENA IA"
@@ -1323,16 +1218,17 @@
         gate_badge: "LEVEL.IMMO EXCLUSIVE · BLIND ASSET PROFILE",
         gate_title: "Unique Commercial Asset in Ciutat Vella · Àngels Axis",
         gate_security_title: "Security Filter (Qualified Investor Access)",
-        gate_security_desc: "Solve the sum to unlock the financial study, land registry/ITE data and Blind Profile in your language:",
+        gate_security_desc: "Solve the sum to unlock the financial study, land registry/ITE data and Blind Profile in your selected language:",
         gate_math_label: "What is",
         gate_btn_access: "UNLOCK DOSSIER",
-        gate_carousel_title: "📸 1:1 Gallery · Current State & Architectural Projections (Atelier / Loft / Clinic)",
+        gate_carousel_title: "📸 1:1 Gallery (1080×1080 px) · Facades, Interior & Architectural Projections",
         nav_demand: "Active Demand",
         nav_market: "Live Market",
         nav_collab: "Partners (500€ Card)",
         nav_private: "Private Area",
         main_header_title: "Barcelona · Ciutat Vella (Àngels Axis) | 3-Level Commercial Asset + Patio (577 sqm Operative)",
         main_status_badge: "2 REGISTERED ENTITIES + AUDITED ITE · UNCONDITIONAL SALE",
+        btn_earth_3d: "3D Flight Google Earth",
         calc_header: "CAPEX (ITE/Activity) & Rental Yield Simulator",
         btn_share_collab: "Share & Earn 500€",
         cta_main_elena: "REQUEST REGISTRY NOTES, ITE & VISIT WITH ELENA AI"
@@ -1345,13 +1241,14 @@
         gate_security_desc: "Résolvez la somme pour débloquer l'étude financière, les données cadastrales/ITE et le Dossier :",
         gate_math_label: "Combien font",
         gate_btn_access: "ACCÉDER AU DOSSIER",
-        gate_carousel_title: "📸 Galerie 1:1 · État Actuel & Projections (Atelier / Loft / Clinique)",
+        gate_carousel_title: "📸 Galerie 1:1 (1080×1080 px) · Façades, Intérieur & Projections",
         nav_demand: "Demande Active",
         nav_market: "Marché Réel",
         nav_collab: "Partenaires (Carte 500€)",
         nav_private: "Espace Privé",
         main_header_title: "Barcelone · Ciutat Vella (Axe Àngels) | Actif Commercial 3 Niveaux + Patio (577 m²)",
         main_status_badge: "2 ENTITÉS FONCIÈRES + ITE AUDITÉE · VENTE SANS CONDITION",
+        btn_earth_3d: "Vol 3D Google Earth",
         calc_header: "Simulateur de Coûts (ITE/Activité) & Rendement Locatif",
         btn_share_collab: "Partager & Gagner 500€",
         cta_main_elena: "DEMANDER LES NOTES FONCIÈRES, ITE ET VISITE AVEC ELENA IA"
@@ -1364,9 +1261,10 @@
         gate_security_desc: "Lösen Sie die Aufgabe, um die Wirtschaftlichkeitsberechnung und Grundbuch-/ITE-Daten freizuschalten:",
         gate_math_label: "Was ergibt",
         gate_btn_access: "DOSSIER ÖFFNEN",
-        gate_carousel_title: "📸 1:1 Galerie · Ist-Zustand & Projektionen (Atelier / Loft / Klinik)",
+        gate_carousel_title: "📸 1:1 Galerie (1080×1080 px) · Fassaden, Bestand & Projektionen",
         nav_collab: "Partner (500€ Karte)",
         main_header_title: "Barcelona · Ciutat Vella (Achse Àngels) | Gewerbeimmobilie 3 Ebenen + Innenhof (577 m²)",
+        btn_earth_3d: "3D-Flug Google Earth",
         calc_header: "Investitions- & Mietrendite-Simulator (inkl. ITE)",
         btn_share_collab: "Teilen & 500€ erhalten",
         cta_main_elena: "GRUNDBUCH, ITE & BESICHTIGUNG MIT ELENA KI ANFORDERN"
@@ -1379,9 +1277,10 @@
         gate_security_desc: "Risolvi la somma per sbloccare lo studio economico e i dati catastali/ITE nella tua lingua:",
         gate_math_label: "Quanto fa",
         gate_btn_access: "ACCEDI AL DOSSIER",
-        gate_carousel_title: "📸 Galleria 1:1 · Stato Attuale e Proiezioni (Atelier / Loft / Clinica)",
+        gate_carousel_title: "📸 Galleria 1:1 (1080×1080 px) · Facciate, Interni e Proiezioni",
         nav_collab: "Collaboratori (Buono 500€)",
         main_header_title: "Barcellona · Ciutat Vella (Asse Àngels) | Immobile Commerciale 3 Livelli + Patio (577 m²)",
+        btn_earth_3d: "Volo 3D Google Earth",
         calc_header: "Simulatore Costi (ITE/Attività) e Rendimento",
         btn_share_collab: "Condividi e Ricevi 500€",
         cta_main_elena: "RICHIEDI VISURE, ITE E VISITA CON ELENA IA"
@@ -1391,12 +1290,13 @@
         gate_badge: "حصرياً لدى LEVEL.IMMO · ملف استثماري سري",
         gate_title: "أصل تجاري فريد في سيوتات فيلا (برشلونة) · محور أنخيلز",
         gate_security_title: "فلتر الأمان (دخول المستثمرين المؤهلين)",
-        gate_security_desc: "أجب عن المعادلة لفتح الدراسة المالية وبيانات السجل العقاري بلتك المختارة:",
+        gate_security_desc: "أجب عن المعادلة لفتح الدراسة المالية وبيانات السجل العقاري بلغتك المختارة:",
         gate_math_label: "كم يساوي",
         gate_btn_access: "فتح الملف الكامل",
-        gate_carousel_title: "📸 معرض 1:1 · الوضع الحالي والتصورات المعمارية",
+        gate_carousel_title: "📸 معرض 1:1 (1080×1080) · الواجهات والوضع الحالي والتصورات",
         nav_collab: "المتعاونون (500€)",
         main_header_title: "برشلونة · سيوتات فيلا | عقار تجاري من 3 طوابق مع فناء خاص (577 م²)",
+        btn_earth_3d: "جولة ثلاثية الأبعاد Google Earth",
         calc_header: "محاكي التكاليف والعائد الإيجاري",
         btn_share_collab: "شارك واحصل على 500€",
         cta_main_elena: "طلب الوثائق الرسمية وتحديد موعد مع المستشارة الذكية ELENA"
@@ -1409,9 +1309,10 @@
         gate_security_desc: "请完成计算以所选语言解锁财务测算、产权登记及 ITE 建筑报告：",
         gate_math_label: "请计算",
         gate_btn_access: "进入完整档案",
-        gate_carousel_title: "📸 1:1 图集 · 现状实拍与改造效果图（高定工坊 / 诊所 / 总部）",
+        gate_carousel_title: "📸 1:1 图集 (1080×1080 px) · 历史立面、现状与改造方案",
         nav_collab: "合作伙伴 (500€ 奖励)",
         main_header_title: "巴塞罗那 · 老城区核心轴线 | 3层独栋商业空间 + 私属庭院 (总实用 577 m²)",
+        btn_earth_3d: "Google Earth 3D 航拍",
         calc_header: "改造预算 (含ITE项目) 与租金回报模拟器",
         btn_share_collab: "分享并赢取 500€ 礼金卡",
         cta_main_elena: "向 ELENA AI 索取产权摘录、ITE 报告并预约看房"
