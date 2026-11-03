@@ -2,7 +2,7 @@
 <html lang="es" id="html-root">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
   <title>Level.immo | Activo Àngels · Ciutat Vella (Barcelona) · Ficha Ciega Patrimonial</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -12,6 +12,7 @@
       background-color: #080d14;
       color: #e2e8f0;
       overflow-x: hidden;
+      -webkit-tap-highlight-color: transparent;
     }
     .gold-badge {
       background: linear-gradient(90deg, rgba(217,119,6,0.22) 0%, rgba(245,158,11,0.08) 100%);
@@ -28,21 +29,50 @@
     }
     .video-blur {
       filter: blur(15px) brightness(0.75);
-      transition: filter 0.6s ease;
+      transition: filter 0.6s ease, transform 0.4s ease;
     }
     .video-unblurred {
       filter: blur(0px) brightness(1);
+      transition: filter 0.6s ease, transform 0.4s ease;
     }
     .square-1-1 {
       aspect-ratio: 1 / 1;
     }
-    .no-scrollbar::-webkit-scrollbar {
-      display: none;
+    /* Fix Responsive Vertical para vídeos con barras laterales incrustadas o 1:1 en móviles */
+    .vertical-stage {
+      aspect-ratio: 9 / 16;
+      width: 100%;
+      position: relative;
+      overflow: hidden;
+      background: #000;
     }
-    .no-scrollbar {
-      -ms-overflow-style: none;
-      scrollbar-width: none;
+    .vertical-stage video {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center center;
     }
+    /* Si el archivo mp4 tiene pillarbox (bandas negras a los lados en un contenedor 16:9), este zoom llena la pantalla vertical en móvil */
+    .pillarbox-zoom {
+      transform: scale(1.78);
+      transform-origin: center center;
+    }
+    .pillarbox-normal {
+      transform: scale(1);
+    }
+    @media (max-width: 640px) {
+      .mobile-full-bleed {
+        margin-left: -1rem;
+        margin-right: -1rem;
+        border-radius: 0 !important;
+        border-left: 0 !important;
+        border-right: 0 !important;
+      }
+    }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     ::-webkit-scrollbar { width: 8px; height: 8px; }
     ::-webkit-scrollbar-track { background: #080d14; }
     ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; }
@@ -51,36 +81,37 @@
 </head>
 <body class="min-h-screen flex flex-col justify-between">
 
-  <!-- ================= PANTALLA 1: PORTADA WELCOME (VÍDEO DE FONDO ENLAZADO) ================= -->
+  <!-- ================= PANTALLA 1: PORTADA WELCOME (100% VERTICAL RESPONSIVE EN MÓVIL) ================= -->
   <div id="gatekeeper-screen" class="fixed inset-0 z-50 bg-[#080d14] overflow-y-auto">
     
-    <!-- Vídeo de Fondo Responsive en Bucle (video-intro-bcn.mp4) -->
-    <div class="absolute inset-0 overflow-hidden pointer-events-none">
-      <video autoplay muted loop playsinline class="w-full h-full object-cover filter brightness-[0.55] contrast-[1.05]">
+    <!-- Vídeo de Fondo Responsive a Pantalla Completa Vertical en Móvil y Desktop -->
+    <div class="fixed inset-0 overflow-hidden pointer-events-none z-0">
+      <video id="intro-bg-video" autoplay muted loop playsinline class="w-full h-full object-cover object-center filter brightness-[0.62] contrast-[1.08] scale-[1.04]">
         <source src="video-intro-bcn.mp4" type="video/mp4">
         <source src="https://app.level-i.com/barcelona/ciutat-vella/activo-angels/video-intro-bcn.mp4" type="video/mp4">
+        <source src="https://level-i.github.io/barcelona/ciutat-vella/activo-angels/video-intro-bcn.mp4" type="video/mp4">
       </video>
-      <div class="absolute inset-0 bg-gradient-to-t from-[#080d14] via-[#080d14]/70 to-[#080d14]/50"></div>
+      <div class="absolute inset-0 bg-gradient-to-b from-[#080d14]/70 via-[#080d14]/45 to-[#080d14]/95"></div>
     </div>
 
-    <div class="relative z-10 min-h-screen max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col justify-between">
+    <div class="relative z-10 min-h-[100dvh] max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 flex flex-col justify-between">
       
-      <!-- Topbar de Portada -->
-      <div class="flex items-center justify-between border-b border-slate-700/60 pb-4 backdrop-blur-md bg-slate-950/30 px-4 rounded-xl">
-        <div class="flex items-center gap-3">
-          <div class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-white text-slate-950 font-black text-xl">L</div>
-          <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 -ml-2 mt-3"></span>
-          <span class="font-extrabold text-white text-lg tracking-tight">Level.immo</span>
-          <span class="hidden sm:inline-block text-[11px] font-mono text-slate-300 border-l border-slate-700 pl-3">
+      <!-- Topbar de Portada (Compacta y Responsive en Móvil) -->
+      <div class="flex items-center justify-between border border-slate-700/60 py-2.5 px-3 sm:px-4 backdrop-blur-md bg-slate-950/55 rounded-xl">
+        <div class="flex items-center gap-2 sm:gap-3">
+          <div class="inline-flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-white text-slate-950 font-black text-lg sm:text-xl">L</div>
+          <span class="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-emerald-400 -ml-1.5 sm:-ml-2 mt-2.5"></span>
+          <span class="font-extrabold text-white text-base sm:text-lg tracking-tight">Level.immo</span>
+          <span class="hidden md:inline-block text-[11px] font-mono text-slate-300 border-l border-slate-700 pl-3">
             API 4173 · AICAT 14200
           </span>
         </div>
 
-        <div class="flex items-center gap-3">
-          <button onclick="openCollaboratorModal()" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/50 text-amber-300 text-xs font-bold transition backdrop-blur">
-            <span>🤝</span> <span data-i18n="btn_collab_top">Colaborador Simpatizante (500 €)</span>
+        <div class="flex items-center gap-2">
+          <button onclick="openCollaboratorModal()" class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/50 text-amber-300 text-[11px] sm:text-xs font-bold transition backdrop-blur">
+            <span>🤝</span> <span class="hidden sm:inline" data-i18n="btn_collab_top">Colaborador Simpatizante (500 €)</span><span class="sm:hidden">500 €</span>
           </button>
-          <select id="lang-select-gate" onchange="changeLanguage(this.value)" class="bg-slate-900/90 border border-slate-700 text-slate-200 text-xs font-semibold rounded-lg px-3 py-2 focus:outline-none focus:border-emerald-500 cursor-pointer backdrop-blur">
+          <select id="lang-select-gate" onchange="changeLanguage(this.value)" class="bg-slate-900/90 border border-slate-700 text-slate-200 text-[11px] sm:text-xs font-semibold rounded-lg px-2 sm:px-3 py-1.5 focus:outline-none focus:border-emerald-500 cursor-pointer backdrop-blur">
             <option value="es">ES Español</option>
             <option value="ca">CA Català</option>
             <option value="en">GB English</option>
@@ -93,63 +124,63 @@
         </div>
       </div>
 
-      <!-- Cuerpo Central Portada Welcome -->
-      <div class="max-w-4xl mx-auto py-8 space-y-6 text-center my-auto">
-        <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full gold-badge text-[11px] font-bold tracking-wider uppercase backdrop-blur">
+      <!-- Cuerpo Central Portada Welcome (Adaptado a Pantalla Vertical Móvil) -->
+      <div class="w-full max-w-4xl mx-auto py-4 sm:py-6 space-y-4 sm:space-y-5 text-center my-auto">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full gold-badge text-[10px] sm:text-[11px] font-bold tracking-wider uppercase backdrop-blur">
           <span>🔒</span> <span data-i18n="gate_badge">EXCLUSIVA LEVEL.IMMO · FICHA CIEGA PATRIMONIAL</span>
         </div>
 
-        <h1 class="text-3xl sm:text-5xl lg:text-6xl font-black text-white leading-tight tracking-tight drop-shadow-lg" data-i18n="gate_title">
+        <h1 class="text-2xl sm:text-5xl lg:text-6xl font-black text-white leading-tight tracking-tight drop-shadow-lg px-1" data-i18n="gate_title">
           Activo Comercial Singular en Ciutat Vella · Eje Àngels
         </h1>
 
-        <p class="text-slate-200 text-sm sm:text-base leading-relaxed max-w-2xl mx-auto drop-shadow-md" data-i18n="gate_subtitle">
+        <p class="text-slate-200 text-xs sm:text-base leading-relaxed max-w-2xl mx-auto drop-shadow-md px-2" data-i18n="gate_subtitle">
           Finca clásica de 1900 junto a Plaça dels Àngels y el mural de Keith Haring. <strong>577 m² operativos</strong> (<strong>474 m² registrales</strong> en 2 entidades unidas: Planta 1ª de 334 m², Planta Baja de 37 m² y Bodega abovedada de 103 m² + <strong>~103 m² de Patio/Terraza interior</strong>). Ascensor y accesibilidad universal. Venta sin condición suspensiva de cambio de uso.
         </p>
 
         <!-- Validador Matemático Anti-Chafarderos -->
-        <div class="card-panel p-6 border-slate-700 bg-[#101826]/90 backdrop-blur-md shadow-2xl max-w-xl mx-auto space-y-3 text-left">
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-2 text-amber-400 text-xs font-bold uppercase tracking-wider">
+        <div class="card-panel p-4 sm:p-6 border-slate-700 bg-[#101826]/85 backdrop-blur-md shadow-2xl max-w-xl mx-auto space-y-3 text-left">
+          <div class="flex items-center justify-between gap-2">
+            <div class="flex items-center gap-1.5 text-amber-400 text-[11px] sm:text-xs font-bold uppercase tracking-wider">
               <span>🛡️</span> <span data-i18n="gate_security_title">Filtro de Seguridad (Acceso Inversor Cualificado)</span>
             </div>
-            <span class="text-lg font-black text-emerald-400">780.000 €</span>
+            <span class="text-base sm:text-lg font-black text-emerald-400 shrink-0">780.000 €</span>
           </div>
 
-          <p class="text-xs text-slate-300" data-i18n="gate_security_desc">
+          <p class="text-[11px] sm:text-xs text-slate-300" data-i18n="gate_security_desc">
             Resuelve la suma para desbloquear el estudio económico, los datos registrales/ITE y la Ficha Ciega en el idioma seleccionado:
           </p>
 
-          <div class="flex flex-wrap sm:flex-nowrap items-center gap-3">
-            <div class="bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-sm font-bold text-white whitespace-nowrap">
-              <span data-i18n="gate_math_label">¿Cuánto es</span> <span id="gate-num1">5</span> + <span id="gate-num2">4</span>?
+          <div class="grid grid-cols-12 gap-2 items-center">
+            <div class="col-span-5 sm:col-span-4 bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-2.5 text-xs sm:text-sm font-bold text-white text-center whitespace-nowrap">
+              <span data-i18n="gate_math_label">¿Cuánto es</span> <span id="gate-num1">5</span>+<span id="gate-num2">4</span>?
             </div>
-            <input type="number" id="gate-math-input" placeholder="?" onkeydown="if(event.key==='Enter') verifyGatekeeper()" class="w-24 bg-[#080d14] border border-slate-700 rounded-lg px-3 py-2.5 text-center text-white font-bold focus:outline-none focus:border-emerald-500" />
-            <button onclick="verifyGatekeeper()" class="flex-1 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs sm:text-sm py-3 px-5 rounded-lg transition uppercase tracking-wider shadow-lg" data-i18n="gate_btn_access">
-              ACCEDER AL DOSSIER
+            <input type="number" id="gate-math-input" placeholder="?" onkeydown="if(event.key==='Enter') verifyGatekeeper()" class="col-span-3 sm:col-span-2 bg-[#080d14] border border-slate-700 rounded-lg px-2 py-2.5 text-center text-white font-bold focus:outline-none focus:border-emerald-500" />
+            <button onclick="verifyGatekeeper()" class="col-span-4 sm:col-span-6 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs sm:text-sm py-2.5 px-3 rounded-lg transition uppercase tracking-wider shadow-lg" data-i18n="gate_btn_access">
+              ACCEDER
             </button>
           </div>
           <p id="gate-error" class="text-rose-400 text-xs hidden" data-i18n="gate_error_msg">Resultado incorrecto. Inténtalo de nuevo.</p>
         </div>
 
-        <!-- Carrusel de Fotografías 1:1 en Portada -->
-        <div class="space-y-2 pt-2 text-left max-w-4xl mx-auto">
-          <div class="flex items-center justify-between text-xs text-slate-300">
-            <span class="font-bold uppercase tracking-wider" data-i18n="gate_carousel_title">📸 Galería 1:1 (1080×1080 px) · Fachadas, Interior y Proyección de Uso</span>
-            <div class="flex gap-1.5">
-              <button onclick="scrollCarousel('gate-carousel', -260)" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-white font-bold">◀</button>
-              <button onclick="scrollCarousel('gate-carousel', 260)" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-white font-bold">▶</button>
+        <!-- Carrusel Horizontal de Fotografías 1:1 debajo en Portada -->
+        <div class="space-y-2 pt-1 text-left max-w-4xl mx-auto">
+          <div class="flex items-center justify-between text-[11px] sm:text-xs text-slate-300 px-1">
+            <span class="font-bold uppercase tracking-wider truncate" data-i18n="gate_carousel_title">📸 Galería 1:1 · Fachadas, Interior y Proyección</span>
+            <div class="flex gap-1.5 shrink-0">
+              <button onclick="scrollCarousel('gate-carousel', -240)" class="px-2.5 py-1 rounded bg-slate-800/90 hover:bg-slate-700 text-white font-bold">◀</button>
+              <button onclick="scrollCarousel('gate-carousel', 240)" class="px-2.5 py-1 rounded bg-slate-800/90 hover:bg-slate-700 text-white font-bold">▶</button>
             </div>
           </div>
-          <div id="gate-carousel" class="flex gap-3 overflow-x-auto no-scrollbar pb-2 snap-x snap-mandatory"></div>
+          <div id="gate-carousel" class="flex gap-2.5 sm:gap-3 overflow-x-auto no-scrollbar pb-1 snap-x snap-mandatory"></div>
         </div>
 
       </div>
 
       <!-- Footer de Portada -->
-      <div class="border-t border-slate-700/60 pt-4 flex flex-wrap items-center justify-between text-[11px] text-slate-300 gap-2 backdrop-blur-md bg-slate-950/30 px-4 rounded-xl">
-        <span>LEVEL PUNTO IMMO 24365 SLU · Travessera de Gràcia, 56, 3-1a, 08006 Barcelona</span>
-        <div class="flex gap-4">
+      <div class="border border-slate-700/60 py-2.5 px-3 sm:px-4 flex flex-wrap items-center justify-between text-[10px] sm:text-[11px] text-slate-300 gap-2 backdrop-blur-md bg-slate-950/55 rounded-xl">
+        <span class="truncate">LEVEL PUNTO IMMO 24365 SLU · API 4173 · AICAT 14200</span>
+        <div class="flex gap-3">
           <button onclick="openLegalModal('aviso')" class="hover:text-white underline" data-i18n="footer_legal">Aviso Legal</button>
           <button onclick="openLegalModal('privacidad')" class="hover:text-white underline" data-i18n="footer_privacy">Privacidad y RGPD</button>
           <button onclick="openLegalModal('cookies')" class="hover:text-white underline" data-i18n="footer_cookies">Cookies e IA</button>
@@ -160,32 +191,32 @@
   </div>
 
   <!-- ================= HEADER PRINCIPAL DE LA LANDING ================= -->
-  <header class="sticky top-0 z-30 bg-[#080d14]/95 backdrop-blur border-b border-slate-800 px-4 lg:px-8 py-3">
-    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
-      <div class="flex items-center gap-3">
-        <a href="https://app.level-i.com/mercado-real" class="flex items-center gap-2 text-white font-extrabold text-xl tracking-tight">
+  <header class="sticky top-0 z-30 bg-[#080d14]/95 backdrop-blur border-b border-slate-800 px-3 sm:px-6 lg:px-8 py-3">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
+      <div class="flex items-center gap-2.5">
+        <a href="https://app.level-i.com/mercado-real" class="flex items-center gap-2 text-white font-extrabold text-lg sm:text-xl tracking-tight">
           <span class="inline-flex items-center justify-center w-7 h-7 rounded bg-white text-slate-950 font-black">L</span>
           <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 -ml-1.5 mt-2"></span>
           <span>Level.immo</span>
         </a>
-        <span class="text-xs text-emerald-400 font-mono hidden md:inline" id="live-clock">03/11/2026 | 00:30:00</span>
+        <span class="text-xs text-emerald-400 font-mono hidden md:inline" id="live-clock">03/11/2026 | 09:46:00</span>
       </div>
 
-      <nav class="flex flex-wrap items-center gap-2 text-xs font-semibold">
-        <a href="https://app.level-i.com/demanda-activa" class="px-3 py-1.5 rounded-lg bg-[#141e30] hover:bg-slate-800 text-slate-200 border border-slate-700/70 transition hidden sm:flex items-center gap-1.5">
+      <nav class="flex flex-wrap items-center gap-1.5 sm:gap-2 text-xs font-semibold">
+        <a href="https://app.level-i.com/demanda-activa" class="px-2.5 py-1.5 rounded-lg bg-[#141e30] hover:bg-slate-800 text-slate-200 border border-slate-700/70 transition hidden lg:flex items-center gap-1.5">
           <span>🎯</span> <span data-i18n="nav_demand">Demanda Activa</span>
         </a>
-        <a href="https://app.level-i.com/mercado-real" class="px-3 py-1.5 rounded-lg bg-[#141e30] hover:bg-slate-800 text-slate-200 border border-slate-700/70 transition hidden sm:flex items-center gap-1.5">
+        <a href="https://app.level-i.com/mercado-real" class="px-2.5 py-1.5 rounded-lg bg-[#141e30] hover:bg-slate-800 text-slate-200 border border-slate-700/70 transition hidden lg:flex items-center gap-1.5">
           <span>📡</span> <span data-i18n="nav_market">Mercado Real</span>
         </a>
-        <button onclick="openCollaboratorModal()" class="px-3 py-1.5 rounded-lg bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 border border-amber-500/40 transition flex items-center gap-1.5">
-          <span>🤝</span> <span data-i18n="nav_collab">Colaboradores (Tarjeta 500€)</span>
+        <button onclick="openCollaboratorModal()" class="px-2.5 py-1.5 rounded-lg bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 border border-amber-500/40 transition flex items-center gap-1">
+          <span>🤝</span> <span data-i18n="nav_collab">Colaboradores (500€)</span>
         </button>
-        <button onclick="openElenaModal()" class="px-3 py-1.5 rounded-lg bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 border border-emerald-500/40 transition flex items-center gap-1.5">
+        <button onclick="openElenaModal()" class="px-2.5 py-1.5 rounded-lg bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 border border-emerald-500/40 transition flex items-center gap-1">
           <span>🔐</span> <span data-i18n="nav_private">Zona Privada</span>
         </button>
 
-        <select id="lang-select-main" onchange="changeLanguage(this.value)" class="bg-[#141e30] border border-slate-700 text-slate-200 text-xs font-semibold rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-emerald-500 cursor-pointer">
+        <select id="lang-select-main" onchange="changeLanguage(this.value)" class="bg-[#141e30] border border-slate-700 text-slate-200 text-xs font-semibold rounded-lg px-2 py-1.5 focus:outline-none focus:border-emerald-500 cursor-pointer">
           <option value="es">ES Español</option>
           <option value="ca">CA Català</option>
           <option value="en">GB English</option>
@@ -200,18 +231,18 @@
   </header>
 
   <!-- ================= CONTENIDO PRINCIPAL: FICHA CIEGA ACTIVO ÀNGELS ================= -->
-  <main class="max-w-7xl mx-auto w-full px-4 lg:px-8 py-8 space-y-8">
+  <main class="max-w-7xl mx-auto w-full px-4 lg:px-8 py-6 sm:py-8 space-y-6 sm:space-y-8">
 
-    <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-800/80 pb-5">
+    <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800/80 pb-4">
       <div>
-        <div class="flex items-center gap-2 text-xs text-slate-400 font-mono mb-1">
+        <div class="flex flex-wrap items-center gap-1.5 text-[11px] sm:text-xs text-slate-400 font-mono mb-1">
           <span>app.level-i.com</span> <span>/</span> <span>barcelona</span> <span>/</span> <span>ciutat-vella</span> <span>/</span> <span class="text-emerald-400 font-bold">activo-angels</span>
         </div>
-        <h2 class="text-2xl sm:text-3xl font-extrabold text-white" data-i18n="main_header_title">
+        <h2 class="text-xl sm:text-3xl font-extrabold text-white" data-i18n="main_header_title">
           Barcelona · Ciutat Vella (Eje Àngels) | Activo Comercial 3 Niveles + Patio (577 m² Operativos)
         </h2>
       </div>
-      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full gold-badge text-xs font-bold uppercase">
+      <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full gold-badge text-[11px] font-bold uppercase">
         <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
         <span data-i18n="main_status_badge">2 FINCAS REGISTRALES + ITE AUDITADA · VENTA SIN CONDICIÓN</span>
       </div>
@@ -222,49 +253,61 @@
       <div class="lg:col-span-7 space-y-6">
 
         <!-- 4 KPIs Oficiales -->
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <div class="card-panel p-4 text-center">
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3">
+          <div class="card-panel p-3.5 sm:p-4 text-center">
             <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block" data-i18n="kpi_1_label">PRECIO DE VENTA</span>
-            <span class="text-xl font-extrabold text-emerald-400 mt-1 block">780.000 €</span>
+            <span class="text-lg sm:text-xl font-extrabold text-emerald-400 mt-1 block">780.000 €</span>
             <span class="text-[11px] text-slate-400 mt-0.5 block" data-i18n="kpi_1_sub">1.351 €/m² operativo</span>
           </div>
-          <div class="card-panel p-4 text-center">
+          <div class="card-panel p-3.5 sm:p-4 text-center">
             <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block" data-i18n="kpi_2_label">SUP. REGISTRAL</span>
             <span class="text-base font-extrabold text-white mt-1 block">474 m²</span>
             <span class="text-[11px] text-amber-400 mt-0.5 block">334 P1 + 37 PB + 103 Sót</span>
           </div>
-          <div class="card-panel p-4 text-center">
+          <div class="card-panel p-3.5 sm:p-4 text-center">
             <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block" data-i18n="kpi_3_label">PATIO / TERRAZA</span>
             <span class="text-base font-extrabold text-white mt-1 block">~103 m²</span>
             <span class="text-[11px] text-emerald-400 mt-0.5 block" data-i18n="kpi_3_sub">Conectado a PB y P1</span>
           </div>
-          <div class="card-panel p-4 text-center">
+          <div class="card-panel p-3.5 sm:p-4 text-center">
             <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block" data-i18n="kpi_4_label">CUOTA Y ESTADO</span>
             <span class="text-base font-extrabold text-white mt-1 block" data-i18n="kpi_4_val">18% Comunidad</span>
             <span class="text-[11px] text-emerald-400 mt-0.5 block" data-i18n="kpi_4_sub">Finca 1900 · Ascensor</span>
           </div>
         </div>
 
-        <!-- Módulo Multimedia Principal -->
-        <div class="card-panel overflow-hidden bg-slate-950 border-slate-800">
+        <!-- Módulo Multimedia Principal: Vídeo 100% Vertical en Móvil (Auto-Zoom anti-barras negras) + Carrusel 1:1 debajo -->
+        <div class="card-panel overflow-hidden bg-slate-950 border-slate-800 mobile-full-bleed">
           <div class="flex flex-wrap items-center justify-between gap-2 px-4 py-3 bg-[#141e30] border-b border-slate-800">
             <div class="flex items-center gap-2 text-xs font-bold text-slate-200">
-              <span class="text-emerald-400">▶</span>
-              <span data-i18n="video_header_title">TOUR VERTICAL 9:16 Y CARRUSEL 1:1 (ESTADO ACTUAL Y PROYECCIÓN DE ARQUITECTURA)</span>
+              <span class="text-emerald-400">📱</span>
+              <span data-i18n="video_header_title">VÍDEO VERTICAL FULLSCREEN (9:16) + CARRUSEL 1:1</span>
             </div>
-            <button onclick="toggleVideoBlur()" class="text-[11px] bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 px-2.5 py-1 rounded font-semibold transition">
-              👁️ <span data-i18n="video_btn_unblur">Alternar Modo Confidencial</span>
-            </button>
+            <div class="flex items-center gap-1.5">
+              <button onclick="toggleVerticalZoom()" id="btn-zoom-fix" class="text-[11px] bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/40 px-2.5 py-1 rounded font-semibold transition">
+                📐 <span id="zoom-label">Ajuste Vertical: Activo</span>
+              </button>
+              <button onclick="toggleVideoBlur()" class="text-[11px] bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 px-2.5 py-1 rounded font-semibold transition">
+                👁️ <span data-i18n="video_btn_unblur">Blur</span>
+              </button>
+            </div>
           </div>
 
-          <div class="relative flex justify-center bg-black py-5 px-4">
-            <div class="relative w-full max-w-[350px] aspect-[9/16] rounded-xl overflow-hidden border border-slate-700 shadow-2xl">
-              <video id="property-video" class="w-full h-full object-cover video-unblurred" controls loop playsinline poster="principal.jpg">
+          <!-- Escenario Vertical 9:16: Ocupa el 100% del ancho en móvil y elimina las barras laterales negras -->
+          <div class="relative flex justify-center bg-black sm:py-6">
+            <div class="vertical-stage w-full sm:max-w-[380px] sm:rounded-2xl sm:border sm:border-slate-700 shadow-2xl">
+              <video id="property-video" class="video-unblurred pillarbox-zoom" autoplay muted loop playsinline controls poster="principal.jpg">
                 <source src="joaquin costa-angels.mp4" type="video/mp4">
+                <source src="https://app.level-i.com/barcelona/ciutat-vella/activo-angels/joaquin%20costa-angels.mp4" type="video/mp4">
                 <source src="https://level-i.github.io/barcelona/ciutat-vella/activo-angels/joaquin%20costa-angels.mp4" type="video/mp4">
               </video>
 
-              <div id="confidential-overlay" class="hidden absolute inset-0 flex flex-col items-center justify-center p-6 text-center bg-slate-950/65 backdrop-blur-sm">
+              <!-- Botón Flotante para Pantalla Completa Vertical en Móviles -->
+              <button onclick="openVerticalFullscreen()" class="absolute top-3 right-3 z-20 px-3 py-1.5 rounded-lg bg-slate-950/80 hover:bg-slate-900 text-white border border-slate-600 text-[11px] font-bold backdrop-blur flex items-center gap-1.5 shadow-lg">
+                <span>⛶</span> <span>Pantalla Completa Móvil</span>
+              </button>
+
+              <div id="confidential-overlay" class="hidden absolute inset-0 z-30 flex flex-col items-center justify-center p-6 text-center bg-slate-950/65 backdrop-blur-sm">
                 <div class="px-4 py-2 rounded-lg bg-amber-500 text-slate-950 font-extrabold text-xs uppercase tracking-wider mb-3">
                   🔒 <span data-i18n="video_overlay_badge">CONFIDENCIALIDAD ACTIVA</span>
                 </div>
@@ -275,14 +318,15 @@
             </div>
           </div>
 
+          <!-- Carrusel de Fotos 1:1 (1080x1080) justo debajo del vídeo -->
           <div class="p-4 bg-[#0d1420] border-t border-slate-800 space-y-2.5">
             <div class="flex items-center justify-between text-xs">
               <span class="font-bold text-amber-400 uppercase tracking-wider" data-i18n="main_carousel_label">
-                🖼️ Galería Completa 1:1 (Pulsa sobre cualquier imagen para ampliar)
+                🖼️ Galería 1:1 (Pulsa en cualquier foto para ampliar)
               </span>
               <div class="flex gap-1.5">
-                <button onclick="scrollCarousel('main-carousel', -300)" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-white font-bold">◀</button>
-                <button onclick="scrollCarousel('main-carousel', 300)" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-white font-bold">▶</button>
+                <button onclick="scrollCarousel('main-carousel', -280)" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-white font-bold">◀</button>
+                <button onclick="scrollCarousel('main-carousel', 280)" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-white font-bold">▶</button>
               </div>
             </div>
             <div id="main-carousel" class="flex gap-3 overflow-x-auto no-scrollbar pb-1 snap-x snap-mandatory"></div>
@@ -290,9 +334,9 @@
         </div>
 
         <!-- Dossier Ejecutivo Enriquecido -->
-        <div class="card-panel p-6 space-y-5">
-          <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-            <h3 class="text-lg font-bold text-white" data-i18n="desc_title">
+        <div class="card-panel p-5 sm:p-6 space-y-5">
+          <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-3">
+            <h3 class="text-base sm:text-lg font-bold text-white" data-i18n="desc_title">
               Auditoría Física, Registral y Potencial de Explotación
             </h3>
             <span class="text-xs font-mono text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 px-2.5 py-1 rounded">
@@ -351,19 +395,19 @@
         </div>
 
         <!-- Módulo Google Earth 3D & Vista Satelital (41.382736, 2.165658) -->
-        <div class="card-panel p-6 space-y-4">
+        <div class="card-panel p-5 sm:p-6 space-y-4">
           <div class="flex flex-wrap items-center justify-between gap-3">
             <div>
               <span class="text-[11px] font-bold uppercase tracking-wider text-amber-400 block" data-i18n="map_sup">
                 🌍 GOOGLE EARTH 3D · VUELO ORBITAL SILENCIOSO
               </span>
-              <h3 class="text-base font-bold text-white" data-i18n="map_title">
+              <h3 class="text-sm sm:text-base font-bold text-white" data-i18n="map_title">
                 Barcelona · Ciutat Vella · Eje Plaça dels Àngels / Joan Coromines
               </h3>
             </div>
             <div class="flex items-center gap-2">
               <span class="text-xs font-mono text-slate-400 bg-[#0b111a] px-2.5 py-1.5 rounded border border-slate-800">
-                41.382736, 2.165658[cite: 121]
+                41.382736, 2.165658
               </span>
               <a href="https://earth.google.com/web/@41.382736,2.165658,45a,280d,35y,0h,60t,0r" target="_blank" rel="noopener noreferrer" class="px-3.5 py-1.5 rounded-lg bg-sky-500/20 hover:bg-sky-500/30 border border-sky-500/40 text-sky-300 text-xs font-extrabold transition flex items-center gap-1.5">
                 <span>🌍</span> <span data-i18n="btn_earth_3d">Vuelo 3D Google Earth</span>
@@ -387,7 +431,7 @@
       <!-- COLUMNA DERECHA (5 Cols): SIMULADOR DE COSTES Y RENTABILIDAD -->
       <div class="lg:col-span-5 space-y-6 lg:sticky lg:top-20">
 
-        <div class="card-panel p-6 border-slate-700/90 shadow-2xl space-y-5">
+        <div class="card-panel p-5 sm:p-6 border-slate-700/90 shadow-2xl space-y-5">
           <div class="flex items-center justify-between border-b border-slate-800 pb-3">
             <span class="text-sm font-bold text-amber-400 flex items-center gap-2">
               <span>📊</span> <span data-i18n="calc_header">Simulador de Costes (ITE/Actividad) & Alquiler</span>
@@ -434,7 +478,7 @@
 
             <div class="flex items-center justify-between gap-2 text-xs">
               <span class="text-slate-300" data-i18n="calc_item_1">+ Reforma P1 (334 m²: Cuadro eléctrico, clima, suite/cocina):</span>
-              <div class="flex items-center gap-1">
+              <div class="flex items-center gap-1 shrink-0">
                 <input type="number" id="cost-p1" value="62000" step="1000" oninput="recalculateEconomics()" class="w-24 bg-[#080d14] border border-slate-700 rounded px-2 py-1 text-right text-white font-bold focus:border-emerald-500 focus:outline-none" />
                 <span class="text-slate-400">€</span>
               </div>
@@ -442,7 +486,7 @@
 
             <div class="flex items-center justify-between gap-2 text-xs">
               <span class="text-slate-300" data-i18n="calc_item_2">+ Tratamiento capilaridad Sótano/PB (140 m²) y Showroom:</span>
-              <div class="flex items-center gap-1">
+              <div class="flex items-center gap-1 shrink-0">
                 <input type="number" id="cost-sotano" value="24000" step="1000" oninput="recalculateEconomics()" class="w-24 bg-[#080d14] border border-slate-700 rounded px-2 py-1 text-right text-white font-bold focus:border-emerald-500 focus:outline-none" />
                 <span class="text-slate-400">€</span>
               </div>
@@ -450,7 +494,7 @@
 
             <div class="flex items-center justify-between gap-2 text-xs">
               <span class="text-slate-300" data-i18n="calc_item_3">+ Patio (103 m²), drenaje Pati 1 y provisión ITE (cuota 18%):</span>
-              <div class="flex items-center gap-1">
+              <div class="flex items-center gap-1 shrink-0">
                 <input type="number" id="cost-patio" value="22000" step="1000" oninput="recalculateEconomics()" class="w-24 bg-[#080d14] border border-slate-700 rounded px-2 py-1 text-right text-white font-bold focus:border-emerald-500 focus:outline-none" />
                 <span class="text-slate-400">€</span>
               </div>
@@ -462,7 +506,7 @@
               <span class="text-[11px] font-bold uppercase tracking-wider text-emerald-400 block" data-i18n="calc_total_label">SUMA TOTAL INVERSIÓN REAL:</span>
               <span class="text-[11px] text-slate-400" id="cost-per-m2-label">1.682 € / m² operativo llave en mano</span>
             </div>
-            <span class="text-2xl font-extrabold text-emerald-400" id="total-investment-display">970.500 €</span>
+            <span class="text-xl sm:text-2xl font-extrabold text-emerald-400" id="total-investment-display">970.500 €</span>
           </div>
 
           <div class="p-4 rounded-xl bg-[#141d2b] border border-slate-800 space-y-3">
@@ -473,7 +517,7 @@
 
             <div class="flex items-center justify-between text-xs">
               <span class="text-slate-300" data-i18n="rent_monthly_label">Renta Mensual Estimada (Editable):</span>
-              <div class="flex items-center gap-1">
+              <div class="flex items-center gap-1 shrink-0">
                 <input type="number" id="est-monthly-rent" value="5800" step="100" oninput="recalculateEconomics()" class="w-24 bg-[#080d14] border border-slate-700 rounded px-2 py-1 text-right text-emerald-400 font-bold focus:border-emerald-500 focus:outline-none" />
                 <span class="text-slate-400">€/mes</span>
               </div>
@@ -513,11 +557,29 @@
     </div>
   </main>
 
+  <!-- ================= MODAL FULLSCREEN VERTICAL NATIVO PARA MÓVILES ================= -->
+  <div id="vertical-fullscreen-modal" class="fixed inset-0 z-50 bg-black hidden flex-col justify-between">
+    <div class="relative w-full h-[100dvh] overflow-hidden flex items-center justify-center bg-black">
+      <video id="fullscreen-vertical-video" class="w-full h-full object-cover pillarbox-zoom" playsinline loop controls>
+        <source src="joaquin costa-angels.mp4" type="video/mp4">
+        <source src="https://app.level-i.com/barcelona/ciutat-vella/activo-angels/joaquin%20costa-angels.mp4" type="video/mp4">
+      </video>
+      <div class="absolute top-4 left-4 right-4 flex items-center justify-between z-20">
+        <span class="px-3 py-1.5 rounded-lg bg-slate-950/80 text-emerald-400 text-xs font-extrabold border border-emerald-500/40 backdrop-blur">
+          Level.immo · Activo Àngels (780.000 €)
+        </span>
+        <button onclick="closeVerticalFullscreen()" class="px-3.5 py-1.5 rounded-lg bg-rose-600 text-white text-xs font-black shadow-lg">
+          ✕ Cerrar
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- ================= MODAL: COLABORADORES SIMPATIZANTES (TARJETA 500€ + SEGUIMIENTO) ================= -->
   <div id="collaborator-modal" class="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md hidden items-center justify-center p-4">
     <div class="card-panel max-w-2xl w-full overflow-hidden border-amber-500/40 shadow-2xl bg-[#101826]">
       
-      <div class="px-6 py-4 bg-[#162133] border-b border-slate-800 flex items-center justify-between">
+      <div class="px-5 py-4 bg-[#162133] border-b border-slate-800 flex items-center justify-between">
         <div class="flex items-center gap-3">
           <div class="w-9 h-9 rounded-lg bg-amber-500 text-slate-950 font-black flex items-center justify-center text-lg">🤝</div>
           <div>
@@ -528,7 +590,7 @@
         <button onclick="closeCollaboratorModal()" class="text-slate-400 hover:text-white text-xs font-bold px-2 py-1">✕</button>
       </div>
 
-      <div class="p-6 max-h-[82vh] overflow-y-auto space-y-5">
+      <div class="p-5 sm:p-6 max-h-[82vh] overflow-y-auto space-y-5">
 
         <div class="grid grid-cols-2 gap-2 bg-[#0b111a] p-1 rounded-xl border border-slate-800">
           <button onclick="switchCollabTab('register')" id="tab-collab-reg" class="py-2 rounded-lg bg-amber-500 text-slate-950 font-extrabold text-xs uppercase transition">
@@ -867,10 +929,10 @@
       const html = galleryItems.map(item => {
         const encodedFile = encodeURI(item.file);
         return `
-          <div onclick="openLightbox('${encodedFile}', '${item.label}')" class="snap-start shrink-0 w-36 sm:w-44 square-1-1 rounded-xl overflow-hidden border border-slate-700/80 hover:border-amber-400 transition cursor-pointer relative group bg-slate-900">
+          <div onclick="openLightbox('${encodedFile}', '${item.label}')" class="snap-start shrink-0 w-28 sm:w-40 square-1-1 rounded-xl overflow-hidden border border-slate-700/80 hover:border-amber-400 transition cursor-pointer relative group bg-slate-900">
             <img src="${encodedFile}" onerror="this.onerror=null;this.src='${GITHUB_CDN}${encodedFile}';" alt="${item.label}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" />
-            <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950/90 via-slate-950/50 to-transparent p-2">
-              <span class="text-[10px] font-semibold text-slate-200 line-clamp-1">${item.label}</span>
+            <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950/90 via-slate-950/50 to-transparent p-1.5 sm:p-2">
+              <span class="text-[9px] sm:text-[10px] font-semibold text-slate-200 line-clamp-1">${item.label}</span>
             </div>
           </div>
         `;
@@ -897,6 +959,41 @@
     }
     function closeLightbox() {
       const modal = document.getElementById('lightbox-modal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    // Control de Zoom Vertical anti-barras laterales y Pantalla Completa Móvil
+    let verticalZoomActive = true;
+    function toggleVerticalZoom() {
+      const v = document.getElementById('property-video');
+      const lbl = document.getElementById('zoom-label');
+      verticalZoomActive = !verticalZoomActive;
+      if (verticalZoomActive) {
+        v.classList.remove('pillarbox-normal');
+        v.classList.add('pillarbox-zoom');
+        lbl.textContent = "Ajuste Vertical: Activo";
+      } else {
+        v.classList.remove('pillarbox-zoom');
+        v.classList.add('pillarbox-normal');
+        lbl.textContent = "Ajuste Vertical: Original";
+      }
+    }
+
+    function openVerticalFullscreen() {
+      const modal = document.getElementById('vertical-fullscreen-modal');
+      const fsVideo = document.getElementById('fullscreen-vertical-video');
+      const mainVideo = document.getElementById('property-video');
+      if (mainVideo) mainVideo.pause();
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      fsVideo.play().catch(() => {});
+    }
+
+    function closeVerticalFullscreen() {
+      const modal = document.getElementById('vertical-fullscreen-modal');
+      const fsVideo = document.getElementById('fullscreen-vertical-video');
+      if (fsVideo) fsVideo.pause();
       modal.classList.add('hidden');
       modal.classList.remove('flex');
     }
@@ -1098,6 +1195,8 @@
       }
     }
 
+    let selectedUse = "";
+    let selectedFin = "";
     function openElenaModal() {
       document.getElementById('elena-modal').classList.remove('hidden');
       document.getElementById('elena-modal').classList.add('flex');
@@ -1180,11 +1279,11 @@
         gate_security_title: "Filtro de Seguridad (Acceso Inversor Cualificado)",
         gate_security_desc: "Resuelve la suma para desbloquear el estudio económico, los datos registrales/ITE y la Ficha Ciega en el idioma seleccionado:",
         gate_math_label: "¿Cuánto es",
-        gate_btn_access: "ACCEDER AL DOSSIER",
-        gate_carousel_title: "📸 Galería 1:1 (1080×1080 px) · Fachadas, Interior y Proyección de Uso",
+        gate_btn_access: "ACCEDER",
+        gate_carousel_title: "📸 Galería 1:1 · Fachadas, Interior y Proyección",
         nav_demand: "Demanda Activa",
         nav_market: "Mercado Real",
-        nav_collab: "Colaboradores (Tarjeta 500€)",
+        nav_collab: "Colaboradores (500€)",
         nav_private: "Zona Privada",
         main_header_title: "Barcelona · Ciutat Vella (Eje Àngels) | Activo Comercial 3 Niveles + Patio (577 m² Operativos)",
         main_status_badge: "2 FINCAS REGISTRALES + ITE AUDITADA · VENTA SIN CONDICIÓN",
@@ -1200,11 +1299,11 @@
         gate_security_title: "Filtre de Seguretat (Accés Inversor Qualificat)",
         gate_security_desc: "Resol la suma per desbloquejar l'estudi econòmic, les dades registrals/ITE i la Fitxa Cega en l'idioma seleccionat:",
         gate_math_label: "Quant és",
-        gate_btn_access: "ACCEDIR AL DOSSIER",
-        gate_carousel_title: "📸 Galeria 1:1 (1080×1080 px) · Façanes, Interior i Projecció d'Ús",
+        gate_btn_access: "ACCEDIR",
+        gate_carousel_title: "📸 Galeria 1:1 · Façanes, Interior i Projecció",
         nav_demand: "Demanda Activa",
         nav_market: "Mercat Real",
-        nav_collab: "Col·laboradors (Targeta 500€)",
+        nav_collab: "Col·laboradors (500€)",
         nav_private: "Zona Privada",
         main_header_title: "Barcelona · Ciutat Vella (Eix Àngels) | Actiu Comercial 3 Nivells + Pati (577 m² Operatius)",
         main_status_badge: "2 FINQUES REGISTRALS + ITE AUDITADA · VENDA SENSE CONDICIÓ",
@@ -1220,11 +1319,11 @@
         gate_security_title: "Security Filter (Qualified Investor Access)",
         gate_security_desc: "Solve the sum to unlock the financial study, land registry/ITE data and Blind Profile in your selected language:",
         gate_math_label: "What is",
-        gate_btn_access: "UNLOCK DOSSIER",
-        gate_carousel_title: "📸 1:1 Gallery (1080×1080 px) · Facades, Interior & Architectural Projections",
+        gate_btn_access: "UNLOCK",
+        gate_carousel_title: "📸 1:1 Gallery · Facades, Interior & Projections",
         nav_demand: "Active Demand",
         nav_market: "Live Market",
-        nav_collab: "Partners (500€ Card)",
+        nav_collab: "Partners (500€)",
         nav_private: "Private Area",
         main_header_title: "Barcelona · Ciutat Vella (Àngels Axis) | 3-Level Commercial Asset + Patio (577 sqm Operative)",
         main_status_badge: "2 REGISTERED ENTITIES + AUDITED ITE · UNCONDITIONAL SALE",
@@ -1240,11 +1339,11 @@
         gate_security_title: "Filtre de Sécurité (Accès Investisseur Qualifié)",
         gate_security_desc: "Résolvez la somme pour débloquer l'étude financière, les données cadastrales/ITE et le Dossier :",
         gate_math_label: "Combien font",
-        gate_btn_access: "ACCÉDER AU DOSSIER",
-        gate_carousel_title: "📸 Galerie 1:1 (1080×1080 px) · Façades, Intérieur & Projections",
+        gate_btn_access: "ACCÉDER",
+        gate_carousel_title: "📸 Galerie 1:1 · Façades, Intérieur & Projections",
         nav_demand: "Demande Active",
         nav_market: "Marché Réel",
-        nav_collab: "Partenaires (Carte 500€)",
+        nav_collab: "Partenaires (500€)",
         nav_private: "Espace Privé",
         main_header_title: "Barcelone · Ciutat Vella (Axe Àngels) | Actif Commercial 3 Niveaux + Patio (577 m²)",
         main_status_badge: "2 ENTITÉS FONCIÈRES + ITE AUDITÉE · VENTE SANS CONDITION",
@@ -1260,9 +1359,9 @@
         gate_security_title: "Sicherheitsprüfung (Zugang für Investoren)",
         gate_security_desc: "Lösen Sie die Aufgabe, um die Wirtschaftlichkeitsberechnung und Grundbuch-/ITE-Daten freizuschalten:",
         gate_math_label: "Was ergibt",
-        gate_btn_access: "DOSSIER ÖFFNEN",
-        gate_carousel_title: "📸 1:1 Galerie (1080×1080 px) · Fassaden, Bestand & Projektionen",
-        nav_collab: "Partner (500€ Karte)",
+        gate_btn_access: "ÖFFNEN",
+        gate_carousel_title: "📸 1:1 Galerie · Fassaden, Bestand & Projektionen",
+        nav_collab: "Partner (500€)",
         main_header_title: "Barcelona · Ciutat Vella (Achse Àngels) | Gewerbeimmobilie 3 Ebenen + Innenhof (577 m²)",
         btn_earth_3d: "3D-Flug Google Earth",
         calc_header: "Investitions- & Mietrendite-Simulator (inkl. ITE)",
@@ -1276,9 +1375,9 @@
         gate_security_title: "Filtro di Sicurezza (Accesso Investitori)",
         gate_security_desc: "Risolvi la somma per sbloccare lo studio economico e i dati catastali/ITE nella tua lingua:",
         gate_math_label: "Quanto fa",
-        gate_btn_access: "ACCEDI AL DOSSIER",
-        gate_carousel_title: "📸 Galleria 1:1 (1080×1080 px) · Facciate, Interni e Proiezioni",
-        nav_collab: "Collaboratori (Buono 500€)",
+        gate_btn_access: "ACCEDI",
+        gate_carousel_title: "📸 Galleria 1:1 · Facciate, Interni e Proiezioni",
+        nav_collab: "Collaboratori (500€)",
         main_header_title: "Barcellona · Ciutat Vella (Asse Àngels) | Immobile Commerciale 3 Livelli + Patio (577 m²)",
         btn_earth_3d: "Volo 3D Google Earth",
         calc_header: "Simulatore Costi (ITE/Attività) e Rendimento",
@@ -1286,14 +1385,14 @@
         cta_main_elena: "RICHIEDI VISURE, ITE E VISITA CON ELENA IA"
       },
       ar: {
-        btn_collab_top: "شريك متعاون (بطاقة هدية 500€)",
+        btn_collab_top: "شريك متعاون (500€)",
         gate_badge: "حصرياً لدى LEVEL.IMMO · ملف استثماري سري",
         gate_title: "أصل تجاري فريد في سيوتات فيلا (برشلونة) · محور أنخيلز",
         gate_security_title: "فلتر الأمان (دخول المستثمرين المؤهلين)",
         gate_security_desc: "أجب عن المعادلة لفتح الدراسة المالية وبيانات السجل العقاري بلغتك المختارة:",
         gate_math_label: "كم يساوي",
-        gate_btn_access: "فتح الملف الكامل",
-        gate_carousel_title: "📸 معرض 1:1 (1080×1080) · الواجهات والوضع الحالي والتصورات",
+        gate_btn_access: "دخول",
+        gate_carousel_title: "📸 معرض 1:1 · الواجهات والوضع الحالي والتصورات",
         nav_collab: "المتعاونون (500€)",
         main_header_title: "برشلونة · سيوتات فيلا | عقار تجاري من 3 طوابق مع فناء خاص (577 م²)",
         btn_earth_3d: "جولة ثلاثية الأبعاد Google Earth",
@@ -1302,15 +1401,15 @@
         cta_main_elena: "طلب الوثائق الرسمية وتحديد موعد مع المستشارة الذكية ELENA"
       },
       zh: {
-        btn_collab_top: "合作伙伴计划 (500 € 礼金卡)",
+        btn_collab_top: "合作伙伴 (500 €)",
         gate_badge: "LEVEL.IMMO 独家 · 保密资产档案",
         gate_title: "巴塞罗那老城区 (Ciutat Vella · Àngels) 稀缺商业资产",
         gate_security_title: "安全验证（合格投资者通道）",
         gate_security_desc: "请完成计算以所选语言解锁财务测算、产权登记及 ITE 建筑报告：",
         gate_math_label: "请计算",
-        gate_btn_access: "进入完整档案",
-        gate_carousel_title: "📸 1:1 图集 (1080×1080 px) · 历史立面、现状与改造方案",
-        nav_collab: "合作伙伴 (500€ 奖励)",
+        gate_btn_access: "进入",
+        gate_carousel_title: "📸 1:1 图集 · 历史立面、现状与改造方案",
+        nav_collab: "合作伙伴 (500€)",
         main_header_title: "巴塞罗那 · 老城区核心轴线 | 3层独栋商业空间 + 私属庭院 (总实用 577 m²)",
         btn_earth_3d: "Google Earth 3D 航拍",
         calc_header: "改造预算 (含ITE项目) 与租金回报模拟器",
