@@ -28,47 +28,53 @@
       border-radius: 0.85rem;
     }
     .video-blur {
-      filter: blur(15px) brightness(0.75);
-      transition: filter 0.6s ease, transform 0.4s ease;
+      filter: blur(16px) brightness(0.7);
+      transition: filter 0.5s ease, transform 0.4s ease;
     }
     .video-unblurred {
       filter: blur(0px) brightness(1);
-      transition: filter 0.6s ease, transform 0.4s ease;
+      transition: filter 0.5s ease, transform 0.4s ease;
     }
     .square-1-1 {
       aspect-ratio: 1 / 1;
     }
-    /* Escenario Vertical 9:16 Responsive para Móvil y Escritorio */
+    /* Escenario Vertical 9:16 Responsive */
     .vertical-stage {
       aspect-ratio: 9 / 16;
       width: 100%;
       position: relative;
       overflow: hidden;
-      background: #000;
+      background: #05080d;
     }
     .vertical-stage video {
       position: absolute;
       inset: 0;
       width: 100%;
       height: 100%;
-      object-fit: cover;
       object-position: center center;
     }
-    /* Elimina ópticamente las barras negras laterales de un vídeo vertical renderizado en contenedor 16:9 */
-    .pillarbox-zoom {
-      transform: scale(1.78);
-      transform-origin: center center;
-    }
     .pillarbox-normal {
+      object-fit: contain;
       transform: scale(1);
     }
-    @media (max-width: 640px) {
-      .mobile-full-bleed {
-        margin-left: -1rem;
-        margin-right: -1rem;
-        border-radius: 0 !important;
-        border-left: 0 !important;
-        border-right: 0 !important;
+    .pillarbox-zoom {
+      object-fit: cover;
+      transform: scale(1.75);
+      transform-origin: center center;
+    }
+    /* Fondo de portada: permite ver el edificio entero de noche tras reproducirse 1 sola vez */
+    .intro-video-full {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center 25%;
+      transition: all 0.8s ease;
+    }
+    @media (min-width: 1024px) {
+      .intro-video-full {
+        object-fit: contain;
+        object-position: center center;
+        background-color: #060a10;
       }
     }
     .no-scrollbar::-webkit-scrollbar { display: none; }
@@ -81,37 +87,34 @@
 </head>
 <body class="min-h-screen flex flex-col justify-between">
 
-  <!-- ================= PANTALLA 1: PORTADA WELCOME (100% VERTICAL RESPONSIVE EN MÓVIL) ================= -->
-  <div id="gatekeeper-screen" class="fixed inset-0 z-50 bg-[#080d14] overflow-y-auto">
+  <!-- ================= PANTALLA 1: PORTADA WELCOME (1 REPRODUCCIÓN Y CONGELA EN NOCHE) ================= -->
+  <div id="gatekeeper-screen" class="fixed inset-0 z-50 bg-[#060a10] overflow-y-auto">
     
-    <!-- Vídeo de Fondo Responsive a Pantalla Completa Vertical (video-intro-bcn.mp4) -->
-    <div class="fixed inset-0 overflow-hidden pointer-events-none z-0">
-      <video id="intro-bg-video" autoplay muted loop playsinline class="w-full h-full object-cover object-center filter brightness-[0.62] contrast-[1.08] scale-[1.04]">
+    <!-- Vídeo Día a Noche: SIN loop (solo 1 vez) y queda fijo en el fotograma final de noche mostrando el edificio -->
+    <div class="fixed inset-0 overflow-hidden pointer-events-none z-0 flex items-center justify-center bg-[#060a10]">
+      <video id="intro-bg-video" autoplay muted playsinline class="intro-video-full filter brightness-[0.78] contrast-[1.06]">
         <source src="video-intro-bcn.mp4" type="video/mp4">
         <source src="https://app.level-i.com/barcelona/ciutat-vella/activo-angels/video-intro-bcn.mp4" type="video/mp4">
         <source src="https://level-i.github.io/barcelona/ciutat-vella/activo-angels/video-intro-bcn.mp4" type="video/mp4">
       </video>
-      <div class="absolute inset-0 bg-gradient-to-b from-[#080d14]/70 via-[#080d14]/45 to-[#080d14]/95"></div>
+      <div class="absolute inset-0 bg-gradient-to-b from-[#080d14]/65 via-[#080d14]/35 to-[#080d14]/90"></div>
     </div>
 
-    <div class="relative z-10 min-h-[100dvh] max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 flex flex-col justify-between">
+    <div class="relative z-10 min-h-[100dvh] max-w-6xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 flex flex-col justify-between">
       
-      <!-- Topbar de Portada -->
-      <div class="flex items-center justify-between border border-slate-700/60 py-2.5 px-3 sm:px-4 backdrop-blur-md bg-slate-950/55 rounded-xl">
-        <div class="flex items-center gap-2 sm:gap-3">
+      <!-- Topbar de Portada Limpia (Sin botón de 500€ en PC ni móvil, como pediste) -->
+      <div class="flex items-center justify-between border border-slate-700/60 py-2.5 px-3.5 sm:px-5 backdrop-blur-md bg-slate-950/55 rounded-xl">
+        <div class="flex items-center gap-2.5" translate="no">
           <div class="inline-flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-white text-slate-950 font-black text-lg sm:text-xl">L</div>
           <span class="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-emerald-400 -ml-1.5 sm:-ml-2 mt-2.5"></span>
           <span class="font-extrabold text-white text-base sm:text-lg tracking-tight">Level.immo</span>
-          <span class="hidden md:inline-block text-[11px] font-mono text-slate-300 border-l border-slate-700 pl-3">
+          <span class="hidden sm:inline-block text-[11px] font-mono text-slate-300 border-l border-slate-700 pl-3">
             API 4173 · AICAT 14200
           </span>
         </div>
 
         <div class="flex items-center gap-2">
-          <button onclick="openCollaboratorModal()" class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/50 text-amber-300 text-[11px] sm:text-xs font-bold transition backdrop-blur">
-            <span>🤝</span> <span class="hidden sm:inline" data-i18n="btn_collab_top">Colaborador Simpatizante (500 €)</span><span class="sm:hidden">500 €</span>
-          </button>
-          <select id="lang-select-gate" onchange="changeLanguage(this.value)" class="bg-slate-900/90 border border-slate-700 text-slate-200 text-[11px] sm:text-xs font-semibold rounded-lg px-2 sm:px-3 py-1.5 focus:outline-none focus:border-emerald-500 cursor-pointer backdrop-blur">
+          <select id="lang-select-gate" onchange="changeLanguage(this.value)" translate="no" class="bg-slate-900/90 border border-slate-700 text-slate-200 text-xs font-semibold rounded-lg px-3 py-1.5 focus:outline-none focus:border-emerald-500 cursor-pointer backdrop-blur">
             <option value="es">ES Español</option>
             <option value="ca">CA Català</option>
             <option value="en">GB English</option>
@@ -125,21 +128,21 @@
       </div>
 
       <!-- Cuerpo Central Portada Welcome -->
-      <div class="w-full max-w-4xl mx-auto py-4 sm:py-6 space-y-4 sm:space-y-5 text-center my-auto">
+      <div class="w-full max-w-4xl mx-auto py-3 sm:py-5 space-y-4 text-center my-auto">
         <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full gold-badge text-[10px] sm:text-[11px] font-bold tracking-wider uppercase backdrop-blur">
           <span>🔒</span> <span data-i18n="gate_badge">EXCLUSIVA LEVEL.IMMO · FICHA CIEGA PATRIMONIAL</span>
         </div>
 
-        <h1 class="text-2xl sm:text-5xl lg:text-6xl font-black text-white leading-tight tracking-tight drop-shadow-lg px-1" data-i18n="gate_title">
+        <h1 class="text-2xl sm:text-4xl lg:text-5xl font-black text-white leading-tight tracking-tight drop-shadow-[0_4px_12px_rgba(0,0,0,0.85)] px-1" data-i18n="gate_title">
           Activo Comercial Singular en Ciutat Vella · Eje Àngels
         </h1>
 
-        <p class="text-slate-200 text-xs sm:text-base leading-relaxed max-w-2xl mx-auto drop-shadow-md px-2" data-i18n="gate_subtitle">
+        <p class="text-slate-100 text-xs sm:text-sm lg:text-base leading-relaxed max-w-2xl mx-auto drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)] px-2 font-medium" data-i18n="gate_subtitle">
           Finca clásica de 1900 junto a Plaça dels Àngels y el mural de Keith Haring. 577 m² operativos (474 m² registrales en 2 entidades unidas: Planta 1ª de 334 m², Planta Baja de 37 m² y Bodega abovedada de 103 m² + ~103 m² de Patio/Terraza interior). Ascensor y accesibilidad universal. Venta sin condición suspensiva de cambio de uso.
         </p>
 
         <!-- Validador Matemático Anti-Chafarderos -->
-        <div class="card-panel p-4 sm:p-6 border-slate-700 bg-[#101826]/85 backdrop-blur-md shadow-2xl max-w-xl mx-auto space-y-3 text-left">
+        <div class="card-panel p-4 sm:p-5 border-slate-700/90 bg-[#101826]/80 backdrop-blur-md shadow-2xl max-w-xl mx-auto space-y-3 text-left">
           <div class="flex items-center justify-between gap-2">
             <div class="flex items-center gap-1.5 text-amber-400 text-[11px] sm:text-xs font-bold uppercase tracking-wider">
               <span>🛡️</span> <span data-i18n="gate_security_title">Filtro de Seguridad (Acceso Inversor Cualificado)</span>
@@ -152,8 +155,8 @@
           </p>
 
           <div class="grid grid-cols-12 gap-2 items-center">
-            <div class="col-span-5 sm:col-span-4 bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-2.5 text-xs sm:text-sm font-bold text-white text-center whitespace-nowrap">
-              <span data-i18n="gate_math_label">¿Cuánto es</span> <span id="gate-num1">5</span>+<span id="gate-num2">4</span>?
+            <div class="col-span-5 sm:col-span-4 bg-slate-900/95 border border-slate-700 rounded-lg px-2.5 py-2.5 text-xs sm:text-sm font-bold text-white text-center whitespace-nowrap">
+              <span data-i18n="gate_math_label">¿Cuánto es</span> <span id="gate-num1">5</span>+<span id="gate-num2">3</span>?
             </div>
             <input type="number" id="gate-math-input" placeholder="?" onkeydown="if(event.key==='Enter') verifyGatekeeper()" class="col-span-3 sm:col-span-2 bg-[#080d14] border border-slate-700 rounded-lg px-2 py-2.5 text-center text-white font-bold focus:outline-none focus:border-emerald-500" />
             <button onclick="verifyGatekeeper()" class="col-span-4 sm:col-span-6 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs sm:text-sm py-2.5 px-3 rounded-lg transition uppercase tracking-wider shadow-lg" data-i18n="gate_btn_access">
@@ -165,8 +168,8 @@
 
         <!-- Carrusel Horizontal de Fotografías 1:1 debajo en Portada -->
         <div class="space-y-2 pt-1 text-left max-w-4xl mx-auto">
-          <div class="flex items-center justify-between text-[11px] sm:text-xs text-slate-300 px-1">
-            <span class="font-bold uppercase tracking-wider truncate" data-i18n="gate_carousel_title">📸 Galería 1:1 (1080×1080 px) · Fachadas, Interior y Proyección</span>
+          <div class="flex items-center justify-between text-[11px] sm:text-xs text-slate-200 px-1">
+            <span class="font-bold uppercase tracking-wider truncate drop-shadow" data-i18n="gate_carousel_title">📸 Galería 1:1 (1080×1080 px) · Fachadas, Interior y Proyección</span>
             <div class="flex gap-1.5 shrink-0">
               <button onclick="scrollCarousel('gate-carousel', -240)" class="px-2.5 py-1 rounded bg-slate-800/90 hover:bg-slate-700 text-white font-bold">◀</button>
               <button onclick="scrollCarousel('gate-carousel', 240)" class="px-2.5 py-1 rounded bg-slate-800/90 hover:bg-slate-700 text-white font-bold">▶</button>
@@ -178,8 +181,8 @@
       </div>
 
       <!-- Footer de Portada -->
-      <div class="border border-slate-700/60 py-2.5 px-3 sm:px-4 flex flex-wrap items-center justify-between text-[10px] sm:text-[11px] text-slate-300 gap-2 backdrop-blur-md bg-slate-950/55 rounded-xl">
-        <span class="truncate">LEVEL PUNTO IMMO 24365 SLU · API 4173 · AICAT 14200</span>
+      <div class="border border-slate-700/60 py-2.5 px-3.5 sm:px-5 flex flex-wrap items-center justify-between text-[10px] sm:text-[11px] text-slate-300 gap-2 backdrop-blur-md bg-slate-950/55 rounded-xl">
+        <span class="truncate" translate="no">LEVEL PUNTO IMMO 24365 SLU · API 4173 · AICAT 14200</span>
         <div class="flex gap-3">
           <button onclick="openLegalModal('aviso')" class="hover:text-white underline" data-i18n="footer_legal">Aviso Legal</button>
           <button onclick="openLegalModal('privacidad')" class="hover:text-white underline" data-i18n="footer_privacy">Privacidad y RGPD</button>
@@ -193,13 +196,13 @@
   <!-- ================= HEADER PRINCIPAL DE LA LANDING ================= -->
   <header class="sticky top-0 z-30 bg-[#080d14]/95 backdrop-blur border-b border-slate-800 px-3 sm:px-6 lg:px-8 py-3">
     <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
-      <div class="flex items-center gap-2.5">
+      <div class="flex items-center gap-2.5" translate="no">
         <a href="https://app.level-i.com/mercado-real" class="flex items-center gap-2 text-white font-extrabold text-lg sm:text-xl tracking-tight">
           <span class="inline-flex items-center justify-center w-7 h-7 rounded bg-white text-slate-950 font-black">L</span>
           <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 -ml-1.5 mt-2"></span>
           <span>Level.immo</span>
         </a>
-        <span class="text-xs text-emerald-400 font-mono hidden md:inline" id="live-clock">03/11/2026 | 21:38:00</span>
+        <span class="text-xs text-emerald-400 font-mono hidden md:inline" id="live-clock">04/11/2026 | 00:15:00</span>
       </div>
 
       <nav class="flex flex-wrap items-center gap-1.5 sm:gap-2 text-xs font-semibold">
@@ -216,7 +219,7 @@
           <span>🔐</span> <span data-i18n="nav_private">Zona Privada</span>
         </button>
 
-        <select id="lang-select-main" onchange="changeLanguage(this.value)" class="bg-[#141e30] border border-slate-700 text-slate-200 text-xs font-semibold rounded-lg px-2 py-1.5 focus:outline-none focus:border-emerald-500 cursor-pointer">
+        <select id="lang-select-main" onchange="changeLanguage(this.value)" translate="no" class="bg-[#141e30] border border-slate-700 text-slate-200 text-xs font-semibold rounded-lg px-2 py-1.5 focus:outline-none focus:border-emerald-500 cursor-pointer">
           <option value="es">ES Español</option>
           <option value="ca">CA Català</option>
           <option value="en">GB English</option>
@@ -235,7 +238,7 @@
 
     <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800/80 pb-4">
       <div>
-        <div class="flex flex-wrap items-center gap-1.5 text-[11px] sm:text-xs text-slate-400 font-mono mb-1">
+        <div class="flex flex-wrap items-center gap-1.5 text-[11px] sm:text-xs text-slate-400 font-mono mb-1" translate="no">
           <span>app.level-i.com</span> <span>/</span> <span>barcelona</span> <span>/</span> <span>ciutat-vella</span> <span>/</span> <span class="text-emerald-400 font-bold">activo-angels</span>
         </div>
         <h2 class="text-xl sm:text-3xl font-extrabold text-white" data-i18n="main_header_title">
@@ -262,7 +265,7 @@
           <div class="card-panel p-3.5 sm:p-4 text-center">
             <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block" data-i18n="kpi_2_label">SUP. REGISTRAL</span>
             <span class="text-base font-extrabold text-white mt-1 block">474 m²</span>
-            <span class="text-[11px] text-amber-400 mt-0.5 block">334 P1 + 37 PB + 103 Sót</span>
+            <span class="text-[11px] text-amber-400 mt-0.5 block" data-i18n="kpi_2_sub">334 P1 + 37 PB + 103 Sót</span>
           </div>
           <div class="card-panel p-3.5 sm:p-4 text-center">
             <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block" data-i18n="kpi_3_label">PATIO / TERRAZA</span>
@@ -276,8 +279,8 @@
           </div>
         </div>
 
-        <!-- Módulo Multimedia Principal: Vídeo 100% Vertical en Móvil + Carrusel 1:1 debajo -->
-        <div class="card-panel overflow-hidden bg-slate-950 border-slate-800 mobile-full-bleed">
+        <!-- Módulo Multimedia Principal: Vídeo en modo Original por defecto + Carrusel 1:1 debajo -->
+        <div class="card-panel overflow-hidden bg-slate-950 border-slate-800">
           <div class="flex flex-wrap items-center justify-between gap-2 px-4 py-3 bg-[#141e30] border-b border-slate-800">
             <div class="flex items-center gap-2 text-xs font-bold text-slate-200">
               <span class="text-emerald-400">📱</span>
@@ -285,7 +288,7 @@
             </div>
             <div class="flex items-center gap-1.5">
               <button onclick="toggleVerticalZoom()" id="btn-zoom-fix" class="text-[11px] bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/40 px-2.5 py-1 rounded font-semibold transition">
-                📐 <span id="zoom-label">Ajuste Vertical: Activo</span>
+                📐 <span id="zoom-label" data-i18n="btn_zoom_orig">Encuadre: Original</span>
               </button>
               <button onclick="toggleVideoBlur()" class="text-[11px] bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 px-2.5 py-1 rounded font-semibold transition">
                 👁️ <span data-i18n="video_btn_unblur">Blur</span>
@@ -294,9 +297,9 @@
           </div>
 
           <!-- Escenario Vertical 9:16 -->
-          <div class="relative flex justify-center bg-black sm:py-6">
+          <div class="relative flex justify-center bg-black sm:py-5">
             <div class="vertical-stage w-full sm:max-w-[380px] sm:rounded-2xl sm:border sm:border-slate-700 shadow-2xl">
-              <video id="property-video" class="video-unblurred pillarbox-zoom" autoplay muted loop playsinline controls poster="principal.jpg">
+              <video id="property-video" class="video-unblurred pillarbox-normal" autoplay muted loop playsinline controls poster="principal.jpg">
                 <source src="joaquin costa-angels.mp4" type="video/mp4">
                 <source src="https://app.level-i.com/barcelona/ciutat-vella/activo-angels/joaquin%20costa-angels.mp4" type="video/mp4">
                 <source src="https://level-i.github.io/barcelona/ciutat-vella/activo-angels/joaquin%20costa-angels.mp4" type="video/mp4">
@@ -339,7 +342,7 @@
             <h3 class="text-base sm:text-lg font-bold text-white" data-i18n="desc_title">
               Auditoría Física, Registral y Potencial de Explotación
             </h3>
-            <span class="text-xs font-mono text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 px-2.5 py-1 rounded">
+            <span class="text-xs font-mono text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 px-2.5 py-1 rounded" data-i18n="desc_badge_reg">
               Registro BCN Nº 3 · ITE 2025
             </span>
           </div>
@@ -350,7 +353,7 @@
 
           <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
             <div class="p-4 rounded-xl bg-[#151f30] border border-slate-800 space-y-1.5">
-              <span class="text-[10px] font-mono uppercase text-amber-400 block">ENTIDAD REGISTRAL 1 (15%)</span>
+              <span class="text-[10px] font-mono uppercase text-amber-400 block" data-i18n="reg_1_sup">ENTIDAD REGISTRAL 1 (15%)</span>
               <div class="font-extrabold text-white text-sm" data-i18n="reg_1_title">Planta Primera · 334 m²</div>
               <p class="text-slate-300 leading-relaxed" data-i18n="reg_1_desc">
                 Planta diáfana modular con balconada corrida a calle, grandes ventanales en arco de medio punto hacia el patio interior, ascensor comunitario y acceso a terraza. Ideal para ateliers, despachos, consultas médicas o suite ejecutiva con cocina y lavandería.
@@ -358,7 +361,7 @@
             </div>
 
             <div class="p-4 rounded-xl bg-[#151f30] border border-slate-800 space-y-1.5">
-              <span class="text-[10px] font-mono uppercase text-sky-400 block">ENTIDAD REGISTRAL 2 (3%)</span>
+              <span class="text-[10px] font-mono uppercase text-sky-400 block" data-i18n="reg_2_sup">ENTIDAD REGISTRAL 2 (3%)</span>
               <div class="font-extrabold text-white text-sm" data-i18n="reg_2_title">PB (37 m²) + Sótano (103 m²)</div>
               <p class="text-slate-300 leading-relaxed" data-i18n="reg_2_desc">
                 140 m² registrales. Recepción comercial a pie de calle y vestíbulo conectada directamente (sin pasar por entresuelo) con la planta primera y con una espectacular bodega histórica de 103 m² con bóvedas catalanas de ladrillo macizo y muros de piedra para Showroom o Galería.
@@ -366,7 +369,7 @@
             </div>
 
             <div class="p-4 rounded-xl bg-[#151f30] border border-slate-800 space-y-1.5">
-              <span class="text-[10px] font-mono uppercase text-emerald-400 block">OASIS INTERIOR (COBERTA 5 / PATI 1)</span>
+              <span class="text-[10px] font-mono uppercase text-emerald-400 block" data-i18n="reg_3_sup">OASIS INTERIOR (COBERTA 5 / PATI 1)</span>
               <div class="font-extrabold text-white text-sm" data-i18n="reg_3_title">Patio / Terraza · ~103 m²</div>
               <p class="text-slate-300 leading-relaxed" data-i18n="reg_3_desc">
                 Antiguo patio de recreo de la guardería a nivel de Planta 1ª, comunicado directamente con la Planta Baja mediante escalera privada cubierta por lucernario y con salida desde las balconeras en arco de la Planta Primera.
@@ -406,7 +409,7 @@
               </h3>
             </div>
             <div class="flex items-center gap-2">
-              <span class="text-xs font-mono text-slate-400 bg-[#0b111a] px-2.5 py-1.5 rounded border border-slate-800">
+              <span class="text-xs font-mono text-slate-400 bg-[#0b111a] px-2.5 py-1.5 rounded border border-slate-800" translate="no">
                 41.382736, 2.165658
               </span>
               <a href="https://earth.google.com/web/@41.382736,2.165658,45a,280d,35y,0h,60t,0r" target="_blank" rel="noopener noreferrer" class="px-3.5 py-1.5 rounded-lg bg-sky-500/20 hover:bg-sky-500/30 border border-sky-500/40 text-sky-300 text-xs font-extrabold transition flex items-center gap-1.5">
@@ -428,7 +431,7 @@
 
       </div>
 
-      <!-- COLUMNA DERECHA (5 Cols): SIMULADOR DE COSTES Y RENTABILIDAD -->
+      <!-- COLUMNA DERECHA (5 Cols): SIMULADOR DE COSTES Y RENTABILIDAD (100% TRADUCIDO EN 8 IDIOMAS) -->
       <div class="lg:col-span-5 space-y-6 lg:sticky lg:top-20">
 
         <div class="card-panel p-5 sm:p-6 border-slate-700/90 shadow-2xl space-y-5">
@@ -436,7 +439,7 @@
             <span class="text-sm font-bold text-amber-400 flex items-center gap-2">
               <span>📊</span> <span data-i18n="calc_header">Simulador de Costes (ITE/Actividad) & Alquiler</span>
             </span>
-            <span class="text-[11px] bg-slate-800 text-emerald-400 px-2.5 py-0.5 rounded font-mono font-bold">474 m² Reg. + 103 m² Patio</span>
+            <span class="text-[11px] bg-slate-800 text-emerald-400 px-2.5 py-0.5 rounded font-mono font-bold" data-i18n="calc_badge_sqm">474 m² Reg. + 103 m² Patio</span>
           </div>
 
           <div>
@@ -504,7 +507,7 @@
           <div class="p-4 rounded-xl bg-[#162234] border border-emerald-500/30 flex items-center justify-between">
             <div>
               <span class="text-[11px] font-bold uppercase tracking-wider text-emerald-400 block" data-i18n="calc_total_label">SUMA TOTAL INVERSIÓN REAL:</span>
-              <span class="text-[11px] text-slate-400" id="cost-per-m2-label">1.682 € / m² operativo llave en mano</span>
+              <span class="text-[11px] text-slate-400" id="cost-per-m2-label">1.682 € / m²</span>
             </div>
             <span class="text-xl sm:text-2xl font-extrabold text-emerald-400" id="total-investment-display">970.500 €</span>
           </div>
@@ -530,7 +533,7 @@
               </div>
               <div class="p-2 rounded bg-[#0b111a]">
                 <span class="text-[10px] uppercase text-slate-400 block" data-i18n="rent_yield_label">RENTABILIDAD BRUTA</span>
-                <span class="text-sm font-extrabold text-emerald-400" id="gross-yield-display">7,17 % Anual</span>
+                <span class="text-sm font-extrabold text-emerald-400" id="gross-yield-display">7,17 %</span>
               </div>
             </div>
           </div>
@@ -560,13 +563,13 @@
   <!-- ================= MODAL FULLSCREEN VERTICAL NATIVO PARA MÓVILES ================= -->
   <div id="vertical-fullscreen-modal" class="fixed inset-0 z-50 bg-black hidden flex-col justify-between">
     <div class="relative w-full h-[100dvh] overflow-hidden flex items-center justify-center bg-black">
-      <video id="fullscreen-vertical-video" class="w-full h-full object-cover pillarbox-zoom" playsinline loop controls>
+      <video id="fullscreen-vertical-video" class="w-full h-full object-contain" playsinline loop controls>
         <source src="joaquin costa-angels.mp4" type="video/mp4">
         <source src="https://app.level-i.com/barcelona/ciutat-vella/activo-angels/joaquin%20costa-angels.mp4" type="video/mp4">
         <source src="https://level-i.github.io/barcelona/ciutat-vella/activo-angels/joaquin%20costa-angels.mp4" type="video/mp4">
       </video>
       <div class="absolute top-4 left-4 right-4 flex items-center justify-between z-20">
-        <span class="px-3 py-1.5 rounded-lg bg-slate-950/80 text-emerald-400 text-xs font-extrabold border border-emerald-500/40 backdrop-blur">
+        <span class="px-3 py-1.5 rounded-lg bg-slate-950/80 text-emerald-400 text-xs font-extrabold border border-emerald-500/40 backdrop-blur" translate="no">
           Level.immo · Activo Àngels (780.000 €)
         </span>
         <button onclick="closeVerticalFullscreen()" class="px-3.5 py-1.5 rounded-lg bg-rose-600 text-white text-xs font-black shadow-lg">
@@ -594,21 +597,21 @@
       <div class="p-5 sm:p-6 max-h-[82vh] overflow-y-auto space-y-5">
 
         <div class="grid grid-cols-2 gap-2 bg-[#0b111a] p-1 rounded-xl border border-slate-800">
-          <button onclick="switchCollabTab('register')" id="tab-collab-reg" class="py-2 rounded-lg bg-amber-500 text-slate-950 font-extrabold text-xs uppercase transition">
+          <button onclick="switchCollabTab('register')" id="tab-collab-reg" class="py-2 rounded-lg bg-amber-500 text-slate-950 font-extrabold text-xs uppercase transition" data-i18n="collab_tab_1">
             1. Activar Enlace y Compartir
           </button>
-          <button onclick="switchCollabTab('dashboard')" id="tab-collab-dash" class="py-2 rounded-lg text-slate-300 hover:text-white font-bold text-xs uppercase transition">
+          <button onclick="switchCollabTab('dashboard')" id="tab-collab-dash" class="py-2 rounded-lg text-slate-300 hover:text-white font-bold text-xs uppercase transition" data-i18n="collab_tab_2">
             2. Panel de Seguimiento (Estados)
           </button>
         </div>
 
         <div id="collab-view-register" class="space-y-4">
           <div class="p-4 rounded-xl bg-[#152033] border border-slate-700/80 text-xs text-slate-300 space-y-2 leading-relaxed">
-            <p class="font-bold text-white">✨ Compromiso de Cero Molestias y Transparencia Total:</p>
-            <p>
-              Al activar tu suscripción como <strong>Colaborador Simpatizante</strong>, no te molestaremos con ningún correo no formal ni comercial. Te daremos acceso directo al <strong>Panel de Seguimiento de tus Contactos Invitados</strong> para que visualices todo su progreso sin exponer ningún dato confidencial.
+            <p class="font-bold text-white" data-i18n="collab_box_title">✨ Compromiso de Cero Molestias y Transparencia Total:</p>
+            <p data-i18n="collab_box_p1">
+              Al activar tu suscripción como Colaborador Simpatizante, no te molestaremos con ningún correo no formal ni comercial. Te daremos acceso directo al Panel de Seguimiento de tus Contactos Invitados para que visualices todo su progreso sin exponer ningún dato confidencial.
             </p>
-            <p class="text-amber-300 font-semibold">
+            <p class="text-amber-300 font-semibold" data-i18n="collab_box_p2">
               🎁 En caso de venta dentro de los 90 días, Level.immo te obsequiará con una Tarjeta Regalo a elegir por valor de 500 €, con el máximo y condiciones que estipule la Legislación Vigente.
             </p>
           </div>
@@ -616,7 +619,7 @@
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
             <input type="text" id="collab-name" placeholder="Tu Nombre o Alias de Colaborador" class="bg-[#080d14] border border-slate-700 rounded-lg px-3 py-2.5 text-white focus:border-amber-500 focus:outline-none" />
             <div class="flex gap-2">
-              <select id="collab-prefix" class="bg-[#080d14] border border-slate-700 rounded-lg px-2 py-2.5 text-white font-semibold">
+              <select id="collab-prefix" class="bg-[#080d14] border border-slate-700 rounded-lg px-2 py-2.5 text-white font-semibold" translate="no">
                 <option value="+34">ES +34</option>
                 <option value="+33">FR +33</option>
                 <option value="+44">UK +44</option>
@@ -632,14 +635,14 @@
 
           <label class="flex items-start gap-2.5 text-[11px] text-slate-300 cursor-pointer">
             <input type="checkbox" id="collab-legal-check" class="mt-0.5 rounded border-slate-600 text-amber-500 focus:ring-amber-500" />
-            <span>
-              Acepto las condiciones de <strong>Colaborador Simpatizante</strong>: los estados visibles serán <em>Enlace enviado hace (X días) / Visita / Contrato / Firma</em> y, transcurridos <strong>90 días</strong> sin cierre, pasará a estado <em>"Visto"</em> caducando el derecho a obsequio. En caso de venta efectiva, Level.immo entregará una Tarjeta Regalo a elegir por valor de <strong>500 €</strong> (sujeta a los límites y retenciones de la Legislación Española Vigente: Ley 11/2021 y RIRPF).
+            <span data-i18n="collab_legal_text">
+              Acepto las condiciones de Colaborador Simpatizante: los estados visibles serán Enlace enviado hace (X días) / Visita / Contrato / Firma y, transcurridos 90 días sin cierre, pasará a estado "Visto" caducando el derecho a obsequio. En caso de venta efectiva, Level.immo entregará una Tarjeta Regalo a elegir por valor de 500 € (sujeta a los límites y retenciones de la Legislación Española Vigente: Ley 11/2021 y RIRPF).
             </span>
           </label>
 
           <p id="collab-error" class="text-rose-400 text-xs hidden">Por favor, introduce tu nombre, número de teléfono y acepta la casilla de condiciones.</p>
 
-          <button onclick="activateCollaboratorLink()" class="w-full py-3.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs uppercase tracking-wider transition shadow-lg">
+          <button onclick="activateCollaboratorLink()" class="w-full py-3.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs uppercase tracking-wider transition shadow-lg" data-i18n="collab_btn_generate">
             🔗 ACTIVAR SUSCRIPCIÓN Y GENERAR ENLACE DE COLABORADOR
           </button>
 
@@ -647,7 +650,7 @@
             <div class="font-bold text-emerald-400">✅ ¡Suscripción activada! Comparte este enlace único con tu Contacto Invitado:</div>
             <div class="flex gap-2">
               <input type="text" id="collab-generated-url" readonly class="flex-1 bg-[#080d14] border border-slate-700 rounded-lg px-3 py-2 text-emerald-300 font-mono text-xs" />
-              <button onclick="copyCollabUrl()" class="px-4 py-2 rounded-lg bg-emerald-500 text-slate-950 font-extrabold">Copiar</button>
+              <button onclick="copyCollabUrl(this)" class="px-4 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold transition">Copiar</button>
             </div>
             <div class="flex flex-wrap gap-2 pt-1">
               <a id="collab-wa-share" href="#" target="_blank" class="px-3 py-2 rounded-lg bg-[#25D366]/20 border border-[#25D366]/50 text-[#25D366] font-bold">📲 Compartir por WhatsApp</a>
@@ -725,9 +728,9 @@
       
       <div class="px-5 py-4 bg-[#162032] border-b border-slate-800 flex items-center justify-between">
         <div class="flex items-center gap-3">
-          <div class="w-9 h-9 rounded-lg bg-emerald-500 text-slate-950 font-black flex items-center justify-center text-lg">E</div>
+          <div class="w-9 h-9 rounded-lg bg-emerald-500 text-slate-950 font-black flex items-center justify-center text-lg" translate="no">E</div>
           <div>
-            <div class="text-sm font-bold text-white">Elena | AI Advisor Level-i</div>
+            <div class="text-sm font-bold text-white" translate="no">Elena | AI Advisor Level-i</div>
             <div class="text-[11px] text-emerald-400 flex items-center gap-1.5">
               <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
               <span data-i18n="elena_sub">Filtro de Inversores · Barcelona Ciutat Vella (08001)</span>
@@ -748,10 +751,10 @@
               Para iniciar con Elena IA y solicitar las Notas Simples, el informe ITE completo y visita prioritaria al Activo Àngels (780.000 €), resuelve la suma:
             </p>
             <div class="flex items-center gap-3">
-              <span class="text-sm font-bold text-white bg-[#080d14] px-3 py-2 rounded border border-slate-700">
-                <span id="elena-num1">7</span> + <span id="elena-num2">6</span> =
+              <span class="text-sm font-bold text-white bg-[#080d14] px-3.5 py-2 rounded border border-slate-700 whitespace-nowrap">
+                <span id="elena-num1">6</span> + <span id="elena-num2">4</span> =
               </span>
-              <input type="number" id="elena-math-input" placeholder="Resultado..." class="flex-1 bg-[#080d14] border border-slate-700 rounded-lg px-3 py-2 text-sm text-white font-bold focus:outline-none focus:border-emerald-500" />
+              <input type="number" id="elena-math-input" placeholder="?" class="flex-1 bg-[#080d14] border border-slate-700 rounded-lg px-3 py-2 text-sm text-white font-bold focus:outline-none focus:border-emerald-500" />
             </div>
 
             <label class="flex items-start gap-2.5 text-[11px] text-slate-300 cursor-pointer pt-2">
@@ -838,7 +841,7 @@
           <div class="space-y-3 text-xs">
             <input type="text" id="lead-name" placeholder="Nombre completo o Empresa" class="w-full bg-[#080d14] border border-slate-700 rounded-lg px-3 py-2.5 text-white focus:border-emerald-500 focus:outline-none" />
             <div class="flex gap-2">
-              <select id="lead-prefix" class="bg-[#080d14] border border-slate-700 rounded-lg px-2.5 py-2.5 text-white font-semibold">
+              <select id="lead-prefix" class="bg-[#080d14] border border-slate-700 rounded-lg px-2.5 py-2.5 text-white font-semibold" translate="no">
                 <option value="+34">ES +34</option>
                 <option value="+33">FR +33</option>
                 <option value="+44">UK +44</option>
@@ -908,9 +911,9 @@
     <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-xs text-slate-400">
       <div class="space-y-1">
         <div class="text-slate-200 font-semibold">
-          Servicios Presenciales en: <span class="font-normal text-slate-400">Barcelona, Ciutat Vella, Sabadell, Terrassa, Sant Cugat del Vallès, Granollers, Mataró, Tarragona, La Ràpita, Alcanar, Les Cases d'Alcanar, Vinaròs, Tortosa, Amposta.</span>
+          <span data-i18n="footer_services_label">Servicios Presenciales en:</span> <span class="font-normal text-slate-400" translate="no">Barcelona, Ciutat Vella, Sabadell, Terrassa, Sant Cugat del Vallès, Granollers, Mataró, Tarragona, La Ràpita, Alcanar, Les Cases d'Alcanar, Vinaròs, Tortosa, Amposta.</span>
         </div>
-        <div class="font-mono text-[11px] text-slate-400">
+        <div class="font-mono text-[11px] text-slate-400" translate="no">
           API 4173 · AICAT 14200 · LEVEL PUNTO IMMO 24365 SLU (NIF B-26745430 · Travessera de Gràcia, 56, 3-1a, 08006 Barcelona)
         </div>
       </div>
@@ -960,6 +963,17 @@
     }
     renderCarousels();
 
+    // Asegura que el vídeo de portada se reproduzca 1 sola vez y se congele exactamente en el último frame (la fachada de noche)
+    const introBgVideo = document.getElementById('intro-bg-video');
+    if (introBgVideo) {
+      introBgVideo.addEventListener('ended', function() {
+        this.pause();
+        if (this.duration) {
+          this.currentTime = Math.max(0, this.duration - 0.05);
+        }
+      });
+    }
+
     function scrollCarousel(id, offset) {
       const el = document.getElementById(id);
       if (el) el.scrollBy({ left: offset, behavior: 'smooth' });
@@ -980,8 +994,8 @@
       modal.classList.remove('flex');
     }
 
-    // Control de Zoom Vertical anti-barras laterales y Pantalla Completa Móvil
-    let verticalZoomActive = true;
+    // Control de Encuadre del Vídeo Interior (Original por defecto para no cortar textos)
+    let verticalZoomActive = false;
     function toggleVerticalZoom() {
       const v = document.getElementById('property-video');
       const lbl = document.getElementById('zoom-label');
@@ -989,11 +1003,11 @@
       if (verticalZoomActive) {
         v.classList.remove('pillarbox-normal');
         v.classList.add('pillarbox-zoom');
-        lbl.textContent = "Ajuste Vertical: Activo";
+        lbl.textContent = "Encuadre: Zoom Vertical";
       } else {
         v.classList.remove('pillarbox-zoom');
         v.classList.add('pillarbox-normal');
-        lbl.textContent = "Ajuste Vertical: Original";
+        lbl.textContent = "Encuadre: Original";
       }
     }
 
@@ -1022,7 +1036,7 @@
       if (el) el.textContent = `${pad(now.getDate())}/${pad(now.getMonth()+1)}/${now.getFullYear()} | ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
     }, 1000);
 
-    let gateSum = 9, elenaSum = 13;
+    let gateSum = 8, elenaSum = 10;
     function initMathChallenges() {
       const g1 = Math.floor(Math.random() * 5) + 3;
       const g2 = Math.floor(Math.random() * 5) + 2;
@@ -1030,8 +1044,8 @@
       document.getElementById('gate-num1').textContent = g1;
       document.getElementById('gate-num2').textContent = g2;
 
-      const e1 = Math.floor(Math.random() * 6) + 4;
-      const e2 = Math.floor(Math.random() * 5) + 3;
+      const e1 = Math.floor(Math.random() * 6) + 3;
+      const e2 = Math.floor(Math.random() * 5) + 2;
       elenaSum = e1 + e2;
       document.getElementById('elena-num1').textContent = e1;
       document.getElementById('elena-num2').textContent = e2;
@@ -1125,9 +1139,9 @@
 
       const fmt = n => n.toLocaleString('es-ES');
       document.getElementById('total-investment-display').textContent = `${fmt(totalInv)} €`;
-      document.getElementById('cost-per-m2-label').textContent = `${fmt(perOperativeSqm)} € / m² operativo llave en mano`;
+      document.getElementById('cost-per-m2-label').textContent = `${fmt(perOperativeSqm)} € / m²`;
       document.getElementById('annual-rent-display').textContent = `${fmt(annualRent)} € / año`;
-      document.getElementById('gross-yield-display').textContent = `${yieldPct.replace('.', ',')} % Anual`;
+      document.getElementById('gross-yield-display').textContent = `${yieldPct.replace('.', ',')} %`;
       document.getElementById('rent-unit-price').textContent = `~${rentPerRegSqm.replace('.', ',')} € / m² reg.`;
     }
 
@@ -1199,9 +1213,14 @@
       list.prepend(newCard);
     }
 
-    function copyCollabUrl() {
+    function copyCollabUrl(btn) {
       const input = document.getElementById('collab-generated-url');
       navigator.clipboard.writeText(input.value).catch(() => {});
+      if (btn) {
+        const old = btn.textContent;
+        btn.textContent = "¡Copiado!";
+        setTimeout(() => { btn.textContent = old; }, 2000);
+      }
     }
 
     let liked = false;
@@ -1210,7 +1229,7 @@
         liked = true;
         const c = document.getElementById('likes-count');
         c.textContent = parseInt(c.textContent, 10) + 1;
-        document.getElementById('btn-like').innerHTML = `<span>❤️</span> <span>Guardado (${c.textContent})</span>`;
+        document.getElementById('btn-like').innerHTML = `<span>❤️</span> <span>(${c.textContent})</span>`;
       }
     }
 
@@ -1290,10 +1309,9 @@
       document.getElementById('legal-modal').classList.remove('flex');
     }
 
-    // Diccionario Multilingüe Integral en los 8 Idiomas Oficiales (ES, CA, EN, FR, DE, IT, AR, ZH)
+    // DICCIONARIO COMPLETO EN LOS 8 IDIOMAS OFICIALES (100% DE LAS CLAVES CUBIERTAS)
     const i18n = {
       es: {
-        btn_collab_top: "Colaborador Simpatizante (500 €)",
         gate_badge: "EXCLUSIVA LEVEL.IMMO · FICHA CIEGA PATRIMONIAL",
         gate_title: "Activo Comercial Singular en Ciutat Vella · Eje Àngels",
         gate_subtitle: "Finca clásica de 1900 junto a Plaça dels Àngels y el mural de Keith Haring. 577 m² operativos (474 m² registrales en 2 entidades unidas: Planta 1ª de 334 m², Planta Baja de 37 m² y Bodega abovedada de 103 m² + ~103 m² de Patio/Terraza interior). Ascensor y accesibilidad universal. Venta sin condición suspensiva de cambio de uso.",
@@ -1301,6 +1319,7 @@
         gate_security_desc: "Resuelve la suma para desbloquear el estudio económico, los datos registrales/ITE y la Ficha Ciega en el idioma seleccionado:",
         gate_math_label: "¿Cuánto es",
         gate_btn_access: "ACCEDER",
+        gate_error_msg: "Resultado incorrecto. Inténtalo de nuevo.",
         gate_carousel_title: "📸 Galería 1:1 (1080×1080 px) · Fachadas, Interior y Proyección",
         nav_demand: "Demanda Activa",
         nav_market: "Mercado Real",
@@ -1311,20 +1330,29 @@
         kpi_1_label: "PRECIO DE VENTA",
         kpi_1_sub: "1.351 €/m² operativo",
         kpi_2_label: "SUP. REGISTRAL",
+        kpi_2_sub: "334 P1 + 37 PB + 103 Sót",
         kpi_3_label: "PATIO / TERRAZA",
         kpi_3_sub: "Conectado a PB y P1",
         kpi_4_label: "CUOTA Y ESTADO",
         kpi_4_val: "18% Comunidad",
         kpi_4_sub: "Finca 1900 · Ascensor",
         video_header_title: "VÍDEO VERTICAL FULLSCREEN (9:16) + CARRUSEL 1:1",
+        btn_zoom_orig: "Encuadre: Original",
+        video_btn_unblur: "Blur",
         btn_mobile_fs: "Pantalla Completa Móvil",
+        video_overlay_badge: "CONFIDENCIALIDAD ACTIVA",
+        video_overlay_btn: "MOSTRAR VÍDEO NÍTIDO",
         main_carousel_label: "🖼️ Galería 1:1 (Pulsa en cualquier foto para ampliar)",
         desc_title: "Auditoría Física, Registral y Potencial de Explotación",
+        desc_badge_reg: "Registro BCN Nº 3 · ITE 2025",
         desc_p1: "Enclavado en una finca clásica del año 1900 con fachada principal de 20 metros revestida en piedra natural en su zócalo y grandes portales en arco de medio punto (orientación Suroeste), y cuya fachada posterior linda directamente con la Plaça de Joan Coromines y el icónico mural original de Keith Haring, junto al polo cultural contemporáneo de Ciutat Vella.",
+        reg_1_sup: "ENTIDAD REGISTRAL 1 (15%)",
         reg_1_title: "Planta Primera · 334 m²",
         reg_1_desc: "Planta diáfana modular con balconada corrida a calle, grandes ventanales en arco de medio punto hacia el patio interior, ascensor comunitario y acceso a terraza. Ideal para ateliers, despachos, consultas médicas o suite ejecutiva con cocina y lavandería.",
+        reg_2_sup: "ENTIDAD REGISTRAL 2 (3%)",
         reg_2_title: "PB (37 m²) + Sótano (103 m²)",
         reg_2_desc: "140 m² registrales. Recepción comercial a pie de calle y vestíbulo conectada directamente (sin pasar por entresuelo) con la planta primera y con una espectacular bodega histórica de 103 m² con bóvedas catalanas de ladrillo macizo y muros de piedra para Showroom o Galería.",
+        reg_3_sup: "OASIS INTERIOR (COBERTA 5 / PATI 1)",
         reg_3_title: "Patio / Terraza · ~103 m²",
         reg_3_desc: "Antiguo patio de recreo de la guardería a nivel de Planta 1ª, comunicado directamente con la Planta Baja mediante escalera privada cubierta por lucernario y con salida desde las balconeras en arco de la Planta Primera.",
         target_1_title: "👗 Atelier de Moda, Diseño & Showroom",
@@ -1336,8 +1364,10 @@
         target_4_title: "🏛️ Inversor Patrimonial / Cambio de Uso",
         target_4_desc: "Se vende como uso comercial sin condición suspensiva a cambio de uso. Inscripciones históricas caducadas (1997/2007) se entregan canceladas en escritura.",
         map_sup: "🌍 GOOGLE EARTH 3D · VUELO ORBITAL SILENCIOSO",
+        map_title: "Barcelona · Ciutat Vella · Eje Plaça dels Àngels / Joan Coromines",
         btn_earth_3d: "Vuelo 3D Google Earth",
         calc_header: "Simulador de Costes (ITE/Actividad) & Alquiler",
+        calc_badge_sqm: "474 m² Reg. + 103 m² Patio",
         calc_select_activity: "1. ELIGE LA ACTIVIDAD PARA SIMULAR ADECUACIÓN Y RENTA DE MERCADO:",
         act_btn_moda: "Atelier Moda",
         act_btn_medico: "Centro Médico",
@@ -1356,10 +1386,13 @@
         rent_yield_label: "RENTABILIDAD BRUTA",
         btn_like_text: "Me Gusta",
         btn_share_collab: "Compartir y Ganar 500€",
-        cta_main_elena: "SOLICITAR NOTAS SIMPLES, ITE Y VISITA CON ELENA IA"
+        cta_main_elena: "SOLICITAR NOTAS SIMPLES, ITE Y VISITA CON ELENA IA",
+        footer_services_label: "Servicios Presenciales en:",
+        footer_legal: "Aviso Legal",
+        footer_privacy: "Privacidad y RGPD",
+        footer_cookies: "Cookies e IA"
       },
       ca: {
-        btn_collab_top: "Col·laborador Simpatitzant (500 €)",
         gate_badge: "EXCLUSIVA LEVEL.IMMO · FITXA CEGA PATRIMONIAL",
         gate_title: "Actiu Comercial Singular a Ciutat Vella · Eix Àngels",
         gate_subtitle: "Finca clàssica de 1900 al costat de la Plaça dels Àngels i el mural de Keith Haring. 577 m² operatius (474 m² registrals en 2 entitats unides: Planta 1a de 334 m², Planta Baixa de 37 m² i Celler de volta de 103 m² + ~103 m² de Pati/Terrassa interior). Ascensor i accessibilitat universal. Venda sense condició suspensiva de canvi d'ús.",
@@ -1367,6 +1400,7 @@
         gate_security_desc: "Resol la suma per desbloquejar l'estudi econòmic, les dades registrals/ITE i la Fitxa Cega en l'idioma seleccionat:",
         gate_math_label: "Quant és",
         gate_btn_access: "ACCEDIR",
+        gate_error_msg: "Resultat incorrecte. Torna-ho a provar.",
         gate_carousel_title: "📸 Galeria 1:1 (1080×1080 px) · Façanes, Interior i Projecció",
         nav_demand: "Demanda Activa",
         nav_market: "Mercat Real",
@@ -1377,20 +1411,29 @@
         kpi_1_label: "PREU DE VENDA",
         kpi_1_sub: "1.351 €/m² operatiu",
         kpi_2_label: "SUP. REGISTRAL",
+        kpi_2_sub: "334 P1 + 37 PB + 103 Sot",
         kpi_3_label: "PATI / TERRASSA",
         kpi_3_sub: "Connectat a PB i P1",
         kpi_4_label: "QUOTA I ESTAT",
         kpi_4_val: "18% Comunitat",
         kpi_4_sub: "Finca 1900 · Ascensor",
         video_header_title: "VÍDEO VERTICAL FULLSCREEN (9:16) + CARRUSEL 1:1",
+        btn_zoom_orig: "Enquadrament: Original",
+        video_btn_unblur: "Blur",
         btn_mobile_fs: "Pantalla Completa Mòbil",
+        video_overlay_badge: "CONFIDENCIALITAT ACTIVA",
+        video_overlay_btn: "MOSTRAR VÍDEO NÍTID",
         main_carousel_label: "🖼️ Galeria 1:1 (Prem qualsevol foto per ampliar)",
         desc_title: "Auditoria Física, Registral i Potencial d'Explotació",
+        desc_badge_reg: "Registre BCN Núm. 3 · ITE 2025",
         desc_p1: "Enclavat en una finca clàssica de l'any 1900 amb façana principal de 20 metres revestida en pedra natural al sòcol i grans portals d'arc de mig punt (orientació Sud-oest), i la façana posterior de la qual confronta directament amb la Plaça de Joan Coromines i l'icònic mural original de Keith Haring.",
+        reg_1_sup: "ENTITAT REGISTRAL 1 (15%)",
         reg_1_title: "Planta Primera · 334 m²",
         reg_1_desc: "Planta diàfana modular amb balconada correguda a carrer, grans finestrals d'arc de mig punt cap al pati interior, ascensor comunitari i accés a terrassa. Ideal per a ateliers, despatxos, consultes mèdiques o suite executiva amb cuina i bugaderia.",
+        reg_2_sup: "ENTITAT REGISTRAL 2 (3%)",
         reg_2_title: "PB (37 m²) + Soterrani (103 m²)",
         reg_2_desc: "140 m² registrals. Recepció comercial a peu de carrer i vestíbul connectada directament (sense passar per entresòl) amb la planta primera i amb un espectacular celler històric de 103 m² amb voltes catalanes de maó massís i murs de pedra per a Showroom o Galeria.",
+        reg_3_sup: "OASI INTERIOR (COBERTA 5 / PATI 1)",
         reg_3_title: "Pati / Terrassa · ~103 m²",
         reg_3_desc: "Antic pati d'esbarjo de la llar d'infants a nivell de Planta 1a, comunicat directament amb la Planta Baixa mitjançant escala privada coberta per lluerna i amb sortida des de les balconeres d'arc de la Planta Primera.",
         target_1_title: "👗 Atelier de Moda, Disseny & Showroom",
@@ -1402,8 +1445,10 @@
         target_4_title: "🏛️ Inversor Patrimonial / Canvi d'Ús",
         target_4_desc: "Es ven com a ús comercial sense condició suspensiva a canvi d'ús. Inscripcions històriques caducades (1997/2007) es lliuren cancel·lades en escriptura.",
         map_sup: "🌍 GOOGLE EARTH 3D · VOL ORBITAL SILENCIÓS",
+        map_title: "Barcelona · Ciutat Vella · Eix Plaça dels Àngels / Joan Coromines",
         btn_earth_3d: "Vol 3D Google Earth",
         calc_header: "Simulador de Costos (ITE/Activitat) & Lloguer",
+        calc_badge_sqm: "474 m² Reg. + 103 m² Pati",
         calc_select_activity: "1. TRIA L'ACTIVITAT PER SIMULAR ADEQUACIÓ I RENDA DE MERCAT:",
         act_btn_moda: "Atelier Moda",
         act_btn_medico: "Centre Mèdic",
@@ -1422,10 +1467,13 @@
         rent_yield_label: "RENDIBILITAT BRUTA",
         btn_like_text: "M'agrada",
         btn_share_collab: "Compartir i Guanyar 500€",
-        cta_main_elena: "SOL·LICITAR NOTES SIMPLES, ITE I VISITA AMB ELENA IA"
+        cta_main_elena: "SOL·LICITAR NOTES SIMPLES, ITE I VISITA AMB ELENA IA",
+        footer_services_label: "Serveis Presencials a:",
+        footer_legal: "Avís Legal",
+        footer_privacy: "Privacitat i RGPD",
+        footer_cookies: "Cookies i IA"
       },
       en: {
-        btn_collab_top: "Sympathizer Partner (500 € Gift)",
         gate_badge: "LEVEL.IMMO EXCLUSIVE · BLIND ASSET PROFILE",
         gate_title: "Unique Commercial Asset in Ciutat Vella · Àngels Axis",
         gate_subtitle: "Classic 1900 building next to Plaça dels Àngels and Keith Haring's mural. 577 sqm operative area (474 sqm registered across 2 linked entities: 334 sqm 1st Floor, 37 sqm Ground Floor & 103 sqm vaulted Cellar + ~103 sqm private Courtyard/Terrace). Elevator & universal accessibility. Unconditional sale regarding change of use.",
@@ -1433,6 +1481,7 @@
         gate_security_desc: "Solve the sum to unlock the financial study, land registry/ITE data and Blind Profile in your selected language:",
         gate_math_label: "What is",
         gate_btn_access: "UNLOCK",
+        gate_error_msg: "Incorrect result. Please try again.",
         gate_carousel_title: "📸 1:1 Gallery (1080×1080 px) · Facades, Interior & Projections",
         nav_demand: "Active Demand",
         nav_market: "Live Market",
@@ -1443,20 +1492,29 @@
         kpi_1_label: "ASKING PRICE",
         kpi_1_sub: "1,351 €/sqm operative",
         kpi_2_label: "REGISTERED AREA",
+        kpi_2_sub: "334 1F + 37 GF + 103 Bsm",
         kpi_3_label: "PATIO / TERRACE",
         kpi_3_sub: "Linked to GF & 1st Fl",
         kpi_4_label: "SHARE & STATUS",
         kpi_4_val: "18% Community",
         kpi_4_sub: "1900 Bldg · Elevator",
         video_header_title: "FULLSCREEN VERTICAL VIDEO (9:16) + 1:1 CAROUSEL",
+        btn_zoom_orig: "Framing: Original",
+        video_btn_unblur: "Blur",
         btn_mobile_fs: "Mobile Fullscreen",
+        video_overlay_badge: "ACTIVE CONFIDENTIALITY",
+        video_overlay_btn: "SHOW SHARP VIDEO",
         main_carousel_label: "🖼️ 1:1 Gallery (Click any photo to enlarge)",
         desc_title: "Physical, Registry Audit & Exploitation Potential",
+        desc_badge_reg: "BCN Land Registry #3 · ITE 2025",
         desc_p1: "Set in a classic 1900 building with a 20-meter main facade clad in natural stone at the plinth and grand semi-circular arched portals (Southwest orientation), whose rear facade borders directly on Plaça de Joan Coromines and the iconic original Keith Haring mural.",
+        reg_1_sup: "REGISTERED ENTITY 1 (15%)",
         reg_1_title: "First Floor · 334 sqm",
         reg_1_desc: "Open-plan modular floor with continuous street balcony, large arched windows facing the inner courtyard, community elevator and terrace access. Ideal for fashion ateliers, executive offices, medical clinics or an executive suite with kitchen and laundry.",
+        reg_2_sup: "REGISTERED ENTITY 2 (3%)",
         reg_2_title: "GF (37 sqm) + Cellar (103 sqm)",
         reg_2_desc: "140 sqm registered. Street-level commercial reception connected directly (bypassing the mezzanine) to the first floor and to a spectacular 103 sqm historic cellar with solid brick Catalan vaults and stone walls for a Showroom or Art Gallery.",
+        reg_3_sup: "INNER OASIS (COBERTA 5 / PATI 1)",
         reg_3_title: "Courtyard / Terrace · ~103 sqm",
         reg_3_desc: "Former kindergarten courtyard at First Floor level, connected directly to the Ground Floor via a private skylight-covered staircase and accessed through the arched French doors of the First Floor.",
         target_1_title: "👗 Fashion Atelier, Design & Showroom",
@@ -1468,8 +1526,10 @@
         target_4_title: "🏛️ Private Wealth Investor / Change of Use",
         target_4_desc: "Sold as commercial use without suspensive condition for change of use. Expired historical registry entries (1997/2007) cancelled upon deed signing.",
         map_sup: "🌍 GOOGLE EARTH 3D · SILENT ORBITAL FLIGHT",
+        map_title: "Barcelona · Ciutat Vella · Plaça dels Àngels / Joan Coromines Axis",
         btn_earth_3d: "3D Flight Google Earth",
         calc_header: "CAPEX (ITE/Activity) & Rental Yield Simulator",
+        calc_badge_sqm: "474 sqm Reg. + 103 sqm Patio",
         calc_select_activity: "1. SELECT TARGET ACTIVITY TO SIMULATE CAPEX & MARKET RENT:",
         act_btn_moda: "Fashion Atelier",
         act_btn_medico: "Medical Clinic",
@@ -1488,10 +1548,13 @@
         rent_yield_label: "GROSS YIELD",
         btn_like_text: "Like",
         btn_share_collab: "Share & Earn 500€",
-        cta_main_elena: "REQUEST REGISTRY NOTES, ITE & VISIT WITH ELENA AI"
+        cta_main_elena: "REQUEST REGISTRY NOTES, ITE & VISIT WITH ELENA AI",
+        footer_services_label: "On-site Services in:",
+        footer_legal: "Legal Notice",
+        footer_privacy: "Privacy & GDPR",
+        footer_cookies: "Cookies & AI"
       },
       fr: {
-        btn_collab_top: "Partenaire Sympathisant (500 €)",
         gate_badge: "EXCLUSIVITÉ LEVEL.IMMO · DOSSIER CONFIDENTIEL",
         gate_title: "Actif Commercial d'Exception à Ciutat Vella · Axe Àngels",
         gate_subtitle: "Immeuble classique de 1900 près de la Plaça dels Àngels et de la fresque de Keith Haring. 577 m² opérationnels (474 m² cadastrés en 2 entités réunies : 1er étage de 334 m², RDC de 37 m² et Cave voûtée de 103 m² + ~103 m² de Patio/Terrasse). Ascenseur. Vente sans condition suspensive.",
@@ -1499,6 +1562,7 @@
         gate_security_desc: "Résolvez la somme pour débloquer l'étude financière, les données foncières/ITE et le Dossier :",
         gate_math_label: "Combien font",
         gate_btn_access: "ACCÉDER",
+        gate_error_msg: "Résultat incorrect. Veuillez réessayer.",
         gate_carousel_title: "📸 Galerie 1:1 (1080×1080 px) · Façades, Intérieur & Projections",
         nav_demand: "Demande Active",
         nav_market: "Marché Réel",
@@ -1507,29 +1571,71 @@
         main_header_title: "Barcelone · Ciutat Vella (Axe Àngels) | Actif Commercial 3 Niveaux + Patio (577 m²)",
         main_status_badge: "2 ENTITÉS FONCIÈRES + ITE AUDITÉE · VENTE SANS CONDITION",
         kpi_1_label: "PRIX DE VENTE",
+        kpi_1_sub: "1 351 €/m² opérationnel",
         kpi_2_label: "SURF. FONCIÈRE",
+        kpi_2_sub: "334 P1 + 37 RDC + 103 S-sol",
         kpi_3_label: "PATIO / TERRASSE",
+        kpi_3_sub: "Relié au RDC et 1er ét.",
         kpi_4_label: "QUOTE-PART",
         kpi_4_val: "18% Copropriété",
+        kpi_4_sub: "Immeuble 1900 · Ascenseur",
         video_header_title: "VIDÉO VERTICALE PLEIN ÉCRAN (9:16) + CARROUSEL 1:1",
+        btn_zoom_orig: "Cadrage : Original",
+        video_btn_unblur: "Flou",
         btn_mobile_fs: "Plein Écran Mobile",
+        video_overlay_badge: "CONFIDENTIALITÉ ACTIVE",
+        video_overlay_btn: "AFFICHER LA VIDÉO NETTE",
+        main_carousel_label: "🖼️ Galerie 1:1 (Cliquez sur une photo pour agrandir)",
         desc_title: "Audit Physique, Foncier et Potentiel d'Exploitation",
+        desc_badge_reg: "Registre BCN N° 3 · ITE 2025",
         desc_p1: "Situé dans un immeuble classique de 1900 avec une façade principale de 20 mètres en pierre naturelle et grands arcs en plein cintre (Sud-Ouest), dont la façade arrière donne directement sur la Plaça de Joan Coromines et la fresque originale de Keith Haring.",
+        reg_1_sup: "ENTITÉ FONCIÈRE 1 (15%)",
         reg_1_title: "Premier Étage · 334 m²",
         reg_1_desc: "Plateau modulable avec balcon filant sur rue, grandes baies arquées sur cour, ascenseur et accès terrasse. Idéal pour atelier de mode, bureaux, clinique ou suite exécutive avec cuisine et buanderie.",
+        reg_2_sup: "ENTITÉ FONCIÈRE 2 (3%)",
         reg_2_title: "RDC (37 m²) + Sous-sol (103 m²)",
         reg_2_desc: "140 m² enregistrés. Accueil commercial sur rue relié directement au 1er étage et à une cave historique de 103 m² avec voûtes catalanes en brique pleine et murs en pierre pour Showroom.",
+        reg_3_sup: "OASIS INTÉRIEURE (COBERTA 5 / PATI 1)",
         reg_3_title: "Patio / Terrasse · ~103 m²",
         reg_3_desc: "Ancienne cour au niveau du 1er étage, reliée au RDC par un escalier privé sous verrière et accessible depuis les portes-fenêtres arquées du 1er étage.",
+        target_1_title: "👗 Atelier de Mode, Design & Showroom",
+        target_1_desc: "Showroom au RDC et voûtes en brique du sous-sol ; ateliers créatifs, bureaux et espace nuit adapté (cuisine, buanderie et patio de 103 m²) au 1er étage.",
+        target_2_title: "🏥 Centre Médical, Clinique ou Bien-être",
+        target_2_desc: "Immeuble conforme aux normes d'accessibilité universelle selon l'ITE, ascenseur (130x105 cm), grands espaces cliniques et patio calme.",
+        target_3_title: "💻 Siège Social, Coworking ou Entité Sociale",
+        target_3_desc: "Fibre optique, 3 niveaux distincts pour le travail collaboratif, salles de réunion voûtées et événements d'entreprise en plein air dans le patio.",
+        target_4_title: "🏛️ Investisseur Patrimonial / Changement d'Usage",
+        target_4_desc: "Vendu à usage commercial sans condition suspensive de changement d'usage. Inscriptions historiques périmées (1997/2007) radiées à l'acte.",
+        map_sup: "🌍 GOOGLE EARTH 3D · VOL ORBITAL SILENCIEUX",
+        map_title: "Barcelone · Ciutat Vella · Axe Plaça dels Àngels / Joan Coromines",
         btn_earth_3d: "Vol 3D Google Earth",
         calc_header: "Simulateur de Coûts (ITE/Activité) & Rendement Locatif",
+        calc_badge_sqm: "474 m² Fonc. + 103 m² Patio",
+        calc_select_activity: "1. CHOISISSEZ L'ACTIVITÉ POUR SIMULER L'AMÉNAGEMENT ET LE LOYER :",
+        act_btn_moda: "Atelier Mode",
+        act_btn_medico: "Centre Médical",
+        act_btn_oficina: "Bureaux / Loft",
+        calc_base_price: "Prix d'Acquisition (2 Entités Foncières) :",
+        calc_taxes: "Droits de Mutation Estimés (ITP/AJD ~10%) :",
+        calc_notary: "Notaire, Registre et Gestion (est.) :",
+        calc_custom_title: "🛠️ 2. POSTES D'AMÉNAGEMENT & ITE (100% MODIFIABLES EN DIRECT) :",
+        calc_item_1: "+ Rénovation 1er ét. (334 m² : Tableau élec., clim, suite/cuisine) :",
+        calc_item_2: "+ Traitement capillarité Sous-sol/RDC (140 m²) & Showroom :",
+        calc_item_3: "+ Patio (103 m²), drainage Pati 1 et provision ITE (quote-part 18%) :",
         calc_total_label: "INVESTISSEMENT TOTAL CLÉ EN MAIN :",
-        rent_study_title: "📈 Étude Locative Ciutat Vella",
+        rent_study_title: "📈 Étude Locative à Ciutat Vella",
+        rent_monthly_label: "Loyer Mensuel Estimé (Modifiable) :",
+        rent_annual_label: "REVENUS BRUTS / AN",
+        rent_yield_label: "RENTABILITÉ BRUTE",
+        btn_like_text: "J'aime",
         btn_share_collab: "Partager & Gagner 500€",
-        cta_main_elena: "DEMANDER LES NOTES FONCIÈRES, ITE ET VISITE AVEC ELENA IA"
+        cta_main_elena: "DEMANDER LES NOTES FONCIÈRES, ITE ET VISITE AVEC ELENA IA",
+        footer_services_label: "Services Présentiels à :",
+        footer_legal: "Mentions Légales",
+        footer_privacy: "Confidentialité & RGPD",
+        footer_cookies: "Cookies & IA"
       },
       de: {
-        btn_collab_top: "Empfehlungspartner (500 €)",
         gate_badge: "LEVEL.IMMO EXKLUSIV · DISKRETES OBJEKTPROFIL",
         gate_title: "Einzigartiges Gewerbeobjekt in Ciutat Vella · Achse Àngels",
         gate_subtitle: "Klassisches Gebäude von 1900 nahe Plaça dels Àngels und dem Keith-Haring-Wandbild. 577 m² Nutzfläche (474 m² Grundbuchfläche in 2 verbundenen Einheiten: 1. OG 334 m², EG 37 m² & Gewölbekeller 103 m² + ~103 m² Innenhof/Terrasse). Aufzug. Bedingungsloser Verkauf.",
@@ -1537,27 +1643,78 @@
         gate_security_desc: "Lösen Sie die Aufgabe, um die Wirtschaftlichkeitsberechnung und Grundbuch-/ITE-Daten freizuschalten:",
         gate_math_label: "Was ergibt",
         gate_btn_access: "ÖFFNEN",
+        gate_error_msg: "Falsches Ergebnis. Bitte erneut versuchen.",
         gate_carousel_title: "📸 1:1 Galerie (1080×1080 px) · Fassaden, Bestand & Projektionen",
+        nav_demand: "Aktive Nachfrage",
+        nav_market: "Live-Markt",
         nav_collab: "Partner (500€)",
+        nav_private: "Privater Bereich",
         main_header_title: "Barcelona · Ciutat Vella (Achse Àngels) | Gewerbeimmobilie 3 Ebenen + Innenhof (577 m²)",
         main_status_badge: "2 GRUNDBUCHEINHEITEN + GEPRÜFTE ITE · BEDINGUNGSLOSER VERKAUF",
         kpi_1_label: "KAUFPREIS",
+        kpi_1_sub: "1.351 €/m² Nutzfläche",
         kpi_2_label: "GRUNDBUCHFLÄCHE",
+        kpi_2_sub: "334 1.OG + 37 EG + 103 UG",
         kpi_3_label: "INNENHOF / TERRASSE",
+        kpi_3_sub: "Verbunden mit EG & 1.OG",
         kpi_4_label: "ANTEIL & STATUS",
         kpi_4_val: "18% Gemeinschaft",
+        kpi_4_sub: "Baujahr 1900 · Aufzug",
+        video_header_title: "VERTIKALES VOLLBILDVIDEO (9:16) + 1:1 KARUSSELL",
+        btn_zoom_orig: "Ansicht: Original",
+        video_btn_unblur: "Blur",
         btn_mobile_fs: "Vollbild Mobil",
+        main_carousel_label: "🖼️ 1:1 Galerie (Klicken zum Vergrößern)",
         desc_title: "Bau-, Grundbuchprüfung & Nutzungspotenzial",
+        desc_badge_reg: "Grundbuch BCN Nr. 3 · ITE 2025",
         desc_p1: "Klassisches Gebäude aus dem Jahr 1900 mit 20 Meter breiter Natursteinfassade (Südwestausrichtung), dessen Rückseite direkt an die Plaça de Joan Coromines und das originale Wandgemälde von Keith Haring grenzt.",
+        reg_1_sup: "GRUNDBUCHEINHEIT 1 (15%)",
+        reg_1_title: "1. Obergeschoss · 334 m²",
+        reg_1_desc: "Offene, modulare Fläche mit durchgehendem Straßenbalkon, großen Rundbogenfenstern zum Innenhof, Aufzug und Terrassenzugang. Ideal für Modeatelier, Büros, Klinik oder Suite mit Küche.",
+        reg_2_sup: "GRUNDBUCHEINHEIT 2 (3%)",
+        reg_2_title: "EG (37 m²) + Gewölbekeller (103 m²)",
+        reg_2_desc: "140 m² Grundbuchfläche. Empfang im EG direkt verbunden mit dem 1. OG und einem historischen 103 m² großen Keller mit katalanischem Ziegelgewölbe und Natursteinmauern für Showroom oder Galerie.",
+        reg_3_sup: "INNENHOF-OASE (COBERTA 5 / PATI 1)",
+        reg_3_title: "Innenhof / Terrasse · ~103 m²",
+        reg_3_desc: "Ehemaliger Hof auf Ebene des 1. OG, direkt über eine überdachte Privattreppe mit dem EG verbunden sowie über die Rundbogentüren des 1. OG zugänglich.",
+        target_1_title: "👗 Modeatelier, Design & Showroom",
+        target_1_desc: "Showroom im EG und Gewölbekeller; Kreativwerkstätten, Büros und Suite mit Küche, Wäscherei und 103 m² Terrasse im 1. OG.",
+        target_2_title: "🏥 Ärztehaus, Klinik oder Wellness",
+        target_2_desc: "Barrierefreier Zugang laut ITE-Bericht, Aufzug (130x105 cm), großzügige Praxisräume und ruhiger Innenhof.",
+        target_3_title: "💻 Unternehmenssitz, Coworking oder Stiftung",
+        target_3_desc: "Glasfaser, 3 Ebenen für kollaboratives Arbeiten, Gewölbe-Tagungsräume und Events im privaten Innenhof.",
+        target_4_title: "🏛️ Bestandsinvestor / Nutzungsänderung",
+        target_4_desc: "Verkauf als Gewerbe ohne aufschiebende Bedingung. Veraltete Grundbucheinträge (1997/2007) werden beim Notartermin gelöscht.",
+        map_sup: "🌍 GOOGLE EARTH 3D · LAUTLOSER ORBITALFLUG",
+        map_title: "Barcelona · Ciutat Vella · Achse Plaça dels Àngels / Joan Coromines",
         btn_earth_3d: "3D-Flug Google Earth",
         calc_header: "Investitions- & Mietrendite-Simulator (inkl. ITE)",
+        calc_badge_sqm: "474 m² Grundb. + 103 m² Hof",
+        calc_select_activity: "1. ZIELAKTIVITÄT FÜR UMBAUKOSTEN & MIETRENDITE WÄHLEN:",
+        act_btn_moda: "Modeatelier",
+        act_btn_medico: "Ärztehaus",
+        act_btn_oficina: "Büros / Loft",
+        calc_base_price: "Kaufpreis (2 Grundbucheinheiten):",
+        calc_taxes: "Geschätzte Grunderwerbsteuer (ITP/AJD ~10%):",
+        calc_notary: "Notar, Grundbuch & Abwicklung (gesch.):",
+        calc_custom_title: "🛠️ 2. AUSBAU- & ITE-POSITIONEN (100% LIVE EDITIERBAR):",
+        calc_item_1: "+ Ausbau 1. OG (334 m²: Elektrik, Klima, Suite/Küche):",
+        calc_item_2: "+ Sanierung Feuchtigkeit UG/EG (140 m²) & Showroom:",
+        calc_item_3: "+ Innenhof (103 m²), Entwässerung Pati 1 & ITE-Anteil (18%):",
         calc_total_label: "GESAMTINVESTITION SCHLÜSSELFERTIG:",
         rent_study_title: "📈 Mietmarktstudie Ciutat Vella",
+        rent_monthly_label: "Geschätzte Monatsmiete (Editierbar):",
+        rent_annual_label: "BRUTTOJAHRESMIETE",
+        rent_yield_label: "BRUTTORENDITE",
+        btn_like_text: "Gefällt mir",
         btn_share_collab: "Teilen & 500€ erhalten",
-        cta_main_elena: "GRUNDBUCH, ITE & BESICHTIGUNG MIT ELENA KI ANFORDERN"
+        cta_main_elena: "GRUNDBUCH, ITE & BESICHTIGUNG MIT ELENA KI ANFORDERN",
+        footer_services_label: "Vor-Ort-Service in:",
+        footer_legal: "Impressum",
+        footer_privacy: "Datenschutz & DSGVO",
+        footer_cookies: "Cookies & KI"
       },
       it: {
-        btn_collab_top: "Collaboratore Simpatizzante (500 €)",
         gate_badge: "ESCLUSIVA LEVEL.IMMO · SCHEDA CONFIDENZIALE",
         gate_title: "Immobile Commerciale Unico a Ciutat Vella · Asse Àngels",
         gate_subtitle: "Palazzo storico del 1900 vicino a Plaça dels Àngels e al murale di Keith Haring. 577 m² operativi (474 m² catastali in 2 unità collegate: 1° Piano 334 m², Piano Terra 37 m² e Cantina a volte 103 m² + ~103 m² di Patio/Terrazza). Ascensore. Vendita senza condizioni sospensive.",
@@ -1565,27 +1722,78 @@
         gate_security_desc: "Risolvi la somma per sbloccare lo studio economico e i dati catastali/ITE nella tua lingua:",
         gate_math_label: "Quanto fa",
         gate_btn_access: "ACCEDI",
+        gate_error_msg: "Risultato errato. Riprova.",
         gate_carousel_title: "📸 Galleria 1:1 (1080×1080 px) · Facciate, Interni e Proiezioni",
+        nav_demand: "Domanda Attiva",
+        nav_market: "Mercato Reale",
         nav_collab: "Collaboratori (500€)",
+        nav_private: "Area Privata",
         main_header_title: "Barcellona · Ciutat Vella (Asse Àngels) | Immobile Commerciale 3 Livelli + Patio (577 m²)",
         main_status_badge: "2 UNITÀ CATASTALI + ITE CERTIFICATA · VENDITA SENZA CONDIZIONI",
         kpi_1_label: "PREZZO DI VENDITA",
+        kpi_1_sub: "1.351 €/m² operativo",
         kpi_2_label: "SUP. CATASTALE",
+        kpi_2_sub: "334 P1 + 37 PT + 103 Sem.",
         kpi_3_label: "PATIO / TERRAZZA",
+        kpi_3_sub: "Collegato a PT e P1",
         kpi_4_label: "QUOTA E STATO",
         kpi_4_val: "18% Condominio",
+        kpi_4_sub: "Palazzo 1900 · Ascensore",
+        video_header_title: "VIDEO VERTICALE SCHERMO INTERO (9:16) + CAROSELLO 1:1",
+        btn_zoom_orig: "Inquadratura: Originale",
+        video_btn_unblur: "Sfoca",
         btn_mobile_fs: "Schermo Intero Mobile",
+        main_carousel_label: "🖼️ Galleria 1:1 (Clicca su una foto per ingrandire)",
         desc_title: "Audit Fisico, Ipotecario e Potenziale di Sviluppo",
+        desc_badge_reg: "Registro BCN N° 3 · ITE 2025",
         desc_p1: "Inserito in un edificio classico del 1900 con facciata di 20 metri in pietra naturale e grandi archi a tutto sesto, il cui lato posteriore confina direttamente con Plaça de Joan Coromines e lo storico murale di Keith Haring.",
+        reg_1_sup: "UNITÀ CATASTALE 1 (15%)",
+        reg_1_title: "Primo Piano · 334 m²",
+        reg_1_desc: "Piano open-space modulare con balconata su strada, grandi finestre ad arco sul patio, ascensore e accesso alla terrazza. Ideale per atelier di moda, uffici, clinica o suite con cucina.",
+        reg_2_sup: "UNITÀ CATASTALE 2 (3%)",
+        reg_2_title: "PT (37 m²) + Cantina (103 m²)",
+        reg_2_desc: "140 m² catastali. Reception commerciale su strada collegata direttamente al 1° piano e a una spettacolare cantina storica di 103 m² con volte catalane in mattoni e muri in pietra per Showroom.",
+        reg_3_sup: "OASI INTERNA (COBERTA 5 / PATI 1)",
+        reg_3_title: "Patio / Terrazza · ~103 m²",
+        reg_3_desc: "Ex cortile al livello del 1° piano, collegato direttamente al Piano Terra tramite scala privata coperta da lucernario e accessibile dalle porte-finestre ad arco del Primo Piano.",
+        target_1_title: "👗 Atelier di Moda, Design & Showroom",
+        target_1_desc: "Showroom al PT e volte in mattoni al piano inferiore; laboratori, uffici e zona notte attrezzata (cucina, lavanderia e patio di 103 m²) al 1° Piano.",
+        target_2_title: "🏥 Centro Medico, Clinica o Benessere",
+        target_2_desc: "Edificio conforme ai requisiti di accessibilità universale secondo ITE, ascensore (130x105 cm), ampi spazi clinici e patio silenzioso.",
+        target_3_title: "💻 Sede Aziendale, Coworking o Ente Sociale",
+        target_3_desc: "Fibra ottica, 3 livelli distinti per lavoro collaborativo, sale riunioni a volta ed eventi aziendali all'aperto nel patio privato.",
+        target_4_title: "🏛️ Investitore Patrimoniale / Cambio d'Uso",
+        target_4_desc: "Venduto ad uso commerciale senza condizione sospensiva di cambio d'uso. Iscrizioni storiche prescritte (1997/2007) cancellate al rogito.",
+        map_sup: "🌍 GOOGLE EARTH 3D · VOLO ORBITALE SILENZIOSO",
+        map_title: "Barcellona · Ciutat Vella · Asse Plaça dels Àngels / Joan Coromines",
         btn_earth_3d: "Volo 3D Google Earth",
         calc_header: "Simulatore Costi (ITE/Attività) e Rendimento",
+        calc_badge_sqm: "474 m² Cat. + 103 m² Patio",
+        calc_select_activity: "1. SCEGLI L'ATTIVITÀ PER SIMULARE ADEGUAMENTO E CANONE DI MERCATO:",
+        act_btn_moda: "Atelier Moda",
+        act_btn_medico: "Centro Medico",
+        act_btn_oficina: "Uffici / Loft",
+        calc_base_price: "Prezzo di Acquisto (2 Unità Catastali):",
+        calc_taxes: "Imposte Stimate (ITP/AJD ~10%):",
+        calc_notary: "Notaio, Registro e Pratiche (stim.):",
+        calc_custom_title: "🛠️ 2. VOCI DI ADEGUAMENTO E ITE (100% MODIFICABILI DAL VIVO):",
+        calc_item_1: "+ Ristrutturazione P1 (334 m²: Quadro elettrico, clima, suite/cucina):",
+        calc_item_2: "+ Trattamento risalita Semint./PT (140 m²) e Showroom:",
+        calc_item_3: "+ Patio (103 m²), drenaggio Pati 1 e quota ITE (18%):",
         calc_total_label: "TOTALE INVESTIMENTO CHIAVI IN MANO:",
-        rent_study_title: "📈 Studio Locativo Ciutat Vella",
+        rent_study_title: "📈 Studio Locativo a Ciutat Vella",
+        rent_monthly_label: "Canone Mensile Stimato (Modificabile):",
+        rent_annual_label: "RICAVI LORDI / ANNO",
+        rent_yield_label: "RENDIMENTO LORDO",
+        btn_like_text: "Mi Piace",
         btn_share_collab: "Condividi e Ricevi 500€",
-        cta_main_elena: "RICHIEDI VISURE, ITE E VISITA CON ELENA IA"
+        cta_main_elena: "RICHIEDI VISURE, ITE E VISITA CON ELENA IA",
+        footer_services_label: "Servizi in Sede a:",
+        footer_legal: "Note Legali",
+        footer_privacy: "Privacy e GDPR",
+        footer_cookies: "Cookie e IA"
       },
       ar: {
-        btn_collab_top: "شريك متعاون (500€)",
         gate_badge: "حصرياً لدى LEVEL.IMMO · ملف استثماري سري",
         gate_title: "أصل تجاري فريد في سيوتات فيلا (برشلونة) · محور أنخيلز",
         gate_subtitle: "مبنى تاريخي من عام 1900 بجوار ساحة أنخيلز وجدارية كيث هارينغ. إجمالي المساحة التشغيلية 577 م² (474 م² مسجلة في السجل العقاري موزعة على الطابق الأول 334 م²، الطابق الأرضي 37 م² وقبو تاريخي مقبب 103 م² + فناء وتراس خاص ~103 م²). مصعد متوفر. بيع بدون شروط معلقة.",
@@ -1593,27 +1801,78 @@
         gate_security_desc: "أجب عن المعادلة لفتح الدراسة المالية وبيانات السجل العقاري بلغتك المختارة:",
         gate_math_label: "كم يساوي",
         gate_btn_access: "دخول",
+        gate_error_msg: "النتيجة غير صحيحة. حاول مرة أخرى.",
         gate_carousel_title: "📸 معرض 1:1 (1080×1080) · الواجهات والوضع الحالي والتصورات",
+        nav_demand: "الطلب النشط",
+        nav_market: "السوق المباشر",
         nav_collab: "المتعاونون (500€)",
+        nav_private: "المنطقة الخاصة",
         main_header_title: "برشلونة · سيوتات فيلا | عقار تجاري من 3 طوابق مع فناء خاص (577 م²)",
         main_status_badge: "وحدتان عقاريتان مسجلتان + تقرير فني ITE · بيع غير مشروط",
         kpi_1_label: "سعر البيع",
+        kpi_1_sub: "1,351 €/م² تشغيلي",
         kpi_2_label: "المساحة المسجلة",
+        kpi_2_sub: "334 ط1 + 37 أرضي + 103 قبو",
         kpi_3_label: "الفناء / التراس",
+        kpi_3_sub: "متصل بالأرضي والطابق 1",
         kpi_4_label: "الحصة والحالة",
         kpi_4_val: "18% من المبنى",
+        kpi_4_sub: "مبنى 1900 · مصعد",
+        video_header_title: "فيديو عمودي كامل (9:16) + معرض 1:1",
+        btn_zoom_orig: "الإطار: الأصلي",
+        video_btn_unblur: "تمويه",
         btn_mobile_fs: "ملء الشاشة للهاتف",
+        main_carousel_label: "🖼️ معرض 1:1 (اضغط على أي صورة للتكبير)",
         desc_title: "التدقيق الفني والعقاري وإمكانات الاستثمار",
+        desc_badge_reg: "سجل برشلونة رقم 3 · ITE 2025",
         desc_p1: "يقع في مبنى كلاسيكي يعود لعام 1900 بواجهة حجرية بعرض 20 متراً، وتطل واجهته الخلفية مباشرة على ساحة جوان كورومينيس وجدارية كيث هارينغ الشهيرة في قلب المنطقة الثقافية ببرشلونة.",
+        reg_1_sup: "الوحدة العقارية 1 (15%)",
+        reg_1_title: "الطابق الأول · 334 م²",
+        reg_1_desc: "مساحة مفتوحة قابلة للتقسيم مع شرفة ممتدة ونوافذ مقوسة كبيرة تطل على الفناء الداخلي ومصعد. مثالية لدار أزياء أو مكاتب أو عيادات طبية أو جناح تنفيذي.",
+        reg_2_sup: "الوحدة العقارية 2 (3%)",
+        reg_2_title: "الطابق الأرضي (37 م²) + القبو (103 م²)",
+        reg_2_desc: "140 م² مسجلة. استقبال تجاري متصل مباشرة بالطابق الأول وبقبو تاريخي مذهل مساحته 103 م² ذو عقود قرميدية كتالونية وجدران حجرية لصالة عرض.",
+        reg_3_sup: "واحة داخلية (COBERTA 5 / PATI 1)",
+        reg_3_title: "فناء / تراس · ~103 م²",
+        reg_3_desc: "فناء خاص في مستوى الطابق الأول متصل مباشرة بالطابق الأرضي عبر درج خاص مغطى بكوة ضوئية.",
+        target_1_title: "👗 دار أزياء وتصميم وصالة عرض (Showroom)",
+        target_1_desc: "صالة عرض في الطابق الأرضي والقبو المقبب؛ وورش تصميم ومكاتب وجناح إقامة مع مطبخ وفناء 103 م² في الطابق الأول.",
+        target_2_title: "🏥 مركز طبي أو عيادة تجميل وعافية",
+        target_2_desc: "المبنى يستوفي شروط الوصول الشامل وفق تقرير ITE، مع مصعد ومساحات واسعة للعيادات وفناء هادئ.",
+        target_3_title: "💻 مقر شركة أو مساحة عمل مشتركة",
+        target_3_desc: "ألياف بصرية، 3 مستويات متميزة للعمل الجماعي وقاعات اجتماعات مقببة وفناء للفعاليات.",
+        target_4_title: "🏛️ مستثمر عقاري / إمكانية تغيير الاستخدام",
+        target_4_desc: "يباع كعقار تجاري بدون شرط معلق لتغيير الاستخدام، خالٍ من أي أعباء مالية.",
+        map_sup: "🌍 جولة ثلاثية الأبعاد عبر GOOGLE EARTH",
+        map_title: "برشلونة · سيوتات فيلا · محور ساحة أنخيلز / جوان كورومينيس",
         btn_earth_3d: "جولة ثلاثية الأبعاد Google Earth",
         calc_header: "محاكي التكاليف والعائد الإيجاري",
+        calc_badge_sqm: "474 م² مسجل + 103 م² فناء",
+        calc_select_activity: "1. اختر النشاط لمحاكاة تكاليف التجهيز والإيجار المتوقع:",
+        act_btn_moda: "دار أزياء",
+        act_btn_medico: "مركز طبي",
+        act_btn_oficina: "مكاتب / لوفت",
+        calc_base_price: "سعر الشراء (وحدتان عقاريتان):",
+        calc_taxes: "الضرائب المقدرة (ITP/AJD ~10%):",
+        calc_notary: "التوثيق والسجل العقاري (تقديري):",
+        calc_custom_title: "🛠️ 2. بنود التجهيز وتقرير ITE (قابلة للتعديل المباشر):",
+        calc_item_1: "+ تجهيز الطابق الأول (334 م²: كهرباء، تكييف، جناح/مطبخ):",
+        calc_item_2: "+ معالجة الرطوبة في القبو/الأرضي (140 م²) وصالة العرض:",
+        calc_item_3: "+ الفناء (103 م²)، تصريف المياه وحصة ITE (18%):",
         calc_total_label: "إجمالي الاستثمار الفعلي:",
         rent_study_title: "📈 دراسة سوق الإيجار في سيوتات فيلا",
+        rent_monthly_label: "الإيجار الشهري المقدر (قابل للتعديل):",
+        rent_annual_label: "الدخل السنوي الإجمالي",
+        rent_yield_label: "العائد الإجمالي",
+        btn_like_text: "أعجبني",
         btn_share_collab: "شارك واحصل على 500€",
-        cta_main_elena: "طلب الوثائق الرسمية وتحديد موعد مع المستشارة الذكية ELENA"
+        cta_main_elena: "طلب الوثائق الرسمية وتحديد موعد مع المستشارة الذكية ELENA",
+        footer_services_label: "خدماتنا المباشرة في:",
+        footer_legal: "إشعار قانوني",
+        footer_privacy: "الخصوصية و RGPD",
+        footer_cookies: "ملفات تعريف الارتباط والذكاء الاصطناعي"
       },
       zh: {
-        btn_collab_top: "合作伙伴 (500 €)",
         gate_badge: "LEVEL.IMMO 独家 · 保密资产档案",
         gate_title: "巴塞罗那老城区 (Ciutat Vella · Àngels) 稀缺商业资产",
         gate_subtitle: "1900年经典历史建筑，毗邻 Àngels 广场与 Keith Haring 原作壁画。总实用面积 577 m²（产权登记面积 474 m²，含二层 334 m²、首层 37 m² 及 103 m² 拱顶地下展厅 + 约 103 m² 私属庭院露台）。配电梯及无障碍通行。无条件现状出售。",
@@ -1621,24 +1880,76 @@
         gate_security_desc: "请完成计算以所选语言解锁财务测算、产权登记及 ITE 建筑报告：",
         gate_math_label: "请计算",
         gate_btn_access: "进入",
+        gate_error_msg: "计算结果有误，请重试。",
         gate_carousel_title: "📸 1:1 图集 (1080×1080 px) · 历史立面、现状与改造方案",
+        nav_demand: "活跃需求",
+        nav_market: "实时市场",
         nav_collab: "合作伙伴 (500€)",
+        nav_private: "私享专区",
         main_header_title: "巴塞罗那 · 老城区核心轴线 | 3层独栋商业空间 + 私属庭院 (总实用 577 m²)",
         main_status_badge: "2项独立产权登记 + ITE建筑审定 · 无条件出售",
         kpi_1_label: "出售价格",
+        kpi_1_sub: "1,351 €/m² 实用单价",
         kpi_2_label: "产权登记面积",
+        kpi_2_sub: "334 二层 + 37 首层 + 103 地下",
         kpi_3_label: "私属庭院 / 露台",
+        kpi_3_sub: "连通首层与二层",
         kpi_4_label: "共有份额与状态",
         kpi_4_val: "18% 业委会份额",
+        kpi_4_sub: "1900年建筑 · 配电梯",
+        video_header_title: "全屏竖屏视频 (9:16) + 1:1 方形图集",
+        btn_zoom_orig: "画面比例：原始",
+        video_btn_unblur: "模糊切换",
         btn_mobile_fs: "手机全屏播放",
+        main_carousel_label: "🖼️ 1:1 图集（点击任意图片放大预览）",
         desc_title: "建筑物理、产权审计与商业运营潜力",
+        desc_badge_reg: "巴塞罗那3号产权局 · ITE 2025",
         desc_p1: "坐落于1900年古典建筑内，主立面宽20米并饰有天然石材拱门（西南朝向），后立面紧邻 Joan Coromines 广场及著名的 Keith Haring 历史壁画，地处老城区当代艺术核心区。",
+        reg_1_sup: "产权实体 1（份额 15%）",
+        reg_1_title: "二层空间 (Planta Primera) · 334 m²",
+        reg_1_desc: "模块化开敞空间，带临街长阳台、朝向内院的拱形落地窗、社区电梯及露台入口。适合高定工坊、企业总部、诊所或带厨房洗衣房的高管套房。",
+        reg_2_sup: "产权实体 2（份额 3%）",
+        reg_2_title: "首层 (37 m²) + 拱顶地下层 (103 m²)",
+        reg_2_desc: "登记面积 140 m²。临街接待区直通二层及 103 m² 传统加泰罗尼亚红砖拱顶与石墙展厅，极适合品牌 Showroom 或艺术画廊。",
+        reg_3_sup: "中心绿洲庭院 (COBERTA 5 / PATI 1)",
+        reg_3_title: "私属庭院 / 露台 · ~103 m²",
+        reg_3_desc: "位于二层高度的原幼儿园庭院，通过带采光天窗的专属室内楼梯与首层直接连通，并可从二层拱门直接步出。",
+        target_1_title: "👗 时尚高定工坊、设计室与品牌 Showroom",
+        target_1_desc: "首层与红砖拱顶地下室作展厅；二层设工坊、办公室及高管休息区（含厨房、洗衣房与103 m²私属庭院）。",
+        target_2_title: "🏥 医疗中心、医美诊所或康养机构",
+        target_2_desc: "ITE报告认证符合无障碍通行标准，配备电梯（130x105 cm），诊室空间充裕且享静谧庭院。",
+        target_3_title: "💻 企业总部、共享办公或文化公益机构",
+        target_3_desc: "光纤入户，三层立体协同办公空间、拱顶会议室及103 m²户外活动露台。",
+        target_4_title: "🏛️ 家族财富配置 / 未来用途变更潜力",
+        target_4_desc: "按商业现状无条件出售。历史已结清登记项（1997/2007）将于公证过户时同步注销。",
+        map_sup: "🌍 GOOGLE EARTH 3D · 静默卫星航拍",
+        map_title: "巴塞罗那 · 老城区 · Plaça dels Àngels / Joan Coromines 核心轴",
         btn_earth_3d: "Google Earth 3D 航拍",
         calc_header: "改造预算 (含ITE项目) 与租金回报模拟器",
+        calc_badge_sqm: "474 m² 产权 + 103 m² 庭院",
+        calc_select_activity: "1. 选择目标业态以模拟改造投入与市场租金：",
+        act_btn_moda: "高定工坊",
+        act_btn_medico: "医疗诊所",
+        act_btn_oficina: "办公 / Loft",
+        calc_base_price: "资产收购价（含2项独立产权）：",
+        calc_taxes: "预计交易税费 (ITP/AJD ~10%)：",
+        calc_notary: "公证、产权登记及代办费（预估）：",
+        calc_custom_title: "🛠️ 2. 室内改造与 ITE 维护预算（100% 实时可编辑）：",
+        calc_item_1: "+ 二层改造 (334 m²：配电箱升级、空调、高管套房/厨房)：",
+        calc_item_2: "+ 地下层/首层防潮处理 (140 m²) 及 Showroom 装修：",
+        calc_item_3: "+ 庭院美化 (103 m²)、天窗排水及 ITE 公区 18% 份额预留：",
         calc_total_label: "总投资成本合计：",
         rent_study_title: "📈 老城区商业租金回报测算",
+        rent_monthly_label: "预计月租金收入（可编辑）：",
+        rent_annual_label: "年毛租金收入",
+        rent_yield_label: "毛租金回报率",
+        btn_like_text: "收藏",
         btn_share_collab: "分享并赢取 500€ 礼金卡",
-        cta_main_elena: "向 ELENA AI 索取产权摘录、ITE 报告并预约看房"
+        cta_main_elena: "向 ELENA AI 索取产权摘录、ITE 报告并预约看房",
+        footer_services_label: "线下服务覆盖城市：",
+        footer_legal: "法律声明",
+        footer_privacy: "隐私与 GDPR",
+        footer_cookies: "Cookie 与 AI 声明"
       }
     };
 
