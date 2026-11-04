@@ -103,16 +103,16 @@
 </head>
 <body class="min-h-screen flex flex-col justify-between">
 
-  <!-- ================= VISOR DE FOTOS LIGHTBOX (COLOCADO EN RAÍZ PARA CIERRE INSTANTÁNEO CON 1 CLIC) ================= -->
+  <!-- ================= VISOR DE FOTOS LIGHTBOX (RAÍZ PARA CIERRE INSTANTÁNEO CON 1 CLIC) ================= -->
   <div id="lightbox-modal" onclick="closeLightbox()">
-    <div class="w-full max-w-lg flex items-center justify-between mb-3 pointer-events-none">
-      <span id="lightbox-counter" class="px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-mono font-bold text-emerald-400">1 / 11</span>
+    <div class="w-full max-w-2xl flex items-center justify-between mb-3 pointer-events-none">
+      <span id="lightbox-counter" class="px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-mono font-bold text-emerald-400">1 / 12</span>
       <span class="px-4 py-2 rounded-xl bg-rose-600 text-white text-xs font-black uppercase tracking-wider shadow-2xl border border-white/30">
         ✕ <span data-i18n="btn_close_lb">Haz clic para cerrar</span>
       </span>
     </div>
-    <img id="lightbox-img" src="" alt="Vista Ampliada" class="max-w-[90vw] sm:max-w-lg max-h-[62vh] object-contain rounded-2xl border-2 border-slate-700 bg-black shadow-2xl pointer-events-none" />
-    <div id="lightbox-caption" class="w-full max-w-lg mt-3 px-4 py-3 rounded-xl bg-[#101826] text-amber-400 text-xs sm:text-sm font-extrabold text-center border border-amber-500/40 shadow-2xl pointer-events-none"></div>
+    <img id="lightbox-img" src="" alt="Vista Ampliada" class="max-w-[92vw] sm:max-w-2xl max-h-[68vh] object-contain rounded-2xl border-2 border-slate-700 bg-black shadow-2xl pointer-events-none" />
+    <div id="lightbox-caption" class="w-full max-w-2xl mt-3 px-4 py-3 rounded-xl bg-[#101826] text-amber-400 text-xs sm:text-sm font-extrabold text-center border border-amber-500/40 shadow-2xl pointer-events-none"></div>
   </div>
 
   <!-- ================= PANTALLA 1: PORTADA WELCOME ================= -->
@@ -221,7 +221,7 @@
           <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 -ml-1.5 mt-2"></span>
           <span>Level.immo</span>
         </a>
-        <span class="text-xs text-emerald-400 font-mono hidden md:inline" id="live-clock">04/11/2026 | 03:36:00</span>
+        <span class="text-xs text-emerald-400 font-mono hidden md:inline" id="live-clock">04/11/2026 | 17:00:00</span>
       </div>
 
       <nav class="flex flex-wrap items-center gap-1.5 sm:gap-2 text-xs font-semibold">
@@ -411,6 +411,7 @@
           </div>
         </div>
 
+        <!-- Módulo Google Earth 3D + Botón Map + Imagen Panorámica Limpia "activo-angels-map.jpg" -->
         <div class="card-panel p-5 sm:p-6 space-y-4">
           <div class="flex flex-wrap items-center justify-between gap-3">
             <div>
@@ -421,30 +422,35 @@
                 Barcelona · Ciutat Vella · Eje Plaça dels Àngels / Joan Coromines
               </h3>
             </div>
-            <div class="flex items-center gap-2">
+            <div class="flex items-center gap-2 flex-wrap">
               <span class="text-xs font-mono text-slate-400 bg-[#0b111a] px-2.5 py-1.5 rounded border border-slate-800" translate="no">
                 41.382736, 2.165658
               </span>
               <a href="https://earth.google.com/web/@41.382736,2.165658,45a,280d,35y,0h,60t,0r" target="_blank" rel="noopener noreferrer" class="px-3.5 py-1.5 rounded-lg bg-sky-500/20 hover:bg-sky-500/30 border border-sky-500/40 text-sky-300 text-xs font-extrabold transition flex items-center gap-1.5">
                 <span>🌍</span> <span data-i18n="btn_earth_3d">Vuelo 3D Google Earth</span>
               </a>
+              <a href="https://www.google.com/maps/search/?api=1&query=41.382736,2.165658" target="_blank" rel="noopener noreferrer" class="px-3.5 py-1.5 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/40 text-emerald-300 text-xs font-extrabold transition flex items-center gap-1.5">
+                <span>🗺️</span> <span data-i18n="btn_map">Map</span>
+              </a>
             </div>
           </div>
 
-          <div class="w-full h-72 rounded-xl overflow-hidden border border-slate-800 relative bg-slate-950">
-            <iframe
-              class="w-full h-full border-0"
-              loading="lazy"
-              allowfullscreen
-              referrerpolicy="no-referrer-when-downgrade"
-              src="https://maps.google.com/maps?ll=41.382736,2.165658&z=19&t=k&hl=es&output=embed">
-            </iframe>
+          <div onclick="openCustomImageLightbox('activo-angels-map.jpg')" class="w-full rounded-xl overflow-hidden border border-slate-800 hover:border-emerald-500/60 transition relative bg-slate-950 cursor-pointer group">
+            <img
+              src="activo-angels-map.jpg"
+              onerror="if(!this.dataset.triedPng){this.dataset.triedPng='1';this.src='activo-angels-map.png';}else if(!this.dataset.triedCdn){this.dataset.triedCdn='1';this.src='https://level-i.github.io/barcelona/ciutat-vella/activo-angels/activo-angels-map.jpg';}"
+              alt="Barcelona · Ciutat Vella · Activo Àngels Map"
+              class="w-full h-auto max-h-96 object-cover group-hover:scale-[1.02] transition duration-300"
+            />
+            <div class="absolute bottom-3 right-3 bg-slate-950/85 backdrop-blur px-3 py-1.5 rounded-lg border border-slate-700 text-[11px] font-bold text-emerald-400 flex items-center gap-1.5 shadow-lg">
+              <span>🔍</span> <span data-i18n="map_zoom_hint">Pulsa para ampliar el mapa</span>
+            </div>
           </div>
         </div>
 
       </div>
 
-      <!-- COLUMNA DERECHA (5 Cols): SIMULADOR "MATRÍCULA DE HONOR" (€/M²) + TABLA ROI APALANCADO "HONORIS CAUSA" -->
+      <!-- COLUMNA DERECHA (5 Cols): SIMULADOR + TABLA ROI -->
       <div class="lg:col-span-5 space-y-6 lg:sticky lg:top-20">
 
         <div class="card-panel p-5 sm:p-6 border-slate-700/90 shadow-2xl space-y-5">
@@ -797,7 +803,7 @@
     </div>
   </div>
 
-  <!-- ================= MODAL ELENA IA (100% MULTILINGÜE) ================= -->
+  <!-- ================= MODAL ELENA IA ================= -->
   <div id="elena-modal" class="fixed inset-0 z-[60] bg-slate-950/85 backdrop-blur-md hidden items-center justify-center p-4">
     <div class="card-panel max-w-lg w-full overflow-hidden border-slate-700 shadow-2xl bg-[#101826]">
       
@@ -817,7 +823,6 @@
 
       <div class="p-5 max-h-[80vh] overflow-y-auto space-y-4">
 
-        <!-- PASO 0 -->
         <div id="elena-step-0" class="space-y-4">
           <div class="p-4 rounded-xl bg-[#162032] border border-slate-700/80 space-y-3">
             <div class="text-xs font-bold text-amber-400 flex items-center gap-1.5">
@@ -851,7 +856,6 @@
           </div>
         </div>
 
-        <!-- PASO 1 -->
         <div id="elena-step-1" class="space-y-4 hidden">
           <div class="p-4 rounded-xl bg-[#182334] border border-slate-700 text-xs text-slate-200 space-y-2 leading-relaxed">
             <p data-i18n="elena_greet_1">
@@ -878,7 +882,6 @@
           </div>
         </div>
 
-        <!-- PASO 2 -->
         <div id="elena-step-2" class="space-y-4 hidden">
           <div class="flex justify-end">
             <div id="user-selected-use-bubble" class="bg-emerald-500 text-slate-950 font-bold text-xs px-3.5 py-2 rounded-xl max-w-xs"></div>
@@ -906,7 +909,6 @@
           </div>
         </div>
 
-        <!-- PASO 3 -->
         <div id="elena-step-3" class="space-y-4 hidden">
           <div class="flex justify-end">
             <div id="user-selected-fin-bubble" class="bg-emerald-500 text-slate-950 font-bold text-xs px-3.5 py-2 rounded-xl max-w-xs"></div>
@@ -959,7 +961,6 @@
           </div>
         </div>
 
-        <!-- PASO 4 -->
         <div id="elena-step-4" class="space-y-4 hidden">
           <div class="p-4 rounded-xl bg-emerald-500/15 border border-emerald-500/40 text-xs text-slate-200 space-y-2">
             <div class="text-sm font-extrabold text-emerald-400" data-i18n="elena_step4_title">✅ ¡Expediente prioritario registrado con éxito!</div>
@@ -985,7 +986,7 @@
     </div>
   </div>
 
-  <!-- ================= FOOTER CORPORATIVO ================= -->
+  <!-- ================= FOOTER ================= -->
   <footer class="border-t border-slate-800/80 bg-[#060a10] px-4 lg:px-8 py-6 mt-12">
     <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-xs text-slate-400">
       <div class="space-y-1">
@@ -1005,10 +1006,21 @@
     </div>
   </footer>
 
-  <!-- ================= LÓGICA JAVASCRIPT INTEGRAL ================= -->
+  <!-- ================= LÓGICA JAVASCRIPT ================= -->
   <script>
     const GITHUB_CDN = "https://level-i.github.io/barcelona/ciutat-vella/activo-angels/";
     let currentLang = "es";
+
+    const annualUnitByLang = {
+      es: "/ año",
+      ca: "/ any",
+      en: "/ year",
+      fr: "/ an",
+      de: "/ Jahr",
+      it: "/ anno",
+      ar: "/ سنة",
+      zh: "/ 年"
+    };
 
     const galleryItems = [
       {
@@ -1153,6 +1165,19 @@
           ar: "الطابق الأول (334 m²) · القاعات والقواطع الخفيفة",
           zh: "二层空间 (334 m²) · 轻质隔断空间（易于打通改造）"
         }
+      },
+      {
+        file: "activo-angels-map.jpg",
+        captions: {
+          es: "Ubicación Aérea · Eje Plaça dels Àngels / Joan Coromines (Ciutat Vella)",
+          ca: "Ubicació Aèria · Eix Plaça dels Àngels / Joan Coromines (Ciutat Vella)",
+          en: "Aerial Location · Plaça dels Àngels / Joan Coromines Axis (Ciutat Vella)",
+          fr: "Vue Aérienne · Axe Plaça dels Àngels / Joan Coromines (Ciutat Vella)",
+          de: "Luftbild · Achse Plaça dels Àngels / Joan Coromines (Ciutat Vella)",
+          it: "Vista Aerea · Asse Plaça dels Àngels / Joan Coromines (Ciutat Vella)",
+          ar: "الموقع الجوي · محور ساحة أنخيلز / جوان كورومينيس",
+          zh: "航拍区位图 · Plaça dels Àngels / Joan Coromines 核心轴线"
+        }
       }
     ];
 
@@ -1192,7 +1217,7 @@
       if (el) el.scrollBy({ left: offset, behavior: 'smooth' });
     }
 
-    // FUNCIONES LIGHTBOX: 1 CLIC ABRE, 1 CLIC EN CUALQUIER PARTE CIERRA
+    // LIGHTBOX BLINDADO INFALIBLE
     function openLightboxByIndex(idx) {
       const item = galleryItems[idx];
       if (!item) return;
@@ -1205,6 +1230,13 @@
       document.getElementById('lightbox-caption').textContent = cap;
       document.getElementById('lightbox-counter').textContent = `${idx + 1} / ${galleryItems.length}`;
       modal.classList.add('is-open');
+    }
+
+    function openCustomImageLightbox(filename) {
+      const idx = galleryItems.findIndex(item => item.file === filename);
+      if (idx !== -1) {
+        openLightboxByIndex(idx);
+      }
     }
 
     function closeLightbox() {
@@ -1375,12 +1407,13 @@
       const yieldPct = totalInv > 0 ? ((annualRent / totalInv) * 100).toFixed(2) : "0.00";
 
       const fmt = n => Math.round(n).toLocaleString('es-ES');
+      const unitYr = annualUnitByLang[currentLang] || "/ año";
+
       document.getElementById('total-investment-display').textContent = `${fmt(totalInv)} €`;
       document.getElementById('cost-per-m2-label').textContent = `${fmt(perOperativeSqm)} € / m²`;
-      document.getElementById('annual-rent-display').textContent = `${fmt(annualRent)} € / año`;
+      document.getElementById('annual-rent-display').textContent = `${fmt(annualRent)} € ${unitYr}`;
       document.getElementById('gross-yield-display').textContent = `${yieldPct.replace('.', ',')} %`;
 
-      // Cálculo de la Tabla de ROI según Capital Financiado (0%, 30%, 50%, 70% LTV sobre Precio de Compra 780.000 €)
       const annualRate = (parseFloat(document.getElementById('loan-rate').value) || 0) / 100;
       const years = parseFloat(document.getElementById('loan-years').value) || 15;
       const monthlyRate = annualRate / 12;
@@ -1626,7 +1659,7 @@
         reg_1_title: "Planta Primera · 334 m²",
         reg_1_desc: "Planta diáfana modular con balconada corrida a calle, grandes ventanales en arco de medio punto hacia el patio interior, ascensor comunitario y acceso a terraza. Ideal para ateliers, despachos, consultas médicas o suite ejecutiva con cocina y lavandería.",
         reg_2_sup: "ENTIDAD REGISTRAL 2 (3%)",
-        reg_2_title: "PB (37 m²) + Sótano (103 m²)",
+        reg_2_title: "PB (37 m²) + Sótano (103 m²)</div>",
         reg_2_desc: "140 m² registrales. Recepción comercial a pie de calle y vestíbulo conectada directamente (sin pasar por entresuelo) con la planta primera y con una espectacular bodega histórica de 103 m² con bóvedas catalanas de ladrillo macizo y muros de piedra para Showroom o Galería.",
         reg_3_sup: "OASIS INTERIOR (COBERTA 5 / PATI 1)",
         reg_3_title: "Patio / Terraza · ~103 m²",
@@ -1642,6 +1675,8 @@
         map_sup: "🌍 GOOGLE EARTH 3D · VUELO ORBITAL SILENCIOSO",
         map_title: "Barcelona · Ciutat Vella · Eje Plaça dels Àngels / Joan Coromines",
         btn_earth_3d: "Vuelo 3D Google Earth",
+        btn_map: "Map",
+        map_zoom_hint: "Pulsa para ampliar el mapa",
         calc_header: "Simulador de Costes, €/m² & ROI Financiero",
         calc_badge_sqm: "474 m² Reg. + 103 m² Patio",
         calc_select_activity: "1. ELIGE LA ACTIVIDAD PARA SIMULAR ADECUACIÓN Y RENTA DE MERCADO:",
@@ -1780,6 +1815,8 @@
         map_sup: "🌍 GOOGLE EARTH 3D · VOL ORBITAL SILENCIÓS",
         map_title: "Barcelona · Ciutat Vella · Eix Plaça dels Àngels / Joan Coromines",
         btn_earth_3d: "Vol 3D Google Earth",
+        btn_map: "Map",
+        map_zoom_hint: "Prem per ampliar el mapa",
         calc_header: "Simulador de Costos, €/m² & ROI Financer",
         calc_badge_sqm: "474 m² Reg. + 103 m² Pati",
         calc_select_activity: "1. TRIA L'ACTIVITAT PER SIMULAR ADEQUACIÓ I RENDA DE MERCAT:",
@@ -1918,6 +1955,8 @@
         map_sup: "🌍 GOOGLE EARTH 3D · SILENT ORBITAL FLIGHT",
         map_title: "Barcelona · Ciutat Vella · Plaça dels Àngels / Joan Coromines Axis",
         btn_earth_3d: "3D Flight Google Earth",
+        btn_map: "Map",
+        map_zoom_hint: "Click to enlarge map",
         calc_header: "CAPEX, €/sqm & Leveraged ROI Simulator",
         calc_badge_sqm: "474 sqm Reg. + 103 sqm Patio",
         calc_select_activity: "1. SELECT TARGET ACTIVITY TO SIMULATE CAPEX & MARKET RENT:",
@@ -2056,6 +2095,8 @@
         map_sup: "🌍 GOOGLE EARTH 3D · VOL ORBITAL SILENCIEUX",
         map_title: "Barcelone · Ciutat Vella · Axe Plaça dels Àngels / Joan Coromines",
         btn_earth_3d: "Vol 3D Google Earth",
+        btn_map: "Map",
+        map_zoom_hint: "Cliquez pour agrandir la carte",
         calc_header: "Simulateur Coûts, €/m² & ROI Financier",
         calc_badge_sqm: "474 m² Fonc. + 103 m² Patio",
         calc_select_activity: "1. CHOISISSEZ L'ACTIVITÉ POUR SIMULER L'AMÉNAGEMENT ET LE LOYER :",
@@ -2192,6 +2233,8 @@
         map_sup: "🌍 GOOGLE EARTH 3D · LAUTLOSER ORBITALFLUG",
         map_title: "Barcelona · Ciutat Vella · Achse Plaça dels Àngels / Joan Coromines",
         btn_earth_3d: "3D-Flug Google Earth",
+        btn_map: "Map",
+        map_zoom_hint: "Klicken zum Vergrößern der Karte",
         calc_header: "Investitions-, €/m² & Eigenkapital-ROI Simulator",
         calc_badge_sqm: "474 m² Grundb. + 103 m² Hof",
         calc_select_activity: "1. ZIELAKTIVITÄT FÜR UMBAUKOSTEN & MIETRENDITE WÄHLEN:",
@@ -2328,6 +2371,8 @@
         map_sup: "🌍 GOOGLE EARTH 3D · VOLO ORBITALE SILENZIOSO",
         map_title: "Barcellona · Ciutat Vella · Asse Plaça dels Àngels / Joan Coromines",
         btn_earth_3d: "Volo 3D Google Earth",
+        btn_map: "Map",
+        map_zoom_hint: "Clicca per ingrandire la mappa",
         calc_header: "Simulatore Costi, €/m² & ROI Finanziario",
         calc_badge_sqm: "474 m² Cat. + 103 m² Patio",
         calc_select_activity: "1. SCEGLI L'ATTIVITÀ PER SIMULARE ADEGUAMENTO E CANONE DI MERCATO:",
@@ -2464,6 +2509,8 @@
         map_sup: "🌍 جولة ثلاثية الأبعاد عبر GOOGLE EARTH",
         map_title: "برشلونة · سيوتات فيلا · محور ساحة أنخيلز / جوان كورومينيس",
         btn_earth_3d: "جولة ثلاثية الأبعاد Google Earth",
+        btn_map: "خريطة Map",
+        map_zoom_hint: "اضغط لتكبير الخريطة",
         calc_header: "محاكي التكاليف وسعر المتر والعائد على رأس المال",
         calc_badge_sqm: "474 م² مسجل + 103 م² فناء",
         calc_select_activity: "1. اختر النشاط لمحاكاة تكاليف التجهيز والإيجار المتوقع:",
@@ -2600,6 +2647,8 @@
         map_sup: "🌍 GOOGLE EARTH 3D · 静默卫星航拍",
         map_title: "巴塞罗那 · 老城区 · Plaça dels Àngels / Joan Coromines 核心轴",
         btn_earth_3d: "Google Earth 3D 航拍",
+        btn_map: "地图 Map",
+        map_zoom_hint: "点击放大查看区位图",
         calc_header: "改造预算、每平米租金与杠杆 ROI 模拟器",
         calc_badge_sqm: "474 m² 产权 + 103 m² 庭院",
         calc_select_activity: "1. 选择目标业态以模拟改造投入与市场租金：",
