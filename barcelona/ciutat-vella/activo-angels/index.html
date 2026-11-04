@@ -38,7 +38,6 @@
     .square-1-1 {
       aspect-ratio: 1 / 1;
     }
-    /* Escenario Vertical 9:16 Responsive */
     .vertical-stage {
       aspect-ratio: 9 / 16;
       width: 100%;
@@ -62,7 +61,6 @@
       transform: scale(1.75);
       transform-origin: center center;
     }
-    /* Fondo de portada: se reproduce 1 sola vez y congela mostrando el edificio de noche */
     .intro-video-full {
       width: 100%;
       height: 100%;
@@ -77,6 +75,24 @@
         background-color: #060a10;
       }
     }
+    /* VISOR LIGHTBOX BLINDADO: 1 CLIC ABRE, 1 CLIC EN CUALQUIER LUGAR CIERRA */
+    #lightbox-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 999999;
+      background-color: rgba(4, 7, 13, 0.95);
+      backdrop-filter: blur(8px);
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      padding: 16px;
+      cursor: pointer;
+      user-select: none;
+    }
+    #lightbox-modal.is-open {
+      display: flex !important;
+    }
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     ::-webkit-scrollbar { width: 8px; height: 8px; }
@@ -87,10 +103,20 @@
 </head>
 <body class="min-h-screen flex flex-col justify-between">
 
-  <!-- ================= PANTALLA 1: PORTADA WELCOME (1 REPRODUCCIÓN Y CONGELA EN NOCHE) ================= -->
-  <div id="gatekeeper-screen" class="fixed inset-0 z-50 bg-[#060a10] overflow-y-auto">
-    
-    <!-- Vídeo Día a Noche: SIN loop (solo 1 vez) y queda fijo en el fotograma final de noche -->
+  <!-- ================= VISOR DE FOTOS LIGHTBOX (COLOCADO EN RAÍZ PARA CIERRE INSTANTÁNEO CON 1 CLIC) ================= -->
+  <div id="lightbox-modal" onclick="closeLightbox()">
+    <div class="w-full max-w-lg flex items-center justify-between mb-3 pointer-events-none">
+      <span id="lightbox-counter" class="px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-mono font-bold text-emerald-400">1 / 11</span>
+      <span class="px-4 py-2 rounded-xl bg-rose-600 text-white text-xs font-black uppercase tracking-wider shadow-2xl border border-white/30">
+        ✕ <span data-i18n="btn_close_lb">Haz clic para cerrar</span>
+      </span>
+    </div>
+    <img id="lightbox-img" src="" alt="Vista Ampliada" class="max-w-[90vw] sm:max-w-lg max-h-[62vh] object-contain rounded-2xl border-2 border-slate-700 bg-black shadow-2xl pointer-events-none" />
+    <div id="lightbox-caption" class="w-full max-w-lg mt-3 px-4 py-3 rounded-xl bg-[#101826] text-amber-400 text-xs sm:text-sm font-extrabold text-center border border-amber-500/40 shadow-2xl pointer-events-none"></div>
+  </div>
+
+  <!-- ================= PANTALLA 1: PORTADA WELCOME ================= -->
+  <div id="gatekeeper-screen" class="fixed inset-0 z-40 bg-[#060a10] overflow-y-auto">
     <div class="fixed inset-0 overflow-hidden pointer-events-none z-0 flex items-center justify-center bg-[#060a10]">
       <video id="intro-bg-video" autoplay muted playsinline class="intro-video-full filter brightness-[0.78] contrast-[1.06]">
         <source src="video-intro-bcn.mp4" type="video/mp4">
@@ -102,15 +128,12 @@
 
     <div class="relative z-10 min-h-[100dvh] max-w-6xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 flex flex-col justify-between">
       
-      <!-- Topbar de Portada Limpia -->
       <div class="flex items-center justify-between border border-slate-700/60 py-2.5 px-3.5 sm:px-5 backdrop-blur-md bg-slate-950/55 rounded-xl">
         <div class="flex items-center gap-2.5" translate="no">
           <div class="inline-flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-white text-slate-950 font-black text-lg sm:text-xl">L</div>
           <span class="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-emerald-400 -ml-1.5 sm:-ml-2 mt-2.5"></span>
           <span class="font-extrabold text-white text-base sm:text-lg tracking-tight">Level.immo</span>
-          <span class="hidden sm:inline-block text-[11px] font-mono text-slate-300 border-l border-slate-700 pl-3">
-            API 4173 · AICAT 14200
-          </span>
+          <span class="hidden sm:inline-block text-[11px] font-mono text-slate-300 border-l border-slate-700 pl-3">API 4173 · AICAT 14200</span>
         </div>
 
         <div class="flex items-center gap-2">
@@ -127,7 +150,6 @@
         </div>
       </div>
 
-      <!-- Cuerpo Central Portada Welcome -->
       <div class="w-full max-w-4xl mx-auto py-3 sm:py-5 space-y-4 text-center my-auto">
         <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full gold-badge text-[10px] sm:text-[11px] font-bold tracking-wider uppercase backdrop-blur">
           <span>🔒</span> <span data-i18n="gate_badge">EXCLUSIVA LEVEL.IMMO · FICHA CIEGA PATRIMONIAL</span>
@@ -141,7 +163,6 @@
           Finca clásica de 1900 junto a Plaça dels Àngels y el mural de Keith Haring. 577 m² operativos (474 m² registrales en 2 entidades unidas: Planta 1ª de 334 m², Planta Baja de 37 m² y Bodega abovedada de 103 m² + ~103 m² de Patio/Terraza interior). Ascensor y accesibilidad universal. Venta sin condición suspensiva de cambio de uso.
         </p>
 
-        <!-- Validador Matemático Anti-Chafarderos -->
         <div class="card-panel p-4 sm:p-5 border-slate-700/90 bg-[#101826]/80 backdrop-blur-md shadow-2xl max-w-xl mx-auto space-y-3 text-left">
           <div class="flex items-center justify-between gap-2">
             <div class="flex items-center gap-1.5 text-amber-400 text-[11px] sm:text-xs font-bold uppercase tracking-wider">
@@ -151,7 +172,7 @@
           </div>
 
           <p class="text-[11px] sm:text-xs text-slate-300" data-i18n="gate_security_desc">
-            Resuelve la suma para desbloquear el estudio económico, los datos registrales/ITE y la Ficha Ciega en el idioma seleccionado:
+            Resuelve la suma para desbloquear el estudio económico, el simulador de hipoteca/ROI y la Ficha Ciega en el idioma seleccionado:
           </p>
 
           <div class="grid grid-cols-12 gap-2 items-center">
@@ -166,10 +187,9 @@
           <p id="gate-error" class="text-rose-400 text-xs hidden" data-i18n="gate_error_msg">Resultado incorrecto. Inténtalo de nuevo.</p>
         </div>
 
-        <!-- Carrusel Horizontal de Fotografías 1:1 debajo en Portada -->
         <div class="space-y-2 pt-1 text-left max-w-4xl mx-auto">
           <div class="flex items-center justify-between text-[11px] sm:text-xs text-slate-200 px-1">
-            <span class="font-bold uppercase tracking-wider truncate drop-shadow" data-i18n="gate_carousel_title">📸 Galería 1:1 (1080×1080 px) · Fachadas, Bóvedas y Planta 1ª</span>
+            <span class="font-bold uppercase tracking-wider truncate drop-shadow" data-i18n="gate_carousel_title">📸 Galería 1:1 (1 clic abre · 1 clic cierra)</span>
             <div class="flex gap-1.5 shrink-0">
               <button onclick="scrollCarousel('gate-carousel', -240)" class="px-2.5 py-1 rounded bg-slate-800/90 hover:bg-slate-700 text-white font-bold">◀</button>
               <button onclick="scrollCarousel('gate-carousel', 240)" class="px-2.5 py-1 rounded bg-slate-800/90 hover:bg-slate-700 text-white font-bold">▶</button>
@@ -180,7 +200,6 @@
 
       </div>
 
-      <!-- Footer de Portada -->
       <div class="border border-slate-700/60 py-2.5 px-3.5 sm:px-5 flex flex-wrap items-center justify-between text-[10px] sm:text-[11px] text-slate-300 gap-2 backdrop-blur-md bg-slate-950/55 rounded-xl">
         <span class="truncate" translate="no">LEVEL PUNTO IMMO 24365 SLU · API 4173 · AICAT 14200</span>
         <div class="flex gap-3">
@@ -193,7 +212,7 @@
     </div>
   </div>
 
-  <!-- ================= HEADER PRINCIPAL DE LA LANDING ================= -->
+  <!-- ================= HEADER PRINCIPAL ================= -->
   <header class="sticky top-0 z-30 bg-[#080d14]/95 backdrop-blur border-b border-slate-800 px-3 sm:px-6 lg:px-8 py-3">
     <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
       <div class="flex items-center gap-2.5" translate="no">
@@ -202,7 +221,7 @@
           <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 -ml-1.5 mt-2"></span>
           <span>Level.immo</span>
         </a>
-        <span class="text-xs text-emerald-400 font-mono hidden md:inline" id="live-clock">04/11/2026 | 00:30:00</span>
+        <span class="text-xs text-emerald-400 font-mono hidden md:inline" id="live-clock">04/11/2026 | 03:36:00</span>
       </div>
 
       <nav class="flex flex-wrap items-center gap-1.5 sm:gap-2 text-xs font-semibold">
@@ -233,7 +252,7 @@
     </div>
   </header>
 
-  <!-- ================= CONTENIDO PRINCIPAL: FICHA CIEGA ACTIVO ÀNGELS ================= -->
+  <!-- ================= CONTENIDO PRINCIPAL ================= -->
   <main class="max-w-7xl mx-auto w-full px-4 lg:px-8 py-6 sm:py-8 space-y-6 sm:space-y-8">
 
     <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800/80 pb-4">
@@ -253,9 +272,9 @@
 
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
 
+      <!-- COLUMNA IZQUIERDA (7 Cols) -->
       <div class="lg:col-span-7 space-y-6">
 
-        <!-- 4 KPIs Oficiales -->
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3">
           <div class="card-panel p-3.5 sm:p-4 text-center">
             <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block" data-i18n="kpi_1_label">PRECIO DE VENTA</span>
@@ -279,7 +298,6 @@
           </div>
         </div>
 
-        <!-- Módulo Multimedia Principal -->
         <div class="card-panel overflow-hidden bg-slate-950 border-slate-800">
           <div class="flex flex-wrap items-center justify-between gap-2 px-4 py-3 bg-[#141e30] border-b border-slate-800">
             <div class="flex items-center gap-2 text-xs font-bold text-slate-200">
@@ -319,11 +337,10 @@
             </div>
           </div>
 
-          <!-- Carrusel de Fotos 1:1 justo debajo del vídeo -->
           <div class="p-4 bg-[#0d1420] border-t border-slate-800 space-y-2.5">
             <div class="flex items-center justify-between text-xs">
               <span class="font-bold text-amber-400 uppercase tracking-wider" data-i18n="main_carousel_label">
-                🖼️ Galería 1:1 (Pulsa en cualquier foto para ampliar con su leyenda)
+                🖼️ Galería 1:1 (1 clic abre la foto · 1 clic la cierra)
               </span>
               <div class="flex gap-1.5">
                 <button onclick="scrollCarousel('main-carousel', -280)" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-white font-bold">◀</button>
@@ -334,7 +351,6 @@
           </div>
         </div>
 
-        <!-- Dossier Ejecutivo Enriquecido con Datos Reales -->
         <div class="card-panel p-5 sm:p-6 space-y-5">
           <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-3">
             <h3 class="text-base sm:text-lg font-bold text-white" data-i18n="desc_title">
@@ -395,7 +411,6 @@
           </div>
         </div>
 
-        <!-- Módulo Google Earth 3D & Vista Satelital (41.382736, 2.165658) -->
         <div class="card-panel p-5 sm:p-6 space-y-4">
           <div class="flex flex-wrap items-center justify-between gap-3">
             <div>
@@ -429,13 +444,13 @@
 
       </div>
 
-      <!-- COLUMNA DERECHA (5 Cols): SIMULADOR DE COSTES Y RENTABILIDAD -->
+      <!-- COLUMNA DERECHA (5 Cols): SIMULADOR "MATRÍCULA DE HONOR" (€/M²) + TABLA ROI APALANCADO "HONORIS CAUSA" -->
       <div class="lg:col-span-5 space-y-6 lg:sticky lg:top-20">
 
         <div class="card-panel p-5 sm:p-6 border-slate-700/90 shadow-2xl space-y-5">
           <div class="flex items-center justify-between border-b border-slate-800 pb-3">
             <span class="text-sm font-bold text-amber-400 flex items-center gap-2">
-              <span>📊</span> <span data-i18n="calc_header">Simulador de Costes (ITE/Actividad) & Alquiler</span>
+              <span>📊</span> <span data-i18n="calc_header">Simulador de Costes, €/m² & ROI Financiero</span>
             </span>
             <span class="text-[11px] bg-slate-800 text-emerald-400 px-2.5 py-0.5 rounded font-mono font-bold" data-i18n="calc_badge_sqm">474 m² Reg. + 103 m² Patio</span>
           </div>
@@ -457,7 +472,7 @@
             </div>
           </div>
 
-          <div class="space-y-2 text-xs border-b border-slate-800 pb-4">
+          <div class="space-y-1.5 text-xs border-b border-slate-800 pb-3">
             <div class="flex justify-between text-slate-300">
               <span data-i18n="calc_base_price">Precio de Adquisición (2 Fincas Registrales):</span>
               <span class="font-bold text-white">780.000 €</span>
@@ -472,7 +487,7 @@
             </div>
           </div>
 
-          <div class="space-y-3">
+          <div class="space-y-2.5">
             <div class="text-[11px] font-bold uppercase tracking-wider text-amber-400" data-i18n="calc_custom_title">
               🛠️ 2. PARTIDAS DE ADECUACIÓN E ITE (100% EDITABLES EN VIVO):
             </div>
@@ -480,7 +495,7 @@
             <div class="flex items-center justify-between gap-2 text-xs">
               <span class="text-slate-300" data-i18n="calc_item_1">+ Reforma P1 (334 m²: Cuadro eléctrico, clima, suite/cocina):</span>
               <div class="flex items-center gap-1 shrink-0">
-                <input type="number" id="cost-p1" value="62000" step="1000" oninput="recalculateEconomics()" class="w-24 bg-[#080d14] border border-slate-700 rounded px-2 py-1 text-right text-white font-bold focus:border-emerald-500 focus:outline-none" />
+                <input type="number" id="cost-p1" value="62000" step="1000" oninput="recalculateEconomics('capex')" class="w-24 bg-[#080d14] border border-slate-700 rounded px-2 py-1 text-right text-white font-bold focus:border-emerald-500 focus:outline-none" />
                 <span class="text-slate-400">€</span>
               </div>
             </div>
@@ -488,7 +503,7 @@
             <div class="flex items-center justify-between gap-2 text-xs">
               <span class="text-slate-300" data-i18n="calc_item_2">+ Tratamiento capilaridad Sótano/PB (140 m²) y Showroom:</span>
               <div class="flex items-center gap-1 shrink-0">
-                <input type="number" id="cost-sotano" value="24000" step="1000" oninput="recalculateEconomics()" class="w-24 bg-[#080d14] border border-slate-700 rounded px-2 py-1 text-right text-white font-bold focus:border-emerald-500 focus:outline-none" />
+                <input type="number" id="cost-sotano" value="24000" step="1000" oninput="recalculateEconomics('capex')" class="w-24 bg-[#080d14] border border-slate-700 rounded px-2 py-1 text-right text-white font-bold focus:border-emerald-500 focus:outline-none" />
                 <span class="text-slate-400">€</span>
               </div>
             </div>
@@ -496,13 +511,13 @@
             <div class="flex items-center justify-between gap-2 text-xs">
               <span class="text-slate-300" data-i18n="calc_item_3">+ Patio (103 m²), drenaje Pati 1 y provisión ITE (cuota 18%):</span>
               <div class="flex items-center gap-1 shrink-0">
-                <input type="number" id="cost-patio" value="22000" step="1000" oninput="recalculateEconomics()" class="w-24 bg-[#080d14] border border-slate-700 rounded px-2 py-1 text-right text-white font-bold focus:border-emerald-500 focus:outline-none" />
+                <input type="number" id="cost-patio" value="22000" step="1000" oninput="recalculateEconomics('capex')" class="w-24 bg-[#080d14] border border-slate-700 rounded px-2 py-1 text-right text-white font-bold focus:border-emerald-500 focus:outline-none" />
                 <span class="text-slate-400">€</span>
               </div>
             </div>
           </div>
 
-          <div class="p-4 rounded-xl bg-[#162234] border border-emerald-500/30 flex items-center justify-between">
+          <div class="p-3.5 rounded-xl bg-[#162234] border border-emerald-500/30 flex items-center justify-between">
             <div>
               <span class="text-[11px] font-bold uppercase tracking-wider text-emerald-400 block" data-i18n="calc_total_label">SUMA TOTAL INVERSIÓN REAL:</span>
               <span class="text-[11px] text-slate-400" id="cost-per-m2-label">1.682 € / m²</span>
@@ -510,30 +525,101 @@
             <span class="text-xl sm:text-2xl font-extrabold text-emerald-400" id="total-investment-display">970.500 €</span>
           </div>
 
-          <div class="p-4 rounded-xl bg-[#141d2b] border border-slate-800 space-y-3">
-            <div class="flex items-center justify-between">
-              <span class="text-xs font-bold text-white" data-i18n="rent_study_title">📈 Estudio de Alquiler en Ciutat Vella</span>
-              <span class="text-xs font-bold text-amber-400" id="rent-unit-price">~12,2 € / m² reg.</span>
+          <!-- 3. MATRÍCULA DE HONOR: SIMULADOR DE ALQUILER POR €/M² + ENLACE A GOOGLE SEARCH AI -->
+          <div class="p-4 rounded-xl bg-[#141d2b] border border-slate-700 space-y-3">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-2.5">
+              <div>
+                <span class="text-xs font-extrabold text-white block" data-i18n="rent_study_title">📈 3. Simulador de Alquiler por €/m² (Barcelona)</span>
+                <span class="text-[10px] text-slate-400" data-i18n="rent_study_sub">Horquilla real en Barcelona (450-550 m²): 14 € a 24 €/m²/mes</span>
+              </div>
+              <a href="https://www.google.com/search?q=alquiler+oficina+450+m2+barcelona&udm=50" target="_blank" rel="noopener noreferrer" class="px-2.5 py-1 rounded-lg bg-sky-500/15 hover:bg-sky-500/25 border border-sky-500/40 text-sky-300 text-[10px] font-extrabold transition flex items-center gap-1">
+                <span>🔍</span> <span data-i18n="btn_google_ref">Auditar Mercado en Google IA ↗</span>
+              </a>
             </div>
 
-            <div class="flex items-center justify-between text-xs">
-              <span class="text-slate-300" data-i18n="rent_monthly_label">Renta Mensual Estimada (Editable):</span>
-              <div class="flex items-center gap-1 shrink-0">
-                <input type="number" id="est-monthly-rent" value="5800" step="100" oninput="recalculateEconomics()" class="w-24 bg-[#080d14] border border-slate-700 rounded px-2 py-1 text-right text-emerald-400 font-bold focus:border-emerald-500 focus:outline-none" />
-                <span class="text-slate-400">€/mes</span>
+            <div class="grid grid-cols-4 gap-1.5 text-[10px] font-bold">
+              <button type="button" onclick="setRentSqmPreset(12.2)" class="py-1.5 px-2 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition">
+                <span data-i18n="preset_1_lbl">Conservador</span><br><span class="text-amber-400">12,2 €/m²</span>
+              </button>
+              <button type="button" onclick="setRentSqmPreset(15)" class="py-1.5 px-2 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition">
+                <span data-i18n="preset_2_lbl">Estándar BCN</span><br><span class="text-emerald-400">15,0 €/m²</span>
+              </button>
+              <button type="button" onclick="setRentSqmPreset(18.5)" class="py-1.5 px-2 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition">
+                <span data-i18n="preset_3_lbl">Centro / Eje</span><br><span class="text-emerald-400">18,5 €/m²</span>
+              </button>
+              <button type="button" onclick="setRentSqmPreset(22)" class="py-1.5 px-2 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition">
+                <span data-i18n="preset_4_lbl">Prime / Patio</span><br><span class="text-amber-400">22,0 €/m²</span>
+              </button>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
+              <div class="p-2.5 rounded-lg bg-[#0b111a] border border-amber-500/40 flex items-center justify-between">
+                <span class="text-[11px] font-bold text-amber-300" data-i18n="rent_sqm_input_label">Precio Alquiler (€/m²):</span>
+                <div class="flex items-center gap-1">
+                  <input type="number" id="est-rent-sqm" value="15.0" step="0.5" min="5" max="60" oninput="recalculateEconomics('sqm')" class="w-16 bg-[#141e30] border border-amber-500/60 rounded px-1.5 py-1 text-right text-amber-400 font-black text-xs focus:outline-none" />
+                  <span class="text-[10px] text-slate-400">€/m²</span>
+                </div>
+              </div>
+
+              <div class="p-2.5 rounded-lg bg-[#0b111a] border border-slate-700 flex items-center justify-between">
+                <span class="text-[11px] font-semibold text-slate-300" data-i18n="rent_monthly_label">Renta / Mes (474 m²):</span>
+                <div class="flex items-center gap-1">
+                  <input type="number" id="est-monthly-rent" value="7110" step="100" oninput="recalculateEconomics('monthly')" class="w-20 bg-[#141e30] border border-slate-600 rounded px-1.5 py-1 text-right text-emerald-400 font-black text-xs focus:outline-none" />
+                  <span class="text-[10px] text-slate-400">€</span>
+                </div>
               </div>
             </div>
 
-            <div class="grid grid-cols-2 gap-2 pt-2 border-t border-slate-800/80 text-center">
-              <div class="p-2 rounded bg-[#0b111a]">
+            <div class="grid grid-cols-2 gap-2 pt-1 text-center">
+              <div class="p-2 rounded bg-[#0b111a] border border-slate-800/80">
                 <span class="text-[10px] uppercase text-slate-400 block" data-i18n="rent_annual_label">INGRESOS BRUTOS / AÑO</span>
-                <span class="text-sm font-extrabold text-white" id="annual-rent-display">69.600 € / año</span>
+                <span class="text-sm font-extrabold text-white" id="annual-rent-display">85.320 € / año</span>
               </div>
-              <div class="p-2 rounded bg-[#0b111a]">
-                <span class="text-[10px] uppercase text-slate-400 block" data-i18n="rent_yield_label">RENTABILIDAD BRUTA</span>
-                <span class="text-sm font-extrabold text-emerald-400" id="gross-yield-display">7,17 %</span>
+              <div class="p-2 rounded bg-[#0b111a] border border-emerald-500/30">
+                <span class="text-[10px] uppercase text-emerald-400 font-bold block" data-i18n="rent_yield_label">YIELD BRUTO (SIN DEUDA)</span>
+                <span class="text-sm font-black text-emerald-400" id="gross-yield-display">8,79 %</span>
               </div>
             </div>
+          </div>
+
+          <!-- 4. DOCTORADO HONORIS CAUSA: TABLA DE ROI EN FUNCIÓN DEL CAPITAL FINANCIADO -->
+          <div class="p-4 rounded-xl bg-[#0e1624] border border-amber-500/40 space-y-3">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+              <span class="text-xs font-extrabold text-amber-400 flex items-center gap-1.5">
+                <span>🏛️</span> <span data-i18n="roi_table_title">4. Tabla ROI según Capital Financiado (Cash-on-Cash)</span>
+              </span>
+              <span class="text-[10px] font-mono text-slate-400">LTV 0% - 70%</span>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2 text-xs">
+              <div class="p-2 rounded-lg bg-[#080d14] border border-slate-800 flex items-center justify-between">
+                <span class="text-[11px] text-slate-300" data-i18n="loan_rate_label">Interés Anual (%):</span>
+                <input type="number" id="loan-rate" value="3.65" step="0.1" min="0.5" max="12" oninput="recalculateEconomics('loan')" class="w-16 bg-[#141e30] border border-slate-700 rounded px-1.5 py-0.5 text-right text-white font-bold text-xs" />
+              </div>
+              <div class="p-2 rounded-lg bg-[#080d14] border border-slate-800 flex items-center justify-between">
+                <span class="text-[11px] text-slate-300" data-i18n="loan_years_label">Plazo (Años):</span>
+                <input type="number" id="loan-years" value="15" step="1" min="5" max="30" oninput="recalculateEconomics('loan')" class="w-14 bg-[#141e30] border border-slate-700 rounded px-1.5 py-0.5 text-right text-white font-bold text-xs" />
+              </div>
+            </div>
+
+            <div class="overflow-x-auto">
+              <table class="w-full text-left border-collapse text-[11px]">
+                <thead>
+                  <tr class="border-b border-slate-700 text-slate-400 uppercase text-[9.5px]">
+                    <th class="py-1.5 px-1.5" data-i18n="th_ltv">% Financiado</th>
+                    <th class="py-1.5 px-1.5 text-right" data-i18n="th_equity">Capital Propio</th>
+                    <th class="py-1.5 px-1.5 text-right" data-i18n="th_debt">Cuota/Año</th>
+                    <th class="py-1.5 px-1.5 text-right" data-i18n="th_cashflow">Cash-Flow Neto</th>
+                    <th class="py-1.5 px-1.5 text-right text-amber-400" data-i18n="th_roi">ROI Capital</th>
+                  </tr>
+                </thead>
+                <tbody id="roi-leverage-tbody" class="divide-y divide-slate-800/80 font-mono text-[11px]">
+                </tbody>
+              </table>
+            </div>
+            <p class="text-[10px] text-slate-400 leading-tight" data-i18n="roi_table_footnote">
+              * Nota: El % financiado se calcula sobre el precio de venta (780.000 €). El Capital Propio incluye la entrada no financiada + impuestos + gastos + reforma. ROI Capital = (Renta Anual - Cuota Hipoteca Anual) / Capital Propio aportado.
+            </p>
           </div>
 
           <div class="space-y-3 pt-1">
@@ -559,12 +645,11 @@
   </main>
 
   <!-- ================= MODAL FULLSCREEN VERTICAL NATIVO PARA MÓVILES ================= -->
-  <div id="vertical-fullscreen-modal" class="fixed inset-0 z-50 bg-black hidden flex-col justify-between">
+  <div id="vertical-fullscreen-modal" style="display:none;" class="fixed inset-0 z-[70] bg-black flex-col justify-between">
     <div class="relative w-full h-[100dvh] overflow-hidden flex items-center justify-center bg-black">
       <video id="fullscreen-vertical-video" class="w-full h-full object-contain" playsinline loop controls>
         <source src="joaquin costa-angels.mp4" type="video/mp4">
         <source src="https://app.level-i.com/barcelona/ciutat-vella/activo-angels/joaquin%20costa-angels.mp4" type="video/mp4">
-        <source src="https://level-i.github.io/barcelona/ciutat-vella/activo-angels/joaquin%20costa-angels.mp4" type="video/mp4">
       </video>
       <div class="absolute top-4 left-4 right-4 flex items-center justify-between z-20">
         <span class="px-3 py-1.5 rounded-lg bg-slate-950/80 text-emerald-400 text-xs font-extrabold border border-emerald-500/40 backdrop-blur" translate="no">
@@ -577,8 +662,8 @@
     </div>
   </div>
 
-  <!-- ================= MODAL: COLABORADORES SIMPATIZANTES (100% MULTILINGÜE) ================= -->
-  <div id="collaborator-modal" class="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md hidden items-center justify-center p-4">
+  <!-- ================= MODAL: COLABORADORES SIMPATIZANTES ================= -->
+  <div id="collaborator-modal" class="fixed inset-0 z-[60] bg-slate-950/85 backdrop-blur-md hidden items-center justify-center p-4">
     <div class="card-panel max-w-2xl w-full overflow-hidden border-amber-500/40 shadow-2xl bg-[#101826]">
       
       <div class="px-5 py-4 bg-[#162133] border-b border-slate-800 flex items-center justify-between">
@@ -712,21 +797,8 @@
     </div>
   </div>
 
-  <!-- ================= MODAL LIGHTBOX 1:1 CON LEYENDA VISIBLE DEBAJO ================= -->
-  <div id="lightbox-modal" onclick="closeLightbox()" class="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-md hidden items-center justify-center p-4 cursor-zoom-out">
-    <div class="max-w-xl w-full flex flex-col items-center gap-3" onclick="event.stopPropagation()">
-      <div class="w-full flex justify-end">
-        <button onclick="closeLightbox()" class="px-3 py-1 rounded-lg bg-slate-800 hover:bg-rose-600 text-white text-xs font-bold transition">✕ Cerrar</button>
-      </div>
-      <div class="w-full square-1-1 rounded-2xl overflow-hidden border border-slate-700 shadow-2xl bg-black">
-        <img id="lightbox-img" src="" alt="Vista Ampliada 1:1" class="w-full h-full object-cover" />
-      </div>
-      <div id="lightbox-caption" class="w-full px-4 py-3 rounded-xl bg-[#101826] text-amber-400 text-xs sm:text-sm font-extrabold text-center border border-slate-700 shadow-xl"></div>
-    </div>
-  </div>
-
-  <!-- ================= MODAL ELENA IA (100% MULTILINGÜE EN LOS 8 IDIOMAS) ================= -->
-  <div id="elena-modal" class="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md hidden items-center justify-center p-4">
+  <!-- ================= MODAL ELENA IA (100% MULTILINGÜE) ================= -->
+  <div id="elena-modal" class="fixed inset-0 z-[60] bg-slate-950/85 backdrop-blur-md hidden items-center justify-center p-4">
     <div class="card-panel max-w-lg w-full overflow-hidden border-slate-700 shadow-2xl bg-[#101826]">
       
       <div class="px-5 py-4 bg-[#162032] border-b border-slate-800 flex items-center justify-between">
@@ -823,7 +895,6 @@
               <option value="Reposición Patrimonial" data-i18n="elena_fin_3">🔄 Reposición Patrimonial / Desinversión previa</option>
             </select>
 
-            <!-- ZONA ESTRICTAMENTE BLOQUEADA -->
             <div>
               <label class="text-[10px] font-bold uppercase text-slate-400 block mb-1" data-i18n="elena_zone_label">ZONA Y EXPEDIENTE ASIGNADO (INTOCABLE):</label>
               <input type="text" value="Barcelona - Ciutat Vella (08001) · Activo Àngels" readonly disabled class="w-full bg-[#0b121e] border border-slate-800 rounded-lg px-3 py-2.5 text-xs font-bold text-emerald-400 cursor-not-allowed select-none opacity-90" />
@@ -904,7 +975,7 @@
   </div>
 
   <!-- ================= MODAL LEGAL ================= -->
-  <div id="legal-modal" class="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-sm hidden items-center justify-center p-4">
+  <div id="legal-modal" class="fixed inset-0 z-[90] bg-slate-950/85 backdrop-blur-sm hidden items-center justify-center p-4">
     <div class="card-panel max-w-lg w-full p-6 border-slate-700 bg-[#101826] space-y-4">
       <div class="flex items-center justify-between border-b border-slate-800 pb-3">
         <h4 id="legal-modal-title" class="text-base font-bold text-emerald-400">Información Legal</h4>
@@ -914,7 +985,7 @@
     </div>
   </div>
 
-  <!-- ================= FOOTER CORPORATIVO CON LISTA OFICIAL EXACTA DE CIUDADES ================= -->
+  <!-- ================= FOOTER CORPORATIVO ================= -->
   <footer class="border-t border-slate-800/80 bg-[#060a10] px-4 lg:px-8 py-6 mt-12">
     <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-xs text-slate-400">
       <div class="space-y-1">
@@ -939,7 +1010,6 @@
     const GITHUB_CDN = "https://level-i.github.io/barcelona/ciutat-vella/activo-angels/";
     let currentLang = "es";
 
-    // Galería 1:1 corregida: ff99.jpg es el Sótano de bóvedas de ladrillo (103 m²) y ff1-ff9 son las salas reales de Planta 1ª (334 m²)
     const galleryItems = [
       {
         file: "principal.jpg",
@@ -1002,7 +1072,7 @@
           fr: "Premier Étage (334 m²) · Structure à Colonnes et Espace Modulaire",
           de: "1. Obergeschoss (334 m²) · Säulenstruktur & Modulare Fläche",
           it: "Primo Piano (334 m²) · Struttura a Colonne e Spazio Modulare",
-          ar: "الطابق الأول (334 م²) · هيكل الأعمدة والمساحة القابلة للتقسيم",
+          ar: "الطابق الأول (334 m²) · هيكل الأعمدة والمساحة القابلة للتقسيم",
           zh: "二层空间 (334 m²) · 独立柱网结构与模块化空间"
         }
       },
@@ -1015,7 +1085,7 @@
           fr: "Premier Étage (334 m²) · Grandes Fenêtres Extérieures et Cloisons",
           de: "1. Obergeschoss (334 m²) · Außenfenster & Raumteiler",
           it: "Primo Piano (334 m²) · Grandi Finestre Esterne e Divisioni",
-          ar: "الطابق الأول (334 م²) · نوافذ خارجية كبيرة وتقسيمات",
+          ar: "الطابق الأول (334 m²) · نوافذ خارجية كبيرة وتقسيمات",
           zh: "二层空间 (334 m²) · 临街外窗与内部隔断"
         }
       },
@@ -1028,7 +1098,7 @@
           fr: "Premier Étage (334 m²) · Espace Office / Point d'Eau et Fenêtre",
           de: "1. Obergeschoss (334 m²) · Teeküche / Wasseranschluss & Fenster",
           it: "Primo Piano (334 m²) · Zona Office / Punto Acqua e Finestra",
-          ar: "الطابق الأول (334 م²) · منطقة المطبخ التحضيري والنافذة",
+          ar: "الطابق الأول (334 m²) · منطقة المطبخ التحضيري والنافذة",
           zh: "二层空间 (334 m²) · 现有茶水/厨卫区与采光窗"
         }
       },
@@ -1041,7 +1111,7 @@
           fr: "Premier Étage (334 m²) · Salle Polyvalente avec Cloisons Vitrées",
           de: "1. Obergeschoss (334 m²) · Mehrzweckraum mit Glastrennwänden",
           it: "Primo Piano (334 m²) · Sala Polivalente con Pareti Vetrate",
-          ar: "الطابق الأول (334 م²) · قاعة متعددة الاستخدامات بفواصل زجاجية",
+          ar: "الطابق الأول (334 m²) · قاعة متعددة الاستخدامات بفواصل زجاجية",
           zh: "二层空间 (334 m²) · 玻璃隔断多功能厅"
         }
       },
@@ -1054,7 +1124,7 @@
           fr: "Premier Étage (334 m²) · Salle Intérieure (Ancienne École Maternelle)",
           de: "1. Obergeschoss (334 m²) · Innenraum (Ehemaliger Kindergarten)",
           it: "Primo Piano (334 m²) · Sala Interna (Ex Asilo)",
-          ar: "الطابق الأول (334 م²) · قاعة داخلية (روضة أطفال سابقة)",
+          ar: "الطابق الأول (334 m²) · قاعة داخلية (روضة أطفال سابقة)",
           zh: "二层空间 (334 m²) · 内部活动室现状（原幼儿园）"
         }
       },
@@ -1067,7 +1137,7 @@
           fr: "Premier Étage (334 m²) · Couloir Central et Bureaux Modulaires",
           de: "1. Obergeschoss (334 m²) · Zentraler Flur & Modulare Büros",
           it: "Primo Piano (334 m²) · Corridoio Centrale e Uffici Modulari",
-          ar: "الطابق الأول (334 م²) · الممر المركزي والمكاتب",
+          ar: "الطابق الأول (334 m²) · الممر المركزي والمكاتب",
           zh: "二层空间 (334 m²) · 中央走廊与模块化隔间"
         }
       },
@@ -1080,7 +1150,7 @@
           fr: "Premier Étage (334 m²) · Vue des Salles et Cloisons Légères",
           de: "1. Obergeschoss (334 m²) · Räume & Leichte Trennwände",
           it: "Primo Piano (334 m²) · Vista Aule e Pareti Divisorie Leggere",
-          ar: "الطابق الأول (334 م²) · القاعات والقواطع الخفيفة",
+          ar: "الطابق الأول (334 m²) · القاعات والقواطع الخفيفة",
           zh: "二层空间 (334 m²) · 轻质隔断空间（易于打通改造）"
         }
       }
@@ -1096,7 +1166,7 @@
         return `
           <div onclick="openLightboxByIndex(${idx})" class="snap-start shrink-0 w-28 sm:w-40 square-1-1 rounded-xl overflow-hidden border border-slate-700/80 hover:border-amber-400 transition cursor-pointer relative group bg-slate-900">
             <img src="${encodedFile}" onerror="this.onerror=null;this.src='${GITHUB_CDN}${encodedFile}';" alt="${cap}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" />
-            <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950/95 via-slate-950/70 to-transparent p-1.5 sm:p-2">
+            <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950/95 via-slate-950/75 to-transparent p-1.5 sm:p-2">
               <span class="text-[9px] sm:text-[10px] font-semibold text-slate-100 line-clamp-2 leading-tight">${cap}</span>
             </div>
           </div>
@@ -1107,7 +1177,6 @@
       mainContainer.innerHTML = html;
     }
 
-    // Congela el vídeo de portada tras 1 reproducción en el último fotograma
     const introBgVideo = document.getElementById('intro-bg-video');
     if (introBgVideo) {
       introBgVideo.addEventListener('ended', function() {
@@ -1123,6 +1192,7 @@
       if (el) el.scrollBy({ left: offset, behavior: 'smooth' });
     }
 
+    // FUNCIONES LIGHTBOX: 1 CLIC ABRE, 1 CLIC EN CUALQUIER PARTE CIERRA
     function openLightboxByIndex(idx) {
       const item = galleryItems[idx];
       if (!item) return;
@@ -1133,15 +1203,18 @@
       img.src = encodedFile;
       img.onerror = function() { this.src = GITHUB_CDN + encodedFile; };
       document.getElementById('lightbox-caption').textContent = cap;
-      modal.classList.remove('hidden');
-      modal.classList.add('flex');
+      document.getElementById('lightbox-counter').textContent = `${idx + 1} / ${galleryItems.length}`;
+      modal.classList.add('is-open');
     }
 
     function closeLightbox() {
       const modal = document.getElementById('lightbox-modal');
-      modal.classList.add('hidden');
-      modal.classList.remove('flex');
+      if (modal) modal.classList.remove('is-open');
     }
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') closeLightbox();
+    });
 
     let verticalZoomActive = false;
     function toggleVerticalZoom() {
@@ -1164,8 +1237,7 @@
       const fsVideo = document.getElementById('fullscreen-vertical-video');
       const mainVideo = document.getElementById('property-video');
       if (mainVideo) mainVideo.pause();
-      modal.classList.remove('hidden');
-      modal.classList.add('flex');
+      modal.style.display = 'flex';
       fsVideo.play().catch(() => {});
     }
 
@@ -1173,8 +1245,7 @@
       const modal = document.getElementById('vertical-fullscreen-modal');
       const fsVideo = document.getElementById('fullscreen-vertical-video');
       if (fsVideo) fsVideo.pause();
-      modal.classList.add('hidden');
-      modal.classList.remove('flex');
+      modal.style.display = 'none';
     }
 
     setInterval(() => {
@@ -1233,6 +1304,7 @@
       }
     }
 
+    // MOTOR ECONÓMICO MATRÍCULA DE HONOR + TABLA ROI APALANCADO HONORIS CAUSA
     const BASE_PRICE = 780000;
     const BASE_TAXES = 78000;
     const BASE_NOTARY = 4500;
@@ -1256,41 +1328,94 @@
         document.getElementById('cost-p1').value = 62000;
         document.getElementById('cost-sotano').value = 24000;
         document.getElementById('cost-patio').value = 22000;
-        document.getElementById('est-monthly-rent').value = 5800;
+        document.getElementById('est-rent-sqm').value = 15.0;
       } else if (type === 'medico') {
         btnMed.className = activeClass;
         document.getElementById('cost-p1').value = 95000;
         document.getElementById('cost-sotano').value = 28000;
         document.getElementById('cost-patio').value = 25000;
-        document.getElementById('est-monthly-rent').value = 6500;
+        document.getElementById('est-rent-sqm').value = 18.5;
       } else {
         btnOfi.className = activeClass;
         document.getElementById('cost-p1').value = 48000;
         document.getElementById('cost-sotano').value = 19000;
         document.getElementById('cost-patio').value = 18000;
-        document.getElementById('est-monthly-rent').value = 5300;
+        document.getElementById('est-rent-sqm').value = 14.0;
       }
-      recalculateEconomics();
+      recalculateEconomics('sqm');
     }
 
-    function recalculateEconomics() {
+    function setRentSqmPreset(sqmVal) {
+      document.getElementById('est-rent-sqm').value = sqmVal;
+      recalculateEconomics('sqm');
+    }
+
+    function recalculateEconomics(source) {
       const cP1 = parseFloat(document.getElementById('cost-p1').value) || 0;
       const cSot = parseFloat(document.getElementById('cost-sotano').value) || 0;
       const cPat = parseFloat(document.getElementById('cost-patio').value) || 0;
-      const rentMonth = parseFloat(document.getElementById('est-monthly-rent').value) || 0;
+
+      const inputSqm = document.getElementById('est-rent-sqm');
+      const inputMonthly = document.getElementById('est-monthly-rent');
+
+      let rentSqm = parseFloat(inputSqm.value) || 0;
+      let rentMonth = parseFloat(inputMonthly.value) || 0;
+
+      if (source === 'sqm') {
+        rentMonth = Math.round(rentSqm * REG_SQM);
+        inputMonthly.value = rentMonth;
+      } else if (source === 'monthly') {
+        rentSqm = REG_SQM > 0 ? (rentMonth / REG_SQM) : 0;
+        inputSqm.value = rentSqm.toFixed(1);
+      }
 
       const totalInv = BASE_PRICE + BASE_TAXES + BASE_NOTARY + cP1 + cSot + cPat;
       const perOperativeSqm = Math.round(totalInv / OPERATIVE_SQM);
       const annualRent = rentMonth * 12;
       const yieldPct = totalInv > 0 ? ((annualRent / totalInv) * 100).toFixed(2) : "0.00";
-      const rentPerRegSqm = (rentMonth / REG_SQM).toFixed(1);
 
-      const fmt = n => n.toLocaleString('es-ES');
+      const fmt = n => Math.round(n).toLocaleString('es-ES');
       document.getElementById('total-investment-display').textContent = `${fmt(totalInv)} €`;
       document.getElementById('cost-per-m2-label').textContent = `${fmt(perOperativeSqm)} € / m²`;
-      document.getElementById('annual-rent-display').textContent = `${fmt(annualRent)} €`;
+      document.getElementById('annual-rent-display').textContent = `${fmt(annualRent)} € / año`;
       document.getElementById('gross-yield-display').textContent = `${yieldPct.replace('.', ',')} %`;
-      document.getElementById('rent-unit-price').textContent = `~${rentPerRegSqm.replace('.', ',')} € / m²`;
+
+      // Cálculo de la Tabla de ROI según Capital Financiado (0%, 30%, 50%, 70% LTV sobre Precio de Compra 780.000 €)
+      const annualRate = (parseFloat(document.getElementById('loan-rate').value) || 0) / 100;
+      const years = parseFloat(document.getElementById('loan-years').value) || 15;
+      const monthlyRate = annualRate / 12;
+      const totalMonths = years * 12;
+
+      const ltvLevels = [0, 0.30, 0.50, 0.70];
+      const tbody = document.getElementById('roi-leverage-tbody');
+      if (!tbody) return;
+
+      tbody.innerHTML = ltvLevels.map(ltv => {
+        const loanAmount = BASE_PRICE * ltv;
+        const ownEquity = totalInv - loanAmount;
+
+        let annualDebtService = 0;
+        if (loanAmount > 0 && monthlyRate > 0 && totalMonths > 0) {
+          const monthlyPayment = loanAmount * (monthlyRate * Math.pow(1 + monthlyRate, totalMonths)) / (Math.pow(1 + monthlyRate, totalMonths) - 1);
+          annualDebtService = monthlyPayment * 12;
+        } else if (loanAmount > 0 && totalMonths > 0) {
+          annualDebtService = loanAmount / years;
+        }
+
+        const netCashFlow = annualRent - annualDebtService;
+        const cashOnCashRoi = ownEquity > 0 ? ((netCashFlow / ownEquity) * 100).toFixed(2) : "0.00";
+        const roiColor = parseFloat(cashOnCashRoi) >= 8 ? "text-emerald-400 font-black" : "text-amber-300 font-bold";
+
+        return `
+          <tr class="hover:bg-slate-800/40 transition">
+            <td class="py-2 px-1.5 font-bold text-white">${Math.round(ltv * 100)}% <span class="text-[9.5px] text-slate-400 font-normal">(${fmt(loanAmount)}€)</span></td>
+            <td class="py-2 px-1.5 text-right text-slate-200">${fmt(ownEquity)} €</td>
+            <td class="py-2 px-1.5 text-right text-slate-400">${ltv === 0 ? '0 €' : '-' + fmt(annualDebtService) + ' €'}</td>
+            <td class="py-2 px-1.5 text-right text-emerald-300 font-semibold">${fmt(netCashFlow)} €</td>
+            <td class="py-2 px-1.5 text-right ${roiColor}">${cashOnCashRoi.replace('.', ',')} %</td>
+          </tr>
+        `;
+      }).join('');
     }
 
     function openCollaboratorModal() {
@@ -1459,18 +1584,19 @@
       document.getElementById('legal-modal').classList.remove('flex');
     }
 
-    // DICCIONARIO COMPLETO EN LOS 8 IDIOMAS (INCLUYE ELENA IA Y COLABORADORES)
+    // DICCIONARIO COMPLETO EN LOS 8 IDIOMAS OFICIALES
     const i18n = {
       es: {
+        btn_close_lb: "Haz clic para cerrar",
         gate_badge: "EXCLUSIVA LEVEL.IMMO · FICHA CIEGA PATRIMONIAL",
         gate_title: "Activo Comercial Singular en Ciutat Vella · Eje Àngels",
         gate_subtitle: "Finca clásica de 1900 junto a Plaça dels Àngels y el mural de Keith Haring. 577 m² operativos (474 m² registrales en 2 entidades unidas: Planta 1ª de 334 m², Planta Baja de 37 m² y Bodega abovedada de 103 m² + ~103 m² de Patio/Terraza interior). Ascensor y accesibilidad universal. Venta sin condición suspensiva de cambio de uso.",
         gate_security_title: "Filtro de Seguridad (Acceso Inversor Cualificado)",
-        gate_security_desc: "Resuelve la suma para desbloquear el estudio económico, los datos registrales/ITE y la Ficha Ciega en el idioma seleccionado:",
+        gate_security_desc: "Resuelve la suma para desbloquear el estudio económico, el simulador de hipoteca/ROI y la Ficha Ciega en el idioma seleccionado:",
         gate_math_label: "¿Cuánto es",
         gate_btn_access: "ACCEDER",
         gate_error_msg: "Resultado incorrecto. Inténtalo de nuevo.",
-        gate_carousel_title: "📸 Galería 1:1 (1080×1080 px) · Fachadas, Bóvedas y Planta 1ª",
+        gate_carousel_title: "📸 Galería 1:1 (1 clic abre · 1 clic cierra)",
         nav_demand: "Demanda Activa",
         nav_market: "Mercado Real",
         nav_collab: "Colaboradores (500€)",
@@ -1492,7 +1618,7 @@
         btn_mobile_fs: "Pantalla Completa Móvil",
         video_overlay_badge: "CONFIDENCIALIDAD ACTIVA",
         video_overlay_btn: "MOSTRAR VÍDEO NÍTIDO",
-        main_carousel_label: "🖼️ Galería 1:1 (Pulsa en cualquier foto para ampliar con su leyenda)",
+        main_carousel_label: "🖼️ Galería 1:1 (1 clic abre la foto · 1 clic la cierra)",
         desc_title: "Auditoría Física, Registral y Potencial de Explotación",
         desc_badge_reg: "Registro BCN Nº 3 · ITE 2025",
         desc_p1: "Enclavado en una finca clásica del año 1900 con fachada principal de 20 metros revestida en piedra natural en su zócalo y grandes portales en arco de medio punto (orientación Suroeste), y cuya fachada posterior linda directamente con la Plaça de Joan Coromines y el icónico mural original de Keith Haring, junto al polo cultural contemporáneo de Ciutat Vella.",
@@ -1516,7 +1642,7 @@
         map_sup: "🌍 GOOGLE EARTH 3D · VUELO ORBITAL SILENCIOSO",
         map_title: "Barcelona · Ciutat Vella · Eje Plaça dels Àngels / Joan Coromines",
         btn_earth_3d: "Vuelo 3D Google Earth",
-        calc_header: "Simulador de Costes (ITE/Actividad) & Alquiler",
+        calc_header: "Simulador de Costes, €/m² & ROI Financiero",
         calc_badge_sqm: "474 m² Reg. + 103 m² Patio",
         calc_select_activity: "1. ELIGE LA ACTIVIDAD PARA SIMULAR ADECUACIÓN Y RENTA DE MERCADO:",
         act_btn_moda: "Atelier Moda",
@@ -1530,10 +1656,26 @@
         calc_item_2: "+ Tratamiento capilaridad Sótano/PB (140 m²) y Showroom:",
         calc_item_3: "+ Patio (103 m²), drenaje Pati 1 y provisión ITE (cuota 18%):",
         calc_total_label: "SUMA TOTAL INVERSIÓN REAL:",
-        rent_study_title: "📈 Estudio de Alquiler en Ciutat Vella",
-        rent_monthly_label: "Renta Mensual Estimada (Editable):",
+        rent_study_title: "📈 3. Simulador de Alquiler por €/m² (Barcelona)",
+        rent_study_sub: "Horquilla real en Barcelona (450-550 m²): 14 € a 24 €/m²/mes",
+        btn_google_ref: "Auditar Mercado en Google IA ↗",
+        preset_1_lbl: "Conservador",
+        preset_2_lbl: "Estándar BCN",
+        preset_3_lbl: "Centro / Eje",
+        preset_4_lbl: "Prime / Patio",
+        rent_sqm_input_label: "Precio Alquiler (€/m²):",
+        rent_monthly_label: "Renta / Mes (474 m²):",
         rent_annual_label: "INGRESOS BRUTOS / AÑO",
-        rent_yield_label: "RENTABILIDAD BRUTA",
+        rent_yield_label: "YIELD BRUTO (SIN DEUDA)",
+        roi_table_title: "4. Tabla ROI según Capital Financiado (Cash-on-Cash)",
+        loan_rate_label: "Interés Anual (%):",
+        loan_years_label: "Plazo (Años):",
+        th_ltv: "% Financiado",
+        th_equity: "Capital Propio",
+        th_debt: "Cuota/Año",
+        th_cashflow: "Cash-Flow Neto",
+        th_roi: "ROI Capital",
+        roi_table_footnote: "* Nota: El % financiado se calcula sobre el precio de venta (780.000 €). El Capital Propio incluye la entrada no financiada + impuestos + gastos + reforma. ROI Capital = (Renta Anual - Cuota Hipoteca Anual) / Capital Propio aportado.",
         btn_like_text: "Me Gusta",
         btn_share_collab: "Compartir y Ganar 500€",
         cta_main_elena: "SOLICITAR NOTAS SIMPLES, ITE Y VISITA CON ELENA IA",
@@ -1583,15 +1725,16 @@
         collab_btn_generate: "🔗 ACTIVAR SUSCRIPCIÓN Y GENERAR ENLACE DE COLABORADOR"
       },
       ca: {
+        btn_close_lb: "Fes clic per tancar",
         gate_badge: "EXCLUSIVA LEVEL.IMMO · FITXA CEGA PATRIMONIAL",
         gate_title: "Actiu Comercial Singular a Ciutat Vella · Eix Àngels",
         gate_subtitle: "Finca clàssica de 1900 al costat de la Plaça dels Àngels i el mural de Keith Haring. 577 m² operatius (474 m² registrals en 2 entitats unides: Planta 1a de 334 m², Planta Baixa de 37 m² i Celler de volta de 103 m² + ~103 m² de Pati/Terrassa interior). Ascensor i accessibilitat universal. Venda sense condició suspensiva de canvi d'ús.",
         gate_security_title: "Filtre de Seguretat (Accés Inversor Qualificat)",
-        gate_security_desc: "Resol la suma per desbloquejar l'estudi econòmic, les dades registrals/ITE i la Fitxa Cega en l'idioma seleccionat:",
+        gate_security_desc: "Resol la suma per desbloquejar l'estudi econòmic, el simulador d'hipoteca/ROI i la Fitxa Cega en l'idioma seleccionat:",
         gate_math_label: "Quant és",
         gate_btn_access: "ACCEDIR",
         gate_error_msg: "Resultat incorrecte. Torna-ho a provar.",
-        gate_carousel_title: "📸 Galeria 1:1 (1080×1080 px) · Façanes, Voltes i Planta 1a",
+        gate_carousel_title: "📸 Galeria 1:1 (1 clic obre · 1 clic tanca)",
         nav_demand: "Demanda Activa",
         nav_market: "Mercat Real",
         nav_collab: "Col·laboradors (500€)",
@@ -1613,7 +1756,7 @@
         btn_mobile_fs: "Pantalla Completa Mòbil",
         video_overlay_badge: "CONFIDENCIALITAT ACTIVA",
         video_overlay_btn: "MOSTRAR VÍDEO NÍTID",
-        main_carousel_label: "🖼️ Galeria 1:1 (Prem qualsevol foto per ampliar amb la seva llegenda)",
+        main_carousel_label: "🖼️ Galeria 1:1 (1 clic obre la foto · 1 clic la tanca)",
         desc_title: "Auditoria Física, Registral i Potencial d'Explotació",
         desc_badge_reg: "Registre BCN Núm. 3 · ITE 2025",
         desc_p1: "Enclavat en una finca clàssica de l'any 1900 amb façana principal de 20 metres revestida en pedra natural al sòcol i grans portals d'arc de mig punt (orientació Sud-oest), i la façana posterior de la qual confronta directament amb la Plaça de Joan Coromines i l'icònic mural original de Keith Haring.",
@@ -1637,7 +1780,7 @@
         map_sup: "🌍 GOOGLE EARTH 3D · VOL ORBITAL SILENCIÓS",
         map_title: "Barcelona · Ciutat Vella · Eix Plaça dels Àngels / Joan Coromines",
         btn_earth_3d: "Vol 3D Google Earth",
-        calc_header: "Simulador de Costos (ITE/Activitat) & Lloguer",
+        calc_header: "Simulador de Costos, €/m² & ROI Financer",
         calc_badge_sqm: "474 m² Reg. + 103 m² Pati",
         calc_select_activity: "1. TRIA L'ACTIVITAT PER SIMULAR ADEQUACIÓ I RENDA DE MERCAT:",
         act_btn_moda: "Atelier Moda",
@@ -1651,10 +1794,26 @@
         calc_item_2: "+ Tractament capil·laritat Soterrani/PB (140 m²) i Showroom:",
         calc_item_3: "+ Pati (103 m²), drenatge Pati 1 i provisió ITE (quota 18%):",
         calc_total_label: "SUMA TOTAL INVERSIÓ REAL:",
-        rent_study_title: "📈 Estudi de Lloguer a Ciutat Vella",
-        rent_monthly_label: "Renda Mensual Estimada (Editable):",
+        rent_study_title: "📈 3. Simulador de Lloguer per €/m² (Barcelona)",
+        rent_study_sub: "Forquilla real a Barcelona (450-550 m²): 14 € a 24 €/m²/mes",
+        btn_google_ref: "Auditar Mercat a Google IA ↗",
+        preset_1_lbl: "Conservador",
+        preset_2_lbl: "Estàndard BCN",
+        preset_3_lbl: "Centre / Eix",
+        preset_4_lbl: "Prime / Pati",
+        rent_sqm_input_label: "Preu Lloguer (€/m²):",
+        rent_monthly_label: "Renda / Mes (474 m²):",
         rent_annual_label: "INGRESSOS BRUTS / ANY",
-        rent_yield_label: "RENDIBILITAT BRUTA",
+        rent_yield_label: "YIELD BRUT (SENSE DEUTE)",
+        roi_table_title: "4. Taula ROI segons Capital Finançat (Cash-on-Cash)",
+        loan_rate_label: "Interès Anual (%):",
+        loan_years_label: "Termini (Anys):",
+        th_ltv: "% Finançat",
+        th_equity: "Capital Propi",
+        th_debt: "Quota/Any",
+        th_cashflow: "Cash-Flow Net",
+        th_roi: "ROI Capital",
+        roi_table_footnote: "* Nota: El % finançat es calcula sobre el preu de venda (780.000 €). El Capital Propi inclou l'entrada no finançada + impostos + despeses + reforma. ROI Capital = (Renda Anual - Quota Hipoteca Anual) / Capital Propi aportat.",
         btn_like_text: "M'agrada",
         btn_share_collab: "Compartir i Guanyar 500€",
         cta_main_elena: "SOL·LICITAR NOTES SIMPLES, ITE I VISITA AMB ELENA IA",
@@ -1704,15 +1863,16 @@
         collab_btn_generate: "🔗 ACTIVAR SUBSCRIPCIÓ I GENERAR ENLLAÇ DE COL·LABORADOR"
       },
       en: {
+        btn_close_lb: "Click to close",
         gate_badge: "LEVEL.IMMO EXCLUSIVE · BLIND ASSET PROFILE",
         gate_title: "Unique Commercial Asset in Ciutat Vella · Àngels Axis",
         gate_subtitle: "Classic 1900 building next to Plaça dels Àngels and Keith Haring's mural. 577 sqm operative area (474 sqm registered across 2 linked entities: 334 sqm 1st Floor, 37 sqm Ground Floor & 103 sqm vaulted Cellar + ~103 sqm private Courtyard/Terrace). Elevator & universal accessibility. Unconditional sale regarding change of use.",
         gate_security_title: "Security Filter (Qualified Investor Access)",
-        gate_security_desc: "Solve the sum to unlock the financial study, land registry/ITE data and Blind Profile in your selected language:",
+        gate_security_desc: "Solve the sum to unlock the financial study, mortgage/ROI simulator and Blind Profile in your selected language:",
         gate_math_label: "What is",
         gate_btn_access: "UNLOCK",
         gate_error_msg: "Incorrect result. Please try again.",
-        gate_carousel_title: "📸 1:1 Gallery (1080×1080 px) · Facades, Vaults & 1st Floor",
+        gate_carousel_title: "📸 1:1 Gallery (1 click opens · 1 click closes)",
         nav_demand: "Active Demand",
         nav_market: "Live Market",
         nav_collab: "Partners (500€)",
@@ -1734,7 +1894,7 @@
         btn_mobile_fs: "Mobile Fullscreen",
         video_overlay_badge: "ACTIVE CONFIDENTIALITY",
         video_overlay_btn: "SHOW SHARP VIDEO",
-        main_carousel_label: "🖼️ 1:1 Gallery (Click any photo to enlarge with caption)",
+        main_carousel_label: "🖼️ 1:1 Gallery (1 click opens photo · 1 click closes)",
         desc_title: "Physical, Registry Audit & Exploitation Potential",
         desc_badge_reg: "BCN Land Registry #3 · ITE 2025",
         desc_p1: "Set in a classic 1900 building with a 20-meter main facade clad in natural stone at the plinth and grand semi-circular arched portals (Southwest orientation), whose rear facade borders directly on Plaça de Joan Coromines and the iconic original Keith Haring mural.",
@@ -1758,7 +1918,7 @@
         map_sup: "🌍 GOOGLE EARTH 3D · SILENT ORBITAL FLIGHT",
         map_title: "Barcelona · Ciutat Vella · Plaça dels Àngels / Joan Coromines Axis",
         btn_earth_3d: "3D Flight Google Earth",
-        calc_header: "CAPEX (ITE/Activity) & Rental Yield Simulator",
+        calc_header: "CAPEX, €/sqm & Leveraged ROI Simulator",
         calc_badge_sqm: "474 sqm Reg. + 103 sqm Patio",
         calc_select_activity: "1. SELECT TARGET ACTIVITY TO SIMULATE CAPEX & MARKET RENT:",
         act_btn_moda: "Fashion Atelier",
@@ -1772,10 +1932,26 @@
         calc_item_2: "+ Basement/GF damp-proofing treatment (140 sqm) & Showroom:",
         calc_item_3: "+ Patio (103 sqm), Pati 1 drainage & ITE 18% community share:",
         calc_total_label: "TOTAL TURNKEY INVESTMENT:",
-        rent_study_title: "📈 Ciutat Vella Commercial Rental Study",
-        rent_monthly_label: "Estimated Monthly Rent (Editable):",
+        rent_study_title: "📈 3. Rental Simulator by €/sqm (Barcelona)",
+        rent_study_sub: "Real Barcelona range (450-550 sqm): 14 € to 24 €/sqm/month",
+        btn_google_ref: "Audit Market on Google AI ↗",
+        preset_1_lbl: "Conservative",
+        preset_2_lbl: "Standard BCN",
+        preset_3_lbl: "Central Axis",
+        preset_4_lbl: "Prime / Patio",
+        rent_sqm_input_label: "Rent Price (€/sqm):",
+        rent_monthly_label: "Monthly Rent (474 sqm):",
         rent_annual_label: "GROSS ANNUAL INCOME",
-        rent_yield_label: "GROSS YIELD",
+        rent_yield_label: "GROSS YIELD (UNLEVERAGED)",
+        roi_table_title: "4. Leveraged ROI Table by Financed Capital (Cash-on-Cash)",
+        loan_rate_label: "Annual Rate (%):",
+        loan_years_label: "Term (Years):",
+        th_ltv: "% Financed",
+        th_equity: "Own Equity",
+        th_debt: "Debt/Year",
+        th_cashflow: "Net Cash-Flow",
+        th_roi: "Equity ROI",
+        roi_table_footnote: "* Note: Financed % is calculated on the asking price (780,000 €). Own Equity includes down payment + taxes + fees + fit-out CAPEX. Equity ROI = (Annual Rent - Annual Mortgage Service) / Own Equity invested.",
         btn_like_text: "Like",
         btn_share_collab: "Share & Earn 500€",
         cta_main_elena: "REQUEST REGISTRY NOTES, ITE & VISIT WITH ELENA AI",
@@ -1825,15 +2001,16 @@
         collab_btn_generate: "🔗 ACTIVATE SUBSCRIPTION & GENERATE PARTNER LINK"
       },
       fr: {
+        btn_close_lb: "Cliquez pour fermer",
         gate_badge: "EXCLUSIVITÉ LEVEL.IMMO · DOSSIER CONFIDENTIEL",
         gate_title: "Actif Commercial d'Exception à Ciutat Vella · Axe Àngels",
         gate_subtitle: "Immeuble classique de 1900 près de la Plaça dels Àngels et de la fresque de Keith Haring. 577 m² opérationnels (474 m² cadastrés en 2 entités réunies : 1er étage de 334 m², RDC de 37 m² et Cave voûtée de 103 m² + ~103 m² de Patio/Terrasse). Ascenseur. Vente sans condition suspensive.",
         gate_security_title: "Filtre de Sécurité (Accès Investisseur Qualifié)",
-        gate_security_desc: "Résolvez la somme pour débloquer l'étude financière, les données foncières/ITE et le Dossier :",
+        gate_security_desc: "Résolvez la somme pour débloquer l'étude financière, le simulateur d'emprunt/ROI et le Dossier :",
         gate_math_label: "Combien font",
         gate_btn_access: "ACCÉDER",
         gate_error_msg: "Résultat incorrect. Veuillez réessayer.",
-        gate_carousel_title: "📸 Galerie 1:1 (1080×1080 px) · Façades, Voûtes & 1er Étage",
+        gate_carousel_title: "📸 Galerie 1:1 (1 clic ouvre · 1 clic ferme)",
         nav_demand: "Demande Active",
         nav_market: "Marché Réel",
         nav_collab: "Partenaires (500€)",
@@ -1855,7 +2032,7 @@
         btn_mobile_fs: "Plein Écran Mobile",
         video_overlay_badge: "CONFIDENTIALITÉ ACTIVE",
         video_overlay_btn: "AFFICHER LA VIDÉO NETTE",
-        main_carousel_label: "🖼️ Galerie 1:1 (Cliquez sur une photo pour agrandir avec légende)",
+        main_carousel_label: "🖼️ Galerie 1:1 (1 clic ouvre la photo · 1 clic la ferme)",
         desc_title: "Audit Physique, Foncier et Potentiel d'Exploitation",
         desc_badge_reg: "Registre BCN N° 3 · ITE 2025",
         desc_p1: "Situé dans un immeuble classique de 1900 avec une façade principale de 20 mètres en pierre naturelle et grands arcs en plein cintre (Sud-Ouest), dont la façade arrière donne directement sur la Plaça de Joan Coromines et la fresque originale de Keith Haring.",
@@ -1879,7 +2056,7 @@
         map_sup: "🌍 GOOGLE EARTH 3D · VOL ORBITAL SILENCIEUX",
         map_title: "Barcelone · Ciutat Vella · Axe Plaça dels Àngels / Joan Coromines",
         btn_earth_3d: "Vol 3D Google Earth",
-        calc_header: "Simulateur de Coûts (ITE/Activité) & Rendement Locatif",
+        calc_header: "Simulateur Coûts, €/m² & ROI Financier",
         calc_badge_sqm: "474 m² Fonc. + 103 m² Patio",
         calc_select_activity: "1. CHOISISSEZ L'ACTIVITÉ POUR SIMULER L'AMÉNAGEMENT ET LE LOYER :",
         act_btn_moda: "Atelier Mode",
@@ -1893,10 +2070,26 @@
         calc_item_2: "+ Traitement capillarité Sous-sol/RDC (140 m²) & Showroom :",
         calc_item_3: "+ Patio (103 m²), drainage Pati 1 et provision ITE (quote-part 18%) :",
         calc_total_label: "INVESTISSEMENT TOTAL CLÉ EN MAIN :",
-        rent_study_title: "📈 Étude Locative à Ciutat Vella",
-        rent_monthly_label: "Loyer Mensuel Estimé (Modifiable) :",
+        rent_study_title: "📈 3. Simulateur de Loyer par €/m² (Barcelone)",
+        rent_study_sub: "Fourchette réelle à Barcelone (450-550 m²) : 14 € à 24 €/m²/mois",
+        btn_google_ref: "Vérifier sur Google IA ↗",
+        preset_1_lbl: "Prudent",
+        preset_2_lbl: "Standard BCN",
+        preset_3_lbl: "Centre / Axe",
+        preset_4_lbl: "Prime / Patio",
+        rent_sqm_input_label: "Prix Loyer (€/m²) :",
+        rent_monthly_label: "Loyer / Mois (474 m²) :",
         rent_annual_label: "REVENUS BRUTS / AN",
-        rent_yield_label: "RENTABILITÉ BRUTE",
+        rent_yield_label: "YIELD BRUT (SANS DETTE)",
+        roi_table_title: "4. Tableau ROI selon Capital Financé (Effet de Levier)",
+        loan_rate_label: "Taux Annuel (%) :",
+        loan_years_label: "Durée (Ans) :",
+        th_ltv: "% Financé",
+        th_equity: "Fonds Propres",
+        th_debt: "Annuité",
+        th_cashflow: "Cash-Flow Net",
+        th_roi: "ROI Fonds Propres",
+        roi_table_footnote: "* Note : Le % financé est calculé sur le prix de vente (780 000 €). Les Fonds Propres incluent l'apport + taxes + frais + travaux. ROI = (Loyer Annuel - Annuité d'Emprunt) / Fonds Propres investis.",
         btn_like_text: "J'aime",
         btn_share_collab: "Partager & Gagner 500€",
         cta_main_elena: "DEMANDER LES NOTES FONCIÈRES, ITE ET VISITE AVEC ELENA IA",
@@ -1917,7 +2110,7 @@
         elena_opt_2: "🏥 Centre Médical, Clinique, Siège Social ou Coworking",
         elena_opt_3: "📈 Investissement Patrimonial Locatif (Rendement >7%)",
         elena_opt_4: "🏛️ Entité Culturelle/Sociale ou Changement d'Usage (Sans condition)",
-        elena_step2_q: " Excellente approche. Comment envisagez-vous de structurer l'acquisition (780 000 € + aménagement) ?",
+        elena_step2_q: "Excellente approche. Comment envisagez-vous de structurer l'acquisition (780 000 € + aménagement) ?",
         elena_fin_1: "💳 Fonds Propres Disponibles / Comptant",
         elena_fin_2: "🏦 Liquidités + Financement Bancaire / Hypothécaire",
         elena_fin_3: "🔄 Arbitrage Patrimonial / Cession préalable",
@@ -1946,15 +2139,16 @@
         collab_btn_generate: "🔗 ACTIVER L'INSCRIPTION ET GÉNÉRER LE LIEN PARTENAIRE"
       },
       de: {
+        btn_close_lb: "Zum Schließen klicken",
         gate_badge: "LEVEL.IMMO EXKLUSIV · DISKRETES OBJEKTPROFIL",
         gate_title: "Einzigartiges Gewerbeobjekt in Ciutat Vella · Achse Àngels",
         gate_subtitle: "Klassisches Gebäude von 1900 nahe Plaça dels Àngels und dem Keith-Haring-Wandbild. 577 m² Nutzfläche (474 m² Grundbuchfläche in 2 verbundenen Einheiten: 1. OG 334 m², EG 37 m² & Gewölbekeller 103 m² + ~103 m² Innenhof/Terrasse). Aufzug. Bedingungsloser Verkauf.",
         gate_security_title: "Sicherheitsprüfung (Zugang für Investoren)",
-        gate_security_desc: "Lösen Sie die Aufgabe, um die Wirtschaftlichkeitsberechnung und Grundbuch-/ITE-Daten freizuschalten:",
+        gate_security_desc: "Lösen Sie die Aufgabe, um die Wirtschaftlichkeitsberechnung, den Kredit-/ROI-Rechner und die Grundbuchdaten freizuschalten:",
         gate_math_label: "Was ergibt",
         gate_btn_access: "ÖFFNEN",
         gate_error_msg: "Falsches Ergebnis. Bitte erneut versuchen.",
-        gate_carousel_title: "📸 1:1 Galerie (1080×1080 px) · Fassaden, Gewölbe & 1. OG",
+        gate_carousel_title: "📸 1:1 Galerie (1 Klick öffnet · 1 Klick schließt)",
         nav_demand: "Aktive Nachfrage",
         nav_market: "Live-Markt",
         nav_collab: "Partner (500€)",
@@ -1974,7 +2168,7 @@
         btn_zoom_orig: "Ansicht: Original",
         video_btn_unblur: "Blur",
         btn_mobile_fs: "Vollbild Mobil",
-        main_carousel_label: "🖼️ 1:1 Galerie (Klicken zum Vergrößern mit Beschreibung)",
+        main_carousel_label: "🖼️ 1:1 Galerie (1 Klick öffnet Foto · 1 Klick schließt)",
         desc_title: "Bau-, Grundbuchprüfung & Nutzungspotenzial",
         desc_badge_reg: "Grundbuch BCN Nr. 3 · ITE 2025",
         desc_p1: "Klassisches Gebäude aus dem Jahr 1900 mit 20 Meter breiter Natursteinfassade (Südwestausrichtung), dessen Rückseite direkt an die Plaça de Joan Coromines und das originale Wandgemälde von Keith Haring grenzt.",
@@ -1998,7 +2192,7 @@
         map_sup: "🌍 GOOGLE EARTH 3D · LAUTLOSER ORBITALFLUG",
         map_title: "Barcelona · Ciutat Vella · Achse Plaça dels Àngels / Joan Coromines",
         btn_earth_3d: "3D-Flug Google Earth",
-        calc_header: "Investitions- & Mietrendite-Simulator (inkl. ITE)",
+        calc_header: "Investitions-, €/m² & Eigenkapital-ROI Simulator",
         calc_badge_sqm: "474 m² Grundb. + 103 m² Hof",
         calc_select_activity: "1. ZIELAKTIVITÄT FÜR UMBAUKOSTEN & MIETRENDITE WÄHLEN:",
         act_btn_moda: "Modeatelier",
@@ -2012,10 +2206,26 @@
         calc_item_2: "+ Sanierung Feuchtigkeit UG/EG (140 m²) & Showroom:",
         calc_item_3: "+ Innenhof (103 m²), Entwässerung Pati 1 & ITE-Anteil (18%):",
         calc_total_label: "GESAMTINVESTITION SCHLÜSSELFERTIG:",
-        rent_study_title: "📈 Mietmarktstudie Ciutat Vella",
-        rent_monthly_label: "Geschätzte Monatsmiete (Editierbar):",
+        rent_study_title: "📈 3. Mietsimulator nach €/m² (Barcelona)",
+        rent_study_sub: "Marktspanne Barcelona (450-550 m²): 14 € bis 24 €/m²/Monat",
+        btn_google_ref: "Marktdaten auf Google KI prüfen ↗",
+        preset_1_lbl: "Konservativ",
+        preset_2_lbl: "Standard BCN",
+        preset_3_lbl: "Zentrum",
+        preset_4_lbl: "Prime / Hof",
+        rent_sqm_input_label: "Mietpreis (€/m²):",
+        rent_monthly_label: "Miete / Monat (474 m²):",
         rent_annual_label: "BRUTTOJAHRESMIETE",
-        rent_yield_label: "BRUTTORENDITE",
+        rent_yield_label: "BRUTTORENDITE (OHNE KREDIT)",
+        roi_table_title: "4. ROI-Tabelle nach Finanzierungsgrad (Cash-on-Cash)",
+        loan_rate_label: "Zinssatz (%):",
+        loan_years_label: "Laufzeit (J):",
+        th_ltv: "% Finanziert",
+        th_equity: "Eigenkapital",
+        th_debt: "Rate/Jahr",
+        th_cashflow: "Netto-Cashflow",
+        th_roi: "EK-Rendite",
+        roi_table_footnote: "* Hinweis: Der Finanzierungsgrad bezieht sich auf den Kaufpreis (780.000 €). Das Eigenkapital umfasst Kaufpreisanteil + Steuern + Nebenkosten + Umbau. EK-Rendite = (Jahresmiete - Kapitaldienst) / Eigenkapital.",
         btn_like_text: "Gefällt mir",
         btn_share_collab: "Teilen & 500€ erhalten",
         cta_main_elena: "GRUNDBUCH, ITE & BESICHTIGUNG MIT ELENA KI ANFORDERN",
@@ -2050,18 +2260,31 @@
         elena_step3_err: "Bitte Namen, gültige Telefonnummer und E-Mail eingeben.",
         elena_btn_confirm: "✔ Anfrage bestätigen & Rückruf planen",
         elena_step4_title: "✅ Prioritätsakte erfolgreich registriert!",
-        elena_btn_finish: "Fertigstellen & zurück zum Exposé"
+        elena_btn_finish: "Fertigstellen & zurück zum Exposé",
+        collab_modal_title: "Empfehlungspartner-Club · Level.immo",
+        collab_modal_sub: "Teilen Sie dieses Objekt, verfolgen Sie den Status live und erhalten Sie 500 € bei Verkauf",
+        collab_tab_1: "1. Link aktivieren & teilen",
+        collab_tab_2: "2. Status-Dashboard",
+        collab_box_title: "✨ Kein Spam & volle Transparenz:",
+        collab_box_p1: "Als Empfehlungspartner erhalten Sie keinerlei Werbe-E-Mails, sondern direkten Zugang zum Status-Dashboard Ihrer eingeladenen Kontakte.",
+        collab_box_p2: "🎁 Bei Verkauf innerhalb von 90 Tagen erhalten Sie eine Geschenkkarte im Wert von 500 € gemäß den geltenden gesetzlichen Bestimmungen.",
+        collab_ph_name: "Ihr Name oder Partner-Alias",
+        collab_ph_phone: "Ihre Mobil-/WhatsApp-Nummer",
+        collab_ph_email: "Ihre E-Mail (nur für Statusmeldungen)",
+        collab_legal_text: "Ich akzeptiere die Bedingungen: 90 Tage Laufzeit (Link gesendet / Besichtigung / Vertrag / Notar), danach Status 'Gesehen'. 500 € Geschenkkarte bei erfolgreichem Verkauf.",
+        collab_btn_generate: "🔗 AKTIVIEREN & PARTNER-LINK ERSTELLEN"
       },
       it: {
+        btn_close_lb: "Clicca per chiudere",
         gate_badge: "ESCLUSIVA LEVEL.IMMO · SCHEDA CONFIDENZIALE",
         gate_title: "Immobile Commerciale Unico a Ciutat Vella · Asse Àngels",
         gate_subtitle: "Palazzo storico del 1900 vicino a Plaça dels Àngels e al murale di Keith Haring. 577 m² operativi (474 m² catastali in 2 unità collegate: 1° Piano 334 m², Piano Terra 37 m² e Cantina a volte 103 m² + ~103 m² di Patio/Terrazza). Ascensore. Vendita senza condizioni sospensive.",
         gate_security_title: "Filtro di Sicurezza (Accesso Investitori)",
-        gate_security_desc: "Risolvi la somma per sbloccare lo studio economico e i dati catastali/ITE nella tua lingua:",
+        gate_security_desc: "Risolvi la somma per sbloccare lo studio economico, il simulatore mutuo/ROI e i dati catastali/ITE nella tua lingua:",
         gate_math_label: "Quanto fa",
         gate_btn_access: "ACCEDI",
         gate_error_msg: "Risultato errato. Riprova.",
-        gate_carousel_title: "📸 Galleria 1:1 (1080×1080 px) · Facciate, Volte e 1° Piano",
+        gate_carousel_title: "📸 Galleria 1:1 (1 clic apre · 1 clic chiude)",
         nav_demand: "Domanda Attiva",
         nav_market: "Mercato Reale",
         nav_collab: "Collaboratori (500€)",
@@ -2081,7 +2304,7 @@
         btn_zoom_orig: "Inquadratura: Originale",
         video_btn_unblur: "Sfoca",
         btn_mobile_fs: "Schermo Intero Mobile",
-        main_carousel_label: "🖼️ Galleria 1:1 (Clicca su una foto per ingrandire con didascalia)",
+        main_carousel_label: "🖼️ Galleria 1:1 (1 clic apre la foto · 1 clic la chiude)",
         desc_title: "Audit Fisico, Ipotecario e Potenziale di Sviluppo",
         desc_badge_reg: "Registro BCN N° 3 · ITE 2025",
         desc_p1: "Inserito in un edificio classico del 1900 con facciata di 20 metri in pietra naturale e grandi archi a tutto sesto, il cui lato posteriore confina direttamente con Plaça de Joan Coromines e lo storico murale di Keith Haring.",
@@ -2105,7 +2328,7 @@
         map_sup: "🌍 GOOGLE EARTH 3D · VOLO ORBITALE SILENZIOSO",
         map_title: "Barcellona · Ciutat Vella · Asse Plaça dels Àngels / Joan Coromines",
         btn_earth_3d: "Volo 3D Google Earth",
-        calc_header: "Simulatore Costi (ITE/Attività) e Rendimento",
+        calc_header: "Simulatore Costi, €/m² & ROI Finanziario",
         calc_badge_sqm: "474 m² Cat. + 103 m² Patio",
         calc_select_activity: "1. SCEGLI L'ATTIVITÀ PER SIMULARE ADEGUAMENTO E CANONE DI MERCATO:",
         act_btn_moda: "Atelier Moda",
@@ -2119,10 +2342,26 @@
         calc_item_2: "+ Trattamento risalita Semint./PT (140 m²) e Showroom:",
         calc_item_3: "+ Patio (103 m²), drenaggio Pati 1 e quota ITE (18%):",
         calc_total_label: "TOTALE INVESTIMENTO CHIAVI IN MANO:",
-        rent_study_title: "📈 Studio Locativo a Ciutat Vella",
-        rent_monthly_label: "Canone Mensile Stimato (Modificabile):",
+        rent_study_title: "📈 3. Simulatore Locazione per €/m² (Barcellona)",
+        rent_study_sub: "Fascia reale a Barcellona (450-550 m²): da 14 € a 24 €/m²/mese",
+        btn_google_ref: "Verifica Mercato su Google IA ↗",
+        preset_1_lbl: "Prudente",
+        preset_2_lbl: "Standard BCN",
+        preset_3_lbl: "Centro / Asse",
+        preset_4_lbl: "Prime / Patio",
+        rent_sqm_input_label: "Prezzo Affitto (€/m²):",
+        rent_monthly_label: "Canone / Mese (474 m²):",
         rent_annual_label: "RICAVI LORDI / ANNO",
-        rent_yield_label: "RENDIMENTO LORDO",
+        rent_yield_label: "YIELD LORDO (SENZA DEBITO)",
+        roi_table_title: "4. Tabella ROI per Capitale Finanziato (Leva Finanziaria)",
+        loan_rate_label: "Tasso Annuo (%):",
+        loan_years_label: "Durata (Anni):",
+        th_ltv: "% Finanziato",
+        th_equity: "Capitale Proprio",
+        th_debt: "Rata/Anno",
+        th_cashflow: "Cash-Flow Netto",
+        th_roi: "ROI Capitale",
+        roi_table_footnote: "* Nota: La % finanziata è calcolata sul prezzo di vendita (780.000 €). Il Capitale Proprio include anticipo + imposte + spese + lavori. ROI Capitale = (Canone Annuo - Rata Mutuo Annua) / Capitale Proprio versato.",
         btn_like_text: "Mi Piace",
         btn_share_collab: "Condividi e Ricevi 500€",
         cta_main_elena: "RICHIEDI VISURE, ITE E VISITA CON ELENA IA",
@@ -2157,18 +2396,31 @@
         elena_step3_err: "Inserisci nome, telefono valido e indirizzo email.",
         elena_btn_confirm: "✔ Conferma Richiesta e Prenota Chiamata",
         elena_step4_title: "✅ Pratica prioritaria registrata con successo!",
-        elena_btn_finish: "Termina e Torna alla Scheda"
+        elena_btn_finish: "Termina e Torna alla Scheda",
+        collab_modal_title: "Club Collaboratori Simpatizzanti · Level.immo",
+        collab_modal_sub: "Condividi questo immobile, segui lo stato dal vivo senza dati riservati e ricevi 500 € in caso di vendita",
+        collab_tab_1: "1. Attiva Link e Condividi",
+        collab_tab_2: "2. Pannello di Monitoraggio (Stati)",
+        collab_box_title: "✨ Impegno Zero Spam e Massima Trasparenza:",
+        collab_box_p1: "Attivando la tua iscrizione come Collaboratore Simpatizzante, non ti invieremo mai email pubblicitarie. Avrai accesso diretto al Pannello di Monitoraggio dei tuoi Contatti Invitati.",
+        collab_box_p2: "🎁 In caso di vendita entro 90 giorni, Level.immo ti omaggerà con una Carta Regalo a scelta del valore di 500 €, secondo la normativa vigente.",
+        collab_ph_name: "Il tuo Nome o Alias Collaboratore",
+        collab_ph_phone: "Il tuo cellulare / WhatsApp",
+        collab_ph_email: "La tua Email (solo per avvisi formali di stato)",
+        collab_legal_text: "Accetto le condizioni: monitoraggio per 90 giorni (Link inviato / Visita / Contratto / Rogito), passando a 'Visto' oltre i 90 giorni. Carta Regalo da 500 € in caso di vendita effettiva.",
+        collab_btn_generate: "🔗 ATTIVA ISCRIZIONE E GENERA LINK COLLABORATORE"
       },
       ar: {
+        btn_close_lb: "انقر للإغلاق",
         gate_badge: "حصرياً لدى LEVEL.IMMO · ملف استثماري سري",
         gate_title: "أصل تجاري فريد في سيوتات فيلا (برشلونة) · محور أنخيلز",
         gate_subtitle: "مبنى تاريخي من عام 1900 بجوار ساحة أنخيلز وجدارية كيث هارينغ. إجمالي المساحة التشغيلية 577 م² (474 م² مسجلة في السجل العقاري موزعة على الطابق الأول 334 م²، الطابق الأرضي 37 م² وقبو تاريخي مقبب 103 م² + فناء وتراس خاص ~103 م²). مصعد متوفر. بيع بدون شروط معلقة.",
         gate_security_title: "فلتر الأمان (دخول المستثمرين المؤهلين)",
-        gate_security_desc: "أجب عن المعادلة لفتح الدراسة المالية وبيانات السجل العقاري بلغتك المختارة:",
+        gate_security_desc: "أجب عن المعادلة لفتح الدراسة المالية ومحاكي التمويل والعائد (ROI) وبيانات السجل العقاري بلغتك المختارة:",
         gate_math_label: "كم يساوي",
         gate_btn_access: "دخول",
         gate_error_msg: "النتيجة غير صحيحة. حاول مرة أخرى.",
-        gate_carousel_title: "📸 معرض 1:1 (1080×1080) · الواجهات والقبو والطابق الأول",
+        gate_carousel_title: "📸 معرض 1:1 (نقرة للفتح · نقرة للإغلاق)",
         nav_demand: "الطلب النشط",
         nav_market: "السوق المباشر",
         nav_collab: "المتعاونون (500€)",
@@ -2188,7 +2440,7 @@
         btn_zoom_orig: "الإطار: الأصلي",
         video_btn_unblur: "تمويه",
         btn_mobile_fs: "ملء الشاشة للهاتف",
-        main_carousel_label: "🖼️ معرض 1:1 (اضغط على أي صورة للتكبير مع الوصف)",
+        main_carousel_label: "🖼️ معرض 1:1 (نقرة لفتح الصورة · نقرة لإغلاقها)",
         desc_title: "التدقيق الفني والعقاري وإمكانات الاستثمار",
         desc_badge_reg: "سجل برشلونة رقم 3 · ITE 2025",
         desc_p1: "يقع في مبنى كلاسيكي يعود لعام 1900 بواجهة حجرية بعرض 20 متراً، وتطل واجهته الخلفية مباشرة على ساحة جوان كورومينيس وجدارية كيث هارينغ الشهيرة في قلب المنطقة الثقافية ببرشلونة.",
@@ -2212,7 +2464,7 @@
         map_sup: "🌍 جولة ثلاثية الأبعاد عبر GOOGLE EARTH",
         map_title: "برشلونة · سيوتات فيلا · محور ساحة أنخيلز / جوان كورومينيس",
         btn_earth_3d: "جولة ثلاثية الأبعاد Google Earth",
-        calc_header: "محاكي التكاليف والعائد الإيجاري",
+        calc_header: "محاكي التكاليف وسعر المتر والعائد على رأس المال",
         calc_badge_sqm: "474 م² مسجل + 103 م² فناء",
         calc_select_activity: "1. اختر النشاط لمحاكاة تكاليف التجهيز والإيجار المتوقع:",
         act_btn_moda: "دار أزياء",
@@ -2226,10 +2478,26 @@
         calc_item_2: "+ معالجة الرطوبة في القبو/الأرضي (140 م²) وصالة العرض:",
         calc_item_3: "+ الفناء (103 م²)، تصريف المياه وحصة ITE (18%):",
         calc_total_label: "إجمالي الاستثمار الفعلي:",
-        rent_study_title: "📈 دراسة سوق الإيجار في سيوتات فيلا",
-        rent_monthly_label: "الإيجار الشهري المقدر (قابل للتعديل):",
+        rent_study_title: "📈 3. محاكي الإيجار حسب السعر للمتر المربع (برشلونة)",
+        rent_study_sub: "متوسط السوق في برشلونة (450-550 م²): 14 إلى 24 €/م²/شهر",
+        btn_google_ref: "مراجعة أسعار السوق عبر Google AI ↗",
+        preset_1_lbl: "متحفظ",
+        preset_2_lbl: "قياسي BCN",
+        preset_3_lbl: "وسط المدينة",
+        preset_4_lbl: "ممتاز / فناء",
+        rent_sqm_input_label: "سعر المتر (€/م²):",
+        rent_monthly_label: "الإيجار الشهري (474 م²):",
         rent_annual_label: "الدخل السنوي الإجمالي",
-        rent_yield_label: "العائد الإجمالي",
+        rent_yield_label: "العائد الإجمالي (بدون تمويل)",
+        roi_table_title: "4. جدول العائد (ROI) حسب نسبة التمويل البنكي",
+        loan_rate_label: "الفائدة السنوية (%):",
+        loan_years_label: "المدة (سنوات):",
+        th_ltv: "% التمويل",
+        th_equity: "رأس المال الخاص",
+        th_debt: "القسط السنوي",
+        th_cashflow: "صافي التدفق",
+        th_roi: "العائد ROI",
+        roi_table_footnote: "* ملاحظة: تُحسب نسبة التمويل على سعر البيع (780,000 €). يشمل رأس المال الخاص الدفعة الأولى + الضرائب + المصاريف + التجهيز. العائد على رأس المال = (الإيجار السنوي - القسط السنوي) / رأس المال الخاص.",
         btn_like_text: "أعجبني",
         btn_share_collab: "شارك واحصل على 500€",
         cta_main_elena: "طلب الوثائق الرسمية وتحديد موعد مع المستشارة الذكية ELENA",
@@ -2264,18 +2532,31 @@
         elena_step3_err: "يرجى إدخال الاسم ورقم الهاتف والبريد الإلكتروني بشكل صحيح.",
         elena_btn_confirm: "✔ تأكيد الطلب وجدولة الاتصال",
         elena_step4_title: "✅ تم تسجيل ملفك ذو الأولوية بنجاح!",
-        elena_btn_finish: "إنهاء والعودة إلى الملف"
+        elena_btn_finish: "إنهاء والعودة إلى الملف",
+        collab_modal_title: "نادي الشركاء المتعاونين · Level.immo",
+        collab_modal_sub: "شارك هذا الأصل، تابع الحالة مباشرة بدون بيانات سرية واحصل على 500 € عند البيع",
+        collab_tab_1: "1. تفعيل الرابط والمشاركة",
+        collab_tab_2: "2. لوحة المتابعة (الحالات)",
+        collab_box_title: "✨ التزام بعدم الإزعاج وشفافية تامة:",
+        collab_box_p1: "عند تفعيل اشتراكك كشريك متعاون، لن نزعجك بأي رسائل دعائية. ستحصل على وصول مباشر للوحة متابعة المدعوين.",
+        collab_box_p2: "🎁 في حال البيع خلال 90 يوماً، ستقدم لك Level.immo بطاقة هدية بقيمة 500 € وفق التشريعات السارية.",
+        collab_ph_name: "الاسم أو اللقب",
+        collab_ph_phone: "رقم الهاتف / واتساب",
+        collab_ph_email: "البريد الإلكتروني (للإشعارات الرسمية فقط)",
+        collab_legal_text: "أوافق على الشروط: صلاحية المتابعة 90 يوماً (تم الإرسال / زيارة / عقد / توقيع)، وتتحول إلى 'تمت المشاهدة' بعد 90 يوماً. بطاقة هدية 500 € عند إتمام البيع.",
+        collab_btn_generate: "🔗 تفعيل الاشتراك وإنشاء رابط الشريك"
       },
       zh: {
+        btn_close_lb: "点击任意处关闭",
         gate_badge: "LEVEL.IMMO 独家 · 保密资产档案",
         gate_title: "巴塞罗那老城区 (Ciutat Vella · Àngels) 稀缺商业资产",
         gate_subtitle: "1900年经典历史建筑，毗邻 Àngels 广场与 Keith Haring 原作壁画。总实用面积 577 m²（产权登记面积 474 m²，含二层 334 m²、首层 37 m² 及 103 m² 拱顶地下展厅 + 约 103 m² 私属庭院露台）。配电梯及无障碍通行。无条件现状出售。",
         gate_security_title: "安全验证（合格投资者通道）",
-        gate_security_desc: "请完成计算以所选语言解锁财务测算、产权登记及 ITE 建筑报告：",
+        gate_security_desc: "请完成计算以所选语言解锁财务测算、按揭杠杆/ROI 模拟器及产权报告：",
         gate_math_label: "请计算",
         gate_btn_access: "进入",
         gate_error_msg: "计算结果有误，请重试。",
-        gate_carousel_title: "📸 1:1 图集 (1080×1080 px) · 历史立面、红砖拱顶与二层实拍",
+        gate_carousel_title: "📸 1:1 图集（单击打开 · 单击关闭）",
         nav_demand: "活跃需求",
         nav_market: "实时市场",
         nav_collab: "合作伙伴 (500€)",
@@ -2295,7 +2576,7 @@
         btn_zoom_orig: "画面比例：原始",
         video_btn_unblur: "模糊切换",
         btn_mobile_fs: "手机全屏播放",
-        main_carousel_label: "🖼️ 1:1 图集（点击任意图片放大并查看图注）",
+        main_carousel_label: "🖼️ 1:1 图集（点击图片放大 · 再次点击即关闭）",
         desc_title: "建筑物理、产权审计与商业运营潜力",
         desc_badge_reg: "巴塞罗那3号产权局 · ITE 2025",
         desc_p1: "坐落于1900年古典建筑内，主立面宽20米并饰有天然石材拱门（西南朝向），后立面紧邻 Joan Coromines 广场及著名的 Keith Haring 历史壁画，地处老城区当代艺术核心区。",
@@ -2319,7 +2600,7 @@
         map_sup: "🌍 GOOGLE EARTH 3D · 静默卫星航拍",
         map_title: "巴塞罗那 · 老城区 · Plaça dels Àngels / Joan Coromines 核心轴",
         btn_earth_3d: "Google Earth 3D 航拍",
-        calc_header: "改造预算 (含ITE项目) 与租金回报模拟器",
+        calc_header: "改造预算、每平米租金与杠杆 ROI 模拟器",
         calc_badge_sqm: "474 m² 产权 + 103 m² 庭院",
         calc_select_activity: "1. 选择目标业态以模拟改造投入与市场租金：",
         act_btn_moda: "高定工坊",
@@ -2333,10 +2614,26 @@
         calc_item_2: "+ 地下层/首层防潮处理 (140 m²) 及 Showroom 装修：",
         calc_item_3: "+ 庭院美化 (103 m²)、天窗排水及 ITE 公区 18% 份额预留：",
         calc_total_label: "总投资成本合计：",
-        rent_study_title: "📈 老城区商业租金回报测算",
-        rent_monthly_label: "预计月租金收入（可编辑）：",
+        rent_study_title: "📈 3. 每平米租金模拟器 (€/m² · 巴塞罗那)",
+        rent_study_sub: "巴塞罗那同面积办公/商业真实租金区间：14 € 至 24 €/m²/月",
+        btn_google_ref: "在 Google AI 核查市场行情 ↗",
+        preset_1_lbl: "保守估算",
+        preset_2_lbl: "巴塞标准",
+        preset_3_lbl: "核心轴线",
+        preset_4_lbl: "精品带院",
+        rent_sqm_input_label: "每平米月租 (€/m²):",
+        rent_monthly_label: "月租金总计 (474 m²):",
         rent_annual_label: "年毛租金收入",
-        rent_yield_label: "毛租金回报率",
+        rent_yield_label: "全款毛回报率 (无贷款)",
+        roi_table_title: "4. 银行按揭杠杆与自有资金回报率 (Cash-on-Cash ROI)",
+        loan_rate_label: "年化利率 (%):",
+        loan_years_label: "贷款年限:",
+        th_ltv: "贷款比例",
+        th_equity: "自有资金投入",
+        th_debt: "年还贷额",
+        th_cashflow: "年净现金流",
+        th_roi: "自有资金 ROI",
+        roi_table_footnote: "* 注：贷款比例按售价 (780,000 €) 计算。自有资金包含首付款 + 税费 + 过户费 + 改造费。自有资金 ROI = (年租金 - 年还贷额) / 自有资金总投入。",
         btn_like_text: "收藏",
         btn_share_collab: "分享并赢取 500€ 礼金卡",
         cta_main_elena: "向 ELENA AI 索取产权摘录、ITE 报告并预约看房",
@@ -2371,7 +2668,19 @@
         elena_step3_err: "请完整填写姓名、有效电话号码及电子邮箱。",
         elena_btn_confirm: "✔ 确认申请并预约电话会议",
         elena_step4_title: "✅ 优先投资档案已成功登记！",
-        elena_btn_finish: "完成并返回保密档案"
+        elena_btn_finish: "完成并返回保密档案",
+        collab_modal_title: "合作伙伴俱乐部 · Level.immo",
+        collab_modal_sub: "分享此资产，实时追踪进度（不泄露隐私），成交即可获赠 500 € 礼金卡",
+        collab_tab_1: "1. 激活专属链接并分享",
+        collab_tab_2: "2. 状态追踪面板",
+        collab_box_title: "✨ 零骚扰与完全透明承诺：",
+        collab_box_p1: "激活合作伙伴订阅后，我们绝不会向您发送任何推销邮件。您将直接获得受邀联系人进度追踪面板的访问权限。",
+        collab_box_p2: "🎁 若在 90 天内成交，Level.immo 将按现行法规赠送您价值 500 € 的自选礼金卡。",
+        collab_ph_name: "您的姓名或合作伙伴代号",
+        collab_ph_phone: "您的手机 / WhatsApp 号码",
+        collab_ph_email: "您的邮箱（仅用于正式状态更新通知）",
+        collab_legal_text: "我接受合作伙伴条款：追踪有效期为90天（已发送链接 / 看房 / 合同 / 公证签约），超过90天未成交则转为“已读”。成功交易后获赠 500 € 礼金卡（须符合西班牙现行税法规定）。",
+        collab_btn_generate: "🔗 激活订阅并生成专属推广链接"
       }
     };
 
@@ -2412,9 +2721,9 @@
 
       renderCarousels();
       updateCrossDomainLinks(lang);
+      recalculateEconomics('sqm');
     }
 
-    // Al cargar la página, detecta si viene un idioma por URL (?lang=...) o guardado en sesión (localStorage)
     (function initSessionLanguage() {
       const params = new URLSearchParams(window.location.search);
       const urlLang = params.get('lang');
