@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" id="html-root">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -347,16 +347,16 @@
 
     <!-- BARRA SUPERIOR FIJA MÓVIL (IDÉNTICA A DEMANDA ACTIVA) -->
     <div class="mobile-top-bar">
-        <div class="mobile-brand">L<span>•</span> Level.immo</div>
+        <div class="mobile-brand" translate="no">L<span>•</span> Level.immo</div>
         <div class="mobile-nav-buttons">
-            <a href="https://app.level-i.com/demanda-activa" class="mobile-nav-btn" data-i18n="nav_demanda_mob">🎯 Demanda</a>
+            <a id="nav-demanda-mob" href="https://app.level-i.com/demanda-activa" class="mobile-nav-btn" data-i18n="nav_demanda_mob">🎯 Demanda</a>
             <a href="#" class="mobile-nav-btn active" data-i18n="nav_mercado_mob">📡 Mercado</a>
         </div>
     </div>
 
     <!-- SIDEBAR ESCRITORIO -->
     <aside>
-        <div class="brand-container">
+        <div class="brand-container" translate="no">
             <div class="brand-logo">
                 <span class="l-letter">L</span><span class="brand-dot"></span> <span class="logo-text">Level.immo</span>
             </div>
@@ -364,7 +364,7 @@
         </div>
 
         <div class="nav-menu">
-            <a href="https://app.level-i.com/demanda-activa" class="nav-item" data-i18n="nav_demanda">🎯 Demanda Activa</a>
+            <a id="nav-demanda-desk" href="https://app.level-i.com/demanda-activa" class="nav-item" data-i18n="nav_demanda">🎯 Demanda Activa</a>
             <a href="#" class="nav-item active" data-i18n="nav_mercado_real">📡 Mercado Real</a>
             <a href="#" class="nav-item" onclick="alert('Área restringida. Solo acceso a usuarios verificados.')" data-i18n="nav_gestion">👥 Acceso a Usuarios</a>
             
@@ -376,14 +376,14 @@
             
             <div style="padding: 10px 14px;">
                 <div style="color: var(--text-muted); font-size: 12.5px; font-weight: 600; margin-bottom: 8px;" data-i18n="nav_poblaciones_titulo">📍 Servicios Presenciales en:</div>
-                <div style="font-size: 11px; color: var(--text-muted); line-height: 1.6; padding-left: 12px;">
+                <div style="font-size: 11px; color: var(--text-muted); line-height: 1.6; padding-left: 12px;" translate="no">
                     Alcanar, Les Cases d'Alcanar, La Ràpita, Amposta, Tortosa, Vinaròs, Benicarló, Tarragona, Barcelona, Terrassa, Sabadell, Castellar del Vallès, Matadepera, Cerdanyola del Vallès, Sant Cugat del Vallès, Rubí, Granollers, Mataró.
                 </div>
             </div>
         </div>
 
         <div class="sidebar-footer">
-            <div style="margin-bottom: 10px; font-weight: bold; color: var(--text-muted);">API 4173 · AICAT 14200</div>
+            <div style="margin-bottom: 10px; font-weight: bold; color: var(--text-muted);" translate="no">API 4173 · AICAT 14200</div>
             <div class="legal-links">
                 <a href="javascript:void(0)" onclick="openModal('modal-legal')">Aviso Legal</a>
                 <a href="javascript:void(0)" onclick="openModal('modal-privacidad')">Privacidad y LOPD</a>
@@ -395,8 +395,8 @@
     <main>
         <header>
             <div class="header-title" data-i18n="header_title">Consola Central PropTech · Feed Cronológico</div>
-            <select class="lang-selector" id="language-selector">
-                <option value="es" selected>🇪🇸 Español</option>
+            <select class="lang-selector" id="language-selector" translate="no">
+                <option value="es">🇪🇸 Español</option>
                 <option value="ca">🟨 Català</option>
                 <option value="en">🇬🇧 English</option>
                 <option value="fr">🇫🇷 Français</option>
@@ -639,7 +639,6 @@
         const WEBHOOK_SURTIDOR = "https://hook.eu1.make.com/bpb012er1137ocx0tcdk19muh6le4qpu"; 
         const WEBHOOK_ELENA    = "https://hook.eu1.make.com/3w2wmbbcc3evnvg8ajo3kjkucrd6dfkw"; 
 
-        // Enlace opcional "Publicar en la web (.csv)" de tu Google Sheet municipios_level_immo.csv
         const URL_CSV_MUNICIPIOS_DRIVE = "https://docs.google.com/spreadsheets/d/e/TU_ID_PUBLICADO_AQUI/pub?output=csv";
 
         const HONORARIOS_BASE_MIN = 6000;
@@ -649,7 +648,7 @@
         const STORAGE_PROVISIONAL_KEY = "level_inmuebles_provisionales_v2";
 
         // ==========================================
-        // 1B. BASE COMPLETA DE TUS 94 CÓDIGOS POSTALES Y TODOS SUS BARRIOS (DE TU TABLA MUNICIPIOS)
+        // 1B. BASE COMPLETA DE TUS 94 CÓDIGOS POSTALES Y TODOS SUS BARRIOS
         // ==========================================
         let DICCIONARIO_CPS = {};
 
@@ -839,7 +838,6 @@
             if (!datalist) return;
             datalist.innerHTML = '';
 
-            // Ordenamos para que primero salgan Terres de l'Ebre / Vinaròs y luego Barcelona / Vallès
             const cpsOrdenados = Object.keys(DICCIONARIO_CPS).sort();
             cpsOrdenados.forEach(cp => {
                 const info = DICCIONARIO_CPS[cp];
@@ -978,7 +976,6 @@
             document.getElementById(`${prefijoId}-id-cp-principal`).value = (barrio && barrio !== "_otras zonas") ? `${municipio}-${barrio}` : `${municipio}-`;
         }
 
-        // Respaldo de seguridad con las 5 propiedades reales principales de Lark
         const INMUEBLES_REALES_BASE = [
             {
                 ID_Inmueble: "REF2026102600060",
@@ -1117,7 +1114,7 @@
         }
 
         // ==========================================
-        // DICCIONARIO MULTIDIOMA
+        // DICCIONARIO MULTIDIOMA + PERSISTENCIA DE SESIÓN Y URL (?lang=...)
         // ==========================================
         const traducciones = {
             es: {
@@ -1162,12 +1159,57 @@
             }
         };
 
-        function cambiarIdioma() {
-            const lang = document.getElementById('language-selector').value;
+        function actualizarEnlacesNavegacion(lang) {
+            const linkDemandaDesk = document.getElementById('nav-demanda-desk');
+            const linkDemandaMob = document.getElementById('nav-demanda-mob');
+            if (linkDemandaDesk) linkDemandaDesk.href = `https://app.level-i.com/demanda-activa?lang=${lang}`;
+            if (linkDemandaMob) linkDemandaMob.href = `https://app.level-i.com/demanda-activa?lang=${lang}`;
+        }
+
+        function cambiarIdioma(forzarLang) {
+            const selector = document.getElementById('language-selector');
+            const lang = forzarLang || (selector ? selector.value : 'es');
+            if (selector && selector.value !== lang) {
+                selector.value = lang;
+            }
+
+            try {
+                localStorage.setItem('level_lang', lang);
+                sessionStorage.setItem('level_lang', lang);
+            } catch (e) {}
+
+            const root = document.getElementById('html-root');
+            if (root) {
+                root.lang = lang;
+                root.dir = (lang === 'ar') ? 'rtl' : 'ltr';
+            }
+
             const dic = traducciones[lang] || traducciones['es'];
-            document.querySelectorAll('[data-i18n]').forEach(el => { if (dic[el.getAttribute('data-i18n')]) el.innerHTML = dic[el.getAttribute('data-i18n')]; });
-            document.querySelectorAll('[data-i18n-placeholder]').forEach(el => { if (dic[el.getAttribute('data-i18n-placeholder')]) el.placeholder = dic[el.getAttribute('data-i18n-placeholder')]; });
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const k = el.getAttribute('data-i18n');
+                if (dic[k]) el.innerHTML = dic[k];
+            });
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+                const k = el.getAttribute('data-i18n-placeholder');
+                if (dic[k]) el.placeholder = dic[k];
+            });
+
             generarCaptcha(lang);
+            actualizarEnlacesNavegacion(lang);
+        }
+
+        function inicializarIdiomaSesion() {
+            const paramLang = urlParams.get('lang');
+            let guardadoLang = null;
+            try {
+                guardadoLang = localStorage.getItem('level_lang') || sessionStorage.getItem('level_lang');
+            } catch (e) {}
+
+            const idiomaInicial = (paramLang && traducciones[paramLang])
+                ? paramLang
+                : ((guardadoLang && traducciones[guardadoLang]) ? guardadoLang : 'es');
+
+            cambiarIdioma(idiomaInicial);
         }
 
         function updateClock() {
@@ -1207,7 +1249,8 @@
         }
 
         function compartirPropiedad(refID) {
-            const shareUrl = `${window.location.origin}${window.location.pathname}?ref=${refID}`;
+            const lang = document.getElementById('language-selector').value || 'es';
+            const shareUrl = `${window.location.origin}${window.location.pathname}?ref=${refID}&lang=${lang}`;
             if (navigator.clipboard) {
                 navigator.clipboard.writeText(shareUrl).then(() => {
                     mostrarToast('🔗 Enlace copiado al portapapeles');
@@ -1612,6 +1655,7 @@
                 feedContainer.appendChild(card);
             });
 
+            // Re-aplica las traducciones del idioma activo sobre las tarjetas recién inyectadas
             cambiarIdioma();
 
             const refToOpen = urlParams.get('ref');
@@ -1630,9 +1674,14 @@
             cargarMunicipiosDesdeDrive();
             setInterval(updateClock, 1000); 
             updateClock(); 
-            cambiarIdioma(); 
-            document.getElementById('language-selector').addEventListener('change', cambiarIdioma);
-            generarCaptcha();
+            
+            // Inicializa respetando el parámetro ?lang= de la URL o la sesión guardada
+            inicializarIdiomaSesion();
+
+            document.getElementById('language-selector').addEventListener('change', function() {
+                cambiarIdioma(this.value);
+            });
+
             cargarInmueblesReales();
 
             const selectorTipo = document.getElementById('prop-tipo');
