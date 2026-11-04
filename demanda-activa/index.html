@@ -38,7 +38,6 @@
     .square-1-1 {
       aspect-ratio: 1 / 1;
     }
-    /* Escenario Vertical 9:16 Responsive */
     .vertical-stage {
       aspect-ratio: 9 / 16;
       width: 100%;
@@ -62,7 +61,6 @@
       transform: scale(1.75);
       transform-origin: center center;
     }
-    /* Fondo de portada: se reproduce 1 sola vez y congela mostrando el edificio de noche */
     .intro-video-full {
       width: 100%;
       height: 100%;
@@ -76,6 +74,23 @@
         object-position: center center;
         background-color: #060a10;
       }
+    }
+    /* Lightbox Blindado: encuadre garantizado dentro de cualquier pantalla sin desbordar jamás */
+    #lightbox-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 99999;
+      background: rgba(5, 8, 14, 0.94);
+      backdrop-filter: blur(10px);
+    }
+    .lightbox-safe-img {
+      width: min(84vw, 56vh);
+      height: min(84vw, 56vh);
+      object-fit: contain;
+      border-radius: 1rem;
+      border: 2px solid #334155;
+      background: #000;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.9);
     }
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
@@ -202,7 +217,7 @@
           <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 -ml-1.5 mt-2"></span>
           <span>Level.immo</span>
         </a>
-        <span class="text-xs text-emerald-400 font-mono hidden md:inline" id="live-clock">04/11/2026 | 00:48:00</span>
+        <span class="text-xs text-emerald-400 font-mono hidden md:inline" id="live-clock">04/11/2026 | 00:58:00</span>
       </div>
 
       <nav class="flex flex-wrap items-center gap-1.5 sm:gap-2 text-xs font-semibold">
@@ -577,7 +592,7 @@
     </div>
   </div>
 
-  <!-- ================= MODAL: COLABORADORES SIMPATIZANTES (100% MULTILINGÜE) ================= -->
+  <!-- ================= MODAL: COLABORADORES SIMPATIZANTES ================= -->
   <div id="collaborator-modal" class="fixed inset-0 z-[60] bg-slate-950/85 backdrop-blur-md hidden items-center justify-center p-4">
     <div class="card-panel max-w-2xl w-full overflow-hidden border-amber-500/40 shadow-2xl bg-[#101826]">
       
@@ -712,32 +727,34 @@
     </div>
   </div>
 
-  <!-- ================= MODAL LIGHTBOX 1:1 REPARADO (ENCUADRE PERFECTO EN PORTÁTIL Y MÓVIL + LEYENDA SIEMPRE VISIBLE + CIERRE INSTANTÁNEO) ================= -->
-  <div id="lightbox-modal" onclick="closeLightbox()" class="fixed inset-0 z-[80] bg-slate-950/90 backdrop-blur-md hidden flex-col items-center justify-center p-3 sm:p-6 cursor-pointer select-none">
+  <!-- ================= MODAL LIGHTBOX 1:1 100% BLINDADO (SE CIERRA CON CLIC EN CUALQUIER PARTE, BOTÓN FLOTANTE FIJO O TECLA ESC) ================= -->
+  <div id="lightbox-modal" onclick="closeLightbox()" class="hidden flex-col items-center justify-center p-4 cursor-zoom-out select-none">
     
-    <!-- Barra superior del Lightbox siempre visible -->
-    <div class="w-full max-w-lg flex items-center justify-between mb-2.5" onclick="event.stopPropagation()">
-      <div class="flex items-center gap-2">
-        <button onclick="stepLightbox(-1)" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-white text-xs font-extrabold border border-slate-600 transition">
-          ◀
-        </button>
-        <span id="lightbox-counter" class="text-xs font-mono font-bold text-slate-300">1 / 11</span>
-        <button onclick="stepLightbox(1)" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-white text-xs font-extrabold border border-slate-600 transition">
-          ▶
-        </button>
-      </div>
-      <button onclick="closeLightbox()" class="px-4 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-500 text-white text-xs font-black uppercase tracking-wider shadow-lg transition">
-        ✕ <span data-i18n="btn_close_lb">Cerrar</span>
+    <!-- Botón de Cierre Fijo en la Esquina Superior Derecha de la Pantalla (Imposible que quede oculto) -->
+    <button type="button" onclick="closeLightbox()" class="fixed top-4 right-4 z-[100000] px-4 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs sm:text-sm font-black uppercase tracking-wider shadow-2xl border-2 border-white/30 flex items-center gap-1.5">
+      <span>✕</span> <span data-i18n="btn_close_lb">Cerrar</span>
+    </button>
+
+    <!-- Controles de Navegación Anterior / Contador / Siguiente -->
+    <div class="flex items-center gap-3 mb-3 z-20" onclick="event.stopPropagation()">
+      <button type="button" onclick="stepLightbox(-1)" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-extrabold border border-slate-600 shadow-lg transition">
+        ◀ Anterior
+      </button>
+      <span id="lightbox-counter" class="px-3 py-1.5 rounded-lg bg-slate-900/90 border border-slate-700 text-xs font-mono font-bold text-emerald-400">1 / 11</span>
+      <button type="button" onclick="stepLightbox(1)" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-extrabold border border-slate-600 shadow-lg transition">
+        Siguiente ▶
       </button>
     </div>
 
-    <!-- Imagen ajustada a la altura de pantalla (al hacer clic encima también se cierra) -->
-    <div class="relative flex items-center justify-center max-h-[65vh] max-w-[92vw] sm:max-w-lg aspect-square rounded-2xl overflow-hidden border-2 border-slate-700 shadow-2xl bg-black">
-      <img id="lightbox-img" src="" alt="Vista Ampliada 1:1" class="w-full h-full object-contain" />
-    </div>
+    <!-- Imagen contenida a min(84vw, 56vh): Al tocar la foto también se cierra -->
+    <img id="lightbox-img" src="" alt="Vista Ampliada 1:1" class="lightbox-safe-img cursor-zoom-out" />
 
     <!-- Leyenda siempre visible debajo de la foto -->
-    <div id="lightbox-caption" onclick="event.stopPropagation()" class="w-full max-w-lg mt-2.5 px-4 py-2.5 rounded-xl bg-[#101826] text-amber-400 text-xs sm:text-sm font-extrabold text-center border border-amber-500/40 shadow-xl"></div>
+    <div id="lightbox-caption" class="w-full max-w-lg mt-3 px-4 py-3 rounded-xl bg-[#101826]/95 text-amber-400 text-xs sm:text-sm font-extrabold text-center border border-amber-500/40 shadow-2xl"></div>
+    
+    <div class="mt-2 text-[11px] text-slate-400 font-medium">
+      (Pulsa en cualquier lugar o en la foto para cerrar)
+    </div>
   </div>
 
   <!-- ================= MODAL ELENA IA (100% MULTILINGÜE EN LOS 8 IDIOMAS) ================= -->
@@ -955,7 +972,6 @@
     let currentLang = "es";
     let currentLightboxIdx = 0;
 
-    // Galería 1:1 verificada: ff99.jpg es el Sótano de bóvedas de ladrillo (103 m²) y ff1-ff9 son las salas reales de Planta 1ª (334 m²)
     const galleryItems = [
       {
         file: "principal.jpg",
@@ -1044,7 +1060,7 @@
           fr: "Premier Étage (334 m²) · Espace Office / Point d'Eau et Fenêtre",
           de: "1. Obergeschoss (334 m²) · Teeküche / Wasseranschluss & Fenster",
           it: "Primo Piano (334 m²) · Zona Office / Punto Acqua e Finestra",
-          ar: "الطابق الأول (334 م²) · منطقة المطبخ التحضيري والنافذة",
+          ar: "الطابق الأول (334 m²) · منطقة المطبخ التحضيري والنافذة",
           zh: "二层空间 (334 m²) · 现有茶水/厨卫区与采光窗"
         }
       },
@@ -1057,7 +1073,7 @@
           fr: "Premier Étage (334 m²) · Salle Polyvalente avec Cloisons Vitrées",
           de: "1. Obergeschoss (334 m²) · Mehrzweckraum mit Glastrennwänden",
           it: "Primo Piano (334 m²) · Sala Polivalente con Pareti Vetrate",
-          ar: "الطابق الأول (334 م²) · قاعة متعددة الاستخدامات بفواصل زجاجية",
+          ar: "الطابق الأول (334 m²) · قاعة متعددة الاستخدامات بفواصل زجاجية",
           zh: "二层空间 (334 m²) · 玻璃隔断多功能厅"
         }
       },
@@ -1070,7 +1086,7 @@
           fr: "Premier Étage (334 m²) · Salle Intérieure (Ancienne École Maternelle)",
           de: "1. Obergeschoss (334 m²) · Innenraum (Ehemaliger Kindergarten)",
           it: "Primo Piano (334 m²) · Sala Interna (Ex Asilo)",
-          ar: "الطابق الأول (334 م²) · قاعة داخلية (روضة أطفال سابقة)",
+          ar: "الطابق الأول (334 m²) · قاعة داخلية (روضة أطفال سابقة)",
           zh: "二层空间 (334 m²) · 内部活动室现状（原幼儿园）"
         }
       },
@@ -1083,7 +1099,7 @@
           fr: "Premier Étage (334 m²) · Couloir Central et Bureaux Modulaires",
           de: "1. Obergeschoss (334 m²) · Zentraler Flur & Modulare Büros",
           it: "Primo Piano (334 m²) · Corridoio Centrale e Uffici Modulari",
-          ar: "الطابق الأول (334 م²) · الممر المركزي والمكاتب",
+          ar: "الطابق الأول (334 m²) · الممر المركزي والمكاتب",
           zh: "二层空间 (334 m²) · 中央走廊与模块化隔间"
         }
       },
@@ -1096,7 +1112,7 @@
           fr: "Premier Étage (334 m²) · Vue des Salles et Cloisons Légères",
           de: "1. Obergeschoss (334 m²) · Räume & Leichte Trennwände",
           it: "Primo Piano (334 m²) · Vista Aule e Pareti Divisorie Leggere",
-          ar: "الطابق الأول (334 م²) · القاعات والقواطع الخفيفة",
+          ar: "الطابق الأول (334 m²) · القاعات والقواطع الخفيفة",
           zh: "二层空间 (334 m²) · 轻质隔断空间（易于打通改造）"
         }
       }
@@ -1138,6 +1154,8 @@
       if (el) el.scrollBy({ left: offset, behavior: 'smooth' });
     }
 
+    // Lightbox Blindado con soporte para botón "Atrás" del navegador/móvil
+    let lightboxOpen = false;
     function openLightboxByIndex(idx) {
       currentLightboxIdx = (idx + galleryItems.length) % galleryItems.length;
       const item = galleryItems[currentLightboxIdx];
@@ -1152,6 +1170,10 @@
       document.getElementById('lightbox-counter').textContent = `${currentLightboxIdx + 1} / ${galleryItems.length}`;
       modal.classList.remove('hidden');
       modal.classList.add('flex');
+      if (!lightboxOpen) {
+        lightboxOpen = true;
+        try { history.pushState({ lightbox: true }, ""); } catch (e) {}
+      }
     }
 
     function stepLightbox(dir) {
@@ -1160,14 +1182,20 @@
 
     function closeLightbox() {
       const modal = document.getElementById('lightbox-modal');
+      if (!modal) return;
       modal.classList.add('hidden');
       modal.classList.remove('flex');
+      lightboxOpen = false;
     }
 
-    // Cerrar Lightbox también con tecla ESC o flechas izquierda/derecha
+    window.addEventListener('popstate', function() {
+      if (lightboxOpen) {
+        closeLightbox();
+      }
+    });
+
     document.addEventListener('keydown', function(e) {
-      const modal = document.getElementById('lightbox-modal');
-      if (modal && !modal.classList.contains('hidden')) {
+      if (lightboxOpen) {
         if (e.key === 'Escape') closeLightbox();
         if (e.key === 'ArrowRight') stepLightbox(1);
         if (e.key === 'ArrowLeft') stepLightbox(-1);
@@ -1490,7 +1518,6 @@
       document.getElementById('legal-modal').classList.remove('flex');
     }
 
-    // DICCIONARIO COMPLETO EN LOS 8 IDIOMAS
     const i18n = {
       es: {
         btn_close_lb: "Cerrar",
