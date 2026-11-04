@@ -221,7 +221,7 @@
           <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 -ml-1.5 mt-2"></span>
           <span>Level.immo</span>
         </a>
-        <span class="text-xs text-emerald-400 font-mono hidden md:inline" id="live-clock">04/11/2026 | 17:15:00</span>
+        <span class="text-xs text-emerald-400 font-mono hidden md:inline" id="live-clock">04/11/2026 | 18:30:00</span>
       </div>
 
       <nav class="flex flex-wrap items-center gap-1.5 sm:gap-2 text-xs font-semibold">
@@ -411,7 +411,7 @@
           </div>
         </div>
 
-        <!-- Módulo Google Earth 3D + Botón Map (Abre activo-angels-map a Pantalla Completa) -->
+        <!-- MÓDULO MAPA: MAPA INTERACTIVO CON COMERCIOS POR DEFECTO + BOTÓN MAP (ABRE activo-angels-map.jpg CON CÍRCULO VERDE) -->
         <div class="card-panel p-5 sm:p-6 space-y-4">
           <div class="flex flex-wrap items-center justify-between gap-3">
             <div>
@@ -429,24 +429,21 @@
               <a href="https://earth.google.com/web/@41.382736,2.165658,45a,280d,35y,0h,60t,0r" target="_blank" rel="noopener noreferrer" class="px-3.5 py-1.5 rounded-lg bg-sky-500/20 hover:bg-sky-500/30 border border-sky-500/40 text-sky-300 text-xs font-extrabold transition flex items-center gap-1.5">
                 <span>🌍</span> <span data-i18n="btn_earth_3d">Vuelo 3D Google Earth</span>
               </a>
-              <!-- BOTÓN MAP: ABRE LA IMAGEN activo-angels-map A PANTALLA COMPLETA -->
+              <!-- BOTÓN MAP: ABRE TU IMAGEN activo-angels-map.jpg CON EL CÍRCULO VERDE A PANTALLA COMPLETA -->
               <button type="button" onclick="openMapFullscreen()" class="px-3.5 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-black transition flex items-center gap-1.5 shadow-lg cursor-pointer">
                 <span>🗺️</span> <span data-i18n="btn_map">Map</span>
               </button>
             </div>
           </div>
 
-          <div onclick="openMapFullscreen()" class="w-full rounded-xl overflow-hidden border border-slate-800 hover:border-emerald-500 transition relative bg-slate-950 cursor-pointer group">
-            <img
-              id="inline-map-img"
-              src="activo-angels-map.jpg"
-              onerror="if(!this.dataset.t1){this.dataset.t1='1';this.src='activo-angels-map.png';}else if(!this.dataset.t2){this.dataset.t2='1';this.src='activo-angels-map.jpeg';}else if(!this.dataset.t3){this.dataset.t3='1';this.src='https://level-i.github.io/barcelona/ciutat-vella/activo-angels/activo-angels-map.jpg';}"
-              alt="Mapa Activo Àngels"
-              class="w-full h-auto max-h-96 object-cover group-hover:scale-[1.02] transition duration-300"
-            />
-            <div class="absolute bottom-3 right-3 bg-slate-950/85 backdrop-blur px-3 py-1.5 rounded-lg border border-emerald-500/50 text-[11px] font-bold text-emerald-400 flex items-center gap-1.5 shadow-lg">
-              <span>⛶</span> <span data-i18n="map_zoom_hint">Pulsa en "Map" o en la imagen para pantalla completa</span>
-            </div>
+          <div class="w-full h-72 rounded-xl overflow-hidden border border-slate-800 relative bg-slate-950">
+            <iframe
+              class="w-full h-full border-0"
+              loading="lazy"
+              allowfullscreen
+              referrerpolicy="no-referrer-when-downgrade"
+              src="https://maps.google.com/maps?ll=41.382736,2.165658&z=19&t=k&hl=es&output=embed">
+            </iframe>
           </div>
         </div>
 
@@ -1010,8 +1007,48 @@
 
   <!-- ================= LÓGICA JAVASCRIPT ================= -->
   <script>
+    // ==========================================
+    // WEBHOOKS OFICIALES MAKE (PRIORIDAD 1)
+    // ==========================================
+    const WEBHOOK_MAKE = "https://hook.eu1.make.com/loy5kvv4qmnvo748fmxo2qvt48mbf986";
+    const WEBHOOK_ELENA_VENTAS = "https://hook.eu1.make.com/3w2wmbbcc3evnvg8ajo3kjkucrd6dfkw";
+    const WEBHOOK_REFERIDOS = "https://hook.eu1.make.com/lcfewra8wffai81fjda2g5jgm76cjaeo";
+
     const GITHUB_CDN = "https://level-i.github.io/barcelona/ciutat-vella/activo-angels/";
+    const ASSET_ID = "ACTIVO-ANGELS-BCN-08001";
     let currentLang = "es";
+    const sessionId = "usr_" + Math.random().toString(36).substring(2, 11);
+    let clienteIP = "Desconocida";
+
+    const urlParamsGlobal = new URLSearchParams(window.location.search);
+    const activeRefCode = urlParamsGlobal.get("ref") || "";
+    const utmSource = urlParamsGlobal.get("utm_source") || "";
+    const utmMedium = urlParamsGlobal.get("utm_medium") || "";
+    const utmCampaign = urlParamsGlobal.get("utm_campaign") || "";
+
+    // Obtener IP y registrar visita referida por Colaborador
+    fetch("https://api.ipify.org?format=json")
+      .then(r => r.json())
+      .then(data => {
+        clienteIP = data.ip || "Desconocida";
+        if (activeRefCode && !sessionStorage.getItem("ref_tracked_" + activeRefCode)) {
+          sessionStorage.setItem("ref_tracked_" + activeRefCode, "1");
+          fetch(WEBHOOK_REFERIDOS, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              evento: "visita_enlace_colaborador",
+              id_inmueble: ASSET_ID,
+              codigo_colaborador: activeRefCode,
+              idioma_usuario: currentLang,
+              id_sesion: sessionId,
+              ip_cliente: clienteIP,
+              fecha_hora: new Date().toISOString()
+            })
+          }).catch(() => {});
+        }
+      })
+      .catch(() => {});
 
     const annualUnitByLang = {
       es: "/ año",
@@ -1025,14 +1062,14 @@
     };
 
     const mapCaptionsByLang = {
-      es: "Mapa de Ubicación · Barcelona Ciutat Vella · Eje Plaça dels Àngels / Joan Coromines (41.382736, 2.165658)",
-      ca: "Mapa d'Ubicació · Barcelona Ciutat Vella · Eix Plaça dels Àngels / Joan Coromines (41.382736, 2.165658)",
-      en: "Location Map · Barcelona Ciutat Vella · Plaça dels Àngels / Joan Coromines Axis (41.382736, 2.165658)",
-      fr: "Carte d'Emplacement · Barcelone Ciutat Vella · Axe Plaça dels Àngels / Joan Coromines (41.382736, 2.165658)",
-      de: "Lageplan · Barcelona Ciutat Vella · Achse Plaça dels Àngels / Joan Coromines (41.382736, 2.165658)",
-      it: "Mappa di Posizione · Barcellona Ciutat Vella · Asse Plaça dels Àngels / Joan Coromines (41.382736, 2.165658)",
-      ar: "خريطة الموقع · برشلونة سيوتات فيلا · محور ساحة أنخيلز / جوان كورومينيس",
-      zh: "区位图 · 巴塞罗那老城区 · Plaça dels Àngels / Joan Coromines 核心轴线"
+      es: "Mapa de Ubicación y Entorno · Barcelona Ciutat Vella · Eje Plaça dels Àngels / Joan Coromines (41.382736, 2.165658)",
+      ca: "Mapa d'Ubicació i Entorn · Barcelona Ciutat Vella · Eix Plaça dels Àngels / Joan Coromines (41.382736, 2.165658)",
+      en: "Location & Surroundings Map · Barcelona Ciutat Vella · Plaça dels Àngels / Joan Coromines Axis (41.382736, 2.165658)",
+      fr: "Carte de Localisation & Environs · Barcelone Ciutat Vella · Axe Plaça dels Àngels / Joan Coromines (41.382736, 2.165658)",
+      de: "Lage- und Umgebungsplan · Barcelona Ciutat Vella · Achse Plaça dels Àngels / Joan Coromines (41.382736, 2.165658)",
+      it: "Mappa di Posizione e Dintorni · Barcellona Ciutat Vella · Asse Plaça dels Àngels / Joan Coromines (41.382736, 2.165658)",
+      ar: "خريطة الموقع والمحيط · برشلونة سيوتات فيلا · محور ساحة أنخيلز / جوان كورومينيس",
+      zh: "区位与周边地图 · 巴塞罗那老城区 · Plaça dels Àngels / Joan Coromines 核心轴线"
     };
 
     const galleryItems = [
@@ -1217,7 +1254,7 @@
       if (el) el.scrollBy({ left: offset, behavior: 'smooth' });
     }
 
-    // LIGHTBOX BLINDADO INFALIBLE (FOTOS 1:1 Y BOTÓN MAP A PANTALLA COMPLETA)
+    // LIGHTBOX BLINDADO INFALIBLE (FOTOS 1:1)
     function openLightboxByIndex(idx) {
       const item = galleryItems[idx];
       if (!item) return;
@@ -1235,16 +1272,15 @@
       modal.classList.add('is-open');
     }
 
-    // ABRE LA IMAGEN activo-angels-map A PANTALLA COMPLETA AL PULSAR EL BOTÓN "Map"
+    // ABRE TU IMAGEN activo-angels-map.jpg CON EL CÍRCULO VERDE A PANTALLA COMPLETA AL PULSAR "Map"
     function openMapFullscreen() {
       const modal = document.getElementById('lightbox-modal');
       const img = document.getElementById('lightbox-img');
-      const inlineMap = document.getElementById('inline-map-img');
       delete img.dataset.m1;
       delete img.dataset.m2;
       delete img.dataset.m3;
 
-      img.src = (inlineMap && inlineMap.currentSrc) ? inlineMap.currentSrc : "activo-angels-map.jpg";
+      img.src = "activo-angels-map.jpg";
       img.onerror = function() {
         if (!this.dataset.m1) { this.dataset.m1 = '1'; this.src = 'activo-angels-map.png'; }
         else if (!this.dataset.m2) { this.dataset.m2 = '1'; this.src = 'activo-angels-map.jpeg'; }
@@ -1515,6 +1551,49 @@
       document.getElementById('collab-wa-share').href = `https://wa.me/?text=${waText}`;
       document.getElementById('collab-link-result').classList.remove('hidden');
 
+      const payloadColaborador = {
+        evento: "alta_colaborador_simpatizante",
+        id_inmueble: ASSET_ID,
+        metadatos_sistema: {
+          origen_landing: "ACTIVO ANGELS BCN",
+          tipo_cta: "ALTA COLABORADOR 500 EUR",
+          idioma_usuario: currentLang,
+          id_sesion: sessionId,
+          ip_cliente: clienteIP,
+          fecha_alta: new Date().toISOString()
+        },
+        datos_usuario: {
+          codigo_colaborador: code,
+          nombre: name,
+          telefono: phone,
+          email: document.getElementById('collab-email').value.trim(),
+          rol_asignar: "Colaborador Simpatizante",
+          acepto_legal: chk
+        },
+        datos_colaboracion: {
+          activo_promocionado: "Barcelona - Ciutat Vella (08001) · Activo Àngels",
+          precio_activo: 780000,
+          premio_estipulado_eur: 500,
+          validez_dias: 90,
+          enlace_generado: url,
+          estado_seguimiento: "Link (0d)"
+        },
+        tracking_marketing: { utm_source: utmSource, utm_medium: utmMedium, utm_campaign: utmCampaign }
+      };
+
+      Promise.allSettled([
+        fetch(WEBHOOK_MAKE, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payloadColaborador)
+        }),
+        fetch(WEBHOOK_REFERIDOS, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payloadColaborador)
+        })
+      ]);
+
       const list = document.getElementById('collab-tracking-list');
       const newCard = document.createElement('div');
       newCard.className = "p-4 rounded-xl bg-emerald-950/30 border border-emerald-500/50 space-y-3";
@@ -1547,13 +1626,53 @@
     }
 
     let liked = false;
+    (function initLikeState() {
+      try {
+        if (localStorage.getItem("liked_" + ASSET_ID) === "1") {
+          liked = true;
+          const c = document.getElementById('likes-count');
+          if (c) {
+            const newCount = parseInt(c.textContent, 10) + 1;
+            c.textContent = newCount;
+            document.getElementById('btn-like').innerHTML = `<span>❤️</span> <span>(${newCount})</span>`;
+          }
+        }
+      } catch (e) {}
+    })();
+
     function registerLike() {
-      if (!liked) {
-        liked = true;
-        const c = document.getElementById('likes-count');
-        c.textContent = parseInt(c.textContent, 10) + 1;
-        document.getElementById('btn-like').innerHTML = `<span>❤️</span> <span>(${c.textContent})</span>`;
-      }
+      if (liked) return;
+      liked = true;
+      try {
+        localStorage.setItem("liked_" + ASSET_ID, "1");
+      } catch (e) {}
+
+      const c = document.getElementById('likes-count');
+      const updatedLikes = parseInt(c.textContent, 10) + 1;
+      c.textContent = updatedLikes;
+      document.getElementById('btn-like').innerHTML = `<span>❤️</span> <span>(${updatedLikes})</span>`;
+
+      fetch(WEBHOOK_MAKE, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          evento: "like_inmueble",
+          id_inmueble: ASSET_ID,
+          metadatos_sistema: {
+            origen_landing: "ACTIVO ANGELS BCN",
+            tipo_cta: "ME GUSTA",
+            idioma_usuario: currentLang,
+            id_sesion: sessionId,
+            ip_cliente: clienteIP,
+            codigo_colaborador_ref: activeRefCode
+          },
+          datos_interaccion: {
+            id_inmueble: ASSET_ID,
+            total_likes_vista: updatedLikes,
+            fecha_hora: new Date().toISOString()
+          }
+        })
+      }).catch(() => {});
     }
 
     let selectedUse = "";
@@ -1593,23 +1712,97 @@
     function submitElenaLead() {
       const name = document.getElementById('lead-name').value.trim();
       const prefix = document.getElementById('lead-prefix').value;
-      const phone = document.getElementById('lead-phone').value.trim();
+      const rawPhone = document.getElementById('lead-phone').value.replace(/\D/g, '');
       const email = document.getElementById('lead-email').value.trim();
       const date = document.getElementById('lead-date').value;
       const time = document.getElementById('lead-time').value;
 
-      if (!name || phone.length < 6 || !email.includes('@')) {
+      if (!name || rawPhone.length < 6 || !email.includes('@')) {
         document.getElementById('elena-step3-error').classList.remove('hidden');
         return;
       }
       document.getElementById('elena-step3-error').classList.add('hidden');
+
+      const fullPhone = prefix + rawPhone;
+      const capexP1 = parseFloat(document.getElementById('cost-p1').value) || 0;
+      const capexSot = parseFloat(document.getElementById('cost-sotano').value) || 0;
+      const capexPat = parseFloat(document.getElementById('cost-patio').value) || 0;
+      const rentSqm = parseFloat(document.getElementById('est-rent-sqm').value) || 0;
+      const rentMonthly = parseFloat(document.getElementById('est-monthly-rent').value) || 0;
+      const totalInvStr = document.getElementById('total-investment-display').textContent;
+      const grossYieldStr = document.getElementById('gross-yield-display').textContent;
+
+      const payloadElena = {
+        evento: "lead_inversor_cualificado_elena",
+        id_inmueble: ASSET_ID,
+        metadatos_sistema: {
+          origen_landing: "ACTIVO ANGELS BCN",
+          tipo_cta: "SOLICITAR NOTAS SIMPLES ITE Y VISITA ELENA IA",
+          idioma_usuario: currentLang,
+          id_sesion: sessionId,
+          ip_cliente: clienteIP,
+          codigo_colaborador_ref: activeRefCode,
+          registrar_asistencia_elena: true
+        },
+        datos_usuario: {
+          nombre: name,
+          telefono: fullPhone,
+          email: email,
+          rol_asignar: "Comprador Inversor",
+          acepto_legal: true
+        },
+        datos_demanda_inversion: {
+          id_inmueble: ASSET_ID,
+          codigo_postal: "08001",
+          poblacion: "Barcelona",
+          barrio: "El Raval / Ciutat Vella (Eje Àngels)",
+          id_cp_principal: "Barcelona-El Raval",
+          zonas_interes: "Barcelona - Ciutat Vella (08001) · Activo Àngels",
+          tipo_inmueble: "Locales / Edificios / Terciario (577 m² op.)",
+          presupuesto_maximo: 780000,
+          capital_aprobado_acreditado: selectedFin,
+          proyecto_previsto: selectedUse,
+          fecha_llamada_solicitada: date,
+          franja_horaria_llamada: time,
+          simulacion_inversor: {
+            inversion_total_calculada: totalInvStr,
+            capex_p1: capexP1,
+            capex_sotano_pb: capexSot,
+            capex_patio_ite: capexPat,
+            alquiler_estimado_eur_m2: rentSqm,
+            renta_mensual_estimada: rentMonthly,
+            yield_bruto_calculado: grossYieldStr
+          },
+          estado_verificacion: "Pendiente llamada Advisor BCN"
+        },
+        tracking_marketing: {
+          utm_source: utmSource,
+          utm_medium: utmMedium,
+          utm_campaign: utmCampaign,
+          referido_por_colaborador: activeRefCode
+        }
+      };
+
+      Promise.allSettled([
+        fetch(WEBHOOK_ELENA_VENTAS, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payloadElena)
+        }),
+        fetch(WEBHOOK_MAKE, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payloadElena)
+        })
+      ]);
+
       document.getElementById('elena-step-3').classList.add('hidden');
       document.getElementById('elena-step-4').classList.remove('hidden');
 
       document.getElementById('confirmation-summary').innerHTML = `
         <strong>${name}</strong> · <strong>Activo Àngels (780.000 €)</strong><br>
         <em>"${selectedUse}"</em><br><br>
-        📞 <strong>${date} (${time})</strong> · WhatsApp: <strong>${prefix} ${phone}</strong> · Email: <strong>${email}</strong>.
+        📞 <strong>${date} (${time})</strong> · WhatsApp: <strong>${prefix} ${rawPhone}</strong> · Email: <strong>${email}</strong>.
       `;
     }
 
@@ -1693,7 +1886,6 @@
         map_title: "Barcelona · Ciutat Vella · Eje Plaça dels Àngels / Joan Coromines",
         btn_earth_3d: "Vuelo 3D Google Earth",
         btn_map: "Map",
-        map_zoom_hint: "Pulsa en \"Map\" o en la imagen para pantalla completa",
         calc_header: "Simulador de Costes, €/m² & ROI Financiero",
         calc_badge_sqm: "474 m² Reg. + 103 m² Patio",
         calc_select_activity: "1. ELIGE LA ACTIVIDAD PARA SIMULAR ADECUACIÓN Y RENTA DE MERCADO:",
@@ -1833,7 +2025,6 @@
         map_title: "Barcelona · Ciutat Vella · Eix Plaça dels Àngels / Joan Coromines",
         btn_earth_3d: "Vol 3D Google Earth",
         btn_map: "Map",
-        map_zoom_hint: "Prem a \"Map\" o a la imatge per a pantalla completa",
         calc_header: "Simulador de Costos, €/m² & ROI Financer",
         calc_badge_sqm: "474 m² Reg. + 103 m² Pati",
         calc_select_activity: "1. TRIA L'ACTIVITAT PER SIMULAR ADEQUACIÓ I RENDA DE MERCAT:",
@@ -1973,7 +2164,6 @@
         map_title: "Barcelona · Ciutat Vella · Plaça dels Àngels / Joan Coromines Axis",
         btn_earth_3d: "3D Flight Google Earth",
         btn_map: "Map",
-        map_zoom_hint: "Click \"Map\" or image for fullscreen",
         calc_header: "CAPEX, €/sqm & Leveraged ROI Simulator",
         calc_badge_sqm: "474 sqm Reg. + 103 sqm Patio",
         calc_select_activity: "1. SELECT TARGET ACTIVITY TO SIMULATE CAPEX & MARKET RENT:",
@@ -2113,7 +2303,6 @@
         map_title: "Barcelone · Ciutat Vella · Axe Plaça dels Àngels / Joan Coromines",
         btn_earth_3d: "Vol 3D Google Earth",
         btn_map: "Map",
-        map_zoom_hint: "Cliquez sur \"Map\" ou l'image pour plein écran",
         calc_header: "Simulateur Coûts, €/m² & ROI Financier",
         calc_badge_sqm: "474 m² Fonc. + 103 m² Patio",
         calc_select_activity: "1. CHOISISSEZ L'ACTIVITÉ POUR SIMULER L'AMÉNAGEMENT ET LE LOYER :",
@@ -2251,7 +2440,6 @@
         map_title: "Barcelona · Ciutat Vella · Achse Plaça dels Àngels / Joan Coromines",
         btn_earth_3d: "3D-Flug Google Earth",
         btn_map: "Map",
-        map_zoom_hint: "Auf \"Map\" oder Bild klicken für Vollbild",
         calc_header: "Investitions-, €/m² & Eigenkapital-ROI Simulator",
         calc_badge_sqm: "474 m² Grundb. + 103 m² Hof",
         calc_select_activity: "1. ZIELAKTIVITÄT FÜR UMBAUKOSTEN & MIETRENDITE WÄHLEN:",
@@ -2389,7 +2577,6 @@
         map_title: "Barcellona · Ciutat Vella · Asse Plaça dels Àngels / Joan Coromines",
         btn_earth_3d: "Volo 3D Google Earth",
         btn_map: "Map",
-        map_zoom_hint: "Clicca su \"Map\" o sull'immagine per schermo intero",
         calc_header: "Simulatore Costi, €/m² & ROI Finanziario",
         calc_badge_sqm: "474 m² Cat. + 103 m² Patio",
         calc_select_activity: "1. SCEGLI L'ATTIVITÀ PER SIMULARE ADEGUAMENTO E CANONE DI MERCATO:",
@@ -2458,7 +2645,7 @@
         elena_step3_err: "Inserisci nome, telefono valido e indirizzo email.",
         elena_btn_confirm: "✔ Conferma Richiesta e Prenota Chiamata",
         elena_step4_title: "✅ Pratica prioritaria registrata con successo!",
-        elena_btn_finish: "Termina e Torna alla Scheda",
+        elena_step4_finish: "Termina e Torna alla Scheda",
         collab_modal_title: "Club Collaboratori Simpatizzanti · Level.immo",
         collab_modal_sub: "Condividi questo immobile, segui lo stato dal vivo senza dati riservati e ricevi 500 € in caso di vendita",
         collab_tab_1: "1. Attiva Link e Condividi",
@@ -2469,7 +2656,7 @@
         collab_ph_name: "Il tuo Nome o Alias Collaboratore",
         collab_ph_phone: "Il tuo cellulare / WhatsApp",
         collab_ph_email: "La tua Email (solo per avvisi formali di stato)",
-        collab_legal_text: "Accetto le condizioni: monitoraggio per 90 giorni (Link inviato / Visita / Contratto / Rogito), passando a 'Visto' oltre i 90 giorni. Carta Regalo da 500 € in caso di vendita effettiva.",
+        collab_legal_text: "Accetto le condizioni: monitoraggio per 90 giorni (Link inviato / Visita / Contrato / Rogito), passando a 'Visto' oltre i 90 giorni. Carta Regalo da 500 € in caso di vendita effettiva.",
         collab_btn_generate: "🔗 ATTIVA ISCRIZIONE E GENERA LINK COLLABORATORE"
       },
       ar: {
@@ -2526,8 +2713,7 @@
         map_sup: "🌍 جولة ثلاثية الأبعاد عبر GOOGLE EARTH",
         map_title: "برشلونة · سيوتات فيلا · محور ساحة أنخيلز / جوان كورومينيس",
         btn_earth_3d: "جولة ثلاثية الأبعاد Google Earth",
-        btn_map: "خريطة Map",
-        map_zoom_hint: "اضغط على Map أو الصورة لملء الشاشة",
+        btn_map: "Map",
         calc_header: "محاكي التكاليف وسعر المتر والعائد على رأس المال",
         calc_badge_sqm: "474 م² مسجل + 103 م² فناء",
         calc_select_activity: "1. اختر النشاط لمحاكاة تكاليف التجهيز والإيجار المتوقع:",
@@ -2543,13 +2729,13 @@
         calc_item_3: "+ الفناء (103 م²)، تصريف المياه وحصة ITE (18%):",
         calc_total_label: "إجمالي الاستثمار الفعلي:",
         rent_study_title: "📈 3. محاكي الإيجار حسب السعر للمتر المربع (برشلونة)",
-        rent_study_sub: "متوسط السوق في برشلونة (450-550 م²): 14 إلى 24 €/م²/شهر",
+        rent_study_sub: "متوسط السوق في برشلونة (450-550 م²): 14 إلى 24 €/m²/شهر",
         btn_google_ref: "مراجعة أسعار السوق عبر Google AI ↗",
         preset_1_lbl: "متحفظ",
         preset_2_lbl: "قياسي BCN",
         preset_3_lbl: "وسط المدينة",
         preset_4_lbl: "ممتاز / فناء",
-        rent_sqm_input_label: "سعر المتر (€/م²):",
+        rent_sqm_input_label: "سعر المتر (€/m²):",
         rent_monthly_label: "الإيجار الشهري (474 م²):",
         rent_annual_label: "الدخل السنوي الإجمالي",
         rent_yield_label: "العائد الإجمالي (بدون تمويل)",
@@ -2596,7 +2782,7 @@
         elena_step3_err: "يرجى إدخال الاسم ورقم الهاتف والبريد الإلكتروني بشكل صحيح.",
         elena_btn_confirm: "✔ تأكيد الطلب وجدولة الاتصال",
         elena_step4_title: "✅ تم تسجيل ملفك ذو الأولوية بنجاح!",
-        elena_btn_finish: "إنهاء والعودة إلى الملف",
+        elena_step4_finish: "إنهاء والعودة إلى الملف",
         collab_modal_title: "نادي الشركاء المتعاونين · Level.immo",
         collab_modal_sub: "شارك هذا الأصل، تابع الحالة مباشرة بدون بيانات سرية واحصل على 500 € عند البيع",
         collab_tab_1: "1. تفعيل الرابط والمشاركة",
@@ -2664,8 +2850,7 @@
         map_sup: "🌍 GOOGLE EARTH 3D · 静默卫星航拍",
         map_title: "巴塞罗那 · 老城区 · Plaça dels Àngels / Joan Coromines 核心轴",
         btn_earth_3d: "Google Earth 3D 航拍",
-        btn_map: "地图 Map",
-        map_zoom_hint: "点击“Map”按钮或图片全屏查看",
+        btn_map: "Map",
         calc_header: "改造预算、每平米租金与杠杆 ROI 模拟器",
         calc_badge_sqm: "474 m² 产权 + 103 m² 庭院",
         calc_select_activity: "1. 选择目标业态以模拟改造投入与市场租金：",
@@ -2710,7 +2895,7 @@
         elena_sub: "合格投资者审核 · 巴塞罗那 Ciutat Vella (08001)",
         elena_sec_title: "安全与保密验证：",
         elena_sec_desc: "如需启动 Elena AI 顾问并索取产权摘录 (Notas Simples)、完整 ITE 报告及预约看房 (780,000 €)，请完成加法验证：",
-        elena_rgpd_accept: "我已阅读并同意",
+        elena_rgpd_accept: "I have read and accept the",
         elena_rgpd_consent: "并同意接受 Level.immo 智能顾问系统的资格审核服务。",
         elena_step0_err: "请核对计算结果并勾选隐私政策同意框。",
         elena_btn_verify: "✔ 验证并与 Elena AI 对话",
@@ -2734,7 +2919,7 @@
         elena_step3_err: "请完整填写姓名、有效电话号码及电子邮箱。",
         elena_btn_confirm: "✔ 确认申请并预约电话会议",
         elena_step4_title: "✅ 优先投资档案已成功登记！",
-        elena_btn_finish: "完成并返回保密档案",
+        elena_step4_finish: "完成并返回保密档案",
         collab_modal_title: "合作伙伴俱乐部 · Level.immo",
         collab_modal_sub: "分享此资产，实时追踪进度（不泄露隐私），成交即可获赠 500 € 礼金卡",
         collab_tab_1: "1. 激活专属链接并分享",
