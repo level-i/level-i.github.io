@@ -112,8 +112,8 @@
 
         .input-group { margin-bottom: 14px; }
         .input-group label { display: block; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-muted); margin-bottom: 5px; }
-        .input-group input, .input-group select { width: 100%; background: #080d14; border: 1px solid var(--border-color); border-radius: 8px; padding: 10px 14px; color: #fff; font-size: 13.5px; outline: none; transition: border-color 0.2s; }
-        .input-group input:focus, .input-group select:focus { border-color: var(--accent-blue); }
+        .input-group input, .input-group select, .input-group textarea { width: 100%; background: #080d14; border: 1px solid var(--border-color); border-radius: 8px; padding: 10px 14px; color: #fff; font-size: 13.5px; outline: none; transition: border-color 0.2s; resize: vertical; }
+        .input-group input:focus, .input-group select:focus, .input-group textarea:focus { border-color: var(--accent-blue); }
 
         /* WIDGET DE SCORING EN TIEMPO REAL */
         .scoring-preview-box {
@@ -142,12 +142,6 @@
         .badge-naranja { background: rgba(245, 158, 11, 0.12); color: var(--accent-orange); border: 1px solid var(--accent-orange); }
         .badge-rojo { background: rgba(239, 68, 68, 0.15); color: var(--accent-red); border: 1px solid var(--accent-red); }
 
-        /* CHECKBOXES DE DOCUMENTACIÓN */
-        .doc-checklist { background: #080d14; border: 1px solid var(--border-color); border-radius: 8px; padding: 12px 14px; margin-bottom: 14px; font-size: 12px; color: var(--text-muted); }
-        .doc-checklist label { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; color: #fff; cursor: pointer; }
-        .doc-checklist label:last-child { margin-bottom: 0; }
-        .doc-checklist input { accent-color: var(--accent-green); width: 16px; height: 16px; }
-
         .value-prop-box {
             background: rgba(0, 122, 255, 0.05);
             border: 1px solid rgba(0, 122, 255, 0.2);
@@ -159,6 +153,7 @@
             line-height: 1.5;
         }
         .value-prop-box strong { color: var(--text-main); }
+        .value-prop-box span.highlight { color: var(--accent-green); font-weight: 600; }
 
         .legal-notice { font-size: 10px; color: var(--text-muted); margin-bottom: 16px; line-height: 1.4; border-left: 2px solid var(--accent-gold); padding-left: 10px; }
 
@@ -192,7 +187,7 @@
             <!-- CABECERA CORPORATIVA -->
             <div class="brand-header">
                 <div class="brand-logo">L<span class="brand-dot"></span> level.immo</div>
-                <div class="api-badge">Lark Consola · Brokers</div>
+                <div class="api-badge">Reverse Market · Hipotecas</div>
             </div>
 
             <!-- ESPACIO DEDICADO PARA ELENA IA -->
@@ -200,7 +195,7 @@
                 <div class="elena-avatar">E</div>
                 <div class="elena-speech">
                     <h3>Elena | AI Financial Advisor</h3>
-                    <p id="elena-speech-text">Completa los datos de los titulares para certificar el pre-scoring y abrir el expediente documental en la consola.</p>
+                    <p id="elena-speech-text">Completa los datos de los titulares para evaluar tu viabilidad. No te pediremos documentación ahora, el bróker se encargará de ello.</p>
                 </div>
             </div>
 
@@ -271,26 +266,19 @@
                     </div>
 
                     <button type="button" id="btn-siguiente" class="btn-action" disabled onclick="pasarAlPaso2()">
-                        Continuar con la Carpeta Documental →
+                        Siguiente Paso: Tu Futura Propiedad →
                     </button>
                 </div>
 
-                <!-- PASO 2: REPOSITORIO DOCUMENTAL Y TRAMITACIÓN -->
+                <!-- PASO 2: TIPO DE PROPIEDAD, AGENDA Y PROPUESTA DE VALOR -->
                 <div id="step-2" class="form-step">
                     
                     <div class="value-prop-box">
-                        📁 <strong>Creación de Carpeta Documental:</strong> Al avanzar, abriremos el expediente en la consola <strong>HIPOTECAS PARA BROKERS</strong> de Lark. <em>Mientras tramitamos tu hipoteca y logramos la pre-aprobación (válida por hasta 3 meses para comprar), empezaremos a filtrar activos en paralelo.</em>
-                    </div>
-
-                    <div class="doc-checklist">
-                        <div style="font-weight: 700; color: #fff; margin-bottom: 6px; text-transform: uppercase; font-size: 11px;">Documentación inicial prevista para adjuntar:</div>
-                        <label><input type="checkbox" checked disabled> DNI / NIE vigente de los titulares</label>
-                        <label><input type="checkbox" id="doc-nomimas"> Últimas 3 nóminas / Declaración IRPF</label>
-                        <label><input type="checkbox" id="doc-extracto"> Extracto bancario de aportación</label>
+                        🎯 <strong>Activamos la Demanda Activa:</strong> Mientras tu bróker tramita la financiación y verifica tu documentación, <span class="highlight">publicaremos tu demanda (de forma anónima) en nuestro panel inverso.</span> ¡Los propietarios podrán empezar a ofrecerte inmuebles desde el minuto 1!
                     </div>
 
                     <div class="input-group">
-                        <label>Tipo de Propiedad que Deseas Comprar (Informativo)</label>
+                        <label>Tipo de Propiedad que Deseas Comprar</label>
                         <select id="field-tipologia">
                             <option value="Residencial Habitual">🏠 Vivienda Habitual / Residencial</option>
                             <option value="Inversión Patrimonial (Yield)">📈 Inversión Patrimonial (Alquiler / Rentabilidad)</option>
@@ -302,13 +290,19 @@
 
                     <div class="input-group">
                         <label>Zona o Población de Interés</label>
-                        <input type="text" id="field-zona" placeholder="Ej. Barcelona (Ciutat Vella), Vinaròs...">
+                        <input type="text" id="field-zona" required placeholder="Ej. Barcelona, Vinaròs, Alcanar...">
+                    </div>
+
+                    <!-- NUEVO CAMPO: DESCRIPCIÓN DE BÚSQUEDA -->
+                    <div class="input-group">
+                        <label>Describe tu propiedad ideal (Para el panel de Demanda Activa)</label>
+                        <textarea id="field-descripcion" rows="3" required placeholder="Ej: Busco un piso muy luminoso en El Raval, mínimo 2 habs y terraza, preferible para invertir..."></textarea>
                     </div>
 
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
                         <div class="input-group">
-                            <label>📅 Fecha Llamada</label>
-                            <input type="date" id="field-fecha" required value="2026-11-06">
+                            <label>📅 Fecha Llamada Bróker</label>
+                            <input type="date" id="field-fecha" required>
                         </div>
                         <div class="input-group">
                             <label>⏰ Franja Horaria</label>
@@ -322,11 +316,11 @@
                     </div>
 
                     <div class="legal-notice">
-                        <strong>Aviso Legal, Cookies e IA:</strong> Uso de IA (Elena) para cualificación. Autorizas el registro en CONTACTOS y la apertura de expediente documental para Financial Rocks bajo cifrado AES-256. Estado inicial: <em>en trámite de registro</em>.
+                        <strong>Aviso Legal, Cookies e IA:</strong> Uso de IA (Elena) para pre-scoring. Autorizas el registro de tus datos de contacto y la publicación anónima de tu demanda. Tus datos financieros serán compartidos con nuestros brókers bajo cifrado AES-256. El bróker asignado te contactará para solicitar la documentación pertinente.
                     </div>
 
                     <button type="submit" id="btn-enviar-final" class="btn-action">
-                        Abrir Expediente y Enviar a Trámite
+                        Activar Demanda y Enviar a Trámite
                     </button>
                     <button type="button" class="btn-action btn-secondary" onclick="volverAlPaso1()">
                         ← Volver Atrás
@@ -339,6 +333,11 @@
     </div>
 
     <script>
+        // Setear fecha de mañana por defecto
+        const manana = new Date();
+        manana.setDate(manana.getDate() + 1);
+        document.getElementById('field-fecha').value = manana.toISOString().split('T')[0];
+
         let estadoActualScoring = "NEUTRAL";
 
         function toggleCotitular() {
@@ -379,7 +378,7 @@
                 estadoActualScoring = "ROJO";
                 badge.className = "scoring-badge badge-rojo";
                 badge.innerHTML = `🔴 <strong>ROJO - OPERACIÓN NO VIABLE</strong><br>Ratio DTI (${dti.toFixed(1)}%). Supera el límite bancario. <em>Imposible tramitar.</em>`;
-                btnSiguiente.disabled = true; // Bloqueo absoluto anti-rojo
+                btnSiguiente.disabled = true; 
             } else if (dti > 32 && dti <= 45) {
                 estadoActualScoring = "NARANJA";
                 badge.className = "scoring-badge badge-naranja";
@@ -400,13 +399,13 @@
             }
             document.getElementById('step-1').classList.remove('active');
             document.getElementById('step-2').classList.add('active');
-            document.getElementById('elena-speech-text').innerHTML = "¡Perfil apto! Se abrirá la carpeta en la consola de Lark. Selecciona el tipo de propiedad y la hora de contacto.";
+            document.getElementById('elena-speech-text').innerHTML = "¡Perfil apto! Cuéntanos qué propiedad buscas. Te añadiremos al radar inverso y el bróker te contactará para la documentación.";
         }
 
         function volverAlPaso1() {
             document.getElementById('step-2').classList.remove('active');
             document.getElementById('step-1').classList.add('active');
-            document.getElementById('elena-speech-text').innerHTML = "Completa los datos de los titulares para certificar el pre-scoring y abrir el expediente documental en la consola.";
+            document.getElementById('elena-speech-text').innerHTML = "Completa los datos de los titulares para evaluar tu viabilidad. No te pediremos documentación ahora, el bróker se encargará de ello.";
         }
 
         function manejarEnvio(event) {
@@ -419,8 +418,9 @@
 
             const numTitulares = document.getElementById('field-num-titulares').value;
             const payload = {
-                evento: "solicitud_hipoteca_consola_lark",
-                estado_expediente: "en trámite de registro",
+                evento: "solicitud_hipoteca_y_demanda_activa",
+                estado_expediente_broker: "En fase de verificación documental",
+                estado_demanda_activa: "Activo (Esperando documentación)",
                 titulares: [
                     {
                         rol: "Titular 1",
@@ -438,6 +438,7 @@
                 preferencias_busqueda: {
                     tipologia: document.getElementById('field-tipologia').value,
                     zona_interes: document.getElementById('field-zona').value,
+                    descripcion_busqueda: document.getElementById('field-descripcion').value,
                     validez_busqueda_meses: 3
                 },
                 agenda_broker: {
@@ -456,16 +457,16 @@
                 });
             }
 
-            // Envío al Webhook de Make / Lark (Consola Hipotecas Brokers)
+            // Sustituye por tu webhook correcto de Make (Escenario de Hipotecas)
             fetch("https://hook.eu1.make.com/lcfewra8wffai81fjda2g5jgm76cjaeo", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(payload)
             }).then(() => {
-                alert("¡Expediente abierto con éxito en Lark y enviado a trámite! Estado: en trámite de registro.");
+                alert("¡Demanda Activa registrada! Un bróker hipotecario se pondrá en contacto contigo para solicitarte la documentación inicial.");
                 location.reload();
             }).catch(() => {
-                alert("Error de red al sincronizar con la consola de Lark. Inténtalo de nuevo.");
+                alert("Error de red al sincronizar con la consola. Inténtalo de nuevo.");
             });
         }
     </script>
