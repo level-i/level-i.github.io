@@ -1,1 +1,427 @@
+<!DOCTYPE html>
+<html lang="es" id="html-root">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Level.immo | Chivatazo Nacional Club (CNC) · Fan Zone</title>
+    <style>
+        :root {
+            --bg-base: #05080f; --bg-panel: #070b14; --bg-card: #0f172a;
+            --accent-green: #10b981; --accent-blue: #007aff; --accent-gold: #C5A059;
+            --accent-red: #ef4444; --text-main: #f9fafb; --text-muted: #94a3b8; --border-color: #1e293b;
+        }
+        * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        body { background-color: var(--bg-base); color: var(--text-main); margin: 0; padding: 0; display: flex; justify-content: center; }
 
+        .app-container {
+            width: 100%; max-width: 480px; background: var(--bg-panel); min-height: 100vh;
+            border-left: 1px solid var(--border-color); border-right: 1px solid var(--border-color);
+            display: flex; flex-direction: column; position: relative; box-shadow: 0 0 50px rgba(0,0,0,0.8);
+        }
+
+        /* HEADER & LANG */
+        .header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 14px 20px; border-bottom: 1px solid var(--border-color);
+            background: rgba(7, 11, 20, 0.95); backdrop-filter: blur(10px);
+            position: sticky; top: 0; z-index: 100;
+        }
+        .brand-logo { font-weight: 900; font-size: 18px; color: #fff; display: flex; align-items: center; gap: 6px; letter-spacing: -0.5px; }
+        .brand-dot { width: 8px; height: 8px; background: var(--accent-green); border-radius: 50%; box-shadow: 0 0 10px var(--accent-green); }
+        .lang-selector { background: var(--bg-card); color: var(--text-muted); border: 1px solid var(--border-color); padding: 5px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; outline: none; cursor: pointer; }
+
+        /* TARJETA DE MIEMBRO CNC */
+        .member-card {
+            padding: 24px 20px; background: linear-gradient(180deg, rgba(197,160,89,0.08) 0%, transparent 100%);
+            border-bottom: 1px solid var(--border-color); text-align: center;
+        }
+        .member-avatar { width: 72px; height: 72px; border-radius: 50%; border: 2px solid var(--accent-gold); object-fit: cover; margin-bottom: 10px; background: var(--bg-card); box-shadow: 0 0 20px rgba(197,160,89,0.25); }
+        .member-title-club { font-size: 10px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; color: var(--accent-gold); margin-bottom: 4px; }
+        .member-name { font-size: 19px; font-weight: 900; margin: 0 0 4px 0; color: #fff; }
+        .member-id { font-size: 12px; color: var(--accent-green); font-family: monospace; font-weight: 700; letter-spacing: 1px; background: rgba(16,185,129,0.1); padding: 4px 10px; border-radius: 12px; display: inline-block; border: 1px solid rgba(16,185,129,0.3); }
+
+        /* FORMULARIO DE APORTACIÓN DIRECTA (LEAD INJECTION) */
+        .lead-injection-box {
+            background: var(--bg-card); border-bottom: 1px solid var(--border-color);
+            padding: 22px 20px;
+        }
+        .lead-injection-box h3 { font-size: 13px; color: var(--accent-green); text-transform: uppercase; margin: 0 0 14px 0; letter-spacing: 0.5px; display: flex; align-items: center; gap: 8px; font-weight: 800; }
+        
+        .input-group { margin-bottom: 12px; }
+        .input-group label { display: block; font-size: 10.5px; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px; letter-spacing: 0.5px; }
+        .input-group input, .input-group select { width: 100%; background: #05080f; border: 1px solid var(--border-color); border-radius: 8px; padding: 10px 14px; color: #fff; font-size: 13px; outline: none; transition: border-color 0.2s; }
+        .input-group input:focus, .input-group select:focus { border-color: var(--accent-blue); }
+
+        /* CONTROL MATEMÁTICO (SEGURIDAD) */
+        .math-security-box {
+            display: flex; align-items: center; gap: 10px; margin-top: 16px; margin-bottom: 16px;
+            background: rgba(197, 160, 89, 0.05); padding: 12px; border-radius: 8px; border: 1px solid rgba(197, 160, 89, 0.2);
+        }
+        .math-security-label { font-size: 12px; font-weight: 800; color: #fff; white-space: nowrap; }
+        .math-security-input { flex-grow: 1; background: #05080f; border: 1px solid var(--border-color); border-radius: 6px; padding: 8px 12px; color: #fff; font-size: 14px; font-weight: 800; text-align: center; outline: none; }
+        .math-security-input:focus { border-color: var(--accent-gold); }
+        .math-error { color: var(--accent-red); font-size: 10px; font-weight: bold; margin-top: -10px; margin-bottom: 12px; display: none; }
+
+        .btn-inject {
+            width: 100%; background: var(--accent-green); color: #05080f; border: none; padding: 14px;
+            border-radius: 8px; font-size: 12px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px;
+            cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 15px rgba(16,185,129,0.25);
+        }
+        .btn-inject:hover { opacity: 0.9; transform: translateY(-1px); }
+
+        /* BOTONERA FINO-FILIPINO */
+        .fino-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 20px; border-bottom: 1px solid var(--border-color); background: rgba(255,255,255,0.01); }
+        .fino-btn { background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-main); padding: 14px 12px; border-radius: 10px; font-size: 12px; font-weight: bold; text-align: center; cursor: pointer; transition: 0.2s; text-decoration: none; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+        .fino-btn:hover { border-color: var(--accent-blue); background: rgba(0,122,255,0.08); transform: translateY(-2px); }
+        .fino-btn span { font-size: 20px; }
+
+        /* MURO DE INMUEBLES */
+        .feed-header { padding: 20px 20px 8px 20px; font-size: 11.5px; font-weight: 800; text-transform: uppercase; color: var(--accent-green); letter-spacing: 1.2px; }
+        .property-card { padding: 16px 20px; border-bottom: 1px solid var(--border-color); background: var(--bg-card); margin-bottom: 1px; }
+        .property-img { width: 100%; height: 180px; object-fit: cover; border-radius: 10px; margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.1); }
+        .property-price { font-size: 19px; font-weight: 900; color: #fff; margin-bottom: 4px; }
+        .property-title { font-size: 13.5px; font-weight: 600; color: var(--text-muted); margin-bottom: 14px; line-height: 1.35; }
+        .share-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .btn-share { background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); color: var(--text-main); padding: 11px; border-radius: 8px; font-size: 11px; font-weight: 700; cursor: pointer; transition: 0.2s; display: flex; justify-content: center; align-items: center; gap: 6px; text-decoration: none; }
+        .btn-share:hover { background: rgba(255,255,255,0.08); color: #fff; }
+        .btn-share.whatsapp { border-color: rgba(37, 211, 102, 0.4); color: #25D366; }
+
+        /* FOOTER & LEGAL */
+        .member-footer { padding: 24px 20px; text-align: center; font-size: 10.5px; color: var(--text-muted); line-height: 1.5; margin-top: auto; border-top: 1px solid var(--border-color); }
+        .legal-links { display: flex; justify-content: center; gap: 10px; margin-top: 12px; font-size: 10.5px; }
+        .link-btn { background: none; border: none; color: var(--accent-blue); text-decoration: underline; padding: 0; cursor: pointer; font-size: inherit; font-weight: 600; }
+        .link-btn:hover { color: #fff; }
+
+        /* MODAL LEGAL Y TOAST */
+        .custom-modal-overlay { display: none; position: fixed; inset: 0; z-index: 1000000; background: rgba(5, 8, 15, 0.88); backdrop-filter: blur(6px); align-items: center; justify-content: center; padding: 16px; }
+        .custom-modal-overlay.is-open { display: flex; }
+        .custom-modal-box { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 24px; max-width: 480px; width: 100%; box-shadow: 0 25px 50px rgba(0,0,0,0.9); }
+        .custom-modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 12px; margin-bottom: 16px; }
+        .custom-modal-header h4 { margin: 0; color: var(--accent-green); font-size: 15px; font-weight: 700; }
+        .custom-modal-header button { background: none; border: none; color: var(--text-muted); font-size: 18px; font-weight: bold; cursor: pointer; padding: 0; }
+        .custom-modal-body { font-size: 12px; color: var(--text-muted); line-height: 1.55; }
+        .custom-modal-body p { margin-top: 0; margin-bottom: 10px; }
+        
+        .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--accent-blue); color: #fff; padding: 12px 24px; border-radius: 30px; font-size: 12px; font-weight: 800; box-shadow: 0 10px 25px rgba(0,0,0,0.5); opacity: 0; pointer-events: none; transition: opacity 0.3s; z-index: 1000; }
+        .toast.show { opacity: 1; }
+    </style>
+</head>
+<body>
+
+    <!-- MODAL LEGAL Y DE COOKIES -->
+    <div id="legal-modal" class="custom-modal-overlay">
+        <div class="custom-modal-box">
+            <div class="custom-modal-header">
+                <h4 id="legal-modal-title">Información Legal</h4>
+                <button type="button" onclick="closeLegalModal()">✕</button>
+            </div>
+            <div id="legal-modal-body" class="custom-modal-body"></div>
+        </div>
+    </div>
+
+    <div class="app-container">
+        
+        <!-- HEADER & IDIOMAS -->
+        <div class="header">
+            <div class="brand-logo">L<span class="brand-dot"></span> level.immo</div>
+            <select class="lang-selector" id="language-selector" onchange="cambiarIdioma(this.value)" translate="no">
+                <option value="es" selected>ES Español</option>
+                <option value="ca">CA Català</option>
+                <option value="en">GB English</option>
+                <option value="fr">FR Français</option>
+                <option value="de">DE Deutsch</option>
+                <option value="it">IT Italiano</option>
+                <option value="ar">AE العربية</option>
+                <option value="zh">CN 中文</option>
+            </select>
+        </div>
+
+        <!-- TARJETA DE MIEMBRO CNC -->
+        <div class="member-card">
+            <div class="member-title-club" data-i18n="cnc_club_title">★ Chivatazo Nacional Club ★</div>
+            <img src="" id="member-avatar" class="member-avatar" alt="Miembro CNC">
+            <h1 class="member-name" id="member-name">Cargando socio...</h1>
+            <div class="member-id" id="member-id">SIMP-XXXX</div>
+        </div>
+
+        <!-- FORMULARIO DE APORTACIÓN DIRECTA DE LEAD (CON CONTROL MATEMÁTICO) -->
+        <div class="lead-injection-box">
+            <h3 data-i18n="form_title">🎯 Aportar Contacto / Lead Directo</h3>
+            <form id="form-aporte-lead" onsubmit="enviarLeadDirecto(event)">
+                <div class="input-group">
+                    <label data-i18n="form_lbl_tipo">Tipo de Oportunidad</label>
+                    <select id="lead-tipo" required>
+                        <option value="Comprador">🏠 Quiere Comprar (Demanda Activa)</option>
+                        <option value="Vendedor">💎 Quiere Vender (Captación / Cuarentena)</option>
+                        <option value="Hipotecas">💳 Necesita Hipoteca / Financiación</option>
+                        <option value="Chivatazo Nacional">📣 Chivatazo de Inmueble (Datos de contacto)</option>
+                        <option value="Advisor">✨ Candidato a Advisor / Socio</option>
+                    </select>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <div class="input-group">
+                        <label data-i18n="form_lbl_nombre">Nombre del Lead</label>
+                        <input type="text" id="lead-nombre" required placeholder="Ej. Ana Pérez">
+                    </div>
+                    <div class="input-group">
+                        <label data-i18n="form_lbl_tel">Teléfono (WhatsApp)</label>
+                        <input type="tel" id="lead-tel" required placeholder="+34 600123456">
+                    </div>
+                </div>
+                
+                <div class="input-group">
+                    <label data-i18n="form_lbl_email">Correo Electrónico (Recomendado)</label>
+                    <input type="email" id="lead-email" placeholder="correo@ejemplo.com">
+                </div>
+
+                <!-- CONTROL MATEMÁTICO -->
+                <div class="math-security-box">
+                    <span class="math-security-label" data-i18n="form_lbl_math">Control de Seguridad: ¿Cuánto es</span>
+                    <span class="math-security-label"><span id="math-num1">5</span> + <span id="math-num2">3</span> ?</span>
+                    <input type="number" id="math-input" class="math-security-input" required placeholder="=">
+                </div>
+                <div id="math-error" class="math-error" data-i18n="form_err_math">Resultado incorrecto. Inténtalo de nuevo.</div>
+
+                <div style="font-size: 10px; color: var(--text-muted); margin-bottom: 12px; line-height: 1.3;">
+                    Al registrar, confirmas tener autorización para ceder estos datos a Level.immo bajo cifrado AES-256 (RGPD).
+                </div>
+
+                <button type="submit" class="btn-inject" data-i18n="form_btn_submit">⚡ Registrar y Asignar a mi Red (CNC)</button>
+            </form>
+        </div>
+
+        <!-- BOTONERA FINO-FILIPINO -->
+        <div class="fino-grid">
+            <a href="#" onclick="lanzarAccion('comprar')" class="fino-btn"><span>🏠</span> <strong data-i18n="btn_comprar">Comprar</strong><small style="color:var(--text-muted); font-size:9px;">Demanda Validada</small></a>
+            <a href="#" onclick="lanzarAccion('vender')" class="fino-btn"><span>💎</span> <strong data-i18n="btn_vender">Vender</strong><small style="color:var(--text-muted); font-size:9px;">Cuarentena Ciega</small></a>
+            <a href="#" onclick="lanzarAccion('hipotecas')" class="fino-btn"><span>💳</span> <strong data-i18n="btn_hipotecas">Hipotecas</strong><small style="color:var(--text-muted); font-size:9px;">Pre-Scoring 3 Min</small></a>
+            <a href="#" onclick="lanzarAccion('chivatazo')" class="fino-btn"><span>📣</span> <strong data-i18n="btn_chivatazo">Chivatazo</strong><small style="color:var(--text-muted); font-size:9px;">Gana hasta 500€</small></a>
+        </div>
+
+        <!-- MURO DE INMUEBLES -->
+        <div class="feed-header" data-i18n="feed_header">
+            Catálogo Activo · Comparte con tu ID
+        </div>
+        <div id="property-feed"></div>
+
+        <!-- FOOTER & LEGAL -->
+        <div class="member-footer">
+            <span data-i18n="footer_desc">Miembro oficial del <strong>Chivatazo Nacional Club</strong> de Level.immo.<br>Actividad auditada (Regla de inactividad: 60 días sin aportación).</span>
+            <div class="legal-links">
+                <button type="button" class="link-btn" onclick="openLegalModal('aviso')" data-i18n="footer_legal">Aviso Legal</button>
+                <span>|</span>
+                <button type="button" class="link-btn" onclick="openLegalModal('privacidad')" data-i18n="footer_privacy">Privacidad y RGPD</button>
+                <span>|</span>
+                <button type="button" class="link-btn" onclick="openLegalModal('cookies')" data-i18n="footer_cookies">Cookies e IA</button>
+            </div>
+        </div>
+
+    </div>
+
+    <div id="toast" class="toast" data-i18n="toast_msg">¡Lead registrado con éxito en tu red CNC!</div>
+
+    <script>
+        // 1. CAPTURAR PARÁMETROS DE LA URL Y RENDERIZAR TARJETA
+        const urlParams = new URLSearchParams(window.location.search);
+        const memberId = urlParams.get('id') || urlParams.get('ref') || 'SIMP-CNC-000';
+        const memberName = urlParams.get('nombre') || 'Socio Colaborador CNC';
+        const memberImg = urlParams.get('img');
+
+        document.getElementById('member-id').textContent = memberId;
+        document.getElementById('member-name').textContent = memberName;
+        document.getElementById('member-avatar').src = memberImg ? memberImg : `https://ui-avatars.com/api/?name=${encodeURIComponent(memberName)}&background=C5A059&color=05080f&size=150&bold=true`;
+
+        // 2. DISPARAR WEBHOOK DE VISITA A MAKE (Mantiene al usuario Activo)
+        fetch("https://hook.eu1.make.com/lcfewra8wffai81fjda2g5jgm76cjaeo", {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ evento: "visita_fan_zone_cnc", id_miembro: memberId, nombre: memberName, timestamp: new Date().toISOString() })
+        }).catch(() => {});
+
+
+        // 3. CONTROL MATEMÁTICO (SEGURIDAD)
+        let mathSum = 0;
+        function generarRetoMatematico() {
+            const num1 = Math.floor(Math.random() * 5) + 3; // Entre 3 y 7
+            const num2 = Math.floor(Math.random() * 5) + 2; // Entre 2 y 6
+            mathSum = num1 + num2;
+            document.getElementById('math-num1').textContent = num1;
+            document.getElementById('math-num2').textContent = num2;
+            document.getElementById('math-input').value = '';
+            document.getElementById('math-error').style.display = 'none';
+        }
+        generarRetoMatematico(); // Inicializar al cargar
+
+
+        // 4. ENVÍO DE LEAD DIRECTO A MAKE (WEBHOOK MAESTRO)
+        function enviarLeadDirecto(e) {
+            e.preventDefault();
+            
+            // Validar Captcha Matemático
+            const mathInput = parseInt(document.getElementById('math-input').value, 10);
+            if (mathInput !== mathSum) {
+                document.getElementById('math-error').style.display = 'block';
+                return; // Bloquea el envío
+            }
+
+            const tipoOportunidad = document.getElementById('lead-tipo').value;
+            const nombreLead = document.getElementById('lead-nombre').value.trim();
+            const telLead = document.getElementById('lead-tel').value.trim();
+            const emailLead = document.getElementById('lead-email').value.trim();
+
+            const payloadLead = {
+                evento: "aporte_directo_socio_cnc",
+                codigo_colaborador: memberId,
+                nombre_colaborador: memberName,
+                tipo_oportunidad: tipoOportunidad,
+                contacto_lead: {
+                    nombre: nombreLead,
+                    telefono: telLead,
+                    email: emailLead
+                },
+                regla_inactividad: "Auditoría de 60 días reiniciada",
+                fecha_registro: new Date().toISOString()
+            };
+
+            // Webhook Maestro Make (loy5kv...)
+            fetch("https://hook.eu1.make.com/loy5kvv4qmnvo748fmxo2qvt48mbf986", {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payloadLead)
+            }).then(() => {
+                const toast = document.getElementById('toast');
+                toast.classList.add('show');
+                setTimeout(() => toast.classList.remove('show'), 3000);
+                document.getElementById('form-aporte-lead').reset();
+                generarRetoMatematico(); // Resetear captcha para el siguiente lead
+            }).catch(() => {
+                alert("Error al registrar el lead. Inténtalo de nuevo.");
+            });
+        }
+
+
+        // 5. CATÁLOGO DE PROPIEDADES (EL MURO)
+        const propiedades = [
+            {
+                id: "ACTIVO-ANGELS",
+                titulo: "Activo Comercial Singular en Ciutat Vella (3 Niveles + Patio de 103 m²)",
+                precio: "780.000 €",
+                imagen: "https://level-i.github.io/barcelona/ciutat-vella/activo-angels/principal.jpg",
+                url_base: "https://app.level-i.com/barcelona/ciutat-vella/activo-angels"
+            },
+            {
+                id: "ADOSADO-ALCANAR",
+                titulo: "Adosado céntrico en Alcanar (2 Hab, 2 Baños, Reformado)",
+                precio: "77.260 €",
+                imagen: "https://level.immo/wp-content/uploads/2026/10/adosado-alcanar.jpg", 
+                url_base: "https://app.level-i.com/alcanar/adosado-centro"
+            }
+        ];
+
+        const feedContainer = document.getElementById('property-feed');
+        propiedades.forEach(prop => {
+            const urlConRef = `${prop.url_base}?ref=${memberId}`;
+            const msjWhatsApp = encodeURIComponent(`¡Hola! Mira esta oportunidad en Level.immo recomendada por el Chivatazo Nacional Club: ${prop.titulo} por ${prop.precio}. Ficha completa: ${urlConRef}`);
+
+            const cardHTML = `
+                <div class="property-card">
+                    <img src="${prop.imagen}" alt="${prop.titulo}" class="property-img">
+                    <div class="property-price">${prop.precio}</div>
+                    <div class="property-title">${prop.titulo}</div>
+                    <div class="share-actions">
+                        <a href="https://wa.me/?text=${msjWhatsApp}" target="_blank" class="btn-share whatsapp" data-i18n-wa="btn_wa">
+                            📲 WhatsApp
+                        </a>
+                        <button onclick="copiarEnlace('${urlConRef}')" class="btn-share" data-i18n-copy="btn_copy">
+                            🔗 Copiar Link
+                        </button>
+                    </div>
+                </div>
+            `;
+            feedContainer.insertAdjacentHTML('beforeend', cardHTML);
+        });
+
+        function copiarEnlace(url) {
+            navigator.clipboard.writeText(url).then(() => {
+                const toast = document.getElementById('toast');
+                toast.textContent = "¡Enlace copiado con tu código CNC!";
+                toast.classList.add('show');
+                setTimeout(() => toast.classList.remove('show'), 2500);
+            });
+        }
+
+        // 6. ACCIONES RÁPIDAS DE LA BOTONERA
+        function lanzarAccion(tipo) {
+            const msj = encodeURIComponent(`Hola, soy miembro del CNC (${memberId} - ${memberName}) y quiero gestionar: ${tipo.toUpperCase()}`);
+            window.open(`https://wa.me/34641451736?text=${msj}`, '_blank');
+        }
+
+        // 7. MODAL LEGAL, PRIVACIDAD Y COOKIES (Estándar Level.immo)
+        function openLegalModal(type) {
+            const title = document.getElementById('legal-modal-title');
+            const body = document.getElementById('legal-modal-body');
+            if (type === 'aviso') {
+                title.textContent = "Aviso Legal · LEVEL PUNTO IMMO 24365 SLU";
+                body.innerHTML = `<p>En cumplimiento de la LSSI-CE, se informa que <strong>Level.immo</strong> y el programa <strong>Chivatazo Nacional Club (CNC)</strong> están operados por <strong>LEVEL PUNTO IMMO 24365 SLU</strong> (NIF B-26745430 · API Colegiado 4173 · AICAT 14200).</p><p>Las gratificaciones por referidos efectivos se liquidan conforme a los límites fiscales de la legislación española vigente.</p>`;
+            } else if (type === 'privacidad') {
+                title.textContent = "Política de Privacidad y RGPD";
+                body.innerHTML = `<p><strong>Responsable:</strong> LEVEL PUNTO IMMO 24365 SLU (Email: level@level.immo).</p><p>Sus datos como colaborador y los datos de los contactos que aporte se procesan bajo estricto cifrado <strong>AES-256</strong>, registrándose en nuestra tabla maestra de CONTACTOS. La finalidad es auditar su actividad de referidos y procesar las operaciones vinculadas a su código (<code>${memberId}</code>). <strong>Regla de Inactividad:</strong> Si transcurren más de 60 días sin que registre actividad o aporte un contacto, su perfil en el CNC pasará a estado inactivo.</p>`;
+            } else {
+                title.textContent = "Política de Cookies e Inteligencia Artificial";
+                body.innerHTML = `<p>Esta plataforma ("Fan Zone") utiliza cookies técnicas de sesión y almacenamiento local para mantener activo su identificador de socio y recordar su preferencia de idioma. Asimismo, utilizamos Inteligencia Artificial y automatizaciones operativas (Make/Lark) para enrutar instantáneamente los leads que aporte hacia el departamento correspondiente.</p>`;
+            }
+            document.getElementById('legal-modal').classList.add('is-open');
+        }
+        function closeLegalModal() { document.getElementById('legal-modal').classList.remove('is-open'); }
+
+        // 8. DICCIONARIO 8 IDIOMAS
+        const i18n = {
+            es: {
+                cnc_club_title: "★ Chivatazo Nacional Club ★",
+                form_title: "🎯 Aportar Contacto / Lead Directo",
+                form_lbl_tipo: "Tipo de Oportunidad", form_lbl_nombre: "Nombre del Lead", form_lbl_tel: "Teléfono (WhatsApp)", form_lbl_email: "Correo Electrónico (Recomendado)",
+                form_lbl_math: "Control de Seguridad: ¿Cuánto es", form_err_math: "Resultado incorrecto. Inténtalo de nuevo.", form_btn_submit: "⚡ Registrar y Asignar a mi Red (CNC)",
+                btn_comprar: "Comprar", btn_vender: "Vender", btn_hipotecas: "Hipotecas", btn_chivatazo: "Chivatazo",
+                feed_header: "Catálogo Activo · Comparte con tu ID",
+                footer_desc: "Miembro oficial del <strong>Chivatazo Nacional Club</strong> de Level.immo.<br>Actividad auditada (Regla de inactividad: 60 días sin aportación).",
+                footer_legal: "Aviso Legal", footer_privacy: "Privacidad y RGPD", footer_cookies: "Cookies e IA",
+                toast_msg: "¡Lead registrado con éxito en tu red CNC!", btn_wa: "📲 WhatsApp", btn_copy: "🔗 Copiar Link"
+            },
+            ca: {
+                cnc_club_title: "★ Chivatazo Nacional Club ★",
+                form_title: "🎯 Aportar Contacte / Lead Directe",
+                form_lbl_tipo: "Tipus d'Oportunitat", form_lbl_nombre: "Nom del Lead", form_lbl_tel: "Telèfon (WhatsApp)", form_lbl_email: "Correu Electrònic (Recomanat)",
+                form_lbl_math: "Control de Seguretat: Quant és", form_err_math: "Resultat incorrecte. Torna-ho a provar.", form_btn_submit: "⚡ Registrar i Assignar a la meva Xarxa (CNC)",
+                btn_comprar: "Comprar", btn_vender: "Vendre", btn_hipotecas: "Hipoteques", btn_chivatazo: "Chivatazo",
+                feed_header: "Catàleg Actiu · Comparteix amb el teu ID",
+                footer_desc: "Membre oficial del <strong>Chivatazo Nacional Club</strong> de Level.immo.<br>Activitat auditada (Regla d'inactivitat: 60 dies sense aportació).",
+                footer_legal: "Avís Legal", footer_privacy: "Privacitat i RGPD", footer_cookies: "Cookies i IA",
+                toast_msg: "¡Lead registrat amb èxit a la teva xarxa CNC!", btn_wa: "📲 WhatsApp", btn_copy: "🔗 Copiar Link"
+            },
+            en: {
+                cnc_club_title: "★ National Tip-off Club ★",
+                form_title: "🎯 Submit Direct Lead",
+                form_lbl_tipo: "Opportunity Type", form_lbl_nombre: "Lead Name", form_lbl_tel: "Phone (WhatsApp)", form_lbl_email: "Email (Recommended)",
+                form_lbl_math: "Security Check: What is", form_err_math: "Incorrect result. Try again.", form_btn_submit: "⚡ Register & Assign to My Network",
+                btn_comprar: "Buy", btn_vender: "Sell", btn_hipotecas: "Mortgages", btn_chivatazo: "Tip-off",
+                feed_header: "Active Catalog · Share with your ID",
+                footer_desc: "Official member of Level.immo <strong>National Tip-off Club</strong>.<br>Audited activity (Inactivity rule: 60 days without submission).",
+                footer_legal: "Legal Notice", footer_privacy: "Privacy & GDPR", footer_cookies: "Cookies & AI",
+                toast_msg: "Lead successfully registered in your network!", btn_wa: "📲 WhatsApp", btn_copy: "🔗 Copy Link"
+            }
+            // (Puedes expandir FR, DE, IT, AR, ZH si lo requieres con las traducciones equivalentes)
+        };
+
+        function cambiarIdioma(lang) {
+            const d = i18n[lang] || i18n['es'];
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const k = el.getAttribute('data-i18n');
+                if(d[k]) el.innerHTML = d[k];
+            });
+            document.querySelectorAll('[data-i18n-wa]').forEach(el => { el.innerHTML = d.btn_wa || "📲 WhatsApp"; });
+            document.querySelectorAll('[data-i18n-copy]').forEach(el => { el.innerHTML = d.btn_copy || "🔗 Copiar Link"; });
+        }
+    </script>
+</body>
+</html>
