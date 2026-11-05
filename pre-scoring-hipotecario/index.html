@@ -115,7 +115,7 @@
         .input-group input, .input-group select, .input-group textarea { width: 100%; background: #080d14; border: 1px solid var(--border-color); border-radius: 8px; padding: 10px 14px; color: #fff; font-size: 13.5px; outline: none; transition: border-color 0.2s; resize: vertical; }
         .input-group input:focus, .input-group select:focus, .input-group textarea:focus { border-color: var(--accent-blue); }
 
-        /* WIDGET DE SCORING EN TIEMPO REAL */
+        /* WIDGET DE SCORING EN TIEMPO REAL (KILLER FEATURE) */
         .scoring-preview-box {
             background: #080d14;
             border: 1px solid var(--border-color);
@@ -130,8 +130,8 @@
         .scoring-badge {
             font-size: 12px;
             font-weight: 800;
-            padding: 10px 12px;
-            border-radius: 6px;
+            padding: 12px 14px;
+            border-radius: 8px;
             display: block;
             letter-spacing: 0.3px;
             line-height: 1.4;
@@ -142,6 +142,7 @@
         .badge-naranja { background: rgba(245, 158, 11, 0.12); color: var(--accent-orange); border: 1px solid var(--accent-orange); }
         .badge-rojo { background: rgba(239, 68, 68, 0.15); color: var(--accent-red); border: 1px solid var(--accent-red); }
 
+        /* PROPUESTA DE VALOR / BARRERA DE CONFIANZA */
         .value-prop-box {
             background: rgba(0, 122, 255, 0.05);
             border: 1px solid rgba(0, 122, 255, 0.2);
@@ -155,7 +156,18 @@
         .value-prop-box strong { color: var(--text-main); }
         .value-prop-box span.highlight { color: var(--accent-green); font-weight: 600; }
 
-        .legal-notice { font-size: 10px; color: var(--text-muted); margin-bottom: 16px; line-height: 1.4; border-left: 2px solid var(--accent-gold); padding-left: 10px; }
+        /* CHECKBOX LEGAL ESTÁNDAR LEVEL.IMMO */
+        .legal-check-container {
+            display: flex; align-items: flex-start; gap: 10px;
+            margin: 18px 0; font-size: 10.5px; color: var(--text-muted); line-height: 1.4;
+        }
+        .legal-check-container input[type="checkbox"] {
+            margin-top: 2px; accent-color: var(--accent-blue); width: 14px; height: 14px; flex-shrink: 0; cursor: pointer;
+        }
+        .link-btn {
+            background: none; border: none; color: var(--accent-blue); text-decoration: underline; padding: 0; font-size: inherit; cursor: pointer; font-family: inherit; font-weight: 600;
+        }
+        .link-btn:hover { color: #fff; }
 
         .btn-action {
             width: 100%;
@@ -175,11 +187,33 @@
         }
         .btn-action:hover:not(:disabled) { opacity: 0.9; transform: translateY(-1px); }
         .btn-action:disabled { background: #1e293b; color: #4b5563; cursor: not-allowed; box-shadow: none; }
-        .btn-secondary { background: transparent; border: 1px solid var(--border-color); color: var(--text-muted); margin-top: 8px; }
+        .btn-secondary { background: transparent; border: 1px solid var(--border-color); color: var(--text-muted); margin-top: 8px; box-shadow: none; }
         .btn-secondary:hover { background: rgba(255,255,255,0.05); color: #fff; }
+
+        /* MODAL LEGAL (ESTÁNDAR) */
+        #legal-modal { display: none; position: fixed; inset: 0; z-index: 1000000; background: rgba(5, 8, 15, 0.85); backdrop-filter: blur(5px); align-items: center; justify-content: center; padding: 16px; }
+        #legal-modal.is-open { display: flex; }
+        .legal-modal-box { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 24px; max-width: 500px; width: 100%; box-shadow: 0 20px 40px rgba(0,0,0,0.8); }
+        .legal-modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 12px; margin-bottom: 16px; }
+        .legal-modal-header h4 { margin: 0; color: var(--accent-green); font-size: 15px; font-weight: 700; }
+        .legal-modal-header button { background: none; border: none; color: var(--text-muted); font-size: 18px; font-weight: bold; cursor: pointer; padding: 0; }
+        .legal-modal-header button:hover { color: #fff; }
+        #legal-modal-body { font-size: 11.5px; color: var(--text-muted); line-height: 1.5; }
+        #legal-modal-body p { margin-top: 0; margin-bottom: 10px; }
     </style>
 </head>
 <body>
+
+    <!-- MODAL LEGAL -->
+    <div id="legal-modal">
+        <div class="legal-modal-box">
+            <div class="legal-modal-header">
+                <h4 id="legal-modal-title">Información Legal</h4>
+                <button type="button" onclick="closeLegalModal()">✕</button>
+            </div>
+            <div id="legal-modal-body"></div>
+        </div>
+    </div>
 
     <div class="elena-fullscreen-modal">
         <div class="modal-content-box">
@@ -195,7 +229,7 @@
                 <div class="elena-avatar">E</div>
                 <div class="elena-speech">
                     <h3>Elena | AI Financial Advisor</h3>
-                    <p id="elena-speech-text">Completa los datos de los titulares para evaluar tu viabilidad. No te pediremos documentación ahora, el bróker se encargará de ello.</p>
+                    <p id="elena-speech-text">Completa tus datos para evaluar el poder de compra real de tu perfil. No te pediremos documentación ahora, tu bróker se encargará de ello.</p>
                 </div>
             </div>
 
@@ -205,40 +239,38 @@
                 <div id="step-1" class="form-step active">
                     
                     <div class="input-group">
-                        <label>Número de Solicitantes / Titulares</label>
+                        <label>Número de Solicitantes (Personas físicas)</label>
                         <select id="field-num-titulares" onchange="toggleCotitular()">
                             <option value="1">1 Solicitante (Titular único)</option>
-                            <option value="2">2 Cotitulares (Personas físicas)</option>
+                            <option value="2">2 Titulares</option>
+                            <option value="3">3 Titulares</option>
+                            <option value="4">4 Titulares</option>
+                            <option value="5">5 Titulares</option>
+                            <option value="6">6 Titulares</option>
                         </select>
                     </div>
 
-                    <!-- TITULAR 1 -->
+                    <!-- TITULAR 1 (Obligatorio) -->
                     <div class="input-group">
-                        <label>Nombre y Apellidos (Titular 1)</label>
+                        <label>Nombre y Apellidos (Titular Principal)</label>
                         <input type="text" id="field-nombre" required placeholder="Ej. Carlos Gómez">
                     </div>
-                    <div class="input-group">
-                        <label>Teléfono / WhatsApp (Titular 1)</label>
-                        <input type="tel" id="field-telefono" required placeholder="+34 600 000 000">
-                    </div>
-                    <div class="input-group">
-                        <label>Correo Electrónico (Titular 1)</label>
-                        <input type="email" id="field-email" required placeholder="carlos@level.immo">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                        <div class="input-group">
+                            <label>Teléfono (WhatsApp)</label>
+                            <input type="tel" id="field-telefono" required placeholder="+34 600 000 000">
+                        </div>
+                        <div class="input-group">
+                            <label>Correo Electrónico</label>
+                            <input type="email" id="field-email" required placeholder="carlos@level.immo">
+                        </div>
                     </div>
 
-                    <!-- TITULAR 2 (OCULTO POR DEFECTO) -->
-                    <div id="block-cotitular" style="display:none; border-top: 1px dashed var(--border-color); padding-top: 12px; margin-top: 12px;">
+                    <!-- BLOQUE DINÁMICO DE OBSERVACIONES PARA COTITULARES (+5) -->
+                    <div id="block-cotitulares-extras" style="display:none; border-top: 1px dashed var(--border-color); padding-top: 12px; margin-top: 5px;">
                         <div class="input-group">
-                            <label>Nombre y Apellidos (Cotitular 2)</label>
-                            <input type="text" id="field-nombre-2" placeholder="Ej. Ana María Pérez">
-                        </div>
-                        <div class="input-group">
-                            <label>Teléfono / WhatsApp (Cotitular 2)</label>
-                            <input type="tel" id="field-telefono-2" placeholder="+34 600 000 000">
-                        </div>
-                        <div class="input-group">
-                            <label>Correo Electrónico (Cotitular 2)</label>
-                            <input type="email" id="field-email-2" placeholder="ana@level.immo">
+                            <label id="label-cotitulares-extra">Datos de los Cotitulares adicionales</label>
+                            <textarea id="field-observaciones-cotitulares" rows="2" placeholder="Por favor, indícanos el nombre y correo de los otros titulares para nuestro registro..."></textarea>
                         </div>
                     </div>
 
@@ -257,11 +289,11 @@
                         <input type="number" id="field-alquiler" required placeholder="Ej. 900 (0 si es en propiedad)" oninput="evaluarPreScoring()">
                     </div>
 
-                    <!-- WIDGET DE SCORING EN TIEMPO REAL -->
+                    <!-- WIDGET DE SCORING EN TIEMPO REAL (KILLER FEATURE) -->
                     <div class="scoring-preview-box">
-                        <div class="scoring-label">Resultado del Pre-Scoring Financiero:</div>
+                        <div class="scoring-label">Tu Poder de Compra Estimado:</div>
                         <div id="scoring-badge" class="scoring-badge badge-neutral">
-                            Rellene los datos de ingresos y cargas para evaluar su capacidad
+                            Rellene los datos de ingresos y cargas para evaluar su capacidad y pre-scoring
                         </div>
                     </div>
 
@@ -274,7 +306,7 @@
                 <div id="step-2" class="form-step">
                     
                     <div class="value-prop-box">
-                        🎯 <strong>Activamos la Demanda Activa:</strong> Mientras tu bróker tramita la financiación y verifica tu documentación, <span class="highlight">publicaremos tu demanda (de forma anónima) en nuestro panel inverso.</span> ¡Los propietarios podrán empezar a ofrecerte inmuebles desde el minuto 1!
+                        🎯 <strong>Activamos la Demanda Activa:</strong> Mientras tu bróker tramita la financiación, <span class="highlight">publicaremos tu demanda (de forma anónima) en nuestro panel inverso.</span> ¡Los propietarios podrán empezar a ofrecerte inmuebles desde el minuto 1!
                     </div>
 
                     <div class="input-group">
@@ -293,7 +325,6 @@
                         <input type="text" id="field-zona" required placeholder="Ej. Barcelona, Vinaròs, Alcanar...">
                     </div>
 
-                    <!-- NUEVO CAMPO: DESCRIPCIÓN DE BÚSQUEDA -->
                     <div class="input-group">
                         <label>Describe tu propiedad ideal (Para el panel de Demanda Activa)</label>
                         <textarea id="field-descripcion" rows="3" required placeholder="Ej: Busco un piso muy luminoso en El Raval, mínimo 2 habs y terraza, preferible para invertir..."></textarea>
@@ -315,8 +346,16 @@
                         </div>
                     </div>
 
-                    <div class="legal-notice">
-                        <strong>Aviso Legal, Cookies e IA:</strong> Uso de IA (Elena) para pre-scoring. Autorizas el registro de tus datos de contacto y la publicación anónima de tu demanda. Tus datos financieros serán compartidos con nuestros brókers bajo cifrado AES-256. El bróker asignado te contactará para solicitar la documentación pertinente.
+                    <!-- CHECKBOX LEGAL ESTÁNDAR LEVEL.IMMO -->
+                    <div class="legal-check-container">
+                        <input type="checkbox" id="legal-check" required>
+                        <label for="legal-check">
+                            He leído y acepto la
+                            <button type="button" class="link-btn" onclick="openLegalModal('privacidad')">Privacidad y RGPD</button>,
+                            <button type="button" class="link-btn" onclick="openLegalModal('aviso')">Aviso Legal</button> y
+                            <button type="button" class="link-btn" onclick="openLegalModal('cookies')">Cookies e IA</button>.
+                            Autorizo el registro en Demanda Activa y la cesión a nuestro bróker asignado bajo cifrado AES-256.
+                        </label>
                     </div>
 
                     <button type="submit" id="btn-enviar-final" class="btn-action">
@@ -333,28 +372,48 @@
     </div>
 
     <script>
+        // Funciones Modal Legal
+        function openLegalModal(type) {
+            const title = document.getElementById('legal-modal-title');
+            const body = document.getElementById('legal-modal-body');
+            if (type === 'aviso') {
+                title.textContent = "Aviso Legal · LEVEL PUNTO IMMO 24365 SLU";
+                body.innerHTML = `<p>En cumplimiento de la Ley 34/2002 (LSSI-CE), se informa que <strong>Level.immo</strong> está operada por <strong>LEVEL PUNTO IMMO 24365 SLU</strong> (NIF B-26745430).</p><p>Los servicios de intermediación financiera y tramitación hipotecaria son derivados a nuestros brókers de <strong>Financial Rocks</strong> u otros partners autorizados para garantizarle las mejores condiciones del mercado.</p>`;
+            } else if (type === 'privacidad') {
+                title.textContent = "Política de Privacidad y RGPD";
+                body.innerHTML = `<p><strong>Responsable:</strong> LEVEL PUNTO IMMO 24365 SLU (Email: level@level.immo).</p><p>Sus datos se procesan con estricta confidencialidad utilizando protocolos de encriptación <strong>AES-256</strong>. La finalidad es gestionar su alta en la tabla de <strong>CONTACTOS</strong>, realizar el pre-scoring financiero y abrir su expediente documental para la tramitación de hipoteca. Al aceptar, consiente también la publicación anónima de sus criterios de búsqueda en el panel público de <strong>Demanda Activa</strong>.</p>`;
+            } else {
+                title.textContent = "Política de Cookies e Inteligencia Artificial";
+                body.innerHTML = `<p>Esta plataforma utiliza el asistente <strong>Elena | AI Advisor Level-i</strong> para la cualificación automatizada y el pre-scoring de viabilidad. Este cálculo es puramente orientativo y no constituye una aprobación vinculante de crédito hasta la revisión humana de su bróker asignado y la entidad bancaria.</p>`;
+            }
+            document.getElementById('legal-modal').classList.add('is-open');
+        }
+        function closeLegalModal() { document.getElementById('legal-modal').classList.remove('is-open'); }
+
         // Setear fecha de mañana por defecto
         const manana = new Date();
         manana.setDate(manana.getDate() + 1);
         document.getElementById('field-fecha').value = manana.toISOString().split('T')[0];
 
         let estadoActualScoring = "NEUTRAL";
+        let maxPropiedadGlobal = 0;
 
         function toggleCotitular() {
-            const num = document.getElementById('field-num-titulares').value;
-            const block = document.getElementById('block-cotitular');
-            const n2 = document.getElementById('field-nombre-2');
-            const t2 = document.getElementById('field-telefono-2');
-            const e2 = document.getElementById('field-email-2');
-
-            if (num === "2") {
-                block.style.display = "block";
-                n2.required = true; t2.required = true; e2.required = true;
+            const num = parseInt(document.getElementById('field-num-titulares').value);
+            const blockExtra = document.getElementById('block-cotitulares-extras');
+            const labelExtra = document.getElementById('label-cotitulares-extra');
+            
+            if (num > 1) {
+                blockExtra.style.display = "block";
+                labelExtra.innerText = `Datos de los otros ${num - 1} cotitulares (Opcional por ahora)`;
             } else {
-                block.style.display = "none";
-                n2.required = false; t2.required = false; e2.required = false;
+                blockExtra.style.display = "none";
+                document.getElementById('field-observaciones-cotitulares').value = "";
             }
         }
+
+        // Formato moneda
+        const fmt = n => Math.round(n).toLocaleString('es-ES');
 
         function evaluarPreScoring() {
             const ingresos = parseFloat(document.getElementById('field-ingresos').value) || 0;
@@ -365,14 +424,36 @@
 
             if (ingresos <= 0) {
                 badge.className = "scoring-badge badge-neutral";
-                badge.innerHTML = "Rellene los datos de ingresos y cargas para evaluar su capacidad";
+                badge.innerHTML = "Rellene los datos de ingresos y cargas para evaluar su capacidad y pre-scoring";
                 btnSiguiente.disabled = true;
                 estadoActualScoring = "NEUTRAL";
                 return;
             }
 
+            // Lógica de Riesgo
             const dti = ((cargas + alquiler) / ingresos) * 100;
             const cuotaDisponible = (ingresos * 0.35) - cargas;
+
+            // Ingeniería Inversa (Asunción de mercado: 3.5% anual a 30 años, 80% LTV)
+            // Fórmula VP = PMT * ((1 - (1+i)^-n) / i)
+            const tasaMensual = 0.035 / 12;
+            const meses = 360;
+            let maxPrestamo = 0;
+            let maxPropiedad = 0;
+
+            if (cuotaDisponible > 0) {
+                maxPrestamo = cuotaDisponible * ((1 - Math.pow(1 + tasaMensual, -meses)) / tasaMensual);
+                maxPropiedad = maxPrestamo / 0.80; // 80% LTV
+                maxPropiedadGlobal = maxPropiedad;
+            }
+
+            // Html de la estimación con el descargo de responsabilidad (letra pequeña técnica)
+            const htmlEstimacion = maxPropiedad > 0 
+                ? `<span style="font-size:14px; display:block; margin: 8px 0; color:#fff;">Valor Máx. Propiedad: <strong>${fmt(maxPropiedad)} €</strong></span>
+                   <div style="font-size:9.5px; font-weight:400; line-height:1.25; color:var(--text-muted); text-transform:none; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 6px; margin-top: 4px;">
+                     * Estimación orientativa sin valor contractual (Cálculo a 30 años con LTV 80%). Se asume que el comprador dispone del 20% de ahorro restante más la provisión para gastos de notaría, impuestos y registro.
+                   </div>`
+                : '';
 
             if (dti > 45 || cuotaDisponible < 150) {
                 estadoActualScoring = "ROJO";
@@ -382,58 +463,50 @@
             } else if (dti > 32 && dti <= 45) {
                 estadoActualScoring = "NARANJA";
                 badge.className = "scoring-badge badge-naranja";
-                badge.innerHTML = `🟠 <strong>NARANJA - ESTUDIO CONDICIONADO</strong><br>Ratio DTI (${dti.toFixed(1)}%). Viable sujeto a revisión con garantías.`;
+                badge.innerHTML = `🟠 <strong>NARANJA - ESTUDIO CONDICIONADO</strong><br>Ratio DTI (${dti.toFixed(1)}%). Viable sujeto a revisión y/o avales.<br>${htmlEstimacion}`;
                 btnSiguiente.disabled = false;
             } else {
                 estadoActualScoring = "VERDE";
                 badge.className = "scoring-badge badge-verde";
-                badge.innerHTML = `🟢 <strong>VERDE - ALTA VIABILIDAD</strong><br>Ratio óptimo (${dti.toFixed(1)}%). Capacidad estimada ~${Math.round(cuotaDisponible)}€/mes.`;
+                badge.innerHTML = `🟢 <strong>VERDE - ALTA VIABILIDAD</strong><br>Ratio óptimo (${dti.toFixed(1)}%). Capacidad holgada.<br>${htmlEstimacion}`;
                 btnSiguiente.disabled = false;
             }
         }
 
         function pasarAlPaso2() {
-            if (estadoActualScoring === "ROJO") {
-                alert("Operación bloqueada por pre-scoring rojo.");
-                return;
-            }
+            if (estadoActualScoring === "ROJO") { return; }
             document.getElementById('step-1').classList.remove('active');
             document.getElementById('step-2').classList.add('active');
-            document.getElementById('elena-speech-text').innerHTML = "¡Perfil apto! Cuéntanos qué propiedad buscas. Te añadiremos al radar inverso y el bróker te contactará para la documentación.";
+            document.getElementById('elena-speech-text').innerHTML = "¡Perfil apto! Cuéntanos qué propiedad buscas. Te añadiremos al radar inverso y tu bróker te contactará para formalizarlo.";
         }
 
         function volverAlPaso1() {
             document.getElementById('step-2').classList.remove('active');
             document.getElementById('step-1').classList.add('active');
-            document.getElementById('elena-speech-text').innerHTML = "Completa los datos de los titulares para evaluar tu viabilidad. No te pediremos documentación ahora, el bróker se encargará de ello.";
+            document.getElementById('elena-speech-text').innerHTML = "Completa tus datos para evaluar el poder de compra real de tu perfil. No te pediremos documentación ahora, tu bróker se encargará de ello.";
         }
 
         function manejarEnvio(event) {
             event.preventDefault();
+            if (estadoActualScoring === "ROJO") return;
 
-            if (estadoActualScoring === "ROJO") {
-                alert("La operación presenta un pre-scoring ROJO y no puede ser aceptada a trámite.");
-                return;
-            }
-
-            const numTitulares = document.getElementById('field-num-titulares').value;
             const payload = {
                 evento: "solicitud_hipoteca_y_demanda_activa",
                 estado_expediente_broker: "En fase de verificación documental",
                 estado_demanda_activa: "Activo (Esperando documentación)",
-                titulares: [
-                    {
-                        rol: "Titular 1",
-                        nombre: document.getElementById('field-nombre').value,
-                        telefono: document.getElementById('field-telefono').value,
-                        email: document.getElementById('field-email').value
-                    }
-                ],
+                numero_titulares_declarados: document.getElementById('field-num-titulares').value,
+                titular_principal: {
+                    nombre: document.getElementById('field-nombre').value,
+                    telefono: document.getElementById('field-telefono').value,
+                    email: document.getElementById('field-email').value
+                },
+                observaciones_cotitulares: document.getElementById('field-observaciones-cotitulares').value,
                 datos_financieros: {
                     ingresos_mensuales: document.getElementById('field-ingresos').value,
                     cargas_mensuales: document.getElementById('field-cargas').value,
                     alquiler_actual: document.getElementById('field-alquiler').value,
-                    resultado_scoring: estadoActualScoring
+                    resultado_scoring: estadoActualScoring,
+                    valor_maximo_estimado_propiedad: maxPropiedadGlobal
                 },
                 preferencias_busqueda: {
                     tipologia: document.getElementById('field-tipologia').value,
@@ -448,22 +521,13 @@
                 fecha_registro: new Date().toISOString()
             };
 
-            if (numTitulares === "2") {
-                payload.titulares.push({
-                    rol: "Cotitular 2",
-                    nombre: document.getElementById('field-nombre-2').value,
-                    telefono: document.getElementById('field-telefono-2').value,
-                    email: document.getElementById('field-email-2').value
-                });
-            }
-
-            // Sustituye por tu webhook correcto de Make (Escenario de Hipotecas)
+            // Reemplazar con el webhook definitivo de Make que apunta a la Consola de Brokers
             fetch("https://hook.eu1.make.com/lcfewra8wffai81fjda2g5jgm76cjaeo", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(payload)
             }).then(() => {
-                alert("¡Demanda Activa registrada! Un bróker hipotecario se pondrá en contacto contigo para solicitarte la documentación inicial.");
+                alert("¡Demanda Activa y Expediente registrados! Un bróker hipotecario se pondrá en contacto contigo muy pronto.");
                 location.reload();
             }).catch(() => {
                 alert("Error de red al sincronizar con la consola. Inténtalo de nuevo.");
