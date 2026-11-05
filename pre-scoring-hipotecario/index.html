@@ -3,25 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Level.immo | Pre-Scoring Hipotecario y Validación Elena IA</title>
+    <title>Level.immo & Financial Rocks | Expediente Hipotecario Avanzado</title>
     <style>
         :root {
             --bg-base: #05080f;
-            --bg-modal: #0d1420;
-            --bg-card: #151f30;
+            --bg-modal: #070b14;
+            --bg-card: #0f172a;
             --accent-green: #10b981;
             --accent-blue: #007aff;
+            --accent-gold: #C5A059;
             --accent-orange: #f59e0b;
             --accent-red: #ef4444;
             --text-main: #f9fafb;
-            --text-muted: #9ca3af;
+            --text-muted: #94a3b8;
             --border-color: #1e293b;
         }
 
         * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
         body { background-color: var(--bg-base); color: var(--text-main); margin: 0; padding: 0; }
 
-        /* PANTALLA COMPLETA FLOTANTE (MODAL ÚNICO) */
+        /* PANTALLA COMPLETA FLOTANTE (MODAL ÚNICO INMERSIVO) */
         .elena-fullscreen-modal {
             position: fixed;
             inset: 0;
@@ -36,74 +37,130 @@
 
         .modal-content-box {
             width: 100%;
-            max-width: 520px;
+            max-width: 620px;
             background: var(--bg-card);
             border: 1px solid var(--border-color);
             border-radius: 16px;
-            padding: 28px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.9);
+            padding: 30px;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.95);
+            margin: auto;
         }
 
-        .modal-header {
+        /* CABECERA CORPORATIVA Y LOGO */
+        .brand-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 14px;
+            margin-bottom: 18px;
+        }
+
+        .brand-logo {
+            font-weight: 900;
+            font-size: 18px;
+            color: #fff;
             display: flex;
             align-items: center;
+            gap: 6px;
+            letter-spacing: -0.5px;
+        }
+        .brand-dot { width: 8px; height: 8px; background: var(--accent-green); border-radius: 50%; box-shadow: 0 0 10px var(--accent-green); }
+
+        .api-badge {
+            font-size: 10px;
+            font-family: monospace;
+            background: rgba(197, 160, 89, 0.1);
+            color: var(--accent-gold);
+            border: 1px solid rgba(197, 160, 89, 0.3);
+            padding: 4px 8px;
+            border-radius: 6px;
+        }
+
+        /* ESPACIO DEDICADO PARA ELENA IA */
+        .elena-box {
+            background: rgba(16, 185, 129, 0.04);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 12px;
+            padding: 14px 16px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: flex-start;
             gap: 12px;
-            margin-bottom: 22px;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 15px;
         }
 
         .elena-avatar {
-            width: 42px;
-            height: 42px;
+            width: 38px;
+            height: 38px;
             background: var(--accent-green);
-            color: #05080f;
+            color: #080d14;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 900;
-            font-size: 18px;
-            box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
+            font-size: 16px;
+            flex-shrink: 0;
+            box-shadow: 0 0 12px rgba(16, 185, 129, 0.4);
         }
 
-        .modal-header h2 { font-size: 16px; font-weight: 700; color: #fff; margin: 0; }
-        .modal-header p { font-size: 11px; color: var(--accent-green); margin: 2px 0 0 0; font-family: monospace; }
+        .elena-speech h3 { font-size: 13px; font-weight: 700; color: #fff; margin: 0 0 4px 0; }
+        .elena-speech p { font-size: 11.5px; color: var(--text-muted); margin: 0; line-height: 1.4; }
 
-        .input-group { margin-bottom: 16px; }
-        .input-group label { display: block; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-muted); margin-bottom: 6px; }
-        .input-group input { width: 100%; background: #080d14; border: 1px solid var(--border-color); border-radius: 8px; padding: 11px 14px; color: #fff; font-size: 14px; outline: none; transition: border-color 0.2s; }
-        .input-group input:focus { border-color: var(--accent-blue); }
+        .form-step { display: none; }
+        .form-step.active { display: block; }
+
+        .input-group { margin-bottom: 14px; }
+        .input-group label { display: block; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-muted); margin-bottom: 5px; }
+        .input-group input, .input-group select { width: 100%; background: #080d14; border: 1px solid var(--border-color); border-radius: 8px; padding: 10px 14px; color: #fff; font-size: 13.5px; outline: none; transition: border-color 0.2s; }
+        .input-group input:focus, .input-group select:focus { border-color: var(--accent-blue); }
 
         /* WIDGET DE SCORING EN TIEMPO REAL */
         .scoring-preview-box {
             background: #080d14;
             border: 1px solid var(--border-color);
             border-radius: 10px;
-            padding: 16px;
-            margin: 20px 0;
+            padding: 14px;
+            margin: 18px 0;
             text-align: center;
         }
 
-        .scoring-label { font-size: 11px; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .scoring-label { font-size: 10px; color: var(--text-muted); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 700; }
         
         .scoring-badge {
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 800;
-            padding: 10px 14px;
+            padding: 10px 12px;
             border-radius: 6px;
             display: block;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.3px;
             line-height: 1.4;
         }
 
-        /* ESTADOS DEL SEMÁFORO */
         .badge-neutral { background: rgba(156, 163, 175, 0.08); color: var(--text-muted); border: 1px dashed var(--border-color); }
         .badge-verde { background: rgba(16, 185, 129, 0.12); color: var(--accent-green); border: 1px solid var(--accent-green); }
         .badge-naranja { background: rgba(245, 158, 11, 0.12); color: var(--accent-orange); border: 1px solid var(--accent-orange); }
-        .badge-rojo { background: rgba(239, 68, 68, 0.12); color: var(--accent-red); border: 1px solid var(--accent-red); }
+        .badge-rojo { background: rgba(239, 68, 68, 0.15); color: var(--accent-red); border: 1px solid var(--accent-red); }
 
-        .legal-notice { font-size: 10.5px; color: var(--text-muted); margin-bottom: 18px; line-height: 1.4; }
+        /* CHECKBOXES DE DOCUMENTACIÓN */
+        .doc-checklist { background: #080d14; border: 1px solid var(--border-color); border-radius: 8px; padding: 12px 14px; margin-bottom: 14px; font-size: 12px; color: var(--text-muted); }
+        .doc-checklist label { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; color: #fff; cursor: pointer; }
+        .doc-checklist label:last-child { margin-bottom: 0; }
+        .doc-checklist input { accent-color: var(--accent-green); width: 16px; height: 16px; }
+
+        .value-prop-box {
+            background: rgba(0, 122, 255, 0.05);
+            border: 1px solid rgba(0, 122, 255, 0.2);
+            border-radius: 10px;
+            padding: 14px;
+            margin-bottom: 16px;
+            font-size: 11.5px;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+        .value-prop-box strong { color: var(--text-main); }
+
+        .legal-notice { font-size: 10px; color: var(--text-muted); margin-bottom: 16px; line-height: 1.4; border-left: 2px solid var(--accent-gold); padding-left: 10px; }
 
         .btn-action {
             width: 100%;
@@ -118,149 +175,297 @@
             text-transform: uppercase;
             cursor: pointer;
             transition: all 0.2s;
+            box-shadow: 0 4px 15px rgba(0, 122, 255, 0.3);
+            margin-top: 5px;
         }
-        .btn-action:hover:not(:disabled) { opacity: 0.9; }
-        .btn-action:disabled { background: #374151; color: #6b7280; cursor: not-allowed; box-shadow: none; }
+        .btn-action:hover:not(:disabled) { opacity: 0.9; transform: translateY(-1px); }
+        .btn-action:disabled { background: #1e293b; color: #4b5563; cursor: not-allowed; box-shadow: none; }
+        .btn-secondary { background: transparent; border: 1px solid var(--border-color); color: var(--text-muted); margin-top: 8px; }
+        .btn-secondary:hover { background: rgba(255,255,255,0.05); color: #fff; }
     </style>
 </head>
 <body>
 
-    <!-- PANTALLA FLOTANTE ÚNICA: ELENA IA + PRE-SCORING -->
     <div class="elena-fullscreen-modal">
         <div class="modal-content-box">
             
-            <div class="modal-header">
+            <!-- CABECERA CORPORATIVA -->
+            <div class="brand-header">
+                <div class="brand-logo">L<span class="brand-dot"></span> level.immo</div>
+                <div class="api-badge">Lark Consola · Brokers</div>
+            </div>
+
+            <!-- ESPACIO DEDICADO PARA ELENA IA -->
+            <div class="elena-box">
                 <div class="elena-avatar">E</div>
-                <div>
-                    <h2>Elena | AI Financial Advisor</h2>
-                    <p>● Análisis de Capacidad y Pre-Scoring en Vivo</p>
+                <div class="elena-speech">
+                    <h3>Elena | AI Financial Advisor</h3>
+                    <p id="elena-speech-text">Completa los datos de los titulares para certificar el pre-scoring y abrir el expediente documental en la consola.</p>
                 </div>
             </div>
 
-            <form id="elena-mortgage-form" onsubmit="enviarTramite(event)">
+            <form id="elena-mortgage-form" onsubmit="manejarEnvio(event)">
                 
-                <div class="input-group">
-                    <label>Nombre y Apellidos del Solicitante</label>
-                    <input type="text" id="field-nombre" required placeholder="Ej. Carlos Gómez">
-                </div>
-
-                <div class="input-group">
-                    <label>Teléfono de Contacto (WhatsApp)</label>
-                    <input type="tel" id="field-telefono" required placeholder="+34 600 000 000">
-                </div>
-
-                <div class="input-group">
-                    <label>Correo Electrónico</label>
-                    <input type="email" id="field-email" required placeholder="correo@level.immo">
-                </div>
-
-                <div class="input-group">
-                    <label>Ingresos Netos Totales Mensuales (€)</label>
-                    <input type="number" id="field-ingresos" required placeholder="Ej. 3500" oninput="evaluarPreScoring()">
-                </div>
-
-                <div class="input-group">
-                    <label>Cargas Financieras / Préstamos Mensuales (€)</label>
-                    <input type="number" id="field-cargas" required placeholder="Ej. 150 (0 si no tiene)" oninput="evaluarPreScoring()">
-                </div>
-
-                <div class="input-group">
-                    <label>Importe Alquiler Actual (€)</label>
-                    <input type="number" id="field-alquiler" required placeholder="Ej. 900 (0 si es en propiedad)" oninput="evaluarPreScoring()">
-                </div>
-
-                <!-- WIDGET DE RESULTADO DE SCORING EN TIEMPO REAL -->
-                <div class="scoring-preview-box">
-                    <div class="scoring-label">Resultado del Pre-Scoring Financiero:</div>
-                    <div id="scoring-badge" class="scoring-badge badge-neutral">
-                        Rellene los datos de ingresos y cargas para calcular su capacidad
+                <!-- PASO 1: TITULARES Y DATOS FINANCIEROS -->
+                <div id="step-1" class="form-step active">
+                    
+                    <div class="input-group">
+                        <label>Número de Solicitantes / Titulares</label>
+                        <select id="field-num-titulares" onchange="toggleCotitular()">
+                            <option value="1">1 Solicitante (Titular único)</option>
+                            <option value="2">2 Cotitulares (Personas físicas)</option>
+                        </select>
                     </div>
+
+                    <!-- TITULAR 1 -->
+                    <div class="input-group">
+                        <label>Nombre y Apellidos (Titular 1)</label>
+                        <input type="text" id="field-nombre" required placeholder="Ej. Carlos Gómez">
+                    </div>
+                    <div class="input-group">
+                        <label>Teléfono / WhatsApp (Titular 1)</label>
+                        <input type="tel" id="field-telefono" required placeholder="+34 600 000 000">
+                    </div>
+                    <div class="input-group">
+                        <label>Correo Electrónico (Titular 1)</label>
+                        <input type="email" id="field-email" required placeholder="carlos@level.immo">
+                    </div>
+
+                    <!-- TITULAR 2 (OCULTO POR DEFECTO) -->
+                    <div id="block-cotitular" style="display:none; border-top: 1px dashed var(--border-color); padding-top: 12px; margin-top: 12px;">
+                        <div class="input-group">
+                            <label>Nombre y Apellidos (Cotitular 2)</label>
+                            <input type="text" id="field-nombre-2" placeholder="Ej. Ana María Pérez">
+                        </div>
+                        <div class="input-group">
+                            <label>Teléfono / WhatsApp (Cotitular 2)</label>
+                            <input type="tel" id="field-telefono-2" placeholder="+34 600 000 000">
+                        </div>
+                        <div class="input-group">
+                            <label>Correo Electrónico (Cotitular 2)</label>
+                            <input type="email" id="field-email-2" placeholder="ana@level.immo">
+                        </div>
+                    </div>
+
+                    <div class="input-group" style="margin-top: 14px;">
+                        <label>Ingresos Netos Totales Conjuntos Mensuales (€)</label>
+                        <input type="number" id="field-ingresos" required placeholder="Ej. 3500" oninput="evaluarPreScoring()">
+                    </div>
+
+                    <div class="input-group">
+                        <label>Cargas Financieras / Préstamos Mensuales (€)</label>
+                        <input type="number" id="field-cargas" required placeholder="Ej. 150 (0 si no tiene)" oninput="evaluarPreScoring()">
+                    </div>
+
+                    <div class="input-group">
+                        <label>Importe Alquiler Actual (€)</label>
+                        <input type="number" id="field-alquiler" required placeholder="Ej. 900 (0 si es en propiedad)" oninput="evaluarPreScoring()">
+                    </div>
+
+                    <!-- WIDGET DE SCORING EN TIEMPO REAL -->
+                    <div class="scoring-preview-box">
+                        <div class="scoring-label">Resultado del Pre-Scoring Financiero:</div>
+                        <div id="scoring-badge" class="scoring-badge badge-neutral">
+                            Rellene los datos de ingresos y cargas para evaluar su capacidad
+                        </div>
+                    </div>
+
+                    <button type="button" id="btn-siguiente" class="btn-action" disabled onclick="pasarAlPaso2()">
+                        Continuar con la Carpeta Documental →
+                    </button>
                 </div>
 
-                <div class="legal-notice">
-                    Tus datos se procesan con cifrado AES-256 bajo estricto cumplimiento del RGPD para certificar tu viabilidad con Financial Rocks.
+                <!-- PASO 2: REPOSITORIO DOCUMENTAL Y TRAMITACIÓN -->
+                <div id="step-2" class="form-step">
+                    
+                    <div class="value-prop-box">
+                        📁 <strong>Creación de Carpeta Documental:</strong> Al avanzar, abriremos el expediente en la consola <strong>HIPOTECAS PARA BROKERS</strong> de Lark. <em>Mientras tramitamos tu hipoteca y logramos la pre-aprobación (válida por hasta 3 meses para comprar), empezaremos a filtrar activos en paralelo.</em>
+                    </div>
+
+                    <div class="doc-checklist">
+                        <div style="font-weight: 700; color: #fff; margin-bottom: 6px; text-transform: uppercase; font-size: 11px;">Documentación inicial prevista para adjuntar:</div>
+                        <label><input type="checkbox" checked disabled> DNI / NIE vigente de los titulares</label>
+                        <label><input type="checkbox" id="doc-nomimas"> Últimas 3 nóminas / Declaración IRPF</label>
+                        <label><input type="checkbox" id="doc-extracto"> Extracto bancario de aportación</label>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Tipo de Propiedad que Deseas Comprar (Informativo)</label>
+                        <select id="field-tipologia">
+                            <option value="Residencial Habitual">🏠 Vivienda Habitual / Residencial</option>
+                            <option value="Inversión Patrimonial (Yield)">📈 Inversión Patrimonial (Alquiler / Rentabilidad)</option>
+                            <option value="Obra Nueva / Promoción">🏗️ Obra Nueva</option>
+                            <option value="Local / Comercial / Terciario">🏢 Local Comercial o Terciario</option>
+                            <option value="Suelo / Terreno">🌍 Suelo / Terreno</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Zona o Población de Interés</label>
+                        <input type="text" id="field-zona" placeholder="Ej. Barcelona (Ciutat Vella), Vinaròs...">
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                        <div class="input-group">
+                            <label>📅 Fecha Llamada</label>
+                            <input type="date" id="field-fecha" required value="2026-11-06">
+                        </div>
+                        <div class="input-group">
+                            <label>⏰ Franja Horaria</label>
+                            <select id="field-horario">
+                                <option value="10:00h - 12:00h">10:00h - 12:00h</option>
+                                <option value="12:00h - 14:00h">12:00h - 14:00h</option>
+                                <option value="16:00h - 18:00h">16:00h - 18:00h</option>
+                                <option value="18:00h - 20:00h">18:00h - 20:00h</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="legal-notice">
+                        <strong>Aviso Legal, Cookies e IA:</strong> Uso de IA (Elena) para cualificación. Autorizas el registro en CONTACTOS y la apertura de expediente documental para Financial Rocks bajo cifrado AES-256. Estado inicial: <em>en trámite de registro</em>.
+                    </div>
+
+                    <button type="submit" id="btn-enviar-final" class="btn-action">
+                        Abrir Expediente y Enviar a Trámite
+                    </button>
+                    <button type="button" class="btn-action btn-secondary" onclick="volverAlPaso1()">
+                        ← Volver Atrás
+                    </button>
                 </div>
 
-                <!-- BOTÓN DE ENVÍO BLOQUEABLE SEGÚN SCORING -->
-                <button type="submit" id="btn-enviar" class="btn-action" disabled>
-                    Certificar y Enviar a Trámite
-                </button>
             </form>
 
         </div>
     </div>
 
     <script>
-        let estadoActualScoring = "NEUTRAL"; // NEUTRAL, VERDE, NARANJA, ROJO
+        let estadoActualScoring = "NEUTRAL";
+
+        function toggleCotitular() {
+            const num = document.getElementById('field-num-titulares').value;
+            const block = document.getElementById('block-cotitular');
+            const n2 = document.getElementById('field-nombre-2');
+            const t2 = document.getElementById('field-telefono-2');
+            const e2 = document.getElementById('field-email-2');
+
+            if (num === "2") {
+                block.style.display = "block";
+                n2.required = true; t2.required = true; e2.required = true;
+            } else {
+                block.style.display = "none";
+                n2.required = false; t2.required = false; e2.required = false;
+            }
+        }
 
         function evaluarPreScoring() {
             const ingresos = parseFloat(document.getElementById('field-ingresos').value) || 0;
             const cargas = parseFloat(document.getElementById('field-cargas').value) || 0;
             const alquiler = parseFloat(document.getElementById('field-alquiler').value) || 0;
             const badge = document.getElementById('scoring-badge');
-            const btnEnviar = document.getElementById('btn-enviar');
+            const btnSiguiente = document.getElementById('btn-siguiente');
 
             if (ingresos <= 0) {
                 badge.className = "scoring-badge badge-neutral";
-                badge.innerHTML = "Rellene los datos de ingresos y cargas para calcular su capacidad";
-                btnEnviar.disabled = true;
+                badge.innerHTML = "Rellene los datos de ingresos y cargas para evaluar su capacidad";
+                btnSiguiente.disabled = true;
                 estadoActualScoring = "NEUTRAL";
                 return;
             }
 
-            // Ratio de endeudamiento DTI = (Cargas + Alquiler) / Ingresos
             const dti = ((cargas + alquiler) / ingresos) * 100;
             const cuotaDisponible = (ingresos * 0.35) - cargas;
 
             if (dti > 45 || cuotaDisponible < 150) {
                 estadoActualScoring = "ROJO";
                 badge.className = "scoring-badge badge-rojo";
-                badge.innerHTML = `🔴 <strong>ROJO - OPERACIÓN NO VIABLE</strong><br>Ratio de endeudamiento (${dti.toFixed(1)}%) superior al límite de riesgo bancario. Operación bloqueada.`;
-                btnEnviar.disabled = true; // REGLA ESTRICTA: No se puede aceptar a trámite
+                badge.innerHTML = `🔴 <strong>ROJO - OPERACIÓN NO VIABLE</strong><br>Ratio DTI (${dti.toFixed(1)}%). Supera el límite bancario. <em>Imposible tramitar.</em>`;
+                btnSiguiente.disabled = true; // Bloqueo absoluto anti-rojo
             } else if (dti > 32 && dti <= 45) {
                 estadoActualScoring = "NARANJA";
                 badge.className = "scoring-badge badge-naranja";
-                badge.innerHTML = `🟠 <strong>NARANJA - ESTUDIO CONDICIONADO</strong><br>Ratio DTI (${dti.toFixed(1)}%). Viable sujeto a revisión de garantías o avales.`;
-                btnEnviar.disabled = false; // Permitido enviar a trámite
+                badge.innerHTML = `🟠 <strong>NARANJA - ESTUDIO CONDICIONADO</strong><br>Ratio DTI (${dti.toFixed(1)}%). Viable sujeto a revisión con garantías.`;
+                btnSiguiente.disabled = false;
             } else {
                 estadoActualScoring = "VERDE";
                 badge.className = "scoring-badge badge-verde";
                 badge.innerHTML = `🟢 <strong>VERDE - ALTA VIABILIDAD</strong><br>Ratio óptimo (${dti.toFixed(1)}%). Capacidad estimada ~${Math.round(cuotaDisponible)}€/mes.`;
-                btnEnviar.disabled = false; // Permitido enviar a trámite
+                btnSiguiente.disabled = false;
             }
         }
 
-        function enviarTramite(event) {
+        function pasarAlPaso2() {
+            if (estadoActualScoring === "ROJO") {
+                alert("Operación bloqueada por pre-scoring rojo.");
+                return;
+            }
+            document.getElementById('step-1').classList.remove('active');
+            document.getElementById('step-2').classList.add('active');
+            document.getElementById('elena-speech-text').innerHTML = "¡Perfil apto! Se abrirá la carpeta en la consola de Lark. Selecciona el tipo de propiedad y la hora de contacto.";
+        }
+
+        function volverAlPaso1() {
+            document.getElementById('step-2').classList.remove('active');
+            document.getElementById('step-1').classList.add('active');
+            document.getElementById('elena-speech-text').innerHTML = "Completa los datos de los titulares para certificar el pre-scoring y abrir el expediente documental en la consola.";
+        }
+
+        function manejarEnvio(event) {
             event.preventDefault();
 
-            // Doble comprobación de seguridad por si el usuario intenta forzar el rojo
             if (estadoActualScoring === "ROJO") {
                 alert("La operación presenta un pre-scoring ROJO y no puede ser aceptada a trámite.");
                 return;
             }
 
+            const numTitulares = document.getElementById('field-num-titulares').value;
             const payload = {
-                evento: "solicitud_hipoteca_preaprobada",
-                solicitante: document.getElementById('field-nombre').value,
-                telefono: document.getElementById('field-telefono').value,
-                email: document.getElementById('field-email').value,
-                ingresos: document.getElementById('field-ingresos').value,
-                cargas: document.getElementById('field-cargas').value,
-                alquiler: document.getElementById('field-alquiler').value,
-                resultado_scoring: estadoActualScoring,
-                fecha: new Date().toISOString()
+                evento: "solicitud_hipoteca_consola_lark",
+                estado_expediente: "en trámite de registro",
+                titulares: [
+                    {
+                        rol: "Titular 1",
+                        nombre: document.getElementById('field-nombre').value,
+                        telefono: document.getElementById('field-telefono').value,
+                        email: document.getElementById('field-email').value
+                    }
+                ],
+                datos_financieros: {
+                    ingresos_mensuales: document.getElementById('field-ingresos').value,
+                    cargas_mensuales: document.getElementById('field-cargas').value,
+                    alquiler_actual: document.getElementById('field-alquiler').value,
+                    resultado_scoring: estadoActualScoring
+                },
+                preferencias_busqueda: {
+                    tipologia: document.getElementById('field-tipologia').value,
+                    zona_interes: document.getElementById('field-zona').value,
+                    validez_busqueda_meses: 3
+                },
+                agenda_broker: {
+                    fecha: document.getElementById('field-fecha').value,
+                    franja: document.getElementById('field-horario').value
+                },
+                fecha_registro: new Date().toISOString()
             };
 
-            // Envío a tu Webhook de Make / Lark
+            if (numTitulares === "2") {
+                payload.titulares.push({
+                    rol: "Cotitular 2",
+                    nombre: document.getElementById('field-nombre-2').value,
+                    telefono: document.getElementById('field-telefono-2').value,
+                    email: document.getElementById('field-email-2').value
+                });
+            }
+
+            // Envío al Webhook de Make / Lark (Consola Hipotecas Brokers)
             fetch("https://hook.eu1.make.com/lcfewra8wffai81fjda2g5jgm76cjaeo", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(payload)
             }).then(() => {
-                alert("¡Solicitud enviada correctamente a trámite con Financial Rocks!");
+                alert("¡Expediente abierto con éxito en Lark y enviado a trámite! Estado: en trámite de registro.");
                 location.reload();
             }).catch(() => {
-                alert("Hubo un error al procesar la solicitud. Inténtalo de nuevo.");
+                alert("Error de red al sincronizar con la consola de Lark. Inténtalo de nuevo.");
             });
         }
     </script>
