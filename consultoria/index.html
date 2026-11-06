@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
-  <title>Level-i | Consultoria Immobiliària i Tècnica a la Carta</title>
+  <title>Level.immo | Consultoria Tècnica, Urbanística i Patrimonial a la Carta</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <style>
@@ -27,21 +27,33 @@
       border: 1px solid #1e293b;
       border-radius: 0.85rem;
     }
-    .video-container {
-      position: relative;
+    .intro-video-full {
       width: 100%;
-      aspect-ratio: 16 / 9;
-      background: #05080d;
-      border-radius: 1rem;
-      overflow: hidden;
-      border: 1px solid #1e293b;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+      height: 100%;
+      object-fit: cover;
+      object-position: center center;
+      transition: all 0.8s ease;
     }
-    .video-container video {
+    @media (min-width: 1024px) {
+      .intro-video-full {
+        object-fit: contain;
+        background-color: #060a10;
+      }
+    }
+    .video-stage-16-9 {
+      aspect-ratio: 16 / 9;
+      width: 100%;
+      position: relative;
+      overflow: hidden;
+      background: #05080d;
+    }
+    .video-stage-16-9 video {
       width: 100%;
       height: 100%;
       object-fit: cover;
     }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     ::-webkit-scrollbar { width: 8px; height: 8px; }
     ::-webkit-scrollbar-track { background: #080d14; }
     ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; }
@@ -50,209 +62,640 @@
 </head>
 <body class="min-h-screen flex flex-col justify-between">
 
-  <!-- ================= HEADER PRINCIPAL ================= -->
-  <header class="sticky top-0 z-30 bg-[#080d14]/95 backdrop-blur border-b border-slate-800 px-4 sm:px-6 lg:px-8 py-3.5">
-    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
-      <div class="flex items-center gap-3" translate="no">
-        <a href="#" class="flex items-center gap-2 text-white font-extrabold text-xl tracking-tight">
-          <span class="inline-flex items-center justify-center w-8 h-8 rounded bg-white text-slate-950 font-black">L</span>
-          <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 -ml-2 mt-2"></span>
-          <span>Level-i</span>
-        </a>
-        <span class="text-[11px] text-slate-400 font-mono hidden sm:inline border-l border-slate-700 pl-3">API 4173 · AICAT 14200</span>
+  <!-- ================= PANTALLA 1: PORTADA WELCOME (GATEKEEPER) ================= -->
+  <div id="gatekeeper-screen" class="fixed inset-0 z-40 bg-[#060a10] overflow-y-auto">
+    <div class="fixed inset-0 overflow-hidden pointer-events-none z-0 flex items-center justify-center bg-[#060a10]">
+      <!-- VÍDEO CONSULTORIA.MP4: AUTOPLAY EN OFF (MUTED), SIN LOOP -->
+      <video id="intro-bg-video" autoplay muted playsinline class="intro-video-full filter brightness-[0.75] contrast-[1.05]">
+        <source src="consultoria.mp4" type="video/mp4">
+        <source src="https://app.level-i.com/consultoria/consultoria.mp4" type="video/mp4">
+        <source src="https://level-i.github.io/consultoria/consultoria.mp4" type="video/mp4">
+      </video>
+      <div class="absolute inset-0 bg-gradient-to-b from-[#080d14]/70 via-[#080d14]/40 to-[#080d14]/95"></div>
+    </div>
+
+    <div class="relative z-10 min-h-[100dvh] max-w-6xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 flex flex-col justify-between">
+      
+      <!-- Top Bar Gatekeeper -->
+      <div class="flex items-center justify-between border border-slate-700/60 py-2.5 px-3.5 sm:px-5 backdrop-blur-md bg-slate-950/65 rounded-xl">
+        <div class="flex items-center gap-2.5" translate="no">
+          <div class="inline-flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-white text-slate-950 font-black text-lg sm:text-xl">L</div>
+          <span class="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-emerald-400 -ml-1.5 sm:-ml-2 mt-2.5"></span>
+          <span class="font-extrabold text-white text-base sm:text-lg tracking-tight">Level.immo</span>
+          <span class="hidden sm:inline-block text-[11px] font-mono text-slate-300 border-l border-slate-700 pl-3">API 4173 · AICAT 14200</span>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <button onclick="replayIntroVideo()" id="btn-replay-intro" class="hidden px-2.5 py-1.5 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/40 text-emerald-300 text-xs font-bold transition items-center gap-1">
+            <span>▶</span> <span data-i18n="btn_replay_video">Repetir Vídeo</span>
+          </button>
+          <select id="lang-select-gate" onchange="changeLanguage(this.value)" translate="no" class="bg-slate-900/90 border border-slate-700 text-slate-200 text-xs font-semibold rounded-lg px-3 py-1.5 focus:outline-none focus:border-emerald-500 cursor-pointer backdrop-blur">
+            <option value="ca">CA Català</option>
+            <option value="es">ES Español</option>
+            <option value="en">GB English</option>
+            <option value="fr">FR Français</option>
+            <option value="de">DE Deutsch</option>
+            <option value="it">IT Italiano</option>
+            <option value="ar">AE العربية</option>
+            <option value="zh">CN 中文</option>
+          </select>
+        </div>
       </div>
 
-      <nav class="flex flex-wrap items-center gap-2 text-xs font-semibold">
-        <select id="lang-select" onchange="changeLanguage(this.value)" translate="no" class="bg-[#141e30] border border-slate-700 text-slate-200 text-xs font-semibold rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-emerald-500 cursor-pointer">
+      <!-- Center Content Gatekeeper -->
+      <div class="w-full max-w-4xl mx-auto py-4 sm:py-6 space-y-5 text-center my-auto">
+        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full gold-badge text-[10px] sm:text-xs font-bold tracking-wider uppercase backdrop-blur">
+          <span>🏛️</span> <span data-i18n="gate_badge">DIVISIÓ DE CONSULTORIA TÈCNICA, CADASTRAL I REGISTRAL</span>
+        </div>
+
+        <h1 class="text-2xl sm:text-4xl lg:text-5xl font-black text-white leading-tight tracking-tight drop-shadow-[0_4px_12px_rgba(0,0,0,0.85)] px-1" data-i18n="gate_title">
+          Enginyeria Patrimonial, Segregacions i Gestió Urbanística a la Carta
+        </h1>
+
+        <p class="text-slate-100 text-xs sm:text-sm lg:text-base leading-relaxed max-w-3xl mx-auto drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)] px-2 font-medium" data-i18n="gate_subtitle">
+          Transformem immobles complexos o sense activitat en actius líquids i rendibles. Especialistes en Divisions Horitzontals, Segregacions, Alteració Cadastral per optimització d'IBI, Lloguer amb Opció a Compra i Inscripció al Registre de la Propietat.
+        </p>
+
+        <!-- Filtro de Seguridad -->
+        <div class="card-panel p-4 sm:p-5 border-slate-700/90 bg-[#101826]/85 backdrop-blur-md shadow-2xl max-w-xl mx-auto space-y-3 text-left">
+          <div class="flex items-center justify-between gap-2">
+            <div class="flex items-center gap-1.5 text-amber-400 text-[11px] sm:text-xs font-bold uppercase tracking-wider">
+              <span>🛡️</span> <span data-i18n="gate_security_title">Accés al Panell Tècnic i Simulador de Costos</span>
+            </div>
+            <span class="text-xs sm:text-sm font-extrabold text-emerald-400 shrink-0 font-mono">API 4173</span>
+          </div>
+
+          <p class="text-[11px] sm:text-xs text-slate-300" data-i18n="gate_security_desc">
+            Resol la suma de verificació per accedir al simulador de costos de Divisió Horitzontal/Cadastre i obrir expedient amb Elena IA:
+          </p>
+
+          <div class="grid grid-cols-12 gap-2 items-center">
+            <div class="col-span-5 sm:col-span-4 bg-slate-900/95 border border-slate-700 rounded-lg px-2.5 py-2.5 text-xs sm:text-sm font-bold text-white text-center whitespace-nowrap">
+              <span data-i18n="gate_math_label">Quant és</span> <span id="gate-num1">4</span>+<span id="gate-num2">3</span>?
+            </div>
+            <input type="number" id="gate-math-input" placeholder="?" onkeydown="if(event.key==='Enter') verifyGatekeeper()" class="col-span-3 sm:col-span-2 bg-[#080d14] border border-slate-700 rounded-lg px-2 py-2.5 text-center text-white font-bold focus:outline-none focus:border-emerald-500" />
+            <button onclick="verifyGatekeeper()" class="col-span-4 sm:col-span-6 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs sm:text-sm py-2.5 px-3 rounded-lg transition uppercase tracking-wider shadow-lg" data-i18n="gate_btn_access">
+              ENTRAR A CONSULTORIA
+            </button>
+          </div>
+          <p id="gate-error" class="text-rose-400 text-xs hidden" data-i18n="gate_error_msg">Resultat incorrecte. Torna-ho a provar.</p>
+        </div>
+
+        <!-- 4 Pilares Rápidos en Portada -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 max-w-4xl mx-auto pt-2 text-left">
+          <div class="p-3 rounded-xl bg-slate-950/75 border border-slate-800 backdrop-blur">
+            <div class="text-emerald-400 text-xs font-extrabold mb-0.5" data-i18n="pill_1_t">📐 Divisió Horitzontal</div>
+            <div class="text-[11px] text-slate-300" data-i18n="pill_1_d">Projecte tècnic, quotes, notaria i Registre.</div>
+          </div>
+          <div class="p-3 rounded-xl bg-slate-950/75 border border-slate-800 backdrop-blur">
+            <div class="text-amber-400 text-xs font-extrabold mb-0.5" data-i18n="pill_2_t">🏛️ Revisió Cadastral</div>
+            <div class="text-[11px] text-slate-300" data-i18n="pill_2_d"> Adequació d'usos per reduir l'IBI comercial.</div>
+          </div>
+          <div class="p-3 rounded-xl bg-slate-950/75 border border-slate-800 backdrop-blur">
+            <div class="text-sky-400 text-xs font-extrabold mb-0.5" data-i18n="pill_3_t">🔑 Lloguer + Opció</div>
+            <div class="text-[11px] text-slate-300" data-i18n="pill_3_d">Renda immediata mentre s'inscriu la segregació.</div>
+          </div>
+          <div class="p-3 rounded-xl bg-slate-950/75 border border-slate-800 backdrop-blur">
+            <div class="text-purple-400 text-xs font-extrabold mb-0.5" data-i18n="pill_4_t">📊 Estudis de Mercat</div>
+            <div class="text-[11px] text-slate-300" data-i18n="pill_4_d">Valoració rigorosa de venda i lloguer €/m².</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer Gatekeeper -->
+      <div class="border border-slate-700/60 py-2.5 px-3.5 sm:px-5 flex flex-wrap items-center justify-between text-[10px] sm:text-[11px] text-slate-300 gap-2 backdrop-blur-md bg-slate-950/65 rounded-xl">
+        <span class="truncate" translate="no">LEVEL PUNTO IMMO 24365 SLU · API 4173 · AICAT 14200</span>
+        <div class="flex gap-3">
+          <button onclick="openLegalModal('aviso')" class="hover:text-white underline" data-i18n="footer_legal">Avís Legal</button>
+          <button onclick="openLegalModal('privacidad')" class="hover:text-white underline" data-i18n="footer_privacy">Privacitat i RGPD</button>
+          <button onclick="openLegalModal('cookies')" class="hover:text-white underline" data-i18n="footer_cookies">Cookies i IA</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ================= HEADER PRINCIPAL ================= -->
+  <header class="sticky top-0 z-30 bg-[#080d14]/95 backdrop-blur border-b border-slate-800 px-3 sm:px-6 lg:px-8 py-3">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
+      <div class="flex items-center gap-2.5" translate="no">
+        <a id="nav-logo-link" href="https://app.level-i.com/mercado-real" class="flex items-center gap-2 text-white font-extrabold text-lg sm:text-xl tracking-tight">
+          <span class="inline-flex items-center justify-center w-7 h-7 rounded bg-white text-slate-950 font-black">L</span>
+          <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 -ml-1.5 mt-2"></span>
+          <span>Level.immo</span>
+        </a>
+        <span class="text-xs text-emerald-400 font-mono hidden md:inline" id="live-clock">06/11/2026 | 15:16:00</span>
+      </div>
+
+      <nav class="flex flex-wrap items-center gap-1.5 sm:gap-2 text-xs font-semibold">
+        <a id="nav-link-demand" href="https://app.level-i.com/demanda-activa" class="px-2.5 py-1.5 rounded-lg bg-[#141e30] hover:bg-slate-800 text-slate-200 border border-slate-700/70 transition hidden lg:flex items-center gap-1.5">
+          <span>🎯</span> <span data-i18n="nav_demand">Demanda Activa</span>
+        </a>
+        <a id="nav-link-market" href="https://app.level-i.com/mercado-real" class="px-2.5 py-1.5 rounded-lg bg-[#141e30] hover:bg-slate-800 text-slate-200 border border-slate-700/70 transition hidden lg:flex items-center gap-1.5">
+          <span>📡</span> <span data-i18n="nav_market">Mercat Real</span>
+        </a>
+        <button onclick="openCollaboratorModal()" class="px-2.5 py-1.5 rounded-lg bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 border border-amber-500/40 transition flex items-center gap-1">
+          <span>🤝</span> <span data-i18n="nav_collab">Col·laboradors</span>
+        </button>
+        <button onclick="openElenaModal()" class="px-3 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black transition flex items-center gap-1 shadow-lg">
+          <span>🤖</span> <span data-i18n="nav_elena_cta">Iniciar Expedient</span>
+        </button>
+
+        <select id="lang-select-main" onchange="changeLanguage(this.value)" translate="no" class="bg-[#141e30] border border-slate-700 text-slate-200 text-xs font-semibold rounded-lg px-2 py-1.5 focus:outline-none focus:border-emerald-500 cursor-pointer">
           <option value="ca">CA Català</option>
           <option value="es">ES Español</option>
           <option value="en">GB English</option>
+          <option value="fr">FR Français</option>
+          <option value="de">DE Deutsch</option>
+          <option value="it">IT Italiano</option>
+          <option value="ar">AE العربية</option>
+          <option value="zh">CN 中文</option>
         </select>
-        <button onclick="openElenaModal()" class="px-4 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold transition flex items-center gap-1.5 shadow-lg">
-          <span>💬</span> <span data-i18n="nav_contact">Contactar (Elena IA)</span>
-        </button>
       </nav>
     </div>
   </header>
 
-  <!-- ================= CONTINGUT PRINCIPAL ================= -->
-  <main class="max-w-7xl mx-auto w-full px-4 lg:px-8 py-8 sm:py-12 space-y-12">
+  <!-- ================= CONTENIDO PRINCIPAL ================= -->
+  <main class="max-w-7xl mx-auto w-full px-4 lg:px-8 py-6 sm:py-8 space-y-6 sm:space-y-8">
 
-    <!-- HERO & VÍDEO -->
-    <div class="text-center space-y-6 max-w-4xl mx-auto">
-      <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full gold-badge text-xs font-bold tracking-wider uppercase">
-        <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
-        <span data-i18n="hero_badge">CONSULTORIA TÈCNICA I LEGAL A LA CARTA</span>
-      </div>
-      
-      <h1 class="text-3xl sm:text-5xl lg:text-6xl font-black text-white leading-tight tracking-tight drop-shadow-lg" data-i18n="hero_title">
-        Resolem la complexitat del teu patrimoni immobiliari.
-      </h1>
-      
-      <p class="text-slate-300 text-sm sm:text-base leading-relaxed px-4 font-medium" data-i18n="hero_subtitle">
-        Estudis de viabilitat, gestions cadastrals complexes, divisions horitzontals i assessorament API integral. Descobreix com Level-i pot optimitzar les teves inversions.
-      </p>
-
-      <!-- VÍDEO PROMOCIONAL -->
-      <div class="pt-4">
-        <div class="video-container">
-          <!-- Substitueix el src pel teu vídeo real de Level-i -->
-          <video autoplay muted loop playsinline controls poster="poster-level-i.jpg">
-            <source src="el_teu_video_promocional.mp4" type="video/mp4">
-            <!-- Missatge per a navegadors antics -->
-            El teu navegador no suporta l'etiqueta de vídeo.
-          </video>
+    <!-- Breadcrumb & Header Title -->
+    <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800/80 pb-4">
+      <div>
+        <div class="flex flex-wrap items-center gap-1.5 text-[11px] sm:text-xs text-slate-400 font-mono mb-1" translate="no">
+          <span>app.level-i.com</span> <span>/</span> <span class="text-emerald-400 font-bold">consultoria</span>
         </div>
-      </div>
-    </div>
-
-    <!-- SERVEIS GRID -->
-    <div class="space-y-6 pt-4">
-      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-        <h2 class="text-xl sm:text-2xl font-extrabold text-white flex items-center gap-2">
-          <span class="text-emerald-400">⚡</span> <span data-i18n="services_title">Els nostres Serveis Destacats</span>
+        <h2 class="text-xl sm:text-3xl font-extrabold text-white" data-i18n="main_header_title">
+          Consultoria Immobiliària, Tècnica i Patrimonial a la Carta
         </h2>
       </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-        <!-- Servei 1 -->
-        <div class="card-panel p-6 space-y-3 hover:border-emerald-500/50 transition group cursor-pointer" onclick="openElenaModal('Divisió Horitzontal i Segregacions')">
-          <div class="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center text-2xl group-hover:scale-110 transition">📐</div>
-          <h3 class="text-lg font-bold text-white" data-i18n="srv_1_title">Divisió Horitzontal i Segregacions</h3>
-          <p class="text-sm text-slate-400 leading-relaxed" data-i18n="srv_1_desc">
-            Transformem finques úniques en entitats registrals independents. Gestionem tot el procés: projecte tècnic, notaria i inscripció al Registre de la Propietat.
-          </p>
-        </div>
-        
-        <!-- Servei 2 -->
-        <div class="card-panel p-6 space-y-3 hover:border-amber-500/50 transition group cursor-pointer" onclick="openElenaModal('Gestió i Alteracions de Cadastre')">
-          <div class="w-12 h-12 rounded-xl bg-amber-500/10 flex items-center justify-center text-2xl group-hover:scale-110 transition">🗺️</div>
-          <h3 class="text-lg font-bold text-white" data-i18n="srv_2_title">Gestions al Cadastre</h3>
-          <p class="text-sm text-slate-400 leading-relaxed" data-i18n="srv_2_desc">
-            Resolució de discrepàncies, alteracions d'ús (estalvi d'IBI) i actualitzacions planimètriques per adequar la realitat física a la registral i cadastral.
-          </p>
-        </div>
-
-        <!-- Servei 3 -->
-        <div class="card-panel p-6 space-y-3 hover:border-sky-500/50 transition group cursor-pointer" onclick="openElenaModal('Estudis de Viabilitat i Mercat')">
-          <div class="w-12 h-12 rounded-xl bg-sky-500/10 flex items-center justify-center text-2xl group-hover:scale-110 transition">📊</div>
-          <h3 class="text-lg font-bold text-white" data-i18n="srv_3_title">Estudis de Viabilitat i Mercat</h3>
-          <p class="text-sm text-slate-400 leading-relaxed" data-i18n="srv_3_desc">
-            Anàlisi exhaustiu per a inversions: valoracions de lloguer amb opció a compra, simulacions de ROI, capex de reformes i auditories de zones comercials.
-          </p>
-        </div>
-
-        <!-- Servei 4 -->
-        <div class="card-panel p-6 space-y-3 hover:border-purple-500/50 transition group cursor-pointer" onclick="openElenaModal('Assessorament API Integral')">
-          <div class="w-12 h-12 rounded-xl bg-purple-500/10 flex items-center justify-center text-2xl group-hover:scale-110 transition">🏛️</div>
-          <h3 class="text-lg font-bold text-white" data-i18n="srv_4_title">Assessorament API Integral</h3>
-          <p class="text-sm text-slate-400 leading-relaxed" data-i18n="srv_4_desc">
-            Com a API i AICAT col·legiats, oferim mediació segura en compravendes i lloguers corporatius, garantint la legalitat i confidencialitat de cada operació.
-          </p>
-        </div>
+      <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full gold-badge text-[11px] font-bold uppercase">
+        <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+        <span data-i18n="main_status_badge">SERVEI OFICIAL API COL·LEGIAT 4173 · AICAT 14200</span>
       </div>
     </div>
 
-    <!-- CALL TO ACTION CENTRAL -->
-    <div class="card-panel p-8 sm:p-12 text-center space-y-6 bg-gradient-to-b from-[#101826] to-[#080d14] border-emerald-500/30 emerald-glow">
-      <h2 class="text-2xl sm:text-3xl font-black text-white" data-i18n="cta_title">Tens un projecte en ment o un problema registral?</h2>
-      <p class="text-slate-300 max-w-2xl mx-auto text-sm sm:text-base" data-i18n="cta_subtitle">
-        Parla amb l'Elena, la nostra IA Advisor, per obrir el teu expedient de consulta a l'instant i agendar una trucada tècnica amb el nostre equip d'experts.
-      </p>
-      <button onclick="openElenaModal()" class="px-8 py-4 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-sm sm:text-base uppercase tracking-wider transition shadow-2xl inline-flex items-center gap-3">
-        <span>🤖</span> <span data-i18n="cta_btn">INICIAR EXPEDIENT AMB ELENA IA</span>
-      </button>
-    </div>
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
 
+      <!-- COLUMNA IZQUIERDA (7 Cols): VÍDEO + SERVICIOS A LA CARTA + CRONOGRAMA -->
+      <div class="lg:col-span-7 space-y-6">
+
+        <!-- KPIs Consultoría -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3">
+          <div class="card-panel p-3.5 sm:p-4 text-center">
+            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block" data-i18n="kpi_1_label">DIVISIÓ HORITZONTAL</span>
+            <span class="text-base sm:text-lg font-extrabold text-emerald-400 mt-1 block" data-i18n="kpi_1_val">Clau en Mà</span>
+            <span class="text-[11px] text-slate-400 mt-0.5 block" data-i18n="kpi_1_sub">Arquitectura + Notaria</span>
+          </div>
+          <div class="card-panel p-3.5 sm:p-4 text-center">
+            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block" data-i18n="kpi_2_label">OPTIMITZACIÓ IBI</span>
+            <span class="text-base sm:text-lg font-extrabold text-amber-400 mt-1 block" data-i18n="kpi_2_val">Cadastre</span>
+            <span class="text-[11px] text-slate-400 mt-0.5 block" data-i18n="kpi_2_sub">Alteració d'Usos</span>
+          </div>
+          <div class="card-panel p-3.5 sm:p-4 text-center">
+            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block" data-i18n="kpi_3_label">OPERATIVA DUAL</span>
+            <span class="text-base sm:text-lg font-extrabold text-white mt-1 block" data-i18n="kpi_3_val">Lloguer + Compra</span>
+            <span class="text-[11px] text-emerald-400 mt-0.5 block" data-i18n="kpi_3_sub">Liquiditat immediata</span>
+          </div>
+          <div class="card-panel p-3.5 sm:p-4 text-center">
+            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block" data-i18n="kpi_4_label">SEGURETAT JURÍDICA</span>
+            <span class="text-base sm:text-lg font-extrabold text-white mt-1 block">100% Legal</span>
+            <span class="text-[11px] text-emerald-400 mt-0.5 block" data-i18n="kpi_4_sub">Registre de la Propietat</span>
+          </div>
+        </div>
+
+        <!-- MÓDULO VÍDEO CONSULTORIA.MP4 (AUTOPLAY MUTED, SIN LOOP) -->
+        <div class="card-panel overflow-hidden bg-slate-950 border-slate-800">
+          <div class="flex flex-wrap items-center justify-between gap-2 px-4 py-3 bg-[#141e30] border-b border-slate-800">
+            <div class="flex items-center gap-2 text-xs font-bold text-slate-200">
+              <span class="text-emerald-400">🎬</span>
+              <span data-i18n="video_header_title">PRESENTACIÓ LEVEL.IMMO · TECNOLOGIA I GESTIÓ PATRIMONIAL</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <button onclick="replayMainVideo(true)" class="text-[11px] bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/40 px-2.5 py-1 rounded font-semibold transition flex items-center gap-1">
+                <span>🔊</span> <span data-i18n="btn_play_sound">Reproduir amb So</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="video-stage-16-9">
+            <video id="main-consultoria-video" autoplay muted playsinline controls>
+              <source src="consultoria.mp4" type="video/mp4">
+              <source src="https://app.level-i.com/consultoria/consultoria.mp4" type="video/mp4">
+              <source src="https://level-i.github.io/consultoria/consultoria.mp4" type="video/mp4">
+            </video>
+            <!-- Overlay que aparece solo cuando el vídeo termina para que el usuario decida si repetirlo -->
+            <div id="video-ended-overlay" class="hidden absolute inset-0 z-20 bg-slate-950/80 backdrop-blur-sm flex flex-col items-center justify-center p-6 text-center space-y-3">
+              <div class="text-sm sm:text-base font-extrabold text-white" data-i18n="video_ended_title">
+                Vols tornar a veure la presentació o obrir un expedient tècnic?
+              </div>
+              <div class="flex flex-wrap items-center justify-center gap-3">
+                <button onclick="replayMainVideo(true)" class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white border border-slate-600 text-xs font-bold transition flex items-center gap-1.5">
+                  <span>🔄</span> <span data-i18n="btn_replay_video">Repetir Vídeo</span>
+                </button>
+                <button onclick="openElenaModal()" class="px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-black transition flex items-center gap-1.5 shadow-lg">
+                  <span>💬</span> <span data-i18n="btn_talk_elena">Parlar amb Elena IA</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CATÁLOGO DE SERVICIOS A LA CARTA -->
+        <div class="card-panel p-5 sm:p-6 space-y-5">
+          <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-3">
+            <h3 class="text-base sm:text-lg font-bold text-white" data-i18n="srv_section_title">
+              Serveis de Consultoria a la Carta per a Copropietaris i Inversors
+            </h3>
+            <span class="text-xs font-mono text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 px-2.5 py-1 rounded" data-i18n="srv_section_badge">
+              Gestió Integral 360°
+            </span>
+          </div>
+
+          <p class="text-sm text-slate-300 leading-relaxed" data-i18n="srv_section_intro">
+            Molts edificis i locals comercials històrics pateixen bloquejos operatius o sobrecostos fiscals perquè mantenen una única referència sense divisió horitzontal o figuren amb un ús 100% comercial al Cadastre tot i estar sense activitat a les plantes superiors. Des de Level.immo executem la solució tècnica, fiscal i jurídica completa:
+          </p>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5 text-xs">
+            <div onclick="openElenaWithService(1)" class="p-4 rounded-xl bg-[#151f30] hover:bg-[#1a273d] border border-slate-800 hover:border-emerald-500/50 transition cursor-pointer space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="text-[10px] font-mono uppercase text-emerald-400 font-bold" data-i18n="srv1_tag">ARQUITECTURA + REGISTRE</span>
+                <span class="text-emerald-400 font-bold">→</span>
+              </div>
+              <div class="font-extrabold text-white text-sm" data-i18n="srv1_title">1. Divisió Horitzontal i Segregacions</div>
+              <p class="text-slate-300 leading-relaxed" data-i18n="srv1_desc">
+                Aixecament de plànols, projecte tècnic d'arquitectura, assignació de quotes de participació, llicència municipal, escriptura pública notarial, liquidació d'AJD i inscripció de les noves entitats independents al Registre de la Propietat.
+              </p>
+            </div>
+
+            <div onclick="openElenaWithService(2)" class="p-4 rounded-xl bg-[#151f30] hover:bg-[#1a273d] border border-slate-800 hover:border-amber-500/50 transition cursor-pointer space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="text-[10px] font-mono uppercase text-amber-400 font-bold" data-i18n="srv2_tag">ESTALVI FISCAL IBI</span>
+                <span class="text-amber-400 font-bold">→</span>
+              </div>
+              <div class="font-extrabold text-white text-sm" data-i18n="srv2_title">2. Alteració i Revisió Cadastral</div>
+              <p class="text-slate-300 leading-relaxed" data-i18n="srv2_desc">
+                Auditoria de la Seu Electrònica del Cadastre. Adeqüem els usos i superfícies d'edificis que figuren erròniament com a 100% comercial o oficines en plantes superiors tancades, reduint dràsticament la càrrega anual del rebut d'IBI.
+              </p>
+            </div>
+
+            <div onclick="openElenaWithService(3)" class="p-4 rounded-xl bg-[#151f30] hover:bg-[#1a273d] border border-slate-800 hover:border-sky-500/50 transition cursor-pointer space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="text-[10px] font-mono uppercase text-sky-400 font-bold" data-i18n="srv3_tag">AGILITAT COMERCIAL</span>
+                <span class="text-sky-400 font-bold">→</span>
+              </div>
+              <div class="font-extrabold text-white text-sm" data-i18n="srv3_title">3. Lloguer amb Opció a Compra Estructurat</div>
+              <p class="text-slate-300 leading-relaxed" data-i18n="srv3_desc">
+                Permet l'obertura immediata del negoci a la planta baixa (adequant escomeses d'aigua i llum) generant rendes mensuals des del primer mes, mentre es tramita en paral·lel la divisió horitzontal per elevar la compravenda definitiva a escriptura pública.
+              </p>
+            </div>
+
+            <div onclick="openElenaWithService(4)" class="p-4 rounded-xl bg-[#151f30] hover:bg-[#1a273d] border border-slate-800 hover:border-purple-500/50 transition cursor-pointer space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="text-[10px] font-mono uppercase text-purple-400 font-bold" data-i18n="srv4_tag">VALORACIÓ API RIGOROSA</span>
+                <span class="text-purple-400 font-bold">→</span>
+              </div>
+              <div class="font-extrabold text-white text-sm" data-i18n="srv4_title">4. Estudis de Mercat i Viabilitat per a Copropietaris</div>
+              <p class="text-slate-300 leading-relaxed" data-i18n="srv4_desc">
+                Informes executius de preus de venda (€/m²) i lloguer comercial per a comunitats de béns, herències i societats. Comparem tots els escenaris (venda total, venda parcial o arrendament) perquè la propietat prengui decisions amb dades reals.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- TABLA DE ESCENARIOS Y TEMPORALIDAD LEGAL -->
+        <div class="card-panel p-5 sm:p-6 space-y-4">
+          <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-3">
+            <div>
+              <span class="text-[11px] font-bold uppercase tracking-wider text-amber-400 block" data-i18n="time_sup">
+                ⏱️ CRONOGRAMA LEGAL I REGISTRAL
+              </span>
+              <h3 class="text-sm sm:text-base font-bold text-white" data-i18n="time_title">
+                Comparativa d'Escenaris Operatius fins a la Inscripció al Registre de la Propietat
+              </h3>
+            </div>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse text-xs">
+              <thead>
+                <tr class="border-b border-slate-700 text-slate-400 uppercase text-[10px]">
+                  <th class="py-2.5 px-2" data-i18n="th_sc_name">Escenari Operatiu</th>
+                  <th class="py-2.5 px-2" data-i18n="th_sc_time">Termini Estimat</th>
+                  <th class="py-2.5 px-2" data-i18n="th_sc_req">Tràmits Requerits</th>
+                  <th class="py-2.5 px-2 text-right text-emerald-400" data-i18n="th_sc_adv">Avantatge Principal</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-800/80 text-xs">
+                <tr class="hover:bg-slate-800/40">
+                  <td class="py-3 px-2 font-bold text-emerald-400" data-i18n="sc1_name">A. Lloguer PB + Opció a Compra</td>
+                  <td class="py-3 px-2 font-mono text-white" data-i18n="sc1_time">1 - 3 setmanes (Inici)</td>
+                  <td class="py-3 px-2 text-slate-300" data-i18n="sc1_req">Contracte dual + Divisió Horitzontal durant l'arrendament (12-24m)</td>
+                  <td class="py-3 px-2 text-right text-emerald-300 font-semibold" data-i18n="sc1_adv">Obertura ràpida i renda immediata</td>
+                </tr>
+                <tr class="hover:bg-slate-800/40">
+                  <td class="py-3 px-2 font-bold text-amber-400" data-i18n="sc2_name">B. Divisió Horitzontal + Venda Fracció</td>
+                  <td class="py-3 px-2 font-mono text-white" data-i18n="sc2_time">3 - 6 mesos</td>
+                  <td class="py-3 px-2 text-slate-300" data-i18n="sc2_req">Projecte arquitecte, Llicència/Declaració, Notaria, AJD (1,5%) i Registre</td>
+                  <td class="py-3 px-2 text-right text-amber-300 font-semibold" data-i18n="sc2_adv">La propietat conserva la resta de l'edifici</td>
+                </tr>
+                <tr class="hover:bg-slate-800/40">
+                  <td class="py-3 px-2 font-bold text-sky-400" data-i18n="sc3_name">C. Venda Directa Edifici Sencer</td>
+                  <td class="py-3 px-2 font-mono text-white" data-i18n="sc3_time">4 - 8 setmanes</td>
+                  <td class="py-3 px-2 text-slate-300" data-i18n="sc3_req">Arres penitencials, Escriptura de Compravenda finca única i Registre</td>
+                  <td class="py-3 px-2 text-right text-sky-300 font-semibold" data-i18n="sc3_adv">Liquidació total sense costos de divisió</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- COLUMNA DERECHA (5 Cols): SIMULADOR DE COSTES TÉCNICOS + ACCESO ELENA IA -->
+      <div class="lg:col-span-5 space-y-6 lg:sticky lg:top-20">
+
+        <div class="card-panel p-5 sm:p-6 border-slate-700/90 shadow-2xl space-y-5">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+            <span class="text-sm font-bold text-amber-400 flex items-center gap-2">
+              <span>🧮</span> <span data-i18n="calc_header">Simulador de Costos: Divisió Horitzontal i Cadastre</span>
+            </span>
+            <span class="text-[11px] bg-slate-800 text-emerald-400 px-2.5 py-0.5 rounded font-mono font-bold">100% Editable</span>
+          </div>
+
+          <!-- Presets de Inmueble -->
+          <div>
+            <label class="text-[11px] font-bold uppercase tracking-wider text-slate-400 block mb-2" data-i18n="calc_select_preset">
+              1. SELECCIONA EL TIPUS D'ACTIU PER SIMULAR COSTOS I TERMINIS:
+            </label>
+            <div class="grid grid-cols-3 gap-2">
+              <button onclick="setConsultoriaPreset('local')" id="btn-pre-local" class="p-2.5 rounded-lg border border-amber-500 bg-amber-500/15 text-amber-300 text-xs font-bold transition text-center">
+                🏪 <span data-i18n="pre_btn_local">Local + Edifici</span>
+              </button>
+              <button onclick="setConsultoriaPreset('edifici')" id="btn-pre-edifici" class="p-2.5 rounded-lg border border-slate-700 bg-[#151f2e] text-slate-300 hover:border-slate-500 text-xs font-bold transition text-center">
+                🏢 <span data-i18n="pre_btn_edifici">Edifici Plurifam.</span>
+              </button>
+              <button onclick="setConsultoriaPreset('cadastre')" id="btn-pre-cadastre" class="p-2.5 rounded-lg border border-slate-700 bg-[#151f2e] text-slate-300 hover:border-slate-500 text-xs font-bold transition text-center">
+                🏛️ <span data-i18n="pre_btn_cadastre">Només Cadastre</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Valor Escriturado para AJD -->
+          <div class="space-y-2 text-xs border-b border-slate-800 pb-3">
+            <div class="flex items-center justify-between gap-2">
+              <span class="text-slate-300 font-semibold" data-i18n="calc_val_label">Valor declarat de la finca a dividir (€):</span>
+              <div class="flex items-center gap-1 shrink-0">
+                <input type="number" id="sim-property-val" value="220000" step="10000" oninput="recalculateConsultoria()" class="w-28 bg-[#080d14] border border-amber-500/60 rounded px-2 py-1 text-right text-amber-400 font-black focus:outline-none" />
+                <span class="text-slate-400">€</span>
+              </div>
+            </div>
+            <div class="flex justify-between text-slate-400">
+              <span data-i18n="calc_ajd_label">Impost AJD Divisió Horitzontal (1,5% Catalunya):</span>
+              <span class="font-bold text-slate-200" id="sim-ajd-display">3.300 €</span>
+            </div>
+          </div>
+
+          <!-- Partidas Técnicas Editables -->
+          <div class="space-y-2.5">
+            <div class="text-[11px] font-bold uppercase tracking-wider text-emerald-400" data-i18n="calc_items_title">
+              🛠️ 2. PARTIDES TÈCNIQUES, NOTARIALS I REGISTRALS (EDITABLES):
+            </div>
+
+            <div class="flex items-center justify-between gap-2 text-xs">
+              <span class="text-slate-300" data-i18n="calc_item_arch">+ Projecte Tècnic Arquitecte (Plànols i quotes):</span>
+              <div class="flex items-center gap-1 shrink-0">
+                <input type="number" id="sim-cost-arch" value="1800" step="100" oninput="recalculateConsultoria()" class="w-24 bg-[#080d14] border border-slate-700 rounded px-2 py-1 text-right text-white font-bold focus:border-emerald-500 focus:outline-none" />
+                <span class="text-slate-400">€</span>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between gap-2 text-xs">
+              <span class="text-slate-300" data-i18n="calc_item_notary">+ Notaria i Inscripció al Registre de la Propietat:</span>
+              <div class="flex items-center gap-1 shrink-0">
+                <input type="number" id="sim-cost-notary" value="1650" step="100" oninput="recalculateConsultoria()" class="w-24 bg-[#080d14] border border-slate-700 rounded px-2 py-1 text-right text-white font-bold focus:border-emerald-500 focus:outline-none" />
+                <span class="text-slate-400">€</span>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between gap-2 text-xs">
+              <span class="text-slate-300" data-i18n="calc_item_cat">+ Expedient d'Alteració Cadastral (Estalvi IBI):</span>
+              <div class="flex items-center gap-1 shrink-0">
+                <input type="number" id="sim-cost-cat" value="650" step="50" oninput="recalculateConsultoria()" class="w-24 bg-[#080d14] border border-slate-700 rounded px-2 py-1 text-right text-white font-bold focus:border-emerald-500 focus:outline-none" />
+                <span class="text-slate-400">€</span>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between gap-2 text-xs">
+              <span class="text-slate-300" data-i18n="calc_item_util">+ Adequació Escomeses (Aigua/Llum independent):</span>
+              <div class="flex items-center gap-1 shrink-0">
+                <input type="number" id="sim-cost-util" value="1400" step="100" oninput="recalculateConsultoria()" class="w-24 bg-[#080d14] border border-slate-700 rounded px-2 py-1 text-right text-white font-bold focus:border-emerald-500 focus:outline-none" />
+                <span class="text-slate-400">€</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Total Estimado -->
+          <div class="p-3.5 rounded-xl bg-[#162234] border border-emerald-500/30 flex items-center justify-between">
+            <div>
+              <span class="text-[11px] font-bold uppercase tracking-wider text-emerald-400 block" data-i18n="calc_total_label">COST TOTAL ESTIMAT DE L'EXPEDIENT:</span>
+              <span class="text-[11px] text-slate-400" data-i18n="calc_total_sub">Inclou impostos (AJD), tècnics, notaria i Registre</span>
+            </div>
+            <span class="text-xl sm:text-2xl font-extrabold text-emerald-400" id="sim-total-display">8.800 €</span>
+          </div>
+
+          <!-- Simulador de Renta Puente (Alquiler con Opción a Compra) -->
+          <div class="p-4 rounded-xl bg-[#141d2b] border border-slate-700 space-y-2.5">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-extrabold text-white" data-i18n="calc_rent_bridge_title">💡 Finançament de l'Expedient via Lloguer Pont</span>
+              <span class="text-[10px] font-mono text-amber-400">18 mesos</span>
+            </div>
+            <p class="text-[11px] text-slate-300 leading-relaxed" data-i18n="calc_rent_bridge_desc">
+              Llogant la Planta Baixa comercial (ex. 950 €/mes) amb Opció a Compra mentre s'inscriu la Divisió Horitzontal, la propietat ingressa <strong class="text-emerald-400">17.100 € bruts en 18 mesos</strong>, cobrint el 100% dels costos de segregació i generant tresoreria neta des del dia 1.
+            </p>
+          </div>
+
+          <!-- Botones de Acción -->
+          <div class="space-y-3 pt-1">
+            <button onclick="openElenaModal()" class="w-full py-4 px-5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs sm:text-sm uppercase tracking-wider transition emerald-glow flex items-center justify-center gap-2">
+              <span>💬</span> <span data-i18n="cta_main_elena">OBRIR EXPEDIENT I AGENDAR TRUCADA AMB ELENA IA</span>
+            </button>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
   </main>
 
-  <!-- ================= MODAL ELENA IA (CONTACTE/LEADS) ================= -->
+  <!-- ================= MODAL ELENA IA (CUALIFICACIÓN + AGENDA DE EXPEDIENTE) ================= -->
   <div id="elena-modal" class="fixed inset-0 z-[60] bg-slate-950/85 backdrop-blur-md hidden items-center justify-center p-4">
     <div class="card-panel max-w-lg w-full overflow-hidden border-slate-700 shadow-2xl bg-[#101826]">
       
-      <!-- Modal Header -->
       <div class="px-5 py-4 bg-[#162032] border-b border-slate-800 flex items-center justify-between">
         <div class="flex items-center gap-3">
-          <div class="w-9 h-9 rounded-lg bg-emerald-500 text-slate-950 font-black flex items-center justify-center text-lg">E</div>
+          <div class="w-9 h-9 rounded-lg bg-emerald-500 text-slate-950 font-black flex items-center justify-center text-lg" translate="no">E</div>
           <div>
-            <div class="text-sm font-bold text-white">Elena | AI Advisor Level-i</div>
+            <div class="text-sm font-bold text-white" translate="no">Elena | AI Advisor Level-i</div>
             <div class="text-[11px] text-emerald-400 flex items-center gap-1.5">
               <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
-              <span data-i18n="elena_status">En línia i preparada per ajudar-te</span>
+              <span data-i18n="elena_sub">Obertura d'Expedients Tècnics i Patrimonials · API 4173</span>
             </div>
           </div>
         </div>
         <button onclick="closeElenaModal()" class="text-slate-400 hover:text-white text-xs font-semibold px-2 py-1 rounded">✕</button>
       </div>
 
-      <div class="p-5 max-h-[80vh] overflow-y-auto space-y-5">
+      <div class="p-5 max-h-[80vh] overflow-y-auto space-y-4">
 
-        <!-- PAS 1: Selecció de Servei -->
-        <div id="elena-step-1" class="space-y-4">
-          <div class="p-4 rounded-xl bg-[#182334] border border-slate-700 text-xs text-slate-200 space-y-2 leading-relaxed">
-            <p data-i18n="elena_q1_p1">
-              Hola, sóc l'Elena, l'Assistent Intel·ligent de Level-i. Estic aquí per agilitzar la teva gestió.
+        <!-- PASO 0: Seguridad + RGPD -->
+        <div id="elena-step-0" class="space-y-4">
+          <div class="p-4 rounded-xl bg-[#162032] border border-slate-700/80 space-y-3">
+            <div class="text-xs font-bold text-amber-400 flex items-center gap-1.5">
+              <span>🛡️</span> <span data-i18n="elena_sec_title">Verificació de Seguretat i Confidencialitat RGPD:</span>
+            </div>
+            <p class="text-xs text-slate-300" data-i18n="elena_sec_desc">
+              Per iniciar l'assistent Elena IA i agendar una trucada tècnica per al teu immoble o expedient, resol la suma:
             </p>
-            <p class="font-semibold text-white" data-i18n="elena_q1_p2">
-              Sobre quin tema o servei necessites assessorament? (Tria una opció)
-            </p>
-          </div>
-          <div class="space-y-2">
-            <button onclick="selectElenaService('Divisió Horitzontal / Segregació')" class="w-full text-left p-3 rounded-lg bg-[#151f2e] hover:bg-emerald-500/20 border border-slate-700 hover:border-emerald-500 text-xs font-semibold text-slate-200 transition">📐 Divisió Horitzontal / Segregació</button>
-            <button onclick="selectElenaService('Gestió de Cadastre / Alteracions')" class="w-full text-left p-3 rounded-lg bg-[#151f2e] hover:bg-emerald-500/20 border border-slate-700 hover:border-emerald-500 text-xs font-semibold text-slate-200 transition">🗺️ Gestió de Cadastre / Alteracions</button>
-            <button onclick="selectElenaService('Estudi de Viabilitat Inversió / Mercat')" class="w-full text-left p-3 rounded-lg bg-[#151f2e] hover:bg-emerald-500/20 border border-slate-700 hover:border-emerald-500 text-xs font-semibold text-slate-200 transition">📊 Estudi de Viabilitat Inversió / Mercat</button>
-            <button onclick="selectElenaService('Assessorament Compravenda / Lloguer (API)')" class="w-full text-left p-3 rounded-lg bg-[#151f2e] hover:bg-emerald-500/20 border border-slate-700 hover:border-emerald-500 text-xs font-semibold text-slate-200 transition">🏛️ Assessorament Compravenda / Lloguer (API)</button>
-            <button onclick="selectElenaService('Altra Consulta Tècnica')" class="w-full text-left p-3 rounded-lg bg-[#151f2e] hover:bg-emerald-500/20 border border-slate-700 hover:border-emerald-500 text-xs font-semibold text-slate-200 transition">💬 Altra Consulta Tècnica</button>
+            <div class="flex items-center gap-3">
+              <span class="text-sm font-bold text-white bg-[#080d14] px-3.5 py-2 rounded border border-slate-700 whitespace-nowrap">
+                <span id="elena-num1">5</span> + <span id="elena-num2">4</span> =
+              </span>
+              <input type="number" id="elena-math-input" placeholder="?" class="flex-1 bg-[#080d14] border border-slate-700 rounded-lg px-3 py-2 text-sm text-white font-bold focus:outline-none focus:border-emerald-500" />
+            </div>
+
+            <label class="flex items-start gap-2.5 text-[11px] text-slate-300 cursor-pointer pt-2">
+              <input type="checkbox" id="elena-rgpd-check" class="mt-0.5 rounded border-slate-600 text-emerald-500 focus:ring-emerald-500" />
+              <span>
+                <span data-i18n="elena_rgpd_accept">He llegit i accepto la</span>
+                <button type="button" onclick="openLegalModal('privacidad')" class="text-emerald-400 underline" data-i18n="footer_privacy">Privacitat i RGPD</button>,
+                <button type="button" onclick="openLegalModal('aviso')" class="text-emerald-400 underline" data-i18n="footer_legal">Avís Legal</button>
+                <span data-i18n="elena_rgpd_consent">i consenteixo el tractament de les dades per obrir l'expedient de consultoria amb Level.immo.</span>
+              </span>
+            </label>
+
+            <p id="elena-step0-error" class="text-rose-400 text-xs hidden" data-i18n="elena_step0_err">Verifica la suma matemàtica i accepta la casella de Privacitat RGPD.</p>
+
+            <button onclick="completeElenaStep0()" class="w-full py-3 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold text-xs uppercase tracking-wider transition" data-i18n="elena_btn_verify">
+              ✔ Verificar i Iniciar Expedient amb Elena IA
+            </button>
           </div>
         </div>
 
-        <!-- PAS 2: Recollida de dades i agenda -->
+        <!-- PASO 1: Selección de Servicio -->
+        <div id="elena-step-1" class="space-y-4 hidden">
+          <div class="p-4 rounded-xl bg-[#182334] border border-slate-700 text-xs text-slate-200 space-y-2 leading-relaxed">
+            <p data-i18n="elena_greet_1">
+              Hola, sóc l'Elena, AI Advisor de Level.immo. Coordinem projectes de divisió horitzontal, adequació cadastral (estalvi d'IBI) i operacions comercials a mida amb garantia col·legial API.
+            </p>
+            <p class="font-semibold text-white" data-i18n="elena_greet_2">
+              Selecciona quin tipus de servei o gestió necessites per al teu immoble:
+            </p>
+          </div>
+
+          <div class="space-y-2">
+            <button onclick="selectElenaUse(this.innerText)" class="w-full text-left p-3 rounded-lg bg-[#151f2e] hover:bg-emerald-500/20 border border-slate-700 hover:border-emerald-500 text-xs font-semibold text-slate-200 transition" data-i18n="elena_opt_1">
+              📐 Divisió Horitzontal / Segregació + Inscripció al Registre de la Propietat
+            </button>
+            <button onclick="selectElenaUse(this.innerText)" class="w-full text-left p-3 rounded-lg bg-[#151f2e] hover:bg-emerald-500/20 border border-slate-700 hover:border-emerald-500 text-xs font-semibold text-slate-200 transition" data-i18n="elena_opt_2">
+              🏛️ Revisió o Alteració Cadastral (Adequació d'usos per reduir l'IBI)
+            </button>
+            <button onclick="selectElenaUse(this.innerText)" class="w-full text-left p-3 rounded-lg bg-[#151f2e] hover:bg-emerald-500/20 border border-slate-700 hover:border-emerald-500 text-xs font-semibold text-slate-200 transition" data-i18n="elena_opt_3">
+              🔑 Estructuració de Lloguer Comercial amb Opció a Compra o Venda Total
+            </button>
+            <button onclick="selectElenaUse(this.innerText)" class="w-full text-left p-3 rounded-lg bg-[#151f2e] hover:bg-emerald-500/20 border border-slate-700 hover:border-emerald-500 text-xs font-semibold text-slate-200 transition" data-i18n="elena_opt_4">
+              📊 Estudi de Mercat, Valoració Patrimonial i Assessorament a Copropietaris
+            </button>
+          </div>
+        </div>
+
+        <!-- PASO 2: Situación del Activo y Ubicación -->
         <div id="elena-step-2" class="space-y-4 hidden">
           <div class="flex justify-end">
-            <div id="user-selected-service" class="bg-emerald-500 text-slate-950 font-bold text-xs px-3.5 py-2 rounded-xl max-w-xs"></div>
+            <div id="user-selected-use-bubble" class="bg-emerald-500 text-slate-950 font-bold text-xs px-3.5 py-2 rounded-xl max-w-xs"></div>
           </div>
-          <div class="p-4 rounded-xl bg-[#182334] border border-slate-700 text-xs text-slate-200" data-i18n="elena_q2">
-            Perfecte. Prenem nota. Per poder obrir l'expedient i que el tècnic de Level-i et truqui preparat, indica'm les teves dades i disponibilitat:
+
+          <div class="p-4 rounded-xl bg-[#182334] border border-slate-700 text-xs text-slate-200" data-i18n="elena_step2_q">
+            Perfecte. Quin és el teu perfil en aquesta operació i en quin municipi es troba l'immoble?
+          </div>
+
+          <div class="space-y-3">
+            <select id="elena-profile-select" class="w-full bg-[#080d14] border border-slate-700 rounded-lg px-3 py-2.5 text-xs font-semibold text-white focus:outline-none focus:border-emerald-500">
+              <option value="Propietari / Copropietari" data-i18n="elena_prof_1">🏛️ Propietari / Copropietari de l'Immoble</option>
+              <option value="Assessoria / Despatx Professional" data-i18n="elena_prof_2">⚖️ Assessoria, Gestoria o Representant de la Propietat</option>
+              <option value="Inversor / Comprador Comercial" data-i18n="elena_prof_3">💼 Inversor / Interessat en Compra o Lloguer Comercial</option>
+            </select>
+
+            <div>
+              <label class="text-[10px] font-bold uppercase text-slate-400 block mb-1" data-i18n="elena_town_label">MUNICIPI O REFERÈNCIA DE L'IMMOBLE:</label>
+              <input type="text" id="elena-town-input" data-i18n-placeholder="elena_ph_town" placeholder="Ex: Alcanar, Amposta, La Ràpita, Vinaròs, Barcelona..." class="w-full bg-[#080d14] border border-slate-700 rounded-lg px-3 py-2.5 text-xs font-bold text-emerald-400 focus:outline-none focus:border-emerald-500" />
+            </div>
+
+            <button onclick="completeElenaStep2()" class="w-full py-3 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold text-xs uppercase tracking-wider transition" data-i18n="elena_btn_continue">
+              Continuar →
+            </button>
+          </div>
+        </div>
+
+        <!-- PASO 3: Datos de Contacto y Agenda de Llamada -->
+        <div id="elena-step-3" class="space-y-4 hidden">
+          <div class="flex justify-end">
+            <div id="user-selected-fin-bubble" class="bg-emerald-500 text-slate-950 font-bold text-xs px-3.5 py-2 rounded-xl max-w-xs"></div>
+          </div>
+
+          <div class="p-4 rounded-xl bg-[#182334] border border-slate-700 text-xs text-slate-200" data-i18n="elena_step3_q">
+            Indica'm el teu nom, telèfon, correu electrònic i quin dia i hora prefereixes per a la trucada de contacte amb el nostre API col·legiat per iniciar l'expedient:
           </div>
 
           <div class="space-y-3 text-xs">
-            <input type="text" id="lead-name" data-i18n-placeholder="elena_ph_name" placeholder="Nom complet o Empresa" class="w-full bg-[#080d14] border border-slate-700 rounded-lg px-3 py-2.5 text-white focus:border-emerald-500 focus:outline-none" />
-            <input type="tel" id="lead-phone" data-i18n-placeholder="elena_ph_phone" placeholder="Telèfon / WhatsApp" class="w-full bg-[#080d14] border border-slate-700 rounded-lg px-3 py-2.5 text-white focus:border-emerald-500 focus:outline-none" />
-            <input type="email" id="lead-email" data-i18n-placeholder="elena_ph_email" placeholder="Correu electrònic" class="w-full bg-[#080d14] border border-slate-700 rounded-lg px-3 py-2.5 text-white focus:border-emerald-500 focus:outline-none" />
+            <input type="text" id="lead-name" data-i18n-placeholder="elena_ph_name" placeholder="Nom complet, Despatx o Empresa" class="w-full bg-[#080d14] border border-slate-700 rounded-lg px-3 py-2.5 text-white focus:border-emerald-500 focus:outline-none" />
+            <div class="flex gap-2">
+              <select id="lead-prefix" class="bg-[#080d14] border border-slate-700 rounded-lg px-2.5 py-2.5 text-white font-semibold" translate="no">
+                <option value="+34">ES +34</option>
+                <option value="+33">FR +33</option>
+                <option value="+44">UK +44</option>
+                <option value="+49">DE +49</option>
+                <option value="+39">IT +39</option>
+                <option value="+971">AE +971</option>
+                <option value="+86">CN +86</option>
+              </select>
+              <input type="tel" id="lead-phone" placeholder="Telèfon / WhatsApp (600123456)" class="flex-1 bg-[#080d14] border border-slate-700 rounded-lg px-3 py-2.5 text-white focus:border-emerald-500 focus:outline-none" />
+            </div>
+            <input type="email" id="lead-email" data-i18n-placeholder="elena_ph_email" placeholder="Correu electrònic de contacte" class="w-full bg-[#080d14] border border-slate-700 rounded-lg px-3 py-2.5 text-white focus:border-emerald-500 focus:outline-none" />
 
             <div class="grid grid-cols-2 gap-2 pt-1">
               <div>
-                <label class="text-[10px] font-bold uppercase text-slate-400 block mb-1" data-i18n="elena_date_label">📅 Data preferida</label>
+                <label class="text-[10px] font-bold uppercase text-slate-400 block mb-1" data-i18n="elena_date_label">📅 Data trucada</label>
                 <input type="date" id="lead-date" class="w-full bg-[#080d14] border border-slate-700 rounded-lg px-2.5 py-2 text-white focus:border-emerald-500 focus:outline-none" />
               </div>
               <div>
                 <label class="text-[10px] font-bold uppercase text-slate-400 block mb-1" data-i18n="elena_time_label">⏰ Franja horària</label>
-                <select id="lead-time" class="w-full bg-[#080d14] border border-slate-700 rounded-lg px-2.5 py-2 text-white focus:border-emerald-500 focus:outline-none">
-                  <option value="Matí (10:00 - 13:00)">Matí (10:00 - 13:00)</option>
-                  <option value="Tarda (16:00 - 19:00)">Tarda (16:00 - 19:00)</option>
+                <select id="lead-time" class="w-full bg-[#080d14] border border-slate-700 rounded-lg px-2.5 py-2 text-white focus:border-emerald-500 focus:outline-none" translate="no">
+                  <option value="09:30h - 11:00h">09:30h - 11:00h</option>
+                  <option value="11:00h - 12:30h">11:00h - 12:30h</option>
+                  <option value="12:30h - 14:00h">12:30h - 14:00h</option>
+                  <option value="16:00h - 17:30h">16:00h - 17:30h</option>
+                  <option value="17:30h - 19:00h">17:30h - 19:00h</option>
                 </select>
               </div>
             </div>
 
-            <p id="elena-step2-error" class="text-rose-400 text-xs hidden" data-i18n="elena_err_msg">Si us plau, completa tots els camps correctament.</p>
+            <p id="elena-step3-error" class="text-rose-400 text-xs hidden" data-i18n="elena_step3_err">Completa nom, telèfon vàlid i correu electrònic.</p>
 
-            <button onclick="submitElenaLead()" class="w-full py-3.5 mt-2 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold text-xs uppercase tracking-wider transition" data-i18n="elena_btn_confirm">
-              ✔ Confirmar i Agendar Trucada
+            <button onclick="submitElenaLead()" class="w-full py-3.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold text-xs uppercase tracking-wider transition" data-i18n="elena_btn_confirm">
+              ✔ Confirmar Expedient i Agendar Trucada
             </button>
-            <button onclick="backToStep1()" class="w-full py-2 text-slate-400 hover:text-white text-xs underline text-center" data-i18n="elena_btn_back">Tornar enrere</button>
           </div>
         </div>
 
-        <!-- PAS 3: Confirmació -->
-        <div id="elena-step-3" class="space-y-4 hidden">
-          <div class="p-5 rounded-xl bg-emerald-500/15 border border-emerald-500/40 text-xs text-slate-200 space-y-3 text-center">
-            <div class="text-3xl">✅</div>
-            <div class="text-base font-extrabold text-emerald-400" data-i18n="elena_success_title">Expedient Obert amb Èxit!</div>
+        <!-- PASO 4: Confirmación -->
+        <div id="elena-step-4" class="space-y-4 hidden">
+          <div class="p-4 rounded-xl bg-emerald-500/15 border border-emerald-500/40 text-xs text-slate-200 space-y-2">
+            <div class="text-sm font-extrabold text-emerald-400" data-i18n="elena_step4_title">✅ Expedient de Consultoria registrat amb èxit!</div>
             <p id="confirmation-summary" class="text-slate-300 leading-relaxed"></p>
-            <p class="text-slate-400" data-i18n="elena_success_desc">Ens posarem en contacte amb tu a la franja indicada per donar-te resposta. Gràcies per confiar en Level-i.</p>
           </div>
-          <button onclick="closeElenaModal()" class="w-full py-3 rounded-lg bg-slate-800 hover:bg-slate-700 text-white font-extrabold text-xs uppercase tracking-wider transition" data-i18n="elena_btn_close">
-            Tancar Panel
+          <button onclick="closeElenaModal()" class="w-full py-3 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold text-xs uppercase tracking-wider transition" data-i18n="elena_btn_finish">
+            Finalitzar i Tornar a Consultoria
           </button>
         </div>
 
@@ -260,230 +703,1055 @@
     </div>
   </div>
 
-  <!-- ================= FOOTER ================= -->
-  <footer class="border-t border-slate-800/80 bg-[#060a10] px-4 lg:px-8 py-8">
-    <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 text-xs text-slate-400">
-      <div class="space-y-2 text-center md:text-left">
-        <div class="text-white font-bold text-sm tracking-widest uppercase">LEVEL-I CONSULTING</div>
-        <div translate="no">API 4173 · AICAT 14200 · LEVEL PUNTO IMMO 24365 SLU (NIF B-26745430)</div>
-        <div data-i18n="footer_zones">Serveis a: Alcanar, La Ràpita, Amposta, Tortosa, Vinaròs, Tarragona, Barcelona i Vallès.</div>
+  <!-- ================= MODAL COLABORADORES ================= -->
+  <div id="collaborator-modal" class="fixed inset-0 z-[60] bg-slate-950/85 backdrop-blur-md hidden items-center justify-center p-4">
+    <div class="card-panel max-w-xl w-full overflow-hidden border-amber-500/40 shadow-2xl bg-[#101826]">
+      <div class="px-5 py-4 bg-[#162133] border-b border-slate-800 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-lg bg-amber-500 text-slate-950 font-black flex items-center justify-center text-lg">🤝</div>
+          <div>
+            <div class="text-sm font-extrabold text-white" data-i18n="collab_modal_title">Xarxa de Despatxos i Col·laboradors · Level.immo</div>
+            <div class="text-[11px] text-amber-400" data-i18n="collab_modal_sub">Col·laboració professional amb Assessories, Gestories, Arquitectes i Simpatitzants</div>
+          </div>
+        </div>
+        <button onclick="closeCollaboratorModal()" class="text-slate-400 hover:text-white text-xs font-bold px-2 py-1">✕</button>
       </div>
-      <div class="flex gap-4">
-        <a href="#" class="hover:text-emerald-400 transition" data-i18n="footer_legal">Avís Legal</a>
-        <a href="#" class="hover:text-emerald-400 transition" data-i18n="footer_privacy">Privacitat i RGPD</a>
+      <div class="p-5 space-y-4 text-xs">
+        <p class="text-slate-300 leading-relaxed" data-i18n="collab_box_p1">
+          Si ets una assessoria fiscal/jurídica o coneixes propietaris que necessiten desbloquejar la venda o divisió horitzontal d'un actiu, genera el teu enllaç directe de col·laborador o obre un expedient conjunt amb nosaltres.
+        </p>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+          <input type="text" id="collab-name" data-i18n-placeholder="collab_ph_name" placeholder="El teu Nom o Despatx" class="bg-[#080d14] border border-slate-700 rounded-lg px-3 py-2.5 text-white focus:border-amber-500 focus:outline-none" />
+          <input type="tel" id="collab-phone" data-i18n-placeholder="collab_ph_phone" placeholder="Telèfon / WhatsApp" class="bg-[#080d14] border border-slate-700 rounded-lg px-3 py-2.5 text-white focus:border-amber-500 focus:outline-none" />
+        </div>
+        <button onclick="activateCollaboratorLink()" class="w-full py-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black uppercase tracking-wider transition" data-i18n="collab_btn_generate">
+          🔗 GENERAR ENLLAÇ DE COL·LABORACIÓ
+        </button>
+        <div id="collab-link-result" class="hidden p-3.5 rounded-xl bg-emerald-500/15 border border-emerald-500/40 space-y-2">
+          <input type="text" id="collab-generated-url" readonly class="w-full bg-[#080d14] border border-slate-700 rounded-lg px-3 py-2 text-emerald-300 font-mono text-xs" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= MODAL LEGAL (TEXTOS FINO FILIPINO COMPLETOS Y TRADUCIDOS) ================= -->
+  <div id="legal-modal" class="fixed inset-0 z-[90] bg-slate-950/90 backdrop-blur-md hidden items-center justify-center p-4">
+    <div class="card-panel max-w-2xl w-full p-6 border-slate-700 bg-[#101826] space-y-4 max-h-[85vh] flex flex-col">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3 shrink-0">
+        <h4 id="legal-modal-title" class="text-base font-extrabold text-emerald-400">Informació Legal i Normativa</h4>
+        <button onclick="closeLegalModal()" class="text-slate-400 hover:text-white text-sm font-bold px-2 py-1">✕</button>
+      </div>
+      <div id="legal-modal-body" class="text-xs text-slate-300 leading-relaxed space-y-3 overflow-y-auto pr-2"></div>
+    </div>
+  </div>
+
+  <!-- ================= FOOTER ================= -->
+  <footer class="border-t border-slate-800/80 bg-[#060a10] px-4 lg:px-8 py-6 mt-12">
+    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-xs text-slate-400">
+      <div class="space-y-1">
+        <div class="text-slate-200 font-semibold">
+          <span data-i18n="footer_services_label">Serveis Presencials i Consultoria a:</span>
+          <span class="font-normal text-slate-400" translate="no"> Alcanar, Les Cases d'Alcanar, La Ràpita, Amposta, Tortosa, Vinaròs, Benicarló, Tarragona, Barcelona, Terrassa, Sabadell, Castellar del Vallès, Matadepera, Cerdanyola del Vallès, Sant Cugat del Vallès, Rubí, Granollers, Mataró.</span>
+        </div>
+        <div class="font-mono text-[11px] text-slate-400" translate="no">
+          API 4173 · AICAT 14200 · LEVEL PUNTO IMMO 24365 SLU (NIF B-26745430 · Travessera de Gràcia, 56, 3-1a, 08006 Barcelona)
+        </div>
+      </div>
+      <div class="flex gap-4 shrink-0">
+        <button onclick="openLegalModal('aviso')" class="hover:text-white underline" data-i18n="footer_legal">Avís Legal</button>
+        <button onclick="openLegalModal('privacidad')" class="hover:text-white underline" data-i18n="footer_privacy">Privacitat i RGPD</button>
+        <button onclick="openLegalModal('cookies')" class="hover:text-white underline" data-i18n="footer_cookies">Cookies i IA</button>
       </div>
     </div>
   </footer>
 
-  <!-- ================= LOGICA JAVASCRIPT ================= -->
+  <!-- ================= LÓGICA JAVASCRIPT ================= -->
   <script>
-    let currentLang = 'ca';
-    let selectedService = '';
+    // WEBHOOKS OFICIALES MAKE
+    const WEBHOOK_MAKE = "https://hook.eu1.make.com/loy5kvv4qmnvo748fmxo2qvt48mbf986";
+    const WEBHOOK_ELENA_VENTAS = "https://hook.eu1.make.com/3w2wmbbcc3evnvg8ajo3kjkucrd6dfkw";
+    const WEBHOOK_REFERIDOS = "https://hook.eu1.make.com/lcfewra8wffai81fjda2g5jgm76cjaeo";
 
-    // DICCIONARI MULTIIDIOMA
-    const i18n = {
-      ca: {
-        nav_contact: "Contactar (Elena IA)",
-        hero_badge: "CONSULTORIA TÈCNICA I LEGAL A LA CARTA",
-        hero_title: "Resolem la complexitat del teu patrimoni immobiliari.",
-        hero_subtitle: "Estudis de viabilitat, gestions cadastrals complexes, divisions horitzontals i assessorament API integral. Descobreix com Level-i pot optimitzar les teves inversions.",
-        services_title: "Els nostres Serveis Destacats",
-        srv_1_title: "Divisió Horitzontal i Segregacions",
-        srv_1_desc: "Transformem finques úniques en entitats registrals independents. Gestionem tot el procés: projecte tècnic, notaria i inscripció al Registre de la Propietat.",
-        srv_2_title: "Gestions al Cadastre",
-        srv_2_desc: "Resolució de discrepàncies, alteracions d'ús (estalvi d'IBI) i actualitzacions planimètriques per adequar la realitat física a la registral i cadastral.",
-        srv_3_title: "Estudis de Viabilitat i Mercat",
-        srv_3_desc: "Anàlisi exhaustiu per a inversions: valoracions de lloguer amb opció a compra, simulacions de ROI, capex de reformes i auditories de zones comercials.",
-        srv_4_title: "Assessorament API Integral",
-        srv_4_desc: "Com a API i AICAT col·legiats, oferim mediació segura en compravendes i lloguers corporatius, garantint la legalitat i confidencialitat de cada operació.",
-        cta_title: "Tens un projecte en ment o un problema registral?",
-        cta_subtitle: "Parla amb l'Elena, la nostra IA Advisor, per obrir el teu expedient de consulta a l'instant i agendar una trucada tècnica amb el nostre equip d'experts.",
-        cta_btn: "INICIAR EXPEDIENT AMB ELENA IA",
-        elena_status: "En línia i preparada per ajudar-te",
-        elena_q1_p1: "Hola, sóc l'Elena, l'Assistent Intel·ligent de Level-i. Estic aquí per agilitzar la teva gestió.",
-        elena_q1_p2: "Sobre quin tema o servei necessites assessorament? (Tria una opció)",
-        elena_q2: "Perfecte. Prenem nota. Per poder obrir l'expedient i que el tècnic de Level-i et truqui preparat, indica'm les teves dades i disponibilitat:",
-        elena_ph_name: "Nom complet o Empresa",
-        elena_ph_phone: "Telèfon / WhatsApp",
-        elena_ph_email: "Correu electrònic",
-        elena_date_label: "📅 Data preferida",
-        elena_time_label: "⏰ Franja horària",
-        elena_err_msg: "Si us plau, completa tots els camps correctament.",
-        elena_btn_confirm: "✔ Confirmar i Agendar Trucada",
-        elena_btn_back: "Tornar enrere",
-        elena_success_title: "Expedient Obert amb Èxit!",
-        elena_success_desc: "Ens posarem en contacte amb tu a la franja indicada per donar-te resposta. Gràcies per confiar en Level-i.",
-        elena_btn_close: "Tancar Panel",
-        footer_zones: "Serveis a: Alcanar, La Ràpita, Amposta, Tortosa, Vinaròs, Tarragona, Barcelona i Vallès.",
-        footer_legal: "Avís Legal",
-        footer_privacy: "Privacitat i RGPD"
-      },
-      es: {
-        nav_contact: "Contactar (Elena IA)",
-        hero_badge: "CONSULTORÍA TÉCNICA Y LEGAL A LA CARTA",
-        hero_title: "Resolvemos la complejidad de tu patrimonio inmobiliario.",
-        hero_subtitle: "Estudios de viabilidad, gestiones catastrales complejas, divisiones horizontales y asesoramiento API integral. Descubre cómo Level-i puede optimizar tus inversiones.",
-        services_title: "Nuestros Servicios Destacados",
-        srv_1_title: "División Horizontal y Segregaciones",
-        srv_1_desc: "Transformamos fincas únicas en entidades registrales independientes. Gestionamos todo el proceso: proyecto técnico, notaría e inscripción registral.",
-        srv_2_title: "Gestiones en Catastro",
-        srv_2_desc: "Resolución de discrepancias, alteraciones de uso (ahorro de IBI) y actualizaciones planimétricas para adecuar la realidad física a la registral.",
-        srv_3_title: "Estudios de Viabilidad y Mercado",
-        srv_3_desc: "Análisis exhaustivo para inversiones: valoraciones de alquiler con opción a compra, simulaciones de ROI, capex de reformas y auditorías comerciales.",
-        srv_4_title: "Asesoramiento API Integral",
-        srv_4_desc: "Como API y AICAT colegiados, ofrecemos mediación segura en compraventas y alquileres corporativos, garantizando la legalidad de cada operación.",
-        cta_title: "¿Tienes un proyecto en mente o un problema registral?",
-        cta_subtitle: "Habla con Elena, nuestra IA Advisor, para abrir tu expediente de consulta al instante y agendar una llamada técnica con nuestro equipo de expertos.",
-        cta_btn: "INICIAR EXPEDIENTE CON ELENA IA",
-        elena_status: "En línea y lista para ayudarte",
-        elena_q1_p1: "Hola, soy Elena, la Asistente Inteligente de Level-i. Estoy aquí para agilizar tu gestión.",
-        elena_q1_p2: "¿Sobre qué tema o servicio necesitas asesoramiento? (Elige una opción)",
-        elena_q2: "Perfecto. Tomamos nota. Para poder abrir el expediente y que el técnico te llame preparado, indícame tus datos y disponibilidad:",
-        elena_ph_name: "Nombre completo o Empresa",
-        elena_ph_phone: "Teléfono / WhatsApp",
-        elena_ph_email: "Correo electrónico",
-        elena_date_label: "📅 Fecha preferida",
-        elena_time_label: "⏰ Franja horaria",
-        elena_err_msg: "Por favor, completa todos los campos correctamente.",
-        elena_btn_confirm: "✔ Confirmar y Agendar Llamada",
-        elena_btn_back: "Volver atrás",
-        elena_success_title: "¡Expediente Abierto con Éxito!",
-        elena_success_desc: "Nos pondremos en contacto contigo en la franja indicada para darte respuesta. Gracias por confiar en Level-i.",
-        elena_btn_close: "Cerrar Panel",
-        footer_zones: "Servicios en: Alcanar, La Ràpita, Amposta, Tortosa, Vinaròs, Tarragona, Barcelona y Vallès.",
-        footer_legal: "Aviso Legal",
-        footer_privacy: "Privacidad y RGPD"
-      },
-      en: {
-        nav_contact: "Contact (Elena AI)",
-        hero_badge: "ON-DEMAND TECHNICAL & LEGAL CONSULTING",
-        hero_title: "We solve the complexity of your real estate assets.",
-        hero_subtitle: "Feasibility studies, complex cadastral management, horizontal divisions, and comprehensive API advising. Discover how Level-i can optimize your investments.",
-        services_title: "Our Featured Services",
-        srv_1_title: "Horizontal Division & Segregations",
-        srv_1_desc: "We transform single properties into independent registered entities. We manage the entire process: technical project, notary, and Land Registry.",
-        srv_2_title: "Cadastral Management",
-        srv_2_desc: "Resolution of discrepancies, use alterations (property tax savings), and planimetric updates to match physical reality with registry data.",
-        srv_3_title: "Feasibility & Market Studies",
-        srv_3_desc: "Comprehensive investment analysis: rent-to-own valuations, ROI simulations, renovation capex, and commercial area audits.",
-        srv_4_title: "Comprehensive API Advising",
-        srv_4_desc: "As certified API and AICAT professionals, we offer secure mediation in corporate sales and rentals, ensuring the legality of every operation.",
-        cta_title: "Have a project in mind or a registry issue?",
-        cta_subtitle: "Talk to Elena, our AI Advisor, to instantly open your consultation file and schedule a technical call with our expert team.",
-        cta_btn: "START FILE WITH ELENA AI",
-        elena_status: "Online and ready to help",
-        elena_q1_p1: "Hello, I'm Elena, Level-i's Smart Assistant. I'm here to streamline your request.",
-        elena_q1_p2: "Which topic or service do you need advice on? (Choose an option)",
-        elena_q2: "Perfect. Noted. To open your file so our technician can call you fully prepared, please provide your details and availability:",
-        elena_ph_name: "Full Name or Company",
-        elena_ph_phone: "Phone / WhatsApp",
-        elena_ph_email: "Email Address",
-        elena_date_label: "📅 Preferred Date",
-        elena_time_label: "⏰ Time Slot",
-        elena_err_msg: "Please fill in all fields correctly.",
-        elena_btn_confirm: "✔ Confirm & Schedule Call",
-        elena_btn_back: "Go Back",
-        elena_success_title: "File Opened Successfully!",
-        elena_success_desc: "We will contact you during the selected time slot to provide an answer. Thank you for trusting Level-i.",
-        elena_btn_close: "Close Panel",
-        footer_zones: "Services in: Alcanar, La Ràpita, Amposta, Tortosa, Vinaròs, Tarragona, Barcelona, and Vallès.",
-        footer_legal: "Legal Notice",
-        footer_privacy: "Privacy & GDPR"
-      }
-    };
+    const ASSET_ID = "CONSULTORIA-PATRIMONIAL-LEVEL-I";
+    let currentLang = "ca";
+    const sessionId = "usr_" + Math.random().toString(36).substring(2, 11);
+    let clienteIP = "Desconocida";
 
-    function changeLanguage(lang) {
-      currentLang = lang;
-      document.getElementById('lang-select').value = lang;
-      document.getElementById('html-root').lang = lang;
-      
-      const dict = i18n[lang] || i18n.ca;
-      
-      // Update text nodes
-      document.querySelectorAll('[data-i18n]').forEach(el => {
-        const key = el.getAttribute('data-i18n');
-        if (dict[key]) el.textContent = dict[key];
-      });
+    const urlParamsGlobal = new URLSearchParams(window.location.search);
+    const activeRefCode = urlParamsGlobal.get("ref") || "";
+    const utmSource = urlParamsGlobal.get("utm_source") || "";
+    const utmMedium = urlParamsGlobal.get("utm_medium") || "";
+    const utmCampaign = urlParamsGlobal.get("utm_campaign") || "";
 
-      // Update placeholders
-      document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
-        const key = el.getAttribute('data-i18n-placeholder');
-        if (dict[key]) el.placeholder = dict[key];
+    // Establecer fecha por defecto en el selector (próximo día laborable)
+    (function setDefaultCallDate() {
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      const iso = tomorrow.toISOString().split('T')[0];
+      const dateInput = document.getElementById('lead-date');
+      if (dateInput) dateInput.value = iso;
+    })();
+
+    fetch("https://api.ipify.org?format=json")
+      .then(r => r.json())
+      .then(data => { clienteIP = data.ip || "Desconocida"; })
+      .catch(() => {});
+
+    // CONTROL DE VÍDEO: AUTOPLAY EN SILENCIO Y DETENCIÓN EN EL ÚLTIMO FOTOGRAMA SIN BUCLE
+    const introBgVideo = document.getElementById('intro-bg-video');
+    if (introBgVideo) {
+      introBgVideo.addEventListener('ended', function() {
+        this.pause();
+        const btnReplay = document.getElementById('btn-replay-intro');
+        if (btnReplay) {
+          btnReplay.classList.remove('hidden');
+          btnReplay.classList.add('inline-flex');
+        }
       });
     }
 
-    // ELENA IA LOGIC
-    function openElenaModal(servicePreselect = null) {
+    function replayIntroVideo() {
+      if (!introBgVideo) return;
+      introBgVideo.currentTime = 0;
+      introBgVideo.muted = false;
+      introBgVideo.play().catch(() => {
+        introBgVideo.muted = true;
+        introBgVideo.play();
+      });
+    }
+
+    const mainVideo = document.getElementById('main-consultoria-video');
+    if (mainVideo) {
+      mainVideo.addEventListener('ended', function() {
+        this.pause();
+        const overlay = document.getElementById('video-ended-overlay');
+        if (overlay) overlay.classList.remove('hidden');
+      });
+      mainVideo.addEventListener('play', function() {
+        const overlay = document.getElementById('video-ended-overlay');
+        if (overlay) overlay.classList.add('hidden');
+      });
+    }
+
+    function replayMainVideo(withSound) {
+      if (!mainVideo) return;
+      const overlay = document.getElementById('video-ended-overlay');
+      if (overlay) overlay.classList.add('hidden');
+      mainVideo.currentTime = 0;
+      if (withSound) mainVideo.muted = false;
+      mainVideo.play().catch(() => {
+        mainVideo.muted = true;
+        mainVideo.play();
+      });
+    }
+
+    // RELOJ EN VIVO
+    setInterval(() => {
+      const now = new Date();
+      const pad = n => String(n).padStart(2, '0');
+      const el = document.getElementById('live-clock');
+      if (el) el.textContent = `${pad(now.getDate())}/${pad(now.getMonth()+1)}/${now.getFullYear()} | ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+    }, 1000);
+
+    // SUMAS MATEMÁTICAS DE SEGURIDAD
+    let gateSum = 7, elenaSum = 9;
+    function initMathChallenges() {
+      const g1 = Math.floor(Math.random() * 5) + 2;
+      const g2 = Math.floor(Math.random() * 5) + 2;
+      gateSum = g1 + g2;
+      document.getElementById('gate-num1').textContent = g1;
+      document.getElementById('gate-num2').textContent = g2;
+
+      const e1 = Math.floor(Math.random() * 5) + 3;
+      const e2 = Math.floor(Math.random() * 5) + 2;
+      elenaSum = e1 + e2;
+      document.getElementById('elena-num1').textContent = e1;
+      document.getElementById('elena-num2').textContent = e2;
+    }
+    initMathChallenges();
+
+    function verifyGatekeeper() {
+      const val = parseInt(document.getElementById('gate-math-input').value, 10);
+      if (val === gateSum) {
+        if (introBgVideo) introBgVideo.pause();
+        document.getElementById('gatekeeper-screen').classList.add('hidden');
+        if (mainVideo) {
+          mainVideo.currentTime = 0;
+          mainVideo.muted = true;
+          mainVideo.play().catch(() => {});
+        }
+      } else {
+        document.getElementById('gate-error').classList.remove('hidden');
+      }
+    }
+
+    // SIMULADOR DE COSTES DE DIVISIÓN HORIZONTAL Y CATASTRO
+    function setConsultoriaPreset(type) {
+      const bLoc = document.getElementById('btn-pre-local');
+      const bEdi = document.getElementById('btn-pre-edifici');
+      const bCad = document.getElementById('btn-pre-cadastre');
+
+      const inactiveClass = "p-2.5 rounded-lg border border-slate-700 bg-[#151f2e] text-slate-300 hover:border-slate-500 text-xs font-bold transition text-center";
+      const activeClass = "p-2.5 rounded-lg border border-amber-500 bg-amber-500/15 text-amber-300 text-xs font-bold transition text-center";
+
+      bLoc.className = inactiveClass;
+      bEdi.className = inactiveClass;
+      bCad.className = inactiveClass;
+
+      if (type === 'local') {
+        bLoc.className = activeClass;
+        document.getElementById('sim-property-val').value = 220000;
+        document.getElementById('sim-cost-arch').value = 1800;
+        document.getElementById('sim-cost-notary').value = 1650;
+        document.getElementById('sim-cost-cat').value = 650;
+        document.getElementById('sim-cost-util').value = 1400;
+      } else if (type === 'edifici') {
+        bEdi.className = activeClass;
+        document.getElementById('sim-property-val').value = 450000;
+        document.getElementById('sim-cost-arch').value = 3200;
+        document.getElementById('sim-cost-notary').value = 2400;
+        document.getElementById('sim-cost-cat').value = 950;
+        document.getElementById('sim-cost-util').value = 2800;
+      } else {
+        bCad.className = activeClass;
+        document.getElementById('sim-property-val').value = 0;
+        document.getElementById('sim-cost-arch').value = 600;
+        document.getElementById('sim-cost-notary').value = 0;
+        document.getElementById('sim-cost-cat').value = 750;
+        document.getElementById('sim-cost-util').value = 0;
+      }
+      recalculateConsultoria();
+    }
+
+    function recalculateConsultoria() {
+      const propVal = parseFloat(document.getElementById('sim-property-val').value) || 0;
+      const ajd = Math.round(propVal * 0.015);
+      const cArch = parseFloat(document.getElementById('sim-cost-arch').value) || 0;
+      const cNot = parseFloat(document.getElementById('sim-cost-notary').value) || 0;
+      const cCat = parseFloat(document.getElementById('sim-cost-cat').value) || 0;
+      const cUtil = parseFloat(document.getElementById('sim-cost-util').value) || 0;
+
+      const total = ajd + cArch + cNot + cCat + cUtil;
+      const fmt = n => Math.round(n).toLocaleString('es-ES');
+
+      document.getElementById('sim-ajd-display').textContent = `${fmt(ajd)} €`;
+      document.getElementById('sim-total-display').textContent = `${fmt(total)} €`;
+    }
+
+    // ELENA IA FLUJO DE CAPTURA
+    let selectedUse = "";
+    let selectedProfile = "";
+    let selectedTown = "";
+
+    function openElenaModal() {
       document.getElementById('elena-modal').classList.remove('hidden');
       document.getElementById('elena-modal').classList.add('flex');
-      
-      // Reset steps
-      document.getElementById('elena-step-1').classList.remove('hidden');
-      document.getElementById('elena-step-2').classList.add('hidden');
-      document.getElementById('elena-step-3').classList.add('hidden');
-      
-      // Set today's date in datepicker
-      const today = new Date().toISOString().split('T')[0];
-      document.getElementById('lead-date').value = today;
-
-      if(servicePreselect) {
-        selectElenaService(servicePreselect);
-      }
     }
-
     function closeElenaModal() {
       document.getElementById('elena-modal').classList.add('hidden');
       document.getElementById('elena-modal').classList.remove('flex');
     }
-
-    function selectElenaService(service) {
-      selectedService = service;
-      document.getElementById('user-selected-service').textContent = service;
+    function openElenaWithService(idx) {
+      openElenaModal();
+      const dict = i18n[currentLang] || i18n.ca;
+      selectedUse = dict['elena_opt_' + idx] || "";
+    }
+    function completeElenaStep0() {
+      const val = parseInt(document.getElementById('elena-math-input').value, 10);
+      const chk = document.getElementById('elena-rgpd-check').checked;
+      if (val === elenaSum && chk) {
+        document.getElementById('elena-step0-error').classList.add('hidden');
+        document.getElementById('elena-step-0').classList.add('hidden');
+        document.getElementById('elena-step-1').classList.remove('hidden');
+      } else {
+        document.getElementById('elena-step0-error').classList.remove('hidden');
+      }
+    }
+    function selectElenaUse(u) {
+      selectedUse = u;
+      document.getElementById('user-selected-use-bubble').textContent = u;
       document.getElementById('elena-step-1').classList.add('hidden');
       document.getElementById('elena-step-2').classList.remove('hidden');
     }
-
-    function backToStep1() {
+    function completeElenaStep2() {
+      const sel = document.getElementById('elena-profile-select');
+      selectedProfile = sel.options[sel.selectedIndex].text;
+      selectedTown = document.getElementById('elena-town-input').value.trim() || "Alcanar / Terres de l'Ebre / BCN";
+      document.getElementById('user-selected-fin-bubble').textContent = `${selectedProfile} · ${selectedTown}`;
       document.getElementById('elena-step-2').classList.add('hidden');
-      document.getElementById('elena-step-1').classList.remove('hidden');
+      document.getElementById('elena-step-3').classList.remove('hidden');
     }
-
     function submitElenaLead() {
       const name = document.getElementById('lead-name').value.trim();
-      const phone = document.getElementById('lead-phone').value.trim();
+      const prefix = document.getElementById('lead-prefix').value;
+      const rawPhone = document.getElementById('lead-phone').value.replace(/\D/g, '');
       const email = document.getElementById('lead-email').value.trim();
       const date = document.getElementById('lead-date').value;
       const time = document.getElementById('lead-time').value;
 
-      if (!name || phone.length < 6 || !email.includes('@')) {
-        document.getElementById('elena-step2-error').classList.remove('hidden');
+      if (!name || rawPhone.length < 6 || !email.includes('@')) {
+        document.getElementById('elena-step3-error').classList.remove('hidden');
         return;
       }
-      
-      document.getElementById('elena-step2-error').classList.add('hidden');
+      document.getElementById('elena-step3-error').classList.add('hidden');
 
-      // SHOW CONFIRMATION
-      document.getElementById('elena-step-2').classList.add('hidden');
-      document.getElementById('elena-step-3').classList.remove('hidden');
+      const fullPhone = prefix + rawPhone;
+      const simTotal = document.getElementById('sim-total-display').textContent;
+
+      const payloadElena = {
+        evento: "expediente_consultoria_elena",
+        id_inmueble: ASSET_ID,
+        metadatos_sistema: {
+          origen_landing: "CONSULTORIA A LA CARTA LEVEL-I",
+          tipo_cta: "ABRIR EXPEDIENTE GESTION TECNICA",
+          idioma_usuario: currentLang,
+          id_sesion: sessionId,
+          ip_cliente: clienteIP,
+          codigo_colaborador_ref: activeRefCode,
+          registrar_asistencia_elena: true
+        },
+        datos_usuario: {
+          nombre: name,
+          telefono: fullPhone,
+          email: email,
+          rol_asignar: selectedProfile,
+          acepto_legal: true
+        },
+        datos_expediente_consultoria: {
+          servicio_solicitado: selectedUse,
+          perfil_cliente: selectedProfile,
+          municipio_inmueble: selectedTown,
+          presupuesto_simulado_expediente: simTotal,
+          fecha_llamada_solicitada: date,
+          franja_horaria_llamada: time
+        },
+        tracking_marketing: {
+          utm_source: utmSource,
+          utm_medium: utmMedium,
+          utm_campaign: utmCampaign
+        }
+      };
+
+      Promise.allSettled([
+        fetch(WEBHOOK_ELENA_VENTAS, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payloadElena)
+        }),
+        fetch(WEBHOOK_MAKE, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payloadElena)
+        })
+      ]);
+
+      document.getElementById('elena-step-3').classList.add('hidden');
+      document.getElementById('elena-step-4').classList.remove('hidden');
 
       document.getElementById('confirmation-summary').innerHTML = `
-        <strong>${name}</strong><br>
-        Servei: <em>${selectedService}</em><br><br>
-        📞 Trucada agendada: <strong>${date} (${time})</strong><br>
-        Email: ${email}
+        <strong>${name}</strong> (${selectedProfile})<br>
+        📍 <strong>${selectedTown}</strong><br>
+        <em>"${selectedUse}"</em><br><br>
+        📞 <strong>${date} (${time})</strong> · WhatsApp: <strong>${prefix} ${rawPhone}</strong> · Email: <strong>${email}</strong>.
       `;
+    }
 
-      // AQUI POTS AFEGIR EL TEU FETCH CAP A MAKE.COM O EL TEU CRM
-      /*
-      fetch("LA_TEVA_URL_WEBHOOK_MAKE", {
+    // COLABORADORES
+    function openCollaboratorModal() {
+      document.getElementById('collaborator-modal').classList.remove('hidden');
+      document.getElementById('collaborator-modal').classList.add('flex');
+    }
+    function closeCollaboratorModal() {
+      document.getElementById('collaborator-modal').classList.add('hidden');
+      document.getElementById('collaborator-modal').classList.remove('flex');
+    }
+    function activateCollaboratorLink() {
+      const name = document.getElementById('collab-name').value.trim();
+      const phone = document.getElementById('collab-phone').value.trim();
+      if (!name || phone.length < 6) return;
+      const code = "COL-" + Math.floor(1000 + Math.random() * 9000);
+      const url = `https://app.level-i.com/consultoria?ref=${code}&lang=${currentLang}`;
+      document.getElementById('collab-generated-url').value = url;
+      document.getElementById('collab-link-result').classList.remove('hidden');
+
+      fetch(WEBHOOK_REFERIDOS, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          nom: name, telefon: phone, email: email, servei: selectedService, data: date, franja: time, idioma: currentLang
+          evento: "alta_colaborador_consultoria",
+          codigo_colaborador: code,
+          nombre: name,
+          telefono: phone,
+          enlace: url,
+          idioma: currentLang
         })
-      });
-      */
+      }).catch(() => {});
     }
+
+    // TEXTOS LEGALES FINO FILIPINO (MULTIIDIOMA RIGUROSO)
+    const legalTexts = {
+      ca: {
+        aviso_title: "Avís Legal, Condicions d'Ús i Garantia Col·legial API",
+        aviso_body: `
+          <p><strong>1. Titularitat i Identificació Societària (Llei 34/2002 LSSI-CE):</strong> El present portal de consultoria tècnica i immobiliària <code>app.level-i.com/consultoria</code> és titularitat de <strong>LEVEL PUNTO IMMO 24365 SLU</strong>, provista de NIF <strong>B-26745430</strong>, amb domicili social a Travessera de Gràcia, 56, 3r 1a, 08006 Barcelona, inscrita al Registre Mercantil de Barcelona. Correu electrònic de contacte oficial: <code>level@level.immo</code>.</p>
+          <p><strong>2. Habilitació Professional i Col·legiació Oficial:</strong> L'activitat de consultoria, valoració, intermediació i gestió patrimonial és dirigida per un Agent de la Propietat Immobiliària col·legiat (<strong>API núm. 4173</strong>) i inscrit al Registre d'Agents Immobiliaris de Catalunya (<strong>AICAT núm. 14200</strong>), comptant amb les assegurances de Responsabilitat Civil Professional i Caució legalment establertes per la normativa vigent.</p>
+          <p><strong>3. Naturalesa de les Simulacions Tècniques i Fiscals:</strong> Les estimacions de costos de Divisió Horitzontal, honoraris d'arquitectura, aranzels notarials, aranzels registrals i càlculs de l'Impost sobre Actes Jurídics Documentats (AJD) o alteracions cadastrals ofertes pel simulador tenen caràcter orientatiu i preliminar. Tot expedient requereix l'emissió d'un pressupost vinculant previ estudi de la certificació descriptiva i gràfica del Cadastre, la nota simple del Registre de la Propietat corresponent (ex. Registre de la Propietat d'Amposta o Barcelona) i el planejament urbanístic municipal (POUM).</p>
+        `,
+        privacidad_title: "Política de Privacitat i Protecció de Dades (RGPD / LOPDGDD)",
+        privacidad_body: `
+          <p><strong>1. Responsable del Tractament:</strong> <strong>LEVEL PUNTO IMMO 24365 SLU</strong> (NIF B-26745430 · Travessera de Gràcia, 56, 3r 1a, 08006 Barcelona · Email: <code>level@level.immo</code>).</p>
+          <p><strong>2. Finalitat del Tractament:</strong> En compliment del Reglament (UE) 2016/679 (RGPD) i la Llei Orgànica 3/2018 (LOPDGDD), li informem que les dades personals facilitades a través de l'assistent <strong>Elena | AI Advisor</strong> seran tractades exclusivament per a: (i) obrir i gestionar l'expedient de consultoria tècnica, cadastral, urbanística o immobiliària sol·licitat; (ii) elaborar estudis de mercat i viabilitat per als copropietaris o inversors; i (iii) coordinar l'agenda de trucades amb el nostre equip API col·legiat.</p>
+          <p><strong>3. Legitimació i Conservació:</strong> La base jurídica del tractament és el consentiment exprés de l'interessat (art. 6.1.a RGPD) i l'aplicació de mesures precontractuals a petició d'aquest (art. 6.1.b RGPD). Les dades es conservaran mentre es mantingui actiu l'expedient i durant els terminis legals exigibles en matèria civil, tributària i de prevenció del blanqueig de capitals (Llei 10/2010).</p>
+          <p><strong>4. Drets dels Interessats:</strong> Pot exercir en qualsevol moment els seus drets d'accés, rectificació, supressió, oposició, limitació i portabilitat enviant una comunicació escrita a <code>level@level.immo</code>, així com presentar una reclamació davant l'Agència Espanyola de Protecció de Dades (www.aepd.es).</p>
+        `,
+        cookies_title: "Política de Cookies i Transparència d'Intel·ligència Artificial (Reglament UE IA)",
+        cookies_body: `
+          <p><strong>1. Emmagatzematge Tècnic Local:</strong> Aquesta pàgina utilitza exclusivament emmagatzematge tècnic de sessió (<code>localStorage</code> i <code>sessionStorage</code>) per recordar l'idioma seleccionat per l'usuari (<code>level_lang</code>), sense instal·lar cookies publicitàries de tercers que rastregin la seva navegació fora del nostre entorn.</p>
+          <p><strong>2. Transparència Algorítmica (Reglament UE 2024/1689 sobre IA):</strong> S'informa expressament a l'usuari que el mòdul <strong>Elena | AI Advisor Level-i</strong> és un sistema automatitzat d'estructuració d'expedients i qualificació prèvia. Totes les decisions tècniques, jurídiques, cadastrals i contractuals són revisades, validades i signades per professionals humans col·legiats (API 4173 / AICAT 14200 i arquitectes col·laboradors).</p>
+        `
+      },
+      es: {
+        aviso_title: "Aviso Legal, Condiciones de Uso y Garantía Colegial API",
+        aviso_body: `
+          <p><strong>1. Titularidad e Identificación Societaria (Ley 34/2002 LSSI-CE):</strong> El presente portal de consultoría técnica e inmobiliaria <code>app.level-i.com/consultoria</code> es titularidad de <strong>LEVEL PUNTO IMMO 24365 SLU</strong>, provista de NIF <strong>B-26745430</strong>, con domicilio social en Travessera de Gràcia, 56, 3º 1ª, 08006 Barcelona, inscrita en el Registro Mercantil de Barcelona. Correo electrónico oficial: <code>level@level.immo</code>.</p>
+          <p><strong>2. Habilitación Profesional y Colegiación Oficial:</strong> La actividad de consultoría, valoración, intermediación y gestión patrimonial está dirigida por un Agente de la Propiedad Inmobiliaria colegiado (<strong>API nº 4173</strong>) e inscrito en el Registro de Agentes Inmobiliarios de Cataluña (<strong>AICAT nº 14200</strong>), contando con los seguros de Responsabilidad Civil Profesional y Caución legalmente exigidos.</p>
+          <p><strong>3. Naturaleza de las Simulaciones Técnicas y Fiscales:</strong> Las estimaciones de costes de División Horizontal, honorarios de arquitectura, aranceles notariales/registrales y cálculos del Impuesto sobre Actos Jurídicos Documentados (AJD) o alteraciones catastrales ofrecidas en el simulador tienen carácter orientativo y preliminar. Todo expediente requiere presupuesto vinculante previo análisis de la certificación catastral, nota simple del Registro de la Propiedad competente (ej. Registro de la Propiedad de Amposta o Barcelona) y normativa urbanística municipal.</p>
+        `,
+        privacidad_title: "Política de Privacidad y Protección de Datos (RGPD / LOPDGDD)",
+        privacidad_body: `
+          <p><strong>1. Responsable del Tratamiento:</strong> <strong>LEVEL PUNTO IMMO 24365 SLU</strong> (NIF B-26745430 · Travessera de Gràcia, 56, 3º 1ª, 08006 Barcelona · Email: <code>level@level.immo</code>).</p>
+          <p><strong>2. Finalidad del Tratamiento:</strong> En cumplimiento del Reglamento (UE) 2016/679 (RGPD) y la Ley Orgánica 3/2018 (LOPDGDD), le informamos que los datos personales facilitados mediante el asistente <strong>Elena | AI Advisor</strong> serán tratados exclusivamente para: (i) abrir y gestionar el expediente de consultoría técnica, catastral, urbanística o inmobiliaria solicitado; (ii) elaborar estudios de mercado y viabilidad para copropietarios o inversores; y (iii) agendar la llamada técnica con nuestro equipo API colegiado.</p>
+          <p><strong>3. Legitimación y Conservación:</strong> La base jurídica es el consentimiento expreso del interesado (art. 6.1.a RGPD) y la aplicación de medidas precontractuales a petición de éste (art. 6.1.b RGPD). Los datos se conservarán mientras dure la gestión del expediente y durante los plazos legales exigibles (Ley 10/2010 de prevención del blanqueo de capitales y normativa tributaria).</p>
+          <p><strong>4. Derechos de los Interesados:</strong> Puede ejercer sus derechos de acceso, rectificación, supresión, oposición, limitación y portabilidad escribiendo a <code>level@level.immo</code>, así como reclamar ante la Agencia Española de Protección de Datos (www.aepd.es).</p>
+        `,
+        cookies_title: "Política de Cookies y Transparencia de Inteligencia Artificial (Reglamento UE IA)",
+        cookies_body: `
+          <p><strong>1. Almacenamiento Técnico Local:</strong> Este portal utiliza únicamente almacenamiento técnico de sesión (<code>localStorage</code> y <code>sessionStorage</code>) para conservar el idioma elegido (<code>level_lang</code>), sin emplear cookies publicitarias invasivas de terceros.</p>
+          <p><strong>2. Transparencia Algorítmica (Reglamento UE 2024/1689 sobre IA):</strong> Se informa expresamente al usuario de que el módulo <strong>Elena | AI Advisor Level-i</strong> es un asistente automatizado de recepción y estructuración de expedientes. Todas las valoraciones, dictámenes catastrales, divisiones horizontales y contratos son supervisados y firmados por profesionales colegiados (API 4173 / AICAT 14200 y arquitectos técnicos).</p>
+        `
+      },
+      en: {
+        aviso_title: "Legal Notice, Terms of Use & Official API Guarantee",
+        aviso_body: `
+          <p><strong>1. Corporate Identification (Law 34/2002 LSSI-CE):</strong> This technical and real estate consulting portal <code>app.level-i.com/consultoria</code> is operated by <strong>LEVEL PUNTO IMMO 24365 SLU</strong>, Tax ID (NIF) <strong>B-26745430</strong>, registered office at Travessera de Gràcia, 56, 3-1a, 08006 Barcelona (Spain). Official email: <code>level@level.immo</code>.</p>
+          <p><strong>2. Official Licensing:</strong> All consulting, valuation, and brokerage services are supervised by a licensed Real Estate Agent (<strong>API #4173 · AICAT #14200</strong>) with full Professional Liability and Surety Insurance.</p>
+          <p><strong>3. Technical & Tax Simulations:</strong> Cost estimates for Horizontal Division, architectural projects, notary/Land Registry fees, Stamp Duty (AJD) and cadastral alterations are indicative and subject to a formal binding quote after reviewing Land Registry and Cadastral records.</p>
+        `,
+        privacidad_title: "Privacy Policy & Data Protection (GDPR)",
+        privacidad_body: `
+          <p><strong>1. Data Controller:</strong> <strong>LEVEL PUNTO IMMO 24365 SLU</strong> (NIF B-26745430 · Email: <code>level@level.immo</code>).</p>
+          <p><strong>2. Purpose & Legal Basis:</strong> Under EU Regulation 2016/679 (GDPR), personal data collected via <strong>Elena | AI Advisor</strong> is processed exclusively to manage your technical/real estate consulting file, prepare market feasibility studies, and schedule calls with our licensed advisors, based on your explicit consent (Art. 6.1.a GDPR) and pre-contractual measures (Art. 6.1.b GDPR).</p>
+          <p><strong>3. Rights:</strong> You may exercise your rights of access, rectification, erasure, restriction, and portability at any time by contacting <code>level@level.immo</code>.</p>
+        `,
+        cookies_title: "Cookies Policy & AI Transparency (EU AI Act)",
+        cookies_body: `
+          <p><strong>1. Technical Storage:</strong> This website strictly uses local session storage (<code>level_lang</code>) to remember your language preference without third-party tracking cookies.</p>
+          <p><strong>2. AI Transparency:</strong> <strong>Elena | AI Advisor Level-i</strong> is an automated intake assistant. All legal, cadastral, architectural, and real estate decisions are reviewed and executed by licensed human professionals.</p>
+        `
+      }
+    };
+
+    function openLegalModal(type) {
+      const title = document.getElementById('legal-modal-title');
+      const body = document.getElementById('legal-modal-body');
+      const langPack = legalTexts[currentLang] || legalTexts.es;
+
+      if (type === 'aviso') {
+        title.textContent = langPack.aviso_title;
+        body.innerHTML = langPack.aviso_body;
+      } else if (type === 'privacidad') {
+        title.textContent = langPack.privacidad_title;
+        body.innerHTML = langPack.privacidad_body;
+      } else {
+        title.textContent = langPack.cookies_title;
+        body.innerHTML = langPack.cookies_body;
+      }
+      document.getElementById('legal-modal').classList.remove('hidden');
+      document.getElementById('legal-modal').classList.add('flex');
+    }
+    function closeLegalModal() {
+      document.getElementById('legal-modal').classList.add('hidden');
+      document.getElementById('legal-modal').classList.remove('flex');
+    }
+
+    // DICCIONARIO MULTILINGÜE COMPLETO (8 IDIOMAS SIN RECORTES)
+    const i18n = {
+      ca: {
+        btn_replay_video: "Repetir Vídeo",
+        btn_play_sound: "Reproduir amb So",
+        btn_talk_elena: "Parlar amb Elena IA",
+        video_ended_title: "Vols tornar a veure la presentació o obrir un expedient tècnic?",
+        gate_badge: "DIVISIÓ DE CONSULTORIA TÈCNICA, CADASTRAL I REGISTRAL",
+        gate_title: "Enginyeria Patrimonial, Segregacions i Gestió Urbanística a la Carta",
+        gate_subtitle: "Transformem immobles complexos o sense activitat en actius líquids i rendibles. Especialistes en Divisions Horitzontals, Segregacions, Alteració Cadastral per optimització d'IBI, Lloguer amb Opció a Compra i Inscripció al Registre de la Propietat.",
+        gate_security_title: "Accés al Panell Tècnic i Simulador de Costos",
+        gate_security_desc: "Resol la suma de verificació per accedir al simulador de costos de Divisió Horitzontal/Cadastre i obrir expedient amb Elena IA:",
+        gate_math_label: "Quant és",
+        gate_btn_access: "ENTRAR A CONSULTORIA",
+        gate_error_msg: "Resultat incorrecte. Torna-ho a provar.",
+        pill_1_t: "📐 Divisió Horitzontal",
+        pill_1_d: "Projecte tècnic, quotes, notaria i Registre.",
+        pill_2_t: "🏛️ Revisió Cadastral",
+        pill_2_d: "Adequació d'usos per reduir l'IBI comercial.",
+        pill_3_t: "🔑 Lloguer + Opció",
+        pill_3_d: "Renda immediata mentre s'inscriu la segregació.",
+        pill_4_t: "📊 Estudis de Mercat",
+        pill_4_d: "Valoració rigorosa de venda i lloguer €/m².",
+        nav_demand: "Demanda Activa",
+        nav_market: "Mercat Real",
+        nav_collab: "Col·laboradors",
+        nav_elena_cta: "Iniciar Expedient",
+        main_header_title: "Consultoria Immobiliària, Tècnica i Patrimonial a la Carta",
+        main_status_badge: "SERVEI OFICIAL API COL·LEGIAT 4173 · AICAT 14200",
+        kpi_1_label: "DIVISIÓ HORITZONTAL",
+        kpi_1_val: "Clau en Mà",
+        kpi_1_sub: "Arquitectura + Notaria",
+        kpi_2_label: "OPTIMITZACIÓ IBI",
+        kpi_2_val: "Cadastre",
+        kpi_2_sub: "Alteració d'Usos",
+        kpi_3_label: "OPERATIVA DUAL",
+        kpi_3_val: "Lloguer + Compra",
+        kpi_3_sub: "Liquiditat immediata",
+        kpi_4_label: "SEGURETAT JURÍDICA",
+        kpi_4_sub: "Registre de la Propietat",
+        video_header_title: "PRESENTACIÓ LEVEL.IMMO · TECNOLOGIA I GESTIÓ PATRIMONIAL",
+        srv_section_title: "Serveis de Consultoria a la Carta per a Copropietaris i Inversors",
+        srv_section_badge: "Gestió Integral 360°",
+        srv_section_intro: "Molts edificis i locals comercials històrics pateixen bloquejos operatius o sobrecostos fiscals perquè mantenen una única referència sense divisió horitzontal o figuren amb un ús 100% comercial al Cadastre tot i estar sense activitat a les plantes superiors. Des de Level.immo executem la solució tècnica, fiscal i jurídica completa:",
+        srv1_tag: "ARQUITECTURA + REGISTRE",
+        srv1_title: "1. Divisió Horitzontal i Segregacions",
+        srv1_desc: "Aixecament de plànols, projecte tècnic d'arquitectura, assignació de quotes de participació, llicència municipal, escriptura pública notarial, liquidació d'AJD i inscripció de les noves entitats independents al Registre de la Propietat.",
+        srv2_tag: "ESTALVI FISCAL IBI",
+        srv2_title: "2. Alteració i Revisió Cadastral",
+        srv2_desc: "Auditoria de la Seu Electrònica del Cadastre. Adeqüem els usos i superfícies d'edificis que figuren erròniament com a 100% comercial o oficines en plantes superiors tancades, reduint dràsticament la càrrega anual del rebut d'IBI.",
+        srv3_tag: "AGILITAT COMERCIAL",
+        srv3_title: "3. Lloguer amb Opció a Compra Estructurat",
+        srv3_desc: "Permet l'obertura immediata del negoci a la planta baixa (adequant escomeses d'aigua i llum) generant rendes mensuals des del primer mes, mentre es tramita en paral·lel la divisió horitzontal per elevar la compravenda definitiva a escriptura pública.",
+        srv4_tag: "VALORACIÓ API RIGOROSA",
+        srv4_title: "4. Estudis de Mercat i Viabilitat per a Copropietaris",
+        srv4_desc: "Informes executius de preus de venda (€/m²) i lloguer comercial per a comunitats de béns, herències i societats. Comparem tots els escenaris (venda total, venda parcial o arrendament) perquè la propietat prengui decisions amb dades reals.",
+        time_sup: "⏱️ CRONOGRAMA LEGAL I REGISTRAL",
+        time_title: "Comparativa d'Escenaris Operatius fins a la Inscripció al Registre de la Propietat",
+        th_sc_name: "Escenari Operatiu",
+        th_sc_time: "Termini Estimat",
+        th_sc_req: "Tràmits Requerits",
+        th_sc_adv: "Avantatge Principal",
+        sc1_name: "A. Lloguer PB + Opció a Compra",
+        sc1_time: "1 - 3 setmanes (Inici)",
+        sc1_req: "Contracte dual + Divisió Horitzontal durant l'arrendament (12-24m)",
+        sc1_adv: "Obertura ràpida i renda immediata",
+        sc2_name: "B. Divisió Horitzontal + Venda Fracció",
+        sc2_time: "3 - 6 mesos",
+        sc2_req: "Projecte arquitecte, Llicència/Declaració, Notaria, AJD (1,5%) i Registre",
+        sc2_adv: "La propietat conserva la resta de l'edifici",
+        sc3_name: "C. Venda Directa Edifici Sencer",
+        sc3_time: "4 - 8 setmanes",
+        sc3_req: "Arres penitencials, Escriptura de Compravenda finca única i Registre",
+        sc3_adv: "Liquidació total sense costos de divisió",
+        calc_header: "Simulador de Costos: Divisió Horitzontal i Cadastre",
+        calc_select_preset: "1. SELECCIONA EL TIPUS D'ACTIU PER SIMULAR COSTOS I TERMINIS:",
+        pre_btn_local: "Local + Edifici",
+        pre_btn_edifici: "Edifici Plurifam.",
+        pre_btn_cadastre: "Només Cadastre",
+        calc_val_label: "Valor declarat de la finca a dividir (€):",
+        calc_ajd_label: "Impost AJD Divisió Horitzontal (1,5% Catalunya):",
+        calc_items_title: "🛠️ 2. PARTIDES TÈCNIQUES, NOTARIALS I REGISTRALS (EDITABLES):",
+        calc_item_arch: "+ Projecte Tècnic Arquitecte (Plànols i quotes):",
+        calc_item_notary: "+ Notaria i Inscripció al Registre de la Propietat:",
+        calc_item_cat: "+ Expedient d'Alteració Cadastral (Estalvi IBI):",
+        calc_item_util: "+ Adequació Escomeses (Aigua/Llum independent):",
+        calc_total_label: "COST TOTAL ESTIMAT DE L'EXPEDIENT:",
+        calc_total_sub: "Inclou impostos (AJD), tècnics, notaria i Registre",
+        calc_rent_bridge_title: "💡 Finançament de l'Expedient via Lloguer Pont",
+        calc_rent_bridge_desc: "Llogant la Planta Baixa comercial (ex. 950 €/mes) amb Opció a Compra mentre s'inscriu la Divisió Horitzontal, la propietat ingressa 17.100 € bruts en 18 mesos, cobrint el 100% dels costos de segregació i generant tresoreria neta des del dia 1.",
+        cta_main_elena: "OBRIR EXPEDIENT I AGENDAR TRUCADA AMB ELENA IA",
+        footer_services_label: "Serveis Presencials i Consultoria a:",
+        footer_legal: "Avís Legal",
+        footer_privacy: "Privacitat i RGPD",
+        footer_cookies: "Cookies i IA",
+        elena_sub: "Obertura d'Expedients Tècnics i Patrimonials · API 4173",
+        elena_sec_title: "Verificació de Seguretat i Confidencialitat RGPD:",
+        elena_sec_desc: "Per iniciar l'assistent Elena IA i agendar una trucada tècnica per al teu immoble o expedient, resol la suma:",
+        elena_rgpd_accept: "He llegit i accepto la",
+        elena_rgpd_consent: "i consenteixo el tractament de les dades per obrir l'expedient de consultoria amb Level.immo.",
+        elena_step0_err: "Verifica la suma matemàtica i accepta la casella de Privacitat RGPD.",
+        elena_btn_verify: "✔ Verificar i Iniciar Expedient amb Elena IA",
+        elena_greet_1: "Hola, sóc l'Elena, AI Advisor de Level.immo. Coordinem projectes de divisió horitzontal, adequació cadastral (estalvi d'IBI) i operacions comercials a mida amb garantia col·legial API.",
+        elena_greet_2: "Selecciona quin tipus de servei o gestió necessites per al teu immoble:",
+        elena_opt_1: "📐 Divisió Horitzontal / Segregació + Inscripció al Registre de la Propietat",
+        elena_opt_2: "🏛️ Revisió o Alteració Cadastral (Adequació d'usos per reduir l'IBI)",
+        elena_opt_3: "🔑 Estructuració de Lloguer Comercial amb Opció a Compra o Venda Total",
+        elena_opt_4: "📊 Estudi de Mercat, Valoració Patrimonial i Assessorament a Copropietaris",
+        elena_step2_q: "Perfecte. Quin és el teu perfil en aquesta operació i en quin municipi es troba l'immoble?",
+        elena_prof_1: "🏛️ Propietari / Copropietari de l'Immoble",
+        elena_prof_2: "⚖️ Assessoria, Gestoria o Representant de la Propietat",
+        elena_prof_3: "💼 Inversor / Interessat en Compra o Lloguer Comercial",
+        elena_town_label: "MUNICIPI O REFERÈNCIA DE L'IMMOBLE:",
+        elena_ph_town: "Ex: Alcanar, Amposta, La Ràpita, Vinaròs, Barcelona...",
+        elena_btn_continue: "Continuar →",
+        elena_step3_q: "Indica'm el teu nom, telèfon, correu electrònic i quin dia i hora prefereixes per a la trucada de contacte amb el nostre API col·legiat per iniciar l'expedient:",
+        elena_ph_name: "Nom complet, Despatx o Empresa",
+        elena_ph_email: "Correu electrònic de contacte",
+        elena_date_label: "📅 Data trucada",
+        elena_time_label: "⏰ Franja horària",
+        elena_step3_err: "Completa nom, telèfon vàlid i correu electrònic.",
+        elena_btn_confirm: "✔ Confirmar Expedient i Agendar Trucada",
+        elena_step4_title: "✅ Expedient de Consultoria registrat amb èxit!",
+        elena_btn_finish: "Finalitzar i Tornar a Consultoria",
+        collab_modal_title: "Xarxa de Despatxos i Col·laboradors · Level.immo",
+        collab_modal_sub: "Col·laboració professional amb Assessories, Gestories, Arquitectes i Simpatitzants",
+        collab_box_p1: "Si ets una assessoria fiscal/jurídica o coneixes propietaris que necessiten desbloquejar la venda o divisió horitzontal d'un actiu, genera el teu enllaç directe de col·laborador o obre un expedient conjunt amb nosaltres.",
+        collab_ph_name: "El teu Nom o Despatx",
+        collab_ph_phone: "Telèfon / WhatsApp",
+        collab_btn_generate: "🔗 GENERAR ENLLAÇ DE COL·LABORACIÓ"
+      },
+      es: {
+        btn_replay_video: "Repetir Vídeo",
+        btn_play_sound: "Reproducir con Sonido",
+        btn_talk_elena: "Hablar con Elena IA",
+        video_ended_title: "¿Quieres volver a ver la presentación o abrir un expediente técnico?",
+        gate_badge: "DIVISIÓN DE CONSULTORÍA TÉCNICA, CATASTRAL Y REGISTRAL",
+        gate_title: "Ingeniería Patrimonial, Segregaciones y Gestión Urbanística a la Carta",
+        gate_subtitle: "Transformamos inmuebles complejos o sin actividad en activos líquidos y rentables. Especialistas en Divisiones Horizontales, Segregaciones, Alteración Catastral para optimización de IBI, Alquiler con Opción a Compra e Inscripción en el Registro de la Propiedad.",
+        gate_security_title: "Acceso al Panel Técnico y Simulador de Costes",
+        gate_security_desc: "Resuelve la suma de verificación para acceder al simulador de costes de División Horizontal/Catastro y abrir expediente con Elena IA:",
+        gate_math_label: "Cuánto es",
+        gate_btn_access: "ENTRAR A CONSULTORÍA",
+        gate_error_msg: "Resultado incorrecto. Inténtalo de nuevo.",
+        pill_1_t: "📐 División Horizontal",
+        pill_1_d: "Proyecto técnico, cuotas, notaría y Registro.",
+        pill_2_t: "🏛️ Revisión Catastral",
+        pill_2_d: "Adecuación de usos para reducir el IBI comercial.",
+        pill_3_t: "🔑 Alquiler + Opción",
+        pill_3_d: "Renta inmediata mientras se inscribe la segregación.",
+        pill_4_t: "📊 Estudios de Mercado",
+        pill_4_d: "Valoración rigurosa de venta y alquiler €/m².",
+        nav_demand: "Demanda Activa",
+        nav_market: "Mercado Real",
+        nav_collab: "Colaboradores",
+        nav_elena_cta: "Iniciar Expediente",
+        main_header_title: "Consultoría Inmobiliaria, Técnica y Patrimonial a la Carta",
+        main_status_badge: "SERVICIO OFICIAL API COLEGIADO 4173 · AICAT 14200",
+        kpi_1_label: "DIVISIÓN HORIZONTAL",
+        kpi_1_val: "Llave en Mano",
+        kpi_1_sub: "Arquitectura + Notaría",
+        kpi_2_label: "OPTIMIZACIÓN IBI",
+        kpi_2_val: "Catastro",
+        kpi_2_sub: "Alteración de Usos",
+        kpi_3_label: "OPERATIVA DUAL",
+        kpi_3_val: "Alquiler + Compra",
+        kpi_3_sub: "Liquidez inmediata",
+        kpi_4_label: "SEGURIDAD JURÍDICA",
+        kpi_4_sub: "Registro de la Propiedad",
+        video_header_title: "PRESENTACIÓN LEVEL.IMMO · TECNOLOGÍA Y GESTIÓN PATRIMONIAL",
+        srv_section_title: "Servicios de Consultoría a la Carta para Copropietarios e Inversores",
+        srv_section_badge: "Gestión Integral 360°",
+        srv_section_intro: "Muchos edificios y locales comerciales históricos sufren bloqueos operativos o sobrecostes fiscales porque mantienen una única referencia sin división horizontal o figuran con un uso 100% comercial en Catastro pese a llevar años sin actividad en plantas superiores. Desde Level.immo ejecutamos la solución técnica, fiscal y jurídica completa:",
+        srv1_tag: "ARQUITECTURA + REGISTRO",
+        srv1_title: "1. División Horizontal y Segregaciones",
+        srv1_desc: "Levantamiento de planos, proyecto técnico de arquitectura, asignación de cuotas de participación, licencia municipal, escritura pública notarial, liquidación de AJD e inscripción de las nuevas fincas independientes en el Registro de la Propiedad.",
+        srv2_tag: "AHORRO FISCAL IBI",
+        srv2_title: "2. Alteración y Revisión Catastral",
+        srv2_desc: "Auditoría de la Sede Electrónica del Catastro. Adecuamos los usos y superficies de edificios que figuran erróneamente como 100% comercial u oficinas en plantas superiores cerradas, reduciendo drásticamente el recibo anual de IBI.",
+        srv3_tag: "AGILIDAD COMERCIAL",
+        srv3_title: "3. Alquiler con Opción a Compra Estructurado",
+        srv3_desc: "Permite la apertura inmediata del negocio en planta baja (adecuando acometidas de agua y luz) generando rentas mensuales desde el primer mes, mientras se tramita en paralelo la división horizontal para elevar la compraventa definitiva a escritura pública.",
+        srv4_tag: "VALORACIÓN API RIGUROSA",
+        srv4_title: "4. Estudios de Mercado y Viabilidad para Copropietarios",
+        srv4_desc: "Informes ejecutivos de precios de venta (€/m²) y alquiler comercial para comunidades de bienes, herencias y sociedades. Comparamos todos los escenarios (venta total, venta parcial o arrendamiento) para tomar decisiones seguras.",
+        time_sup: "⏱️ CRONOGRAMA LEGAL Y REGISTRAL",
+        time_title: "Comparativa de Escenarios Operativos hasta la Inscripción en el Registro de la Propiedad",
+        th_sc_name: "Escenario Operativo",
+        th_sc_time: "Plazo Estimado",
+        th_sc_req: "Trámites Requeridos",
+        th_sc_adv: "Ventaja Principal",
+        sc1_name: "A. Alquiler PB + Opción a Compra",
+        sc1_time: "1 - 3 semanas (Inicio)",
+        sc1_req: "Contrato dual + División Horizontal durante el arrendamiento (12-24m)",
+        sc1_adv: "Apertura rápida y renta inmediata",
+        sc2_name: "B. División Horizontal + Venta Fracción",
+        sc2_time: "3 - 6 meses",
+        sc2_req: "Proyecto arquitecto, Licencia/Declaración, Notaría, AJD (1,5%) y Registro",
+        sc2_adv: "La propiedad conserva el resto del edificio",
+        sc3_name: "C. Venta Directa Edificio Completo",
+        sc3_time: "4 - 8 semanas",
+        sc3_req: "Arras penitenciales, Escritura de Compraventa finca única y Registro",
+        sc3_adv: "Liquidación total sin costes de división",
+        calc_header: "Simulador de Costes: División Horizontal y Catastro",
+        calc_select_preset: "1. SELECCIONA EL TIPO DE ACTIVO PARA SIMULAR COSTES Y PLAZOS:",
+        pre_btn_local: "Local + Edificio",
+        pre_btn_edifici: "Edificio Plurifam.",
+        pre_btn_cadastre: "Solo Catastro",
+        calc_val_label: "Valor declarado de la finca a dividir (€):",
+        calc_ajd_label: "Impuesto AJD División Horizontal (1,5% Cataluña):",
+        calc_items_title: "🛠️ 2. PARTIDAS TÉCNICAS, NOTARIALES Y REGISTRALES (EDITABLES):",
+        calc_item_arch: "+ Proyecto Técnico Arquitecto (Planos y cuotas):",
+        calc_item_notary: "+ Notaría e Inscripción en el Registro de la Propiedad:",
+        calc_item_cat: "+ Expediente de Alteración Catastral (Ahorro IBI):",
+        calc_item_util: "+ Adecuación Acometidas (Agua/Luz independiente):",
+        calc_total_label: "COSTE TOTAL ESTIMADO DEL EXPEDIENTE:",
+        calc_total_sub: "Incluye impuestos (AJD), técnicos, notaría y Registro",
+        calc_rent_bridge_title: "💡 Financiación del Expediente vía Alquiler Puente",
+        calc_rent_bridge_desc: "Alquilando la Planta Baja comercial (ej. 950 €/mes) con Opción a Compra mientras se inscribe la División Horizontal, la propiedad ingresa 17.100 € brutos en 18 meses, cubriendo el 100% de los costes de segregación y generando tesorería neta desde el día 1.",
+        cta_main_elena: "ABRIR EXPEDIENTE Y AGENDAR LLAMADA CON ELENA IA",
+        footer_services_label: "Servicios Presenciales y Consultoría en:",
+        footer_legal: "Aviso Legal",
+        footer_privacy: "Privacidad y RGPD",
+        footer_cookies: "Cookies e IA",
+        elena_sub: "Apertura de Expedientes Técnicos y Patrimoniales · API 4173",
+        elena_sec_title: "Verificación de Seguridad y Confidencialidad RGPD:",
+        elena_sec_desc: "Para iniciar el asistente Elena IA y agendar una llamada técnica para tu inmueble o expediente, resuelve la suma:",
+        elena_rgpd_accept: "He leído y acepto la",
+        elena_rgpd_consent: "y consiento el tratamiento de los datos para abrir el expediente de consultoría con Level.immo.",
+        elena_step0_err: "Verifica la suma matemática y acepta la casilla de Privacidad RGPD.",
+        elena_btn_verify: "✔ Verificar e Iniciar Expediente con Elena IA",
+        elena_greet_1: "Hola, soy Elena, AI Advisor de Level.immo. Coordinamos proyectos de división horizontal, adecuación catastral (ahorro de IBI) y operaciones comerciales a medida con garantía colegial API.",
+        elena_greet_2: "Selecciona qué tipo de servicio o gestión necesitas para tu inmueble:",
+        elena_opt_1: "📐 División Horizontal / Segregación + Inscripción en el Registro de la Propiedad",
+        elena_opt_2: "🏛️ Revisión o Alteración Catastral (Adecuación de usos para reducir el IBI)",
+        elena_opt_3: "🔑 Estructuración de Alquiler Comercial con Opción a Compra o Venta Total",
+        elena_opt_4: "📊 Estudio de Mercado, Valoración Patrimonial y Asesoramiento a Copropietarios",
+        elena_step2_q: "Perfecto. ¿Cuál es tu perfil en esta operación y en qué municipio se encuentra el inmueble?",
+        elena_prof_1: "🏛️ Propietario / Copropietario del Inmueble",
+        elena_prof_2: "⚖️ Asesoría, Gestoría o Representante de la Propiedad",
+        elena_prof_3: "💼 Inversor / Interesado en Compra o Alquiler Comercial",
+        elena_town_label: "MUNICIPIO O REFERENCIA DEL INMUEBLE:",
+        elena_ph_town: "Ej: Alcanar, Amposta, La Ràpita, Vinaròs, Barcelona...",
+        elena_btn_continue: "Continuar →",
+        elena_step3_q: "Indícame tu nombre, teléfono, correo electrónico y qué día y hora prefieres para la llamada de contacto con nuestro API colegiado para iniciar el expediente:",
+        elena_ph_name: "Nombre completo, Despacho o Empresa",
+        elena_ph_email: "Correo electrónico de contacto",
+        elena_date_label: "📅 Fecha llamada",
+        elena_time_label: "⏰ Franja horaria",
+        elena_step3_err: "Completa nombre, teléfono válido y correo electrónico.",
+        elena_btn_confirm: "✔ Confirmar Expediente y Agendar Llamada",
+        elena_step4_title: "✅ ¡Expediente de Consultoría registrado con éxito!",
+        elena_btn_finish: "Finalizar y Volver a Consultoría",
+        collab_modal_title: "Red de Despachos y Colaboradores · Level.immo",
+        collab_modal_sub: "Colaboración profesional con Asesorías, Gestorías, Arquitectos y Simpatizantes",
+        collab_box_p1: "Si eres una asesoría fiscal/jurídica o conoces propietarios que necesitan desbloquear la venta o división horizontal de un activo, genera tu enlace directo de colaborador o abre un expediente conjunto con nosotros.",
+        collab_ph_name: "Tu Nombre o Despacho",
+        collab_ph_phone: "Teléfono / WhatsApp",
+        collab_btn_generate: "🔗 GENERAR ENLACE DE COLABORACIÓN"
+      },
+      en: {
+        btn_replay_video: "Replay Video",
+        btn_play_sound: "Play with Sound",
+        btn_talk_elena: "Talk to Elena AI",
+        video_ended_title: "Would you like to replay the presentation or open a technical file?",
+        gate_badge: "TECHNICAL, CADASTRAL & LAND REGISTRY CONSULTING DIVISION",
+        gate_title: "Bespoke Real Estate Engineering, Segregations & Urban Management",
+        gate_subtitle: "We transform complex or inactive properties into liquid, high-yield assets. Specialists in Horizontal Divisions, Property Segregations, Cadastral Alterations for IBI tax optimization, Rent-to-Own structuring, and Land Registry inscription.",
+        gate_security_title: "Access Technical Panel & Cost Simulator",
+        gate_security_desc: "Solve the verification sum to unlock the Horizontal Division/Cadastre cost simulator and open a file with Elena AI:",
+        gate_math_label: "What is",
+        gate_btn_access: "ENTER CONSULTING",
+        gate_error_msg: "Incorrect result. Please try again.",
+        pill_1_t: "📐 Horizontal Division",
+        pill_1_d: "Architectural project, quotas, notary & Registry.",
+        pill_2_t: "🏛️ Cadastral Review",
+        pill_2_d: "Use alteration to reduce commercial IBI tax.",
+        pill_3_t: "🔑 Rent-to-Own",
+        pill_3_d: "Immediate rental income while registering division.",
+        pill_4_t: "📊 Market Valuation",
+        pill_4_d: "Rigorous sale & commercial rental €/sqm studies.",
+        nav_demand: "Active Demand",
+        nav_market: "Live Market",
+        nav_collab: "Partners",
+        nav_elena_cta: "Start File",
+        main_header_title: "On-Demand Real Estate, Technical & Patrimonial Consulting",
+        main_status_badge: "OFFICIAL LICENSED API 4173 · AICAT 14200",
+        kpi_1_label: "HORIZONTAL DIVISION",
+        kpi_1_val: "Turnkey",
+        kpi_1_sub: "Architecture + Notary",
+        kpi_2_label: "IBI TAX SAVINGS",
+        kpi_2_val: "Cadastre",
+        kpi_2_sub: "Use Alteration",
+        kpi_3_label: "DUAL STRUCTURE",
+        kpi_3_val: "Rent + Option",
+        kpi_3_sub: "Immediate cash-flow",
+        kpi_4_label: "LEGAL CERTAINTY",
+        kpi_4_sub: "Land Registry",
+        video_header_title: "LEVEL.IMMO PRESENTATION · TECHNOLOGY & ASSET MANAGEMENT",
+        srv_section_title: "On-Demand Consulting Services for Co-Owners & Investors",
+        srv_section_badge: "360° Full Management",
+        srv_section_intro: "Many historic buildings and commercial premises suffer operational blocks or excessive tax burdens because they lack horizontal division or are registered as 100% commercial in the Cadastre despite having inactive upper floors. Level.immo executes the complete technical, tax, and legal solution:",
+        srv1_tag: "ARCHITECTURE + REGISTRY",
+        srv1_title: "1. Horizontal Division & Segregations",
+        srv1_desc: "Drafting of blueprints, architectural project, allocation of ownership quotas, municipal license, public notary deed, AJD tax settlement, and registration of independent entities in the Land Registry.",
+        srv2_tag: "IBI PROPERTY TAX SAVINGS",
+        srv2_title: "2. Cadastral Alteration & Review",
+        srv2_desc: "Audit of the Electronic Cadastre. We update the uses and areas of buildings erroneously listed as 100% commercial on inactive upper floors, significantly reducing annual IBI property tax bills.",
+        srv3_tag: "COMMERCIAL AGILITY",
+        srv3_title: "3. Structured Rent-to-Own Agreements",
+        srv3_desc: "Enables immediate business opening on the ground floor (adapting water/electricity utilities) generating monthly rent from day one, while the horizontal division is processed in parallel prior to the final sale deed.",
+        srv4_tag: "LICENSED API VALUATION",
+        srv4_title: "4. Market & Feasibility Studies for Co-Owners",
+        srv4_desc: "Executive reports on sale prices (€/sqm) and commercial rents for co-owners, estates, and companies. We compare all scenarios (full sale, partial sale, or lease) for safe decision-making.",
+        time_sup: "⏱️ LEGAL & REGISTRY TIMELINE",
+        time_title: "Comparison of Operating Scenarios up to Land Registry Inscription",
+        th_sc_name: "Operating Scenario",
+        th_sc_time: "Estimated Time",
+        th_sc_req: "Required Procedures",
+        th_sc_adv: "Key Advantage",
+        sc1_name: "A. Ground Floor Lease + Purchase Option",
+        sc1_time: "1 - 3 weeks (Start)",
+        sc1_req: "Dual contract + Horizontal Division during lease term (12-24m)",
+        sc1_adv: "Fast opening & immediate income",
+        sc2_name: "B. Horizontal Division + Partial Sale",
+        sc2_time: "3 - 6 months",
+        sc2_req: "Architect project, Permit, Notary, AJD Tax (1.5%) & Land Registry",
+        sc2_adv: "Owners retain upper floors",
+        sc3_name: "C. Direct Sale of Entire Building",
+        sc3_time: "4 - 8 weeks",
+        sc3_req: "Earnest money contract, single Public Deed of Sale & Registry",
+        sc3_adv: "Full liquidity without division costs",
+        calc_header: "Cost Simulator: Horizontal Division & Cadastre",
+        calc_select_preset: "1. SELECT ASSET TYPE TO SIMULATE COSTS & TIMELINES:",
+        pre_btn_local: "Premises + Bldg",
+        pre_btn_edifici: "Multi-family Bldg",
+        pre_btn_cadastre: "Cadastre Only",
+        calc_val_label: "Declared value of property to divide (€):",
+        calc_ajd_label: "AJD Stamp Duty Tax (1.5% Catalonia):",
+        calc_items_title: "🛠️ 2. TECHNICAL, NOTARY & REGISTRY ITEMS (EDITABLE):",
+        calc_item_arch: "+ Architect Technical Project (Plans & quotas):",
+        calc_item_notary: "+ Notary & Land Registry Inscription:",
+        calc_item_cat: "+ Cadastral Alteration File (IBI Tax Savings):",
+        calc_item_util: "+ Utility Connections (Independent Water/Power):",
+        calc_total_label: "ESTIMATED TOTAL FILE COST:",
+        calc_total_sub: "Includes taxes (AJD), architect, notary & Land Registry",
+        calc_rent_bridge_title: "💡 Self-Financing via Bridge Lease",
+        calc_rent_bridge_desc: "By leasing the commercial Ground Floor (e.g., 950 €/month) with a Purchase Option while registering the Horizontal Division, the owners collect 17,100 € gross over 18 months, covering 100% of segregation costs.",
+        cta_main_elena: "OPEN FILE & SCHEDULE CALL WITH ELENA AI",
+        footer_services_label: "On-site Consulting Services in:",
+        footer_legal: "Legal Notice",
+        footer_privacy: "Privacy & GDPR",
+        footer_cookies: "Cookies & AI",
+        elena_sub: "Technical & Real Estate File Intake · API 4173",
+        elena_sec_title: "GDPR Security & Confidentiality Verification:",
+        elena_sec_desc: "To start Elena AI and schedule a technical call for your property or file, solve the sum:",
+        elena_rgpd_accept: "I have read and accept the",
+        elena_rgpd_consent: "and consent to data processing to open a consulting file with Level.immo.",
+        elena_step0_err: "Please verify the math sum and accept the GDPR Privacy checkbox.",
+        elena_btn_verify: "✔ Verify & Start File with Elena AI",
+        elena_greet_1: "Hello, I am Elena, AI Advisor at Level.immo. We coordinate horizontal division projects, cadastral reviews (IBI savings), and bespoke commercial transactions.",
+        elena_greet_2: "Select the type of service or management you need:",
+        elena_opt_1: "📐 Horizontal Division / Segregation + Land Registry Inscription",
+        elena_opt_2: "🏛️ Cadastral Review or Alteration (Use update to reduce IBI tax)",
+        elena_opt_3: "🔑 Commercial Rent-to-Own Structuring or Full Sale",
+        elena_opt_4: "📊 Market Study, Valuation & Co-Owner Advisory",
+        elena_step2_q: "Perfect. What is your role in this transaction and in which municipality is the property located?",
+        elena_prof_1: "🏛️ Property Owner / Co-Owner",
+        elena_prof_2: "⚖️ Legal/Tax Advisor or Property Representative",
+        elena_prof_3: "💼 Investor / Commercial Buyer or Tenant",
+        elena_town_label: "MUNICIPALITY OR PROPERTY REFERENCE:",
+        elena_ph_town: "E.g., Alcanar, Amposta, La Ràpita, Vinaròs, Barcelona...",
+        elena_btn_continue: "Continue →",
+        elena_step3_q: "Please provide your name, phone, email, and preferred date and time slot for our licensed API advisor to call you:",
+        elena_ph_name: "Full Name, Firm or Company",
+        elena_ph_email: "Contact email address",
+        elena_date_label: "📅 Call Date",
+        elena_time_label: "⏰ Time Slot",
+        elena_step3_err: "Please enter a valid name, phone number, and email.",
+        elena_btn_confirm: "✔ Confirm File & Schedule Call",
+        elena_step4_title: "✅ Consulting File Successfully Registered!",
+        elena_btn_finish: "Finish & Return to Consulting",
+        collab_modal_title: "Professional Firms & Partners Network · Level.immo",
+        collab_modal_sub: "Professional collaboration with Tax/Legal Advisors, Architects & Partners",
+        collab_box_p1: "If you are a tax/legal advisory firm or know property owners who need to unlock a sale or horizontal division, generate your partner link here.",
+        collab_ph_name: "Your Name or Firm",
+        collab_ph_phone: "Phone / WhatsApp",
+        collab_btn_generate: "🔗 GENERATE PARTNER LINK"
+      },
+      fr: {
+        btn_replay_video: "Revoir la Vidéo",
+        btn_play_sound: "Lire avec le Son",
+        btn_talk_elena: "Parler avec Elena IA",
+        video_ended_title: "Souhaitez-vous revoir la présentation ou ouvrir un dossier technique ?",
+        gate_badge: "DIVISION DE CONSEIL TECHNIQUE, CADASTRAL ET FONCIER",
+        gate_title: "Ingénierie Patrimoniale, Divisions et Gestion Urbanistique sur Mesure",
+        gate_subtitle: "Nous transformons des biens complexes ou inactifs en actifs liquides et rentables. Spécialistes en Divisions Horizontales, Ségrégations, Révision Cadastrale (optimisation IBI), Location avec Option d'Achat et Inscription au Registre Foncier.",
+        gate_security_title: "Accès au Panneau Technique et Simulateur de Coûts",
+        gate_security_desc: "Résolvez la somme pour accéder au simulateur de Division Horizontale/Cadastre et ouvrir un dossier avec Elena IA :",
+        gate_math_label: "Combien font",
+        gate_btn_access: "ENTRER EN CONSULTATION",
+        gate_error_msg: "Résultat incorrect. Veuillez réessayer.",
+        nav_demand: "Demande Active",
+        nav_market: "Marché Réel",
+        nav_collab: "Partenaires",
+        nav_elena_cta: "Ouvrir Dossier",
+        main_header_title: "Conseil Immobilier, Technique et Patrimonial à la Carte",
+        main_status_badge: "SERVICE OFFICIEL API AGRÉÉ 4173 · AICAT 14200",
+        video_header_title: "PRÉSENTATION LEVEL.IMMO · TECHNOLOGIE ET GESTION PATRIMONIALE",
+        srv_section_title: "Services de Conseil à la Carte pour Copropriétaires et Investisseurs",
+        calc_header: "Simulateur de Coûts : Division Horizontale et Cadastre",
+        cta_main_elena: "OUVRIR UN DOSSIER ET PLANIFIER UN APPEL AVEC ELENA IA",
+        footer_legal: "Mentions Légales",
+        footer_privacy: "Confidentialité & RGPD",
+        footer_cookies: "Cookies & IA"
+      },
+      de: {
+        btn_replay_video: "Video wiederholen",
+        btn_play_sound: "Mit Ton abspielen",
+        btn_talk_elena: "Mit Elena KI sprechen",
+        video_ended_title: "Möchten Sie die Präsentation erneut ansehen oder eine Akte eröffnen?",
+        gate_badge: "ABTEILUNG FÜR TECHNISCHE, KATASTER- UND GRUNDBUCHBERATUNG",
+        gate_title: "Maßgeschneiderte Immobilienberatung, Teilungen & Katastermanagement",
+        gate_subtitle: "Wir verwandeln komplexe oder leerstehende Immobilien in liquide, rentable Werte. Spezialisten für Horizontale Teilung, Katasteränderung zur Grundsteueroptimierung (IBI), Mietkauf und Grundbucheintragung.",
+        gate_security_title: "Zugang zum Technik-Panel & Kostenrechner",
+        gate_security_desc: "Lösen Sie die Rechenaufgabe, um den Kostenrechner freizuschalten und eine Akte mit Elena KI zu eröffnen:",
+        gate_math_label: "Was ergibt",
+        gate_btn_access: "ZUR BERATUNG",
+        gate_error_msg: "Falsches Ergebnis. Bitte erneut versuchen.",
+        nav_demand: "Aktive Nachfrage",
+        nav_market: "Live-Markt",
+        nav_collab: "Partner",
+        nav_elena_cta: "Akte eröffnen",
+        main_header_title: "Maßgeschneiderte Immobilien-, Technik- und Vermögensberatung",
+        main_status_badge: "OFFIZIELLER SERVICE API 4173 · AICAT 14200",
+        video_header_title: "LEVEL.IMMO PRÄSENTATION · TECHNOLOGIE & VERMÖGENSMANAGEMENT",
+        srv_section_title: "Beratungsleistungen nach Maß für Miteigentümer und Investoren",
+        calc_header: "Kostenrechner: Horizontale Teilung & Kataster",
+        cta_main_elena: "AKTE ERÖFFNEN & RÜCKRUF MIT ELENA KI PLANEN",
+        footer_legal: "Impressum",
+        footer_privacy: "Datenschutz & DSGVO",
+        footer_cookies: "Cookies & KI"
+      },
+      it: {
+        btn_replay_video: "Ripeti Video",
+        btn_play_sound: "Riproduci con Audio",
+        btn_talk_elena: "Parla con Elena IA",
+        video_ended_title: "Vuoi rivedere la presentazione o aprire una pratica tecnica?",
+        gate_badge: "DIVISIONE DI CONSULENZA TECNICA, CATASTALE E IPOTECARIA",
+        gate_title: "Ingegneria Patrimoniale, Frazionamenti e Gestione Urbanistica su Misura",
+        gate_subtitle: "Trasformiamo immobili complessi o inattivi in asset liquidi e redditizi. Specialisti in Divisioni Orizzontali, Frazionamenti, Variazioni Catastali per riduzione IBI, Affitto con Riscatto e Trascrizione nei Registri Immobiliari.",
+        gate_security_title: "Accesso al Pannello Tecnico e Simulatore Costi",
+        gate_security_desc: "Risolvi la somma per accedere al simulatore di Divisione Orizzontale/Catasto e aprire una pratica con Elena IA:",
+        gate_math_label: "Quanto fa",
+        gate_btn_access: "ENTRA IN CONSULENZA",
+        gate_error_msg: "Risultato errato. Riprova.",
+        nav_demand: "Domanda Attiva",
+        nav_market: "Mercato Reale",
+        nav_collab: "Collaboratori",
+        nav_elena_cta: "Apri Pratica",
+        main_header_title: "Consulenza Immobiliare, Tecnica e Patrimoniale su Misura",
+        main_status_badge: "SERVIZIO UFFICIALE API 4173 · AICAT 14200",
+        video_header_title: "PRESENTAZIONE LEVEL.IMMO · TECNOLOGIA E GESTIONE PATRIMONIALE",
+        srv_section_title: "Servizi di Consulenza su Misura per Comproprietari e Investitori",
+        calc_header: "Simulatore Costi: Divisione Orizzontale e Catasto",
+        cta_main_elena: "APRI PRATICA E PRENOTA CHIAMATA CON ELENA IA",
+        footer_legal: "Note Legali",
+        footer_privacy: "Privacy e GDPR",
+        footer_cookies: "Cookie e IA"
+      },
+      ar: {
+        btn_replay_video: "إعادة تشغيل الفيديو",
+        btn_play_sound: "تشغيل بالصوت",
+        btn_talk_elena: "تحدث مع المستشارة الذكية Elena",
+        video_ended_title: "هل ترغب في إعادة مشاهدة العرض أو فتح ملف استشاري؟",
+        gate_badge: "قسم الاستشارات الفنية والعقارية والسجل العقاري",
+        gate_title: "هندسة الأصول العقارية، الفرز والتقسيم وإدارة التخطيط حسب الطلب",
+        gate_subtitle: "نحول العقارات المعقدة أو غير النشطة إلى أصول سائلة وعالية العائد. متخصصون في التقسيم الأفقي، تعديل بيانات السجل المساحي لتخفيض ضريبة العقار (IBI)، الإيجار المنتهي بالتملك والتسجيل العقاري.",
+        gate_security_title: "الدخول إلى اللوحة الفنية ومحاكي التكاليف",
+        gate_security_desc: "أجب عن المعادلة لفتح محاكي تكاليف التقسيم الأفقي وفتح ملف مع Elena IA:",
+        gate_math_label: "كم يساوي",
+        gate_btn_access: "دخول قسم الاستشارات",
+        gate_error_msg: "النتيجة غير صحيحة. حاول مرة أخرى.",
+        nav_demand: "الطلب النشط",
+        nav_market: "السوق المباشر",
+        nav_collab: "المتعاونون",
+        nav_elena_cta: "فتح ملف",
+        main_header_title: "الاستشارات العقارية والفنية وإدارة الأصول حسب الطلب",
+        main_status_badge: "خدمة رسمية معتمدة API 4173 · AICAT 14200",
+        video_header_title: "عرض LEVEL.IMMO · التكنولوجيا وإدارة الأصول العقارية",
+        srv_section_title: "خدمات استشارية مخصصة للشركاء الملاك والمستثمرين",
+        calc_header: "محاكي التكاليف: التقسيم الأفقي والسجل المساحي",
+        cta_main_elena: "فتح ملف وجدولة مكالمة مع المستشارة الذكية ELENA",
+        footer_legal: "إشعار قانوني",
+        footer_privacy: "الخصوصية و RGPD",
+        footer_cookies: "ملفات تعريف الارتباط والذكاء الاصطناعي"
+      },
+      zh: {
+        btn_replay_video: "重播视频",
+        btn_play_sound: "开启声音播放",
+        btn_talk_elena: "与 Elena AI 顾问对话",
+        video_ended_title: "您想重新观看演示视频还是立即建立技术咨询档案？",
+        gate_badge: "技术、地籍与产权登记定制咨询部",
+        gate_title: "定制化房地产资产工程、产权分割与城市规划管理",
+        gate_subtitle: "我们将复杂或闲置的物业转化为高流动性、高回报的优质资产。专注于水平产权分割 (División Horizontal)、地籍用途变更以大幅降低 IBI 房产税、租购结合方案及产权局登记。",
+        gate_security_title: "进入技术面板与成本模拟器",
+        gate_security_desc: "请完成加法验证以解锁水平产权分割/地籍成本模拟器，并与 Elena AI 建立专属档案：",
+        gate_math_label: "请计算",
+        gate_btn_access: "进入咨询中心",
+        gate_error_msg: "计算结果有误，请重试。",
+        nav_demand: "活跃需求",
+        nav_market: "实时市场",
+        nav_collab: "合作伙伴",
+        nav_elena_cta: "建立档案",
+        main_header_title: "定制化房地产、技术与家族资产管理咨询",
+        main_status_badge: "官方注册房地产经纪人 API 4173 · AICAT 14200",
+        video_header_title: "LEVEL.IMMO 官方演示 · 科技与资产管理",
+        srv_section_title: "面向共有产权人与投资者的定制咨询服务",
+        calc_header: "成本模拟器：水平产权分割与地籍变更",
+        cta_main_elena: "建立咨询档案并预约 ELENA AI 电话会议",
+        footer_legal: "法律声明",
+        footer_privacy: "隐私与 GDPR",
+        footer_cookies: "Cookie 与 AI 声明"
+      }
+    };
+
+    function updateCrossDomainLinks(lang) {
+      const demandLink = document.getElementById('nav-link-demand');
+      const marketLink = document.getElementById('nav-link-market');
+      const logoLink = document.getElementById('nav-logo-link');
+      if (demandLink) demandLink.href = `https://app.level-i.com/demanda-activa?lang=${lang}`;
+      if (marketLink) marketLink.href = `https://app.level-i.com/mercado-real?lang=${lang}`;
+      if (logoLink) logoLink.href = `https://app.level-i.com/mercado-real?lang=${lang}`;
+    }
+
+    function changeLanguage(lang) {
+      currentLang = lang;
+      try {
+        localStorage.setItem('level_lang', lang);
+        sessionStorage.setItem('level_lang', lang);
+      } catch (e) {}
+
+      document.getElementById('lang-select-gate').value = lang;
+      document.getElementById('lang-select-main').value = lang;
+      const root = document.getElementById('html-root');
+      root.lang = lang;
+      root.dir = (lang === 'ar') ? 'rtl' : 'ltr';
+
+      const dict = i18n[lang] || i18n.ca;
+      const fallbackDict = i18n.es;
+
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (dict[key]) el.textContent = dict[key];
+        else if (fallbackDict[key]) el.textContent = fallbackDict[key];
+        else if (i18n.ca[key]) el.textContent = i18n.ca[key];
+      });
+
+      document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+        const key = el.getAttribute('data-i18n-placeholder');
+        if (dict[key]) el.placeholder = dict[key];
+        else if (fallbackDict[key]) el.placeholder = fallbackDict[key];
+      });
+
+      updateCrossDomainLinks(lang);
+      recalculateConsultoria();
+    }
+
+    (function initSessionLanguage() {
+      const params = new URLSearchParams(window.location.search);
+      const urlLang = params.get('lang');
+      let savedLang = null;
+      try {
+        savedLang = localStorage.getItem('level_lang') || sessionStorage.getItem('level_lang');
+      } catch (e) {}
+      const initialLang = (urlLang && i18n[urlLang]) ? urlLang : ((savedLang && i18n[savedLang]) ? savedLang : 'ca');
+      changeLanguage(initialLang);
+    })();
   </script>
 </body>
 </html>
