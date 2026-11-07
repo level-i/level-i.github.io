@@ -78,16 +78,16 @@
     border-color: var(--emerald);
   }
 
-  /* ESTRUCTURA 3 COLUMNAS */
+  /* ESTRUCTURA 3 COLUMNAS Y PANTALLA COMPLETA CORREGIDA */
   .app-layout {
     display: grid;
-    grid-template-columns: 260px 1fr 310px;
+    grid-template-columns: 260px minmax(0, 1fr) 310px;
     min-height: calc(100vh - 58px);
     padding-bottom: 62px;
-    transition: grid-template-columns 0.3s ease;
+    width: 100%;
   }
   .app-layout.fullscreen-mode {
-    grid-template-columns: 0px 1fr 0px;
+    grid-template-columns: minmax(0, 1fr);
   }
   .app-layout.fullscreen-mode .sidebar-left,
   .app-layout.fullscreen-mode .sidebar-right {
@@ -199,18 +199,26 @@
   .legal-links a:hover { color: var(--emerald); text-decoration: underline; }
 
   /* ZONA CENTRAL */
-  .main-stage { display: flex; flex-direction: column; background: var(--bg-main); width: 100%; overflow: hidden; }
+  .main-stage {
+    display: flex;
+    flex-direction: column;
+    background: var(--bg-main);
+    width: 100%;
+    min-width: 0;
+  }
   .topbar {
-    height: 60px;
+    min-height: 60px;
     border-bottom: 1px solid var(--border);
-    padding: 0 24px;
+    padding: 10px 24px;
     display: flex;
     align-items: center;
     justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
     background: rgba(13, 19, 34, 0.9);
   }
   .topbar-title { font-size: 13.5px; color: var(--text-muted); font-weight: 500; }
-  .topbar-right { display: flex; align-items: center; gap: 12px; }
+  .topbar-right { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
   .badge-private {
     background: var(--amber-soft);
     border: 1px solid rgba(245, 158, 11, 0.4);
@@ -237,11 +245,10 @@
   .lang-select:hover { border-color: var(--emerald); }
 
   .stage-content {
-    padding: 30px 26px;
-    max-width: 1180px;
+    padding: 28px 24px;
+    max-width: 1220px;
     width: 100%;
     margin: 0 auto;
-    overflow-y: auto;
     flex: 1;
   }
 
@@ -258,7 +265,7 @@
   .login-card h1 { font-size: 23px; font-weight: 800; margin-bottom: 10px; line-height: 1.3; }
   .login-card p.lead { font-size: 13.5px; color: var(--text-muted); line-height: 1.55; margin-bottom: 22px; }
   .form-group { margin-bottom: 16px; }
-  .form-label { display: block; font-size: 12.5px; font-weight: 600; color: #cbd5e1; margin-bottom: 8px; }
+  .form-label { display: block; font-size: 12.5px; font-weight: 600; color: #cbd5e1; margin-bottom: 8px; cursor: pointer; }
   .form-input {
     width: 100%;
     background: var(--bg-input);
@@ -306,7 +313,7 @@
     margin-bottom: 20px;
     gap: 10px;
   }
-  .spam-question { font-size: 13.5px; font-weight: 700; color: var(--amber); }
+  .spam-question { font-size: 13.5px; font-weight: 700; color: var(--amber); cursor: pointer; }
   .spam-input {
     width: 90px;
     background: var(--bg-panel);
@@ -370,7 +377,7 @@
   #msg-error, #msg-legal-error { background: var(--danger-soft); border: 1px solid var(--danger); color: #fca5a5; }
 
   /* DASHBOARD */
-  #portal-dashboard { display: none; }
+  #portal-dashboard { display: none; width: 100%; }
   .dash-toolbar {
     background: var(--bg-panel);
     border: 1px solid var(--border);
@@ -447,6 +454,7 @@
     border-radius: 14px;
     padding: 20px;
     margin-bottom: 20px;
+    width: 100%;
   }
   .panel-header {
     display: flex;
@@ -545,7 +553,7 @@
   .pill-map-action:hover { transform: translateY(-1px); opacity: 0.92; }
   .map-iframe-wrapper {
     width: 100%;
-    height: 215px;
+    height: 235px;
     border-radius: 10px;
     overflow: hidden;
     border: 1px solid var(--border);
@@ -750,11 +758,24 @@
     overflow: hidden;
   }
 
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
   @media (max-width: 980px) {
     .mobile-top-bar { display: flex; }
-    .app-layout { grid-template-columns: 1fr; margin-top: 55px; }
+    .app-layout { grid-template-columns: minmax(0, 1fr); margin-top: 55px; }
     .sidebar-left, .sidebar-right { display: none; }
     .grid-2col, .grid-3col { grid-template-columns: 1fr; }
+    .stage-content { padding: 18px 14px; }
     #elena-chat-window { right: 0; bottom: 58px; width: 100%; border-radius: 16px 16px 0 0; }
   }
 </style>
@@ -816,7 +837,8 @@
       <div class="topbar-title" data-i18n="topbar_title">Consola PropTech · Reverse Market & Gestión de Alquileres</div>
       <div class="topbar-right">
         <div class="badge-private">🔒 <span data-i18n="badge_private">Área Privada Verificada</span></div>
-        <select id="lang-selector" class="lang-select" onchange="cambiarIdioma(this.value)" translate="no">
+        <label for="lang-selector" class="sr-only">Seleccionar idioma</label>
+        <select id="lang-selector" class="lang-select" aria-label="Seleccionar idioma" onchange="cambiarIdioma(this.value)" translate="no">
           <option value="es">🇪🇸 Español</option>
           <option value="ca">🟨 Català</option>
           <option value="en">🇬🇧 English</option>
@@ -830,7 +852,7 @@
     </header>
 
     <div class="stage-content">
-      <!-- SECCIÓN 1: LOGIN (LIMPIO SIN DATOS HARDCODEADOS) -->
+      <!-- SECCIÓN 1: LOGIN -->
       <section id="login-section" class="login-card">
         <h1 data-i18n="login_title">Acceso Residentes, Propietarios y Servicios Jurídicos</h1>
         <p class="lead" id="desc-login" data-i18n="login_desc">
@@ -840,12 +862,12 @@
         <!-- FASE 1: PEDIR DNI -->
         <div id="fase-dni">
           <div class="form-group">
-            <label class="form-label" data-i18n="label_dni">DNI / NIE / CIF del Titular o Letrado Autorizado (Conecta con Elena IA)</label>
-            <input type="text" id="input-dni" class="form-input" placeholder="Ej: 00000000X / B12345678" autocomplete="off">
+            <label for="input-dni" class="form-label" data-i18n="label_dni">DNI / NIE / CIF del Titular o Letrado Autorizado (Conecta con Elena IA)</label>
+            <input type="text" id="input-dni" name="input_dni" class="form-input" placeholder="Ej: 00000000X / B12345678" autocomplete="off">
           </div>
 
           <div class="privacy-box">
-            <input type="checkbox" id="chk-privacidad">
+            <input type="checkbox" id="chk-privacidad" name="chk_privacidad">
             <label for="chk-privacidad">
               <span data-i18n="chk_accept_prefix">Acepto las</span>
               <span class="privacy-link" onclick="event.preventDefault(); abrirModal('modal-privacidad');" data-i18n="chk_accept_link">Condiciones y la Privacidad</span>.
@@ -854,8 +876,8 @@
           </div>
 
           <div class="spam-box" id="caja-mates">
-            <span class="spam-question" id="lvl-math-question">Verificación: ¿Cuánto es ...?</span>
-            <input type="number" id="input-math" class="spam-input" placeholder="?">
+            <label for="input-math" class="spam-question" id="lvl-math-question">Verificación: ¿Cuánto es ...?</label>
+            <input type="number" id="input-math" name="input_math" class="spam-input" aria-label="Resultado de la suma de verificación" placeholder="?">
           </div>
 
           <button type="button" class="btn-primary" id="btn-acceso" onclick="llamarAlWebhook()" data-i18n="btn_request_pin">
@@ -869,10 +891,10 @@
           <div style="color: var(--emerald); font-weight: 800; font-size: 16px; margin-bottom: 10px;" data-i18n="pin_sent_title">
             ¡Identidad verificada!
           </div>
-          <p id="texto-instruccion-pin" style="color: var(--text-muted); font-size: 13.5px; margin-bottom: 16px; line-height: 1.5;" data-i18n="pin_sent_desc">
+          <label for="input-pin-user" id="texto-instruccion-pin" style="display:block; color: var(--text-muted); font-size: 13.5px; margin-bottom: 16px; line-height: 1.5; cursor:pointer;" data-i18n="pin_sent_desc">
             Te acabamos de enviar un enlace y un <strong>PIN temporal de 4 cifras</strong> a tu WhatsApp. Introduce el PIN aquí abajo para abrir tu expediente a pantalla completa:
-          </p>
-          <input type="number" id="input-pin-user" class="pin-input-big" placeholder="••••">
+          </label>
+          <input type="text" inputmode="numeric" maxlength="4" id="input-pin-user" name="input_pin_user" class="pin-input-big" aria-label="PIN temporal de 4 cifras" placeholder="••••">
           <button type="button" class="btn-primary" id="btn-validar-pin" onclick="validarPin()" data-i18n="btn_enter_portal">
             Entrar al Portal a Pantalla Completa →
           </button>
@@ -893,7 +915,7 @@
               🏠 Expediente del Residente
             </button>
             <button type="button" id="btn-tab-propietaria" class="tab-btn owner-tab" style="display:none;" onclick="mostrarVistaInterna('propietaria')" data-i18n="tab_owner">
-              💼 Área Propietaria (Radar de Morosidad, GPS y Servicios Jurídicos)
+              💼 Área Propietaria (Radar, GPS y Servicios Jurídicos)
             </button>
           </div>
 
@@ -915,7 +937,7 @@
             <span class="badge badge-info">3 PROPIEDADES · 4 INQUILINOS</span>
           </div>
           <p style="font-size:14px; color:var(--text-muted); margin-bottom:14px;">
-            <span data-i18n="owner_hello">Hola,</span> <strong style="color:#fff;" id="owner-greeting-name">Propietario</strong>. <span data-i18n="owner_subdesc">Selecciona qué información de tus inmuebles deseas consultar, activa la ruta GPS en auto o asigna acceso a tus servicios jurídicos:</span>
+            <span data-i18n="owner_hello">Hola,</span> <strong style="color:#fff;" id="owner-greeting-name">Carmen Forcadell</strong>. <span data-i18n="owner_subdesc">Selecciona qué información de tus inmuebles deseas consultar, activa la ruta GPS en auto o asigna acceso a tus servicios jurídicos:</span>
           </p>
 
           <div class="owner-cards-grid">
@@ -960,7 +982,7 @@
               </div>
             </div>
             <div class="map-iframe-wrapper">
-              <iframe id="owner-map-iframe" src="https://maps.google.com/maps?q=40.576956,0.550353&t=&z=16&ie=UTF8&iwloc=&output=embed" loading="lazy"></iframe>
+              <iframe id="owner-map-iframe" title="Mapa de Cartera del Propietario" src="https://maps.google.com/maps?q=40.576956,0.550353&t=&z=16&ie=UTF8&iwloc=&output=embed" loading="lazy"></iframe>
             </div>
           </div>
 
@@ -971,33 +993,33 @@
               <span class="badge badge-success">ALTA + INSTRUCCIONES POR EMAIL</span>
             </div>
             <p style="font-size:13px; color:var(--text-muted); margin-bottom:16px; line-height:1.55;">
-              Registra a tu abogado o despacho jurídico en <code>PROPERTY_PROPIETARIOS_LEGAL_SERVICES</code>. Al guardar, el sistema enviará los datos al webhook para registrar al letrado y disparar su correo corporativo de bienvenida.
+              Registra a tu abogado o despacho jurídico en <code>PROPERTY_PROPIETARIOS_LEGAL_SERVICES</code>. Al guardar, el sistema registra los datos en la tabla y dispara el correo electrónico de bienvenida con las instrucciones paso a paso.
             </p>
 
             <form onsubmit="enviarAutorizacionAbogado(event)">
               <div class="grid-3col">
                 <div class="form-group" style="margin-bottom:0;">
-                  <label class="form-label">Nombre del Abogado / Despacho *</label>
-                  <input type="text" id="input-nombre-abogado" class="form-input" placeholder="Ej: Bufete Martínez & Asociados" required>
+                  <label for="input-nombre-abogado" class="form-label">Nombre del Abogado / Despacho *</label>
+                  <input type="text" id="input-nombre-abogado" name="nombre_abogado" class="form-input" placeholder="Ej: Bufete Martínez & Asociados" required>
                 </div>
                 <div class="form-group" style="margin-bottom:0;">
-                  <label class="form-label">DNI / NIE / CIF del Abogado *</label>
-                  <input type="text" id="input-dni-abogado" class="form-input" placeholder="Ej: 12345678Z o B12345678" required>
+                  <label for="input-dni-abogado" class="form-label">DNI / NIE / CIF del Abogado *</label>
+                  <input type="text" id="input-dni-abogado" name="dni_abogado" class="form-input" placeholder="Ej: 12345678Z o B12345678" required>
                 </div>
                 <div class="form-group" style="margin-bottom:0;">
-                  <label class="form-label">Email del Abogado (Para Bienvenida) *</label>
-                  <input type="email" id="input-email-abogado" class="form-input" placeholder="abogado@despacho.com" required>
+                  <label for="input-email-abogado" class="form-label">Email del Abogado (Para Bienvenida) *</label>
+                  <input type="email" id="input-email-abogado" name="email_abogado" class="form-input" placeholder="abogado@despacho.com" required>
                 </div>
               </div>
 
               <div class="grid-2col" style="margin-bottom:14px;">
                 <div class="form-group" style="margin-bottom:0;">
-                  <label class="form-label">Teléfono Móvil WhatsApp (con prefijo 34) *</label>
-                  <input type="text" id="input-tel-abogado" class="form-input" placeholder="Ej: 34600112233" required>
+                  <label for="input-tel-abogado" class="form-label">Teléfono Móvil WhatsApp (con prefijo 34) *</label>
+                  <input type="text" id="input-tel-abogado" name="tel_abogado" class="form-input" placeholder="Ej: 34600112233" required>
                 </div>
                 <div class="form-group" style="margin-bottom:0;">
-                  <label class="form-label">Inmuebles Autorizados *</label>
-                  <input type="text" id="input-prop-abogado" class="form-input" value="Martinenca, Jaume I, Travessera" placeholder="Ej: Martinenca, Jaume I, Travessera" required>
+                  <label for="input-prop-abogado" class="form-label">Inmuebles Autorizados (Clic rápido o escribe) *</label>
+                  <input type="text" id="input-prop-abogado" name="prop_abogado" class="form-input" value="Martinenca, Jaume I, Travessera" placeholder="Ej: Martinenca, Jaume I, Travessera" required>
                   <div class="prop-chips-bar">
                     <button type="button" class="prop-chip" onclick="togglePropiedadAbogado('Martinenca')">+ Martinenca</button>
                     <button type="button" class="prop-chip" onclick="togglePropiedadAbogado('Jaume I')">+ Jaume I</button>
@@ -1009,17 +1031,17 @@
 
               <div class="grid-2col" style="margin-bottom:16px; align-items:center;">
                 <div class="form-group" style="margin-bottom:0;">
-                  <label class="form-label">Estado de la Credencial Jurídica</label>
-                  <select id="select-estado-abogado" class="form-input" style="cursor:pointer;">
+                  <label for="select-estado-abogado" class="form-label">Estado de la Credencial Jurídica</label>
+                  <select id="select-estado-abogado" name="estado_abogado" class="form-input" style="cursor:pointer;">
                     <option value="ACTIVO">🟢 ACTIVO (Habilitar acceso por DNI/CIF y PIN WhatsApp)</option>
                     <option value="REVOCADO">🔴 REVOCADO (Bloquear acceso inmediatamente)</option>
                   </select>
                 </div>
 
                 <div class="privacy-box" style="margin-bottom:0; margin-top:22px; border-color:rgba(16,185,129,0.35);">
-                  <input type="checkbox" id="chk-enviar-mail-abogado" checked>
+                  <input type="checkbox" id="chk-enviar-mail-abogado" name="enviar_mail_abogado" checked>
                   <label for="chk-enviar-mail-abogado" style="color:#e2e8f0;">
-                    <strong>📩 Enviar email de bienvenida e instrucciones al abogado</strong> con sus credenciales y ruta GPS.
+                    <strong>📩 Enviar email de bienvenida e instrucciones al abogado</strong> explicándole el funcionamiento del acceso con su DNI/CIF, PIN por WhatsApp y ruta GPS a los inmuebles.
                   </label>
                 </div>
               </div>
@@ -1028,7 +1050,7 @@
                 ⚖️ Asignar Abogado en Base de Datos y Enviar Email de Bienvenida →
               </button>
               <div id="msg-legal-exito"></div>
-              <div id="msg-legal-error">❌ Error al registrar la autorización. Revisa la conexión con el webhook.</div>
+              <div id="msg-legal-error">❌ Error al registrar la autorización. Revisa que el escenario de Make esté activo.</div>
             </form>
           </div>
         </div>
@@ -1085,7 +1107,7 @@
                   <button type="button" class="prop-chip" onclick="actualizarMapaInmueble('Travessera', 'Travessera', 40.620422, 0.590800)">📍 Travessera</button>
                 </div>
                 <div class="map-iframe-wrapper">
-                  <iframe id="property-map-iframe" src="https://maps.google.com/maps?q=40.576956,0.550353&t=&z=16&ie=UTF8&iwloc=&output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                  <iframe id="property-map-iframe" title="Mapa del Inmueble" src="https://maps.google.com/maps?q=40.576956,0.550353&t=&z=16&ie=UTF8&iwloc=&output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
                 </div>
               </div>
 
@@ -1182,7 +1204,7 @@
         <div id="chat-role-indicator" style="font-size:11px; color:var(--emerald);">● Conserje Digital 24/7</div>
       </div>
     </div>
-    <button type="button" onclick="cerrarChatElena()" style="background:transparent; border:none; color:var(--text-muted); font-size:18px; cursor:pointer;">✕</button>
+    <button type="button" onclick="cerrarChatElena()" style="background:transparent; border:none; color:var(--text-muted); font-size:18px; cursor:pointer;" aria-label="Cerrar chat">✕</button>
   </div>
 
   <div id="chat-messages-box" style="flex:1; padding:14px; overflow-y:auto; display:flex; flex-direction:column; gap:10px; font-size:13px;">
@@ -1192,8 +1214,9 @@
   </div>
 
   <form onsubmit="enviarMensajeBotChat(event)" style="padding:10px; background:#131c31; display:flex; gap:8px; border-top:1px solid var(--border);">
-    <input type="text" id="chat-input-text" class="form-input" style="padding:9px 12px; font-size:13px;" placeholder="Escribe tu mensaje..." required>
-    <button type="submit" id="chat-send-btn" style="background:var(--emerald); color:#042f2e; border:none; padding:0 16px; border-radius:8px; font-weight:800; cursor:pointer;">➤</button>
+    <label for="chat-input-text" class="sr-only">Escribe tu mensaje para Elena IA</label>
+    <input type="text" id="chat-input-text" name="chat_input_text" class="form-input" style="padding:9px 12px; font-size:13px;" placeholder="Escribe tu mensaje..." aria-label="Escribe tu mensaje para Elena IA" required>
+    <button type="submit" id="chat-send-btn" style="background:var(--emerald); color:#042f2e; border:none; padding:0 16px; border-radius:8px; font-weight:800; cursor:pointer;" aria-label="Enviar mensaje">➤</button>
   </form>
 </div>
 
@@ -1204,14 +1227,14 @@
       <strong id="visor-titulo" style="color:var(--emerald); font-size:14px;">Consulta Cifrada en Tiempo Real</strong>
       <button type="button" class="btn-logout" onclick="cerrarVisorSeguro()">✕ Cerrar Visor</button>
     </div>
-    <iframe id="visor-iframe" src="about:blank" style="flex:1; width:100%; border:none; border-radius:8px; background:#090d16;"></iframe>
+    <iframe id="visor-iframe" title="Visor Seguro de Documentos" src="about:blank" style="flex:1; width:100%; border:none; border-radius:8px; background:#090d16;"></iframe>
   </div>
 </div>
 
 <!-- MODALES LEGALES -->
 <div id="modal-aviso-legal" class="modal-backdrop" onclick="if(event.target === this) cerrarModal('modal-aviso-legal')">
   <div class="modal-card">
-    <button class="modal-close-x" onclick="cerrarModal('modal-aviso-legal')">&times;</button>
+    <button class="modal-close-x" onclick="cerrarModal('modal-aviso-legal')" aria-label="Cerrar">&times;</button>
     <h3 style="color:var(--amber); margin-bottom:14px; padding-bottom:10px; border-bottom:1px solid var(--border);" data-i18n="modal_legal_title">Aviso Legal y Condiciones · LEVEL PUNTO IMMO 24365 SLU</h3>
     <div style="font-size:13.5px; color:var(--text-muted); line-height:1.65; margin-bottom:20px;" data-i18n="modal_legal_body">
       <p style="margin-bottom:10px;">En cumplimiento con la Ley 34/2002 (LSSI-CE), se informa que la plataforma <strong>Level.immo</strong> está operada por <strong>LEVEL PUNTO IMMO 24365 SLU</strong>, con NIF <strong>B-26745430</strong> y domicilio social en Travessera de Gràcia, 56, 3-1a, 08006 Barcelona.</p>
@@ -1223,7 +1246,7 @@
 
 <div id="modal-privacidad" class="modal-backdrop" onclick="if(event.target === this) cerrarModal('modal-privacidad')">
   <div class="modal-card">
-    <button class="modal-close-x" onclick="cerrarModal('modal-privacidad')">&times;</button>
+    <button class="modal-close-x" onclick="cerrarModal('modal-privacidad')" aria-label="Cerrar">&times;</button>
     <h3 style="color:var(--emerald); margin-bottom:14px; padding-bottom:10px; border-bottom:1px solid var(--border);" data-i18n="modal_priv_title">Privacidad y Protección de Datos (RGPD)</h3>
     <div style="font-size:13.5px; color:var(--text-muted); line-height:1.65; margin-bottom:20px;" data-i18n="modal_priv_body">
       <p style="margin-bottom:10px;"><strong>Responsable:</strong> LEVEL PUNTO IMMO 24365 SLU (NIF B-26745430).</p>
@@ -1235,7 +1258,7 @@
 
 <div id="modal-cookies" class="modal-backdrop" onclick="if(event.target === this) cerrarModal('modal-cookies')">
   <div class="modal-card">
-    <button class="modal-close-x" onclick="cerrarModal('modal-cookies')">&times;</button>
+    <button class="modal-close-x" onclick="cerrarModal('modal-cookies')" aria-label="Cerrar">&times;</button>
     <h3 style="color:var(--blue); margin-bottom:14px; padding-bottom:10px; border-bottom:1px solid var(--border);" data-i18n="modal_cookies_title">Política de Cookies e Inteligencia Artificial</h3>
     <div style="font-size:13.5px; color:var(--text-muted); line-height:1.65; margin-bottom:20px;" data-i18n="modal_cookies_body">
       <p style="margin-bottom:10px;">Esta plataforma utiliza almacenamiento local necesario para mantener su sesión verificada y el soporte multidioma.</p>
@@ -1508,7 +1531,7 @@ function activarFasePin(dniRaw, data) {
   }
 
   if (data.modo_respaldo) {
-    document.getElementById("texto-instruccion-pin").innerHTML = "Modo Propietaria Verificada. Introduce tu PIN enviado por WhatsApp o el PIN maestro de consola (<strong>2436</strong>):";
+    document.getElementById("texto-instruccion-pin").innerHTML = "Modo Propietaria Verificada (<strong>Carmen Forcadell</strong>). Introduce el PIN recibido por WhatsApp o el PIN maestro de consola (<strong>2436</strong>):";
   }
 
   document.getElementById("fase-dni").style.display = "none";
@@ -1564,7 +1587,7 @@ function cargarExpedienteDesdeMake(identificador) {
   })
   .then(function(response) { return response.json(); })
   .then(function(data) {
-    if (data && data.status === "success") {
+    if (data && (data.status === "success" || data.nombre || data.recibos_html)) {
       renderizarPortalConDatos(data, identificador);
     } else {
       throw new Error("Expediente no devuelto");
@@ -1578,7 +1601,7 @@ function cargarExpedienteDesdeMake(identificador) {
         dni: "40913126J",
         rol: "PROPIETARIO",
         nombre_propiedad: "Martinenca, Jaume I, Travessera",
-        direccion: "Cartera Activa (3 Propiedades)",
+        direccion: "Cartera Activa (3 Propiedades: Alcanar / La Ràpita)",
         lat: 40.576956,
         lon: 0.550353
       }, identificador);
@@ -1601,22 +1624,46 @@ function renderizarPortalConDatos(data, identificador) {
   document.getElementById("portal-dashboard").style.display = "block";
   document.getElementById("main-layout").classList.add("fullscreen-mode");
 
-  var nombreReal = data.nombre || "Titular Verificado";
-  var dniReal = data.dni || window.sesionActiva.dni || identificador;
-  var propReal = data.nombre_propiedad || data.propiedades_autorizadas || "---";
-  var dirReal = data.direccion || "---";
+  var esPropietaria = (window.sesionActiva.rol === "PROPIETARIO" || String(window.sesionActiva.dni).toUpperCase() === "40913126J");
+  var nombreReal = data.nombre || data.nombre_inquilino || data.nombre_abogado || (esPropietaria ? "Carmen Forcadell" : "Titular Verificado");
+  var dniReal = data.dni || data.dni_inquilino || data.dni_abogado || window.sesionActiva.dni || identificador;
+  var propReal = data.nombre_propiedad || data.propiedad || data.propiedades_autorizadas || (esPropietaria ? "Martinenca, Jaume I, Travessera" : "---");
+  var dirReal = data.direccion || (esPropietaria ? "Cartera Activa (3 Propiedades)" : "---");
 
   window.sesionActiva.dni = dniReal;
   window.sesionActiva.propiedad = propReal;
+
   document.getElementById("badge-titular-activo").innerText = window.sesionActiva.rol + ": " + nombreReal + " (" + dniReal + ")";
   document.getElementById("val-nombre").innerText = nombreReal;
   document.getElementById("val-dni").innerText = dniReal;
   document.getElementById("val-propiedad").innerText = propReal;
   document.getElementById("val-direccion").innerText = dirReal;
 
+  // Volcado de fotografías del inmueble si vienen en el JSON
+  var galeriaBox = document.getElementById("val-fotos");
+  if (galeriaBox) {
+    var rawFotos = data.fotos_html || data.fotos || data.fotos_urls || "";
+    if (Array.isArray(rawFotos) && rawFotos.length > 0) {
+      galeriaBox.innerHTML = rawFotos.map(function(u) {
+        return '<img src="' + escaparHTML(u) + '" alt="Inmueble" onclick="window.open(this.src, \'_blank\')">';
+      }).join("");
+    } else if (typeof rawFotos === "string" && rawFotos.trim() !== "") {
+      if (rawFotos.includes("<img")) {
+        galeriaBox.innerHTML = rawFotos;
+      } else {
+        galeriaBox.innerHTML = rawFotos.split(",").map(function(u) {
+          var cleanUrl = u.trim();
+          return cleanUrl ? '<img src="' + escaparHTML(cleanUrl) + '" alt="Inmueble" onclick="window.open(this.src, \'_blank\')">' : '';
+        }).join("");
+      }
+    } else {
+      galeriaBox.innerHTML = "<div style='font-size:12px; color:var(--text-muted);'>Imágenes verificadas en el visor de contrato.</div>";
+    }
+  }
+
   actualizarMapaInmueble(dirReal, propReal, data.lat, data.lon);
 
-  if (window.sesionActiva.rol === "PROPIETARIO" || String(dniReal).toUpperCase() === "40913126J") {
+  if (esPropietaria) {
     window.sesionActiva.rol = "PROPIETARIO";
     window.sesionActiva.tabla_filtro = "PROPERTY_PROPIETARIOS";
     document.getElementById("btn-tab-propietaria").style.display = "inline-block";
@@ -1643,6 +1690,7 @@ function renderizarPortalConDatos(data, identificador) {
   document.getElementById("val-incidencias").innerHTML = data.incidencias_html || "<div style='color:var(--text-muted);'>Sin incidencias activas.</div>";
 }
 
+// ENVIAR ALTA DE ABOGADO + INSTRUCCIONES COMPLETAS AL WEBHOOK 3 (ADV_PROP_LEGAL_SERVICES)
 window.enviarAutorizacionAbogado = function(e) {
   e.preventDefault();
   var nombreAbg = document.getElementById("input-nombre-abogado").value.trim();
@@ -1659,8 +1707,31 @@ window.enviarAutorizacionAbogado = function(e) {
 
   msgExitoLegal.style.display = "none";
   msgErrorLegal.style.display = "none";
-  btnAbg.innerText = "Registrando abogado y enviando solicitud...";
+  btnAbg.innerText = "Registrando abogado y enviando email de bienvenida...";
   btnAbg.disabled = true;
+
+  var urlPortal = "https://app.level-i.com/gestion-de-inquilinos/";
+  var cuerpoEmailHTML =
+    '<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #0d1322; color: #f8fafc; padding: 28px; border-radius: 12px; border: 1px solid #10b981;">' +
+      '<h2 style="color: #10b981; margin-top: 0;">⚖️ Bienvenida a la Consola Jurídica · Level.immo</h2>' +
+      '<p>Estimado/a <strong>' + escaparHTML(nombreAbg) + '</strong>,</p>' +
+      '<p>La propiedad titular (<strong>Carmen Forcadell · DNI ' + escaparHTML(window.sesionActiva.dni || "40913126J") + '</strong>) le ha concedido acceso jurídico verificado a los siguientes inmuebles en alquiler:</p>' +
+      '<div style="background: #131c31; padding: 14px; border-left: 4px solid #f59e0b; margin: 16px 0; border-radius: 6px;">' +
+        '<strong>📍 Inmuebles Autorizados:</strong> ' + escaparHTML(propAbg) + '<br>' +
+        '<strong>🔑 Identificador Asignado (DNI/NIE/CIF):</strong> ' + escaparHTML(dniAbg) + '<br>' +
+        '<strong>📲 WhatsApp receptor de PIN:</strong> +' + escaparHTML(telAbg) +
+      '</div>' +
+      '<h3 style="color: #f59e0b;">¿Cómo funciona su acceso seguro?</h3>' +
+      '<ol style="line-height: 1.7;">' +
+        '<li>Entre en el portal privado: <a href="' + urlPortal + '" style="color: #10b981; font-weight: bold;">' + urlPortal + '</a></li>' +
+        '<li>Introduzca su <strong>DNI, NIE o CIF (' + escaparHTML(dniAbg) + ')</strong> y resuelva la suma de verificación.</li>' +
+        '<li>Recibirá al instante en su <strong>WhatsApp (+' + escaparHTML(telAbg) + ')</strong> un <strong>PIN temporal de 4 cifras</strong>.</li>' +
+        '<li>Al introducir el PIN, accederá en tiempo real al estado de recibos, suministros, contratos, incidencias y <strong>navegación GPS directa en auto ("Cómo llegar")</strong> hacia cada inmueble autorizado.</li>' +
+      '</ol>' +
+      '<p style="font-size: 12px; color: #94a3b8; margin-top: 24px; border-top: 1px solid #1e293b; padding-top: 12px;">' +
+        'LEVEL PUNTO IMMO 24365 SLU · API 4173 · AICAT 14200 · Trazabilidad RGPD auditada.' +
+      '</p>' +
+    '</div>';
 
   var payloadLegal = {
     accion: "autorizar_abogado",
@@ -1673,7 +1744,9 @@ window.enviarAutorizacionAbogado = function(e) {
     telefono_abogado: telAbg,
     propiedades_autorizadas: propAbg,
     estado_acceso: estadoAbg,
-    enviar_email_bienvenida: enviarMail
+    enviar_email_bienvenida: enviarMail,
+    asunto_email: "⚖️ Credenciales de Acceso Jurídico y Bienvenida · Consola Level.immo",
+    cuerpo_email_html: cuerpoEmailHTML
   };
 
   fetch(URL_WEBHOOK_LEGAL_SERVICES, {
@@ -1683,9 +1756,9 @@ window.enviarAutorizacionAbogado = function(e) {
   })
   .then(function(res) { return res.text(); })
   .then(function() {
-    msgExitoLegal.innerHTML = "✅ <strong>" + escaparHTML(nombreAbg) + " (" + escaparHTML(dniAbg) + ")</strong> registrado correctamente y notificado a <strong>" + escaparHTML(emailAbg) + "</strong>.";
+    msgExitoLegal.innerHTML = "✅ <strong>" + escaparHTML(nombreAbg) + " (" + escaparHTML(dniAbg) + ")</strong> dado de alta en <code>PROPERTY_PROPIETARIOS_LEGAL_SERVICES</code> y email de bienvenida enviado a <strong>" + escaparHTML(emailAbg) + "</strong>.";
     msgExitoLegal.style.display = "block";
-    btnAbg.innerText = "¡Abogado Asignado con Éxito!";
+    btnAbg.innerText = "¡Abogado Asignado y Bienvenida Enviada!";
     setTimeout(function() {
       btnAbg.innerText = "⚖️ Asignar Abogado en Base de Datos y Enviar Email de Bienvenida →";
       btnAbg.disabled = false;
