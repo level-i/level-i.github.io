@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Level.immo · Consola PropTech - Gestión de Usuarios, Inquilinos y Propietarios</title>
+<title>Level.immo · Consola PropTech - Gestión de Alquileres, Suministros y Partes</title>
 <style>
   :root {
     --bg-main: #060a12;
@@ -986,7 +986,7 @@
               🏠 Expediente del Residente
             </button>
             <button type="button" id="btn-tab-propietaria" class="tab-btn owner-tab" style="display:none;" onclick="mostrarVistaInterna('propietaria')" data-i18n="tab_owner">
-              💼 Área Propietaria (Radar, Cartera, GPS y Servicios Jurídicos)
+              💼 Área Propietaria (Radar, Cartera, GPS, Suministros y Abogado)
             </button>
           </div>
 
@@ -1001,20 +1001,20 @@
           </div>
         </div>
 
-        <!-- SUBVISTA PROPIETARIA (CON RADAR NATIVO, BUSCADOR DE 100+ PISOS, FICHAS, RECIBOS PDF Y ABOGADO) -->
+        <!-- SUBVISTA PROPIETARIA -->
         <div id="vista-propietaria-carmen" class="panel-box" style="display:none; border-color:var(--amber);">
           <div class="panel-header">
             <span data-i18n="owner_area_header">👑 ÁREA SEGURA DEL PROPIETARIO · GESTIÓN EN TIEMPO REAL</span>
             <span class="badge badge-info" id="badge-resumen-cartera">3 PROPIEDADES · 4 INQUILINOS</span>
           </div>
           <p style="font-size:14px; color:var(--text-muted); margin-bottom:14px;">
-            <span data-i18n="owner_hello">Hola,</span> <strong style="color:#fff;" id="owner-greeting-name">Carmen Forcadell</strong>. <span data-i18n="owner_subdesc">Audita el estado de cobros, genera recibos oficiales en PDF, inspecciona las fichas de tus inmuebles e inquilinos o autoriza a tus servicios jurídicos:</span>
+            <span data-i18n="owner_hello">Hola,</span> <strong style="color:#fff;" id="owner-greeting-name">Carmen Forcadell</strong>. <span data-i18n="owner_subdesc">Audita el estado de cobros, genera recibos oficiales en PDF, controla suministros y regularizaciones (día 25) o autoriza a tus servicios jurídicos:</span>
           </p>
 
           <div class="owner-cards-grid">
             <div class="owner-card">
               <h3 data-i18n="owner_radar_title">🚨 Radar de Morosidad y Cobros</h3>
-              <p data-i18n="owner_radar_desc">Control de recibos pendientes, cambio de estado a Abonado y emisión instantánea de Recibo Oficial en PDF.</p>
+              <p data-i18n="owner_radar_desc">Control de recibos pendientes, cambio de estado a Abonado y emisión instantánea de Recibo Oficial en PDF (Emisor: Propietario).</p>
               <button type="button" class="btn-radar-alert" onclick="abrirVisorNativoPropietario('morosidad')" data-i18n="owner_radar_btn">
                 Ver Recibos Pendientes y Emitir PDF
               </button>
@@ -1028,7 +1028,7 @@
             </div>
           </div>
 
-          <!-- FICHAS DIRECTAS DE LOS INMUEBLES E INQUILINOS (ESCALABLE CON BUSCADOR PARA 1 A 100+ PISOS) -->
+          <!-- FICHAS DIRECTAS DE LOS INMUEBLES E INQUILINOS (Buscador 1 a 100+ pisos) -->
           <div class="panel-box" style="background:var(--bg-card); margin-top:16px; margin-bottom:20px;">
             <div class="panel-header" style="color:var(--emerald); margin-bottom:12px;">
               <span>🏛️ FICHAS DE INMUEBLES, INQUILINOS Y RECIBOS DE LA CARTERA</span>
@@ -1038,6 +1038,18 @@
               </div>
             </div>
             <div id="contenedor-fichas-cartera" class="portfolio-grid"></div>
+          </div>
+
+          <!-- CONTROL DE SUMINISTROS Y REGULARIZACIÓN (DÍA 25) E IBAN -->
+          <div class="panel-box" style="background:var(--bg-card); margin-top:16px; margin-bottom:20px; border-color:var(--neon-cyan);">
+            <div class="panel-header" style="color:var(--neon-cyan); margin-bottom:12px;">
+              <span>⚡ MOTOR DE SUMINISTROS, GASTOS Y REGULARIZACIÓN (DÍA 25)</span>
+              <span class="badge badge-info">CUENTA IBAN DE PAGO ASOCIADA</span>
+            </div>
+            <p style="font-size:13px; color:var(--text-muted); margin-bottom:14px;">
+              Control de consumos (Agua, Electricidad, Regularización de saldos y Gastos comunitarios). Los pagos e ingresos se realizan a través de la cuenta IBAN oficial: <strong style="color:#fff;">ES21 2100 0000 0000 2436 1420</strong>.
+            </p>
+            <div id="contenedor-suministros-propietario" style="display:flex; flex-direction:column; gap:10px;"></div>
           </div>
 
           <!-- CONTROL DE RECIBOS DE LA CARTERA Y GENERACIÓN DE PDF AL PASAR A ABONADO -->
@@ -1053,7 +1065,7 @@
             <div id="contenedor-recibos-propietario"></div>
           </div>
 
-          <!-- GEOLOCALIZACIÓN Y NAVEGACIÓN GPS EN AUTO DE LA CARTERA -->
+          <!-- GEOLOCALIZACIÓN Y NAVEGACIÓN GPS EN AUTO -->
           <div class="panel-box" style="background:var(--bg-card); margin-top:16px; margin-bottom:20px;">
             <div class="panel-header" style="color:var(--neon-cyan); margin-bottom:12px;">
               <span>🚗 GEOLOCALIZACIÓN DE CARTERA Y NAVEGACIÓN GPS EN AUTO</span>
@@ -1176,7 +1188,7 @@
                 <span class="info-value" id="val-direccion">---</span>
               </div>
               <div class="info-row">
-                <span class="info-label">Contrato / Renta Mensual:</span>
+                <span class="info-label">Contrato / Renta / IBAN:</span>
                 <span class="info-value" id="val-contrato-renta" style="color:var(--amber);">---</span>
               </div>
 
@@ -1213,7 +1225,7 @@
 
               <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:16px; padding-top:14px; border-top:1px solid var(--border);">
                 <button type="button" class="btn-outline-sm" style="padding:10px; font-weight:700;" onclick="abrirFichaContratoActual()" data-i18n="btn_view_contract">
-                  📄 Ver Ficha y Contrato de Alquiler
+                  📄 Ver Ficha, Contrato e IBAN
                 </button>
                 <button type="button" class="btn-outline-sm" style="padding:10px; font-weight:700;" onclick="abrirChatElenaConAsunto('Reportar Avería o Consulta')" data-i18n="btn_report_issue">
                   🛠️ ¿Dudas o Averías? Conserje 24/7
@@ -1241,7 +1253,7 @@
           <div class="panel-box">
             <div class="panel-header">
               <span data-i18n="recibos_box_title">🧾 RECIBOS, SUMINISTROS Y DESCARGA DE JUSTIFICANTES PDF</span>
-              <span class="badge badge-success">EMISIÓN AUTOMÁTICA DE PDF EN ESTADO ABONADO</span>
+              <span class="badge badge-success">EMISIÓN AUTOMÁTICA DE PDF ENTRE PARTES</span>
             </div>
             <div id="val-recibos" style="font-size:13.5px; color:var(--text-muted);">---</div>
           </div>
@@ -1321,7 +1333,7 @@
   </form>
 </div>
 
-<!-- VISOR NATIVO SEGURO (SIN PANTALLA NEGRA NI BLOQUEO DE IFRAME) -->
+<!-- VISOR NATIVO SEGURO -->
 <div id="modal-visor-seguro" class="modal-backdrop" onclick="if(event.target === this) cerrarVisorSeguro()">
   <div class="modal-card large-viewer">
     <div style="display:flex; justify-content:space-between; align-items:center; padding-bottom:12px; border-bottom:1px solid var(--border); margin-bottom:14px;">
@@ -1339,7 +1351,6 @@
     <h3 style="color:var(--amber); margin-bottom:14px; padding-bottom:10px; border-bottom:1px solid var(--border);" data-i18n="modal_legal_title">Aviso Legal y Condiciones · LEVEL PUNTO IMMO 24365 SLU</h3>
     <div style="font-size:13.5px; color:var(--text-muted); line-height:1.65; margin-bottom:20px;" data-i18n="modal_legal_body">
       <p style="margin-bottom:10px;">En cumplimiento con la Ley 34/2002 (LSSI-CE), se informa que la plataforma <strong>Level.immo</strong> está operada por <strong>LEVEL PUNTO IMMO 24365 SLU</strong>, con NIF <strong>B-26745430</strong> y domicilio social en Travessera de Gràcia, 56, 3-1a, 08006 Barcelona.</p>
-      <p style="margin-bottom:10px;">Entidad inscrita como Agente de la Propiedad Inmobiliaria Colegiado <strong>API 4173</strong> y en el Registro de Agentes Inmobiliarios de Cataluña <strong>AICAT 14200</strong>.</p>
     </div>
     <button type="button" class="btn-primary" onclick="cerrarModal('modal-aviso-legal')">Entendido y Cerrar</button>
   </div>
@@ -1363,7 +1374,6 @@
     <h3 style="color:var(--blue); margin-bottom:14px; padding-bottom:10px; border-bottom:1px solid var(--border);" data-i18n="modal_cookies_title">Política de Cookies e Inteligencia Artificial</h3>
     <div style="font-size:13.5px; color:var(--text-muted); line-height:1.65; margin-bottom:20px;" data-i18n="modal_cookies_body">
       <p style="margin-bottom:10px;">Esta plataforma utiliza almacenamiento local necesario para mantener su sesión verificada y el soporte multidioma.</p>
-      <p>Las consultas al conserje digital Elena IA y la geolocalización GPS están asistidas por sistemas avanzados en tiempo real.</p>
     </div>
     <button type="button" class="btn-primary" onclick="cerrarModal('modal-cookies')">Entendido y Cerrar</button>
   </div>
@@ -1375,7 +1385,7 @@ const URL_WEBHOOK_PORTAL_DATOS = "https://hook.eu1.make.com/tfk9n3nefcufj183eth6
 const URL_WEBHOOK_BOT_CHAT = "https://hook.eu1.make.com/8xd81xb9t3mg2ycwez1czd3quwhf2nef";
 const URL_WEBHOOK_LEGAL_SERVICES = "https://hook.eu1.make.com/7h10etd9klntm41oebrg4m1buc903uh4";
 
-// CARTERA ESTRUCTURADA DE PROPIEDADES, INQUILINOS Y RECIBOS (SE SINCRONIZA CON MAKE Y SIRVE DE BASE EN TIEMPO REAL)
+// CARTERA DE PROPIEDADES, INQUILINOS, SUMINISTROS (IBAN Y REGULARIZACIÓN) Y RECIBOS
 window.CARTERA_PROPIEDADES = [
   {
     id: "PROP-MARTINENCA",
@@ -1386,14 +1396,14 @@ window.CARTERA_PROPIEDADES = [
     inquilino: "Residente Titular · Martinenca",
     dni_inquilino: "INQ-MARTINENCA-01",
     renta_mensual: "650,00 €",
+    iban: "ES21 2100 0000 0000 2436 1420",
     estado_contrato: "ACTIVO · Vigente",
-    suministros: "Agua y Electricidad sujetos a regla de regularización mensual (día 25)",
+    suministros: "Agua y Electricidad sujetos a regla de regularización mensual (Día 25). Saldo provisional: 50,00 €/mes.",
     avisos: "Revisión trimestral de contadores de agua y electricidad programada el día 25.",
     incidencias: "Sin incidencias técnicas abiertas en Martinenca.",
     fotos: [
       "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=600&q=80",
-      "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=600&q=80",
-      "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=600&q=80"
+      "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=600&q=80"
     ]
   },
   {
@@ -1402,16 +1412,16 @@ window.CARTERA_PROPIEDADES = [
     direccion: "Avinguda Jaume I · Zona Mercat Municipal (La Ràpita, Tarragona)",
     lat: 40.618081,
     lon: 0.591411,
-    inquilino: "Residente Titular · Jaume I (2 Cotitulares)",
+    inquilino: "Residente Titular · Jaume I",
     dni_inquilino: "INQ-JAUME-02",
     renta_mensual: "580,00 €",
+    iban: "ES21 2100 0000 0000 2436 1420",
     estado_contrato: "ACTIVO · Vigente",
-    suministros: "Suministros domiciliados · Regularización automática activa",
+    suministros: "Suministros domiciliados · Regularización automática activa (Día 25).",
     avisos: "Comunidad de propietarios: limpieza de fachada completada.",
     incidencias: "Sin averías pendientes en la vivienda Jaume I.",
     fotos: [
-      "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=600&q=80",
-      "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=600&q=80"
+      "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=600&q=80"
     ]
   },
   {
@@ -1423,15 +1433,21 @@ window.CARTERA_PROPIEDADES = [
     inquilino: "Residente Titular · Travessera",
     dni_inquilino: "INQ-TRAVESSERA-03",
     renta_mensual: "620,00 €",
+    iban: "ES21 2100 0000 0000 2436 1420",
     estado_contrato: "ACTIVO · Vigente",
-    suministros: "Lectura de consumo eléctrico y agua actualizada",
+    suministros: "Lectura de consumo eléctrico y agua actualizada (Día 25).",
     avisos: "Actualización anual de contrato registrada en expediente.",
     incidencias: "Revisión preventiva de caldera cerrada satisfactoriamente.",
     fotos: [
-      "https://images.unsplash.com/photo-1493809842364-78817add7ffb?auto=format&fit=crop&w=600&q=80",
-      "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=600&q=80"
+      "https://images.unsplash.com/photo-1493809842364-78817add7ffb?auto=format&fit=crop&w=600&q=80"
     ]
   }
+];
+
+window.SUMINISTROS_GASTOS = [
+  { id: "SUM-01", propiedad: "Martinenca", concepto: "Agua + Electricidad (Provisional Día 25)", importe: "94,50 €", estado: "Pendiente de Regularización", iban: "ES21 2100 0000 0000 2436 1420" },
+  { id: "SUM-02", propiedad: "Jaume I", concepto: "Agua Potable T4 (Regularización)", importe: "48,20 €", estado: "Pendiente de Regularización", iban: "ES21 2100 0000 0000 2436 1420" },
+  { id: "SUM-03", propiedad: "Travessera", concepto: "Electricidad Consumo Real", importe: "76,10 €", estado: "Abonado y Regularizado", iban: "ES21 2100 0000 0000 2436 1420" }
 ];
 
 window.RECIBOS_CARTERA = [
@@ -1504,20 +1520,6 @@ window.RECIBOS_CARTERA = [
     estado: "Pendiente",
     fecha_emision: "25/10/2026",
     fecha_pago: "---"
-  },
-  {
-    id_recibo: "REC-2026-1009",
-    propiedad: "Travessera",
-    direccion: "Carrer Travessera · La Ràpita",
-    inquilino: "Residente Titular · Travessera",
-    dni_inquilino: "INQ-TRAVESSERA-03",
-    concepto: "Renta Mensual de Alquiler · Octubre 2026",
-    tipo: "Alquiler",
-    periodo: "01/10/2026 - 31/10/2026",
-    importe: "620,00 €",
-    estado: "Abonado",
-    fecha_emision: "25/09/2026",
-    fecha_pago: "01/10/2026"
   }
 ];
 
@@ -1547,12 +1549,12 @@ const I18N = {
     pin_sent_title: "¡Identidad verificada!",
     pin_sent_desc: "Te acabamos de enviar un enlace y un PIN temporal de 4 cifras a tu WhatsApp. Introduce el PIN aquí abajo para abrir tu expediente:",
     btn_enter_portal: "Entrar al Portal a Pantalla Completa →", btn_back: "← Volver atrás",
-    tab_resident: "🏠 Expediente del Residente", tab_owner: "💼 Área Propietaria (Radar, Cartera, GPS y Servicios Jurídicos)",
+    tab_resident: "🏠 Expediente del Residente", tab_owner: "💼 Área Propietaria (Radar, Cartera, GPS, Suministros y Abogado)",
     btn_toggle_sidebars: "⛶ Mostrar/Ocultar Paneles Laterales", btn_logout: "✕ Cerrar Sesión",
     exp_box_title: "🏠 EXPEDIENTE Y PROPIEDAD", lbl_tenant: "Inquilino / Titular:", lbl_property: "Inmueble(s):", lbl_address: "Dirección / Ubicación:",
     lbl_photos: "Fotografías del Inmueble:", lbl_map_box: "📍 Geolocalización y Navegación GPS:", btn_drive_auto: "Cómo llegar (Auto)", btn_open_maps: "Google Maps", btn_fly_3d: "Vuelo 3D",
-    btn_view_contract: "📄 Ver Ficha y Contrato de Alquiler", btn_report_issue: "🛠️ ¿Dudas o Averías? Conserje 24/7",
-    avisos_box_title: "📢 AVISOS GENERALES E INSTRUCCIONES", inc_box_title: "🛠️ INCIDENCIAS ACTIVAS Y SUMINISTROS", recibos_box_title: "🧾 RECIBOS, SUMINISTROS Y DESCARGA DE JUSTIFICANTES PDF",
+    btn_view_contract: "📄 Ver Ficha, Contrato e IBAN", btn_report_issue: "🛠️ ¿Dudas o Averías? Conserje 24/7",
+    avisos_box_title: "📢 AVISOS GENERALES E INSTRUCCIONES", inc_box_title: "🛠️ INCIDENCIAS ACTIVAS Y SUMINISTROS", recibos_box_title: "🧾 RECIBOS, SUMINISTROS Y DESCARGA DE JUSTIFICANTS PDF",
     btn_talk_elena: "💬 Hablar con Elena IA",
     chat_welcome: "Hola, soy Elena IA. ¿En qué puedo ayudarte hoy con tu contrato de alquiler, suministros o incidencias de la vivienda?"
   },
@@ -1569,11 +1571,11 @@ const I18N = {
     pin_sent_title: "Identitat verificada!",
     pin_sent_desc: "T'acabem d'enviar un enllaç i un PIN temporal de 4 xifres al teu WhatsApp. Introdueix el PIN aquí sota:",
     btn_enter_portal: "Entrar al Portal a Pantalla Completa →", btn_back: "← Tornar enrere",
-    tab_resident: "🏠 Expedient del Resident", tab_owner: "💼 Àrea Propietària (Radar, Cartera, GPS i Serveis Jurídics)",
+    tab_resident: "🏠 Expedient del Resident", tab_owner: "💼 Àrea Propietària (Radar, Cartera, GPS, Suministros y Abogado)",
     btn_toggle_sidebars: "⛶ Mostrar/Ocultar Panells Laterals", btn_logout: "✕ Tancar Sessió",
     exp_box_title: "🏠 EXPEDIENT I PROPIETAT", lbl_tenant: "Llogater / Titular:", lbl_property: "Immoble(s):", lbl_address: "Adreça / Ubicació:",
     lbl_photos: "Fotografies de l'Immoble:", lbl_map_box: "📍 Geolocalització i Navegació GPS:", btn_drive_auto: "Com arribar (Cotxe)", btn_open_maps: "Google Maps", btn_fly_3d: "Vol 3D",
-    btn_view_contract: "📄 Veure Fitxa i Contracte", btn_report_issue: "🛠️ Dubtes o Avaries? Conserge 24/7",
+    btn_view_contract: "📄 Veure Fitxa, Contracte i IBAN", btn_report_issue: "🛠️ Dubtes o Avaries? Conserge 24/7",
     avisos_box_title: "📢 AVISOS GENERALS", inc_box_title: "🛠️ INCIDÈNCIES ACTIVES", recibos_box_title: "🧾 REBUTS, SUBMINISTRAMENTS I JUSTIFICANTS PDF",
     btn_talk_elena: "💬 Parlar amb Elena IA",
     chat_welcome: "Hola, sóc l'Elena IA. En què puc ajudar-te avui amb el teu contracte de lloguer, subministraments o incidències?"
@@ -1623,7 +1625,7 @@ function cambiarIdioma(forzarLang) {
 }
 
 // ============================================================================
-// GENERADOR DE RECIBO OFICIAL VÁLIDO EN PDF (AL PASAR A ESTADO "ABONADO")
+// GENERADOR DE RECIBO OFICIAL ENTRE PARTICULAR (PROPIETARIO Y INQUILINO)
 // ============================================================================
 window.descargarReciboPDF = function(idRecibo) {
   var rec = window.RECIBOS_CARTERA.find(function(r) { return r.id_recibo === idRecibo; });
@@ -1637,71 +1639,65 @@ window.descargarReciboPDF = function(idRecibo) {
   }
 
   var htmlRecibo = '<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">' +
-    '<title>Recibo Oficial ' + escaparHTML(rec.id_recibo) + ' - Level.immo</title>' +
+    '<title>Recibo de Alquiler ' + escaparHTML(rec.id_recibo) + '</title>' +
     '<style>' +
-      '@page { size: A4; margin: 18mm; }' +
-      'body { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; color: #0f172a; background: #f8fafc; margin: 0; padding: 24px; }' +
-      '.sheet { max-width: 760px; margin: 0 auto; background: #ffffff; border: 2px solid #0f172a; border-radius: 12px; padding: 36px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); position: relative; }' +
-      '.header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 3px solid #10b981; padding-bottom: 20px; margin-bottom: 24px; }' +
-      '.brand { font-size: 28px; font-weight: 900; letter-spacing: -0.5px; color: #060a12; }' +
-      '.brand span { color: #10b981; }' +
-      '.company-meta { font-size: 11.5px; color: #475569; line-height: 1.5; margin-top: 6px; }' +
-      '.receipt-badge { text-align: right; }' +
-      '.receipt-title { font-size: 20px; font-weight: 900; color: #0f172a; text-transform: uppercase; }' +
-      '.receipt-num { font-size: 13px; font-weight: 700; color: #059669; margin-top: 4px; }' +
-      '.stamp-paid { display: inline-block; margin-top: 8px; padding: 6px 14px; border: 2px solid #10b981; color: #059669; background: #ecfdf5; font-weight: 900; font-size: 13px; border-radius: 6px; letter-spacing: 1px; }' +
-      '.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 24px; }' +
-      '.box { background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 8px; padding: 14px 16px; }' +
-      '.box-title { font-size: 11px; font-weight: 800; text-transform: uppercase; color: #64748b; margin-bottom: 6px; }' +
-      '.box-val { font-size: 13.5px; font-weight: 700; color: #0f172a; line-height: 1.45; }' +
-      'table { width: 100%; border-collapse: collapse; margin-bottom: 26px; }' +
-      'th { background: #0f172a; color: #ffffff; text-align: left; padding: 12px 14px; font-size: 12px; text-transform: uppercase; }' +
-      'td { padding: 14px; border-bottom: 1px solid #cbd5e1; font-size: 14px; color: #1e293b; }' +
-      '.total-row td { background: #ecfdf5; font-weight: 900; font-size: 17px; color: #065f46; border-top: 2px solid #10b981; border-bottom: 2px solid #10b981; }' +
-      '.footer { margin-top: 30px; padding-top: 16px; border-top: 1px dashed #94a3b8; display: flex; justify-content: space-between; align-items: flex-end; font-size: 11.5px; color: #475569; }' +
-      '.no-print { text-align: center; margin-bottom: 18px; }' +
-      '.btn-print { background: #10b981; color: #042f2e; border: none; padding: 12px 24px; border-radius: 8px; font-weight: 900; font-size: 14px; cursor: pointer; margin-right: 10px; }' +
-      '@media print { body { background: #fff; padding: 0; } .sheet { box-shadow: none; border: 1px solid #000; } .no-print { display: none; } }' +
+      '@page { size: A4; margin: 20mm; }' +
+      'body { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; color: #1e293b; background: #ffffff; margin: 0; padding: 20px; }' +
+      '.sheet { max-width: 720px; margin: 0 auto; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 40px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }' +
+      '.header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #0f172a; padding-bottom: 20px; margin-bottom: 24px; }' +
+      '.title-doc { font-size: 22px; font-weight: 800; color: #0f172a; text-transform: uppercase; letter-spacing: 0.5px; }' +
+      '.doc-num { font-size: 13px; font-weight: 700; color: #475569; margin-top: 4px; }' +
+      '.stamp { display: inline-block; margin-top: 10px; padding: 6px 14px; border: 2px solid #10b981; color: #047857; background: #ecfdf5; font-weight: 800; font-size: 12px; border-radius: 6px; }' +
+      '.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 28px; }' +
+      '.box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; }' +
+      '.box-title { font-size: 11px; font-weight: 800; text-transform: uppercase; color: #64748b; margin-bottom: 8px; }' +
+      '.box-val { font-size: 13.5px; font-weight: 600; color: #0f172a; line-height: 1.5; }' +
+      'table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }' +
+      'th { background: #0f172a; color: #ffffff; text-align: left; padding: 12px 14px; font-size: 11.5px; text-transform: uppercase; }' +
+      'td { padding: 14px; border-bottom: 1px solid #e2e8f0; font-size: 13.5px; color: #334155; }' +
+      '.total-row td { background: #f1f5f9; font-weight: 800; font-size: 16px; color: #0f172a; border-top: 2px solid #0f172a; border-bottom: 2px solid #0f172a; }' +
+      '.signatures { display: flex; justify-content: space-between; margin-top: 50px; padding-top: 20px; border-top: 1px solid #cbd5e1; }' +
+      '.sig-box { width: 45%; text-align: center; font-size: 12px; color: #475569; }' +
+      '.sig-line { margin-top: 50px; border-top: 1px solid #94a3b8; padding-top: 6px; font-weight: 700; color: #0f172a; }' +
+      '.no-print { text-align: center; margin-bottom: 20px; }' +
+      '.btn-print { background: #0f172a; color: #ffffff; border: none; padding: 10px 20px; border-radius: 6px; font-weight: 700; font-size: 13px; cursor: pointer; }' +
+      '@media print { .no-print { display: none; } body { padding: 0; } .sheet { border: none; box-shadow: none; } }' +
     '</style></head><body>' +
     '<div class="no-print">' +
-      '<button class="btn-print" onclick="window.print()">🖨️ Guardar como PDF / Imprimir Recibo Oficial</button>' +
+      '<button class="btn-print" onclick="window.print()">🖨️ Descargar / Imprimir Recibo en PDF</button>' +
     '</div>' +
     '<div class="sheet">' +
       '<div class="header">' +
         '<div>' +
-          '<div class="brand">L<span>•</span> Level.immo</div>' +
-          '<div class="company-meta">' +
-            '<strong>LEVEL PUNTO IMMO 24365 SLU</strong> · NIF B-26745430<br>' +
-            'Travessera de Gràcia, 56, 3-1a · 08006 Barcelona<br>' +
-            'Agente Colegiado API 4173 · Registro AICAT 14200' +
-          '</div>' +
+          '<div class="title-doc">Recibo de Alquiler</div>' +
+          '<div class="doc-num">Documento Nº ' + escaparHTML(rec.id_recibo) + '</div>' +
         '</div>' +
-        '<div class="receipt-badge">' +
-          '<div class="receipt-title">Recibo de Pago</div>' +
-          '<div class="receipt-num">Nº ' + escaparHTML(rec.id_recibo) + '</div>' +
-          '<div class="stamp-paid">✓ ESTADO: ABONADO</div>' +
+        '<div style="text-align: right;">' +
+          '<div class="stamp">✓ COBRO EFECTUADO (IBAN Verificado)</div>' +
         '</div>' +
       '</div>' +
       '<div class="grid-2">' +
         '<div class="box">' +
-          '<div class="box-title">Inmueble Arrendado y Propiedad</div>' +
+          '<div class="box-title">Arrendador / Propietario (Emisor)</div>' +
           '<div class="box-val">' +
-            'Activo: ' + escaparHTML(rec.propiedad) + '<br>' +
-            'Ubicación: ' + escaparHTML(rec.direccion) + '<br>' +
-            'Titular Propiedad: Carmen Forcadell (40913126J)' +
+            '<strong>Carmen Forcadell</strong><br>' +
+            'DNI: 40913126J<br>' +
+            'Inmueble: ' + escaparHTML(rec.propiedad) + '<br>' +
+            'Dirección: ' + escaparHTML(rec.direccion) +
           '</div>' +
         '</div>' +
         '<div class="box">' +
-          '<div class="box-title">Datos del Arrendatario y Abono</div>' +
+          '<div class="box-title">Arrendatario / Inquilino (Receptor)</div>' +
           '<div class="box-val">' +
-            'Arrendatario: ' + escaparHTML(rec.inquilino) + '<br>' +
+            '<strong>' + escaparHTML(rec.inquilino) + '</strong><br>' +
             'Identificador: ' + escaparHTML(rec.dni_inquilino) + '<br>' +
-            'Fecha Emisión: ' + escaparHTML(rec.fecha_emision) + ' · <strong>Fecha Abono: ' + escaparHTML(fechaAbono) + '</strong>' +
+            'Fecha de Emisión: ' + escaparHTML(rec.fecha_emision) + '<br>' +
+            '<strong>Fecha de Abono: ' + escaparHTML(fechaAbono) + '</strong>' +
           '</div>' +
         '</div>' +
       '</div>' +
       '<table>' +
-        '<thead><tr><th>Concepto</th><th>Tipo</th><th>Periodo Devengado</th><th style="text-align:right;">Importe</th></tr></thead>' +
+        '<thead><tr><th>Concepto del Cobro</th><th>Tipo</th><th>Periodo</th><th style="text-align:right;">Importe</th></tr></thead>' +
         '<tbody>' +
           '<tr>' +
             '<td><strong>' + escaparHTML(rec.concepto) + '</strong></td>' +
@@ -1710,23 +1706,23 @@ window.descargarReciboPDF = function(idRecibo) {
             '<td style="text-align:right; font-weight:700;">' + escaparHTML(rec.importe) + '</td>' +
           '</tr>' +
           '<tr class="total-row">' +
-            '<td colspan="3">TOTAL RECIBO ABONADO (Queda saldado el concepto indicado)</td>' +
+            '<td colspan="3">TOTAL RECIBIDO</td>' +
             '<td style="text-align:right;">' + escaparHTML(rec.importe) + '</td>' +
           '</tr>' +
         '</tbody>' +
       '</table>' +
-      '<div class="footer">' +
-        '<div>' +
-          'Justificante válido de pago emitido electrónicamente por la Consola PropTech Level.immo.<br>' +
-          'Código de verificación documental: <strong>LVL-' + escaparHTML(rec.id_recibo) + '-VERIFIED</strong>' +
+      '<div class="signatures">' +
+        '<div class="sig-box">' +
+          'Firma del Arrendador (Propietario)' +
+          '<div class="sig-line">Carmen Forcadell</div>' +
         '</div>' +
-        '<div style="text-align:right;">' +
-          '<strong>Firma y Sello Digital</strong><br>' +
-          'LEVEL PUNTO IMMO 24365 SLU' +
+        '<div class="sig-box">' +
+          'Conforme el Arrendatario' +
+          '<div class="sig-line">' + escaparHTML(rec.inquilino) + '</div>' +
         '</div>' +
       '</div>' +
     '</div>' +
-    '<script>setTimeout(function(){ window.print(); }, 450);<\/script>' +
+    '<script>setTimeout(function(){ window.print(); }, 400);<\/script>' +
     '</body></html>';
 
   ventanaPDF.document.open();
@@ -1734,7 +1730,6 @@ window.descargarReciboPDF = function(idRecibo) {
   ventanaPDF.document.close();
 };
 
-// CAMBIAR UN RECIBO DE "PENDIENTE" A "ABONADO" Y GENERAR AUTOMÁTICAMENTE EL PDF
 window.marcarReciboComoAbonado = function(idRecibo) {
   var rec = window.RECIBOS_CARTERA.find(function(r) { return r.id_recibo === idRecibo; });
   if (!rec) return;
@@ -1742,7 +1737,6 @@ window.marcarReciboComoAbonado = function(idRecibo) {
   rec.estado = "Abonado";
   rec.fecha_pago = new Date().toLocaleDateString("es-ES");
 
-  // Notificar a Make en segundo plano para actualizar el estado en la base de datos
   fetch(URL_WEBHOOK_PORTAL_DATOS, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -1760,20 +1754,19 @@ window.marcarReciboComoAbonado = function(idRecibo) {
   renderizarCarteraYRecibosPropietario();
   renderizarRecibosInquilino(window.sesionActiva.propiedad);
 
-  // Si el modal visor está abierto, refrescarlo también
   var modalVisor = document.getElementById("modal-visor-seguro");
   if (modalVisor && modalVisor.style.display === "flex") {
     abrirVisorNativoPropietario("morosidad");
   }
 
-  // Disparar automáticamente el recibo oficial en PDF
   window.descargarReciboPDF(idRecibo);
 };
 
-// RENDERIZAR LAS FICHAS DE LOS INMUEBLES E INQUILINOS EN EL PANEL DE PROPIETARIA
+// RENDERIZAR CARTERA, SUMINISTROS Y RECIBOS
 function renderizarCarteraYRecibosPropietario(filtroTexto) {
   var contCartera = document.getElementById("contenedor-fichas-cartera");
   var contRecibos = document.getElementById("contenedor-recibos-propietario");
+  var contSuministros = document.getElementById("contenedor-suministros-propietario");
   if (!contCartera || !contRecibos) return;
 
   var q = (filtroTexto || "").trim().toLowerCase();
@@ -1790,6 +1783,7 @@ function renderizarCarteraYRecibosPropietario(filtroTexto) {
     badgeCartera.innerText = window.CARTERA_PROPIEDADES.length + " PROPIEDADES · " + pendientesTotal + " RECIBOS PENDIENTES";
   }
 
+  // Renderizar fichas de inmuebles
   contCartera.innerHTML = listaProps.map(function(p) {
     var recsProp = window.RECIBOS_CARTERA.filter(function(r) { return r.propiedad.toUpperCase() === p.nombre_propiedad.toUpperCase(); });
     var numPend = recsProp.filter(function(r) { return r.estado.toUpperCase() === "PENDIENTE"; }).length;
@@ -1807,7 +1801,7 @@ function renderizarCarteraYRecibosPropietario(filtroTexto) {
           badgeCobro +
         '</div>' +
         '<div class="info-row"><span class="info-label">Inquilino:</span><span class="info-value">' + escaparHTML(p.inquilino) + '</span></div>' +
-        '<div class="info-row"><span class="info-label">Renta Mensual:</span><span class="info-value" style="color:var(--emerald);">' + escaparHTML(p.renta_mensual) + '</span></div>' +
+        '<div class="info-row"><span class="info-label">Renta / IBAN:</span><span class="info-value" style="color:var(--emerald);">' + escaparHTML(p.renta_mensual) + ' (' + escaparHTML(p.iban) + ')</span></div>' +
         '<div class="info-row"><span class="info-label">Estado Contrato:</span><span class="info-value">' + escaparHTML(p.estado_contrato) + '</span></div>' +
       '</div>' +
       '<div style="display:flex; gap:8px; flex-wrap:wrap; padding-top:8px; border-top:1px solid rgba(30,41,59,0.6);">' +
@@ -1816,6 +1810,22 @@ function renderizarCarteraYRecibosPropietario(filtroTexto) {
       '</div>' +
     '</div>';
   }).join("");
+
+  // Renderizar suministros y regularización (Día 25)
+  if (contSuministros) {
+    contSuministros.innerHTML = window.SUMINISTROS_GASTOS.map(function(s) {
+      return '<div class="receipt-row">' +
+        '<div class="receipt-info">' +
+          '<div class="receipt-concept">⚡ ' + escaparHTML(s.concepto) + ' · <span style="color:var(--neon-cyan);">' + escaparHTML(s.propiedad) + '</span></div>' +
+          '<div class="receipt-meta">IBAN Destino: <strong>' + escaparHTML(s.iban) + '</strong> · Ciclo: Día 25 de mes</div>' +
+        '</div>' +
+        '<div class="receipt-actions">' +
+          '<span class="receipt-amount">' + escaparHTML(s.importe) + '</span>' +
+          '<span class="badge badge-info">' + escaparHTML(s.estado) + '</span>' +
+        '</div>' +
+      '</div>';
+    }).join("");
+  }
 
   // Renderizar recibos según filtro
   var listaRecs = window.RECIBOS_CARTERA.filter(function(r) {
@@ -1862,7 +1872,6 @@ window.filtrarRecibosPropietario = function(estado, btnElem) {
   renderizarCarteraYRecibosPropietario();
 };
 
-// INSPECCIONAR CUALQUIER PISO EN LA VISTA DE EXPEDIENTE DE INQUILINO
 window.inspeccionarInmuebleComoResidente = function(nombrePropiedad) {
   seleccionarInmuebleResidente(nombrePropiedad);
   mostrarVistaInterna("residente");
@@ -1879,7 +1888,7 @@ window.seleccionarInmuebleResidente = function(nombrePropiedad) {
   document.getElementById("val-dni").innerText = ficha.dni_inquilino;
   document.getElementById("val-propiedad").innerText = ficha.nombre_propiedad;
   document.getElementById("val-direccion").innerText = ficha.direccion;
-  document.getElementById("val-contrato-renta").innerText = ficha.estado_contrato + " · " + ficha.renta_mensual + "/mes";
+  document.getElementById("val-contrato-renta").innerText = ficha.estado_contrato + " · " + ficha.renta_mensual + "/mes · IBAN: " + ficha.iban;
 
   var galeriaBox = document.getElementById("val-fotos");
   if (galeriaBox && Array.isArray(ficha.fotos)) {
@@ -1898,7 +1907,7 @@ window.seleccionarInmuebleResidente = function(nombrePropiedad) {
       '<strong>Estado Técnico:</strong> ' + escaparHTML(ficha.incidencias) +
     '</div>' +
     '<div style="background:var(--bg-input); border-left:3px solid var(--neon-cyan); padding:12px; border-radius:8px; color:#cbd5e1;">' +
-      '<strong>Suministros:</strong> ' + escaparHTML(ficha.suministros) +
+      '<strong>Suministros e IBAN (' + escaparHTML(ficha.iban) + '):</strong> ' + escaparHTML(ficha.suministros) +
     '</div>';
 
   actualizarMapaInmueble(ficha.direccion, ficha.nombre_propiedad, ficha.lat, ficha.lon);
@@ -1938,7 +1947,6 @@ function renderizarRecibosInquilino(nombrePropiedad) {
   }).join("");
 }
 
-// VISOR NATIVO PARA LOS BOTONES "VER RECIBOS PENDIENTES" Y "VER ESTADO DE CONTRATOS" (SIN PANTALLA NEGRA)
 window.abrirVisorNativoPropietario = function(modo) {
   var titulo = document.getElementById("visor-titulo");
   var caja = document.getElementById("visor-contenido-nativo");
@@ -1994,7 +2002,7 @@ window.abrirVisorNativoPropietario = function(modo) {
             '</div>' +
             '<div class="info-row"><span class="info-label">Arrendatario:</span><span class="info-value">' + escaparHTML(p.inquilino) + '</span></div>' +
             '<div class="info-row"><span class="info-label">Identificador:</span><span class="info-value">' + escaparHTML(p.dni_inquilino) + '</span></div>' +
-            '<div class="info-row"><span class="info-label">Renta Mensual:</span><span class="info-value" style="color:var(--emerald);">' + escaparHTML(p.renta_mensual) + '</span></div>' +
+            '<div class="info-row"><span class="info-label">Renta / IBAN:</span><span class="info-value" style="color:var(--emerald);">' + escaparHTML(p.renta_mensual) + ' (' + escaparHTML(p.iban) + ')</span></div>' +
             '<div class="info-row"><span class="info-label">Coordenadas GPS:</span><span class="info-value">' + p.lat + ', ' + p.lon + '</span></div>' +
           '</div>' +
           '<button type="button" class="btn-primary" style="padding:10px; font-size:13px;" onclick="cerrarVisorSeguro(); inspeccionarInmuebleComoResidente(\'' + escaparHTML(p.nombre_propiedad) + '\')">👁️ Abrir Expediente Completo del Inmueble →</button>' +
@@ -2009,16 +2017,16 @@ window.abrirVisorNativoPropietario = function(modo) {
 window.abrirFichaContratoActual = function() {
   var propActual = window.sesionActiva.propiedad || "Martinenca";
   var p = window.CARTERA_PROPIEDADES.find(function(x) { return x.nombre_propiedad.toUpperCase() === propActual.toUpperCase(); }) || window.CARTERA_PROPIEDADES[0];
-  document.getElementById("visor-titulo").innerText = "📄 Ficha Contractual y Suministros · " + p.nombre_propiedad;
+  document.getElementById("visor-titulo").innerText = "📄 Ficha Contractual, Suministros e IBAN · " + p.nombre_propiedad;
   document.getElementById("visor-contenido-nativo").innerHTML =
     '<div class="panel-box" style="background:var(--bg-input); margin-bottom:0;">' +
       '<div class="info-row"><span class="info-label">Inmueble Arrendado:</span><span class="info-value" style="color:var(--emerald);">' + escaparHTML(p.nombre_propiedad) + '</span></div>' +
       '<div class="info-row"><span class="info-label">Dirección Exacta:</span><span class="info-value">' + escaparHTML(p.direccion) + '</span></div>' +
-      '<div class="info-row"><span class="info-label">Arrendadora / Propiedad:</span><span class="info-value">Carmen Forcadell (40913126J)</span></div>' +
+      '<div class="info-row"><span class="info-label">Arrendadora / Propietaria:</span><span class="info-value">Carmen Forcadell (40913126J)</span></div>' +
       '<div class="info-row"><span class="info-label">Arrendatario Titular:</span><span class="info-value">' + escaparHTML(p.inquilino) + ' (' + escaparHTML(p.dni_inquilino) + ')</span></div>' +
       '<div class="info-row"><span class="info-label">Renta Mensual Pactada:</span><span class="info-value" style="color:var(--amber);">' + escaparHTML(p.renta_mensual) + '</span></div>' +
-      '<div class="info-row"><span class="info-label">Cláusula de Suministros:</span><span class="info-value">' + escaparHTML(p.suministros) + '</span></div>' +
-      '<div class="info-row"><span class="info-label">Agencia Gestora:</span><span class="info-value">LEVEL PUNTO IMMO 24365 SLU · API 4173 · AICAT 14200</span></div>' +
+      '<div class="info-row"><span class="info-label">Cuenta IBAN de Ingreso:</span><span class="info-value" style="color:var(--neon-cyan);">' + escaparHTML(p.iban) + '</span></div>' +
+      '<div class="info-row"><span class="info-label">Cláusula de Suministros (Día 25):</span><span class="info-value">' + escaparHTML(p.suministros) + '</span></div>' +
     '</div>';
   document.getElementById("modal-visor-seguro").style.display = "flex";
 };
@@ -2049,7 +2057,7 @@ function actualizarMapaInmueble(direccion, nombrePropiedad, lat, lon) {
     queryGPS = "40.576956,0.550353";
   } else if (upperProp.includes("JAUME")) {
     queryGPS = "40.618081,0.591411";
-  } else if (upperProp.includes("TRAVESSERA") || upperProp.includes("TRAVESEA")) {
+  } else if (upperProp.includes("TRAVESSERA")) {
     queryGPS = "40.620422,0.590800";
   } else if (direccion && direccion !== "---") {
     queryGPS = encodeURIComponent(direccion);
@@ -2275,7 +2283,6 @@ function renderizarPortalConDatos(data, identificador) {
   document.getElementById("portal-dashboard").style.display = "block";
   document.getElementById("main-layout").classList.add("fullscreen-mode");
 
-  // Si Make envía arrays actualizados de cartera o recibos, sincronizarlos
   if (Array.isArray(data.cartera_inmuebles) && data.cartera_inmuebles.length > 0) {
     window.CARTERA_PROPIEDADES = data.cartera_inmuebles;
   }
@@ -2293,11 +2300,9 @@ function renderizarPortalConDatos(data, identificador) {
 
   document.getElementById("badge-titular-activo").innerText = window.sesionActiva.rol + ": " + nombreReal + " (" + dniReal + ")";
 
-  // Cargar datos completos en la vista de residente y en la de propietaria
   seleccionarInmuebleResidente(propReal.split(",")[0].trim());
   renderizarCarteraYRecibosPropietario();
 
-  // Si Make envió HTML específico para recibos/avisos/incidencias de un inquilino concreto, respetarlo
   if (data.Nombre_Inquilino || (!esPropietaria && data.nombre)) {
     document.getElementById("val-nombre").innerText = nombreReal;
     document.getElementById("val-dni").innerText = dniReal;
@@ -2375,9 +2380,6 @@ window.enviarAutorizacionAbogado = function(e) {
         '<li>Recibirá al instante en su <strong>WhatsApp (+' + escaparHTML(telAbg) + ')</strong> un <strong>PIN temporal de 4 cifras</strong>.</li>' +
         '<li>Al introducir el PIN, accederá en tiempo real al estado de recibos, suministros, contratos, incidencias y <strong>navegación GPS directa en auto ("Cómo llegar")</strong> hacia cada inmueble autorizado.</li>' +
       '</ol>' +
-      '<p style="font-size: 12px; color: #94a3b8; margin-top: 24px; border-top: 1px solid #1e293b; padding-top: 12px;">' +
-        'LEVEL PUNTO IMMO 24365 SLU · API 4173 · AICAT 14200 · Trazabilidad RGPD auditada.' +
-      '</p>' +
     '</div>';
 
   var payloadLegal = {
@@ -2403,7 +2405,7 @@ window.enviarAutorizacionAbogado = function(e) {
   })
   .then(function(res) { return res.text(); })
   .then(function() {
-    msgExitoLegal.innerHTML = "✅ <strong>" + escaparHTML(nombreAbg) + " (" + escaparHTML(dniAbg) + ")</strong> dado de alta en <code>PROPERTY_PROPIETARIOS_LEGAL_SERVICES</code> (Tel: +" + escaparHTML(telAbg) + ") y email enviado a <strong>" + escaparHTML(emailAbg) + "</strong>.";
+    msgExitoLegal.innerHTML = "✅ <strong>" + escaparHTML(nombreAbg) + " (" + escaparHTML(dniAbg) + ")</strong> dado de alta en <code>PROPERTY_PROPIETARIOS_LEGAL_SERVICES</code> y email enviado a <strong>" + escaparHTML(emailAbg) + "</strong>.";
     msgExitoLegal.style.display = "block";
     btnAbg.innerText = "¡Abogado Asignado y Bienvenida Enviada!";
     setTimeout(function() {
