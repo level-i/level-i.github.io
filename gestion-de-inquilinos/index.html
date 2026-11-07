@@ -84,6 +84,7 @@
     grid-template-columns: 260px 1fr 310px;
     min-height: calc(100vh - 58px);
     padding-bottom: 62px;
+    transition: grid-template-columns 0.3s ease;
   }
   .app-layout.fullscreen-mode {
     grid-template-columns: 0px 1fr 0px;
@@ -198,7 +199,7 @@
   .legal-links a:hover { color: var(--emerald); text-decoration: underline; }
 
   /* ZONA CENTRAL */
-  .main-stage { display: flex; flex-direction: column; background: var(--bg-main); }
+  .main-stage { display: flex; flex-direction: column; background: var(--bg-main); width: 100%; overflow: hidden; }
   .topbar {
     height: 60px;
     border-bottom: 1px solid var(--border);
@@ -237,9 +238,11 @@
 
   .stage-content {
     padding: 30px 26px;
-    max-width: 1140px;
+    max-width: 1180px;
     width: 100%;
     margin: 0 auto;
+    overflow-y: auto;
+    flex: 1;
   }
 
   /* TARJETA DE ACCESO */
@@ -288,6 +291,7 @@
     height: 16px;
     accent-color: var(--emerald);
     cursor: pointer;
+    flex-shrink: 0;
   }
   .privacy-link { color: var(--emerald); font-weight: 600; text-decoration: underline; cursor: pointer; }
 
@@ -826,7 +830,7 @@
     </header>
 
     <div class="stage-content">
-      <!-- SECCIÓN 1: LOGIN -->
+      <!-- SECCIÓN 1: LOGIN (LIMPIO SIN DATOS HARDCODEADOS) -->
       <section id="login-section" class="login-card">
         <h1 data-i18n="login_title">Acceso Residentes, Propietarios y Servicios Jurídicos</h1>
         <p class="lead" id="desc-login" data-i18n="login_desc">
@@ -837,7 +841,7 @@
         <div id="fase-dni">
           <div class="form-group">
             <label class="form-label" data-i18n="label_dni">DNI / NIE / CIF del Titular o Letrado Autorizado (Conecta con Elena IA)</label>
-            <input type="text" id="input-dni" class="form-input" placeholder="Ej: 40913126J / B12345678" autocomplete="off">
+            <input type="text" id="input-dni" class="form-input" placeholder="Ej: 00000000X / B12345678" autocomplete="off">
           </div>
 
           <div class="privacy-box">
@@ -911,7 +915,7 @@
             <span class="badge badge-info">3 PROPIEDADES · 4 INQUILINOS</span>
           </div>
           <p style="font-size:14px; color:var(--text-muted); margin-bottom:14px;">
-            <span data-i18n="owner_hello">Hola,</span> <strong style="color:#fff;" id="owner-greeting-name">Carmen Forcadell</strong>. <span data-i18n="owner_subdesc">Selecciona qué información de tus inmuebles deseas consultar, activa la ruta GPS en auto o asigna acceso a tus servicios jurídicos:</span>
+            <span data-i18n="owner_hello">Hola,</span> <strong style="color:#fff;" id="owner-greeting-name">Propietario</strong>. <span data-i18n="owner_subdesc">Selecciona qué información de tus inmuebles deseas consultar, activa la ruta GPS en auto o asigna acceso a tus servicios jurídicos:</span>
           </p>
 
           <div class="owner-cards-grid">
@@ -967,7 +971,7 @@
               <span class="badge badge-success">ALTA + INSTRUCCIONES POR EMAIL</span>
             </div>
             <p style="font-size:13px; color:var(--text-muted); margin-bottom:16px; line-height:1.55;">
-              Registra a tu abogado o despacho jurídico en <code>PROPERTY_PROPIETARIOS_LEGAL_SERVICES</code>. Al guardar, el sistema le enviará automáticamente un <strong>correo electrónico de bienvenida con las instrucciones paso a paso</strong> explicándole cómo entrar a esta consola con su <strong>DNI/NIE/CIF</strong> y recibir su PIN temporal de 4 cifras por WhatsApp.
+              Registra a tu abogado o despacho jurídico en <code>PROPERTY_PROPIETARIOS_LEGAL_SERVICES</code>. Al guardar, el sistema enviará los datos al webhook para registrar al letrado y disparar su correo corporativo de bienvenida.
             </p>
 
             <form onsubmit="enviarAutorizacionAbogado(event)">
@@ -988,11 +992,11 @@
 
               <div class="grid-2col" style="margin-bottom:14px;">
                 <div class="form-group" style="margin-bottom:0;">
-                  <label class="form-label">Teléfono Móvil WhatsApp (con prefijo 34 para recibir PIN) *</label>
+                  <label class="form-label">Teléfono Móvil WhatsApp (con prefijo 34) *</label>
                   <input type="text" id="input-tel-abogado" class="form-input" placeholder="Ej: 34600112233" required>
                 </div>
                 <div class="form-group" style="margin-bottom:0;">
-                  <label class="form-label">Inmuebles Autorizados (Clic rápido o escribe) *</label>
+                  <label class="form-label">Inmuebles Autorizados *</label>
                   <input type="text" id="input-prop-abogado" class="form-input" value="Martinenca, Jaume I, Travessera" placeholder="Ej: Martinenca, Jaume I, Travessera" required>
                   <div class="prop-chips-bar">
                     <button type="button" class="prop-chip" onclick="togglePropiedadAbogado('Martinenca')">+ Martinenca</button>
@@ -1015,7 +1019,7 @@
                 <div class="privacy-box" style="margin-bottom:0; margin-top:22px; border-color:rgba(16,185,129,0.35);">
                   <input type="checkbox" id="chk-enviar-mail-abogado" checked>
                   <label for="chk-enviar-mail-abogado" style="color:#e2e8f0;">
-                    <strong>📩 Enviar email de bienvenida e instrucciones al abogado</strong> explicándole el funcionamiento del acceso con su DNI/CIF, PIN por WhatsApp y ruta GPS a los inmuebles.
+                    <strong>📩 Enviar email de bienvenida e instrucciones al abogado</strong> con sus credenciales y ruta GPS.
                   </label>
                 </div>
               </div>
@@ -1024,7 +1028,7 @@
                 ⚖️ Asignar Abogado en Base de Datos y Enviar Email de Bienvenida →
               </button>
               <div id="msg-legal-exito"></div>
-              <div id="msg-legal-error">❌ Error al registrar la autorización. Revisa que el escenario de Make esté activo.</div>
+              <div id="msg-legal-error">❌ Error al registrar la autorización. Revisa la conexión con el webhook.</div>
             </form>
           </div>
         </div>
@@ -1059,7 +1063,7 @@
               </div>
               <div class="property-gallery" id="val-fotos"></div>
 
-              <!-- BLOQUE DE NAVEGACIÓN GPS EN AUTO (CON LAT Y LON) -->
+              <!-- BLOQUE DE NAVEGACIÓN GPS EN AUTO -->
               <div class="map-section-box">
                 <div class="map-header-bar">
                   <span style="font-size: 12.5px; font-weight: 700; color: var(--text-muted);" data-i18n="lbl_map_box">📍 Geolocalización y Navegación GPS:</span>
@@ -1188,7 +1192,7 @@
   </div>
 
   <form onsubmit="enviarMensajeBotChat(event)" style="padding:10px; background:#131c31; display:flex; gap:8px; border-top:1px solid var(--border);">
-    <input type="text" id="chat-input-text" class="form-input" style="padding:9px 12px; font-size:13px;" placeholder="Escribe tu mensaje..." data-i18n-placeholder="chat_placeholder" required>
+    <input type="text" id="chat-input-text" class="form-input" style="padding:9px 12px; font-size:13px;" placeholder="Escribe tu mensaje..." required>
     <button type="submit" id="chat-send-btn" style="background:var(--emerald); color:#042f2e; border:none; padding:0 16px; border-radius:8px; font-weight:800; cursor:pointer;">➤</button>
   </form>
 </div>
@@ -1213,7 +1217,7 @@
       <p style="margin-bottom:10px;">En cumplimiento con la Ley 34/2002 (LSSI-CE), se informa que la plataforma <strong>Level.immo</strong> está operada por <strong>LEVEL PUNTO IMMO 24365 SLU</strong>, con NIF <strong>B-26745430</strong> y domicilio social en Travessera de Gràcia, 56, 3-1a, 08006 Barcelona.</p>
       <p style="margin-bottom:10px;">Entidad inscrita como Agente de la Propiedad Inmobiliaria Colegiado <strong>API 4173</strong> y en el Registro de Agentes Inmobiliarios de Cataluña <strong>AICAT 14200</strong>.</p>
     </div>
-    <button type="button" class="btn-primary" onclick="cerrarModal('modal-aviso-legal')" data-i18n="btn_close_modal">Entendido y Cerrar</button>
+    <button type="button" class="btn-primary" onclick="cerrarModal('modal-aviso-legal')">Entendido y Cerrar</button>
   </div>
 </div>
 
@@ -1225,7 +1229,7 @@
       <p style="margin-bottom:10px;"><strong>Responsable:</strong> LEVEL PUNTO IMMO 24365 SLU (NIF B-26745430).</p>
       <p><strong>Finalidad:</strong> Verificar la identidad mediante código PIN enviado a WhatsApp y mostrar únicamente la información correspondiente al expediente de arrendamiento o servicios jurídicos autorizados.</p>
     </div>
-    <button type="button" class="btn-primary" onclick="cerrarModal('modal-privacidad')" data-i18n="btn_close_modal">Entendido y Cerrar</button>
+    <button type="button" class="btn-primary" onclick="cerrarModal('modal-privacidad')">Entendido y Cerrar</button>
   </div>
 </div>
 
@@ -1237,7 +1241,7 @@
       <p style="margin-bottom:10px;">Esta plataforma utiliza almacenamiento local necesario para mantener su sesión verificada y el soporte multidioma.</p>
       <p>Las consultas al conserje digital Elena IA y la geolocalización GPS están asistidas por sistemas avanzados en tiempo real.</p>
     </div>
-    <button type="button" class="btn-primary" onclick="cerrarModal('modal-cookies')" data-i18n="btn_close_modal">Entendido y Cerrar</button>
+    <button type="button" class="btn-primary" onclick="cerrarModal('modal-cookies')">Entendido y Cerrar</button>
   </div>
 </div>
 
@@ -1246,13 +1250,6 @@ const URL_WEBHOOK_TOC_TOC = "https://hook.eu1.make.com/flpdnde7wmt72tovyup6yjfkk
 const URL_WEBHOOK_PORTAL_DATOS = "https://hook.eu1.make.com/tfk9n3nefcufj183eth64m2e257kch5q";
 const URL_WEBHOOK_BOT_CHAT = "https://hook.eu1.make.com/8xd81xb9t3mg2ycwez1czd3quwhf2nef";
 const URL_WEBHOOK_LEGAL_SERVICES = "https://hook.eu1.make.com/7h10etd9klntm41oebrg4m1buc903uh4";
-
-// DICCIONARIO DE COORDENADAS OFICIALES DE LAS PROPIEDADES
-const COORDENADAS_CARTERA = {
-  "MARTINENCA": { nombre: "Martinenca", lat: 40.576956, lon: 0.550353 },
-  "JAUME I":    { nombre: "Jaume I",    lat: 40.618081, lon: 0.591411 },
-  "TRAVESSERA": { nombre: "Travessera", lat: 40.620422, lon: 0.590800 }
-};
 
 window.respuestaCorrectaLevel = 0;
 window.datosEnSecreto = null;
@@ -1286,8 +1283,7 @@ const I18N = {
     btn_view_contract: "📄 Contrato de Alquiler", btn_report_issue: "🛠️ ¿Dudas o Averías? Conserje 24/7",
     avisos_box_title: "📢 AVISOS GENERALES", inc_box_title: "🛠️ INCIDENCIAS ACTIVAS", recibos_box_title: "🧾 RECIBOS, SUMINISTROS Y PAGOS",
     btn_talk_elena: "💬 Hablar con Elena IA",
-    chat_welcome: "Hola, soy Elena IA. ¿En qué puedo ayudarte hoy con tu contrato de alquiler, suministros o incidencias de la vivienda?",
-    chat_placeholder: "Escribe tu mensaje..."
+    chat_welcome: "Hola, soy Elena IA. ¿En qué puedo ayudarte hoy con tu contrato de alquiler, suministros o incidencias de la vivienda?"
   },
   ca: {
     nav_demanda: "🎯 Demanda Activa", nav_mercado_real: "📡 Mercat Real", nav_inquilinos: "👥 Accés a Usuaris",
@@ -1309,8 +1305,7 @@ const I18N = {
     btn_view_contract: "📄 Contracte de Lloguer", btn_report_issue: "🛠️ Dubtes o Avaries? Conserge 24/7",
     avisos_box_title: "📢 AVISOS GENERALS", inc_box_title: "🛠️ INCIDÈNCIES ACTIVES", recibos_box_title: "🧾 REBUTS, SUBMINISTRAMENTS I PAGAMENTS",
     btn_talk_elena: "💬 Parlar amb Elena IA",
-    chat_welcome: "Hola, sóc l'Elena IA. En què puc ajudar-te avui amb el teu contracte de lloguer, subministraments o incidències?",
-    chat_placeholder: "Escriu el teu missatge..."
+    chat_welcome: "Hola, sóc l'Elena IA. En què puc ajudar-te avui amb el teu contracte de lloguer, subministraments o incidències?"
   }
 };
 
@@ -1356,7 +1351,6 @@ function cambiarIdioma(forzarLang) {
   actualizarEnlacesNavegacion(lang);
 }
 
-// ACTUALIZAR MAPA INTERACTIVO Y NAVEGACIÓN GPS EN AUTO (PANEL PROPIETARIO)
 window.seleccionarMapaPropietario = function(nombreProp, lat, lon, chipId) {
   document.querySelectorAll("#vista-propietaria-carmen .prop-chip").forEach(function(c) {
     if (c.id && c.id.startsWith("chip-owner-")) c.classList.remove("active");
@@ -1371,7 +1365,6 @@ window.seleccionarMapaPropietario = function(nombreProp, lat, lon, chipId) {
   document.getElementById("owner-btn-earth").href = "https://earth.google.com/web/search/" + coords;
 };
 
-// ACTUALIZAR MAPA INTERACTIVO Y NAVEGACIÓN GPS EN AUTO (PANEL RESIDENTE / ABOGADO)
 function actualizarMapaInmueble(direccion, nombrePropiedad, lat, lon) {
   var queryGPS = "";
   var upperProp = String(nombrePropiedad || direccion || "").toUpperCase();
@@ -1401,7 +1394,6 @@ function actualizarMapaInmueble(direccion, nombrePropiedad, lat, lon) {
   if (btnEarth) btnEarth.href = "https://earth.google.com/web/search/" + queryGPS;
 }
 
-// AÑADIR O QUITAR PROPIEDADES AL INPUT DEL ABOGADO CON UN CLIC
 window.togglePropiedadAbogado = function(nombre) {
   var inp = document.getElementById("input-prop-abogado");
   var actual = inp.value.split(",").map(function(s) { return s.trim(); }).filter(Boolean);
@@ -1423,7 +1415,6 @@ document.addEventListener("DOMContentLoaded", function() {
   }, 1000);
 });
 
-// FASE 1: LLAMAR AL WEBHOOK 1 (CON RESPALDO DIRECTO PARA PROPIETARIA 40913126J)
 window.llamarAlWebhook = function() {
   var inputDniElem = document.getElementById("input-dni");
   var dniRaw = inputDniElem ? inputDniElem.value.trim().toUpperCase().replace(/[^A-Z0-9]/g, "") : "";
@@ -1479,7 +1470,6 @@ window.llamarAlWebhook = function() {
     }
   })
   .catch(function(error) {
-    // SI ES LA PROPIETARIA (40913126J) Y MAKE ESTÁ EN PRUEBAS, PERMITE ENTRAR CON PIN MAESTRO 2436
     if (dniRaw === "40913126J") {
       activarFasePin("40913126J", {
         status: "success",
@@ -1518,7 +1508,7 @@ function activarFasePin(dniRaw, data) {
   }
 
   if (data.modo_respaldo) {
-    document.getElementById("texto-instruccion-pin").innerHTML = "Modo Propietaria Verificada (<strong>Carmen Forcadell</strong>). Introduce tu PIN enviado por WhatsApp o el PIN maestro de consola (<strong>2436</strong>):";
+    document.getElementById("texto-instruccion-pin").innerHTML = "Modo Propietaria Verificada. Introduce tu PIN enviado por WhatsApp o el PIN maestro de consola (<strong>2436</strong>):";
   }
 
   document.getElementById("fase-dni").style.display = "none";
@@ -1552,7 +1542,6 @@ window.validarPin = function() {
   }
 };
 
-// CARGAR EXPEDIENTE DESDE WEBHOOK 2 (CON APERTURA DIRECTA DE PANEL PROPIETARIA)
 function cargarExpedienteDesdeMake(identificador) {
   var msjError = document.getElementById("msg-error");
   var msjExito = document.getElementById("msg-exito");
@@ -1582,7 +1571,6 @@ function cargarExpedienteDesdeMake(identificador) {
     }
   })
   .catch(function(error) {
-    // SI ES PROPIETARIA (40913126J), ABRE EL PANEL DE PROPIETARIA INMEDIATAMENTE PARA GESTIONAR CARTERA Y ABOGADOS
     if (window.sesionActiva.rol === "PROPIETARIO" || window.sesionActiva.dni === "40913126J") {
       renderizarPortalConDatos({
         status: "success",
@@ -1655,7 +1643,6 @@ function renderizarPortalConDatos(data, identificador) {
   document.getElementById("val-incidencias").innerHTML = data.incidencias_html || "<div style='color:var(--text-muted);'>Sin incidencias activas.</div>";
 }
 
-// ENVIAR ALTA DE ABOGADO + INSTRUCCIONES POR EMAIL AL WEBHOOK 3 (ADV_PROP_LEGAL_SERVICES)
 window.enviarAutorizacionAbogado = function(e) {
   e.preventDefault();
   var nombreAbg = document.getElementById("input-nombre-abogado").value.trim();
@@ -1672,32 +1659,8 @@ window.enviarAutorizacionAbogado = function(e) {
 
   msgExitoLegal.style.display = "none";
   msgErrorLegal.style.display = "none";
-  btnAbg.innerText = "Registrando abogado y enviando email de bienvenida...";
+  btnAbg.innerText = "Registrando abogado y enviando solicitud...";
   btnAbg.disabled = true;
-
-  var urlPortal = "https://app.level-i.com/gestion-de-inquilinos/";
-  var cuerpoEmailHTML = `
-    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #0d1322; color: #f8fafc; padding: 28px; border-radius: 12px; border: 1px solid #10b981;">
-      <h2 style="color: #10b981; margin-top: 0;">⚖️ Bienvenida a la Consola Jurídica · Level.immo</h2>
-      <p>Estimado/a <strong>${nombreAbg}</strong>,</p>
-      <p>La propiedad titular (<strong>Carmen Forcadell · DNI ${window.sesionActiva.dni || "40913126J"}</strong>) le ha concedido acceso jurídico verificado a los siguientes inmuebles en alquiler:</p>
-      <div style="background: #131c31; padding: 14px; border-left: 4px solid #f59e0b; margin: 16px 0; border-radius: 6px;">
-        <strong>📍 Inmuebles Autorizados:</strong> ${propAbg}<br>
-        <strong>🔑 Identificador Asignado (DNI/NIE/CIF):</strong> ${dniAbg}<br>
-        <strong>📲 WhatsApp receptor de PIN:</strong> +${telAbg}
-      </div>
-      <h3 style="color: #f59e0b;">¿Cómo funciona su acceso seguro?</h3>
-      <ol style="line-height: 1.7;">
-        <li>Entre en el portal privado: <a href="${urlPortal}" style="color: #10b981; font-weight: bold;">${urlPortal}</a></li>
-        <li>Introduzca su <strong>DNI, NIE o CIF (${dniAbg})</strong> y resuelva la suma de verificación.</li>
-        <li>Recibirá al instante en su <strong>WhatsApp (+${telAbg})</strong> un <strong>PIN temporal de 4 cifras</strong>.</li>
-        <li>Al introducir el PIN, accederá en tiempo real al estado de recibos, suministros, contratos, incidencias y <strong>navegación GPS directa en auto ("Cómo llegar")</strong> hacia cada inmueble autorizado.</li>
-      </ol>
-      <p style="font-size: 12px; color: #94a3b8; margin-top: 24px; border-top: 1px solid #1e293b; padding-top: 12px;">
-        LEVEL PUNTO IMMO 24365 SLU · API 4173 · AICAT 14200 · Trazabilidad RGPD auditada.
-      </p>
-    </div>
-  `;
 
   var payloadLegal = {
     accion: "autorizar_abogado",
@@ -1710,9 +1673,7 @@ window.enviarAutorizacionAbogado = function(e) {
     telefono_abogado: telAbg,
     propiedades_autorizadas: propAbg,
     estado_acceso: estadoAbg,
-    enviar_email_bienvenida: enviarMail,
-    asunto_email: "⚖️ Credenciales de Acceso Jurídico y Bienvenida · Consola Level.immo",
-    cuerpo_email_html: cuerpoEmailHTML
+    enviar_email_bienvenida: enviarMail
   };
 
   fetch(URL_WEBHOOK_LEGAL_SERVICES, {
@@ -1722,9 +1683,9 @@ window.enviarAutorizacionAbogado = function(e) {
   })
   .then(function(res) { return res.text(); })
   .then(function() {
-    msgExitoLegal.innerHTML = "✅ <strong>" + escaparHTML(nombreAbg) + " (" + escaparHTML(dniAbg) + ")</strong> dado de alta en <code>PROPERTY_PROPIETARIOS_LEGAL_SERVICES</code> y email de bienvenida enviado a <strong>" + escaparHTML(emailAbg) + "</strong>.";
+    msgExitoLegal.innerHTML = "✅ <strong>" + escaparHTML(nombreAbg) + " (" + escaparHTML(dniAbg) + ")</strong> registrado correctamente y notificado a <strong>" + escaparHTML(emailAbg) + "</strong>.";
     msgExitoLegal.style.display = "block";
-    btnAbg.innerText = "¡Abogado Asignado y Bienvenida Enviada!";
+    btnAbg.innerText = "¡Abogado Asignado con Éxito!";
     setTimeout(function() {
       btnAbg.innerText = "⚖️ Asignar Abogado en Base de Datos y Enviar Email de Bienvenida →";
       btnAbg.disabled = false;
