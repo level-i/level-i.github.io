@@ -6,7 +6,6 @@
   <title>Level.immo | Consultoria Tècnica, Cadastral i Patrimonial a la Carta</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <!-- Leaflet CSS/JS para permitir zoom libre con la rueda sin bloqueo de tecla Ctrl + Capas Satélite/Catastro -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <style>
@@ -37,7 +36,6 @@
       object-position: center center;
       transition: opacity 0.6s ease;
     }
-    /* Modal de Mapa a Pantalla Completa */
     #map-fullscreen-modal {
       display: none;
       position: fixed;
@@ -69,17 +67,17 @@
   <div id="map-fullscreen-modal">
     <div class="w-full max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2 mb-2.5 px-2">
       <div class="flex items-center gap-2">
-        <span class="px-3 py-1 rounded-lg bg-slate-900 border border-emerald-500/40 text-xs font-mono font-bold text-emerald-400">
+        <span class="px-3 py-1 rounded-lg bg-slate-900 border border-emerald-500/40 text-xs font-mono font-bold text-emerald-400" data-i18n="fs_map_badge">
           🛰️ VISTA AÈRIA SATÈL·LIT + PARCEL·LARI CADASTRAL (ZOOM LLIURE)
         </span>
         <span id="fs-map-label" class="text-xs font-bold text-amber-400 truncate max-w-md"></span>
       </div>
       <div class="flex items-center gap-2">
         <button type="button" onclick="toggleCatastroOverlay()" class="px-3 py-1.5 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/50 text-amber-300 text-xs font-bold transition cursor-pointer">
-          📐 Activar/Ocultar Línees del Cadastre
+          📐 <span data-i18n="btn_catastro_layer">Capa Cadastre</span>
         </button>
         <button type="button" onclick="closeFullscreenMap()" class="px-4 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs font-black uppercase tracking-wider shadow-2xl cursor-pointer">
-          ✕ Tancar Pantalla Completa
+          ✕ <span data-i18n="btn_close_fs_map">Tancar Pantalla Completa</span>
         </button>
       </div>
     </div>
@@ -420,11 +418,11 @@
                 Obre la Fitxa Cadastral de l'Immoble i navega amb Zoom Lliure
               </h3>
             </div>
-            <span class="text-[11px] font-mono text-emerald-400 bg-slate-900 border border-slate-700 px-2.5 py-1 rounded">14 / 20 caràcters</span>
+            <span class="text-[11px] font-mono text-emerald-400 bg-slate-900 border border-slate-700 px-2.5 py-1 rounded" data-i18n="cat_char_badge">14 / 20 caràcters</span>
           </div>
 
           <p class="text-xs text-slate-300 leading-relaxed" data-i18n="cat_tool_desc">
-            Enganxa o escriu la Referència Cadastral (14 o 20 caràcters): el sistema localitzarà automàticament les coordenades oficials de la finca al mapa satèl·lit i t'obrirà directament la <strong>Fitxa Descriptiva i Gràfica del Cadastre</strong> d'aquesta referència:
+            Enganxa o escriu la Referència Cadastral (14 o 20 caràcters): el sistema localitzarà automàticament les coordenades oficials de la finca al mapa satèl·lit i t'obrirà directament la Fitxa Descriptiva i Gràfica del Cadastre d'aquesta referència:
           </p>
 
           <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 text-xs">
@@ -452,43 +450,37 @@
 
           <!-- Botonera Catastro Directo + Cartografía + Valor Referencia + Google Earth + Cómo llegar -->
           <div class="flex flex-wrap items-center gap-2 pt-1">
-            <!-- BOTÓN 1: ABRE DIRECTAMENTE LA FICHA DEL INMUEBLE EN EL CATASTRO -->
             <button type="button" onclick="openDirectCatastroFicha('main')" class="px-3.5 py-2 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-black transition flex items-center gap-1.5 shadow-lg cursor-pointer">
               <span>🏛️</span> <span data-i18n="btn_open_catastro">Obrir Fitxa del Cadastre ↗</span>
             </button>
 
-            <!-- BOTÓN 2: ABRE EL PLANO PARCELARIO OFICIAL DE ESA REFERENCIA -->
             <button type="button" onclick="openDirectCatastroMapa('main')" class="px-3 py-2 rounded-lg bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/40 text-amber-300 text-xs font-bold transition flex items-center gap-1.5 cursor-pointer">
               <span>📐</span> <span data-i18n="btn_open_carto">Plànol Parcel·la ↗</span>
             </button>
 
-            <!-- BOTÓN 3: VALOR DE REFERENCIA (INACTIVO / PRÓXIMAMENTE) -->
-            <button type="button" disabled class="px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-slate-400 text-xs font-bold flex items-center gap-1.5 cursor-not-allowed opacity-85" title="En desenvolupament per a la campanya de llançament">
+            <button type="button" disabled class="px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-slate-400 text-xs font-bold flex items-center gap-1.5 cursor-not-allowed opacity-85">
               <span>🔒</span> <span data-i18n="btn_val_ref_soon">Valor de Referència (Pròximament)</span>
             </button>
 
-            <!-- BOTÓN 4: GOOGLE EARTH 3D -->
             <button type="button" onclick="openGoogleEarth3D('main')" class="px-3 py-2 rounded-lg bg-sky-500/20 hover:bg-sky-500/30 border border-sky-500/40 text-sky-300 text-xs font-bold transition flex items-center gap-1.5 cursor-pointer">
               <span>🌍</span> <span data-i18n="btn_earth_3d">Vol 3D Google Earth ↗</span>
             </button>
 
-            <!-- BOTÓN 5: CÓMO LLEGAR (GPS DE CORTESÍA) -->
             <button type="button" onclick="openCourtesyNavigator('main')" class="px-3.5 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-black transition flex items-center gap-1.5 shadow-lg cursor-pointer">
               <span>🚗</span> <span data-i18n="btn_how_to_get">Com arribar (GPS) ↗</span>
             </button>
 
-            <!-- BOTÓN 6: ENVIAR UBICACIÓN POR WHATSAPP -->
             <button type="button" onclick="shareLocationWhatsApp('main')" class="px-3 py-2 rounded-lg bg-[#25D366]/20 hover:bg-[#25D366]/30 border border-[#25D366]/50 text-[#25D366] text-xs font-bold transition flex items-center gap-1 cursor-pointer">
               <span>📲</span> <span data-i18n="btn_share_loc">Enviar Ubicació</span>
             </button>
           </div>
 
-          <!-- VISOR SATÉLITE CON ZOOM LIBRE (RUEDA DEL RATÓN DIRECTA SIN CTRL) + BOTÓN PANTALLA COMPLETA -->
+          <!-- VISOR SATÉLITE CON ZOOM LIBRE + BOTÓN PANTALLA COMPLETA -->
           <div class="relative w-full h-72 sm:h-80 rounded-xl overflow-hidden border border-slate-700 bg-slate-950 shadow-inner">
             <div id="main-leaflet-map" class="w-full h-full z-10"></div>
             <div class="absolute top-2.5 right-2.5 z-20 flex gap-1.5">
               <button type="button" onclick="toggleCatastroOverlay()" class="px-2.5 py-1.5 rounded-lg bg-slate-950/85 hover:bg-slate-900 text-amber-300 border border-amber-500/40 text-[11px] font-bold backdrop-blur shadow-lg cursor-pointer">
-                📐 Capa Cadastre
+                📐 <span data-i18n="btn_catastro_layer">Capa Cadastre</span>
               </button>
               <button type="button" onclick="openFullscreenMap()" class="px-3 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-[11px] font-black shadow-lg flex items-center gap-1 cursor-pointer">
                 <span>⛶</span> <span data-i18n="btn_fullscreen_map">Pantalla Completa</span>
@@ -507,7 +499,7 @@
             <span class="text-sm font-bold text-amber-400 flex items-center gap-2">
               <span>🧮</span> <span data-i18n="calc_header">Simulador de Costos: Divisió Horitzontal i Cadastre</span>
             </span>
-            <span class="text-[11px] bg-slate-800 text-emerald-400 px-2.5 py-0.5 rounded font-mono font-bold">100% Editable</span>
+            <span class="text-[11px] bg-slate-800 text-emerald-400 px-2.5 py-0.5 rounded font-mono font-bold" data-i18n="badge_editable">100% Editable</span>
           </div>
 
           <p class="text-xs text-slate-300 leading-relaxed" data-i18n="calc_intro_desc">
@@ -691,7 +683,7 @@
               <span class="text-[11px] font-bold text-amber-400 uppercase tracking-wider" data-i18n="elena_cat_box_title">
                 🗺️ Dades Cadastrals i Ubicació (Opcional)
               </span>
-              <span class="text-[10px] font-mono text-slate-400">14 o 20 caràcters</span>
+              <span class="text-[10px] font-mono text-slate-400" data-i18n="cat_char_badge">14 / 20 caràcters</span>
             </div>
 
             <input type="text" id="elena-catastro-ref" maxlength="20" oninput="validateCatastroInput('elena')" data-i18n-placeholder="elena_ph_catastro" placeholder="Referència Cadastral (14 o 20 caràcters)" class="w-full bg-[#080d14] border border-slate-700 rounded-lg px-3 py-2 text-amber-400 font-mono font-bold uppercase focus:border-amber-400 focus:outline-none" />
@@ -700,7 +692,7 @@
 
             <div class="flex gap-1.5">
               <input type="text" id="elena-catastro-loc" data-i18n-placeholder="elena_ph_loc" placeholder="Adreça i municipi de l'immoble..." class="flex-1 bg-[#080d14] border border-slate-700 rounded-lg px-3 py-2 text-white focus:border-emerald-500 focus:outline-none" />
-              <button type="button" onclick="openCourtesyNavigator('elena')" class="px-2.5 py-2 rounded-lg bg-emerald-500 text-slate-950 font-black text-[11px] flex items-center gap-1 shrink-0 transition shadow cursor-pointer" title="Com arribar (GPS)">
+              <button type="button" onclick="openCourtesyNavigator('elena')" class="px-2.5 py-2 rounded-lg bg-emerald-500 text-slate-950 font-black text-[11px] flex items-center gap-1 shrink-0 transition shadow cursor-pointer" title="GPS">
                 <span>🚗</span> <span data-i18n="btn_how_to_get_short">GPS</span>
               </button>
             </div>
@@ -710,7 +702,7 @@
                 <span>🏛️</span> <span data-i18n="btn_open_catastro">Obrir Fitxa del Cadastre ↗</span>
               </button>
               <button type="button" onclick="openGoogleEarth3D('elena')" class="px-2.5 py-1.5 rounded-lg bg-sky-500/20 border border-sky-500/40 text-sky-300 font-bold text-[11px] flex items-center gap-1 cursor-pointer">
-                <span>🌍</span> <span>Google Earth 3D ↗</span>
+                <span>🌍</span> <span data-i18n="btn_earth_3d">Vol 3D Google Earth ↗</span>
               </button>
             </div>
           </div>
@@ -747,7 +739,7 @@
               </div>
               <div>
                 <label class="text-[10px] font-bold uppercase text-slate-400 block mb-1" data-i18n="elena_time_label">⏰ Franja horària</label>
-                <select id="lead-time" class="w-full bg-[#080d14] border border-slate-700 rounded-lg px-2.5 py-2 text-white focus:border-emerald-500 focus:outline-none cursor-pointer">
+                <select id="lead-time" class="w-full bg-[#080d14] border border-slate-700 rounded-lg px-2.5 py-2 text-white focus:border-emerald-500 focus:outline-none cursor-pointer" translate="no">
                   <option value="09:30h - 11:00h">09:30h - 11:00h</option>
                   <option value="11:00h - 12:30h">11:00h - 12:30h</option>
                   <option value="12:30h - 14:00h">12:30h - 14:00h</option>
@@ -828,7 +820,6 @@
     const sessionId = "usr_" + Math.random().toString(36).substring(2, 11);
     let clienteIP = "Desconocida";
 
-    // Coordenadas actuales del visor (Por defecto Travessera de Gràcia 56, Barcelona)
     let currentLat = 41.40054;
     let currentLng = 2.15465;
     let mainMap = null;
@@ -839,24 +830,21 @@
     let catastroWmsFs = null;
     let catastroOverlayVisible = true;
 
-    // Inicializar Mapa Satélite Interactivo con Zoom Libre (Rueda del ratón sin Ctrl) + Capa WMS Oficial del Catastro
     function initInteractiveSatelliteMaps() {
       if (typeof L === 'undefined') return;
 
       mainMap = L.map('main-leaflet-map', {
         center: [currentLat, currentLng],
         zoom: 19,
-        scrollWheelZoom: true, // Permite zoom directo con la rueda sin pulsar Ctrl
+        scrollWheelZoom: true,
         zoomControl: true
       });
 
-      // Capa Satélite Google Hybrid de Alta Resolución
       L.tileLayer('https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
         maxZoom: 21,
         attribution: '© Google Satellite · Level.immo'
       }).addTo(mainMap);
 
-      // Capa WMS Oficial de la Dirección General del Catastro superpuesta
       catastroWmsMain = L.tileLayer.wms('https://ovc.catastro.meh.es/Cartografia/WMS/ServidorWMS.aspx', {
         layers: 'Catastro',
         format: 'image/png',
@@ -932,8 +920,6 @@
       document.getElementById('map-fullscreen-modal').classList.remove('is-open');
     }
 
-    // CONEXIÓN DIRECTA CON EL SERVICIO WEB OFICIAL DEL CATASTRO (OVCCoordenadas)
-    // A partir de los 14 primeros caracteres de la Referencia Catastral obtiene las coordenadas GPS exactas del inmueble
     async function geolocateFromCatastro(context, openFichaAfter = false) {
       const refInput = document.getElementById(context + '-catastro-ref');
       const status = document.getElementById(context + '-catastro-status');
@@ -943,9 +929,10 @@
       if (clean.length !== 14 && clean.length !== 20) return;
 
       const rc14 = clean.substring(0, 14);
+      const dict = i18n[currentLang] || i18n.ca;
       if (status) {
         status.className = "text-[11px] text-sky-400 font-semibold";
-        status.textContent = "⏳ Connectant amb el servidor oficial del Cadastre...";
+        status.textContent = "⏳ ...";
       }
 
       try {
@@ -962,7 +949,7 @@
         if (xcen && ycen) {
           const lng = parseFloat(xcen.textContent);
           const lat = parseFloat(ycen.textContent);
-          const addressText = ldt ? ldt.textContent : `Ref. Cadastral: ${clean}`;
+          const addressText = ldt ? ldt.textContent : `Ref: ${clean}`;
 
           const locInput = document.getElementById(context + '-catastro-loc');
           if (locInput && ldt) locInput.value = addressText;
@@ -971,18 +958,18 @@
 
           if (status) {
             status.className = "text-[11px] text-emerald-400 font-bold";
-            status.textContent = `✔ Localitzat al Cadastre: ${addressText}`;
+            status.textContent = `✔ ${addressText}`;
           }
         } else {
           if (status) {
             status.className = "text-[11px] text-emerald-400 font-bold";
-            status.textContent = `✔ Referència Cadastral vàlida (${clean.length} car.)`;
+            status.textContent = `✔ ${dict.cat_valid_msg} (${clean.length})`;
           }
         }
       } catch (err) {
         if (status) {
           status.className = "text-[11px] text-emerald-400 font-bold";
-          status.textContent = `✔ Referència Cadastral oficial vàlida (${clean.length} car.)`;
+          status.textContent = `✔ ${dict.cat_valid_msg} (${clean.length})`;
         }
       }
 
@@ -991,7 +978,6 @@
       }
     }
 
-    // Geocodificador de direcciones escritas manualmente (con soporte para números de policía y municipios)
     async function geocodeAddressToMap(context) {
       const locInput = document.getElementById(context + '-catastro-loc');
       if (!locInput || !locInput.value.trim()) return;
@@ -1006,13 +992,11 @@
       } catch (e) {}
     }
 
-    // ABRE DIRECTAMENTE LA FICHA DESCRIPTIVA Y GRÁFICA DEL INMUEBLE EN LA SEDE ELECTRÓNICA DEL CATASTRO
     function openDirectCatastroFicha(context) {
       const refInput = document.getElementById(context + '-catastro-ref');
       const clean = refInput ? refInput.value.trim().toUpperCase().replace(/[^A-Z0-9]/g, '') : '';
 
       if (clean.length === 20 || clean.length === 14) {
-        // Copiar al portapapeles automáticamente como cortesía
         try { navigator.clipboard.writeText(clean); } catch (e) {}
 
         const rc1 = clean.substring(0, 7);
@@ -1021,7 +1005,6 @@
         const cc1 = clean.length === 20 ? clean.substring(18, 19) : '';
         const cc2 = clean.length === 20 ? clean.substring(19, 20) : '';
 
-        // URL directa de Consulta y Certificación de Bien Inmueble por Referencia Catastral desglosada
         const directFichaUrl = `https://www1.sedecatastro.gob.es/CYCBienInmueble/OVCConCiud.aspx?UrbRus=U&RefC=${clean}&rc1=${rc1}&rc2=${rc2}&car=${car}&cc1=${cc1}&cc2=${cc2}`;
         window.open(directFichaUrl, '_blank', 'noopener');
       } else {
@@ -1029,7 +1012,6 @@
       }
     }
 
-    // ABRE EL PLANO PARCELARIO OFICIAL DE ESA REFERENCIA EN EL CATASTRO
     function openDirectCatastroMapa(context) {
       const refInput = document.getElementById(context + '-catastro-ref');
       const clean = refInput ? refInput.value.trim().toUpperCase().replace(/[^A-Z0-9]/g, '') : '';
@@ -1041,7 +1023,6 @@
       }
     }
 
-    // ABRE GOOGLE EARTH 3D CON VUELO ORBITAL INCLINADO (60 GRADOS) SOBRE LAS COORDENADAS O DIRECCIÓN
     function openGoogleEarth3D(context) {
       const locInput = document.getElementById(context + '-catastro-loc');
       const refInput = document.getElementById(context + '-catastro-ref');
@@ -1066,7 +1047,7 @@
       const locInput = document.getElementById(context + '-catastro-loc');
       const query = (locInput && locInput.value.trim()) ? locInput.value.trim() : `${currentLat},${currentLng}`;
       const mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(query)}`;
-      const text = `📍 Ubicació i navegador GPS (Cortesia Level.immo): ${query} -> ${mapsUrl}`;
+      const text = `📍 GPS Level.immo: ${query} -> ${mapsUrl}`;
       window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank', 'noopener');
     }
 
@@ -1093,12 +1074,12 @@
 
     function shareConsultoriaPage() {
       const shareUrl = window.location.href;
-      const shareTitle = "Level.immo | Consultoria Tècnica, Cadastral i Patrimonial a la Carta";
+      const shareTitle = "Level.immo | Consultoria";
       if (navigator.share) {
         navigator.share({ title: shareTitle, url: shareUrl }).catch(() => {});
       } else {
         navigator.clipboard.writeText(shareUrl).then(() => {
-          alert(currentLang === 'ca' ? "✓ Enllaç de la pàgina copiat al porta-retalls!" : "✓ ¡Enlace de la página copiado al portapapeles!");
+          alert("✓ URL Copied!");
         }).catch(() => {});
       }
     }
@@ -1192,19 +1173,18 @@
 
       if (isValidLength && isValidFormat) {
         status.className = "text-[11px] text-emerald-400 font-bold";
-        status.textContent = `✔ ${dict.cat_valid_msg || 'Referència Cadastral vàlida'} (${clean.length} car.)`;
+        status.textContent = `✔ ${dict.cat_valid_msg} (${clean.length})`;
 
         if (context === 'elena') {
           const actions = document.getElementById('elena-catastro-actions');
           actions.classList.remove('hidden');
           actions.classList.add('flex');
         }
-        // En cuanto completa los 14 o 20 caracteres, geolocaliza sola la parcela en el mapa
         geolocateFromCatastro(context, false);
         return true;
       } else {
         status.className = "text-[11px] text-amber-400 font-semibold";
-        status.textContent = `⚠️ ${dict.cat_invalid_msg || 'Format oficial: 14 o 20 caràcters'} [${clean.length}/20]`;
+        status.textContent = `⚠️ ${dict.cat_invalid_msg} [${clean.length}/20]`;
         if (context === 'elena') {
           document.getElementById('elena-catastro-actions').classList.add('hidden');
           document.getElementById('elena-catastro-actions').classList.remove('flex');
@@ -1426,6 +1406,7 @@
       `;
     }
 
+    // TEXTOS LEGALES EN LOS 8 IDIOMAS
     const legalTexts = {
       ca: {
         aviso_title: "Avís Legal · LEVEL PUNTO IMMO 24365 SLU",
@@ -1445,11 +1426,51 @@
       },
       en: {
         aviso_title: "Legal Notice · LEVEL PUNTO IMMO 24365 SLU",
-        aviso_body: `<p>In compliance with Spanish Law 34/2002 (LSSI-CE), <strong>Level.immo</strong> is operated by <strong>LEVEL PUNTO IMMO 24365 SLU</strong> (Tax ID B-26745430 · Travessera de Gràcia, 56, 3-1a, 08006 Barcelona · Licensed API 4173 · AICAT 14200 · Email: <code>level@level.immo</code>).</p><p>All technical consulting, horizontal division, cadastral alteration, and valuation services are supervised by licensed API professionals.</p>`,
-        privacidad_title: "Privacy Policy & GDPR",
-        privacidad_body: `<p><strong>Data Controller:</strong> LEVEL PUNTO IMMO 24365 SLU (Email: <code>level@level.immo</code>). Your personal data and cadastral references are processed in strict confidentiality under EU GDPR exclusively to manage your technical file and schedule your advisor call.</p>`,
-        cookies_title: "Cookies & AI Policy",
-        cookies_body: `<p>This site uses technical session storage for language preferences (<code>level_lang</code>) and the automated assistant <strong>Elena | AI Advisor Level-i</strong> to structure consulting files under human supervision.</p>`
+        aviso_body: `<p>In compliance with Spanish Law 34/2002 (LSSI-CE), <strong>Level.immo</strong> is operated by <strong>LEVEL PUNTO IMMO 24365 SLU</strong> (Tax ID B-26745430 · Travessera de Gràcia, 56, 3-1a, 08006 Barcelona · Licensed API 4173 · AICAT 14200 · Email: <code>level@level.immo</code>).</p><p>All technical consulting, horizontal division, cadastral alteration, and valuation services are supervised by licensed API professionals. Cost and tax (AJD) simulations are indicative and confirmed via a binding quote after reviewing Land Registry and Cadastral records.</p>`,
+        privacidad_title: "Privacy Policy & Data Protection (GDPR)",
+        privacidad_body: `<p><strong>Data Controller:</strong> LEVEL PUNTO IMMO 24365 SLU (Email: <code>level@level.immo</code>). Your personal data and cadastral references are processed in strict confidentiality under EU Regulation 2016/679 (GDPR) exclusively to manage your technical file and schedule your advisor call. You may exercise your rights of access, rectification, erasure, and portability at <code>level@level.immo</code>.</p>`,
+        cookies_title: "Cookies & AI Transparency Policy",
+        cookies_body: `<p>This site uses technical session storage for language preferences (<code>level_lang</code>) and the automated assistant <strong>Elena | AI Advisor Level-i</strong> to structure consulting files under human supervision by licensed API 4173 / AICAT 14200 agents.</p>`
+      },
+      fr: {
+        aviso_title: "Mentions Légales · LEVEL PUNTO IMMO 24365 SLU",
+        aviso_body: `<p>Conformément à la Loi 34/2002 (LSSI-CE), <strong>Level.immo</strong> est opérée par <strong>LEVEL PUNTO IMMO 24365 SLU</strong> (NIF B-26745430 · Travessera de Gràcia, 56, 3-1a, 08006 Barcelone · API 4173 · AICAT 14200 · E-mail : <code>level@level.immo</code>).</p><p>Les services de conseil technique, division horizontale, révision cadastrale et évaluation sont supervisés par des agents agréés API/AICAT. Les simulations de coûts et taxes (AJD) sont indicatives.</p>`,
+        privacidad_title: "Politique de Confidentialité et RGPD",
+        privacidad_body: `<p><strong>Responsable du traitement :</strong> LEVEL PUNTO IMMO 24365 SLU (<code>level@level.immo</code>). Vos données personnelles et références cadastrales sont traitées en toute confidentialité conformément au RGPD (UE) 2016/679 uniquement pour gérer votre dossier technique et planifier l'appel avec nos conseillers.</p>`,
+        cookies_title: "Politique de Cookies et d'Intelligence Artificielle",
+        cookies_body: `<p>Ce site utilise uniquement le stockage technique de session pour mémoriser votre langue (<code>level_lang</code>) et l'assistante automatisée <strong>Elena | AI Advisor Level-i</strong> sous supervision humaine.</p>`
+      },
+      de: {
+        aviso_title: "Impressum · LEVEL PUNTO IMMO 24365 SLU",
+        aviso_body: `<p>Gemäß Gesetz 34/2002 (LSSI-CE) wird <strong>Level.immo</strong> von der <strong>LEVEL PUNTO IMMO 24365 SLU</strong> betrieben (Steuernummer NIF B-26745430 · Travessera de Gràcia, 56, 3-1a, 08006 Barcelona · API 4173 · AICAT 14200 · E-Mail: <code>level@level.immo</code>).</p><p>Alle Beratungs-, Teilungs-, Kataster- und Bewertungsleistungen erfolgen unter Aufsicht zugelassener Immobilienmakler (API/AICAT). Kosten- und Steuersimulationen (AJD) dienen als Orientierung.</p>`,
+        privacidad_title: "Datenschutzrichtlinie & DSGVO",
+        privacidad_body: `<p><strong>Verantwortlicher:</strong> LEVEL PUNTO IMMO 24365 SLU (<code>level@level.immo</code>). Ihre personenbezogenen Daten und Katasterreferenzen werden streng vertraulich gemäß DSGVO (EU) 2016/679 ausschließlich zur Bearbeitung Ihrer technischen Akte und zur Terminvereinbarung verarbeitet.</p>`,
+        cookies_title: "Cookie- & KI-Richtlinie",
+        cookies_body: `<p>Diese Website verwendet ausschließlich technischen Sitzungsspeicher für Ihre Sprachauswahl (<code>level_lang</code>) sowie den automatisierten Assistenten <strong>Elena | AI Advisor Level-i</strong> unter Aufsicht zugelassener Experten (API 4173).</p>`
+      },
+      it: {
+        aviso_title: "Note Legali · LEVEL PUNTO IMMO 24365 SLU",
+        aviso_body: `<p>Ai sensi della Legge 34/2002 (LSSI-CE), <strong>Level.immo</strong> è gestita da <strong>LEVEL PUNTO IMMO 24365 SLU</strong> (NIF B-26745430 · Travessera de Gràcia, 56, 3-1a, 08006 Barcellona · API 4173 · AICAT 14200 · Email: <code>level@level.immo</code>).</p><p>Tutti i servizi di consulenza tecnica, divisione orizzontale, revisione catastale e valutazione sono supervisionati da professionisti abilitati API/AICAT.</p>`,
+        privacidad_title: "Informativa sulla Privacy e GDPR",
+        privacidad_body: `<p><strong>Titolare del trattamento:</strong> LEVEL PUNTO IMMO 24365 SLU (<code>level@level.immo</code>). I Suoi dati personali e catastali sono trattati con estrema riservatezza ai sensi del Regolamento (UE) 2016/679 (GDPR) esclusivamente per gestire la pratica richiesta.</p>`,
+        cookies_title: "Politica sui Cookie e Intelligenza Artificiale",
+        cookies_body: `<p>Questo sito utilizza archiviazione tecnica di sessione per la lingua (<code>level_lang</code>) e l'assistente automatizzato <strong>Elena | AI Advisor Level-i</strong> sotto supervisione umana (API 4173).</p>`
+      },
+      ar: {
+        aviso_title: "إشعار قانوني · LEVEL PUNTO IMMO 24365 SLU",
+        aviso_body: `<p>وفقاً للقانون الإسباني 34/2002 (LSSI-CE)، تُدار منصة <strong>Level.immo</strong> بواسطة شركة <strong>LEVEL PUNTO IMMO 24365 SLU</strong> (الرقم الضريبي B-26745430 · العنوان: Travessera de Gràcia, 56, 3-1a, 08006 Barcelona · ترخيص API 4173 · AICAT 14200 · البريد: <code>level@level.immo</code>).</p><p>تُقدم جميع خدمات الاستشارات الفنية والتقسيم الأفقي وتدقيق السجل المساحي تحت إشراف وكلاء عقاريين معتمدين رسمياً.</p>`,
+        privacidad_title: "سياسة الخصوصية وحماية البيانات (RGPD)",
+        privacidad_body: `<p><strong>مسؤول معالجة البيانات:</strong> LEVEL PUNTO IMMO 24365 SLU (<code>level@level.immo</code>). تتم معالجة بياناتك الشخصية وبيانات السجل المساحي بسرية تامة وفق اللائحة الأوروبية (RGPD) حصرياً لفتح وإدارة ملفك الفني وجدولة مكالمتك مع مستشارينا.</p>`,
+        cookies_title: "سياسة ملفات تعريف الارتباط والذكاء الاصطناعي",
+        cookies_body: `<p>يستخدم هذا الموقع التخزين التقني للجلسة لحفظ اللغة المفضلة (<code>level_lang</code>) والمساعدة الذكية <strong>Elena | AI Advisor Level-i</strong> لتنظيم الملفات تحت إشراف بشري معتمد.</p>`
+      },
+      zh: {
+        aviso_title: "法律声明 · LEVEL PUNTO IMMO 24365 SLU",
+        aviso_body: `<p>根据西班牙第 34/2002 号法律 (LSSI-CE)，<strong>Level.immo</strong> 由 <strong>LEVEL PUNTO IMMO 24365 SLU</strong> 运营（税号 NIF B-26745430 · 注册地址：Travessera de Gràcia, 56, 3-1a, 08006 Barcelona · 官方注册号 API 4173 · AICAT 14200 · 邮箱：<code>level@level.immo</code>）。</p><p>所有技术咨询、水平产权分割、地籍变更及市场估值服务均由官方注册房地产经纪人监督执行。</p>`,
+        privacidad_title: "隐私政策与数据保护 (GDPR)",
+        privacidad_body: `<p><strong>数据控制方：</strong> LEVEL PUNTO IMMO 24365 SLU (<code>level@level.immo</code>)。您的个人数据及地籍编号将严格按照欧盟《通用数据保护条例》(GDPR) 保密处理，仅用于管理您的技术咨询档案及安排顾问通话。</p>`,
+        cookies_title: "Cookie 与人工智能透明度声明",
+        cookies_body: `<p>本网站仅使用本地会话存储记录您的语言偏好 (<code>level_lang</code>)，并通过智能助手 <strong>Elena | AI Advisor Level-i</strong> 在注册经纪人监督下协助建立咨询档案。</p>`
       }
     };
 
@@ -1476,12 +1497,18 @@
       document.getElementById('legal-modal').classList.remove('flex');
     }
 
+    // DICCIONARIO 100% COMPLETO EN LOS 8 IDIOMAS (TODAS LAS CLAVES TRADUCIDAS SIN EXCEPCIÓN)
     const i18n = {
       ca: {
         btn_replay_video: "Activar Vídeo / So",
         btn_view_intro: "Vídeo Intro",
         btn_share_page: "Compartir",
         btn_fullscreen_map: "Pantalla Completa",
+        btn_catastro_layer: "Capa Cadastre",
+        btn_close_fs_map: "Tancar Pantalla Completa",
+        fs_map_badge: "🛰️ VISTA AÈRIA SATÈL·LIT + PARCEL·LARI CADASTRAL (ZOOM LLIURE)",
+        cat_char_badge: "14 / 20 caràcters",
+        badge_editable: "100% Editable",
         cta_share_bottom: "Compartir aquesta Pàgina de Consultoria",
         nav_demand: "Demanda Activa",
         nav_market: "Mercat Real",
@@ -1611,6 +1638,11 @@
         btn_view_intro: "Vídeo Intro",
         btn_share_page: "Compartir",
         btn_fullscreen_map: "Pantalla Completa",
+        btn_catastro_layer: "Capa Catastro",
+        btn_close_fs_map: "Cerrar Pantalla Completa",
+        fs_map_badge: "🛰️ VISTA AÉREA SATÉLITE + PARCELARIO CATASTRAL (ZOOM LIBRE)",
+        cat_char_badge: "14 / 20 caracteres",
+        badge_editable: "100% Editable",
         cta_share_bottom: "Compartir esta Página de Consultoría",
         nav_demand: "Demanda Activa",
         nav_market: "Mercado Real",
@@ -1740,6 +1772,11 @@
         btn_view_intro: "Video Intro",
         btn_share_page: "Share",
         btn_fullscreen_map: "Full Screen",
+        btn_catastro_layer: "Cadastre Layer",
+        btn_close_fs_map: "Close Full Screen",
+        fs_map_badge: "🛰️ SATELLITE AERIAL VIEW + CADASTRAL PARCELS (FREE ZOOM)",
+        cat_char_badge: "14 / 20 characters",
+        badge_editable: "100% Editable",
         cta_share_bottom: "Share this Consulting Page",
         nav_demand: "Active Demand",
         nav_market: "Live Market",
@@ -1752,6 +1789,14 @@
         gate_math_label: "What is",
         gate_btn_access: "ENTER CONSULTING",
         gate_error_msg: "Incorrect result. Please try again.",
+        pill_1_t: "📐 Horizontal Division",
+        pill_1_d: "Architectural project, quotas, notary & Registry.",
+        pill_2_t: "🏛️ Cadastral Audit",
+        pill_2_d: "Use updates, surface adjustments & IBI tax savings.",
+        pill_3_t: "🔑 Dual Contracting",
+        pill_3_d: "Rent-to-own agreements & earnest money contracts.",
+        pill_4_t: "📊 Market Studies",
+        pill_4_d: "Rigorous sale & rental €/sqm valuations.",
         main_header_title: "On-Demand Real Estate, Technical & Patrimonial Consulting",
         main_status_badge: "OFFICIAL LICENSED API 4173 · AICAT 14200",
         kpi_1_label: "1. TECHNICAL & URBAN AREA",
@@ -1766,14 +1811,92 @@
         kpi_4_label: "4. PATRIMONIAL AREA (API 4173)",
         kpi_4_val: "Valuation & Registry",
         kpi_4_sub: "Market Studies & Inscription",
+        srv_section_title: "On-Demand Consulting Services for Owners, Advisory Firms & Investors",
+        srv_section_badge: "360° Full Management",
+        srv_section_intro: "From Level.immo's technical and legal department, we coordinate all phases required to regularize, divide, value, or market real estate assets (entire buildings, commercial premises, residential properties, and family or corporate estates), from initial blueprints to Land Registry inscription:",
+        srv1_tag: "ARCHITECTURE + REGISTRY",
+        srv_1_title: "1. Horizontal Division & Segregations",
+        srv_1_desc: "Drafting of blueprints, architectural project, allocation of ownership quotas, municipal permit, public notary deed, AJD tax settlement, and registration of independent entities in the Land Registry.",
+        srv2_tag: "IBI TAX OPTIMIZATION",
+        srv_2_title: "2. Cadastral Alteration & Review",
+        srv_2_desc: "Technical audit before the Official Cadastre. Resolution of surface discrepancies, change of use, and adaptation of physical reality to optimize annual IBI property tax.",
+        srv3_tag: "BESPOKE CONTRACTING",
+        srv_3_title: "3. Rent-to-Own & Dual Transactions",
+        srv_3_desc: "Legal drafting and structuring of rent-to-own agreements (terms agreed between parties), earnest money contracts, and sales conditioned on prior urban or registry procedures.",
+        srv4_tag: "OFFICIAL API VALUATION",
+        srv_4_title: "4. Market & Patrimonial Feasibility Studies",
+        srv_4_desc: "Executive sale and rental valuation reports (€/sqm) for co-owners, estates, professional firms, and companies. Comparative scenario analysis for safe decision-making.",
+        time_sup: "⏱️ STANDARD LEGAL & REGISTRY TIMELINE",
+        time_title: "Comparison of Operating Scenarios up to Land Registry Inscription",
+        th_sc_name: "Operating Scenario",
+        th_sc_time: "Estimated Time",
+        th_sc_req: "Required Procedures",
+        th_sc_adv: "Key Advantage",
+        sc1_name: "A. Lease + Purchase Option",
+        sc1_time: "1 - 3 weeks (Start)",
+        sc1_req: "Dual contract (lease + purchase option). Execution term agreed between parties",
+        sc1_adv: "Fast opening & immediate income",
+        sc2_name: "B. Horizontal Division + Sale",
+        sc2_time: "3 - 6 months",
+        sc2_req: "Architect project, Permit/Declaration, Cadastre update, Notary, AJD (1.5%) & Registry",
+        sc2_adv: "Owners retain remaining units",
+        sc3_name: "C. Direct Full Asset Sale",
+        sc3_time: "4 - 8 weeks",
+        sc3_req: "Earnest money contract, Public Deed of Sale & Land Registry inscription",
+        sc3_adv: "Full liquidity without division procedures",
+        cat_tool_sup: "🌍 DIRECT CONNECTION TO OFFICIAL CADASTRE RECORD & AERIAL VIEW",
+        cat_tool_title: "Open Property Cadastral Record & Navigate with Free Zoom",
+        cat_tool_desc: "Paste or type the Cadastral Reference (14 or 20 characters): the system will automatically locate the official coordinates on the satellite map and open the Descriptive & Graphic Cadastre Record:",
+        cat_lbl_ref: "Cadastral Reference (14 or 20 characters):",
+        cat_lbl_loc: "Address & Municipality (Aerial View & GPS):",
+        cat_ph_ref: "E.g. 9872023DF3897S0001WX",
+        cat_ph_loc: "E.g. Travessera de Gràcia 56, Barcelona",
+        cat_valid_msg: "Valid official Cadastral Reference",
+        cat_invalid_msg: "Official format: 14 (parcel) or 20 characters (unit)",
         btn_open_catastro: "Open Cadastre Record ↗",
         btn_open_carto: "Parcel Map ↗",
         btn_val_ref_soon: "Reference Value (Coming Soon)",
         btn_earth_3d: "3D Flight Google Earth ↗",
         btn_how_to_get: "How to get there (GPS) ↗",
+        btn_how_to_get_short: "GPS",
+        btn_share_loc: "Share Location",
         calc_header: "Cost Simulator: Horizontal Division & Cadastre",
+        calc_intro_desc: "Edit any amount to estimate technical, notary, registry, and tax costs for a segregation, horizontal division, or cadastral update:",
+        calc_val_label: "Declared property value to divide (€):",
+        calc_ajd_label: "AJD Stamp Duty Tax (1.5% Catalonia):",
+        calc_items_title: "🛠️ TECHNICAL, NOTARY & REGISTRY ITEMS (EDITABLE):",
+        calc_item_arch: "+ Architect Technical Project (Plans & quotas):",
+        calc_item_notary: "+ Notary & Land Registry Inscription:",
+        calc_item_cat: "+ Cadastral Alteration File (IBI Savings):",
+        calc_item_util: "+ Utility Connections (Independent Water/Power):",
         calc_total_label: "ESTIMATED FILE COST:",
+        calc_total_sub: "Includes taxes (AJD), architect, notary & Land Registry",
         cta_main_elena: "OPEN FILE & SCHEDULE CALL WITH ELENA AI",
+        elena_status: "Technical & Patrimonial File Intake · API 4173",
+        elena_sec_title: "GDPR Security & Privacy Verification:",
+        elena_sec_desc: "To speak with Elena AI and open your technical or cadastral file in strict confidence, solve the sum:",
+        elena_rgpd_accept: "I have read and accept the",
+        elena_rgpd_consent: "and consent to be assisted by Level.immo's file intake system.",
+        elena_step0_err: "Please verify the math sum and accept the GDPR Privacy checkbox.",
+        elena_btn_verify: "✔ Verify & Continue with Elena AI",
+        elena_q1_p1: "Hello, I'm Elena, AI Advisor at Level.immo. We coordinate horizontal division projects, cadastral updates, and bespoke real estate transactions.",
+        elena_q1_p2: "Which topic or service do you need advice on? (Choose an option)",
+        elena_q2: "Perfect. To open your file so our licensed API specialist can call you prepared, please provide your details and (optionally) the Cadastral Reference or address:",
+        elena_cat_box_title: "🗺️ Cadastral Data & Location (Optional)",
+        elena_ph_catastro: "Cadastral Reference (14 or 20 characters)",
+        elena_ph_loc: "Property address & municipality...",
+        elena_ph_name: "Full Name, Firm or Company",
+        elena_ph_phone: "Phone / WhatsApp",
+        elena_ph_email: "Email Address",
+        elena_date_label: "📅 Call Date",
+        elena_time_label: "⏰ Time Slot",
+        elena_err_msg: "Please check your name, phone, email, and ensure the Cadastral Reference has 14 or 20 characters.",
+        elena_btn_confirm: "✔ Confirm File & Schedule Call",
+        elena_btn_back: "Go Back",
+        elena_success_title: "Consulting File Successfully Registered!",
+        elena_success_desc: "We will contact you during the selected time slot. Thank you for trusting Level.immo.",
+        elena_btn_close: "Finish & Return to Consulting",
+        footer_services_label: "On-site Consulting Services in:",
         footer_legal: "Legal Notice",
         footer_privacy: "Privacy & GDPR",
         footer_cookies: "Cookies & AI"
@@ -1783,98 +1906,670 @@
         btn_view_intro: "Vidéo Intro",
         btn_share_page: "Partager",
         btn_fullscreen_map: "Plein Écran",
+        btn_catastro_layer: "Calque Cadastre",
+        btn_close_fs_map: "Fermer le Plein Écran",
+        fs_map_badge: "🛰️ VUE AÉRIENNE SATELLITE + PARCELLAIRE CADASTRAL (ZOOM LIBRE)",
+        cat_char_badge: "14 / 20 caractères",
+        badge_editable: "100% Modifiable",
+        cta_share_bottom: "Partager cette Page de Conseil",
         nav_demand: "Demande Active",
         nav_market: "Marché Réel",
         nav_contact: "Ouvrir Dossier",
+        hero_badge: "DIVISION DE CONSEIL TECHNIQUE, CADASTRAL ET FONCIER",
+        hero_title: "Ingénierie Patrimoniale, Divisions et Gestion Urbanistique sur Mesure",
+        hero_subtitle: "Solutions techniques, fiscales et juridiques pour propriétaires, indivisions, cabinets de conseil et investisseurs. Spécialistes en Divisions Horizontales, Révision Cadastrale, Location avec Option d'Achat et Registre Foncier.",
+        gate_security_title: "Filtre de Sécurité (Accès Conseil & Simulateur)",
+        gate_security_desc: "Résolvez la somme pour accéder au catalogue de services techniques, au simulateur de coûts et à l'assistante Elena IA :",
+        gate_math_label: "Combien font",
+        gate_btn_access: "ENTRER EN CONSULTATION",
+        gate_error_msg: "Résultat incorrect. Veuillez réessayer.",
+        pill_1_t: "📐 Division Horizontale",
+        pill_1_d: "Projet technique, quotes-parts, notaire et Registre.",
+        pill_2_t: "🏛️ Audit Cadastral",
+        pill_2_d: "Révision des usages, surfaces et économie d'IBI.",
+        pill_3_t: "🔑 Contrat Dual",
+        pill_3_d: "Location avec option d'achat et arrhes.",
+        pill_4_t: "📊 Études de Marché",
+        pill_4_d: "Évaluation rigoureuse de vente et loyer €/m².",
+        main_header_title: "Conseil Immobilier, Technique et Patrimonial à la Carte",
+        main_status_badge: "SERVICE OFFICIEL API AGRÉÉ 4173 · AICAT 14200",
         kpi_1_label: "1. PÔLE TECHNIQUE & URBAIN",
         kpi_1_val: "Division & Ségrégation",
+        kpi_1_sub: "Projet, Permis & Quotes-parts",
         kpi_2_label: "2. PÔLE CADASTRAL & FISCAL",
         kpi_2_val: "Audit du Cadastre",
+        kpi_2_sub: "Révision d'Usage & Économie IBI",
         kpi_3_label: "3. PÔLE JURIDIQUE & CONTRATS",
         kpi_3_val: "Contrats sur Mesure",
+        kpi_3_sub: "Vente, Arrhes & Option d'Achat",
         kpi_4_label: "4. PÔLE PATRIMONIAL (API 4173)",
         kpi_4_val: "Évaluation & Registre",
-        btn_open_catastro: "Ouvrir Fiche Cadastre ↗",
+        kpi_4_sub: "Études de Marché & Inscription",
+        srv_section_title: "Services de Conseil à la Carte pour Propriétaires, Cabinets et Investisseurs",
+        srv_section_badge: "Gestion Intégrale 360°",
+        srv_section_intro: "Depuis le département technique et juridique de Level.immo, nous coordonnons toutes les phases nécessaires pour régulariser, diviser, évaluer ou commercialiser des actifs immobiliers (immeubles entiers, locaux commerciaux, logements et patrimoines familiaux ou sociétaires), du projet initial jusqu'à l'inscription au Registre Foncier :",
+        srv1_tag: "ARCHITECTURE + REGISTRE",
+        srv_1_title: "1. Division Horizontale et Ségrégations",
+        srv_1_desc: "Relevé topographique et plans, projet technique d'architecture, attribution des quotes-parts, licence municipale, acte notarié, liquidation de la taxe AJD et inscription des nouvelles entités au Registre de la Propriété.",
+        srv2_tag: "OPTIMISATION FISCALE IBI",
+        srv_2_title: "2. Altération et Révision Cadastrale",
+        srv_2_desc: "Audit technique auprès du Cadastre Officiel. Résolution des écarts de surface, changements d'usage et mise en conformité physique de l'immeuble pour réduire drastiquement la taxe foncière annuelle (IBI).",
+        srv3_tag: "CONTRATS SUR MESURE",
+        srv_3_title: "3. Location avec Option d'Achat et Opérations Duales",
+        srv_3_desc: "Rédaction et structuration juridique de contrats de location avec option d'achat (délais et conditions à convenir entre les parties), arrhes pénitentielles et ventes conditionnées aux démarches urbanistiques ou foncières.",
+        srv4_tag: "ÉVALUATION API OFFICIELLE",
+        srv_4_title: "4. Études de Marché et Faisabilité Patrimoniale",
+        srv_4_desc: "Rapports exécutifs d'évaluation de vente et de location (€/m²) pour indivisions, successions, cabinets professionnels et sociétés. Analyse comparative de scénarios pour une prise de décision sûre.",
+        time_sup: "⏱️ CALENDRIER LÉGAL ET FONCIER STANDARD",
+        time_title: "Comparatif des Scénarios Opérationnels jusqu'à l'Inscription au Registre de la Propriété",
+        th_sc_name: "Scénario Opérationnel",
+        th_sc_time: "Délai Estimé",
+        th_sc_req: "Démarches Requises",
+        th_sc_adv: "Avantage Principal",
+        sc1_name: "A. Location + Option d'Achat",
+        sc1_time: "1 - 3 semaines (Début)",
+        sc1_req: "Contrat dual (bail + option d'achat). Délai d'exécution à convenir entre les parties",
+        sc1_adv: "Ouverture rapide et revenus immédiats",
+        sc2_name: "B. Division Horizontale + Vente",
+        sc2_time: "3 - 6 mois",
+        sc2_req: "Projet d'architecte, Licence/Déclaration, régularisation au Cadastre, Notaire, AJD (1,5%) et Registre",
+        sc2_adv: "La propriété conserve le reste du bien",
+        sc3_name: "C. Vente Directe Actif Entier",
+        sc3_time: "4 - 8 semaines",
+        sc3_req: "Arrhes pénitentielles, Acte Authentique de Vente et inscription au Registre Foncier",
+        sc3_adv: "Liquidation totale sans frais de division",
+        cat_tool_sup: "🌍 CONNEXION DIRECTE À LA FICHE OFFICIELLE DU CADASTRE ET VUE AÉRIENNE",
+        cat_tool_title: "Ouvrez la Fiche Cadastrale de l'Immeuble et naviguez avec Zoom Libre",
+        cat_tool_desc: "Collez ou saisissez la Référence Cadastrale (14 ou 20 caractères) : le système localisera automatiquement les coordonnées officielles sur la carte satellite et ouvrira directement la Fiche Descriptive et Graphique du Cadastre :",
+        cat_lbl_ref: "Référence Cadastrale (14 ou 20 caractères) :",
+        cat_lbl_loc: "Adresse et Commune (Vue Aérienne et GPS) :",
+        cat_ph_ref: "Ex : 9872023DF3897S0001WX",
+        cat_ph_loc: "Ex : Travessera de Gràcia 56, Barcelona",
+        cat_valid_msg: "Référence Cadastrale officielle valide",
+        cat_invalid_msg: "Format officiel : 14 (parcelle) ou 20 caractères (bien)",
+        btn_open_catastro: "Ouvrir Fiche du Cadastre ↗",
         btn_open_carto: "Plan Parcelle ↗",
-        btn_how_to_get: "Itinéraire (GPS) ↗"
+        btn_val_ref_soon: "Valeur de Référence (Prochainement)",
+        btn_earth_3d: "Vol 3D Google Earth ↗",
+        btn_how_to_get: "Itinéraire (GPS) ↗",
+        btn_how_to_get_short: "GPS",
+        btn_share_loc: "Partager Position",
+        calc_header: "Simulateur de Coûts : Division Horizontale et Cadastre",
+        calc_intro_desc: "Modifiez tout montant pour estimer instantanément les coûts techniques, notariaux, fonciers et fiscaux d'une ségrégation, division horizontale ou mise à jour cadastrale :",
+        calc_val_label: "Valeur déclarée du bien à diviser (€) :",
+        calc_ajd_label: "Taxe AJD Division Horizontale (1,5% Catalogne) :",
+        calc_items_title: "🛠️ POSTES TECHNIQUES, NOTARIAUX ET FONCIERS (MODIFIABLES) :",
+        calc_item_arch: "+ Projet Technique Architecte (Plans et quotes-parts) :",
+        calc_item_notary: "+ Notaire et Inscription au Registre de la Propriété :",
+        calc_item_cat: "+ Dossier de Révision Cadastrale (Économie IBI) :",
+        calc_item_util: "+ Adaptation Branchements (Eau/Électricité indépendants) :",
+        calc_total_label: "COÛT ESTIMÉ DU DOSSIER :",
+        calc_total_sub: "Inclut taxes (AJD), architecture, notaire et Registre",
+        cta_main_elena: "OUVRIR UN DOSSIER ET PLANIFIER UN APPEL AVEC ELENA IA",
+        elena_status: "Ouverture de Dossiers Techniques et Patrimoniaux · API 4173",
+        elena_sec_title: "Vérification de Sécurité et Confidentialité RGPD :",
+        elena_sec_desc: "Pour parler avec Elena IA et ouvrir votre dossier technique ou cadastral en toute confidentialité, résolvez la somme :",
+        elena_rgpd_accept: "J'ai lu et j'accepte la",
+        elena_rgpd_consent: "et je consens à être pris en charge par le système de dossiers de Level.immo.",
+        elena_step0_err: "Veuillez vérifier la somme mathématique et accepter la case RGPD.",
+        elena_btn_verify: "✔ Vérifier et Continuer avec Elena IA",
+        elena_q1_p1: "Bonjour, je suis Elena, AI Advisor chez Level.immo. Nous coordonnons les projets de division horizontale, de révision cadastrale (économie d'IBI) et d'opérations sur mesure.",
+        elena_q1_p2: "Sur quel sujet ou service avez-vous besoin de conseils ? (Choisissez une option)",
+        elena_q2: "Parfait. Pour ouvrir le dossier afin que notre spécialiste API vous appelle préparé, indiquez vos coordonnées et (en option) la Référence Cadastrale ou l'adresse :",
+        elena_cat_box_title: "🗺️ Données Cadastrales et Localisation (Optionnel)",
+        elena_ph_catastro: "Référence Cadastrale (14 ou 20 caractères)",
+        elena_ph_loc: "Adresse et commune de l'immeuble...",
+        elena_ph_name: "Nom complet, Cabinet ou Société",
+        elena_ph_phone: "Téléphone / WhatsApp",
+        elena_ph_email: "Adresse e-mail",
+        elena_date_label: "📅 Date d'appel",
+        elena_time_label: "⏰ Créneau horaire",
+        elena_err_msg: "Veuillez vérifier votre nom, téléphone, e-mail et que la Référence Cadastrale comporte 14 ou 20 caractères.",
+        elena_btn_confirm: "✔ Confirmer le Dossier et Planifier l'Appel",
+        elena_btn_back: "Retour",
+        elena_success_title: "Dossier de Conseil enregistré avec succès !",
+        elena_success_desc: "Nous vous contacterons durant le créneau indiqué. Merci de votre confiance en Level.immo.",
+        elena_btn_close: "Terminer et Retourner au Conseil",
+        footer_services_label: "Services Présentiels et Conseil à :",
+        footer_legal: "Mentions Légales",
+        footer_privacy: "Confidentialité & RGPD",
+        footer_cookies: "Cookies & IA"
       },
       de: {
         btn_replay_video: "Video / Ton aktivieren",
         btn_view_intro: "Video-Intro",
         btn_share_page: "Teilen",
         btn_fullscreen_map: "Vollbild",
+        btn_catastro_layer: "Kataster-Ebene",
+        btn_close_fs_map: "Vollbild schließen",
+        fs_map_badge: "🛰️ SATELLITEN-LUFTBILD + KATASTER-FLURKARTE (FREIER ZOOM)",
+        cat_char_badge: "14 / 20 Zeichen",
+        badge_editable: "100% Editierbar",
+        cta_share_bottom: "Diese Beratungsseite teilen",
         nav_demand: "Aktive Nachfrage",
         nav_market: "Live-Markt",
         nav_contact: "Akte eröffnen",
+        hero_badge: "ABTEILUNG FÜR TECHNISCHE, KATASTER- UND GRUNDBUCHBERATUNG",
+        hero_title: "Maßgeschneiderte Immobilienberatung, Teilungen & Katastermanagement",
+        hero_subtitle: "Technische, steuerliche und rechtliche Lösungen für Eigentümer, Erbengemeinschaften, Kanzleien und Investoren. Spezialisten für Horizontale Teilung, Parzellierung, Katasteranpassung, Mietkauf und Grundbucheintragung.",
+        gate_security_title: "Sicherheitsfilter (Zugang zu Beratung & Rechner)",
+        gate_security_desc: "Lösen Sie die Rechenaufgabe, um den Leistungskatalog, den Kostenrechner und den Assistenten Elena KI freizuschalten:",
+        gate_math_label: "Was ergibt",
+        gate_btn_access: "ZUR BERATUNG",
+        gate_error_msg: "Falsches Ergebnis. Bitte erneut versuchen.",
+        pill_1_t: "📐 Horizontale Teilung",
+        pill_1_d: "Architekturprojekt, Quoten, Notar & Grundbuch.",
+        pill_2_t: "🏛️ Katasterprüfung",
+        pill_2_d: "Nutzungs- & Flächenanpassung zur IBI-Steuersenkung.",
+        pill_3_t: "🔑 Duale Verträge",
+        pill_3_d: "Mietkaufverträge und Anzahlungsvereinbarungen.",
+        pill_4_t: "📊 Marktstudien",
+        pill_4_d: "Präzise Verkaufs- und Mietbewertungen (€/m²).",
+        main_header_title: "Maßgeschneiderte Immobilien-, Technik- und Vermögensberatung",
+        main_status_badge: "OFFIZIELLER SERVICE API 4173 · AICAT 14200",
         kpi_1_label: "1. TECHNIK & STÄDTEBAU",
         kpi_1_val: "Teilung & Parzellierung",
+        kpi_1_sub: "Projekt, Lizenz & Quoten",
         kpi_2_label: "2. KATASTER & STEUERN",
         kpi_2_val: "Katasterprüfung",
+        kpi_2_sub: "Nutzungsänderung & IBI-Ersparnis",
         kpi_3_label: "3. RECHT & VERTRÄGE",
         kpi_3_val: "Verträge nach Maß",
+        kpi_3_sub: "Kauf, Anzahlung & Mietkauf",
         kpi_4_label: "4. VERMÖGEN (API 4173)",
         kpi_4_val: "Bewertung & Grundbuch",
+        kpi_4_sub: "Marktstudien & Eintragung",
+        srv_section_title: "Beratungsleistungen nach Maß für Eigentümer, Kanzleien und Investoren",
+        srv_section_badge: "360° Komplettservice",
+        srv_section_intro: "Unsere technische und juristische Abteilung bei Level.immo koordiniert alle Phasen zur Regularisierung, Teilung, Bewertung oder Vermarktung von Immobilien (Gesamtgebäude, Gewerbeflächen, Wohnungen sowie Familien- und Gesellschaftsvermögen) – vom ersten Bauplan bis zur Grundbucheintragung:",
+        srv1_tag: "ARCHITEKTUR + GRUNDBUCH",
+        srv_1_title: "1. Horizontale Teilung und Parzellierungen",
+        srv_1_desc: "Bestandsaufnahme und Baupläne, technisches Architekturprojekt, Festlegung der Miteigentumsquoten, kommunale Genehmigung, Notarurkunde, AJD-Steuerabwicklung und Eintragung der neuen Einheiten im Grundbuch.",
+        srv2_tag: "IBI-STEUEROPTIMIERUNG",
+        srv_2_title: "2. Katasteränderung und -prüfung",
+        srv_2_desc: "Technische Prüfung beim Elektronischen Katasteramt. Behebung von Flächenabweichungen, Nutzungsänderungen und Anpassung der realen Gebäudesituation zur deutlichen Senkung der jährlichen Grundsteuer (IBI).",
+        srv3_tag: "VERTRÄGE NACH MASS",
+        srv_3_title: "3. Mietkauf (Opción a Compra) & Duale Transaktionen",
+        srv_3_desc: "Juristische Ausarbeitung von Mietverträgen mit Kaufoption (Laufzeiten und Konditionen frei vereinbar), Reugeldverträgen (Arras) sowie an behördliche oder grundbuchrechtliche Vorbedingungen geknüpften Kaufverträgen.",
+        srv4_tag: "OFFIZIELLE API-BEWERTUNG",
+        srv_4_title: "4. Marktstudien und Wirtschaftlichkeitsanalysen",
+        srv_4_desc: "Umfassende Verkaufs- und Mietwertgutachten (€/m²) für Eigentümergemeinschaften, Erbschaften, Steuer-/Rechtskanzleien und Unternehmen. Szenarienvergleich für sichere Entscheidungen.",
+        time_sup: "⏱️ RECHTLICHER UND GRUNDBUCHLICHER ZEITPLAN",
+        time_title: "Vergleich der Handlungsoptionen bis zur Eintragung im Grundbuch",
+        th_sc_name: "Handlungsoption",
+        th_sc_time: "Geschätzte Dauer",
+        th_sc_req: "Erforderliche Schritte",
+        th_sc_adv: "Hauptvorteil",
+        sc1_name: "A. Vermietung + Kaufoption",
+        sc1_time: "1 - 3 Wochen (Start)",
+        sc1_req: "Dualer Vertrag (Miete + Kaufoption). Ausübungsfrist nach Vereinbarung zwischen den Parteien",
+        sc1_adv: "Schnelle Eröffnung & sofortige Mieteinnahmen",
+        sc2_name: "B. Horizontale Teilung + Verkauf",
+        sc2_time: "3 - 6 Monate",
+        sc2_req: "Architektenprojekt, Genehmigung, Katasteranpassung, Notar, AJD-Steuer (1,5%) & Grundbuch",
+        sc2_adv: "Eigentümer behalten das restliche Gebäude",
+        sc3_name: "C. Direktverkauf Gesamtobjekt",
+        sc3_time: "4 - 8 Wochen",
+        sc3_req: "Arras-Vertrag, notarielle Kaufurkunde und direkte Grundbucheintragung",
+        sc3_adv: "Komplette Liquidität ohne Teilungsverfahren",
+        cat_tool_sup: "🌍 DIREKTVERBINDUNG ZUR OFFIZIELLEN KATASTERAKTE & LUFTBILD",
+        cat_tool_title: "Offizielle Katasterakte öffnen & mit freiem Zoom navigieren",
+        cat_tool_desc: "Fügen Sie die Katasterreferenz (14 oder 20 Zeichen) ein: Das System ermittelt automatisch die offiziellen Koordinaten auf der Satellitenkarte und öffnet direkt das amtliche Katasterdatenblatt:",
+        cat_lbl_ref: "Katasterreferenz (14 oder 20 Zeichen):",
+        cat_lbl_loc: "Adresse und Ort (Luftbild & GPS):",
+        cat_ph_ref: "Bsp.: 9872023DF3897S0001WX",
+        cat_ph_loc: "Bsp.: Travessera de Gràcia 56, Barcelona",
+        cat_valid_msg: "Gültige offizielle Katasterreferenz",
+        cat_invalid_msg: "Offizielles Format: 14 (Parzelle) oder 20 Zeichen (Einheit)",
         btn_open_catastro: "Katasterakte öffnen ↗",
         btn_open_carto: "Flurkarte ↗",
-        btn_how_to_get: "Route (GPS) ↗"
+        btn_val_ref_soon: "Referenzwert (Demnächst verfügbar)",
+        btn_earth_3d: "3D-Flug Google Earth ↗",
+        btn_how_to_get: "Route (GPS) ↗",
+        btn_how_to_get_short: "GPS",
+        btn_share_loc: "Standort teilen",
+        calc_header: "Kostenrechner: Horizontale Teilung & Kataster",
+        calc_intro_desc: "Passen Sie beliebige Beträge an, um sofort die technischen, notariellen, grundbuchlichen und steuerlichen Kosten einer Teilung oder Katasteränderung zu berechnen:",
+        calc_val_label: "Erklärter Immobilienwert für die Teilung (€):",
+        calc_ajd_label: "AJD-Stempelsteuer Horizontale Teilung (1,5% Katalonien):",
+        calc_items_title: "🛠️ TECHNISCHE, NOTARIELLE & GRUNDBUCH-POSITIONEN (EDITIERBAR):",
+        calc_item_arch: "+ Technisches Architektenprojekt (Pläne & Quoten):",
+        calc_item_notary: "+ Notar und Eintragung im Grundbuch:",
+        calc_item_cat: "+ Katasteränderungsverfahren (IBI-Steuerersparnis):",
+        calc_item_util: "+ Anpassung Hausanschlüsse (Wasser/Strom getrennt):",
+        calc_total_label: "GESCHÄTZTE GESAMTKOSTEN DES VERFAHRENS:",
+        calc_total_sub: "Inklusive Steuern (AJD), Architektur, Notar und Grundbuch",
+        cta_main_elena: "AKTE ERÖFFNEN & RÜCKRUF MIT ELENA KI PLANEN",
+        elena_status: "Aufnahme technischer & immobilienrechtlicher Akten · API 4173",
+        elena_sec_title: "DSGVO-Sicherheits- und Datenschutzprüfung:",
+        elena_sec_desc: "Um mit Elena KI zu sprechen und Ihre technische oder katasterrechtliche Akte vertraulich zu eröffnen, lösen Sie bitte die Aufgabe:",
+        elena_rgpd_accept: "Ich habe die",
+        elena_rgpd_consent: "gelesen und akzeptiert und stimme der Bearbeitung durch das Aktensystem von Level.immo zu.",
+        elena_step0_err: "Bitte prüfen Sie die Rechenaufgabe und bestätigen Sie das DSGVO-Kästchen.",
+        elena_btn_verify: "✔ Prüfen und weiter mit Elena KI",
+        elena_q1_p1: "Hallo, ich bin Elena, AI Advisor bei Level.immo. Wir koordinieren horizontale Teilungen, Katasteranpassungen (IBI-Ersparnis) und maßgeschneiderte Immobilientransaktionen.",
+        elena_q1_p2: "Zu welchem Thema oder welcher Leistung wünschen Sie eine Beratung? (Option wählen)",
+        elena_q2: "Perfekt. Damit unser API-Spezialist Sie optimal vorbereitet anrufen kann, geben Sie bitte Ihre Kontaktdaten und (optional) die Katasterreferenz oder Adresse ein:",
+        elena_cat_box_title: "🗺️ Katasterdaten und Standort (Optional)",
+        elena_ph_catastro: "Katasterreferenz (14 oder 20 Zeichen)",
+        elena_ph_loc: "Adresse und Gemeinde der Immobilie...",
+        elena_ph_name: "Vollständiger Name, Kanzlei oder Firma",
+        elena_ph_phone: "Telefon / WhatsApp",
+        elena_ph_email: "E-Mail-Adresse",
+        elena_date_label: "📅 Rückrufdatum",
+        elena_time_label: "⏰ Zeitfenster",
+        elena_err_msg: "Bitte prüfen Sie Name, Telefon, E-Mail und stellen Sie sicher, dass die Katasterreferenz 14 oder 20 Zeichen hat.",
+        elena_btn_confirm: "✔ Akte bestätigen & Rückruf planen",
+        elena_btn_back: "Zurück",
+        elena_success_title: "Beratungsakte erfolgreich registriert!",
+        elena_success_desc: "Wir werden Sie im gewählten Zeitfenster kontaktieren. Vielen Dank für Ihr Vertrauen in Level.immo.",
+        elena_btn_close: "Fertigstellen & zurück zur Beratung",
+        footer_services_label: "Vor-Ort-Service und Beratung in:",
+        footer_legal: "Impressum",
+        footer_privacy: "Datenschutz & DSGVO",
+        footer_cookies: "Cookies & KI"
       },
       it: {
         btn_replay_video: "Attiva Video / Audio",
         btn_view_intro: "Video Intro",
         btn_share_page: "Condividi",
         btn_fullscreen_map: "Schermo Intero",
+        btn_catastro_layer: "Livello Catasto",
+        btn_close_fs_map: "Chiudi Schermo Intero",
+        fs_map_badge: "🛰️ VISTA AEREA SATELLITARE + PARTICELLARE CATASTALE (ZOOM LIBERO)",
+        cat_char_badge: "14 / 20 caratteri",
+        badge_editable: "100% Modificabile",
+        cta_share_bottom: "Condividi questa Pagina di Consulenza",
         nav_demand: "Domanda Attiva",
         nav_market: "Mercato Reale",
         nav_contact: "Apri Pratica",
+        hero_badge: "DIVISIONE DI CONSULENZA TECNICA, CATASTALE E IPOTECARIA",
+        hero_title: "Ingegneria Patrimoniale, Frazionamenti e Gestione Urbanistica su Misura",
+        hero_subtitle: "Soluzioni tecniche, fiscali e legali per proprietari, comproprietà, studi professionali e investitori. Specialisti in Divisioni Orizzontali, Frazionamenti, Adeguamento Catastale, Contrattazione Duale e Trascrizione nei Registri Immobiliari.",
+        gate_security_title: "Filtro di Sicurezza (Accesso Consulenza e Simulatore)",
+        gate_security_desc: "Risolvi la somma per accedere al catalogo dei servizi tecnici, al simulatore costi e all'assistente Elena IA:",
+        gate_math_label: "Quanto fa",
+        gate_btn_access: "ENTRA IN CONSULENZA",
+        gate_error_msg: "Risultato errato. Riprova.",
+        pill_1_t: "📐 Divisione Orizzontale",
+        pill_1_d: "Progetto tecnico, quote, notaio e Registro.",
+        pill_2_t: "🏛️ Audit Catastale",
+        pill_2_d: "Adeguamento usi, superfici e risparmio IBI.",
+        pill_3_t: "🔑 Contratti Duali",
+        pill_3_d: "Affitto con opzione d'acquisto e caparre.",
+        pill_4_t: "📊 Studi di Mercato",
+        pill_4_d: "Valutazione rigorosa di vendita e affitto €/m².",
+        main_header_title: "Consulenza Immobiliare, Tecnica e Patrimoniale su Misura",
+        main_status_badge: "SERVIZIO UFFICIALE API ABILITATO 4173 · AICAT 14200",
         kpi_1_label: "1. AREA TECNICA E URBANISTICA",
         kpi_1_val: "Divisione e Frazionamento",
+        kpi_1_sub: "Progetto, Licenza e Quote",
         kpi_2_label: "2. AREA CATASTALE E FISCALE",
         kpi_2_val: "Audit Catastale",
+        kpi_2_sub: "Variazione d'Uso e Risparmio IBI",
         kpi_3_label: "3. AREA LEGALE E CONTRATTI",
         kpi_3_val: "Contratti su Misura",
+        kpi_3_sub: "Compravendita, Caparra e Opzione",
         kpi_4_label: "4. AREA PATRIMONIALE (API 4173)",
         kpi_4_val: "Valutazione e Registro",
-        btn_open_catastro: "Apri Scheda Catasto ↗",
+        kpi_4_sub: "Studi di Mercato e Trascrizione",
+        srv_section_title: "Servizi di Consulenza su Misura per Proprietari, Studi Professionali e Investitori",
+        srv_section_badge: "Gestione Integrale 360°",
+        srv_section_intro: "Dal dipartimento tecnico e legale di Level.immo coordiniamo tutte le fasi necessarie per regolarizzare, dividere, valutare o commercializzare immobili (interi edifici, locali commerciali, abitazioni e patrimoni familiari o societari), dal progetto iniziale fino alla trascrizione nei Registri Immobiliari:",
+        srv1_tag: "ARCHITETTURA + REGISTRO",
+        srv_1_title: "1. Divisione Orizzontale e Frazionamenti",
+        srv_1_desc: "Rilievo planimetrico, progetto tecnico d'architettura, assegnazione delle quote millesimali, licenza edilizia, atto pubblico notarile, liquidazione imposta AJD e iscrizione delle nuove unità indipendenti nel Registro della Proprietà.",
+        srv2_tag: "OTTIMIZZAZIONE FISCALE IBI",
+        srv_2_title: "2. Variazione e Revisione Catastale",
+        srv_2_desc: "Audit tecnico presso la Sede Elettronica del Catasto. Risoluzione di discrepanze di superficie, cambi d'uso e adeguamento della realtà fisica dell'immobile per ridurre sensibilmente l'imposta annuale IBI.",
+        srv3_tag: "CONTRATTAZIONE SU MISURA",
+        srv_3_title: "3. Affitto con Opzione d'Acquisto e Operazioni Duali",
+        srv_3_desc: "Redazione e strutturazione legale di contratti di locazione con opzione di acquisto (termini e condizioni da concordare tra le parti), caparre confirmatorie/penitenziali e compravendite condizionate a pratiche urbanistiche.",
+        srv4_tag: "VALUTAZIONE API UFFICIALE",
+        srv_4_title: "4. Studi di Mercato e Fattibilità Patrimoniale",
+        srv_4_desc: "Report esecutivi di valutazione di vendita e locazione (€/m²) per comproprietà, successioni, studi di consulenza e società. Analisi comparativa degli scenari per decisioni sicure.",
+        time_sup: "⏱️ CRONOPROGRAMMA LEGALE E IPOTECARIO STANDARD",
+        time_title: "Confronto degli Scenari Operativi fino alla Trascrizione nel Registro della Proprietà",
+        th_sc_name: "Scenario Operativo",
+        th_sc_time: "Tempistica Stimata",
+        th_sc_req: "Adempimenti Richiesti",
+        th_sc_adv: "Vantaggio Principale",
+        sc1_name: "A. Locazione + Opzione d'Acquisto",
+        sc1_time: "1 - 3 settimane (Avvio)",
+        sc1_req: "Contratto duale (locazione + opzione d'acquisto). Termine di esercizio da concordare tra le parti",
+        sc1_adv: "Apertura rapida e rendita immediata",
+        sc2_name: "B. Divisione Orizzontale + Vendita",
+        sc2_time: "3 - 6 mesi",
+        sc2_req: "Progetto architetto, Licenza/Dichiarazione, variazione in Catasto, Notaio, AJD (1,5%) e Registro",
+        sc2_adv: "La proprietà conserva il resto dell'immobile",
+        sc3_name: "C. Vendita Diretta Intero Immobile",
+        sc3_time: "4 - 8 settimane",
+        sc3_req: "Caparra penitenziale, Rogito Notarile di Compravendita e trascrizione nel Registro",
+        sc3_adv: "Liquidazione totale senza pratiche di divisione",
+        cat_tool_sup: "🌍 CONNESSIONE DIRETTA ALLA SCHEDA UFFICIALE DEL CATASTO E VISTA AEREA",
+        cat_tool_title: "Apri la Scheda Catastale dell'Immobile e naviga con Zoom Libero",
+        cat_tool_desc: "Incolla o digita il Riferimento Catastale (14 o 20 caratteri): il sistema localizzerà automaticamente le coordinate ufficiali sulla mappa satellitare e aprirà direttamente la Scheda Descrittiva e Grafica del Catasto:",
+        cat_lbl_ref: "Riferimento Catastale (14 o 20 caratteri):",
+        cat_lbl_loc: "Indirizzo e Comune (Vista Aerea e GPS):",
+        cat_ph_ref: "Es: 9872023DF3897S0001WX",
+        cat_ph_loc: "Es: Travessera de Gràcia 56, Barcelona",
+        cat_valid_msg: "Riferimento Catastale ufficiale valido",
+        cat_invalid_msg: "Formato ufficiale: 14 (particella) o 20 caratteri (immobile)",
+        btn_open_catastro: "Apri Scheda del Catasto ↗",
         btn_open_carto: "Mappa Particella ↗",
-        btn_how_to_get: "Come arrivare (GPS) ↗"
+        btn_val_ref_soon: "Valore di Riferimento (Prossimamente)",
+        btn_earth_3d: "Volo 3D Google Earth ↗",
+        btn_how_to_get: "Come arrivare (GPS) ↗",
+        btn_how_to_get_short: "GPS",
+        btn_share_loc: "Invia Posizione",
+        calc_header: "Simulatore Costi: Divisione Orizzontale e Catasto",
+        calc_intro_desc: "Modifica qualsiasi importo per stimare all'istante i costi tecnici, notarili, ipotecari e fiscali di un frazionamento, divisione orizzontale o variazione catastale:",
+        calc_val_label: "Valore dichiarato dell'immobile da dividere (€):",
+        calc_ajd_label: "Imposta AJD Divisione Orizzontale (1,5% Catalogna):",
+        calc_items_title: "🛠️ VOCI TECNICHE, NOTARILI E DI REGISTRO (MODIFICABILI):",
+        calc_item_arch: "+ Progetto Tecnico Architetto (Planimetrie e quote):",
+        calc_item_notary: "+ Notaio e Trascrizione nel Registro della Proprietà:",
+        calc_item_cat: "+ Pratica di Variazione Catastale (Risparmio IBI):",
+        calc_item_util: "+ Adeguamento Allacciamenti (Acqua/Luce indipendenti):",
+        calc_total_label: "COSTO STIMATO DELLA PRATICA:",
+        calc_total_sub: "Include imposte (AJD), architettura, notaio e Registro",
+        cta_main_elena: "APRI PRATICA E PRENOTA CHIAMATA CON ELENA IA",
+        elena_status: "Apertura Pratiche Tecniche e Patrimoniali · API 4173",
+        elena_sec_title: "Verifica di Sicurezza e Privacy GDPR:",
+        elena_sec_desc: "Per parlare con Elena IA e aprire la tua pratica tecnica o catastale in totale riservatezza, risolvi la somma:",
+        elena_rgpd_accept: "Ho letto e accetto la",
+        elena_rgpd_consent: "e acconsento a essere assistito dal sistema pratiche di Level.immo.",
+        elena_step0_err: "Verifica la somma matematica e accetta la casella Privacy GDPR.",
+        elena_btn_verify: "✔ Verifica e Continua con Elena IA",
+        elena_q1_p1: "Ciao, sono Elena, AI Advisor di Level.immo. Coordiniamo progetti di divisione orizzontale, adeguamento catastale (risparmio IBI) e operazioni immobiliari su misura.",
+        elena_q1_p2: "Su quale argomento o servizio hai bisogno di consulenza? (Scegli un'opzione)",
+        elena_q2: "Perfetto. Per aprire la pratica in modo che il nostro specialista API ti chiami preparato, indicami i tuoi dati e (opzionalmente) il Riferimento Catastale o indirizzo:",
+        elena_cat_box_title: "🗺️ Dati Catastali e Posizione (Opzionale)",
+        elena_ph_catastro: "Riferimento Catastale (14 o 20 caratteri)",
+        elena_ph_loc: "Indirizzo e comune dell'immobile...",
+        elena_ph_name: "Nome completo, Studio o Azienda",
+        elena_ph_phone: "Telefono / WhatsApp",
+        elena_ph_email: "Indirizzo email",
+        elena_date_label: "📅 Data chiamata",
+        elena_time_label: "⏰ Fascia oraria",
+        elena_err_msg: "Controlla nome, telefono, email e che il Riferimento Catastale abbia 14 o 20 caratteri.",
+        elena_btn_confirm: "✔ Conferma Pratica e Prenota Chiamata",
+        elena_btn_back: "Torna indietro",
+        elena_success_title: "Pratica di Consulenza registrata con successo!",
+        elena_success_desc: "Ti contatteremo nella fascia oraria indicata. Grazie per aver scelto Level.immo.",
+        elena_btn_close: "Termina e Torna a Consulenza",
+        footer_services_label: "Servizi in Sede e Consulenza a:",
+        footer_legal: "Note Legali",
+        footer_privacy: "Privacy e GDPR",
+        footer_cookies: "Cookie e IA"
       },
       ar: {
         btn_replay_video: "تشغيل الفيديو / الصوت",
         btn_view_intro: "فيديو المقدمة",
         btn_share_page: "مشاركة",
         btn_fullscreen_map: "ملء الشاشة",
+        btn_catastro_layer: "طبقة السجل المساحي",
+        btn_close_fs_map: "إغلاق ملء الشاشة",
+        fs_map_badge: "🛰️ رؤية جوية عبر الأقمار الصناعية + مخطط السجل المساحي (تكبير حر)",
+        cat_char_badge: "14 / 20 رمزاً",
+        badge_editable: "قابل للتعديل 100%",
+        cta_share_bottom: "مشاركة صفحة الاستشارات هذه",
         nav_demand: "الطلب النشط",
         nav_market: "السوق المباشر",
         nav_contact: "فتح ملف",
+        hero_badge: "قسم الاستشارات الفنية والعقارية والسجل العقاري",
+        hero_title: "هندسة الأصول العقارية، الفرز والتقسيم وإدارة التخطيط حسب الطلب",
+        hero_subtitle: "حلول فنية وضريبية وقانونية للملاك والشركاء ومكاتب الاستشارات والمستثمرين. متخصصون في التقسيم الأفقي، فرز العقارات، تعديل بيانات السجل المساحي، العقود المزدوجة والتسجيل في السجل العقاري.",
+        gate_security_title: "فلتر الأمان (الدخول إلى الاستشارات والمحاكي)",
+        gate_security_desc: "أجب عن معادلة التحقق للوصول إلى دليل الخدمات الفنية ومحاكي التكاليف والمستشارة الذكية Elena IA:",
+        gate_math_label: "كم يساوي",
+        gate_btn_access: "دخول قسم الاستشارات",
+        gate_error_msg: "النتيجة غير صحيحة. حاول مرة أخرى.",
+        pill_1_t: "📐 التقسيم الأفقي",
+        pill_1_d: "مشروع هندسي، حصص، كاتب العدل والسجل العقاري.",
+        pill_2_t: "🏛️ تدقيق السجل المساحي",
+        pill_2_d: "تعديل الاستخدام والمساحات وتخفيض ضريبة IBI.",
+        pill_3_t: "🔑 تعاقد مزدوج",
+        pill_3_d: "إيجار منتهي بالتملك وعقود عربون.",
+        pill_4_t: "📊 دراسات السوق",
+        pill_4_d: "تقييم دقيق لأسعار البيع والإيجار (€/م²).",
+        main_header_title: "الاستشارات العقارية والفنية وإدارة الأصول حسب الطلب",
+        main_status_badge: "خدمة رسمية معتمدة API 4173 · AICAT 14200",
         kpi_1_label: "1. القسم الفني والتخطيط",
         kpi_1_val: "التقسيم والفرز العقاري",
+        kpi_1_sub: "المشروع الهندسي، التراخيص والحصص",
         kpi_2_label: "2. قسم السجل المساحي والضرائب",
         kpi_2_val: "تدقيق السجل المساحي",
+        kpi_2_sub: "تعديل الاستخدام وتخفيض ضريبة IBI",
         kpi_3_label: "3. القسم القانوني والعقود",
         kpi_3_val: "عقود مخصصة",
+        kpi_3_sub: "البيع، العربون وخيار الشراء",
         kpi_4_label: "4. إدارة الأصول (API 4173)",
         kpi_4_val: "التقييم والسجل العقاري",
+        kpi_4_sub: "دراسات السوق والتسجيل الرسمي",
+        srv_section_title: "خدمات استشارية مخصصة للملاك ومكاتب الاستشارات والمستثمرين",
+        srv_section_badge: "إدارة شاملة 360°",
+        srv_section_intro: "من خلال القسم الفني والقانوني في Level.immo ننسق جميع المراحل اللازمة لتسوية أو تقسيم أو تقييم أو تسويق الأصول العقارية (المباني الكاملة، المحلات التجارية، المساكن والأملاك العائلية أو التابعة للشركات) منذ المخطط الأولي وحتى التسجيل العقاري:",
+        srv1_tag: "الهندسة المعمارية + السجل العقاري",
+        srv_1_title: "1. التقسيم الأفقي وفرز العقارات",
+        srv_1_desc: "رفع مساحي وإعداد المخططات، المشروع الهندسي المعماري، تحديد حصص الملكية، التراخيص البلدية، التوثيق لدى كاتب العدل، تسوية ضريبة AJD وتسجيل الوحدات المستقلة الجديدة في السجل العقاري.",
+        srv2_tag: "تحسين ضريبة العقار IBI",
+        srv_2_title: "2. تعديل ومراجعة السجل المساحي (Catastro)",
+        srv_2_desc: "تدقيق فني أمام المقر الإلكتروني للسجل المساحي. معالجة فروق المساحة وتغيير الاستخدام ومواءمة الواقع الفعلي للعقار لتخفيض العبء الضريبي السنوي لإيصال IBI.",
+        srv3_tag: "صياغة عقود مخصصة",
+        srv_3_title: "3. الإيجار مع خيار الشراء والعمليات المزدوجة",
+        srv_3_desc: "صياغة وهيكلة قانونية لعقود الإيجار المنتهي بالتملك (بمدد وشروط يُتفق عليها بين الأطراف)، عقود العربون وعمليات البيع المشروطة بإجراءات تخطيطية أو عقارية مسبقة.",
+        srv4_tag: "تقييم رسمي معتمد API",
+        srv_4_title: "4. دراسات السوق والجدوى العقارية",
+        srv_4_desc: "تقارير تنفيذية لتقييم أسعار البيع والإيجار (€/م²) للشركاء الملاك والتركات والمكاتب المهنية والشركات، مع تحليل مقارن للسيناريوهات لاتخاذ قرارات آمنة.",
+        time_sup: "⏱️ الجدول الزمني القانوني والعقاري القياسي",
+        time_title: "مقارنة السيناريوهات التشغيلية حتى التسجيل في السجل العقاري",
+        th_sc_name: "السيناريو التشغيلي",
+        th_sc_time: "المدة المقدرة",
+        th_sc_req: "الإجراءات المطلوبة",
+        th_sc_adv: "الميزة الرئيسية",
+        sc1_name: "أ. إيجار + خيار الشراء",
+        sc1_time: "1 - 3 أسابيع (البدء)",
+        sc1_req: "عقد مزدوج (إيجار + خيار شراء). مدة التنفيذ يُتفق عليها بين الأطراف",
+        sc1_adv: "افتتاح سريع وعائد إيجاري فوري",
+        sc2_name: "ب. تقسيم أفقي + بيع",
+        sc2_time: "3 - 6 أشهر",
+        sc2_req: "مشروع معماري، ترخيص، تحديث السجل المساحي، كاتب العدل، ضريبة AJD (1.5%) والسجل العقاري",
+        sc2_adv: "يحتفظ الملاك بباقي أجزاء العقار",
+        sc3_name: "ج. بيع مباشر لكامل الأصل",
+        sc3_time: "4 - 8 أسابيع",
+        sc3_req: "عقد عربون، صك بيع رسمي لدى كاتب العدل وتسجيل مباشر في السجل العقاري",
+        sc3_adv: "سيولة كاملة دون إجراءات تقسيم",
+        cat_tool_sup: "🌍 اتصال مباشر بالبطاقة الرسمية للسجل المساحي والرؤية الجوية",
+        cat_tool_title: "افتح البطاقة المساحية للعقار وتصفح الخريطة بتكبير حر",
+        cat_tool_desc: "الصق أو اكتب الرقم المرجعي للسجل المساحي (14 أو 20 رمزاً): سيقوم النظام تلقائياً بتحديد الإحداثيات الرسمية على خريطة الأقمار الصناعية وفتح البطاقة الوصفية والبيانية الرسمية:",
+        cat_lbl_ref: "الرقم المرجعي للسجل المساحي (14 أو 20 رمزاً):",
+        cat_lbl_loc: "العنوان والبلدية (الرؤية الجوية و GPS):",
+        cat_ph_ref: "مثال: 9872023DF3897S0001WX",
+        cat_ph_loc: "مثال: Travessera de Gràcia 56, Barcelona",
+        cat_valid_msg: "رقم مرجعي رسمي صحيح",
+        cat_invalid_msg: "الصيغة الرسمية: 14 (قطعة) أو 20 رمزاً (عقار)",
         btn_open_catastro: "فتح بطاقة السجل المساحي ↗",
-        btn_how_to_get: "كيفية الوصول (GPS) ↗"
+        btn_open_carto: "مخطط القطعة ↗",
+        btn_val_ref_soon: "القيمة المرجعية (قريباً)",
+        btn_earth_3d: "جولة ثلاثية الأبعاد Google Earth ↗",
+        btn_how_to_get: "كيفية الوصول (GPS) ↗",
+        btn_how_to_get_short: "GPS",
+        btn_share_loc: "إرسال الموقع",
+        calc_header: "محاكي التكاليف: التقسيم الأفقي والسجل المساحي",
+        calc_intro_desc: "عدّل أي مبلغ لتقدير التكاليف الفنية وتكاليف التوثيق والتسجيل والضرائب فوراً لعملية الفرز أو التقسيم الأفقي أو تعديل السجل المساحي:",
+        calc_val_label: "القيمة المصرح بها للعقار المراد تقسيمه (€):",
+        calc_ajd_label: "ضريبة التوثيق AJD للتقسيم الأفقي (1.5% كتالونيا):",
+        calc_items_title: "🛠️ البنود الفنية والتوثيقية والعقارية (قابلة للتعديل):",
+        calc_item_arch: "+ المشروع الهندسي المعماري (المخططات والحصص):",
+        calc_item_notary: "+ كاتب العدل والتسجيل في السجل العقاري:",
+        calc_item_cat: "+ ملف تعديل السجل المساحي (توفير ضريبة IBI):",
+        calc_item_util: "+ تهيئة التوصيلات المستقلة (مياه / كهرباء):",
+        calc_total_label: "التكلفة التقديرية للملف:",
+        calc_total_sub: "تشمل الضرائب (AJD) والهندسة وكاتب العدل والسجل العقاري",
+        cta_main_elena: "فتح ملف وجدولة مكالمة مع المستشارة الذكية ELENA",
+        elena_status: "فتح الملفات الفنية والعقارية · API 4173",
+        elena_sec_title: "التحقق الأمني وحماية البيانات RGPD:",
+        elena_sec_desc: "للتحدث مع Elena IA وفتح ملفك الفني أو العقاري بسرية تامة، أجب عن المجموع:",
+        elena_rgpd_accept: "لقد قرأت وأوافق على",
+        elena_rgpd_consent: "وأوافق على متابعة طلبي عبر نظام الملفات في Level.immo.",
+        elena_step0_err: "يرجى التحقق من المجموع والموافقة على خانة الخصوصية RGPD.",
+        elena_btn_verify: "✔ تحقق وتابع مع المستشارة الذكية Elena",
+        elena_q1_p1: "مرحباً، أنا Elena، المستشارة الذكية في Level.immo. ننسق مشاريع التقسيم الأفقي وتعديل السجل المساحي والعمليات العقارية المخصصة بضمان رسمي API.",
+        elena_q1_p2: "حول أي موضوع أو خدمة تحتاج إلى استشارة؟ (اختر خياراً)",
+        elena_q2: "ممتاز. لفتح الملف ولكي يتصل بك المختص لدينا وهو مطلع على التفاصيل، يرجى إدخال بياناتك و(اختيارياً) الرقم المرجعي للسجل المساحي أو العنوان:",
+        elena_cat_box_title: "🗺️ بيانات السجل المساحي والموقع (اختياري)",
+        elena_ph_catastro: "الرقم المرجعي للسجل المساحي (14 أو 20 رمزاً)",
+        elena_ph_loc: "عنوان وبلدية العقار...",
+        elena_ph_name: "الاسم الكامل أو المكتب أو الشركة",
+        elena_ph_phone: "الهاتف / واتساب",
+        elena_ph_email: "البريد الإلكتروني",
+        elena_date_label: "📅 تاريخ المكالمة",
+        elena_time_label: "⏰ الفترة الزمنية",
+        elena_err_msg: "يرجى مراجعة الاسم والهاتف والبريد الإلكتروني والتأكد من أن الرقم المساحي يتكون من 14 أو 20 رمزاً.",
+        elena_btn_confirm: "✔ تأكيد الملف وجدولة المكالمة",
+        elena_btn_back: "رجوع",
+        elena_success_title: "تم تسجيل ملف الاستشارة بنجاح!",
+        elena_success_desc: "سنتواصل معك في الفترة المحددة. شكراً لثقتك بـ Level.immo.",
+        elena_btn_close: "إنهاء والعودة إلى الاستشارات",
+        footer_services_label: "خدماتنا المباشرة والاستشارية في:",
+        footer_legal: "إشعار قانوني",
+        footer_privacy: "الخصوصية و RGPD",
+        footer_cookies: "ملفات الارتباط والذكاء الاصطناعي"
       },
       zh: {
         btn_replay_video: "播放视频 / 开启声音",
         btn_view_intro: "视频封面",
         btn_share_page: "分享",
         btn_fullscreen_map: "全屏地图",
+        btn_catastro_layer: "地籍图层",
+        btn_close_fs_map: "关闭全屏",
+        fs_map_badge: "🛰️ 高清卫星航拍 + 官方地籍地块图层（自由缩放）",
+        cat_char_badge: "14 / 20 位字符",
+        badge_editable: "100% 可编辑",
+        cta_share_bottom: "分享此咨询中心页面",
         nav_demand: "活跃需求",
         nav_market: "实时市场",
         nav_contact: "建立档案",
+        hero_badge: "技术、地籍与产权登记定制咨询部",
+        hero_title: "定制化房地产资产工程、产权分割与城市规划管理",
+        hero_subtitle: "面向业主、共有产权人、顾问机构及投资者的技术、税务与法律解决方案。专注于水平产权分割、物业分拆、地籍用途变更、租购双重合约及产权局登记。",
+        gate_security_title: "安全验证（进入咨询中心与成本模拟器）",
+        gate_security_desc: "请完成加法验证以解锁技术服务目录、成本模拟器及 Elena AI 智能顾问：",
+        gate_math_label: "请计算",
+        gate_btn_access: "进入咨询中心",
+        gate_error_msg: "计算结果有误，请重试。",
+        pill_1_t: "📐 水平产权分割",
+        pill_1_d: "建筑技术方案、份额、公证与产权登记。",
+        pill_2_t: "🏛️ 官方地籍审计",
+        pill_2_d: "用途与面积更正，大幅降低 IBI 房产税。",
+        pill_3_t: "🔑 双重架构合同",
+        pill_3_d: "租购结合期权协议与定金合同。",
+        pill_4_t: "📊 市场价值研究",
+        pill_4_d: "严谨的买卖与商业租赁 €/m² 估值报告。",
+        main_header_title: "定制化房地产、技术与家族资产管理咨询",
+        main_status_badge: "官方注册房地产经纪人 API 4173 · AICAT 14200",
         kpi_1_label: "1. 建筑技术与城市规划部",
         kpi_1_val: "产权分割与物业分拆",
+        kpi_1_sub: "建筑方案、市政许可与份额分配",
         kpi_2_label: "2. 地籍审计与税务优化部",
         kpi_2_val: "官方地籍核查与变更",
+        kpi_2_sub: "用途调整与 IBI 房产税减免",
         kpi_3_label: "3. 法律事务与合同架构部",
         kpi_3_val: "定制化商业合同",
+        kpi_3_sub: "买卖过户、定金协议与租购期权",
         kpi_4_label: "4. 资产评估与产权部 (API 4173)",
         kpi_4_val: "市场估值与产权登记",
+        kpi_4_sub: "可行性报告与产权局官方登记",
+        srv_section_title: "面向业主、专业事务所与投资者的定制化咨询服务",
+        srv_section_badge: "360° 全流程管理",
+        srv_section_intro: "Level.immo 技术与法律部门统筹协调房地产资产（整栋建筑、商业店铺、住宅及家族或企业名下资产）在合规化、产权分割、估值或交易中的所有阶段，涵盖从初期图纸设计直至产权局正式登记：",
+        srv1_tag: "建筑方案 + 产权登记",
+        srv_1_title: "1. 水平产权分割 (División Horizontal) 与物业分拆",
+        srv_1_desc: "测绘与平面图绘制、建筑师技术方案、共有份额分配、市政许可证申请、公证处公证书签署、AJD 印花税清算以及在产权登记局完成独立新产权实体的登记。",
+        srv2_tag: "IBI 房产税优化",
+        srv_2_title: "2. 地籍资料变更与官方审查 (Catastro)",
+        srv_2_desc: "在西班牙官方电子地籍局进行技术审计。解决面积差异、变更物业用途并使登记信息与建筑物理现状一致，从而大幅降低每年的 IBI 房产税账单。",
+        srv3_tag: "定制化合同架构",
+        srv_3_title: "3. 租购结合 (先租后买) 与双重交易架构",
+        srv_3_desc: "起草并设计带购买期权的租赁合同（具体期限与条件由双方协商确定）、解约金定金合同 (Arras) 以及附带城市规划或产权前置条件的买卖合同。",
+        srv4_tag: "官方 API 权威估值",
+        srv_4_title: "4. 市场调研与资产可行性研究报告",
+        srv_4_desc: "为共有产权人、遗产继承、专业顾问事务所及企业出具极具参考价值的出售与租赁估值执行报告 (€/m²)，提供多方案对比分析以辅助安全决策。",
+        time_sup: "⏱️ 标准法律与产权登记时间表",
+        time_title: "直至完成产权局登记的各运营方案对比",
+        th_sc_name: "运营方案",
+        th_sc_time: "预计周期",
+        th_sc_req: "所需办理手续",
+        th_sc_adv: "核心优势",
+        sc1_name: "A. 租赁 + 购买期权 (先租后买)",
+        sc1_time: "1 - 3 周（启动）",
+        sc1_req: "双重合同（租赁 + 购买期权），行权期限由双方协商确定",
+        sc1_adv: "快速开业并立即产生租金收益",
+        sc2_name: "B. 水平产权分割 + 分拆出售",
+        sc2_time: "3 - 6 个月",
+        sc2_req: "建筑师项目、市政许可、地籍变更、公证、AJD 税 (1.5%) 及产权登记",
+        sc2_adv: "业主可保留建筑其余部分产权",
+        sc3_name: "C. 整栋资产直接出售",
+        sc3_time: "4 - 8 周",
+        sc3_req: "定金协议、单一物业买卖公证书及产权局过户登记",
+        sc3_adv: "无需分割手续即可实现全额变现",
+        cat_tool_sup: "🌍 直连官方地籍档案与高清卫星航拍",
+        cat_tool_title: "打开物业官方地籍档案并自由缩放浏览卫星地图",
+        cat_tool_desc: "粘贴或输入地籍参考编号（14 或 20 位字符）：系统将自动在卫星地图上定位该物业的官方坐标，并直接打开该编号的官方地籍图文档案：",
+        cat_lbl_ref: "地籍参考编号（14 或 20 位字符）：",
+        cat_lbl_loc: "街道地址与城市（卫星视图与 GPS 导航）：",
+        cat_ph_ref: "例如：9872023DF3897S0001WX",
+        cat_ph_loc: "例如：Travessera de Gràcia 56, Barcelona",
+        cat_valid_msg: "有效的官方地籍参考编号",
+        cat_invalid_msg: "官方格式要求：14 位（地块）或 20 位字符（物业）",
         btn_open_catastro: "打开官方地籍档案 ↗",
-        btn_how_to_get: "如何前往 (GPS 导航) ↗"
+        btn_open_carto: "地块平面图 ↗",
+        btn_val_ref_soon: "官方参考价值（即将推出）",
+        btn_earth_3d: "Google Earth 3D 航拍 ↗",
+        btn_how_to_get: "如何前往 (GPS 导航) ↗",
+        btn_how_to_get_short: "GPS",
+        btn_share_loc: "发送位置",
+        calc_header: "成本模拟器：水平产权分割与地籍变更",
+        calc_intro_desc: "修改任意金额即可实时测算物业分拆、水平产权分割或地籍用途变更的技术、公证、登记及税务成本：",
+        calc_val_label: "拟分割物业的申报价值 (€)：",
+        calc_ajd_label: "水平产权分割 AJD 印花税（加泰罗尼亚 1.5%）：",
+        calc_items_title: "🛠️ 技术、公证与产权登记预算项（实时可编辑）：",
+        calc_item_arch: "+ 建筑师技术项目（图纸测绘与份额分配）：",
+        calc_item_notary: "+ 公证处公证及产权局登记费：",
+        calc_item_cat: "+ 地籍变更申请档案（节省 IBI 房产税）：",
+        calc_item_util: "+ 独立水电表接入改造预估：",
+        calc_total_label: "档案预估总成本：",
+        calc_total_sub: "包含税费 (AJD)、建筑师、公证及产权局登记",
+        cta_main_elena: "建立咨询档案并预约 ELENA AI 电话会议",
+        elena_status: "技术与资产管理档案建立 · API 4173",
+        elena_sec_title: "GDPR 安全与隐私验证：",
+        elena_sec_desc: "如需与 Elena AI 对话并保密建立您的技术或地籍档案，请完成加法计算：",
+        elena_rgpd_accept: "我已阅读并同意",
+        elena_rgpd_consent: "并授权 Level.immo 档案系统处理我的咨询请求。",
+        elena_step0_err: "请核对计算结果并勾选 GDPR 隐私同意框。",
+        elena_btn_verify: "✔ 验证并继续与 Elena AI 对话",
+        elena_q1_p1: "您好，我是 Level.immo 的智能顾问 Elena。我们统筹协调水平产权分割、地籍变更（降低 IBI 房产税）及官方 API 保障的定制化地产交易。",
+        elena_q1_p2: "请问您需要哪方面的咨询服务？（请选择一项）",
+        elena_q2: "非常好。为了建立档案以便我们的 API 专家做好充分准备与您联系，请填写您的联系信息及（可选）地籍参考编号或物业地址：",
+        elena_cat_box_title: "🗺️ 地籍数据与物业位置（可选）",
+        elena_ph_catastro: "地籍参考编号（14 或 20 位字符）",
+        elena_ph_loc: "物业街道地址与所属城市...",
+        elena_ph_name: "您的姓名、事务所或企业名称",
+        elena_ph_phone: "电话 / WhatsApp",
+        elena_ph_email: "电子邮箱地址",
+        elena_date_label: "📅 预约通话日期",
+        elena_time_label: "⏰ 预约时段",
+        elena_err_msg: "请检查姓名、电话、邮箱，并确保填写的地籍编号为 14 或 20 位字符。",
+        elena_btn_confirm: "✔ 确认建立档案并预约通话",
+        elena_btn_back: "返回上一步",
+        elena_success_title: "咨询档案已成功建立！",
+        elena_success_desc: "我们将在您选择的时段内与您联系。感谢您信任 Level.immo。",
+        elena_btn_close: "完成并返回咨询中心",
+        footer_services_label: "线下服务与咨询覆盖城市：",
+        footer_legal: "法律声明",
+        footer_privacy: "隐私与 GDPR",
+        footer_cookies: "Cookie 与 AI"
       }
     };
 
