@@ -1554,7 +1554,7 @@ const I18N = {
     exp_box_title: "🏠 EXPEDIENTE Y PROPIEDAD", lbl_tenant: "Inquilino / Titular:", lbl_property: "Inmueble(s):", lbl_address: "Dirección / Ubicación:",
     lbl_photos: "Fotografías del Inmueble:", lbl_map_box: "📍 Geolocalización y Navegación GPS:", btn_drive_auto: "Cómo llegar (Auto)", btn_open_maps: "Google Maps", btn_fly_3d: "Vuelo 3D",
     btn_view_contract: "📄 Ver Ficha, Contrato e IBAN", btn_report_issue: "🛠️ ¿Dudas o Averías? Conserje 24/7",
-    avisos_box_title: "📢 AVISOS GENERALES E INSTRUCCIONES", inc_box_title: "🛠️ INCIDENCIAS ACTIVAS Y SUMINISTROS", recibos_box_title: "🧾 RECIBOS, SUMINISTROS Y DESCARGA DE JUSTIFICANTS PDF",
+    avisos_box_title: "📢 AVISOS GENERALES E INSTRUCCIONES", inc_box_title: "🛠️ INCIDENCIAS ACTIVAS Y SUMINISTROS", recibos_box_title: "🧾 RECIBOS, SUMINISTROS Y DESCARGA DE JUSTIFICANTES PDF",
     btn_talk_elena: "💬 Hablar con Elena IA",
     chat_welcome: "Hola, soy Elena IA. ¿En qué puedo ayudarte hoy con tu contrato de alquiler, suministros o incidencias de la vivienda?"
   },
@@ -2198,6 +2198,7 @@ function activarFasePin(dniRaw, data) {
   document.getElementById("caja-pin").style.display = "block";
   document.getElementById("input-pin-user").value = "";
   document.getElementById("input-pin-user").focus();
+  window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
 window.validarPin = function() {
@@ -2289,6 +2290,9 @@ function renderizarPortalConDatos(data, identificador) {
   if (Array.isArray(data.recibos_lista) && data.recibos_lista.length > 0) {
     window.RECIBOS_CARTERA = data.recibos_lista;
   }
+  if (Array.isArray(data.suministros_lista) && data.suministros_lista.length > 0) {
+    window.SUMINISTROS_GASTOS = data.suministros_lista;
+  }
 
   var esPropietaria = (window.sesionActiva.rol === "PROPIETARIO" || String(window.sesionActiva.dni).toUpperCase() === "40913126J");
   var nombreReal = data.nombre || data.nombre_inquilino || data.nombre_abogado || (esPropietaria ? "Carmen Forcadell" : "Titular Verificado");
@@ -2338,6 +2342,7 @@ function renderizarPortalConDatos(data, identificador) {
   }
 
   document.getElementById("chat-role-indicator").innerText = "● Conectado (" + window.sesionActiva.tabla_filtro + ")";
+  window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
 window.enviarAutorizacionAbogado = function(e) {
@@ -2436,6 +2441,7 @@ function volverFaseDni() {
     btnPin.disabled = false;
   }
   window.pintarSumaLevel();
+  window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
 function mostrarVistaInterna(vista) {
@@ -2455,6 +2461,7 @@ function mostrarVistaInterna(vista) {
     tabRes.classList.add("active");
     tabProp.classList.remove("active");
   }
+  window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
 function alternarPantallaCompleta() {
