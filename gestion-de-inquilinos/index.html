@@ -43,7 +43,6 @@
     overflow-x: hidden;
   }
 
-  /* BLOQUEO TOTAL DE CUALQUIER BARRA INFERIOR FLOTANTE ANTIGUA */
   .bottom-bar, .elena-launch-btn {
     display: none !important;
     visibility: hidden !important;
@@ -880,7 +879,7 @@
     <header class="topbar">
       <div class="topbar-title" data-i18n="topbar_title">Consola PropTech · Reverse Market & Gestión de Alquileres</div>
       <div class="topbar-right">
-        <div class="badge-private">🔒 <span data-i18n="badge_private">Área Privada · v2.0 Tiempo Real</span></div>
+        <div class="badge-private">🔒 <span data-i18n="badge_private">Área Privada · v2.1 Tiempo Real</span></div>
         <label for="lang-selector" class="sr-only">Seleccionar idioma</label>
         <select id="lang-selector" class="lang-select" aria-label="Seleccionar idioma" onchange="cambiarIdioma(this.value)" translate="no">
           <option value="es">🇪🇸 Español</option>
@@ -933,10 +932,10 @@
         <div id="caja-pin">
           <div style="font-size: 34px; margin-bottom: 8px;">📲</div>
           <div style="color: var(--emerald); font-weight: 800; font-size: 16px; margin-bottom: 10px;" data-i18n="pin_sent_title">
-            ¡Identidad verificada!
+            ¡Solicitud enviada a tu WhatsApp!
           </div>
           <label for="input-pin-user" id="texto-instruccion-pin" style="display:block; color: var(--text-muted); font-size: 13.5px; margin-bottom: 16px; line-height: 1.5; cursor:pointer;" data-i18n="pin_sent_desc">
-            Te acabamos de enviar un enlace y un <strong>PIN temporal de 4 cifras</strong> a tu WhatsApp. Introduce el PIN aquí abajo para abrir tu expediente a pantalla completa:
+            Introduce el <strong>PIN temporal de 4 cifras</strong> recibido en tu WhatsApp para abrir tu expediente a pantalla completa:
           </label>
           <input type="text" inputmode="numeric" maxlength="4" id="input-pin-user" name="input_pin_user" class="pin-input-big" aria-label="PIN temporal de 4 cifras" placeholder="••••">
           <button type="button" class="btn-primary" id="btn-validar-pin" onclick="validarPin()" data-i18n="btn_enter_portal">
@@ -1350,10 +1349,6 @@ const URL_WEBHOOK_PORTAL_DATOS = "https://hook.eu1.make.com/tfk9n3nefcufj183eth6
 const URL_WEBHOOK_BOT_CHAT = "https://hook.eu1.make.com/8xd81xb9t3mg2ycwez1czd3quwhf2nef";
 const URL_WEBHOOK_LEGAL_SERVICES = "https://hook.eu1.make.com/7h10etd9klntm41oebrg4m1buc903uh4";
 
-// ============================================================================
-// ARRAYS DINÁMICOS (VACÍOS DE FÁBRICA: CERO DATOS INVENTADOS)
-// Se rellenan únicamente con la respuesta en tiempo real de Make.
-// ============================================================================
 window.CARTERA_PROPIEDADES = [];
 window.SUMINISTROS_GASTOS = [];
 window.RECIBOS_CARTERA = [];
@@ -1396,10 +1391,6 @@ function formatearCampoValor(val) {
   return "";
 }
 
-// ============================================================================
-// EXTRACTOR INTELIGENTE: BUSCA LA FILA EXACTA DEL DNI QUE HA ENTRADO
-// (Evita que salga el Inquilino 1 cuando Make devuelve las 4 filas sin filtrar)
-// ============================================================================
 function extraerRegistroMake(rawPayload, identificadorBuscado) {
   if (!rawPayload) return {};
   var target = String(identificadorBuscado || window.sesionActiva["DNI-NIE-CIF"] || "").trim().toUpperCase();
@@ -1417,8 +1408,8 @@ function extraerRegistroMake(rawPayload, identificadorBuscado) {
       itemCoincidente = listaItems.find(function(it) {
         var f = it.fields || it;
         var dniFila = formatearCampoValor(f["DNI-NIE-CIF"] || f["DNI/NIE Inquilinos"] || f.dni_inquilino || f.dni || "").toUpperCase();
-        var codFila = formatearCampoValor(f["Autho-code-inquilino"] || f["Autho-code-propietario"] || f["Autho-code-abogado"] || f.codigo_inquilino || "").toUpperCase();
-        return dniFila.includes(target) || codFila === target;
+        var codFila = formatearCampoValor(f["Autho-code-inquilino"] || f["Autho-code-propietario"] || f["Autho-code-abogado"] || f.codigo_inquilino || f.Search_Code || "").toUpperCase();
+        return dniFila.includes(target) || codFila.includes(target);
       });
     }
     var elegido = itemCoincidente || listaItems[0];
@@ -1431,7 +1422,6 @@ function extraerRegistroMake(rawPayload, identificadorBuscado) {
   return rawPayload;
 }
 
-// Normaliza recibos tanto si vienen ya formateados como si vienen directos de PROPERTY_SUMINISTROS_Y_GASTOS
 function normalizarReciboDesdeMake(r) {
   var f = r.fields ? r.fields : r;
   var idRec = formatearCampoValor(f.id_recibo || f["ID Nº"] || f.id || r.record_id || "---");
@@ -1473,15 +1463,15 @@ const I18N = {
   es: {
     nav_demanda: "🎯 Demanda Activa", nav_mercado_real: "📡 Mercado Real", nav_inquilinos: "👥 Acceso a Usuarios",
     link_legal: "Aviso Legal", link_privacidad: "Privacidad y LOPD", link_cookies: "Cookies e IA",
-    topbar_title: "Consola PropTech · Reverse Market & Gestión de Alquileres", badge_private: "Área Privada · v2.0 Tiempo Real",
+    topbar_title: "Consola PropTech · Reverse Market & Gestión de Alquileres", badge_private: "Área Privada · v2.1 Tiempo Real",
     login_title: "Acceso Residentes, Propietarios y Servicios Jurídicos",
     login_desc: "Introduce tu DNI/NIE/CIF para acceder de forma segura a tu panel privado y recibir tu PIN temporal de 4 cifras por WhatsApp.",
     label_dni: "DNI / NIE / CIF del Titular o Letrado Autorizado",
     chk_accept_prefix: "Acepto las", chk_accept_link: "Condiciones y la Privacidad",
     chk_accept_suffix: "Autorizo la consulta cifrada de mi expediente y el envío de PIN por WhatsApp.",
     btn_request_pin: "Solicitar Verificación VIP →",
-    pin_sent_title: "¡Identidad verificada!",
-    pin_sent_desc: "Te acabamos de enviar un enlace y un PIN temporal de 4 cifras a tu WhatsApp. Introduce el PIN aquí abajo para abrir tu expediente:",
+    pin_sent_title: "¡Solicitud enviada a tu WhatsApp!",
+    pin_sent_desc: "Introduce el PIN temporal de 4 cifras recibido en tu WhatsApp para abrir tu expediente:",
     btn_enter_portal: "Entrar al Portal a Pantalla Completa →", btn_back: "← Volver atrás",
     tab_resident: "🏠 Expediente del Residente", tab_owner: "💼 Área Propietaria (Radar, Cartera, GPS, Suministros y Abogado)",
     btn_toggle_sidebars: "⛶ Mostrar/Ocultar Paneles Laterales", btn_logout: "✕ Cerrar Sesión",
@@ -1495,15 +1485,15 @@ const I18N = {
   ca: {
     nav_demanda: "🎯 Demanda Activa", nav_mercado_real: "📡 Mercat Real", nav_inquilinos: "👥 Accés a Usuaris",
     link_legal: "Avís Legal", link_privacidad: "Privacitat i LOPD", link_cookies: "Cookies i IA",
-    topbar_title: "Consola PropTech · Gestió de Llogaters i Propietaris", badge_private: "Àrea Privada · v2.0 Temps Real",
+    topbar_title: "Consola PropTech · Gestió de Llogaters i Propietaris", badge_private: "Àrea Privada · v2.1 Temps Real",
     login_title: "Accés Residents, Propietaris i Serveis Jurídics",
     login_desc: "Introdueix el teu DNI/NIE/CIF per accedir de forma segura al teu panell privat i rebre el teu PIN temporal de 4 xifres per WhatsApp.",
     label_dni: "DNI / NIE / CIF del Titular o Advocat Autoritzat",
     chk_accept_prefix: "Accepto les", chk_accept_link: "Condicions i la Privacitat",
     chk_accept_suffix: "Autoritzo la consulta xifrada del meu expedient i l'enviament del PIN per WhatsApp.",
     btn_request_pin: "Sol·licitar Verificació VIP →",
-    pin_sent_title: "Identitat verificada!",
-    pin_sent_desc: "T'acabem d'enviar un enllaç i un PIN temporal de 4 xifres al teu WhatsApp. Introdueix el PIN aquí sota:",
+    pin_sent_title: "Sol·licitud enviada al teu WhatsApp!",
+    pin_sent_desc: "Introdueix el PIN temporal de 4 xifres rebut al teu WhatsApp:",
     btn_enter_portal: "Entrar al Portal a Pantalla Completa →", btn_back: "← Tornar enrere",
     tab_resident: "🏠 Expedient del Resident", tab_owner: "💼 Àrea Propietària (Radar, Cartera, GPS, Subministraments i Advocat)",
     btn_toggle_sidebars: "⛶ Mostrar/Ocultar Panells Laterals", btn_logout: "✕ Tancar Sessió",
@@ -1558,9 +1548,6 @@ function cambiarIdioma(forzarLang) {
   actualizarEnlacesNavegacion(lang);
 }
 
-// ============================================================================
-// GENERADOR DE RECIBO OFICIAL ENTRE PARTES (CON DATOS REALES DEL RECIBO)
-// ============================================================================
 window.descargarReciboPDF = function(idRecibo) {
   var rec = window.RECIBOS_CARTERA.find(function(r) { return String(r.id_recibo) === String(idRecibo); });
   if (!rec) return;
@@ -1699,7 +1686,6 @@ window.marcarReciboComoAbonado = function(idRecibo) {
   window.descargarReciboPDF(idRecibo);
 };
 
-// RENDERIZAR CARTERA, SUMINISTROS Y RECIBOS DEL PROPIETARIO
 function renderizarCarteraYRecibosPropietario(filtroTexto) {
   var contCartera = document.getElementById("contenedor-fichas-cartera");
   var contRecibos = document.getElementById("contenedor-recibos-propietario");
@@ -2022,19 +2008,18 @@ document.addEventListener("DOMContentLoaded", function() {
     if (el) el.textContent = ahora.toLocaleDateString("es-ES") + " | " + ahora.toLocaleTimeString("es-ES");
   }, 1000);
 
-  // Acceso directo desde enlace de WhatsApp (?code=...)
   var params = new URLSearchParams(window.location.search);
   var codeUrl = params.get("code");
   if (codeUrl && codeUrl.trim() !== "" && codeUrl.trim() !== "200") {
     var cleanCode = codeUrl.trim();
     window.sesionActiva.codigo_inquilino = cleanCode;
     window.sesionActiva["DNI-NIE-CIF"] = cleanCode;
-    cargarExpedienteDesdeMake(cleanCode);
+    cargarExpedienteDesdeMake(cleanCode, "");
   }
 });
 
 // ============================================================================
-// FASE 1: CONEXIÓN A TOC TOC INQUILINOS EN MAKE
+// FASE 1: CONEXIÓN A TOC TOC INQUILINOS EN MAKE (TOLERANTE A "Accepted")
 // ============================================================================
 window.llamarAlWebhook = function() {
   var inputDniElem = document.getElementById("input-dni");
@@ -2084,27 +2069,48 @@ window.llamarAlWebhook = function() {
   })
   .then(function(response) { return response.text(); })
   .then(function(textResponse) {
+    var trimmed = String(textResponse || "").trim();
     var data = {};
+
+    // Si Make devuelve "Accepted" (porque aún no llegó al Webhook Response o no tiene Body),
+    // abrimos igualmente la caja de PIN para que el usuario introduzca el PIN que reciba en su WhatsApp.
+    if (trimmed === "Accepted" || trimmed === "") {
+      activarFasePin(dniRaw, {
+        status: "accepted_by_make",
+        pin_secreto: "",
+        "DNI-NIE-CIF": dniRaw,
+        codigo_inquilino: dniRaw
+      });
+      return;
+    }
+
     try {
-      data = JSON.parse(textResponse);
+      data = JSON.parse(trimmed);
     } catch (e) {
-      var matchPin = String(textResponse).match(/\b(\d{4})\b/);
+      var matchPin = trimmed.match(/\b(\d{4})\b/);
       if (matchPin) {
         data = { status: "success", pin_secreto: matchPin[1], "DNI-NIE-CIF": dniRaw };
       } else {
-        throw new Error("Respuesta no JSON desde Make: " + textResponse);
+        activarFasePin(dniRaw, {
+          status: "accepted_by_make",
+          pin_secreto: "",
+          "DNI-NIE-CIF": dniRaw,
+          codigo_inquilino: dniRaw
+        });
+        return;
       }
     }
-    var pinRecibido = data.pin_secreto || data.Codigo_PIN || data.pin;
-    if (data && (data.status === "success" || pinRecibido)) {
-      data.pin_secreto = String(pinRecibido || "").trim();
-      activarFasePin(dniRaw, data);
-    } else {
-      throw new Error(data.message || "Make no devolvió el campo pin_secreto en el Webhook Response");
+
+    if (data && (data.status === "error" || data.error)) {
+      throw new Error(data.message || data.error || "DNI no encontrado.");
     }
+
+    var pinRecibido = data.pin_secreto || data.Codigo_PIN || data.pin || "";
+    data.pin_secreto = String(pinRecibido).trim();
+    activarFasePin(dniRaw, data);
   })
   .catch(function(error) {
-    msjError.innerText = "Error en TOC TOC INQUILINOS: " + (error.message || "DNI/NIE/CIF no registrado o fallo en el Webhook Response de Make.");
+    msjError.innerText = "Aviso: " + (error.message || "DNI/NIE/CIF no registrado en la base de datos.");
     msjError.style.display = "block";
     btn.innerText = "Solicitar Verificación VIP →";
     btn.disabled = false;
@@ -2149,7 +2155,7 @@ window.validarPin = function() {
 
   msjError.style.display = "none";
 
-  if (!pinUser) {
+  if (!pinUser || pinUser.length < 4) {
     msjError.innerText = "Escribe el PIN de 4 cifras recibido en tu WhatsApp para continuar.";
     msjError.style.display = "block";
     return;
@@ -2157,11 +2163,11 @@ window.validarPin = function() {
 
   var pinGuardado = window.datosEnSecreto && window.datosEnSecreto.pin_secreto ? String(window.datosEnSecreto.pin_secreto).trim() : "";
 
-  if (window.datosEnSecreto && (!pinGuardado || String(pinUser) === pinGuardado)) {
-    btnPin.innerText = "¡Correcto! Cargando tu expediente...";
+  if (!pinGuardado || String(pinUser) === pinGuardado) {
+    btnPin.innerText = "¡Verificado! Cargando tu expediente...";
     btnPin.disabled = true;
     var dniOriginal = window.sesionActiva["DNI-NIE-CIF"];
-    cargarExpedienteDesdeMake(dniOriginal);
+    cargarExpedienteDesdeMake(dniOriginal, pinUser);
   } else {
     msjError.innerText = "PIN incorrecto. Revisa el código de 4 cifras enviado a tu WhatsApp.";
     msjError.style.display = "block";
@@ -2171,7 +2177,7 @@ window.validarPin = function() {
 // ============================================================================
 // FASE 3: CARGA DE DATOS REALES DESDE PORTAL DATOS INQUILINOS (MAKE)
 // ============================================================================
-function cargarExpedienteDesdeMake(identificador) {
+function cargarExpedienteDesdeMake(identificador, pinIntroducido) {
   var msjError = document.getElementById("msg-error");
   var msjExito = document.getElementById("msg-exito");
   msjError.style.display = "none";
@@ -2185,6 +2191,8 @@ function cargarExpedienteDesdeMake(identificador) {
     "DNI-NIE-CIF": dniValor,
     dni: dniValor,
     codigo_inquilino: codigoInq,
+    pin: pinIntroducido || "",
+    PIN_Temporal: pinIntroducido || "",
     rol: window.sesionActiva.rol,
     tabla_filtro: window.sesionActiva.tabla_filtro
   };
@@ -2196,17 +2204,21 @@ function cargarExpedienteDesdeMake(identificador) {
   })
   .then(function(response) { return response.text(); })
   .then(function(rawText) {
-    var parsed = JSON.parse(rawText);
+    var trimmed = String(rawText || "").trim();
+    if (trimmed === "Accepted" || trimmed === "") {
+      throw new Error("El escenario Portal Datos Inquilinos respondió 'Accepted' sin devolver el JSON del expediente.");
+    }
+    var parsed = JSON.parse(trimmed);
     var data = extraerRegistroMake(parsed, dniValor);
     if (data && Object.keys(data).length > 0) {
       renderizarPortalConDatos(data, dniValor);
     } else {
-      throw new Error("El escenario Portal Datos Inquilinos devolvió un objeto vacío");
+      throw new Error("El escenario Portal Datos Inquilinos devolvió un objeto vacío.");
     }
   })
   .catch(function(error) {
     msjExito.style.display = "none";
-    msjError.innerText = "Error en Portal Datos Inquilinos: " + (error.message || "Verifica que el segundo escenario de Make esté activo y devuelva un JSON válido.");
+    msjError.innerText = "Aviso en Portal Datos Inquilinos: " + (error.message || "Verifica que el segundo escenario de Make esté activo y devuelva un JSON válido.");
     msjError.style.display = "block";
     var btnPin = document.getElementById("btn-validar-pin");
     if (btnPin) {
@@ -2225,7 +2237,7 @@ function pintarFichaExpedienteEnPantalla(d) {
   var dniTitular = formatearCampoValor(obtenerDniUnificado(d)) || window.sesionActiva["DNI-NIE-CIF"] || "---";
 
   var codigoAutho = formatearCampoValor(
-    d["Autho-code-inquilino"] || d["Autho-code-propietario"] || d["Autho-code-abogado"] || d.codigo_inquilino || d.code
+    d["Autho-code-inquilino"] || d["Autho-code-propietario"] || d["Autho-code-abogado"] || d.Search_Code || d.codigo_inquilino || d.code
   ) || window.sesionActiva.codigo_inquilino || "---";
 
   var propiedadNombre = formatearCampoValor(
@@ -2257,7 +2269,6 @@ function pintarFichaExpedienteEnPantalla(d) {
   document.getElementById("val-direccion").innerText = direccionTexto;
   document.getElementById("val-contrato-renta").innerText = resumenContrato || "---";
 
-  // Galería de fotos si Make devuelve array de fotos
   var wrapFotos = document.getElementById("wrap-galeria-fotos");
   var galeriaBox = document.getElementById("val-fotos");
   if (Array.isArray(d.fotos) && d.fotos.length > 0) {
@@ -2270,7 +2281,6 @@ function pintarFichaExpedienteEnPantalla(d) {
     galeriaBox.innerHTML = "";
   }
 
-  // Avisos
   if (d.avisos_html) {
     document.getElementById("val-avisos").innerHTML = d.avisos_html;
   } else if (d.avisos) {
@@ -2279,7 +2289,6 @@ function pintarFichaExpedienteEnPantalla(d) {
     document.getElementById("val-avisos").innerHTML = "<div style='color:var(--text-muted);'>Sin avisos generales registrados en este expediente.</div>";
   }
 
-  // Incidencias
   var incTexto = formatearCampoValor(d.incidencias || d.PROPERTY_INCIDENCIAS || d["PROPERTY_INCIDENCIAS 2"]);
   if (d.incidencias_html) {
     document.getElementById("val-incidencias").innerHTML = d.incidencias_html;
@@ -2289,7 +2298,6 @@ function pintarFichaExpedienteEnPantalla(d) {
     document.getElementById("val-incidencias").innerHTML = "<div style='color:var(--text-muted);'>Sin incidencias activas registradas en este expediente.</div>";
   }
 
-  // Recibos
   if (d.recibos_html) {
     document.getElementById("val-recibos").innerHTML = d.recibos_html;
   } else {
