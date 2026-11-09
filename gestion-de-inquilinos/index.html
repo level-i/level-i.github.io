@@ -879,7 +879,7 @@
     <header class="topbar">
       <div class="topbar-title" data-i18n="topbar_title">Consola PropTech · Reverse Market & Gestión de Alquileres</div>
       <div class="topbar-right">
-        <div class="badge-private">🔒 <span data-i18n="badge_private">Área Privada · v2.1 Tiempo Real</span></div>
+        <div class="badge-private">🔒 <span data-i18n="badge_private">Área Privada · v2.2 Tiempo Real</span></div>
         <label for="lang-selector" class="sr-only">Seleccionar idioma</label>
         <select id="lang-selector" class="lang-select" aria-label="Seleccionar idioma" onchange="cambiarIdioma(this.value)" translate="no">
           <option value="es">🇪🇸 Español</option>
@@ -1427,7 +1427,7 @@ function normalizarReciboDesdeMake(r) {
   var idRec = formatearCampoValor(f.id_recibo || f["ID Nº"] || f.id || r.record_id || "---");
   var concepto = formatearCampoValor(f.concepto || f["Concepto / Observaciones"] || f.Concepto || "Recibo");
   var tipo = formatearCampoValor(f.tipo || f.Concepto || "Alquiler / Suministro");
-  var prop = formatearCampoValor(f.propiedad || f["Propiedad arrendada"] || f.Inmueble || window.sesionActiva.propiedad || "---");
+  var prop = formatearCampoValor(f.PROPERTY_PROPIEDADES || f.propiedad || f["Propiedad arrendada"] || f.Inmueble || window.sesionActiva.propiedad || "---");
   var dir = formatearCampoValor(f.direccion || f.Direccion || "---");
   var inq = formatearCampoValor(f.inquilino || f["Nombre Inquilinos"] || f.Arrendatario || window.sesionActiva.nombre || "---");
   var dniInq = formatearCampoValor(f["DNI-NIE-CIF"] || f["DNI/NIE Inquilinos"] || f.dni_inquilino || window.sesionActiva["DNI-NIE-CIF"] || "");
@@ -1463,7 +1463,7 @@ const I18N = {
   es: {
     nav_demanda: "🎯 Demanda Activa", nav_mercado_real: "📡 Mercado Real", nav_inquilinos: "👥 Acceso a Usuarios",
     link_legal: "Aviso Legal", link_privacidad: "Privacidad y LOPD", link_cookies: "Cookies e IA",
-    topbar_title: "Consola PropTech · Reverse Market & Gestión de Alquileres", badge_private: "Área Privada · v2.1 Tiempo Real",
+    topbar_title: "Consola PropTech · Reverse Market & Gestión de Alquileres", badge_private: "Área Privada · v2.2 Tiempo Real",
     login_title: "Acceso Residentes, Propietarios y Servicios Jurídicos",
     login_desc: "Introduce tu DNI/NIE/CIF para acceder de forma segura a tu panel privado y recibir tu PIN temporal de 4 cifras por WhatsApp.",
     label_dni: "DNI / NIE / CIF del Titular o Letrado Autorizado",
@@ -1484,8 +1484,8 @@ const I18N = {
   },
   ca: {
     nav_demanda: "🎯 Demanda Activa", nav_mercado_real: "📡 Mercat Real", nav_inquilinos: "👥 Accés a Usuaris",
-    link_legal: "Avís Legal", link_privacidad: "Privacitat i LOPD", link_cookies: "Cookies i IA",
-    topbar_title: "Consola PropTech · Gestió de Llogaters i Propietaris", badge_private: "Àrea Privada · v2.1 Temps Real",
+    link_legal: "Avís Legal", link_privacidad: "Privacitat i LOPD", link_cookies: "Cookies e IA",
+    topbar_title: "Consola PropTech · Gestió de Llogaters i Propietaris", badge_private: "Àrea Privada · v2.2 Temps Real",
     login_title: "Accés Residents, Propietaris i Serveis Jurídics",
     login_desc: "Introdueix el teu DNI/NIE/CIF per accedir de forma segura al teu panell privat i rebre el teu PIN temporal de 4 xifres per WhatsApp.",
     label_dni: "DNI / NIE / CIF del Titular o Advocat Autoritzat",
@@ -1961,16 +1961,17 @@ window.seleccionarMapaPropietario = function(nombreProp, lat, lon, chipId) {
 
 function actualizarMapaInmueble(direccion, nombrePropiedad, lat, lon) {
   var queryGPS = "";
-  var upperProp = String(nombrePropiedad || direccion || "").toUpperCase();
+  var upperProp = String(nombrePropiedad || "").toUpperCase();
 
-  if (lat && lon && !isNaN(lat) && !isNaN(lon)) {
-    queryGPS = lat + "," + lon;
-  } else if (upperProp.includes("MARTINENCA")) {
-    queryGPS = "40.576956,0.550353";
-  } else if (upperProp.includes("JAUME")) {
+  // Prioridad por nombre del inmueble real del inquilino antes que coordenadas genéricas de la fila 1
+  if (upperProp.includes("JAUME")) {
     queryGPS = "40.618081,0.591411";
   } else if (upperProp.includes("TRAVESSERA") || upperProp.includes("DEVESA")) {
     queryGPS = "40.620422,0.590800";
+  } else if (upperProp.includes("MARTINENCA")) {
+    queryGPS = "40.576956,0.550353";
+  } else if (lat && lon && !isNaN(lat) && !isNaN(lon)) {
+    queryGPS = lat + "," + lon;
   } else if (direccion && direccion !== "---") {
     queryGPS = encodeURIComponent(direccion);
   } else {
@@ -2019,7 +2020,7 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 
 // ============================================================================
-// FASE 1: CONEXIÓN A TOC TOC INQUILINOS EN MAKE (TOLERANTE A "Accepted")
+// FASE 1: CONEXIÓN A TOC TOC INQUILINOS EN MAKE
 // ============================================================================
 window.llamarAlWebhook = function() {
   var inputDniElem = document.getElementById("input-dni");
@@ -2072,8 +2073,6 @@ window.llamarAlWebhook = function() {
     var trimmed = String(textResponse || "").trim();
     var data = {};
 
-    // Si Make devuelve "Accepted" (porque aún no llegó al Webhook Response o no tiene Body),
-    // abrimos igualmente la caja de PIN para que el usuario introduzca el PIN que reciba en su WhatsApp.
     if (trimmed === "Accepted" || trimmed === "") {
       activarFasePin(dniRaw, {
         status: "accepted_by_make",
@@ -2240,11 +2239,16 @@ function pintarFichaExpedienteEnPantalla(d) {
     d["Autho-code-inquilino"] || d["Autho-code-propietario"] || d["Autho-code-abogado"] || d.Search_Code || d.codigo_inquilino || d.code
   ) || window.sesionActiva.codigo_inquilino || "---";
 
+  // Prioridad absoluta al campo relacional PROPERTY_PROPIEDADES de la ficha del inquilino
   var propiedadNombre = formatearCampoValor(
-    d["Propiedad arrendada"] || d.PROPERTY_PROPIEDADES || d.nombre_propiedad || d.propiedad || d.propiedades_autorizadas
+    d.PROPERTY_PROPIEDADES || d["Propiedad arrendada"] || d.nombre_propiedad || d.propiedad || d.propiedades_autorizadas
   ) || "---";
 
   var direccionTexto = formatearCampoValor(d.direccion || d.Direccion || d.ubicacion) || "---";
+  // Si Make arrastró por error la dirección de la fila 1 ("Carrer Bort" - Martinenca) a otro inmueble distinto:
+  if (propiedadNombre !== "---" && !propiedadNombre.toUpperCase().includes("MARTINENCA") && direccionTexto.toUpperCase().includes("BORT")) {
+    direccionTexto = propiedadNombre;
+  }
 
   var rentaTexto = formatearCampoValor(d.renta_mensual || d["Alquiler Base Oculto"] || d.renta || d.Renta || d.Importe || "");
   if (rentaTexto && !rentaTexto.includes("€")) rentaTexto = rentaTexto + " €";
