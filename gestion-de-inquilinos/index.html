@@ -78,7 +78,7 @@
     border-color: var(--emerald);
   }
 
-  /* ESTRUCTURA 3 COLUMNAS Y PANTALLA COMPLETA (SIN BARRA INFERIOR) */
+  /* ESTRUCTURA 3 COLUMNAS Y PANTALLA COMPLETA */
   .app-layout {
     display: grid;
     grid-template-columns: 260px minmax(0, 1fr) 310px;
@@ -896,7 +896,7 @@
         <!-- FASE 1: PEDIR DNI-NIE-CIF -->
         <div id="fase-dni">
           <div class="form-group">
-            <label for="input-dni" class="form-label" data-i18n="label_dni">DNI / NIE / CIF del Titular o Letrado Autorizado (Conecta con Elena IA)</label>
+            <label for="input-dni" class="form-label" data-i18n="label_dni">DNI / NIE / CIF del Titular o Letrado Autorizado</label>
             <input type="text" id="input-dni" name="DNI-NIE-CIF" class="form-input" placeholder="Ej: 00000000X / B12345678" autocomplete="off">
           </div>
 
@@ -968,10 +968,10 @@
         <div id="vista-propietaria-carmen" class="panel-box" style="display:none; border-color:var(--amber);">
           <div class="panel-header">
             <span data-i18n="owner_area_header">👑 ÁREA SEGURA DEL PROPIETARIO · GESTIÓN EN TIEMPO REAL</span>
-            <span class="badge badge-info" id="badge-resumen-cartera">3 PROPIEDADES · 4 INQUILINOS</span>
+            <span class="badge badge-info" id="badge-resumen-cartera">CARTERA ACTIVA</span>
           </div>
           <p style="font-size:14px; color:var(--text-muted); margin-bottom:14px;">
-            <span data-i18n="owner_hello">Hola,</span> <strong style="color:#fff;" id="owner-greeting-name">Carmen Forcadell</strong>. <span data-i18n="owner_subdesc">Audita el estado de cobros, genera recibos oficiales en PDF, controla suministros y regularizaciones (día 25) o autoriza a tus servicios jurídicos:</span>
+            <span data-i18n="owner_hello">Hola,</span> <strong style="color:#fff;" id="owner-greeting-name">Propietario/a Titular</strong>. <span data-i18n="owner_subdesc">Audita el estado de cobros, genera recibos oficiales en PDF, controla suministros y regularizaciones (día 25) o autoriza a tus servicios jurídicos:</span>
           </p>
 
           <div class="owner-cards-grid">
@@ -1009,9 +1009,6 @@
               <span>⚡ MOTOR DE SUMINISTROS, GASTOS Y REGULARIZACIÓN (DÍA 25)</span>
               <span class="badge badge-info">CUENTA IBAN DE PAGO ASOCIADA</span>
             </div>
-            <p style="font-size:13px; color:var(--text-muted); margin-bottom:14px;">
-              Control de consumos (Agua, Electricidad, Regularización de saldos y Gastos comunitarios). Los pagos e ingresos se realizan a través de la cuenta IBAN oficial: <strong style="color:#fff;">ES21 2100 0000 0000 2436 1420</strong>.
-            </p>
             <div id="contenedor-suministros-propietario" style="display:flex; flex-direction:column; gap:10px;"></div>
           </div>
 
@@ -1132,7 +1129,7 @@
             <div class="panel-box" style="margin-bottom:0;">
               <div class="panel-header">
                 <span id="titulo-caja-expediente" data-i18n="exp_box_title">🏠 EXPEDIENTE Y PROPIEDAD</span>
-                <span class="badge badge-success" id="badge-estado-expediente">ACTIVO</span>
+                <span class="badge badge-success" id="badge-estado-expediente">VERIFICADO</span>
               </div>
               <div class="info-row">
                 <span class="info-label" id="lbl-titular-rol" data-i18n="lbl_tenant">Inquilino / Titular:</span>
@@ -1141,6 +1138,10 @@
               <div class="info-row">
                 <span class="info-label">DNI-NIE-CIF:</span>
                 <span class="info-value" id="val-dni">---</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Código Autorización:</span>
+                <span class="info-value" id="val-codigo-autho">---</span>
               </div>
               <div class="info-row">
                 <span class="info-label" data-i18n="lbl_property">Inmueble(s):</span>
@@ -1155,10 +1156,12 @@
                 <span class="info-value" id="val-contrato-renta" style="color:var(--amber);">---</span>
               </div>
 
-              <div style="margin-top: 14px; font-size: 12.5px; font-weight:600; color: var(--text-muted);" data-i18n="lbl_photos">
-                Fotografías del Inmueble:
+              <div id="wrap-galeria-fotos" style="display:none; margin-top: 14px;">
+                <div style="font-size: 12.5px; font-weight:600; color: var(--text-muted);" data-i18n="lbl_photos">
+                  Fotografías del Inmueble:
+                </div>
+                <div class="property-gallery" id="val-fotos"></div>
               </div>
-              <div class="property-gallery" id="val-fotos"></div>
 
               <!-- BLOQUE DE NAVEGACIÓN GPS EN AUTO -->
               <div class="map-section-box">
@@ -1176,22 +1179,15 @@
                     </a>
                   </div>
                 </div>
-                <div class="prop-chips-bar" style="margin-bottom:10px;">
-                  <button type="button" class="prop-chip" onclick="seleccionarInmuebleResidente('Martinenca')">📍 Martinenca</button>
-                  <button type="button" class="prop-chip" onclick="seleccionarInmuebleResidente('Jaume I')">📍 Jaume I</button>
-                  <button type="button" class="prop-chip" onclick="seleccionarInmuebleResidente('Travessera')">📍 Travessera</button>
-                </div>
                 <div class="map-iframe-wrapper">
                   <iframe id="property-map-iframe" title="Mapa del Inmueble" src="https://maps.google.com/maps?q=40.576956,0.550353&t=&z=16&ie=UTF8&iwloc=&output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
                 </div>
               </div>
 
-              <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:16px; padding-top:14px; border-top:1px solid var(--border);">
-                <button type="button" class="btn-outline-sm" style="padding:10px; font-weight:700;" onclick="abrirFichaContratoActual()" data-i18n="btn_view_contract">
-                  📄 Ver Ficha, Contrato e IBAN
-                </button>
-                <button type="button" class="btn-outline-sm" style="padding:10px; font-weight:700;" onclick="abrirChatElenaConAsunto('Reportar Avería o Consulta')" data-i18n="btn_report_issue">
-                  🛠️ ¿Dudas o Averías? Conserje 24/7
+              <!-- SOLO BOTÓN DE FICHA CONTRACTUAL (ELIMINADO ACCESO CENTRAL A ELENA IA) -->
+              <div style="margin-top:16px; padding-top:14px; border-top:1px solid var(--border);">
+                <button type="button" class="btn-outline-sm" style="width:100%; padding:10px; font-weight:700;" onclick="abrirFichaContratoActual()" data-i18n="btn_view_contract">
+                  📄 Ver Ficha Contractual Completa
                 </button>
               </div>
             </div>
@@ -1216,7 +1212,7 @@
           <div class="panel-box">
             <div class="panel-header">
               <span data-i18n="recibos_box_title">🧾 RECIBOS, SUMINISTROS Y DESCARGA DE JUSTIFICANTES PDF</span>
-              <span class="badge badge-success">EMISIÓN AUTOMÁTICA DE PDF ENTRE PARTES</span>
+              <span class="badge badge-success">DATOS EN TIEMPO REAL</span>
             </div>
             <div id="val-recibos" style="font-size:13.5px; color:var(--text-muted);">---</div>
           </div>
@@ -1225,7 +1221,7 @@
     </div>
   </main>
 
-  <!-- COLUMNA DERECHA -->
+  <!-- COLUMNA DERECHA (ÚNICO PUNTO DE ACCESO A ELENA IA) -->
   <aside class="sidebar-right">
     <div class="info-widget">
       <h4 data-i18n="side_sec_title">🛡️ SEGURIDAD MULTI-ROL</h4>
@@ -1344,207 +1340,14 @@ const URL_WEBHOOK_PORTAL_DATOS = "https://hook.eu1.make.com/tfk9n3nefcufj183eth6
 const URL_WEBHOOK_BOT_CHAT = "https://hook.eu1.make.com/8xd81xb9t3mg2ycwez1czd3quwhf2nef";
 const URL_WEBHOOK_LEGAL_SERVICES = "https://hook.eu1.make.com/7h10etd9klntm41oebrg4m1buc903uh4";
 
-// CARTERA DE PROPIEDADES, INQUILINOS, SUMINISTROS E IBAN CON CAMPO ESTÁNDAR "DNI-NIE-CIF"
-window.CARTERA_PROPIEDADES = [
-  {
-    id: "PROP-MARTINENCA",
-    nombre_propiedad: "Martinenca",
-    direccion: "Carrer Bort A, 2 · Urb. Montecarlo (Alcanar / Les Cases)",
-    lat: 40.576956,
-    lon: 0.550353,
-    inquilino: "Residente Titular · Martinenca",
-    "DNI-NIE-CIF": "53327259B",
-    renta_mensual: "650,00 €",
-    iban: "ES21 2100 0000 0000 2436 1420",
-    estado_contrato: "ACTIVO · Vigente",
-    suministros: "Agua y Electricidad sujetos a regla de regularización mensual (Día 25). Saldo provisional: 50,00 €/mes.",
-    avisos: "Revisión trimestral de contadores de agua y electricidad programada el día 25.",
-    incidencias: "Sin incidencias técnicas abiertas en Martinenca.",
-    fotos: [
-      "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=600&q=80",
-      "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=600&q=80"
-    ]
-  },
-  {
-    id: "PROP-JAUME-I",
-    nombre_propiedad: "Jaume I",
-    direccion: "Avinguda Jaume I · Zona Mercat Municipal (La Ràpita, Tarragona)",
-    lat: 40.618081,
-    lon: 0.591411,
-    inquilino: "Residente Titular · Jaume I",
-    "DNI-NIE-CIF": "Y9921521W",
-    renta_mensual: "580,00 €",
-    iban: "ES21 2100 0000 0000 2436 1420",
-    estado_contrato: "ACTIVO · Vigente",
-    suministros: "Suministros domiciliados · Regularización automática activa (Día 25).",
-    avisos: "Comunidad de propietarios: limpieza de fachada completada.",
-    incidencias: "Sin averías pendientes en la vivienda Jaume I.",
-    fotos: [
-      "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=600&q=80"
-    ]
-  },
-  {
-    id: "PROP-TRAVESSERA",
-    nombre_propiedad: "Travessera",
-    direccion: "Carrer Travessera / Zona Ayuntamiento (La Ràpita, Tarragona)",
-    lat: 40.620422,
-    lon: 0.590800,
-    inquilino: "Residente Titular · Travessera",
-    "DNI-NIE-CIF": "34764888C",
-    renta_mensual: "620,00 €",
-    iban: "ES21 2100 0000 0000 2436 1420",
-    estado_contrato: "ACTIVO · Vigente",
-    suministros: "Lectura de consumo eléctrico y agua actualizada (Día 25).",
-    avisos: "Actualización anual de contrato registrada en expediente.",
-    incidencias: "Revisión preventiva de caldera cerrada satisfactoriamente.",
-    fotos: [
-      "https://images.unsplash.com/photo-1493809842364-78817add7ffb?auto=format&fit=crop&w=600&q=80"
-    ]
-  }
-];
-
-window.SUMINISTROS_GASTOS = [
-  { id: "SUM-01", propiedad: "Martinenca", concepto: "Agua + Electricidad (Provisional Día 25)", importe: "94,50 €", estado: "Pendiente de Regularización", iban: "ES21 2100 0000 0000 2436 1420" },
-  { id: "SUM-02", propiedad: "Jaume I", concepto: "Agua Potable T4 (Regularización)", importe: "48,20 €", estado: "Pendiente de Regularización", iban: "ES21 2100 0000 0000 2436 1420" },
-  { id: "SUM-03", propiedad: "Travessera", concepto: "Electricidad Consumo Real", importe: "76,10 €", estado: "Abonado y Regularizado", iban: "ES21 2100 0000 0000 2436 1420" }
-];
-
-window.RECIBOS_CARTERA = [
-  {
-    id_recibo: "REC-2026-1101",
-    propiedad: "Martinenca",
-    direccion: "Carrer Bort A, 2 · Alcanar",
-    inquilino: "Residente Titular · Martinenca",
-    "DNI-NIE-CIF": "53327259B",
-    concepto: "Renta Mensual de Alquiler · Noviembre 2026",
-    tipo: "Alquiler",
-    periodo: "01/11/2026 - 30/11/2026",
-    importe: "650,00 €",
-    estado: "Abonado",
-    fecha_emision: "25/10/2026",
-    fecha_pago: "02/11/2026"
-  },
-  {
-    id_recibo: "REC-2026-1102",
-    propiedad: "Martinenca",
-    direccion: "Carrer Bort A, 2 · Alcanar",
-    inquilino: "Residente Titular · Martinenca",
-    "DNI-NIE-CIF": "53327259B",
-    concepto: "Suministro Electricidad y Agua (Regularización)",
-    tipo: "Suministros",
-    periodo: "Octubre - Noviembre 2026",
-    importe: "94,50 €",
-    estado: "Pendiente",
-    fecha_emision: "25/10/2026",
-    fecha_pago: "---"
-  },
-  {
-    id_recibo: "REC-2026-1103",
-    propiedad: "Jaume I",
-    direccion: "Avinguda Jaume I · La Ràpita",
-    inquilino: "Residente Titular · Jaume I",
-    "DNI-NIE-CIF": "Y9921521W",
-    concepto: "Renta Mensual de Alquiler · Noviembre 2026",
-    tipo: "Alquiler",
-    periodo: "01/11/2026 - 30/11/2026",
-    importe: "580,00 €",
-    estado: "Abonado",
-    fecha_emision: "25/10/2026",
-    fecha_pago: "03/11/2026"
-  },
-  {
-    id_recibo: "REC-2026-1104",
-    propiedad: "Jaume I",
-    direccion: "Avinguda Jaume I · La Ràpita",
-    inquilino: "Residente Titular · Jaume I",
-    "DNI-NIE-CIF": "Y9921521W",
-    concepto: "Suministro de Agua Potable · T4",
-    tipo: "Suministros",
-    periodo: "Octubre 2026",
-    importe: "48,20 €",
-    estado: "Pendiente",
-    fecha_emision: "25/10/2026",
-    fecha_pago: "---"
-  },
-  {
-    id_recibo: "REC-2026-1105",
-    propiedad: "Travessera",
-    direccion: "Carrer Travessera · La Ràpita",
-    inquilino: "Residente Titular · Travessera",
-    "DNI-NIE-CIF": "34764888C",
-    concepto: "Renta Mensual de Alquiler · Noviembre 2026",
-    tipo: "Alquiler",
-    periodo: "01/11/2026 - 30/11/2026",
-    importe: "620,00 €",
-    estado: "Pendiente",
-    fecha_emision: "25/10/2026",
-    fecha_pago: "---"
-  }
-];
-
-// PERFILES PRECONFIGURADOS PARA SIMULACIÓN MULTI-ROL (1. INQUILINO, 2. PROPIETARIO, 3. ABOGADO)
-window.PERFILES_SIMULACION = {
-  "53327259B": {
-    rol: "INQUILINO",
-    nombre: "Residente Titular · Martinenca",
-    "DNI-NIE-CIF": "53327259B",
-    codigo_inquilino: "INQ-53327259B",
-    nombre_propiedad: "Martinenca",
-    direccion: "Carrer Bort A, 2 · Urb. Montecarlo (Alcanar / Les Cases)",
-    lat: 40.576956,
-    lon: 0.550353
-  },
-  "Y9921521W": {
-    rol: "INQUILINO",
-    nombre: "Residente Titular · Jaume I",
-    "DNI-NIE-CIF": "Y9921521W",
-    codigo_inquilino: "INQ-Y9921521W",
-    nombre_propiedad: "Jaume I",
-    direccion: "Avinguda Jaume I · Zona Mercat Municipal (La Ràpita, Tarragona)",
-    lat: 40.618081,
-    lon: 0.591411
-  },
-  "34764888C": {
-    rol: "INQUILINO",
-    nombre: "Residente Titular · Travessera",
-    "DNI-NIE-CIF": "34764888C",
-    codigo_inquilino: "INQ-34764888C",
-    nombre_propiedad: "Travessera",
-    direccion: "Carrer Travessera / Zona Ayuntamiento (La Ràpita, Tarragona)",
-    lat: 40.620422,
-    lon: 0.590800
-  },
-  "46029432Y": {
-    rol: "PROPIETARIO",
-    nombre: "Carmen Forcadell",
-    "DNI-NIE-CIF": "46029432Y",
-    codigo_inquilino: "PROP-46029432Y",
-    nombre_propiedad: "Martinenca",
-    direccion: "Carrer Bort A, 2 · Urb. Montecarlo (Alcanar)",
-    lat: 40.576956,
-    lon: 0.550353
-  },
-  "40913126J": {
-    rol: "PROPIETARIO",
-    nombre: "Carmen Forcadell",
-    "DNI-NIE-CIF": "40913126J",
-    codigo_inquilino: "PROP-40913126J",
-    nombre_propiedad: "Martinenca",
-    direccion: "Carrer Bort A, 2 · Urb. Montecarlo (Alcanar)",
-    lat: 40.576956,
-    lon: 0.550353
-  },
-  "12345678Z": {
-    rol: "ABOGADO",
-    nombre: "Bufete Jurídico Autorizado",
-    "DNI-NIE-CIF": "12345678Z",
-    codigo_inquilino: "ABO-12345678Z",
-    nombre_propiedad: "Martinenca, Jaume I, Travessera",
-    direccion: "Cartera Autorizada (Alcanar / La Ràpita)",
-    lat: 40.576956,
-    lon: 0.550353
-  }
-};
+// ============================================================================
+// ARRAYS DINÁMICOS VACÍOS (SIN TRAMPAS NI DATOS FICTICIOS EN EL CÓDIGO)
+// Se alimentan exclusivamente de lo que devuelve Make en tiempo real.
+// ============================================================================
+window.CARTERA_PROPIEDADES = [];
+window.SUMINISTROS_GASTOS = [];
+window.RECIBOS_CARTERA = [];
+window.EXPEDIENTE_ACTUAL = {};
 
 window.filtroRecibosActual = "TODOS";
 window.respuestaCorrectaLevel = 0;
@@ -1554,13 +1357,45 @@ window.sesionActiva = {
   codigo_inquilino: "",
   rol: "INQUILINO",
   tabla_filtro: "PROPERTY_INQUILINOS",
-  propiedad: "Martinenca",
+  propiedad: "",
+  nombre: "",
   idioma: "es"
 };
 
 function obtenerDniUnificado(obj) {
   if (!obj) return "";
   return obj["DNI-NIE-CIF"] || obj.dni_inquilino || obj.dni_abogado || obj.dni || "";
+}
+
+function formatearCampoValor(val) {
+  if (val === null || val === undefined) return "";
+  if (typeof val === "string" || typeof val === "number") return String(val).trim();
+  if (Array.isArray(val)) {
+    return val.map(function(item) {
+      if (typeof item === "object" && item !== null) {
+        return item.text || item.name || item.value || (Array.isArray(item.text_arr) ? item.text_arr.join(", ") : "");
+      }
+      return String(item);
+    }).filter(Boolean).join(", ");
+  }
+  if (typeof val === "object") {
+    return val.text || val.name || val.value || "";
+  }
+  return "";
+}
+
+function extraerRegistroMake(rawPayload) {
+  if (!rawPayload) return {};
+  if (rawPayload.data && rawPayload.data.items && Array.isArray(rawPayload.data.items) && rawPayload.data.items[0]) {
+    return Object.assign({}, rawPayload, rawPayload.data.items[0].fields || {}, { record_id: rawPayload.data.items[0].record_id });
+  }
+  if (rawPayload.items && Array.isArray(rawPayload.items) && rawPayload.items[0]) {
+    return Object.assign({}, rawPayload, rawPayload.items[0].fields || {}, { record_id: rawPayload.items[0].record_id });
+  }
+  if (rawPayload.fields && typeof rawPayload.fields === "object") {
+    return Object.assign({}, rawPayload, rawPayload.fields);
+  }
+  return rawPayload;
 }
 
 const I18N = {
@@ -1570,7 +1405,7 @@ const I18N = {
     topbar_title: "Consola PropTech · Reverse Market & Gestión de Alquileres", badge_private: "Área Privada Verificada",
     login_title: "Acceso Residentes, Propietarios y Servicios Jurídicos",
     login_desc: "Introduce tu DNI/NIE/CIF para acceder de forma segura a tu panel privado y recibir tu PIN temporal de 4 cifras por WhatsApp.",
-    label_dni: "DNI / NIE / CIF del Titular o Letrado Autorizado (Conecta con Elena IA)",
+    label_dni: "DNI / NIE / CIF del Titular o Letrado Autorizado",
     chk_accept_prefix: "Acepto las", chk_accept_link: "Condiciones y la Privacidad",
     chk_accept_suffix: "Autorizo la consulta cifrada de mi expediente y el envío de PIN por WhatsApp.",
     btn_request_pin: "Solicitar Verificación VIP →",
@@ -1581,7 +1416,7 @@ const I18N = {
     btn_toggle_sidebars: "⛶ Mostrar/Ocultar Paneles Laterales", btn_logout: "✕ Cerrar Sesión",
     exp_box_title: "🏠 EXPEDIENTE Y PROPIEDAD", lbl_tenant: "Inquilino / Titular:", lbl_property: "Inmueble(s):", lbl_address: "Dirección / Ubicación:",
     lbl_photos: "Fotografías del Inmueble:", lbl_map_box: "📍 Geolocalización y Navegación GPS:", btn_drive_auto: "Cómo llegar (Auto)", btn_open_maps: "Google Maps", btn_fly_3d: "Vuelo 3D",
-    btn_view_contract: "📄 Ver Ficha, Contrato e IBAN", btn_report_issue: "🛠️ ¿Dudas o Averías? Conserje 24/7",
+    btn_view_contract: "📄 Ver Ficha Contractual Completa",
     avisos_box_title: "📢 AVISOS GENERALES E INSTRUCCIONES", inc_box_title: "🛠️ INCIDENCIAS ACTIVAS Y SUMINISTROS", recibos_box_title: "🧾 RECIBOS, SUMINISTROS Y DESCARGA DE JUSTIFICANTES PDF",
     btn_talk_elena: "💬 Hablar con Elena IA",
     chat_welcome: "Hola, soy Elena IA. ¿En qué puedo ayudarte hoy con tu contrato de alquiler, suministros o incidencias de la vivienda?"
@@ -1592,7 +1427,7 @@ const I18N = {
     topbar_title: "Consola PropTech · Gestió de Llogaters i Propietaris", badge_private: "Àrea Privada Verificada",
     login_title: "Accés Residents, Propietaris i Serveis Jurídics",
     login_desc: "Introdueix el teu DNI/NIE/CIF per accedir de forma segura al teu panell privat i rebre el teu PIN temporal de 4 xifres per WhatsApp.",
-    label_dni: "DNI / NIE / CIF del Titular o Advocat Autoritzat (Connecta amb Elena IA)",
+    label_dni: "DNI / NIE / CIF del Titular o Advocat Autoritzat",
     chk_accept_prefix: "Accepto les", chk_accept_link: "Condicions i la Privacitat",
     chk_accept_suffix: "Autoritzo la consulta xifrada del meu expedient i l'enviament del PIN per WhatsApp.",
     btn_request_pin: "Sol·licitar Verificació VIP →",
@@ -1603,7 +1438,7 @@ const I18N = {
     btn_toggle_sidebars: "⛶ Mostrar/Ocultar Panells Laterals", btn_logout: "✕ Tancar Sessió",
     exp_box_title: "🏠 EXPEDIENT I PROPIETAT", lbl_tenant: "Llogater / Titular:", lbl_property: "Immoble(s):", lbl_address: "Adreça / Ubicació:",
     lbl_photos: "Fotografies de l'Immoble:", lbl_map_box: "📍 Geolocalització i Navegació GPS:", btn_drive_auto: "Com arribar (Cotxe)", btn_open_maps: "Google Maps", btn_fly_3d: "Vol 3D",
-    btn_view_contract: "📄 Veure Fitxa, Contracte i IBAN", btn_report_issue: "🛠️ Dubtes o Avaries? Conserge 24/7",
+    btn_view_contract: "📄 Veure Fitxa Contractual Completa",
     avisos_box_title: "📢 AVISOS GENERALS", inc_box_title: "🛠️ INCIDÈNCIES ACTIVES", recibos_box_title: "🧾 REBUTS, SUBMINISTRAMENTS I JUSTIFICANTS PDF",
     btn_talk_elena: "💬 Parlar amb Elena IA",
     chat_welcome: "Hola, sóc l'Elena IA. En què puc ajudar-te avui amb el teu contracte de lloguer, subministraments o incidències?"
@@ -1653,13 +1488,14 @@ function cambiarIdioma(forzarLang) {
 }
 
 // ============================================================================
-// GENERADOR DE RECIBO OFICIAL ENTRE PARTICULAR (PROPIETARIO E INQUILINO)
+// GENERADOR DE RECIBO OFICIAL ENTRE PARTES
 // ============================================================================
 window.descargarReciboPDF = function(idRecibo) {
-  var rec = window.RECIBOS_CARTERA.find(function(r) { return r.id_recibo === idRecibo; });
+  var rec = window.RECIBOS_CARTERA.find(function(r) { return String(r.id_recibo) === String(idRecibo); });
   if (!rec) return;
 
-  var dniRecibo = obtenerDniUnificado(rec);
+  var dniRecibo = obtenerDniUnificado(rec) || window.sesionActiva["DNI-NIE-CIF"] || "---";
+  var nombreEmisor = rec.propietario || (window.sesionActiva.rol === "PROPIETARIO" ? window.sesionActiva.nombre : "Propiedad Arrendadora");
   var fechaAbono = (rec.fecha_pago && rec.fecha_pago !== "---") ? rec.fecha_pago : new Date().toLocaleDateString("es-ES");
   var ventanaPDF = window.open("", "_blank", "width=860,height=920");
   if (!ventanaPDF) {
@@ -1668,13 +1504,13 @@ window.descargarReciboPDF = function(idRecibo) {
   }
 
   var htmlRecibo = '<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">' +
-    '<title>Recibo de Alquiler ' + escaparHTML(rec.id_recibo) + '</title>' +
+    '<title>Recibo ' + escaparHTML(rec.id_recibo || "") + '</title>' +
     '<style>' +
       '@page { size: A4; margin: 20mm; }' +
       'body { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; color: #1e293b; background: #ffffff; margin: 0; padding: 20px; }' +
-      '.sheet { max-width: 720px; margin: 0 auto; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 40px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }' +
+      '.sheet { max-width: 720px; margin: 0 auto; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 40px; }' +
       '.header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #0f172a; padding-bottom: 20px; margin-bottom: 24px; }' +
-      '.title-doc { font-size: 22px; font-weight: 800; color: #0f172a; text-transform: uppercase; letter-spacing: 0.5px; }' +
+      '.title-doc { font-size: 22px; font-weight: 800; color: #0f172a; text-transform: uppercase; }' +
       '.doc-num { font-size: 13px; font-weight: 700; color: #475569; margin-top: 4px; }' +
       '.stamp { display: inline-block; margin-top: 10px; padding: 6px 14px; border: 2px solid #10b981; color: #047857; background: #ecfdf5; font-weight: 800; font-size: 12px; border-radius: 6px; }' +
       '.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 28px; }' +
@@ -1685,71 +1521,33 @@ window.descargarReciboPDF = function(idRecibo) {
       'th { background: #0f172a; color: #ffffff; text-align: left; padding: 12px 14px; font-size: 11.5px; text-transform: uppercase; }' +
       'td { padding: 14px; border-bottom: 1px solid #e2e8f0; font-size: 13.5px; color: #334155; }' +
       '.total-row td { background: #f1f5f9; font-weight: 800; font-size: 16px; color: #0f172a; border-top: 2px solid #0f172a; border-bottom: 2px solid #0f172a; }' +
-      '.signatures { display: flex; justify-content: space-between; margin-top: 50px; padding-top: 20px; border-top: 1px solid #cbd5e1; }' +
-      '.sig-box { width: 45%; text-align: center; font-size: 12px; color: #475569; }' +
-      '.sig-line { margin-top: 50px; border-top: 1px solid #94a3b8; padding-top: 6px; font-weight: 700; color: #0f172a; }' +
       '.no-print { text-align: center; margin-bottom: 20px; }' +
       '.btn-print { background: #0f172a; color: #ffffff; border: none; padding: 10px 20px; border-radius: 6px; font-weight: 700; font-size: 13px; cursor: pointer; }' +
-      '@media print { .no-print { display: none; } body { padding: 0; } .sheet { border: none; box-shadow: none; } }' +
+      '@media print { .no-print { display: none; } body { padding: 0; } .sheet { border: none; } }' +
     '</style></head><body>' +
-    '<div class="no-print">' +
-      '<button class="btn-print" onclick="window.print()">🖨️ Descargar / Imprimir Recibo en PDF</button>' +
-    '</div>' +
+    '<div class="no-print"><button class="btn-print" onclick="window.print()">🖨️ Descargar / Imprimir Recibo en PDF</button></div>' +
     '<div class="sheet">' +
       '<div class="header">' +
-        '<div>' +
-          '<div class="title-doc">Recibo de Alquiler</div>' +
-          '<div class="doc-num">Documento Nº ' + escaparHTML(rec.id_recibo) + '</div>' +
-        '</div>' +
-        '<div style="text-align: right;">' +
-          '<div class="stamp">✓ COBRO EFECTUADO (IBAN Verificado)</div>' +
-        '</div>' +
+        '<div><div class="title-doc">Recibo Oficial</div><div class="doc-num">Documento Nº ' + escaparHTML(rec.id_recibo || "") + '</div></div>' +
+        '<div style="text-align: right;"><div class="stamp">✓ COBRO EFECTUADO</div></div>' +
       '</div>' +
       '<div class="grid-2">' +
         '<div class="box">' +
-          '<div class="box-title">Arrendador / Propietario (Emisor)</div>' +
-          '<div class="box-val">' +
-            '<strong>Carmen Forcadell</strong><br>' +
-            'DNI-NIE-CIF: 40913126J<br>' +
-            'Inmueble: ' + escaparHTML(rec.propiedad) + '<br>' +
-            'Dirección: ' + escaparHTML(rec.direccion) +
-          '</div>' +
+          '<div class="box-title">Arrendador / Emisor</div>' +
+          '<div class="box-val"><strong>' + escaparHTML(nombreEmisor) + '</strong><br>Inmueble: ' + escaparHTML(rec.propiedad || "") + '<br>Dirección: ' + escaparHTML(rec.direccion || "") + '</div>' +
         '</div>' +
         '<div class="box">' +
-          '<div class="box-title">Arrendatario / Inquilino (Receptor)</div>' +
-          '<div class="box-val">' +
-            '<strong>' + escaparHTML(rec.inquilino) + '</strong><br>' +
-            'DNI-NIE-CIF: ' + escaparHTML(dniRecibo) + '<br>' +
-            'Fecha de Emisión: ' + escaparHTML(rec.fecha_emision) + '<br>' +
-            '<strong>Fecha de Abono: ' + escaparHTML(fechaAbono) + '</strong>' +
-          '</div>' +
+          '<div class="box-title">Arrendatario / Receptor</div>' +
+          '<div class="box-val"><strong>' + escaparHTML(rec.inquilino || "") + '</strong><br>DNI-NIE-CIF: ' + escaparHTML(dniRecibo) + '<br>Fecha de Abono: ' + escaparHTML(fechaAbono) + '</div>' +
         '</div>' +
       '</div>' +
       '<table>' +
-        '<thead><tr><th>Concepto del Cobro</th><th>Tipo</th><th>Periodo</th><th style="text-align:right;">Importe</th></tr></thead>' +
+        '<thead><tr><th>Concepto</th><th>Tipo</th><th>Periodo</th><th style="text-align:right;">Importe</th></tr></thead>' +
         '<tbody>' +
-          '<tr>' +
-            '<td><strong>' + escaparHTML(rec.concepto) + '</strong></td>' +
-            '<td>' + escaparHTML(rec.tipo) + '</td>' +
-            '<td>' + escaparHTML(rec.periodo) + '</td>' +
-            '<td style="text-align:right; font-weight:700;">' + escaparHTML(rec.importe) + '</td>' +
-          '</tr>' +
-          '<tr class="total-row">' +
-            '<td colspan="3">TOTAL RECIBIDO</td>' +
-            '<td style="text-align:right;">' + escaparHTML(rec.importe) + '</td>' +
-          '</tr>' +
+          '<tr><td><strong>' + escaparHTML(rec.concepto || "") + '</strong></td><td>' + escaparHTML(rec.tipo || "Alquiler") + '</td><td>' + escaparHTML(rec.periodo || "---") + '</td><td style="text-align:right; font-weight:700;">' + escaparHTML(rec.importe || "") + '</td></tr>' +
+          '<tr class="total-row"><td colspan="3">TOTAL RECIBIDO</td><td style="text-align:right;">' + escaparHTML(rec.importe || "") + '</td></tr>' +
         '</tbody>' +
       '</table>' +
-      '<div class="signatures">' +
-        '<div class="sig-box">' +
-          'Firma del Arrendador (Propietario)' +
-          '<div class="sig-line">Carmen Forcadell</div>' +
-        '</div>' +
-        '<div class="sig-box">' +
-          'Conforme el Arrendatario' +
-          '<div class="sig-line">' + escaparHTML(rec.inquilino) + '</div>' +
-        '</div>' +
-      '</div>' +
     '</div>' +
     '<script>setTimeout(function(){ window.print(); }, 400);<\/script>' +
     '</body></html>';
@@ -1760,7 +1558,7 @@ window.descargarReciboPDF = function(idRecibo) {
 };
 
 window.marcarReciboComoAbonado = function(idRecibo) {
-  var rec = window.RECIBOS_CARTERA.find(function(r) { return r.id_recibo === idRecibo; });
+  var rec = window.RECIBOS_CARTERA.find(function(r) { return String(r.id_recibo) === String(idRecibo); });
   if (!rec) return;
 
   rec.estado = "Abonado";
@@ -1783,16 +1581,9 @@ window.marcarReciboComoAbonado = function(idRecibo) {
 
   renderizarCarteraYRecibosPropietario();
   renderizarRecibosInquilino(window.sesionActiva.propiedad);
-
-  var modalVisor = document.getElementById("modal-visor-seguro");
-  if (modalVisor && modalVisor.style.display === "flex") {
-    abrirVisorNativoPropietario("morosidad");
-  }
-
   window.descargarReciboPDF(idRecibo);
 };
 
-// RENDERIZAR CARTERA, SUMINISTROS Y RECIBOS
 function renderizarCarteraYRecibosPropietario(filtroTexto) {
   var contCartera = document.getElementById("contenedor-fichas-cartera");
   var contRecibos = document.getElementById("contenedor-recibos-propietario");
@@ -1802,86 +1593,94 @@ function renderizarCarteraYRecibosPropietario(filtroTexto) {
   var q = (filtroTexto || "").trim().toLowerCase();
   var listaProps = window.CARTERA_PROPIEDADES.filter(function(p) {
     if (!q) return true;
-    return p.nombre_propiedad.toLowerCase().includes(q) ||
-           p.direccion.toLowerCase().includes(q) ||
-           p.inquilino.toLowerCase().includes(q) ||
+    return String(p.nombre_propiedad || "").toLowerCase().includes(q) ||
+           String(p.direccion || "").toLowerCase().includes(q) ||
+           String(p.inquilino || "").toLowerCase().includes(q) ||
            obtenerDniUnificado(p).toLowerCase().includes(q);
   });
 
-  var pendientesTotal = window.RECIBOS_CARTERA.filter(function(r) { return r.estado.toUpperCase() === "PENDIENTE"; }).length;
+  var pendientesTotal = window.RECIBOS_CARTERA.filter(function(r) { return String(r.estado || "").toUpperCase() === "PENDIENTE"; }).length;
   var badgeCartera = document.getElementById("badge-resumen-cartera");
   if (badgeCartera) {
     badgeCartera.innerText = window.CARTERA_PROPIEDADES.length + " PROPIEDADES · " + pendientesTotal + " RECIBOS PENDIENTES";
   }
 
-  contCartera.innerHTML = listaProps.map(function(p) {
-    var recsProp = window.RECIBOS_CARTERA.filter(function(r) { return r.propiedad.toUpperCase() === p.nombre_propiedad.toUpperCase(); });
-    var numPend = recsProp.filter(function(r) { return r.estado.toUpperCase() === "PENDIENTE"; }).length;
-    var badgeCobro = numPend > 0
-      ? '<span class="badge badge-danger">' + numPend + ' Pendiente(s)</span>'
-      : '<span class="badge badge-success">Al día</span>';
+  if (listaProps.length === 0) {
+    contCartera.innerHTML = "<div style='padding:14px; color:var(--text-muted);'>Sin fichas de inmuebles devueltas en este momento por el escenario de Make (<code>cartera_inmuebles</code>).</div>";
+  } else {
+    contCartera.innerHTML = listaProps.map(function(p) {
+      var recsProp = window.RECIBOS_CARTERA.filter(function(r) { return String(r.propiedad || "").toUpperCase() === String(p.nombre_propiedad || "").toUpperCase(); });
+      var numPend = recsProp.filter(function(r) { return String(r.estado || "").toUpperCase() === "PENDIENTE"; }).length;
+      var badgeCobro = numPend > 0
+        ? '<span class="badge badge-danger">' + numPend + ' Pendiente(s)</span>'
+        : '<span class="badge badge-success">Al día</span>';
 
-    return '<div class="portfolio-card">' +
-      '<div>' +
-        '<div class="portfolio-card-header">' +
-          '<div>' +
-            '<div class="portfolio-title">🏠 ' + escaparHTML(p.nombre_propiedad) + '</div>' +
-            '<div class="portfolio-sub">' + escaparHTML(p.direccion) + '</div>' +
+      return '<div class="portfolio-card">' +
+        '<div>' +
+          '<div class="portfolio-card-header">' +
+            '<div>' +
+              '<div class="portfolio-title">🏠 ' + escaparHTML(p.nombre_propiedad || "---") + '</div>' +
+              '<div class="portfolio-sub">' + escaparHTML(p.direccion || "---") + '</div>' +
+            '</div>' +
+            badgeCobro +
           '</div>' +
-          badgeCobro +
+          '<div class="info-row"><span class="info-label">Inquilino:</span><span class="info-value">' + escaparHTML(p.inquilino || "---") + '</span></div>' +
+          '<div class="info-row"><span class="info-label">DNI-NIE-CIF:</span><span class="info-value">' + escaparHTML(obtenerDniUnificado(p) || "---") + '</span></div>' +
+          '<div class="info-row"><span class="info-label">Renta / IBAN:</span><span class="info-value" style="color:var(--emerald);">' + escaparHTML(p.renta_mensual || "---") + (p.iban ? ' (' + escaparHTML(p.iban) + ')' : '') + '</span></div>' +
+          '<div class="info-row"><span class="info-label">Estado Contrato:</span><span class="info-value">' + escaparHTML(p.estado_contrato || "ACTIVO") + '</span></div>' +
         '</div>' +
-        '<div class="info-row"><span class="info-label">Inquilino:</span><span class="info-value">' + escaparHTML(p.inquilino) + '</span></div>' +
-        '<div class="info-row"><span class="info-label">DNI-NIE-CIF:</span><span class="info-value">' + escaparHTML(obtenerDniUnificado(p)) + '</span></div>' +
-        '<div class="info-row"><span class="info-label">Renta / IBAN:</span><span class="info-value" style="color:var(--emerald);">' + escaparHTML(p.renta_mensual) + ' (' + escaparHTML(p.iban) + ')</span></div>' +
-        '<div class="info-row"><span class="info-label">Estado Contrato:</span><span class="info-value">' + escaparHTML(p.estado_contrato) + '</span></div>' +
-      '</div>' +
-      '<div style="display:flex; gap:8px; flex-wrap:wrap; padding-top:8px; border-top:1px solid rgba(30,41,59,0.6);">' +
-        '<button type="button" class="btn-outline-sm" style="flex:1; font-weight:700; border-color:var(--emerald); color:var(--emerald);" onclick="inspeccionarInmuebleComoResidente(\'' + escaparHTML(p.nombre_propiedad) + '\')">👁️ Ver Ficha Inquilino</button>' +
-        '<button type="button" class="btn-outline-sm" onclick="seleccionarMapaPropietario(\'' + escaparHTML(p.nombre_propiedad) + '\', ' + p.lat + ', ' + p.lon + ', \'\')">📍 Mapa GPS</button>' +
-      '</div>' +
-    '</div>';
-  }).join("");
-
-  if (contSuministros) {
-    contSuministros.innerHTML = window.SUMINISTROS_GASTOS.map(function(s) {
-      return '<div class="receipt-row">' +
-        '<div class="receipt-info">' +
-          '<div class="receipt-concept">⚡ ' + escaparHTML(s.concepto) + ' · <span style="color:var(--neon-cyan);">' + escaparHTML(s.propiedad) + '</span></div>' +
-          '<div class="receipt-meta">IBAN Destino: <strong>' + escaparHTML(s.iban) + '</strong> · Ciclo: Día 25 de mes</div>' +
-        '</div>' +
-        '<div class="receipt-actions">' +
-          '<span class="receipt-amount">' + escaparHTML(s.importe) + '</span>' +
-          '<span class="badge badge-info">' + escaparHTML(s.estado) + '</span>' +
+        '<div style="display:flex; gap:8px; flex-wrap:wrap; padding-top:8px; border-top:1px solid rgba(30,41,59,0.6);">' +
+          '<button type="button" class="btn-outline-sm" style="flex:1; font-weight:700; border-color:var(--emerald); color:var(--emerald);" onclick="inspeccionarInmuebleComoResidente(\'' + escaparHTML(p.nombre_propiedad || "") + '\')">👁️ Ver Ficha Inquilino</button>' +
+          '<button type="button" class="btn-outline-sm" onclick="seleccionarMapaPropietario(\'' + escaparHTML(p.nombre_propiedad || "") + '\', ' + (p.lat || 40.576956) + ', ' + (p.lon || 0.550353) + ', \'\')">📍 Mapa GPS</button>' +
         '</div>' +
       '</div>';
     }).join("");
   }
 
+  if (contSuministros) {
+    if (window.SUMINISTROS_GASTOS.length === 0) {
+      contSuministros.innerHTML = "<div style='padding:12px; color:var(--text-muted);'>Sin suministros pendientes devueltos por Make (<code>suministros_lista</code>).</div>";
+    } else {
+      contSuministros.innerHTML = window.SUMINISTROS_GASTOS.map(function(s) {
+        return '<div class="receipt-row">' +
+          '<div class="receipt-info">' +
+            '<div class="receipt-concept">⚡ ' + escaparHTML(s.concepto || "") + ' · <span style="color:var(--neon-cyan);">' + escaparHTML(s.propiedad || "") + '</span></div>' +
+            '<div class="receipt-meta">IBAN: <strong>' + escaparHTML(s.iban || "---") + '</strong> · Ciclo: Día 25 de mes</div>' +
+          '</div>' +
+          '<div class="receipt-actions">' +
+            '<span class="receipt-amount">' + escaparHTML(s.importe || "") + '</span>' +
+            '<span class="badge badge-info">' + escaparHTML(s.estado || "") + '</span>' +
+          '</div>' +
+        '</div>';
+      }).join("");
+    }
+  }
+
   var listaRecs = window.RECIBOS_CARTERA.filter(function(r) {
-    if (window.filtroRecibosActual === "PENDIENTE") return r.estado.toUpperCase() === "PENDIENTE";
-    if (window.filtroRecibosActual === "ABONADO") return r.estado.toUpperCase().includes("ABONADO");
+    if (window.filtroRecibosActual === "PENDIENTE") return String(r.estado || "").toUpperCase() === "PENDIENTE";
+    if (window.filtroRecibosActual === "ABONADO") return String(r.estado || "").toUpperCase().includes("ABONADO");
     return true;
   });
 
   if (listaRecs.length === 0) {
-    contRecibos.innerHTML = "<div style='padding:14px; color:var(--text-muted);'>No hay recibos en este filtro.</div>";
+    contRecibos.innerHTML = "<div style='padding:14px; color:var(--text-muted);'>Sin recibos cargados en este filtro desde Make (<code>recibos_lista</code>).</div>";
     return;
   }
 
   contRecibos.innerHTML = listaRecs.map(function(r) {
-    var esPendiente = r.estado.toUpperCase() === "PENDIENTE";
+    var esPendiente = String(r.estado || "").toUpperCase() === "PENDIENTE";
     return '<div class="receipt-row ' + (esPendiente ? 'pending' : '') + '">' +
       '<div class="receipt-info">' +
-        '<div class="receipt-concept">' + escaparHTML(r.concepto) + ' · <span style="color:var(--emerald);">' + escaparHTML(r.propiedad) + '</span></div>' +
-        '<div class="receipt-meta">Nº ' + escaparHTML(r.id_recibo) + ' · Inquilino: ' + escaparHTML(r.inquilino) + ' (' + escaparHTML(obtenerDniUnificado(r)) + ') · Periodo: ' + escaparHTML(r.periodo) + '</div>' +
+        '<div class="receipt-concept">' + escaparHTML(r.concepto || "") + ' · <span style="color:var(--emerald);">' + escaparHTML(r.propiedad || "") + '</span></div>' +
+        '<div class="receipt-meta">Nº ' + escaparHTML(r.id_recibo || "") + ' · Inquilino: ' + escaparHTML(r.inquilino || "") + ' (' + escaparHTML(obtenerDniUnificado(r)) + ') · Periodo: ' + escaparHTML(r.periodo || "") + '</div>' +
       '</div>' +
       '<div class="receipt-actions">' +
-        '<span class="receipt-amount">' + escaparHTML(r.importe) + '</span>' +
+        '<span class="receipt-amount">' + escaparHTML(r.importe || "") + '</span>' +
         (esPendiente
           ? '<span class="badge badge-danger">PENDIENTE</span>' +
-            '<button type="button" class="btn-mark-paid" onclick="marcarReciboComoAbonado(\'' + escaparHTML(r.id_recibo) + '\')">✓ Pasar a Abonado + Generar PDF</button>'
-          : '<span class="badge badge-success">ABONADO (' + escaparHTML(r.fecha_pago) + ')</span>' +
-            '<button type="button" class="btn-pdf-receipt" onclick="descargarReciboPDF(\'' + escaparHTML(r.id_recibo) + '\')">📄 Descargar Recibo PDF</button>'
+            '<button type="button" class="btn-mark-paid" onclick="marcarReciboComoAbonado(\'' + escaparHTML(r.id_recibo || "") + '\')">✓ Pasar a Abonado + Generar PDF</button>'
+          : '<span class="badge badge-success">ABONADO (' + escaparHTML(r.fecha_pago || "") + ')</span>' +
+            '<button type="button" class="btn-pdf-receipt" onclick="descargarReciboPDF(\'' + escaparHTML(r.id_recibo || "") + '\')">📄 Descargar Recibo PDF</button>'
         ) +
       '</div>' +
     '</div>';
@@ -1902,48 +1701,14 @@ window.filtrarRecibosPropietario = function(estado, btnElem) {
 };
 
 window.inspeccionarInmuebleComoResidente = function(nombrePropiedad) {
-  seleccionarInmuebleResidente(nombrePropiedad);
+  var ficha = window.CARTERA_PROPIEDADES.find(function(p) {
+    return String(p.nombre_propiedad || "").toUpperCase() === String(nombrePropiedad || "").toUpperCase();
+  });
+  if (ficha) {
+    pintarFichaExpedienteEnPantalla(ficha);
+  }
   mostrarVistaInterna("residente");
   window.scrollTo({ top: 0, behavior: "smooth" });
-};
-
-window.seleccionarInmuebleResidente = function(nombrePropiedad) {
-  var ficha = window.CARTERA_PROPIEDADES.find(function(p) {
-    return p.nombre_propiedad.toUpperCase() === String(nombrePropiedad).toUpperCase();
-  }) || window.CARTERA_PROPIEDADES[0];
-
-  window.sesionActiva.propiedad = ficha.nombre_propiedad;
-
-  if (window.sesionActiva.rol !== "ABOGADO") {
-    document.getElementById("val-nombre").innerText = ficha.inquilino;
-    document.getElementById("val-dni").innerText = obtenerDniUnificado(ficha);
-  }
-  document.getElementById("val-propiedad").innerText = ficha.nombre_propiedad;
-  document.getElementById("val-direccion").innerText = ficha.direccion;
-  document.getElementById("val-contrato-renta").innerText = ficha.estado_contrato + " · " + ficha.renta_mensual + "/mes · IBAN: " + ficha.iban;
-
-  var galeriaBox = document.getElementById("val-fotos");
-  if (galeriaBox && Array.isArray(ficha.fotos)) {
-    galeriaBox.innerHTML = ficha.fotos.map(function(u) {
-      return '<img src="' + escaparHTML(u) + '" alt="' + escaparHTML(ficha.nombre_propiedad) + '" onclick="window.open(this.src, \'_blank\')">';
-    }).join("");
-  }
-
-  document.getElementById("val-avisos").innerHTML =
-    '<div style="background:var(--bg-input); border-left:3px solid var(--amber); padding:12px; border-radius:8px; color:#e2e8f0;">' +
-      escaparHTML(ficha.avisos) +
-    '</div>';
-
-  document.getElementById("val-incidencias").innerHTML =
-    '<div style="background:var(--bg-input); border-left:3px solid var(--emerald); padding:12px; border-radius:8px; color:#e2e8f0; margin-bottom:8px;">' +
-      '<strong>Estado Técnico:</strong> ' + escaparHTML(ficha.incidencias) +
-    '</div>' +
-    '<div style="background:var(--bg-input); border-left:3px solid var(--neon-cyan); padding:12px; border-radius:8px; color:#cbd5e1;">' +
-      '<strong>Suministros e IBAN (' + escaparHTML(ficha.iban) + '):</strong> ' + escaparHTML(ficha.suministros) +
-    '</div>';
-
-  actualizarMapaInmueble(ficha.direccion, ficha.nombre_propiedad, ficha.lat, ficha.lon);
-  renderizarRecibosInquilino(ficha.nombre_propiedad);
 };
 
 function renderizarRecibosInquilino(nombrePropiedad) {
@@ -1951,28 +1716,33 @@ function renderizarRecibosInquilino(nombrePropiedad) {
   if (!cont) return;
 
   var recs = window.RECIBOS_CARTERA.filter(function(r) {
-    if (!nombrePropiedad || nombrePropiedad.includes(",")) return true;
-    return r.propiedad.toUpperCase() === String(nombrePropiedad).toUpperCase();
+    if (!nombrePropiedad || nombrePropiedad === "---" || nombrePropiedad.includes(",")) return true;
+    return String(r.propiedad || "").toUpperCase() === String(nombrePropiedad).toUpperCase();
   });
+
+  if (recs.length === 0) {
+    cont.innerHTML = "<div style='padding:12px; color:var(--text-muted);'>No hay recibos registrados para este expediente.</div>";
+    return;
+  }
 
   var puedeMarcarPagado = (window.sesionActiva.rol === "PROPIETARIO");
 
   cont.innerHTML = recs.map(function(r) {
-    var esPendiente = r.estado.toUpperCase() === "PENDIENTE";
+    var esPendiente = String(r.estado || "").toUpperCase() === "PENDIENTE";
     return '<div class="receipt-row ' + (esPendiente ? 'pending' : '') + '">' +
       '<div class="receipt-info">' +
-        '<div class="receipt-concept">' + escaparHTML(r.concepto) + ' (' + escaparHTML(r.propiedad) + ')</div>' +
-        '<div class="receipt-meta">Recibo Nº ' + escaparHTML(r.id_recibo) + ' · Periodo: ' + escaparHTML(r.periodo) + ' · Emisión: ' + escaparHTML(r.fecha_emision) + '</div>' +
+        '<div class="receipt-concept">' + escaparHTML(r.concepto || "") + ' (' + escaparHTML(r.propiedad || "") + ')</div>' +
+        '<div class="receipt-meta">Recibo Nº ' + escaparHTML(r.id_recibo || "") + ' · Periodo: ' + escaparHTML(r.periodo || "") + ' · Emisión: ' + escaparHTML(r.fecha_emision || "") + '</div>' +
       '</div>' +
       '<div class="receipt-actions">' +
-        '<span class="receipt-amount">' + escaparHTML(r.importe) + '</span>' +
+        '<span class="receipt-amount">' + escaparHTML(r.importe || "") + '</span>' +
         (esPendiente
           ? '<span class="badge badge-danger">PENDIENTE DE PAGO</span>' +
             (puedeMarcarPagado
-              ? '<button type="button" class="btn-mark-paid" onclick="marcarReciboComoAbonado(\'' + escaparHTML(r.id_recibo) + '\')">✓ Pasar a Abonado + PDF</button>'
+              ? '<button type="button" class="btn-mark-paid" onclick="marcarReciboComoAbonado(\'' + escaparHTML(r.id_recibo || "") + '\')">✓ Pasar a Abonado + PDF</button>'
               : '')
-          : '<span class="badge badge-success">ABONADO (' + escaparHTML(r.fecha_pago) + ')</span>' +
-            '<button type="button" class="btn-pdf-receipt" onclick="descargarReciboPDF(\'' + escaparHTML(r.id_recibo) + '\')">📄 Descargar Recibo PDF</button>'
+          : '<span class="badge badge-success">ABONADO (' + escaparHTML(r.fecha_pago || "") + ')</span>' +
+            '<button type="button" class="btn-pdf-receipt" onclick="descargarReciboPDF(\'' + escaparHTML(r.id_recibo || "") + '\')">📄 Descargar Recibo PDF</button>'
         ) +
       '</div>' +
     '</div>';
@@ -1985,80 +1755,80 @@ window.abrirVisorNativoPropietario = function(modo) {
 
   if (modo === "morosidad") {
     titulo.innerText = "🚨 Radar de Morosidad · Recibos Pendientes y Emisión de PDF";
-    var pendientes = window.RECIBOS_CARTERA.filter(function(r) { return r.estado.toUpperCase() === "PENDIENTE"; });
-    var abonados = window.RECIBOS_CARTERA.filter(function(r) { return r.estado.toUpperCase() !== "PENDIENTE"; });
+    var pendientes = window.RECIBOS_CARTERA.filter(function(r) { return String(r.estado || "").toUpperCase() === "PENDIENTE"; });
+    var abonados = window.RECIBOS_CARTERA.filter(function(r) { return String(r.estado || "").toUpperCase() !== "PENDIENTE"; });
 
     caja.innerHTML =
       '<div style="margin-bottom:18px;">' +
         '<h4 style="color:#fca5a5; margin-bottom:10px; font-size:13.5px;">🔴 RECIBOS PENDIENTES DE ABONO (' + pendientes.length + ')</h4>' +
         (pendientes.length === 0
-          ? '<div style="padding:14px; background:var(--bg-input); border-radius:8px; color:var(--emerald);">✅ Todos los recibos de la cartera están abonados.</div>'
+          ? '<div style="padding:14px; background:var(--bg-input); border-radius:8px; color:var(--emerald);">✅ No hay recibos pendientes.</div>'
           : pendientes.map(function(r) {
               return '<div class="receipt-row pending">' +
                 '<div class="receipt-info">' +
-                  '<div class="receipt-concept">' + escaparHTML(r.concepto) + ' · <span style="color:var(--amber);">' + escaparHTML(r.propiedad) + '</span></div>' +
-                  '<div class="receipt-meta">Inquilino: ' + escaparHTML(r.inquilino) + ' (' + escaparHTML(obtenerDniUnificado(r)) + ') · Emisión: ' + escaparHTML(r.fecha_emision) + '</div>' +
+                  '<div class="receipt-concept">' + escaparHTML(r.concepto || "") + ' · <span style="color:var(--amber);">' + escaparHTML(r.propiedad || "") + '</span></div>' +
+                  '<div class="receipt-meta">Inquilino: ' + escaparHTML(r.inquilino || "") + ' (' + escaparHTML(obtenerDniUnificado(r)) + ')</div>' +
                 '</div>' +
                 '<div class="receipt-actions">' +
-                  '<span class="receipt-amount">' + escaparHTML(r.importe) + '</span>' +
-                  '<button type="button" class="btn-mark-paid" onclick="marcarReciboComoAbonado(\'' + escaparHTML(r.id_recibo) + '\')">✓ Marcar como Abonado y Generar PDF</button>' +
+                  '<span class="receipt-amount">' + escaparHTML(r.importe || "") + '</span>' +
+                  '<button type="button" class="btn-mark-paid" onclick="marcarReciboComoAbonado(\'' + escaparHTML(r.id_recibo || "") + '\')">✓ Marcar como Abonado y Generar PDF</button>' +
                 '</div>' +
               '</div>';
             }).join("")
         ) +
       '</div>' +
       '<div>' +
-        '<h4 style="color:var(--emerald); margin-bottom:10px; font-size:13.5px;">🟢 HISTORIAL DE RECIBOS ABONADOS CON PDF DISPONIBLE (' + abonados.length + ')</h4>' +
+        '<h4 style="color:var(--emerald); margin-bottom:10px; font-size:13.5px;">🟢 HISTORIAL DE RECIBOS ABONADOS (' + abonados.length + ')</h4>' +
         abonados.map(function(r) {
           return '<div class="receipt-row">' +
             '<div class="receipt-info">' +
-              '<div class="receipt-concept">' + escaparHTML(r.concepto) + ' · ' + escaparHTML(r.propiedad) + '</div>' +
-              '<div class="receipt-meta">Abonado el ' + escaparHTML(r.fecha_pago) + ' · Nº ' + escaparHTML(r.id_recibo) + '</div>' +
+              '<div class="receipt-concept">' + escaparHTML(r.concepto || "") + ' · ' + escaparHTML(r.propiedad || "") + '</div>' +
+              '<div class="receipt-meta">Abonado el ' + escaparHTML(r.fecha_pago || "") + ' · Nº ' + escaparHTML(r.id_recibo || "") + '</div>' +
             '</div>' +
             '<div class="receipt-actions">' +
-              '<span class="receipt-amount">' + escaparHTML(r.importe) + '</span>' +
-              '<button type="button" class="btn-pdf-receipt" onclick="descargarReciboPDF(\'' + escaparHTML(r.id_recibo) + '\')">📄 Descargar Recibo PDF</button>' +
+              '<span class="receipt-amount">' + escaparHTML(r.importe || "") + '</span>' +
+              '<button type="button" class="btn-pdf-receipt" onclick="descargarReciboPDF(\'' + escaparHTML(r.id_recibo || "") + '\')">📄 Descargar Recibo PDF</button>' +
             '</div>' +
           '</div>';
         }).join("") +
       '</div>';
   } else {
     titulo.innerText = "🏛️ Cartera de Inmuebles, Fichas y Estado de Contratos";
-    caja.innerHTML = '<div class="portfolio-grid">' +
-      window.CARTERA_PROPIEDADES.map(function(p) {
-        return '<div class="portfolio-card">' +
-          '<div>' +
-            '<div class="portfolio-card-header">' +
-              '<div><div class="portfolio-title">🏠 ' + escaparHTML(p.nombre_propiedad) + '</div><div class="portfolio-sub">' + escaparHTML(p.direccion) + '</div></div>' +
-              '<span class="badge badge-success">' + escaparHTML(p.estado_contrato) + '</span>' +
+    if (window.CARTERA_PROPIEDADES.length === 0) {
+      caja.innerHTML = "<div style='padding:14px; color:var(--text-muted);'>No hay fichas cargadas en <code>cartera_inmuebles</code>.</div>";
+    } else {
+      caja.innerHTML = '<div class="portfolio-grid">' +
+        window.CARTERA_PROPIEDADES.map(function(p) {
+          return '<div class="portfolio-card">' +
+            '<div>' +
+              '<div class="portfolio-card-header">' +
+                '<div><div class="portfolio-title">🏠 ' + escaparHTML(p.nombre_propiedad || "") + '</div><div class="portfolio-sub">' + escaparHTML(p.direccion || "") + '</div></div>' +
+                '<span class="badge badge-success">' + escaparHTML(p.estado_contrato || "ACTIVO") + '</span>' +
+              '</div>' +
+              '<div class="info-row"><span class="info-label">Arrendatario:</span><span class="info-value">' + escaparHTML(p.inquilino || "") + '</span></div>' +
+              '<div class="info-row"><span class="info-label">DNI-NIE-CIF:</span><span class="info-value">' + escaparHTML(obtenerDniUnificado(p)) + '</span></div>' +
             '</div>' +
-            '<div class="info-row"><span class="info-label">Arrendatario:</span><span class="info-value">' + escaparHTML(p.inquilino) + '</span></div>' +
-            '<div class="info-row"><span class="info-label">DNI-NIE-CIF:</span><span class="info-value">' + escaparHTML(obtenerDniUnificado(p)) + '</span></div>' +
-            '<div class="info-row"><span class="info-label">Renta / IBAN:</span><span class="info-value" style="color:var(--emerald);">' + escaparHTML(p.renta_mensual) + ' (' + escaparHTML(p.iban) + ')</span></div>' +
-            '<div class="info-row"><span class="info-label">Coordenadas GPS:</span><span class="info-value">' + p.lat + ', ' + p.lon + '</span></div>' +
-          '</div>' +
-          '<button type="button" class="btn-primary" style="padding:10px; font-size:13px;" onclick="cerrarVisorSeguro(); inspeccionarInmuebleComoResidente(\'' + escaparHTML(p.nombre_propiedad) + '\')">👁️ Abrir Expediente Completo del Inmueble →</button>' +
-        '</div>';
-      }).join("") +
-    '</div>';
+            '<button type="button" class="btn-primary" style="padding:10px; font-size:13px;" onclick="cerrarVisorSeguro(); inspeccionarInmuebleComoResidente(\'' + escaparHTML(p.nombre_propiedad || "") + '\')">👁️ Abrir Expediente del Inmueble →</button>' +
+          '</div>';
+        }).join("") +
+      '</div>';
+    }
   }
 
   document.getElementById("modal-visor-seguro").style.display = "flex";
 };
 
 window.abrirFichaContratoActual = function() {
-  var propActual = window.sesionActiva.propiedad || "Martinenca";
-  var p = window.CARTERA_PROPIEDADES.find(function(x) { return x.nombre_propiedad.toUpperCase() === propActual.toUpperCase(); }) || window.CARTERA_PROPIEDADES[0];
-  document.getElementById("visor-titulo").innerText = "📄 Ficha Contractual, Suministros e IBAN · " + p.nombre_propiedad;
+  var exp = window.EXPEDIENTE_ACTUAL || {};
+  document.getElementById("visor-titulo").innerText = "📄 Ficha Contractual Completa · " + (exp.propiedad || "---");
   document.getElementById("visor-contenido-nativo").innerHTML =
     '<div class="panel-box" style="background:var(--bg-input); margin-bottom:0;">' +
-      '<div class="info-row"><span class="info-label">Inmueble Arrendado:</span><span class="info-value" style="color:var(--emerald);">' + escaparHTML(p.nombre_propiedad) + '</span></div>' +
-      '<div class="info-row"><span class="info-label">Dirección Exacta:</span><span class="info-value">' + escaparHTML(p.direccion) + '</span></div>' +
-      '<div class="info-row"><span class="info-label">Arrendadora / Propietaria:</span><span class="info-value">Carmen Forcadell (DNI-NIE-CIF: 40913126J)</span></div>' +
-      '<div class="info-row"><span class="info-label">Arrendatario Titular:</span><span class="info-value">' + escaparHTML(p.inquilino) + ' (DNI-NIE-CIF: ' + escaparHTML(obtenerDniUnificado(p)) + ')</span></div>' +
-      '<div class="info-row"><span class="info-label">Renta Mensual Pactada:</span><span class="info-value" style="color:var(--amber);">' + escaparHTML(p.renta_mensual) + '</span></div>' +
-      '<div class="info-row"><span class="info-label">Cuenta IBAN de Ingreso:</span><span class="info-value" style="color:var(--neon-cyan);">' + escaparHTML(p.iban) + '</span></div>' +
-      '<div class="info-row"><span class="info-label">Cláusula de Suministros (Día 25):</span><span class="info-value">' + escaparHTML(p.suministros) + '</span></div>' +
+      '<div class="info-row"><span class="info-label">Titular / Arrendatario:</span><span class="info-value">' + escaparHTML(exp.nombre || "---") + '</span></div>' +
+      '<div class="info-row"><span class="info-label">DNI-NIE-CIF:</span><span class="info-value">' + escaparHTML(exp.dni || "---") + '</span></div>' +
+      '<div class="info-row"><span class="info-label">Código Autorización:</span><span class="info-value">' + escaparHTML(exp.codigo || "---") + '</span></div>' +
+      '<div class="info-row"><span class="info-label">Inmueble Arrendado:</span><span class="info-value" style="color:var(--emerald);">' + escaparHTML(exp.propiedad || "---") + '</span></div>' +
+      '<div class="info-row"><span class="info-label">Dirección:</span><span class="info-value">' + escaparHTML(exp.direccion || "---") + '</span></div>' +
+      '<div class="info-row"><span class="info-label">Condiciones / Renta / IBAN:</span><span class="info-value" style="color:var(--amber);">' + escaparHTML(exp.contrato_renta || "---") + '</span></div>' +
     '</div>';
   document.getElementById("modal-visor-seguro").style.display = "flex";
 };
@@ -2127,8 +1897,21 @@ document.addEventListener("DOMContentLoaded", function() {
     var el = document.getElementById("live-clock");
     if (el) el.textContent = ahora.toLocaleDateString("es-ES") + " | " + ahora.toLocaleTimeString("es-ES");
   }, 1000);
+
+  // Si el usuario entra desde el enlace directo de WhatsApp (?code=...)
+  var params = new URLSearchParams(window.location.search);
+  var codeUrl = params.get("code");
+  if (codeUrl && codeUrl.trim() !== "" && codeUrl.trim() !== "200") {
+    var cleanCode = codeUrl.trim();
+    window.sesionActiva.codigo_inquilino = cleanCode;
+    window.sesionActiva["DNI-NIE-CIF"] = cleanCode;
+    cargarExpedienteDesdeMake(cleanCode);
+  }
 });
 
+// ============================================================================
+// FASE 1: PETICIÓN REAL A MAKE (TOC TOC INQUILINOS)
+// ============================================================================
 window.llamarAlWebhook = function() {
   var inputDniElem = document.getElementById("input-dni");
   var dniRaw = inputDniElem ? inputDniElem.value.trim().toUpperCase().replace(/[^A-Z0-9-]/g, "") : "";
@@ -2178,35 +1961,16 @@ window.llamarAlWebhook = function() {
   .then(function(response) { return response.text(); })
   .then(function(textResponse) {
     var data = JSON.parse(textResponse);
-    if (data && data.status === "success" && data.pin_secreto) {
+    var pinRecibido = data.pin_secreto || data.Codigo_PIN || data.pin;
+    if (data && (data.status === "success" || pinRecibido)) {
+      data.pin_secreto = String(pinRecibido);
       activarFasePin(dniRaw, data);
     } else {
-      throw new Error("Respuesta sin PIN");
+      throw new Error(data.message || "Respuesta sin PIN desde Make");
     }
   })
   .catch(function(error) {
-    // RESPALDO DE SIMULACIÓN PARA LOS 3 ROLES (INQUILINO, PROPIETARIO, ABOGADO)
-    var perfilSim = window.PERFILES_SIMULACION[dniRaw] || (dniRaw.startsWith("ABO-") ? {
-      rol: "ABOGADO",
-      nombre: "Letrado Autorizado (" + dniRaw + ")",
-      "DNI-NIE-CIF": dniRaw,
-      codigo_inquilino: dniRaw
-    } : null);
-
-    if (perfilSim) {
-      activarFasePin(dniRaw, {
-        status: "success",
-        pin_secreto: "2436",
-        codigo_inquilino: perfilSim.codigo_inquilino,
-        "DNI-NIE-CIF": dniRaw,
-        rol: perfilSim.rol,
-        nombre: perfilSim.nombre,
-        modo_respaldo: true
-      });
-      return;
-    }
-
-    msjError.innerText = "DNI/NIE/CIF no registrado en la base de datos o error de conexión.";
+    msjError.innerText = "DNI/NIE/CIF no registrado en la base de datos o error de respuesta en el escenario TOC TOC INQUILINOS.";
     msjError.style.display = "block";
     btn.innerText = "Solicitar Verificación VIP →";
     btn.disabled = false;
@@ -2217,26 +1981,20 @@ window.llamarAlWebhook = function() {
 function activarFasePin(dniRaw, data) {
   window.datosEnSecreto = data;
   window.sesionActiva["DNI-NIE-CIF"] = dniRaw;
-  window.sesionActiva.codigo_inquilino = data.codigo_inquilino || dniRaw;
+  window.sesionActiva.codigo_inquilino = data.codigo_inquilino || data["Autho-code-inquilino"] || data["Autho-code-propietario"] || data["Autho-code-abogado"] || dniRaw;
 
   var rolDevuelto = data.rol ? String(data.rol).toUpperCase() : "";
-  var codDevuelto = data.codigo_inquilino ? String(data.codigo_inquilino).toUpperCase() : "";
-  var perfilLocal = window.PERFILES_SIMULACION[dniRaw];
+  var codDevuelto = String(window.sesionActiva.codigo_inquilino).toUpperCase();
 
-  if (dniRaw === "40913126J" || dniRaw === "46029432Y" || rolDevuelto.includes("PROPIETARIO") || codDevuelto.startsWith("PROP-") || (perfilLocal && perfilLocal.rol === "PROPIETARIO")) {
+  if (rolDevuelto.includes("PROPIETARIO") || codDevuelto.startsWith("PROP-")) {
     window.sesionActiva.rol = "PROPIETARIO";
     window.sesionActiva.tabla_filtro = "PROPERTY_PROPIETARIOS";
-  } else if (rolDevuelto.includes("ABOGADO") || rolDevuelto.includes("LEGAL") || codDevuelto.startsWith("ABO-") || dniRaw.startsWith("ABO-") || (perfilLocal && perfilLocal.rol === "ABOGADO")) {
+  } else if (rolDevuelto.includes("ABOGADO") || rolDevuelto.includes("LEGAL") || codDevuelto.startsWith("ABO-")) {
     window.sesionActiva.rol = "ABOGADO";
     window.sesionActiva.tabla_filtro = "PROPERTY_PROPIETARIOS_LEGAL_SERVICES";
   } else {
     window.sesionActiva.rol = "INQUILINO";
     window.sesionActiva.tabla_filtro = "PROPERTY_INQUILINOS";
-  }
-
-  if (data.modo_respaldo) {
-    document.getElementById("texto-instruccion-pin").innerHTML =
-      "Modo Verificado <strong>[" + escaparHTML(window.sesionActiva.rol) + " · " + escaparHTML(dniRaw) + "]</strong>. Introduce el PIN recibido por WhatsApp o el PIN maestro de prueba (<strong>2436</strong>):";
   }
 
   document.getElementById("fase-dni").style.display = "none";
@@ -2247,6 +2005,9 @@ function activarFasePin(dniRaw, data) {
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
+// ============================================================================
+// FASE 2: VALIDACIÓN ESTRICTA DEL PIN ENVIADO POR MAKE
+// ============================================================================
 window.validarPin = function() {
   var pinUser = document.getElementById("input-pin-user").value.trim();
   var msjError = document.getElementById("msg-error");
@@ -2255,28 +2016,30 @@ window.validarPin = function() {
   msjError.style.display = "none";
 
   if (!pinUser) {
-    msjError.innerText = "Escribe el PIN de 4 cifras para continuar.";
+    msjError.innerText = "Escribe el PIN de 4 cifras recibido en tu WhatsApp para continuar.";
     msjError.style.display = "block";
     return;
   }
 
-  var dniActual = window.sesionActiva["DNI-NIE-CIF"];
-  if (window.datosEnSecreto && (pinUser === window.datosEnSecreto.pin_secreto.toString() || pinUser === "2436")) {
-    btnPin.innerText = "¡Correcto! Cargando tu panel...";
+  if (window.datosEnSecreto && String(pinUser) === String(window.datosEnSecreto.pin_secreto).trim()) {
+    btnPin.innerText = "¡Correcto! Cargando tu expediente...";
     btnPin.disabled = true;
-    var codigo = window.datosEnSecreto.codigo_inquilino || dniActual;
+    var codigo = window.datosEnSecreto.codigo_inquilino || window.sesionActiva["DNI-NIE-CIF"];
     cargarExpedienteDesdeMake(codigo);
   } else {
-    msjError.innerText = "PIN incorrecto. Revisa el mensaje enviado a tu WhatsApp.";
+    msjError.innerText = "PIN incorrecto. Revisa el código de 4 cifras enviado a tu WhatsApp.";
     msjError.style.display = "block";
   }
 };
 
+// ============================================================================
+// FASE 3: CARGA DE DATOS REALES DESDE MAKE (PORTAL DATOS INQUILINOS)
+// ============================================================================
 function cargarExpedienteDesdeMake(identificador) {
   var msjError = document.getElementById("msg-error");
   var msjExito = document.getElementById("msg-exito");
   msjError.style.display = "none";
-  msjExito.innerText = "Cargando expediente seguro en tiempo real...";
+  msjExito.innerText = "Cargando expediente en tiempo real desde Make...";
   msjExito.style.display = "block";
 
   var dniValor = window.sesionActiva["DNI-NIE-CIF"] || identificador;
@@ -2294,32 +2057,19 @@ function cargarExpedienteDesdeMake(identificador) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload)
   })
-  .then(function(response) { return response.json(); })
-  .then(function(data) {
-    if (data && (data.status === "success" || data.nombre || data.recibos_html || data.cartera_inmuebles)) {
+  .then(function(response) { return response.text(); })
+  .then(function(rawText) {
+    var parsed = JSON.parse(rawText);
+    var data = extraerRegistroMake(parsed);
+    if (data && Object.keys(data).length > 0) {
       renderizarPortalConDatos(data, identificador);
     } else {
-      throw new Error("Expediente no devuelto");
+      throw new Error("JSON vacío");
     }
   })
   .catch(function(error) {
-    var perfilSim = window.PERFILES_SIMULACION[dniValor];
-    if (perfilSim || window.sesionActiva.rol === "PROPIETARIO" || window.sesionActiva.rol === "ABOGADO") {
-      renderizarPortalConDatos(perfilSim || {
-        status: "success",
-        nombre: window.sesionActiva.rol === "PROPIETARIO" ? "Carmen Forcadell" : "Letrado Autorizado",
-        "DNI-NIE-CIF": dniValor,
-        rol: window.sesionActiva.rol,
-        nombre_propiedad: "Martinenca",
-        direccion: "Carrer Bort A, 2 · Urb. Montecarlo (Alcanar)",
-        lat: 40.576956,
-        lon: 0.550353
-      }, identificador);
-      return;
-    }
-
     msjExito.style.display = "none";
-    msjError.innerText = "Expediente no encontrado para este identificador o error de conexión.";
+    msjError.innerText = "Error al obtener los datos del escenario Portal Datos Inquilinos en Make. Verifica que el escenario esté activo y devuelva un JSON válido.";
     msjError.style.display = "block";
     var btnPin = document.getElementById("btn-validar-pin");
     if (btnPin) {
@@ -2329,65 +2079,133 @@ function cargarExpedienteDesdeMake(identificador) {
   });
 }
 
+function pintarFichaExpedienteEnPantalla(d) {
+  var nombreTitular = formatearCampoValor(
+    d.nombre || d.Arrendatario || d.Nombre_Inquilino || d.nombre_inquilino ||
+    d.Propietario || d.nombre_propietario || d.nombre_abogado || d["Nombre de pila"]
+  ) || "---";
+
+  var dniTitular = formatearCampoValor(obtenerDniUnificado(d)) || window.sesionActiva["DNI-NIE-CIF"] || "---";
+
+  var codigoAutho = formatearCampoValor(
+    d.codigo_inquilino || d["Autho-code-inquilino"] || d["Autho-code-propietario"] || d["Autho-code-abogado"] || d.code
+  ) || window.sesionActiva.codigo_inquilino || "---";
+
+  var propiedadNombre = formatearCampoValor(
+    d.nombre_propiedad || d.propiedad || d["Propiedad arrendada"] || d.PROPERTY_PROPIEDADES || d.propiedades_autorizadas
+  ) || "---";
+
+  var direccionTexto = formatearCampoValor(d.direccion || d.Direccion || d.ubicacion) || "---";
+
+  var rentaTexto = formatearCampoValor(d.renta_mensual || d.renta || d.Renta || "");
+  var ibanTexto = formatearCampoValor(d.iban || d.IBAN || "");
+  var estadoTexto = formatearCampoValor(d.estado_contrato || d.estado || "ACTIVO");
+  var resumenContrato = [estadoTexto, rentaTexto, ibanTexto ? "IBAN: " + ibanTexto : ""].filter(Boolean).join(" · ");
+
+  window.EXPEDIENTE_ACTUAL = {
+    nombre: nombreTitular,
+    dni: dniTitular,
+    codigo: codigoAutho,
+    propiedad: propiedadNombre,
+    direccion: direccionTexto,
+    contrato_renta: resumenContrato
+  };
+
+  document.getElementById("val-nombre").innerText = nombreTitular;
+  document.getElementById("val-dni").innerText = dniTitular;
+  document.getElementById("val-codigo-autho").innerText = codigoAutho;
+  document.getElementById("val-propiedad").innerText = propiedadNombre;
+  document.getElementById("val-direccion").innerText = direccionTexto;
+  document.getElementById("val-contrato-renta").innerText = resumenContrato || "---";
+
+  // Galería de fotos si Make devuelve array de fotos
+  var wrapFotos = document.getElementById("wrap-galeria-fotos");
+  var galeriaBox = document.getElementById("val-fotos");
+  if (Array.isArray(d.fotos) && d.fotos.length > 0) {
+    wrapFotos.style.display = "block";
+    galeriaBox.innerHTML = d.fotos.map(function(u) {
+      return '<img src="' + escaparHTML(u) + '" alt="' + escaparHTML(propiedadNombre) + '" onclick="window.open(this.src, \'_blank\')">';
+    }).join("");
+  } else {
+    wrapFotos.style.display = "none";
+    galeriaBox.innerHTML = "";
+  }
+
+  // Avisos
+  if (d.avisos_html) {
+    document.getElementById("val-avisos").innerHTML = d.avisos_html;
+  } else if (d.avisos) {
+    document.getElementById("val-avisos").innerHTML = '<div style="background:var(--bg-input); border-left:3px solid var(--amber); padding:12px; border-radius:8px; color:#e2e8f0;">' + escaparHTML(formatearCampoValor(d.avisos)) + '</div>';
+  } else {
+    document.getElementById("val-avisos").innerHTML = "<div style='color:var(--text-muted);'>Sin avisos generales registrados en este expediente.</div>";
+  }
+
+  // Incidencias
+  var incTexto = formatearCampoValor(d.incidencias || d.PROPERTY_INCIDENCIAS || d["PROPERTY_INCIDENCIAS 2"]);
+  if (d.incidencias_html) {
+    document.getElementById("val-incidencias").innerHTML = d.incidencias_html;
+  } else if (incTexto) {
+    document.getElementById("val-incidencias").innerHTML = '<div style="background:var(--bg-input); border-left:3px solid var(--emerald); padding:12px; border-radius:8px; color:#e2e8f0;">' + escaparHTML(incTexto) + '</div>';
+  } else {
+    document.getElementById("val-incidencias").innerHTML = "<div style='color:var(--text-muted);'>Sin incidencias activas registradas en este expediente.</div>";
+  }
+
+  // Recibos
+  if (d.recibos_html) {
+    document.getElementById("val-recibos").innerHTML = d.recibos_html;
+  } else {
+    renderizarRecibosInquilino(propiedadNombre);
+  }
+
+  actualizarMapaInmueble(direccionTexto, propiedadNombre, d.lat, d.lon);
+}
+
 function renderizarPortalConDatos(data, identificador) {
   document.getElementById("login-section").style.display = "none";
   document.getElementById("portal-dashboard").style.display = "block";
   document.getElementById("main-layout").classList.add("fullscreen-mode");
 
-  if (Array.isArray(data.cartera_inmuebles) && data.cartera_inmuebles.length > 0) {
-    window.CARTERA_PROPIEDADES = data.cartera_inmuebles;
-  }
-  if (Array.isArray(data.recibos_lista) && data.recibos_lista.length > 0) {
-    window.RECIBOS_CARTERA = data.recibos_lista;
-  }
-  if (Array.isArray(data.suministros_lista) && data.suministros_lista.length > 0) {
-    window.SUMINISTROS_GASTOS = data.suministros_lista;
-  }
+  window.CARTERA_PROPIEDADES = Array.isArray(data.cartera_inmuebles) ? data.cartera_inmuebles : [];
+  window.RECIBOS_CARTERA = Array.isArray(data.recibos_lista) ? data.recibos_lista : [];
+  window.SUMINISTROS_GASTOS = Array.isArray(data.suministros_lista) ? data.suministros_lista : [];
 
-  var dniSesion = String(window.sesionActiva["DNI-NIE-CIF"]).toUpperCase();
-  var esPropietaria = (window.sesionActiva.rol === "PROPIETARIO" || dniSesion === "40913126J" || dniSesion === "46029432Y");
-  var nombreReal = data.nombre || data.nombre_inquilino || data.nombre_abogado || (esPropietaria ? "Carmen Forcadell" : "Titular Verificado");
-  var dniReal = obtenerDniUnificado(data) || window.sesionActiva["DNI-NIE-CIF"] || identificador;
-  var propReal = data.nombre_propiedad || data.propiedad || data.propiedades_autorizadas || "Martinenca";
+  var rolDetectado = String(data.rol || window.sesionActiva.rol || "INQUILINO").toUpperCase();
+  var codCheck = String(data.codigo_inquilino || data["Autho-code-propietario"] || data["Autho-code-abogado"] || identificador || "").toUpperCase();
 
-  window.sesionActiva["DNI-NIE-CIF"] = dniReal;
-  window.sesionActiva.propiedad = propReal;
-
-  document.getElementById("badge-titular-activo").innerText = window.sesionActiva.rol + ": " + nombreReal + " (" + dniReal + ")";
-
-  seleccionarInmuebleResidente(propReal.split(",")[0].trim());
-  renderizarCarteraYRecibosPropietario();
-
-  if (data.Nombre_Inquilino || (!esPropietaria && data.nombre)) {
-    document.getElementById("val-nombre").innerText = nombreReal;
-    document.getElementById("val-dni").innerText = dniReal;
-  }
-  if (data.direccion && !esPropietaria) {
-    document.getElementById("val-direccion").innerText = data.direccion;
-  }
-  if (data.recibos_html) document.getElementById("val-recibos").innerHTML = data.recibos_html;
-  if (data.avisos_html) document.getElementById("val-avisos").innerHTML = data.avisos_html;
-  if (data.incidencias_html) document.getElementById("val-incidencias").innerHTML = data.incidencias_html;
-
-  if (esPropietaria) {
+  if (rolDetectado.includes("PROPIETARIO") || codCheck.startsWith("PROP-")) {
     window.sesionActiva.rol = "PROPIETARIO";
     window.sesionActiva.tabla_filtro = "PROPERTY_PROPIETARIOS";
-    document.getElementById("btn-tab-propietaria").style.display = "inline-block";
-    document.getElementById("owner-greeting-name").innerText = nombreReal;
-    mostrarVistaInterna("propietaria");
-  } else if (window.sesionActiva.rol === "ABOGADO" || String(identificador).toUpperCase().startsWith("ABO-")) {
+  } else if (rolDetectado.includes("ABOGADO") || rolDetectado.includes("LEGAL") || codCheck.startsWith("ABO-")) {
     window.sesionActiva.rol = "ABOGADO";
     window.sesionActiva.tabla_filtro = "PROPERTY_PROPIETARIOS_LEGAL_SERVICES";
+  } else {
+    window.sesionActiva.rol = "INQUILINO";
+    window.sesionActiva.tabla_filtro = "PROPERTY_INQUILINOS";
+  }
+
+  pintarFichaExpedienteEnPantalla(data);
+
+  var nombreActivo = window.EXPEDIENTE_ACTUAL.nombre || "Titular Verificado";
+  var dniActivo = window.EXPEDIENTE_ACTUAL.dni || window.sesionActiva["DNI-NIE-CIF"] || identificador;
+
+  window.sesionActiva.nombre = nombreActivo;
+  window.sesionActiva["DNI-NIE-CIF"] = dniActivo;
+  window.sesionActiva.propiedad = window.EXPEDIENTE_ACTUAL.propiedad;
+
+  document.getElementById("badge-titular-activo").innerText = window.sesionActiva.rol + ": " + nombreActivo + " (" + dniActivo + ")";
+
+  if (window.sesionActiva.rol === "PROPIETARIO") {
+    document.getElementById("btn-tab-propietaria").style.display = "inline-block";
+    document.getElementById("owner-greeting-name").innerText = nombreActivo;
+    renderizarCarteraYRecibosPropietario();
+    mostrarVistaInterna("propietaria");
+  } else if (window.sesionActiva.rol === "ABOGADO") {
     document.getElementById("btn-tab-propietaria").style.display = "none";
     document.getElementById("btn-tab-residente").innerText = "⚖️ Expediente Jurídico Autorizado";
     document.getElementById("titulo-caja-expediente").innerText = "⚖️ EXPEDIENTE JURÍDICO · INMUEBLES AUTORIZADOS";
     document.getElementById("lbl-titular-rol").innerText = "Letrado / Despacho Autorizado:";
-    document.getElementById("val-nombre").innerText = nombreReal;
-    document.getElementById("val-dni").innerText = dniReal;
     mostrarVistaInterna("residente");
   } else {
-    window.sesionActiva.rol = "INQUILINO";
-    window.sesionActiva.tabla_filtro = "PROPERTY_INQUILINOS";
     document.getElementById("btn-tab-propietaria").style.display = "none";
     document.getElementById("btn-tab-residente").innerText = "🏠 Expediente del Residente";
     document.getElementById("titulo-caja-expediente").innerText = "🏠 EXPEDIENTE Y PROPIEDAD";
@@ -2421,25 +2239,14 @@ window.enviarAutorizacionAbogado = function(e) {
   btnAbg.innerText = "Registrando abogado y enviando email de bienvenida...";
   btnAbg.disabled = true;
 
-  // Guardamos también en simulación local para poder probar inmediatamente el acceso de este abogado
-  window.PERFILES_SIMULACION[dniAbg] = {
-    rol: "ABOGADO",
-    nombre: nombreAbg,
-    "DNI-NIE-CIF": dniAbg,
-    codigo_inquilino: "ABO-" + dniAbg,
-    nombre_propiedad: propAbg,
-    direccion: "Cartera Autorizada (" + propAbg + ")",
-    lat: 40.576956,
-    lon: 0.550353
-  };
-
-  var dniPropietarioActual = window.sesionActiva["DNI-NIE-CIF"] || "40913126J";
+  var dniPropietarioActual = window.sesionActiva["DNI-NIE-CIF"] || "";
+  var nombrePropietarioActual = window.sesionActiva.nombre || "Propiedad Titular";
   var urlPortal = "https://app.level-i.com/gestion-de-inquilinos/";
   var cuerpoEmailHTML =
     '<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #0d1322; color: #f8fafc; padding: 28px; border-radius: 12px; border: 1px solid #10b981;">' +
       '<h2 style="color: #10b981; margin-top: 0;">⚖️ Bienvenida a la Consola Jurídica · Level.immo</h2>' +
       '<p>Estimado/a <strong>' + escaparHTML(nombreAbg) + '</strong>,</p>' +
-      '<p>La propiedad titular (<strong>Carmen Forcadell · DNI-NIE-CIF ' + escaparHTML(dniPropietarioActual) + '</strong>) le ha concedido acceso jurídico verificado a los siguientes inmuebles en alquiler:</p>' +
+      '<p>La propiedad titular (<strong>' + escaparHTML(nombrePropietarioActual) + ' · DNI-NIE-CIF ' + escaparHTML(dniPropietarioActual) + '</strong>) le ha concedido acceso jurídico verificado a los siguientes inmuebles en alquiler:</p>' +
       '<div style="background: #131c31; padding: 14px; border-left: 4px solid #f59e0b; margin: 16px 0; border-radius: 6px;">' +
         '<strong>📍 Inmuebles Autorizados:</strong> ' + escaparHTML(propAbg) + '<br>' +
         '<strong>🔑 Identificador Asignado (DNI-NIE-CIF):</strong> ' + escaparHTML(dniAbg) + '<br>' +
@@ -2450,7 +2257,7 @@ window.enviarAutorizacionAbogado = function(e) {
         '<li>Entre en el portal privado: <a href="' + urlPortal + '" style="color: #10b981; font-weight: bold;">' + urlPortal + '</a></li>' +
         '<li>Introduzca su <strong>DNI-NIE-CIF (' + escaparHTML(dniAbg) + ')</strong> y resuelva la suma de verificación.</li>' +
         '<li>Recibirá al instante en su <strong>WhatsApp (+' + escaparHTML(telAbg) + ')</strong> un <strong>PIN temporal de 4 cifras</strong>.</li>' +
-        '<li>Al introducir el PIN, accederá en tiempo real al estado de recibos, suministros, contratos, incidencias y <strong>navegación GPS directa en auto ("Cómo llegar")</strong> hacia cada inmueble autorizado.</li>' +
+        '<li>Al introducir el PIN, accederá en tiempo real al expediente y navegación GPS hacia cada inmueble autorizado.</li>' +
       '</ol>' +
     '</div>';
 
@@ -2459,7 +2266,7 @@ window.enviarAutorizacionAbogado = function(e) {
     "DNI-NIE-CIF": dniAbg,
     dni_abogado: dniAbg,
     dni_propietario: dniPropietarioActual,
-    nombre_propietario: "Carmen Forcadell",
+    nombre_propietario: nombrePropietarioActual,
     autho_code_abogado: "ABO-" + dniAbg,
     nombre_abogado: nombreAbg,
     email_abogado: emailAbg,
@@ -2487,7 +2294,6 @@ window.enviarAutorizacionAbogado = function(e) {
     }, 4500);
   })
   .catch(function(err) {
-    console.error("Error al autorizar abogado:", err);
     msgErrorLegal.style.display = "block";
     btnAbg.innerText = "⚖️ Asignar Abogado en Base de Datos y Enviar Email de Bienvenida →";
     btnAbg.disabled = false;
@@ -2538,6 +2344,10 @@ function alternarPantallaCompleta() {
 
 function cerrarSesion() {
   window.datosEnSecreto = null;
+  window.EXPEDIENTE_ACTUAL = {};
+  window.CARTERA_PROPIEDADES = [];
+  window.RECIBOS_CARTERA = [];
+  window.SUMINISTROS_GASTOS = [];
   window.sesionActiva["DNI-NIE-CIF"] = "";
   window.sesionActiva.codigo_inquilino = "";
   window.sesionActiva.rol = "INQUILINO";
@@ -2549,6 +2359,9 @@ function cerrarSesion() {
   document.getElementById("portal-dashboard").style.display = "none";
   document.getElementById("login-section").style.display = "block";
   document.getElementById("main-layout").classList.remove("fullscreen-mode");
+  if (window.history && window.history.replaceState) {
+    window.history.replaceState({}, document.title, window.location.pathname);
+  }
   volverFaseDni();
 }
 
@@ -2558,13 +2371,6 @@ function cerrarVisorSeguro() {
 
 function abrirChatElena() {
   document.getElementById("elena-chat-window").style.display = "flex";
-}
-
-function abrirChatElenaConAsunto(asunto) {
-  abrirChatElena();
-  var inp = document.getElementById("chat-input-text");
-  inp.value = "[" + asunto + "] ";
-  inp.focus();
 }
 
 function cerrarChatElena() {
