@@ -1,1 +1,546 @@
+<!DOCTYPE html>
+<html lang="ca" id="html-root">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+  <title>Level.immo | Simulador Patrimonial: Donació vs. Préstec Familiar i Hipoteca</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #080d14;
+      color: #e2e8f0;
+      overflow-x: hidden;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .gold-badge {
+      background: linear-gradient(90deg, rgba(217,119,6,0.22) 0%, rgba(245,158,11,0.08) 100%);
+      border: 1px solid rgba(245,158,11,0.45);
+      color: #fbbf24;
+    }
+    .emerald-glow {
+      box-shadow: 0 0 28px rgba(16, 185, 129, 0.35);
+    }
+    .card-panel {
+      background-color: #101826;
+      border: 1px solid #1e293b;
+      border-radius: 0.85rem;
+    }
+    .intro-video-full {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center center;
+      transition: opacity 0.6s ease;
+    }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: #080d14; }
+    ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #10b981; }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between">
 
+  <!-- ================= PANTALLA 1: PORTADA WELCOME A PANTALLA COMPLETA ================= -->
+  <div id="gatekeeper-screen" class="fixed inset-0 z-40 bg-[#060a10] overflow-y-auto">
+    <div class="fixed inset-0 overflow-hidden pointer-events-none z-0 flex items-center justify-center bg-[#060a10]">
+      <video id="intro-bg-video" autoplay muted playsinline preload="auto" class="intro-video-full filter brightness-[0.68] contrast-[1.08]">
+        <source src="consultoria.mp4" type="video/mp4">
+        <source src="./consultoria.mp4" type="video/mp4">
+        <source src="https://level-i.github.io/consultoria/consultoria.mp4" type="video/mp4">
+        <source src="https://app.level-i.com/consultoria/consultoria.mp4" type="video/mp4">
+      </video>
+      <div class="absolute inset-0 bg-gradient-to-b from-[#080d14]/75 via-[#080d14]/45 to-[#080d14]/95"></div>
+    </div>
+
+    <div class="relative z-10 min-h-[100dvh] max-w-6xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 flex flex-col justify-between">
+      
+      <!-- Top Bar Portada -->
+      <div class="flex flex-wrap items-center justify-between gap-2 border border-slate-700/60 py-2.5 px-3.5 sm:px-5 backdrop-blur-md bg-slate-950/65 rounded-xl">
+        <div class="flex items-center gap-2.5" translate="no">
+          <div class="inline-flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-white text-slate-950 font-black text-lg sm:text-xl">L</div>
+          <span class="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-emerald-400 -ml-1.5 sm:-ml-2 mt-2.5"></span>
+          <span class="font-extrabold text-white text-base sm:text-lg tracking-tight">Level.immo</span>
+          <span class="hidden sm:inline-block text-[11px] font-mono text-slate-300 border-l border-slate-700 pl-3">API 4173 · AICAT 14200</span>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <button type="button" onclick="replayIntroVideo()" class="px-2.5 py-1.5 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/40 text-emerald-300 text-[11px] sm:text-xs font-bold transition flex items-center gap-1 cursor-pointer">
+            <span>▶</span> <span data-i18n="btn_replay_video">Activar Vídeo / So</span>
+          </button>
+
+          <select id="lang-select-gate" onchange="changeLanguage(this.value)" translate="no" class="bg-slate-900/90 border border-slate-700 text-slate-200 text-xs font-semibold rounded-lg px-2.5 sm:px-3 py-1.5 focus:outline-none focus:border-emerald-500 cursor-pointer backdrop-blur">
+            <option value="ca">CA Català</option>
+            <option value="es">ES Español</option>
+            <option value="en">GB English</option>
+            <option value="fr">FR Français</option>
+            <option value="de">DE Deutsch</option>
+            <option value="it">IT Italiano</option>
+            <option value="ar">AE العربية</option>
+            <option value="zh">CN 中文</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Centro Portada -->
+      <div class="w-full max-w-4xl mx-auto py-4 sm:py-6 space-y-4 sm:space-y-5 text-center my-auto">
+        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full gold-badge text-[10px] sm:text-xs font-bold tracking-wider uppercase backdrop-blur">
+          <span>🏛️</span> <span>SIMULADOR PATRIMONIAL: DONACIÓ VS PRÉSTEC FAMILIAR</span>
+        </div>
+
+        <h1 class="text-2xl sm:text-4xl lg:text-5xl font-black text-white leading-tight tracking-tight drop-shadow-[0_4px_16px_rgba(0,0,0,0.9)] px-1">
+          Anàlisi de Costos, Préstecs Familiars i Viabilitat Hipotecària
+        </h1>
+
+        <p class="text-slate-100 text-xs sm:text-base lg:text-lg leading-relaxed max-w-3xl mx-auto drop-shadow-[0_2px_10px_rgba(0,0,0,0.95)] px-2 font-medium">
+          Valora els costos fiscals de les donacions enfront d'alternatives segures com la copropietat o el préstec familiar documentat, amb càlculs a mida segons aportació, ingressos i despeses.
+        </p>
+
+        <!-- Filtro Matemático de Seguridad -->
+        <div class="card-panel p-4 sm:p-5 border-slate-700/90 bg-[#101826]/85 backdrop-blur-md shadow-2xl max-w-xl mx-auto space-y-3 text-left">
+          <div class="flex items-center justify-between gap-2">
+            <div class="flex items-center gap-1.5 text-amber-400 text-[11px] sm:text-xs font-bold uppercase tracking-wider">
+              <span>🛡️</span> <span>Filtre de Seguretat (Accés al Simulador)</span>
+            </div>
+            <span class="text-xs sm:text-sm font-black text-emerald-400 shrink-0 font-mono">API 4173</span>
+          </div>
+
+          <p class="text-[11px] sm:text-xs text-slate-300">
+            Resol la suma de verificació per accedir al simulador financer i al contracte descarregable:
+          </p>
+
+          <div class="grid grid-cols-12 gap-2 items-center">
+            <div class="col-span-5 sm:col-span-4 bg-slate-900/95 border border-slate-700 rounded-lg px-2 py-2.5 text-xs sm:text-sm font-bold text-white text-center whitespace-nowrap">
+              Quant és <span id="gate-num1">5</span>+<span id="gate-num2">3</span>?
+            </div>
+            <input type="number" id="gate-math-input" placeholder="?" onkeydown="if(event.key==='Enter') verifyGatekeeper()" class="col-span-3 sm:col-span-2 bg-[#080d14] border border-slate-700 rounded-lg px-2 py-2.5 text-center text-white font-bold focus:outline-none focus:border-emerald-500" />
+            <button type="button" onclick="verifyGatekeeper()" class="col-span-4 sm:col-span-6 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs sm:text-sm py-2.5 px-3 rounded-lg transition uppercase tracking-wider shadow-lg cursor-pointer">
+              ENTRAR AL SIMULADOR
+            </button>
+          </div>
+          <p id="gate-error" class="text-rose-400 text-xs hidden">Resultat incorrecte. Torna-ho a provar.</p>
+        </div>
+
+        <!-- 4 Pilares en Portada -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 max-w-4xl mx-auto pt-1 text-left">
+          <div class="p-3 rounded-xl bg-slate-950/75 border border-slate-800 backdrop-blur">
+            <div class="text-emerald-400 text-xs font-extrabold mb-0.5">📊 Donació vs Préstec</div>
+            <div class="text-[11px] text-slate-300">Comparativa de costos fiscals i viabilitat.</div>
+          </div>
+          <div class="p-3 rounded-xl bg-slate-950/75 border border-slate-800 backdrop-blur">
+            <div class="text-amber-400 text-xs font-extrabold mb-0.5">🤝 Préstec Familiar</div>
+            <div class="text-[11px] text-slate-300">Terminis, models i aval bancari.</div>
+          </div>
+          <div class="p-3 rounded-xl bg-slate-950/75 border border-slate-800 backdrop-blur">
+            <div class="text-sky-400 text-xs font-extrabold mb-0.5">📄 Contracte PDF</div>
+            <div class="text-[11px] text-slate-300">Model estàndard descarregable.</div>
+          </div>
+          <div class="p-3 rounded-xl bg-slate-950/75 border border-slate-800 backdrop-blur">
+            <div class="text-purple-400 text-xs font-extrabold mb-0.5">💬 Preguntes Freqüents</div>
+            <div class="text-[11px] text-slate-300">Respostes expertes del sector.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer Portada con Copyright -->
+      <div class="border border-slate-700/60 py-2.5 px-3.5 sm:px-5 flex flex-wrap items-center justify-between text-[10px] sm:text-[11px] text-slate-300 gap-2 backdrop-blur-md bg-slate-950/65 rounded-xl">
+        <span class="truncate" translate="no">© 2026 LEVEL PUNTO IMMO 24365 SLU · API 4173 · AICAT 14200</span>
+        <div class="flex flex-wrap gap-3">
+          <button type="button" onclick="openLegalModal('aviso')" class="hover:text-white underline">Avís Legal</button>
+          <button type="button" onclick="openLegalModal('privacidad')" class="hover:text-white underline">Privacitat i RGPD</button>
+          <button type="button" onclick="openLegalModal('cookies')" class="hover:text-white underline">Cookies i IA</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ================= HEADER PRINCIPAL ================= -->
+  <header class="sticky top-0 z-30 bg-[#080d14]/95 backdrop-blur border-b border-slate-800 px-3 sm:px-6 lg:px-8 py-3">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
+      <div class="flex items-center gap-2.5" translate="no">
+        <a href="https://app.level-i.com/donaciones-familiares" class="flex items-center gap-2 text-white font-extrabold text-lg sm:text-xl tracking-tight">
+          <span class="inline-flex items-center justify-center w-7 h-7 rounded bg-white text-slate-950 font-black">L</span>
+          <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 -ml-1.5 mt-2"></span>
+          <span>Level.immo</span>
+        </a>
+        <span class="text-[11px] text-slate-400 font-mono hidden sm:inline border-l border-slate-700 pl-3">API 4173 · AICAT 14200</span>
+        <span class="text-xs text-emerald-400 font-mono hidden lg:inline pl-2" id="live-clock">07/11/2026 | 10:00:00</span>
+      </div>
+
+      <nav class="flex flex-wrap items-center gap-1.5 sm:gap-2 text-xs font-semibold">
+        <button type="button" onclick="shareConsultoriaPage()" class="px-2.5 py-1.5 rounded-lg bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 border border-amber-500/40 transition flex items-center gap-1 cursor-pointer">
+          <span>🔗</span> <span>Compartir</span>
+        </button>
+
+        <button type="button" onclick="reopenWelcomeScreen()" class="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition flex items-center gap-1 cursor-pointer">
+          <span>🎬</span> <span class="hidden sm:inline">Vídeo Intro</span>
+        </button>
+
+        <select id="lang-select-main" onchange="changeLanguage(this.value)" translate="no" class="bg-[#141e30] border border-slate-700 text-slate-200 text-xs font-semibold rounded-lg px-2 py-1.5 focus:outline-none focus:border-emerald-500 cursor-pointer">
+          <option value="ca">CA Català</option>
+          <option value="es">ES Español</option>
+          <option value="en">GB English</option>
+          <option value="fr">FR Français</option>
+          <option value="de">DE Deutsch</option>
+          <option value="it">IT Italiano</option>
+          <option value="ar">AE العربية</option>
+          <option value="zh">CN 中文</option>
+        </select>
+
+        <button type="button" onclick="document.getElementById('simulador-section').scrollIntoView({behavior: 'smooth'})" class="px-3 sm:px-4 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold transition flex items-center gap-1.5 shadow-lg cursor-pointer">
+          <span>🧮</span> <span>Simulador & Contracte</span>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ================= CONTENIDO PRINCIPAL ================= -->
+  <main class="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-10">
+
+    <!-- Cabecera Institucional -->
+    <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800/80 pb-5">
+      <div>
+        <div class="flex flex-wrap items-center gap-1.5 text-[11px] sm:text-xs text-slate-400 font-mono mb-1" translate="no">
+          <span>app.level-i.com</span> <span>/</span> <span class="text-emerald-400 font-bold">donaciones-familiares</span>
+        </div>
+        <h2 class="text-xl sm:text-3xl font-extrabold text-white">
+          Simulador Patrimonial: Donación Directa vs. Préstamo Familiar e Hipoteca
+        </h2>
+      </div>
+      <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full gold-badge text-[11px] font-bold uppercase">
+        <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+        <span>SERVEI OFICIAL API COL·LEGIAT 4173 · AICAT 14200</span>
+      </div>
+    </div>
+
+    <!-- SECCIÓN 1: SIMULADOR INTERACTIVO Y CÁLCULOS (2 Columnas) -->
+    <div id="simulador-section" class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+
+      <!-- Columna Izquierda: Introducción y Alternativas -->
+      <div class="lg:col-span-7 space-y-6">
+        <div class="card-panel p-5 sm:p-6 space-y-5">
+          <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-3">
+            <h3 class="text-base sm:text-lg font-bold text-white">
+              Análisis Estratégico: Donación vs. Préstamo Familiar + Aval
+            </h3>
+            <span class="text-xs font-mono text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 px-2.5 py-1 rounded">
+              Optimització Fiscal i Financera
+            </span>
+          </div>
+
+          <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+            Quan els progenitors volen donar o aportar una suma de diners per a l'adquisició d'un habitatge, triar l'estructura jurídica adequada marca la diferència entre assumir una elevada càrrega fiscal o blindar el patrimoni familiar amb total seguretat jurídica.
+          </p>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5 text-xs">
+            <div class="p-4 rounded-xl bg-[#151f30] border border-slate-800 space-y-2">
+              <span class="text-[10px] font-mono uppercase text-rose-400 font-bold">OPCIÓ A: DONACIÓ PURA</span>
+              <div class="font-extrabold text-white text-sm">Donació de Diners en Efectiu</div>
+              <p class="text-slate-300 leading-relaxed">
+                Tributa per l'Impost de Successions i Donacions (segons comunitat autònoma). Requereix justificar rigorosament l'origen dels fons davant la Hisenda Pública. No genera cap obligació de retorn.
+              </p>
+            </div>
+
+            <div class="p-4 rounded-xl bg-[#151f30] border border-emerald-500/50 space-y-2">
+              <span class="text-[10px] font-mono uppercase text-emerald-400 font-bold">OPCIÓ B: PRÉSTEC FAMILIAR + AVAL</span>
+              <div class="font-extrabold text-white text-sm">Préstec entre Particulars (0% TIN)</div>
+              <p class="text-slate-300 leading-relaxed">
+                S'instrumenta mitjançant contracte privat i model 600 (exent). No tributa per donació, crea un deure de devolució i permet als pares avalar la hipoteca amb el seu habitatge lliure de càrregues.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- MÓDULO DE DESCARGA DE CONTRATO ESTÁNDAR PDF -->
+        <div class="card-panel p-5 sm:p-6 space-y-4 border-amber-500/40 bg-[#101826]">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+            <span class="text-sm font-bold text-amber-400 flex items-center gap-2">
+              <span>📄</span> <span>Contracte Estàndard de Préstec Familiar (Descarregable)</span>
+            </span>
+            <span class="text-[11px] bg-amber-500/10 text-amber-300 border border-amber-500/30 px-2.5 py-0.5 rounded font-mono font-bold">PDF / Text</span>
+          </div>
+
+          <p class="text-xs text-slate-300 leading-relaxed">
+            Pots copiar, omplir i descarregar directament el model oficial de contracte de préstec entre familiars sense interessos (0% TIN) per presentar davant la Hisenda Autonòmica (Model 600):
+          </p>
+
+          <div class="bg-[#080d14] border border-slate-700 rounded-lg p-3.5 font-mono text-[11px] text-slate-300 max-h-56 overflow-y-auto space-y-2">
+            <p class="text-amber-400 font-bold">CONTRATO DE PRÉSTAMO ENTRE PARTICULARES SIN INTERESES</p>
+            <p>En [Ciudad], a [Día] de [Mes] de [Año]</p>
+            <p class="text-slate-400">REUNIDOS: De una parte, D./Dña. [Padre/Prestamista] y de otra D./Dña. [Hijo/Prestatario]...</p>
+            <p class="text-slate-400">PRIMERO.- El PRESTAMISTA entrega en este acto al PRESTATARIO la cantidad de [Importe en €] en concepto de préstamo...</p>
+            <p class="text-slate-400">SEGUNDO.- El presente préstamo se pacta con un tipo de interés nominal del 0% anual...</p>
+            <p class="text-slate-400">TERCERO.- El plazo de devolución será de [N] años mediante cuotas mensuales...</p>
+          </div>
+
+          <div class="flex flex-wrap gap-2 pt-1">
+            <button type="button" onclick="downloadContractText()" class="px-4 py-2.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs transition shadow-lg cursor-pointer">
+              📥 Descarregar / Copiar Model de Contracte (TXT/PDF)
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Columna Derecha: Simulador Financiero Interactivo -->
+      <div class="lg:col-span-5 space-y-6 lg:sticky lg:top-20">
+        <div class="card-panel p-5 sm:p-6 border-slate-700/90 shadow-2xl space-y-5">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+            <span class="text-sm font-bold text-amber-400 flex items-center gap-2">
+              <span>🧮</span> <span>Simulador de Viabilitat i Quotes</span>
+            </span>
+            <span class="text-[11px] bg-slate-800 text-emerald-400 px-2.5 py-0.5 rounded font-mono font-bold">100% Editable</span>
+          </div>
+
+          <p class="text-xs text-slate-300 leading-relaxed">
+            Introdueix les dades per calcular automàticament la quota hipotecària, la ràtio d'esforç i la viabilitat davant la banca:
+          </p>
+
+          <div class="space-y-3 text-xs">
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label class="text-[10px] font-bold uppercase text-slate-400 block mb-1">Edat Comprador:</label>
+                <input type="number" id="sim-edad-comprador" value="43" oninput="recalculateSimulation()" class="w-full bg-[#080d14] border border-slate-700 rounded px-2.5 py-2 text-white font-bold focus:border-emerald-500 focus:outline-none" />
+              </div>
+              <div>
+                <label class="text-[10px] font-bold uppercase text-slate-400 block mb-1">Edat Donants/Pares:</label>
+                <input type="number" id="sim-edad-padres" value="65" oninput="recalculateSimulation()" class="w-full bg-[#080d14] border border-slate-700 rounded px-2.5 py-2 text-white font-bold focus:border-emerald-500 focus:outline-none" />
+              </div>
+            </div>
+
+            <div>
+              <label class="text-[10px] font-bold uppercase text-slate-400 block mb-1">Preu de Venda de l'Inmueble (€):</label>
+              <input type="number" id="sim-preu-immoble" value="180000" step="5000" oninput="recalculateSimulation()" class="w-full bg-[#080d14] border border-amber-500/60 rounded px-2.5 py-2 text-amber-400 font-black focus:outline-none" />
+            </div>
+
+            <div>
+              <label class="text-[10px] font-bold uppercase text-slate-400 block mb-1">Import Aportació / Préstec Familiar (€):</label>
+              <input type="number" id="sim-aportacio-pares" value="50000" step="5000" oninput="recalculateSimulation()" class="w-full bg-[#080d14] border border-emerald-500/60 rounded px-2.5 py-2 text-emerald-400 font-black focus:outline-none" />
+            </div>
+
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label class="text-[10px] font-bold uppercase text-slate-400 block mb-1">Ingressos Nets Mensuals (€):</label>
+                <input type="number" id="sim-ingressos" value="1800" step="100" oninput="recalculateSimulation()" class="w-full bg-[#080d14] border border-slate-700 rounded px-2.5 py-2 text-white font-bold focus:border-emerald-500 focus:outline-none" />
+              </div>
+              <div>
+                <label class="text-[10px] font-bold uppercase text-slate-400 block mb-1">Despeses Fixes / Prèstecs (€):</label>
+                <input type="number" id="sim-despeses" value="300" step="50" oninput="recalculateSimulation()" class="w-full bg-[#080d14] border border-slate-700 rounded px-2.5 py-2 text-white font-bold focus:border-emerald-500 focus:outline-none" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Resultados Automáticos -->
+          <div class="p-4 rounded-xl bg-[#162234] border border-emerald-500/30 space-y-2 text-xs">
+            <div class="flex justify-between text-slate-300">
+              <span>Import a Finançar (Hipoteca):</span>
+              <span class="font-bold text-white" id="res-financar">130.000 €</span>
+            </div>
+            <div class="flex justify-between text-slate-300">
+              <span>Quota Hipotecària Estimada (3,25% TIN / 25a):</span>
+              <span class="font-bold text-amber-400" id="res-cuota-hipoteca">634,95 € / mes</span>
+            </div>
+            <div class="flex justify-between text-slate-300">
+              <span>Quota Préstec Familiar (10 anys):</span>
+              <span class="font-bold text-sky-400" id="res-cuota-familiar">416,67 € / mes</span>
+            </div>
+            <div class="border-t border-slate-700 pt-2 flex justify-between font-extrabold text-sm text-emerald-400">
+              <span>Ràtio d'Esfuerç Total:</span>
+              <span id="res-ratio-esfuerzo">58,4% (Requereix Aval)</span>
+            </div>
+          </div>
+
+          <div class="pt-1">
+            <button type="button" onclick="alert('Simulació validada per API 4173. Pots descarregar el contracte o consultar les FAQ per a més detalls.')" class="w-full py-3.5 px-5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs sm:text-sm uppercase tracking-wider transition emerald-glow flex items-center justify-center gap-2 cursor-pointer">
+              <span>✔</span> <span>Validar Viabilitat amb Criteris Bancaris</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- SECCIÓN 2: FAQ'S PREGUNTAS FRECUENTES -->
+    <div class="card-panel p-6 sm:p-8 space-y-6">
+      <div class="border-b border-slate-800 pb-3">
+        <span class="text-[11px] font-bold uppercase tracking-wider text-amber-400 block">❓ RESOLUCIÓ D'INCÒGNITES</span>
+        <h3 class="text-lg sm:text-xl font-extrabold text-white">Preguntes Frecuents (FAQ's) sobre Donacions i Préstecs Familiars</h3>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs sm:text-sm">
+        <div class="space-y-2 bg-[#151f30] p-4 rounded-xl border border-slate-800">
+          <h4 class="font-extrabold text-amber-400">1. Què és millor: donació en diners o préstec familiar?</h4>
+          <p class="text-slate-300 leading-relaxed">
+            Des del punt de vista fiscal i de protecció patrimonial, el <strong>préstec familiar documentat</strong> sol ser molt més segur i econòmic. La donació pura tributa per l'Impost de Successions i Donacions (amb costos elevats segons la comunitat autònoma) i exigeix justificar l'origen dels fons. El préstec familiar (al 0% d'interès legal i liquidat mitjançant el model 600 sense cost fiscal) no genera impostos de donació i crea un marc jurídic clar de devolució.
+          </p>
+        </div>
+
+        <div class="space-y-2 bg-[#151f30] p-4 rounded-xl border border-slate-800">
+          <h4 class="font-extrabold text-amber-400">2. Si els pares presten el diners, poden ser avalistes de la hipoteca?</h4>
+          <p class="text-slate-300 leading-relaxed">
+            <strong>Sí, de fet és una combinació excel·lent i molt ben vista per la banca.</strong> Aquesta estructura de "doble suport" permet que els pares ajudin amb la liquidez inicial mitjançant un préstec privat i responguin de la operació principal aportant la seva garantia (o un immoble lliure de càrregues), la qual cosa incrementa notablement les probabilitats d'aprovació de la hipoteca.
+          </p>
+        </div>
+
+        <div class="space-y-2 bg-[#151f30] p-4 rounded-xl border border-slate-800">
+          <h4 class="font-extrabold text-amber-400">3. A quin termini es pot fixar la devolució del préstec personal entre familiars?</h4>
+          <p class="text-slate-300 leading-relaxed">
+            La llei civil permet total llibertat per pactar el termini (per exemple, entre <strong>5 i 15 anys</strong>). No obstant això, hi ha dues normes clau: el criteri fiscal (el termini ha de ser realista per evitar que Hisenda ho consideri una donació encoberta) i el criteri bancari (convé pactar un termini ampli perquè la quota mensual sigui reduïda i no saturi la ràtio d'esfuerzo).
+          </p>
+        </div>
+
+        <div class="space-y-2 bg-[#151f30] p-4 rounded-xl border border-slate-800">
+          <h4 class="font-extrabold text-amber-400">4. Quina documentació exigeixen els bancs en aquesta estructura?</h4>
+          <p class="text-slate-300 leading-relaxed">
+            La banca sol·licitarà: del comprador (DNI, contracte laboral, nòmines recents o històric si és fix discontinu, extractes bancaris i CIRBE) i dels pares/avalistes (DNI, justificants de pensions i la <strong>Nota Simple</strong> del seu immoble lliure de càrregues).
+          </p>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ================= MODAL LEGAL ================= -->
+  <div id="legal-modal" class="fixed inset-0 z-[90] bg-slate-950/90 backdrop-blur-md hidden items-center justify-center p-4">
+    <div class="card-panel max-w-2xl w-full p-5 sm:p-6 border-slate-700 bg-[#101826] space-y-4 max-h-[85vh] flex flex-col">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3 shrink-0">
+        <h4 id="legal-modal-title" class="text-sm sm:text-base font-extrabold text-emerald-400">Informació Legal</h4>
+        <button type="button" onclick="closeLegalModal()" class="text-slate-400 hover:text-white text-sm font-bold px-2 py-1">✕</button>
+      </div>
+      <div id="legal-modal-body" class="text-xs text-slate-300 leading-relaxed space-y-3 overflow-y-auto pr-2"></div>
+    </div>
+  </div>
+
+  <!-- ================= FOOTER ================= -->
+  <footer class="border-t border-slate-800/80 bg-[#060a10] px-4 lg:px-8 py-6 mt-12">
+    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-xs text-slate-400">
+      <div class="space-y-1">
+        <div class="text-slate-200 font-semibold">
+          <span>Simulador Patrimonial Oficial · Level.immo</span>
+        </div>
+        <div class="font-mono text-[11px] text-slate-400" translate="no">
+          © 2026 LEVEL PUNTO IMMO 24365 SLU · API 4173 · AICAT 14200 (NIF B-26745430 · Travessera de Gràcia, 56, 3-1a, 08006 Barcelona)
+        </div>
+      </div>
+      <div class="flex flex-wrap gap-4 shrink-0">
+        <button type="button" onclick="openLegalModal('aviso')" class="hover:text-white underline">Avís Legal</button>
+        <button type="button" onclick="openLegalModal('privacidad')" class="hover:text-white underline">Privacitat i RGPD</button>
+        <button type="button" onclick="openLegalModal('cookies')" class="hover:text-white underline">Cookies i IA</button>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ================= SCRIPT JAVASCRIPT ================= -->
+  <script>
+    let gateSum = 8;
+    function initMathChallenges() {
+      const g1 = Math.floor(Math.random() * 5) + 3;
+      const g2 = Math.floor(Math.random() * 5) + 2;
+      gateSum = g1 + g2;
+      document.getElementById('gate-num1').textContent = g1;
+      document.getElementById('gate-num2').textContent = g2;
+    }
+    initMathChallenges();
+
+    function verifyGatekeeper() {
+      const val = parseInt(document.getElementById('gate-math-input').value, 10);
+      if (val === gateSum) {
+        document.getElementById('gatekeeper-screen').classList.add('hidden');
+        document.getElementById('gate-error').classList.add('hidden');
+      } else {
+        document.getElementById('gate-error').classList.remove('hidden');
+      }
+    }
+
+    function recalculateSimulation() {
+      const preu = parseFloat(document.getElementById('sim-preu-immoble').value) || 0;
+      const aportacio = parseFloat(document.getElementById('sim-aportacio-pares').value) || 0;
+      const ingressos = parseFloat(document.getElementById('sim-ingressos').value) || 1;
+      const despeses = parseFloat(document.getElementById('sim-despeses').value) || 0;
+
+      const financar = Math.max(0, preu - aportacio);
+      document.getElementById('res-financar').textContent = financar.toLocaleString('es-ES') + ' €';
+
+      const r = 0.0325 / 12;
+      const n = 300;
+      const cuotaHipoteca = financar > 0 ? (financar * r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1) : 0;
+      document.getElementById('res-cuota-hipoteca').textContent = cuotaHipoteca.toFixed(2) + ' € / mes';
+
+      const cuotaFamiliar = aportacio > 0 ? aportacio / 120 : 0;
+      document.getElementById('res-cuota-familiar').textContent = cuotaFamiliar.toFixed(2) + ' € / mes';
+
+      const totalCuotas = cuotaHipoteca + cuotaFamiliar + despeses;
+      const ratio = (totalCuotas / ingressos) * 100;
+
+      const ratioEl = document.getElementById('res-ratio-esfuerzo');
+      ratioEl.textContent = ratio.toFixed(1) + '% ' + (ratio > 35 ? '(Requereix Aval / Pares)' : '(Viable)');
+      ratioEl.className = ratio > 35 ? 'text-amber-400 font-extrabold' : 'text-emerald-400 font-extrabold';
+    }
+
+    function downloadContractText() {
+      const contractContent = `CONTRATO DE PRÉSTAMO ENTRE PARTICULARES SIN INTERESES\n\nEn [Ciudad], a [Día] de [Mes] de [Año]\n\nREUNIDOS\n\nDE UNA PARTE, D./Dña. [Nombre y Apellidos del Prestamista/Padre], mayor de edad, con DNI [Número de DNI] y domicilio en [Dirección completa]. En adelante, el "PRESTAMISTA".\n\nDE OTRA PARTE, D./Dña. [Nombre y Apellidos del Prestatario/Hijo], mayor de edad, con DNI [Número de DNI] y domicilio en [Dirección completa]. En adelante, el "PRESTATARIO".\n\nEXPONEN\n\nI. Que el PRESTAMISTA entrega en este acto al PRESTATARIO, que los recibe en concepto de préstamo, la cantidad de [Importe en euros] euros.\n\nESTIPULACIONES\n\nPRIMERA. - OBJETO DEL PRÉSTAMO: El PRESTAMISTA entrega al PRESTATARIO la cantidad citada mediante transferencia bancaria.\nSEGUNDA. - TIPO DE INTERÉS: El presente préstamo se pacta al 0% de interés nominal anual.\nTERCERA. - PLAZO Y DEVOLUCIÓN: El plazo será de [N] años mediante cuotas mensuales.\nCUARTA. - LIQUIDACIÓN FISCAL: Presentación del Modelo 600 ante la Hacienda Autonómica.\n\nFdo. Prestamista                             Fdo. Prestatario`;
+
+      const blob = new Blob([contractContent], { type: 'text/plain;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'Contrato_Prestamo_Familiar_Level.txt';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    const legalTexts = {
+      ca: {
+        aviso_title: "Avís Legal · LEVEL PUNTO IMMO 24365 SLU",
+        aviso_body: "<p>En compliment de la Llei 34/2002, s'informa que <strong>Level.immo</strong> està operada per <strong>LEVEL PUNTO IMMO 24365 SLU</strong> (NIF B-26745430 · API 4173 · AICAT 14200).</p>",
+        privacidad_title: "Política de Privacitat (RGPD)",
+        privacidad_body: "<p>Les dades s'utilitzen exclusivament per a la simulació patrimonial i gestió d'expedients sota el RGPD.</p>",
+        cookies_title: "Política de Cookies",
+        cookies_body: "<p>Aquesta web utilitza emmagatzematge de sessió tècnic.</p>"
+      },
+      es: {
+        aviso_title: "Aviso Legal · LEVEL PUNTO IMMO 24365 SLU",
+        aviso_body: "<p>En cumplimiento de la Ley 34/2002, <strong>Level.immo</strong> está operada por <strong>LEVEL PUNTO IMMO 24365 SLU</strong> (NIF B-26745430 · API 4173 · AICAT 14200).</p>",
+        privacidad_title: "Política de Privacidad (RGPD)",
+        privacidad_body: "<p>Los datos se utilizan exclusivamente para la simulación patrimonial bajo el RGPD.</p>",
+        cookies_title: "Política de Cookies",
+        cookies_body: "<p>Esta web utiliza almacenamiento técnico de sesión.</p>"
+      }
+    };
+
+    function openLegalModal(type) {
+      const title = document.getElementById('legal-modal-title');
+      const body = document.getElementById('legal-modal-body');
+      const pack = legalTexts['es'];
+      title.textContent = type === 'aviso' ? pack.aviso_title : (type === 'privacidad' ? pack.privacidad_title : pack.cookies_title);
+      body.innerHTML = type === 'aviso' ? pack.aviso_body : (type === 'privacidad' ? pack.privacidad_body : pack.cookies_body);
+      document.getElementById('legal-modal').classList.remove('hidden');
+      document.getElementById('legal-modal').classList.add('flex');
+    }
+
+    function closeLegalModal() {
+      document.getElementById('legal-modal').classList.add('hidden');
+      document.getElementById('legal-modal').classList.remove('flex');
+    }
+
+    function changeLanguage(lang) {}
+
+    function shareConsultoriaPage() {
+      navigator.clipboard.writeText(window.location.href);
+      alert('✓ Enllaç copiat al porta-retalls!');
+    }
+
+    function reopenWelcomeScreen() {
+      document.getElementById('gatekeeper-screen').classList.remove('hidden');
+    }
+  </script>
+</body>
+</html>
