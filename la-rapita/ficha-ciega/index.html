@@ -238,7 +238,7 @@
         .btn-quick-choice { background: rgba(197, 160, 89, 0.15); border: 1px solid var(--accent-gold); color: #fff; padding: 10px 12px; border-radius: 6px; font-size: 12.5px; font-weight: bold; cursor: pointer; text-align: left; transition: 0.2s; }
         .btn-quick-choice:hover { background: var(--accent-gold); color: #000; }
         
-        .btn-action-chat { display: block; width: 100%; background-color: var(--accent-green); color: #fff; text-align: center; padding: 12px; border-radius: 8px; font-size: 13.5px; font-weight: bold; cursor: pointer; border: none; }
+        .btn-action-chat { display: block; width: 100%; background: var(--accent-green); color: #fff; text-align: center; padding: 12px; border-radius: 8px; font-size: 13.5px; font-weight: bold; cursor: pointer; border: none; }
         .btn-secondary { background: transparent; border: 1px solid var(--border-color); color: var(--text-muted); padding: 8px 12px; border-radius: 6px; font-size: 12px; cursor: pointer; }
         
         .toast-notification { position: fixed; top: 75px; right: 20px; background: var(--accent-green); color: #090d16; padding: 12px 18px; border-radius: 8px; font-weight: 800; font-size: 13px; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5); transform: translateX(150%); transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1); z-index: 11000; }
@@ -439,7 +439,7 @@
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 20px;">
                 <div class="input-group-sim">
                     <label data-i18n="sim_label_aportacion">Aportación Inicial (€)</label>
-                    <input type="number" id="sim-aportacion" value="21600" min="21600" step="500" oninput="calcularCuotaLocal()">
+                    <input type="number" id="sim-aportacion" value="21600" min="0" step="500" oninput="calcularCuotaLocal()">
                 </div>
                 <div class="input-group-sim">
                     <label data-i18n="sim_label_plazo">Plazo (Años)</label>
@@ -554,8 +554,8 @@
 
     <div class="toast-notification" id="toast-msg"></div>
 
-    <!-- MODAL AVISO LEGAL RÁPIDO -->
-    <div id="modal-legal-rapido" class="modal-overlay" style="z-index: 10005;" onclick="this.style.display='none'">
+    <!-- MODAL AVISO LEGAL RÁPIDO (Z-INDEX AUMENTADO) -->
+    <div id="modal-legal-rapido" class="modal-overlay" style="z-index: 9999999;" onclick="this.style.display='none'">
         <div class="elena-modal-box" style="max-width: 520px;" onclick="event.stopPropagation()">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
                 <h3 id="modal-legal-titulo" style="margin:0; color:var(--accent-green); font-size:16px;">Aviso Legal y Condiciones</h3>
@@ -566,7 +566,7 @@
     </div>
 
     <!-- MODAL ELENA (VISITAS) -->
-    <div id="modal-elena" class="modal-overlay">
+    <div id="modal-elena" class="modal-overlay" style="z-index: 10000;">
         <div class="elena-modal-box">
             <div class="elena-header">
                 <div class="victoria-avatar">E</div>
@@ -757,7 +757,7 @@
     </div>
 
     <!-- MODAL CONFIRMACIÓN PRE-SCORING -->
-    <div id="ps-success-modal" class="custom-modal-overlay">
+    <div id="ps-success-modal" class="custom-modal-overlay" style="z-index: 10000000;">
         <div class="custom-modal-box" style="text-align: center;">
             <div style="font-size: 36px; margin-bottom: 10px;">✅</div>
             <h4 style="color: var(--accent-green); font-size: 16px; margin: 0 0 10px 0;" data-i18n="ps_success_title">¡Solicitud de Pre-scoring Registrada!</h4>
@@ -1002,7 +1002,11 @@
         // ==========================================
         function calcularCuotaLocal() {
             const precio = 72000;
-            const aportacion = parseFloat(document.getElementById('sim-aportacion').value) || 0;
+            let aportacion = document.getElementById('sim-aportacion').value;
+            // Si el campo está vacío, consideramos aportación 0 para el cálculo temporal,
+            // pero mantenemos el campo vacío visualmente.
+            aportacion = aportacion === "" ? 0 : parseFloat(aportacion);
+            
             const plazoAnios = parseInt(document.getElementById('sim-plazo').value) || 30;
             const interesAnual = parseFloat(document.getElementById('sim-interes').value) || 0;
 
@@ -1369,10 +1373,12 @@
 
         function evaluarPreScoringCompleto() {
             const tipologia = document.getElementById('ps-field-tipologia').value;
-            const edad = parseInt(document.getElementById('ps-field-edad').value, 10) || 0;
-            const ingresos = parseFloat(document.getElementById('ps-field-ingresos').value) || 0;
-            const cargas = parseFloat(document.getElementById('ps-field-cargas').value) || 0;
-            const alquiler = parseFloat(document.getElementById('ps-field-alquiler').value) || 0;
+            // Manejamos strings vacíos para no romper el cálculo
+            const edad = document.getElementById('ps-field-edad').value === "" ? 0 : parseInt(document.getElementById('ps-field-edad').value, 10);
+            const ingresos = document.getElementById('ps-field-ingresos').value === "" ? 0 : parseFloat(document.getElementById('ps-field-ingresos').value);
+            const cargas = document.getElementById('ps-field-cargas').value === "" ? 0 : parseFloat(document.getElementById('ps-field-cargas').value);
+            const alquiler = document.getElementById('ps-field-alquiler').value === "" ? 0 : parseFloat(document.getElementById('ps-field-alquiler').value);
+            
             const badge = document.getElementById('ps-scoring-badge');
             const btnSiguiente = document.getElementById('ps-btn-siguiente');
             const lang = document.getElementById('language-selector').value;
@@ -1385,7 +1391,10 @@
 
             let plazoMaximoPermitido = 30;
             let ltvBancario = 0.80; 
-            if (tipologia.includes("Local Comercial")) { plazoMaximoPermitido = 15; ltvBancario = 0.70; }
+            if (tipologia.includes("Local Comercial") || tipologia.includes("Terciario") || tipologia.includes("Terciari")) { 
+                plazoMaximoPermitido = 15; 
+                ltvBancario = 0.70; 
+            }
 
             const plazoPorEdad = Math.min(plazoMaximoPermitido, EDAD_MAXIMA_VENCIMIENTO_BANCO - edad);
             if (plazoPorEdad < 5) {
@@ -1478,15 +1487,15 @@
                 numero_titulares_declarados: document.getElementById('ps-field-num-titulares').value,
                 titular_principal: {
                     nombre: nombreTitular,
-                    edad: parseInt(document.getElementById('ps-field-edad').value, 10),
+                    edad: document.getElementById('ps-field-edad').value === "" ? 0 : parseInt(document.getElementById('ps-field-edad').value, 10),
                     telefono: "+34" + rawTel,
                     email: document.getElementById('ps-field-email').value.trim()
                 },
                 observaciones_cotitulares: document.getElementById('ps-field-observaciones-cotitulares').value.trim(),
                 datos_financieros: {
-                    ingresos_mensuales: parseFloat(document.getElementById('ps-field-ingresos').value) || 0,
-                    cargas_mensuales: parseFloat(document.getElementById('ps-field-cargas').value) || 0,
-                    alquiler_actual: parseFloat(document.getElementById('ps-field-alquiler').value) || 0,
+                    ingresos_mensuales: document.getElementById('ps-field-ingresos').value === "" ? 0 : parseFloat(document.getElementById('ps-field-ingresos').value),
+                    cargas_mensuales: document.getElementById('ps-field-cargas').value === "" ? 0 : parseFloat(document.getElementById('ps-field-cargas').value),
+                    alquiler_actual: document.getElementById('ps-field-alquiler').value === "" ? 0 : parseFloat(document.getElementById('ps-field-alquiler').value),
                     resultado_scoring: estadoActualScoringPS,
                     plazo_maximo_anios_edad: plazoAniosGlobalPS,
                     tipo_fijo_orientativo_tin: TIPO_FIJO_ANUAL_ORIENTATIVO,
