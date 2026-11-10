@@ -30,6 +30,9 @@
     .emerald-glow {
       box-shadow: 0 0 32px rgba(16, 185, 129, 0.45);
     }
+    .amber-glow {
+      box-shadow: 0 0 35px rgba(245, 158, 11, 0.5);
+    }
     .input-clear {
       background-color: #05080f;
       border: 2px solid #3b4d6b;
@@ -133,7 +136,6 @@
   <!-- ================= PANTALLA 1: PORTADA CON VÍDEO DE LA CHICA CON GAFAS VIRTUALES EN AMBAS APARIENCIAS RESPONSIVE ================= -->
   <div id="gatekeeper-screen" class="fixed inset-0 z-50 bg-[#04070d] overflow-y-auto no-print p-4 flex items-center justify-center">
     
-    <!-- Vídeo de Fondo de la Chica con Gafas Virtuales (Responsive para Móvil y PC/Tablet + Imágenes de Respaldo) -->
     <div class="fixed inset-0 overflow-hidden pointer-events-none z-0 bg-[#04070d]">
       <video id="intro-bg-video" autoplay muted loop playsinline preload="auto" poster="https://app.level-i.com/donaciones-familiares/fondo_horizontal.jpg" class="intro-video-full filter brightness-[0.55] contrast-[1.1]">
         <source src="https://app.level-i.com/consultoria/consultoria.mp4" type="video/mp4">
@@ -216,7 +218,7 @@
     </div>
   </div>
 
-  <!-- ================= CABECERA PRINCIPAL FIJA CON BANDERAS SVG REALES ================= -->
+  <!-- ================= CABECERA PRINCIPAL FIJA (SIN EL BOTÓN LEVEL-HUNTER HASTA QUE RELLENE Y PUBLIQUE EL ANUNCIO) ================= -->
   <header class="sticky top-0 z-40 bg-[#070b12]/95 backdrop-blur border-b-2 border-slate-800 px-4 py-3.5 no-print">
     <div class="max-w-5xl mx-auto flex flex-wrap items-center justify-between gap-3">
       
@@ -234,6 +236,7 @@
         </span>
       </div>
 
+      <!-- Solo selector de Banderas SVG en el Header inicialmente -->
       <div class="flex flex-wrap items-center gap-2.5">
         <div class="flex items-center gap-1.5 bg-slate-950 p-1.5 rounded-xl border border-slate-700" translate="no">
           <button type="button" onclick="changeLanguage('es')" id="btn-lang-es" class="px-3.5 py-2 rounded-lg font-extrabold text-xs bg-emerald-500 text-slate-950 flex items-center gap-1.5 transition cursor-pointer">
@@ -245,10 +248,6 @@
             <span>CAT Català</span>
           </button>
         </div>
-
-        <button type="button" onclick="openElenaModal()" class="px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs sm:text-sm transition shadow-lg cursor-pointer flex items-center gap-1.5">
-          <span>🎯</span> <span data-i18n="hdr_cta">Activar LEVEL-Hunter</span>
-        </button>
       </div>
 
     </div>
@@ -333,7 +332,7 @@
 
       </div>
 
-      <!-- El Montaje en 4 FASES sencillas (Con "FASE 1..4" unificado para Español y Catalán) -->
+      <!-- El Montaje en 4 FASES sencillas -->
       <div class="space-y-4">
         <h3 class="text-xl sm:text-2xl font-black text-amber-400 uppercase tracking-wide" data-i18n="s1_how_title">
           🛠️ Cómo funciona el Montaje de la Operación (En 4 fases sencillas):
@@ -729,7 +728,7 @@
       </div>
     </section>
 
-    <!-- ================= FASE 2: PANEL DE DEMANDA ACTIVA A ANCHO COMPLETO (CON EMAIL OBLIGATORIO DEL INTERESADO) ================= -->
+    <!-- ================= FASE 2: PANEL DE DEMANDA ACTIVA A ANCHO COMPLETO (CON DESBLOQUEO SECUENCIAL LEVEL-HUNTER) ================= -->
     <section id="demanda-section" class="card-panel p-6 sm:p-10 space-y-8 border-emerald-500/60 bg-gradient-to-b from-[#0e192d] to-[#070b12]">
       
       <div class="flex flex-wrap items-center justify-between gap-4 border-b-2 border-slate-800 pb-5">
@@ -741,7 +740,8 @@
             No pierda ningún piso mientras el banco tramita sus papeles: Publique su Demanda Activa
           </h3>
         </div>
-        <button type="button" onclick="openElenaModal()" class="btn-action bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-sm emerald-glow">
+        <!-- Botón de cabecera OCULTO hasta que rellene y publique el anuncio abajo -->
+        <button type="button" id="btn-hunter-top-section" onclick="openElenaModal()" class="hidden btn-action bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-sm emerald-glow">
           🎯 <span data-i18n="dm_top_btn">Activar LEVEL-Hunter (1.000 € + IVA)</span>
         </button>
       </div>
@@ -767,7 +767,7 @@
         </div>
       </div>
 
-      <!-- Formulario de Demanda Activa a ancho completo + DATOS Y EMAIL OBLIGATORIO DEL INTERESADO COMPRADOR -->
+      <!-- Formulario de Demanda Activa a ancho completo + DATOS OBLIGATORIOS PARA DESBLOQUEAR LEVEL-HUNTER -->
       <div class="w-full space-y-5 bg-slate-950 p-6 sm:p-8 rounded-2xl border-2 border-slate-800">
         <h4 class="text-lg sm:text-xl font-black text-amber-400 uppercase" data-i18n="dm_form_title">
           ✍️ Escriba cómo es la vivienda que busca y sus datos de contacto para publicar su anuncio:
@@ -800,14 +800,14 @@
 
           <div>
             <label class="text-sm font-bold text-slate-300 block mb-1.5" data-i18n="dm_lbl_zone">
-              Municipio o Barrio donde quiere comprar:
+              Municipio o Barrio donde quiere comprar (*):
             </label>
             <input type="text" id="d-zona" value="" oninput="updateDemandaPreview()" data-i18n-placeholder="dm_ph_zone" placeholder="Ej: Sabadell, Terrassa, Barcelona, La Ràpita, Tortosa..." class="input-clear" />
           </div>
 
           <div>
             <label class="text-sm font-bold text-slate-300 block mb-1.5" data-i18n="dm_lbl_type">
-              Tipo de vivienda:
+              Tipo de vivienda (*):
             </label>
             <select id="d-tipus" onchange="updateDemandaPreview()" class="input-clear">
               <option value="1" data-i18n="dm_op1">Piso con balcón o terraza</option>
@@ -819,20 +819,20 @@
 
           <div>
             <label class="text-sm font-bold text-slate-300 block mb-1.5" data-i18n="dm_lbl_budget">
-              Presupuesto máximo de compra (€):
+              Presupuesto máximo de compra (€) (*):
             </label>
             <input type="number" id="d-pressupost" value="0" min="0" step="5000" onfocus="clearZero(this)" onblur="restoreZero(this)" oninput="updateDemandaPreview()" class="input-clear text-amber-400" />
           </div>
 
           <div>
             <label class="text-sm font-bold text-slate-300 block mb-1.5" data-i18n="dm_lbl_reqs">
-              ¿Qué necesita la vivienda? (Habitaciones, ascensor, parking...):
+              ¿Qué necesita la vivienda? (Habitaciones, ascensor, parking...) (*):
             </label>
             <input type="text" id="d-requisits" value="" oninput="updateDemandaPreview()" data-i18n-placeholder="dm_ph_reqs" placeholder="Ej: Mínimo 3 habitaciones, luminoso, listo para entrar a vivir..." class="input-clear" />
           </div>
 
-          <p id="d-error-msg" class="text-rose-400 text-sm font-bold hidden" data-i18n="dm_err_contact">
-            ⚠️ Por favor, introduzca su Nombre, un Correo Electrónico válido (con @) y su Teléfono para publicar su anuncio provisional.
+          <p id="d-error-msg" class="text-rose-400 text-sm font-bold hidden p-4 rounded-xl bg-rose-950/60 border border-rose-500/50" data-i18n="dm_err_contact">
+            ⚠️ Para publicar su anuncio y desbloquear la activación de LEVEL-Hunter, rellene por favor todos los datos: Nombre, Correo Electrónico (con @), Teléfono, Municipio, Presupuesto mayor que 0 € y qué necesita la vivienda.
           </p>
 
           <button type="button" onclick="publishProvisionalDemand()" class="btn-action bg-emerald-500 hover:bg-emerald-400 text-slate-950 w-full emerald-glow uppercase">
@@ -844,7 +844,7 @@
       <!-- Previsualización a ancho completo debajo del formulario -->
       <div class="w-full space-y-6">
         
-        <div class="p-6 sm:p-8 rounded-2xl bg-[#050911] border-2 border-emerald-500 space-y-4 relative shadow-2xl">
+        <div id="preview-demand-card" class="p-6 sm:p-8 rounded-2xl bg-[#050911] border-2 border-emerald-500 space-y-5 relative shadow-2xl">
           <div class="flex flex-wrap items-center justify-between gap-2">
             <span class="text-sm font-extrabold uppercase text-emerald-400 tracking-wider" data-i18n="prev_card_head">
               👁️ ASÍ VERÁN SU ANUNCIO PROPIETARIOS Y COLABORADORES:
@@ -866,8 +866,24 @@
 
           <div class="flex flex-wrap items-center justify-between gap-2 text-sm text-slate-400 pt-1">
             <span translate="no">level.immo · app.level-i.com/demanda-activa</span>
-            <button type="button" onclick="openElenaModal()" class="text-emerald-400 hover:underline font-extrabold cursor-pointer" data-i18n="prev_activate_link">
-              Activar búsqueda prioritaria →
+            <span id="prev-locked-hint" class="text-amber-300 text-xs font-bold" data-i18n="prev_locked_msg">
+              🔒 Rellene los datos de arriba y pulse "Publicar Mi Anuncio Provisional" para activar LEVEL-Hunter
+            </span>
+          </div>
+
+          <!-- BLOQUE DESBLOQUEABLE DE ACTIVACIÓN LEVEL-HUNTER (APARECE JUSTO AL PUBLICAR EL ANUNCIO COMO PEDISTE EN EL VÍDEO) -->
+          <div id="unlocked-hunter-cta-box" class="hidden p-6 rounded-2xl bg-gradient-to-r from-emerald-950 via-slate-900 to-emerald-950 border-2 border-amber-400 amber-glow space-y-4 text-center">
+            <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-emerald-500 text-slate-950 font-black text-xs uppercase">
+              <span>✅</span> <span data-i18n="unlocked_badge">¡ANUNCIO VALIDADO Y PUBLICADO! SIGUIENTE PASO DESBLOQUEADO</span>
+            </div>
+            <h5 class="text-xl sm:text-2xl font-black text-white" data-i18n="unlocked_title">
+              Ahora ya puede activar su Mandato Prioritario LEVEL-Hunter "Compra a la Carta"
+            </h5>
+            <p class="text-slate-200 text-sm sm:text-base max-w-2xl mx-auto" data-i18n="unlocked_desc">
+              Pulse el botón de abajo para abrir su expediente oficial con Elena IA y generar su Hoja de Encargo / Volante de Pago (1.000 € + IVA).
+            </p>
+            <button type="button" onclick="openElenaModal()" class="btn-action bg-amber-500 hover:bg-amber-400 text-slate-950 w-full sm:w-auto px-8 py-4 text-base sm:text-lg uppercase shadow-2xl">
+              🎯 <span data-i18n="dm_top_btn">Activar LEVEL-Hunter (1.000 € + IVA)</span>
             </button>
           </div>
         </div>
@@ -902,7 +918,7 @@
       </div>
     </section>
 
-    <!-- ================= FASE 3 (AL FINAL): CONTRATO DE PRÉSTAMO FAMILIAR A ANCHO COMPLETO (SIN DOCUSIGN) ================= -->
+    <!-- ================= FASE 3 (AL FINAL): CONTRATO DE PRÉSTAMO FAMILIAR A ANCHO COMPLETO ================= -->
     <section id="sec-contract" class="card-panel p-6 sm:p-10 space-y-8">
       
       <div id="contract-controls" class="space-y-6 no-print">
@@ -1301,6 +1317,7 @@
     let gateSum = 7;
     let elenaSum = 7;
     let currentVoterName = "--";
+    let demandPublishedUnlocked = false;
     const sessionId = "usr_" + Math.random().toString(36).substring(2, 11);
     let clienteIP = "Desconocida";
 
@@ -1539,7 +1556,6 @@
         footer_legal: "Aviso Legal",
         footer_privacy: "Privacidad y RGPD",
         footer_cookies: "Cookies e IA",
-        hdr_cta: "Activar LEVEL-Hunter",
         s1_badge: "EXPLICADO CLARO, SIN TECNICISMOS Y CON LAS CUENTAS CLARAS",
         s1_title: "¿Quiere comprar su vivienda con ayuda de sus padres, pero teme a Hacienda o que el banco le diga que no?",
         s1_lead: "Muchas personas trabajadoras pagan su alquiler religiosamente mes a mes, pero no tienen ahorros suficientes para la entrada de un piso o tienen contratos discontinuos. Cuando los padres (pensionistas o ahorradores) quieren dejarles ese dinero, <strong>cometen el error de hacer una transferencia directa o una donación cara</strong>. Aquí le enseñamos cómo montar la operación de forma 100% legal, pagando 0 € de impuestos por el préstamo familiar y logrando que el banco apruebe la hipoteca.",
@@ -1634,23 +1650,26 @@
         dm_lbl_buyer_name: "Nombre y apellidos del comprador (*):",
         dm_lbl_buyer_email: "Correo electrónico del comprador (Obligatorio *):",
         dm_lbl_buyer_phone: "Teléfono / WhatsApp del comprador (*):",
-        dm_err_contact: "⚠️ Por favor, introduzca su Nombre, un Correo Electrónico válido (con @) y su Teléfono para publicar su anuncio provisional.",
-        dm_lbl_zone: "Municipio o Barrio donde quiere comprar:",
+        dm_err_contact: "⚠️ Para publicar su anuncio y desbloquear la activación de LEVEL-Hunter, rellene por favor todos los datos: Nombre, Correo Electrónico (con @), Teléfono, Municipio, Presupuesto mayor que 0 € y qué necesita la vivienda.",
+        dm_lbl_zone: "Municipio o Barrio donde quiere comprar (*):",
         dm_ph_zone: "Ej: Sabadell, Terrassa, Barcelona, La Ràpita, Tortosa...",
-        dm_lbl_type: "Tipo de vivienda:",
+        dm_lbl_type: "Tipo de vivienda (*):",
         dm_op1: "Piso con balcón o terraza",
         dm_op2: "Casa o Chalet familiar",
         dm_op3: "Planta baja o piso con ascensor",
         dm_op4: "Ático soleado",
-        dm_lbl_budget: "Presupuesto máximo de compra (€):",
-        dm_lbl_reqs: "¿Qué necesita la vivienda? (Habitaciones, ascensor, parking...):",
+        dm_lbl_budget: "Presupuesto máximo de compra (€) (*):",
+        dm_lbl_reqs: "¿Qué necesita la vivienda? (Habitaciones, ascensor, parking...) (*):",
         dm_ph_reqs: "Ej: Mínimo 3 habitaciones, luminoso, listo para entrar a vivir...",
         dm_btn_publish: "Publicar Mi Anuncio Provisional y Avisar a Colaboradores",
         prev_card_head: "👁️ ASÍ VERÁN SU ANUNCIO PROPIETARIOS Y COLABORADORES:",
         prev_badge_wait: "⚡ BORRADOR EN VIVO",
         prev_badge_live: "🟢 PUBLICADO EN DEMANDA ACTIVA",
         prev_verified: "✔ Financiación familiar + Hipoteca en trámite",
-        prev_activate_link: "Activar búsqueda prioritaria →",
+        prev_locked_msg: "🔒 Rellene los datos de arriba y pulse \"Publicar Mi Anuncio Provisional\" para activar LEVEL-Hunter",
+        unlocked_badge: "¡ANUNCIO VALIDADO Y PUBLICADO! SIGUIENTE PASO DESBLOQUEADO",
+        unlocked_title: "Ahora ya puede activar su Mandato Prioritario LEVEL-Hunter \"Compra a la Carta\"",
+        unlocked_desc: "Pulse el botón de abajo para abrir su expediente oficial con Elena IA y generar su Hoja de Encargo / Volante de Pago (1.000 € + IVA).",
         live_demands_title: "🔥 Otros compradores buscando ahora mismo en Demanda Activa:",
         ld1_t: "Piso 3 hab. con ascensor (Sabadell / Terrassa)",
         ld1_d: "Comprador con préstamo familiar firmado · Hasta 195.000 €",
@@ -1710,7 +1729,7 @@
         v_btn_close: "Cerrar",
         ftr_lock: "Vídeo Portada",
         alert_copied: "✓ El texto completo del contrato se ha copiado al portapapeles.",
-        alert_published: "✓ ¡Su anuncio provisional ya está activo y enviado a nuestra central! Nuestros Advisors y colaboradores de la zona han recibido la alerta.",
+        alert_published: "✓ ¡Su anuncio provisional ya está publicado! Se ha desbloqueado justo debajo el botón para activar su expediente LEVEL-Hunter.",
         alert_tpv_soon: "💳 Pasarela TPV Banc Sabadell (Próximamente): Estamos integrando el pago directo con tarjeta y facturación automática. Por ahora, puede realizar el abono mediante transferencia a la cuenta BS BANC SABADELL ES53 0081 0190 4800 0163 8565 indicada en su volante."
       },
       ca: {
@@ -1725,7 +1744,6 @@
         footer_legal: "Avís Legal",
         footer_privacy: "Privacitat i RGPD",
         footer_cookies: "Cookies i IA",
-        hdr_cta: "Activar LEVEL-Hunter",
         s1_badge: "EXPLICAT CLAR, SENSE TECNICISMES I AMB ELS COMPTES CLARS",
         s1_title: "Vol comprar el seu habitatge amb l'ajuda dels seus pares, però té por d'Hisenda o que el banc li digui que no?",
         s1_lead: "Moltes persones treballadores paguen el seu lloguer puntualment mes a mes, però no tenen estalvis suficients per a l'entrada d'un pis o tenen contractes discontinus. Quan els pares (pensionistes o estalviadors) volen deixar-los aquests diners, <strong>cometen l'error de fer una transferència directa o una donació cara</strong>. Aquí li ensenyem com muntar l'operació de forma 100% legal, pagant 0 € d'impostos pel préstec familiar i aconseguint que el banc aprovi la hipoteca.",
@@ -1820,23 +1838,26 @@
         dm_lbl_buyer_name: "Nom i cognoms del comprador (*):",
         dm_lbl_buyer_email: "Correu electrònic del comprador (Obligatori *):",
         dm_lbl_buyer_phone: "Telèfon / WhatsApp del comprador (*):",
-        dm_err_contact: "⚠️ Si us plau, introdueixi el seu Nom, un Correu Electrònic vàlid (amb @) i el seu Telèfon per publicar el seu anunci provisional.",
-        dm_lbl_zone: "Municipi o Barri on vol comprar:",
+        dm_err_contact: "⚠️ Per publicar el seu anunci i desbloquejar l'activació de LEVEL-Hunter, ompli si us plau totes les dades: Nom, Correu Electrònic (amb @), Telèfon, Municipi, Pressupost major que 0 € i què necessita l'habitatge.",
+        dm_lbl_zone: "Municipi o Barri on vol comprar (*):",
         dm_ph_zone: "Ex: Sabadell, Terrassa, Barcelona, La Ràpita, Tortosa...",
-        dm_lbl_type: "Tipus d'habitatge:",
+        dm_lbl_type: "Tipus d'habitatge (*):",
         dm_op1: "Pis amb balcó o terrassa",
         dm_op2: "Casa o Xalet familiar",
         dm_op3: "Planta baixa o pis amb ascensor",
         dm_op4: "Àtic assolellat",
-        dm_lbl_budget: "Pressupost màxim de compra (€):",
-        dm_lbl_reqs: "Què necessita l'habitatge? (Habitacions, ascensor, pàrquing...):",
+        dm_lbl_budget: "Pressupost màxim de compra (€) (*):",
+        dm_lbl_reqs: "Què necessita l'habitatge? (Habitacions, ascensor, pàrquing...) (*):",
         dm_ph_reqs: "Ex: Mínim 3 habitacions, lluminós, llest per entrar a viure...",
         dm_btn_publish: "Publicar El Meu Anunci Provisional i Avisar Col·laboradors",
         prev_card_head: "👁️ AIXÍ VEURAN EL SEU ANUNCI PROPIETARIS I COL·LABORADORS:",
         prev_badge_wait: "⚡ ESBORRANY EN VIU",
         prev_badge_live: "🟢 PUBLICAT A DEMANDA ACTIVA",
         prev_verified: "✔ Finançament familiar + Hipoteca en tràmit",
-        prev_activate_link: "Activar cerca prioritària →",
+        prev_locked_msg: "🔒 Ompli les dades de dalt i premi \"Publicar El Meu Anunci Provisional\" per activar LEVEL-Hunter",
+        unlocked_badge: "ANUNCI VALIDAT I PUBLICAT! SEGÜENT PAS DESBLOQUEJAT",
+        unlocked_title: "Ara ja pot activar el seu Mandat Prioritari LEVEL-Hunter \"Compra a la Carta\"",
+        unlocked_desc: "Premi el botó de sota per obrir el seu expedient oficial amb Elena IA i generar el seu Full d'Encàrrec / Volant de Pagament (1.000 € + IVA).",
         live_demands_title: "🔥 Altres compradors buscant ara mateix a Demanda Activa:",
         ld1_t: "Pis 3 hab. amb ascensor (Sabadell / Terrassa)",
         ld1_d: "Comprador amb préstec familiar signat · Fins a 195.000 €",
@@ -1896,7 +1917,7 @@
         v_btn_close: "Tancar",
         ftr_lock: "Vídeo Portada",
         alert_copied: "✓ El text complet del contracte s'ha copiat al porta-retalls.",
-        alert_published: "✓ El seu anunci provisional ja està actiu i enviat a la nostra central! Els nostres Advisors i col·laboradors de la zona han rebut l'alerta.",
+        alert_published: "✓ El seu anunci provisional ja està publicat! S'ha desbloquejat just a sota el botó per activar el seu expedient LEVEL-Hunter.",
         alert_tpv_soon: "💳 Passarel·la TPV Banc Sabadell (Properament): Estem integrant el pagament directe amb targeta i facturació automàtica. Per ara, pot realitzar l'abonament mitjançant transferència al compte BS BANC SABADELL ES53 0081 0190 4800 0163 8565 indicat al seu volant."
       }
     };
@@ -1982,8 +2003,11 @@
         fechaInput.value = "10 de noviembre de 2026";
       }
 
-      // Actualizar etiqueta dinámica "Mandante / Mandant: Nombre" en el volante si está abierto
       document.getElementById('v-sign-client-dynamic').textContent = `${dict.v_mandante_prefix}: ${currentVoterName}`;
+
+      if (demandPublishedUnlocked) {
+        document.getElementById('prev-badge-state').textContent = dict.prev_badge_live;
+      }
 
       updateSubtitlesByProgress();
       syncMuteUI();
@@ -2264,28 +2288,39 @@
       }
     }
 
-    // DISPARO WEBHOOK 1: PUBLICACIÓN DE ANUNCIO PROVISIONAL DE DEMANDA ACTIVA (EXIGE EMAIL DEL INTERESADO COMPRADOR)
+    // DISPARO WEBHOOK 1 + DESBLOQUEO DEL BOTÓN LEVEL-HUNTER CUANDO TODOS LOS DATOS DEL ANUNCIO ESTÁN RELLENADOS
     function publishProvisionalDemand() {
       const buyerName = document.getElementById('d-buyer-name').value.trim();
       const buyerEmail = document.getElementById('d-buyer-email').value.trim();
       const buyerPhone = document.getElementById('d-buyer-phone').value.replace(/\D/g, '');
+      const zonaVal = document.getElementById('d-zona').value.trim();
+      const presVal = parseFloat(document.getElementById('d-pressupost').value) || 0;
+      const reqsVal = document.getElementById('d-requisits').value.trim();
       const errEl = document.getElementById('d-error-msg');
 
-      if (!buyerName || !buyerEmail.includes('@') || !buyerEmail.includes('.') || buyerPhone.length < 6) {
+      // Validación estricta de todos los campos del anuncio como pides en el vídeo
+      if (!buyerName || !buyerEmail.includes('@') || !buyerEmail.includes('.') || buyerPhone.length < 6 || !zonaVal || presVal <= 0 || !reqsVal) {
         errEl.classList.remove('hidden');
         return;
       }
       errEl.classList.add('hidden');
 
-      // Autocompletar también en el modal de Elena para ahorrarle trabajo al comprador
-      if (!document.getElementById('hunter-name').value) document.getElementById('hunter-name').value = buyerName;
-      if (!document.getElementById('hunter-email').value) document.getElementById('hunter-email').value = buyerEmail;
-      if (!document.getElementById('hunter-phone').value) document.getElementById('hunter-phone').value = buyerPhone;
+      // Autocompletar los datos en el modal de Elena para que ya los tenga listos
+      document.getElementById('hunter-name').value = buyerName;
+      document.getElementById('hunter-email').value = buyerEmail;
+      document.getElementById('hunter-phone').value = buyerPhone;
 
-      playSpecialSuccessSound('radar');
+      demandPublishedUnlocked = true;
+      playSpecialSuccessSound('cash');
+
+      // Cambiar estado del anuncio y DESBLOQUEAR los botones de LEVEL-Hunter
       const badge = document.getElementById('prev-badge-state');
       badge.textContent = i18n[currentLang].prev_badge_live;
       badge.className = "px-3 py-1 rounded-full bg-emerald-500 text-slate-950 font-mono text-xs font-black";
+
+      document.getElementById('prev-locked-hint').classList.add('hidden');
+      document.getElementById('unlocked-hunter-cta-box').classList.remove('hidden');
+      document.getElementById('btn-hunter-top-section').classList.remove('hidden');
 
       const isCatalanSession = (currentLang === 'ca');
       const dossierLangCode = isCatalanSession ? 'CA' : 'ES';
@@ -2305,10 +2340,10 @@
           email: buyerEmail
         },
         anuncio_provisional: {
-          zona: document.getElementById('d-zona').value.trim() || 'Por definir',
+          zona: zonaVal,
           titular_anuncio: document.getElementById('prev-titulo').textContent,
           presupuesto: document.getElementById('prev-pres').textContent,
-          requisitos: document.getElementById('prev-req').textContent
+          requisitos: reqsVal
         },
         simulacion_actual: {
           precio_vivienda: document.getElementById('res-preu-base').textContent,
@@ -2323,7 +2358,7 @@
         fetch(WEBHOOK_MAKE, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payloadDemanda) })
       ]);
 
-      alert(i18n[currentLang].alert_published);
+      document.getElementById('unlocked-hunter-cta-box').scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
 
     function refreshElenaGreeting() {
