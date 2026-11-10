@@ -37,7 +37,7 @@
       padding: 0.95rem 1.15rem;
       color: #ffffff;
       font-weight: 800;
-      font-size: 1.3rem;
+      font-size: 1.25rem;
       width: 100%;
       transition: all 0.2s;
     }
@@ -59,7 +59,7 @@
     }
     .btn-action {
       padding: 1.15rem 1.6rem;
-      font-size: 1.1rem;
+      font-size: 1.08rem;
       font-weight: 900;
       border-radius: 0.9rem;
       cursor: pointer;
@@ -69,7 +69,7 @@
       justify-content: center;
       gap: 0.6rem;
     }
-    .intro-media-bg {
+    .intro-video-full {
       width: 100%;
       height: 100%;
       object-fit: cover;
@@ -109,7 +109,8 @@
       body.print-mode-voucher main,
       body.print-mode-voucher header,
       body.print-mode-voucher footer,
-      body.print-mode-voucher #elena-modal {
+      body.print-mode-voucher #elena-modal,
+      body.print-mode-voucher #legal-modal {
         display: none !important;
       }
       body.print-mode-voucher #voucher-modal {
@@ -129,25 +130,23 @@
 </head>
 <body class="min-h-screen flex flex-col justify-between">
 
-  <!-- ================= PANTALLA DE ENTRADA CON TUS FONDOS ADAPTATIVOS (PC/TABLET VS MÓVIL) ================= -->
+  <!-- ================= PANTALLA 1: PORTADA CON VÍDEO DE LA CHICA CON GAFAS VIRTUALES EN AMBAS APARIENCIAS RESPONSIVE ================= -->
   <div id="gatekeeper-screen" class="fixed inset-0 z-50 bg-[#04070d] overflow-y-auto no-print p-4 flex items-center justify-center">
     
-    <!-- Imágenes de Fondo Adaptativas según aparato de visualización -->
-    <div class="fixed inset-0 overflow-hidden pointer-events-none z-0">
-      <picture class="w-full h-full block">
-        <!-- Móviles (vertical): fondo_vertical.jpg -->
-        <source media="(max-width: 767px)" srcset="./fondo_vertical.jpg, https://app.level-i.com/donaciones-familiares/fondo_vertical.jpg, https://level-i.github.io/donaciones-familiares/fondo_vertical.jpg">
-        <!-- PC y Tablet (horizontal): fondo_horizontal.jpg -->
-        <source media="(min-width: 768px)" srcset="./fondo_horizontal.jpg, https://app.level-i.com/donaciones-familiares/fondo_horizontal.jpg, https://level-i.github.io/donaciones-familiares/fondo_horizontal.jpg">
-        <img src="https://app.level-i.com/donaciones-familiares/fondo_horizontal.jpg" onerror="this.src='./fondo_horizontal.jpg'" alt="Level.immo Donaciones Familiares" class="intro-media-bg filter brightness-[0.45] contrast-[1.08]" />
-      </picture>
-      <!-- Velo de contraste suave para lectura nítida sin tapar la imagen de fondo -->
-      <div class="absolute inset-0 bg-gradient-to-b from-[#04070d]/80 via-[#04070d]/55 to-[#04070d]/90"></div>
+    <!-- Vídeo de Fondo de la Chica con Gafas Virtuales (Responsive para Móvil y PC/Tablet + Imágenes de Respaldo) -->
+    <div class="fixed inset-0 overflow-hidden pointer-events-none z-0 bg-[#04070d]">
+      <video id="intro-bg-video" autoplay muted loop playsinline preload="auto" poster="https://app.level-i.com/donaciones-familiares/fondo_horizontal.jpg" class="intro-video-full filter brightness-[0.55] contrast-[1.1]">
+        <source src="https://app.level-i.com/consultoria/consultoria.mp4" type="video/mp4">
+        <source src="https://level-i.github.io/consultoria/consultoria.mp4" type="video/mp4">
+        <source src="../consultoria/consultoria.mp4" type="video/mp4">
+        <source src="consultoria.mp4" type="video/mp4">
+      </video>
+      <div class="absolute inset-0 bg-gradient-to-b from-[#04070d]/80 via-[#04070d]/50 to-[#04070d]/95"></div>
     </div>
 
-    <div class="relative z-10 card-panel p-6 sm:p-10 max-w-3xl w-full text-center space-y-6 shadow-2xl border-emerald-500/60 bg-[#0b1322]/85 backdrop-blur-md">
+    <div class="relative z-10 card-panel p-6 sm:p-10 max-w-3xl w-full text-center space-y-6 shadow-2xl border-emerald-500/60 bg-[#0b1322]/85 backdrop-blur-md my-auto">
       
-      <!-- Top Bar de Portada con Banderas SVG Reales -->
+      <!-- Top Bar de Portada con Banderas SVG Reales y Botón de Vídeo -->
       <div class="flex flex-wrap justify-between items-center gap-3 border-b border-slate-700 pb-4">
         <div class="flex items-center gap-2" translate="no">
           <span class="inline-flex items-center justify-center w-9 h-9 rounded-lg bg-white text-slate-950 font-black text-xl">L</span>
@@ -156,15 +155,21 @@
           <span class="text-xs font-mono text-emerald-400 border-l border-slate-700 pl-2">level-i.com</span>
         </div>
 
-        <div class="flex items-center gap-2 bg-slate-950 p-1.5 rounded-xl border border-slate-700" translate="no">
-          <button type="button" onclick="changeLanguage('es')" id="gate-lang-es" class="px-3.5 py-2 rounded-lg font-extrabold text-xs bg-emerald-500 text-slate-950 flex items-center gap-1.5 cursor-pointer">
-            <svg class="w-5 h-3.5 rounded-sm shrink-0 shadow" viewBox="0 0 60 40"><rect width="60" height="40" fill="#AA151B"/><rect y="10" width="60" height="20" fill="#F1BF00"/></svg>
-            <span>ES Español</span>
+        <div class="flex flex-wrap items-center gap-2">
+          <button type="button" onclick="replayIntroVideo()" class="px-3 py-2 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/40 text-emerald-300 text-xs font-bold transition flex items-center gap-1 cursor-pointer">
+            <span>▶</span> <span data-i18n="btn_replay_video">Activar Vídeo / Sonido</span>
           </button>
-          <button type="button" onclick="changeLanguage('ca')" id="gate-lang-ca" class="px-3.5 py-2 rounded-lg font-extrabold text-xs text-slate-200 hover:text-white flex items-center gap-1.5 cursor-pointer">
-            <svg class="w-5 h-3.5 rounded-sm shrink-0 shadow" viewBox="0 0 60 40"><rect width="60" height="40" fill="#FCDD09"/><rect y="4.4" width="60" height="4.4" fill="#DA121A"/><rect y="13.3" width="60" height="4.4" fill="#DA121A"/><rect y="22.2" width="60" height="4.4" fill="#DA121A"/><rect y="31.1" width="60" height="4.4" fill="#DA121A"/></svg>
-            <span>CAT Català</span>
-          </button>
+
+          <div class="flex items-center gap-1.5 bg-slate-950 p-1.5 rounded-xl border border-slate-700" translate="no">
+            <button type="button" onclick="changeLanguage('es')" id="gate-lang-es" class="px-3.5 py-2 rounded-lg font-extrabold text-xs bg-emerald-500 text-slate-950 flex items-center gap-1.5 cursor-pointer">
+              <svg class="w-5 h-3.5 rounded-sm shrink-0 shadow" viewBox="0 0 60 40"><rect width="60" height="40" fill="#AA151B"/><rect y="10" width="60" height="20" fill="#F1BF00"/></svg>
+              <span>ES Español</span>
+            </button>
+            <button type="button" onclick="changeLanguage('ca')" id="gate-lang-ca" class="px-3.5 py-2 rounded-lg font-extrabold text-xs text-slate-200 hover:text-white flex items-center gap-1.5 cursor-pointer">
+              <svg class="w-5 h-3.5 rounded-sm shrink-0 shadow" viewBox="0 0 60 40"><rect width="60" height="40" fill="#FCDD09"/><rect y="4.4" width="60" height="4.4" fill="#DA121A"/><rect y="13.3" width="60" height="4.4" fill="#DA121A"/><rect y="22.2" width="60" height="4.4" fill="#DA121A"/><rect y="31.1" width="60" height="4.4" fill="#DA121A"/></svg>
+              <span>CAT Català</span>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -180,9 +185,10 @@
         Herramienta clara y gratuita para familias: compare cuánto cuesta una Donación frente a un Préstamo Familiar al 0%, calcule las cuotas reales y descargue el contrato legal listo para firmar.
       </p>
 
+      <!-- Prueba Matemática de Entrada -->
       <div class="bg-slate-950/95 p-6 rounded-xl border-2 border-slate-700 space-y-4 text-left">
         <div class="text-sm font-extrabold text-amber-400 uppercase" data-i18n="gate_sec_label">
-          🛡️ Acceso de seguridad (resuelva esta suma sencilla para entrar):
+          🛡️ Filtro de Seguridad (resuelva esta suma sencilla para entrar al simulador):
         </div>
         <div class="flex flex-col sm:flex-row items-center gap-3">
           <div class="bg-slate-900 border border-slate-700 rounded-xl px-5 py-3.5 text-xl font-black text-white whitespace-nowrap">
@@ -198,8 +204,14 @@
         </p>
       </div>
 
-      <div class="text-xs text-slate-300 font-mono" translate="no">
-        © 2026 LEVEL PUNTO IMMO 24365 SLU · API 4173 · AICAT 14200 · app.level-i.com/donaciones-familiares
+      <!-- Pie Legal Completo en Portada -->
+      <div class="border-t border-slate-700/80 pt-4 flex flex-wrap items-center justify-between text-xs text-slate-300 gap-2">
+        <span class="font-mono" translate="no">© 2026 level.immo · LEVEL PUNTO IMMO 24365 SLU · API 4173 · AICAT 14200</span>
+        <div class="flex flex-wrap gap-3">
+          <button type="button" onclick="openLegalModal('aviso')" class="hover:text-white underline cursor-pointer" data-i18n="footer_legal">Aviso Legal</button>
+          <button type="button" onclick="openLegalModal('privacidad')" class="hover:text-white underline cursor-pointer" data-i18n="footer_privacy">Privacidad y RGPD</button>
+          <button type="button" onclick="openLegalModal('cookies')" class="hover:text-white underline cursor-pointer" data-i18n="footer_cookies">Cookies e IA</button>
+        </div>
       </div>
     </div>
   </div>
@@ -216,6 +228,9 @@
         </a>
         <span class="hidden md:inline-block text-xs font-mono text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 px-2.5 py-1 rounded">
           app.level-i.com/donaciones-familiares
+        </span>
+        <span class="hidden lg:inline-block text-xs font-mono text-slate-400 border-l border-slate-700 pl-3">
+          LEVEL PUNTO IMMO 24365 SLU · API 4173
         </span>
       </div>
 
@@ -242,7 +257,7 @@
   <!-- ================= CONTENIDO PRINCIPAL A ANCHO COMPLETO (1 SOLA COLUMNA VERTICAL EN PC) ================= -->
   <main class="max-w-5xl mx-auto w-full px-4 py-8 space-y-12">
 
-    <!-- BLOQUE INTRODUCTORIO A ANCHO COMPLETO + LOCUCIÓN CON MUTE GIGANTE -->
+    <!-- BLOQUE INTRODUCTORIO A ANCHO COMPLETO + LOCUCIÓN CON MUTE GIGANTE + LAS 4 FASES -->
     <section class="card-panel p-6 sm:p-10 space-y-8 border-emerald-500/40 bg-gradient-to-b from-[#101929] to-[#0a101d]">
       <div class="flex flex-wrap items-center justify-between gap-3">
         <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full gold-badge text-xs font-extrabold uppercase">
@@ -318,15 +333,15 @@
 
       </div>
 
-      <!-- El Montaje en 4 pasos sencillos (Uno debajo de otro a ancho completo para máxima claridad) -->
+      <!-- El Montaje en 4 FASES sencillas (Con "FASE 1..4" unificado para Español y Catalán) -->
       <div class="space-y-4">
         <h3 class="text-xl sm:text-2xl font-black text-amber-400 uppercase tracking-wide" data-i18n="s1_how_title">
-          🛠️ Cómo funciona el Montaje de la Operación (En 4 pasos sencillos):
+          🛠️ Cómo funciona el Montaje de la Operación (En 4 fases sencillas):
         </h3>
 
         <div class="space-y-4">
           <div class="p-5 sm:p-6 rounded-xl bg-slate-950/90 border-2 border-slate-800 space-y-2">
-            <span class="inline-block px-3.5 py-1 rounded-lg bg-emerald-500 text-slate-950 font-black text-sm">PASO 1</span>
+            <span class="inline-block px-3.5 py-1 rounded-lg bg-emerald-500 text-slate-950 font-black text-sm" translate="no">FASE 1</span>
             <h4 class="font-extrabold text-white text-xl" data-i18n="step1_t">Préstamo Familiar al 0% (No Donación)</h4>
             <p class="text-slate-200 text-base" data-i18n="step1_d">
               En vez de regalar el dinero y pagar el Impuesto de Donaciones, sus padres se lo prestan a interés 0% firmando el contrato oficial que tiene más abajo y presentándolo en Hacienda (Modelo 600 exento: coste 0 €).
@@ -334,7 +349,7 @@
           </div>
 
           <div class="p-5 sm:p-6 rounded-xl bg-slate-950/90 border-2 border-slate-800 space-y-2">
-            <span class="inline-block px-3.5 py-1 rounded-lg bg-amber-500 text-slate-950 font-black text-sm">PASO 2</span>
+            <span class="inline-block px-3.5 py-1 rounded-lg bg-amber-500 text-slate-950 font-black text-sm" translate="no">FASE 2</span>
             <h4 class="font-extrabold text-white text-xl" data-i18n="step2_t">Cuota Pequeña y Plazo Amplio</h4>
             <p class="text-slate-200 text-base" data-i18n="step2_d">
               Pactamos devolver el dinero a los padres en un plazo amplio (por ejemplo, 10 o 15 años). Así la cuota mensual es muy baja y no ahoga sus ingresos cuando el banco estudie su hipoteca.
@@ -342,7 +357,7 @@
           </div>
 
           <div class="p-5 sm:p-6 rounded-xl bg-slate-950/90 border-2 border-slate-800 space-y-2">
-            <span class="inline-block px-3.5 py-1 rounded-lg bg-sky-400 text-slate-950 font-black text-sm">PASO 3</span>
+            <span class="inline-block px-3.5 py-1 rounded-lg bg-sky-400 text-slate-950 font-black text-sm" translate="no">FASE 3</span>
             <h4 class="font-extrabold text-white text-xl" data-i18n="step3_t">Respaldo ante el Banco</h4>
             <p class="text-slate-200 text-base" data-i18n="step3_d">
               Al entrar con el dinero de sus padres, usted pide mucha menos hipoteca al banco. Y si hace falta por su tipo de contrato, los padres pueden respaldar la operación con su pensión o vivienda libre de cargas.
@@ -350,7 +365,7 @@
           </div>
 
           <div class="p-5 sm:p-6 rounded-xl bg-slate-950/90 border-2 border-emerald-500/60 space-y-2">
-            <span class="inline-block px-3.5 py-1 rounded-lg bg-purple-400 text-slate-950 font-black text-sm">PASO 4</span>
+            <span class="inline-block px-3.5 py-1 rounded-lg bg-purple-400 text-slate-950 font-black text-sm" translate="no">FASE 4</span>
             <h4 class="font-extrabold text-white text-xl" data-i18n="step4_t">Búsqueda Inmediata en Mercado Real</h4>
             <p class="text-slate-200 text-base" data-i18n="step4_d">
               Mientras nuestro Broker tramita su hipoteca, activamos su anuncio en nuestro panel de Demanda Activa. Nuestros Advisors y colaboradores de la zona le buscan pisos antes de que salgan en internet.
@@ -360,12 +375,12 @@
       </div>
     </section>
 
-    <!-- ================= PASO 1: SIMULADOR FINANCIERO A ANCHO COMPLETO (BLOQUE ARRIBA + RESULTADOS DEBAJO) ================= -->
+    <!-- ================= FASE 1: SIMULADOR FINANCIERO A ANCHO COMPLETO ================= -->
     <section class="card-panel p-6 sm:p-10 space-y-8">
       <div class="border-b-2 border-slate-800 pb-4 flex flex-wrap items-center justify-between gap-4">
         <div>
           <span class="text-xs font-extrabold uppercase tracking-wider text-emerald-400 block" data-i18n="sim_badge">
-            🧮 PASO 1 · SIMULADOR CLARO A ANCHO COMPLETO (EL CERO SE BORRA SOLO AL HACER CLIC)
+            🧮 FASE 1 INTERACTIVA · SIMULADOR CLARO A ANCHO COMPLETO (EL CERO SE BORRA SOLO AL HACER CLIC)
           </span>
           <h3 class="text-2xl sm:text-3xl font-black text-white mt-1" data-i18n="sim_title">
             Simulador de Compra, Ahorro Fiscal (Donación vs. Préstamo) y Cuota Hipotecaria
@@ -380,7 +395,7 @@
         👉 <strong>Instrucciones muy fáciles:</strong> Haga clic en cualquier casilla oscura y escriba su cifra (el cero inicial se quita solo). Los gastos de Notaría, Registro y Gestoría se calculan automáticamente al poner el precio de la vivienda.
       </p>
 
-      <!-- BLOQUE DE ENTRADA DE DATOS A ANCHO COMPLETO (100% WIDTH) -->
+      <!-- BLOQUE DE ENTRADA DE DATOS A ANCHO COMPLETO -->
       <div class="w-full space-y-8 bg-slate-950/90 p-6 sm:p-8 rounded-2xl border-2 border-slate-800">
         
         <!-- 1. Precio y Gastos de Compra -->
@@ -444,7 +459,7 @@
           </div>
         </div>
 
-        <!-- 3. Ingresos claramente separados: Comprador vs Padres (Uno debajo de otro a ancho completo) -->
+        <!-- 3. Ingresos claramente separados: Comprador vs Padres -->
         <div class="space-y-5 pt-4 border-t border-slate-800">
           <div class="text-lg sm:text-xl font-black text-sky-400 uppercase border-b border-slate-800 pb-2" data-i18n="box3_title">
             3. Ingresos mensuales y gastos actuales (Especificados uno por uno)
@@ -521,7 +536,7 @@
 
       </div>
 
-      <!-- BLOQUE DE RESULTADOS A ANCHO COMPLETO (JUSTO DEBAJO DE LOS DATOS) -->
+      <!-- BLOQUE DE RESULTADOS A ANCHO COMPLETO -->
       <div class="w-full space-y-8">
 
         <!-- Tarjeta 1: Comparativa de Carga Fiscal a ancho completo -->
@@ -663,7 +678,7 @@
       </div>
     </section>
 
-    <!-- ================= PREGUNTAS FRECUENTES (FAQ) A ANCHO COMPLETO UNA DEBAJO DE OTRA ================= -->
+    <!-- ================= PREGUNTAS FRECUENTES (FAQ) A ANCHO COMPLETO ================= -->
     <section class="card-panel p-6 sm:p-10 space-y-6 border-amber-500/40">
       <div class="border-b-2 border-slate-800 pb-4">
         <span class="text-xs font-extrabold uppercase tracking-wider text-amber-400 block" data-i18n="faq_badge">
@@ -714,13 +729,13 @@
       </div>
     </section>
 
-    <!-- ================= PASO 2: PANEL DE DEMANDA ACTIVA A ANCHO COMPLETO (FORMULARIO ARRIBA + PREVISUALIZACIÓN DEBAJO) ================= -->
+    <!-- ================= FASE 2: PANEL DE DEMANDA ACTIVA A ANCHO COMPLETO (CON EMAIL OBLIGATORIO DEL INTERESADO) ================= -->
     <section id="demanda-section" class="card-panel p-6 sm:p-10 space-y-8 border-emerald-500/60 bg-gradient-to-b from-[#0e192d] to-[#070b12]">
       
       <div class="flex flex-wrap items-center justify-between gap-4 border-b-2 border-slate-800 pb-5">
         <div>
           <span class="px-3.5 py-1.5 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-mono font-extrabold uppercase" data-i18n="dm_badge">
-            📡 PASO 2 INTERACTIVO · CONEXIÓN DIRECTA CON MERCADO REAL · LEVEL-HUNTER
+            📡 FASE 2 INTERACTIVA · CONEXIÓN DIRECTA CON MERCADO REAL · LEVEL-HUNTER
           </span>
           <h3 class="text-2xl sm:text-3xl font-black text-white mt-2" data-i18n="dm_title">
             No pierda ningún piso mientras el banco tramita sus papeles: Publique su Demanda Activa
@@ -752,13 +767,37 @@
         </div>
       </div>
 
-      <!-- Formulario de Demanda Activa a ancho completo -->
+      <!-- Formulario de Demanda Activa a ancho completo + DATOS Y EMAIL OBLIGATORIO DEL INTERESADO COMPRADOR -->
       <div class="w-full space-y-5 bg-slate-950 p-6 sm:p-8 rounded-2xl border-2 border-slate-800">
         <h4 class="text-lg sm:text-xl font-black text-amber-400 uppercase" data-i18n="dm_form_title">
-          ✍️ Escriba cómo es la vivienda que busca para ver su anuncio:
+          ✍️ Escriba cómo es la vivienda que busca y sus datos de contacto para publicar su anuncio:
         </h4>
 
         <div class="space-y-4">
+          <div class="p-5 rounded-xl bg-slate-900 border-2 border-emerald-500/40 space-y-4">
+            <div class="text-sm font-black uppercase text-emerald-400" data-i18n="dm_buyer_contact_head">
+              👤 Datos obligatorios del interesado comprador (para recibir las ofertas de viviendas):
+            </div>
+            <div>
+              <label class="text-sm font-bold text-slate-200 block mb-1.5" data-i18n="dm_lbl_buyer_name">
+                Nombre y apellidos del comprador (*):
+              </label>
+              <input type="text" id="d-buyer-name" data-i18n-placeholder="ph_fullname" placeholder="Nombre y dos apellidos" class="input-clear" />
+            </div>
+            <div>
+              <label class="text-sm font-bold text-amber-300 block mb-1.5" data-i18n="dm_lbl_buyer_email">
+                Correo electrónico del comprador (Obligatorio *):
+              </label>
+              <input type="email" id="d-buyer-email" placeholder="comprador@correo.com" required class="input-clear border-amber-500/60" />
+            </div>
+            <div>
+              <label class="text-sm font-bold text-slate-200 block mb-1.5" data-i18n="dm_lbl_buyer_phone">
+                Teléfono / WhatsApp del comprador (*):
+              </label>
+              <input type="tel" id="d-buyer-phone" placeholder="600 000 000" class="input-clear" />
+            </div>
+          </div>
+
           <div>
             <label class="text-sm font-bold text-slate-300 block mb-1.5" data-i18n="dm_lbl_zone">
               Municipio o Barrio donde quiere comprar:
@@ -791,6 +830,10 @@
             </label>
             <input type="text" id="d-requisits" value="" oninput="updateDemandaPreview()" data-i18n-placeholder="dm_ph_reqs" placeholder="Ej: Mínimo 3 habitaciones, luminoso, listo para entrar a vivir..." class="input-clear" />
           </div>
+
+          <p id="d-error-msg" class="text-rose-400 text-sm font-bold hidden" data-i18n="dm_err_contact">
+            ⚠️ Por favor, introduzca su Nombre, un Correo Electrónico válido (con @) y su Teléfono para publicar su anuncio provisional.
+          </p>
 
           <button type="button" onclick="publishProvisionalDemand()" class="btn-action bg-emerald-500 hover:bg-emerald-400 text-slate-950 w-full emerald-glow uppercase">
             <span>🟢</span> <span data-i18n="dm_btn_publish">Publicar Mi Anuncio Provisional y Avisar a Colaboradores</span>
@@ -859,14 +902,14 @@
       </div>
     </section>
 
-    <!-- ================= PASO 3 (AL FINAL): CONTRATO DE PRÉSTAMO FAMILIAR A ANCHO COMPLETO ================= -->
+    <!-- ================= FASE 3 (AL FINAL): CONTRATO DE PRÉSTAMO FAMILIAR A ANCHO COMPLETO (SIN DOCUSIGN) ================= -->
     <section id="sec-contract" class="card-panel p-6 sm:p-10 space-y-8">
       
       <div id="contract-controls" class="space-y-6 no-print">
         <div class="flex flex-wrap items-center justify-between gap-4 border-b-2 border-slate-800 pb-4">
           <div>
             <span class="text-xs font-extrabold uppercase tracking-wider text-amber-400 block" data-i18n="ct_badge">
-              📄 PASO 3 INTERACTIVO · DOCUMENTO OFICIAL GRATUITO PARA RELLENAR, DESCARGAR EN PDF O FIRMAR DIGITALMENTE
+              📄 FASE 3 INTERACTIVA · DOCUMENTO OFICIAL GRATUITO PARA RELLENAR E IMPRIMIR EN PDF
             </span>
             <h3 class="text-2xl sm:text-3xl font-black text-white mt-1" data-i18n="ct_title">
               Contrato Estándar de Préstamo Familiar (0% Intereses)
@@ -879,14 +922,11 @@
             <button type="button" onclick="printOnlyContract()" class="btn-action bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs py-3 px-5 shadow-lg">
               🖨️ <span data-i18n="ct_btn_print">Imprimir / Guardar PDF</span>
             </button>
-            <button type="button" onclick="sendForDigitalSignature('contrato_prestamo_familiar')" class="btn-action bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs py-3 px-5 shadow-lg">
-              ✍️ <span data-i18n="ct_btn_docusign">Enviar a Firmar por Móvil / Email (DocuSign)</span>
-            </button>
           </div>
         </div>
 
         <p class="text-slate-200 text-lg bg-slate-900/90 p-5 rounded-xl border border-slate-700" data-i18n="ct_instructions">
-          👉 <strong>Muy fácil de rellenar:</strong> Escriba la ciudad, la fecha y el nombre, DNI y dirección de los padres (prestamistas) y de los hijos (prestatarios). Si son dos padres o dos compradores, pulse el botón <strong>"+ Añadir otra persona"</strong>. Puede imprimirlo en PDF o enviarlo para firma digital en el móvil.
+          👉 <strong>Muy fácil de rellenar:</strong> Escriba la ciudad, la fecha y el nombre, DNI y dirección de los padres (prestamistas) y de los hijos (prestatarios). Si son dos padres o dos compradores, pulse el botón <strong>"+ Añadir otra persona"</strong>. Todo lo que escriba aparecerá al instante en el contrato legal de abajo listo para imprimir o guardar en PDF.
         </p>
 
         <!-- Configuración General del Contrato a ancho completo -->
@@ -913,7 +953,7 @@
           </label>
         </div>
 
-        <!-- Prestamistas y Prestatarios a ancho completo (Uno debajo de otro) -->
+        <!-- Prestamistas y Prestatarios a ancho completo -->
         <div class="space-y-6">
           
           <!-- Prestamistas -->
@@ -989,7 +1029,7 @@
 
   </main>
 
-  <!-- ================= MODAL CHATBOT ELENA IA (ACTIVACIÓN LEVEL-HUNTER + WEBHOOK MAKE) ================= -->
+  <!-- ================= MODAL CHATBOT ELENA IA (CON EMAIL OBLIGATORIO + VERIFICACIÓN MATEMÁTICA Y RGPD) ================= -->
   <div id="elena-modal" class="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-md hidden items-center justify-center p-4 no-print">
     <div class="card-panel max-w-xl w-full overflow-hidden border-emerald-500/60 shadow-2xl bg-[#0d1524]">
       
@@ -1019,9 +1059,9 @@
           </div>
         </div>
 
-        <div class="space-y-3">
+        <div class="space-y-3.5">
           <div>
-            <label class="text-xs font-bold text-slate-300 block mb-1" data-i18n="elena_lbl_name">Su Nombre y Apellidos:</label>
+            <label class="text-xs font-bold text-slate-300 block mb-1" data-i18n="elena_lbl_name">Su Nombre y Apellidos (*):</label>
             <input type="text" id="hunter-name" oninput="refreshElenaGreeting()" data-i18n-placeholder="ph_fullname" placeholder="Nombre y dos apellidos" class="input-clear text-base py-2.5" />
           </div>
 
@@ -1038,32 +1078,46 @@
               </select>
             </div>
             <div class="sm:col-span-5">
-              <label class="text-xs font-bold text-slate-300 block mb-1" data-i18n="elena_lbl_phone">Teléfono / WhatsApp:</label>
+              <label class="text-xs font-bold text-slate-300 block mb-1" data-i18n="elena_lbl_phone">Teléfono / WhatsApp (*):</label>
               <input type="tel" id="hunter-phone" placeholder="600 000 000" class="input-clear text-base py-2.5" />
             </div>
             <div class="sm:col-span-4">
-              <label class="text-xs font-bold text-slate-300 block mb-1" data-i18n="elena_lbl_dni">Su DNI / NIE:</label>
+              <label class="text-xs font-bold text-slate-300 block mb-1" data-i18n="elena_lbl_dni">Su DNI / NIE (*):</label>
               <input type="text" id="hunter-dni" placeholder="12345678A" class="input-clear text-base py-2.5 uppercase font-mono" />
             </div>
           </div>
 
           <div>
-            <label class="text-xs font-bold text-slate-300 block mb-1" data-i18n="elena_lbl_email">Correo electrónico:</label>
-            <input type="email" id="hunter-email" placeholder="cliente@correo.com" class="input-clear text-base py-2.5" />
+            <label class="text-xs font-bold text-amber-300 block mb-1" data-i18n="elena_lbl_email">
+              Correo electrónico del comprador (Obligatorio *):
+            </label>
+            <input type="email" id="hunter-email" placeholder="cliente@correo.com" required class="input-clear text-base py-2.5 border-amber-500/60" />
           </div>
 
-          <label class="flex items-start gap-2.5 text-xs text-slate-300 pt-1 cursor-pointer">
-            <input type="checkbox" id="hunter-rgpd" checked class="mt-0.5 w-4 h-4 accent-emerald-500" />
-            <span data-i18n="elena_rgpd_txt">
-              Acepto abrir expediente con LEVEL PUNTO IMMO 24365 SLU y la Política de Privacidad RGPD.
-            </span>
-          </label>
+          <!-- Verificación Matemática + RGPD en Elena -->
+          <div class="p-3.5 rounded-xl bg-slate-950 border border-slate-700 space-y-2.5">
+            <div class="flex items-center justify-between gap-3">
+              <span class="text-xs font-bold text-amber-400" data-i18n="elena_math_lbl">🛡️ Suma de seguridad:</span>
+              <span class="font-black text-white bg-slate-900 px-3 py-1 rounded border border-slate-700">
+                <span id="elena-num1">3</span> + <span id="elena-num2">4</span> =
+              </span>
+              <input type="number" id="elena-math-input" placeholder="?" class="input-clear text-center text-base py-1.5 w-24" />
+            </div>
+
+            <label class="flex items-start gap-2.5 text-xs text-slate-300 pt-1 cursor-pointer">
+              <input type="checkbox" id="hunter-rgpd" checked class="mt-0.5 w-4 h-4 accent-emerald-500" />
+              <span>
+                <span data-i18n="elena_rgpd_txt">Acepto abrir expediente con LEVEL PUNTO IMMO 24365 SLU y la</span>
+                <button type="button" onclick="openLegalModal('privacidad')" class="text-emerald-400 underline font-bold" data-i18n="footer_privacy">Privacidad y RGPD</button>.
+              </span>
+            </label>
+          </div>
 
           <p id="hunter-error" class="text-rose-400 text-xs font-bold hidden" data-i18n="elena_err_msg">
-            Por favor, escriba su nombre y su teléfono válido para generar su documento de encargo.
+            ⚠️ Por favor, rellene su Nombre, Teléfono, un Correo Electrónico válido (con @) y resuelva la suma de seguridad.
           </p>
 
-          <div class="pt-2 space-y-2.5">
+          <div class="pt-2">
             <button type="button" onclick="openVoucherFromElena()" class="btn-action bg-amber-500 hover:bg-amber-400 text-slate-950 w-full text-xs sm:text-sm uppercase shadow-xl">
               🖨️ <span data-i18n="elena_btn_voucher">Activar Expediente e Imprimir Hoja de Encargo (1.210 € IVA incl.)</span>
             </button>
@@ -1074,7 +1128,7 @@
     </div>
   </div>
 
-  <!-- ================= MODAL HOJA DE ENCARGO Y VOLANTE DE PAGO + FIRMA DIGITAL DOCUSIGN ================= -->
+  <!-- ================= MODAL HOJA DE ENCARGO Y VOLANTE DE PAGO (CON BANC SABADELL + MANDANT: NOMBRE + TPV PRÓXIMAMENTE) ================= -->
   <div id="voucher-modal" class="fixed inset-0 z-[80] bg-slate-950/95 backdrop-blur-md hidden items-center justify-center p-4 overflow-y-auto">
     <div id="voucher-printable" class="max-w-2xl w-full p-6 sm:p-10 bg-white text-slate-950 rounded-2xl space-y-6 shadow-2xl border-4 border-slate-900 my-auto">
       
@@ -1083,6 +1137,7 @@
         <span class="font-mono">API 4173</span>
       </div>
 
+      <!-- Cabecera Oficial Personalizada level.immo + level-i.com + LEVEL PUNTO IMMO 24365 SLU -->
       <div class="flex flex-wrap items-start justify-between gap-4 border-b-2 border-slate-900 pb-4">
         <div class="space-y-1" translate="no">
           <div class="flex items-center gap-2">
@@ -1109,6 +1164,7 @@
         </div>
       </div>
 
+      <!-- Datos del Cliente Mandante -->
       <div class="p-4 rounded-xl bg-slate-100 border border-slate-300 space-y-1.5 text-xs sm:text-sm">
         <div class="font-black uppercase text-slate-900" data-i18n="v_client_head">
           Datos del Cliente Mandante (Comprador):
@@ -1122,6 +1178,7 @@
         <div><strong data-i18n="v_lbl_search">Búsqueda solicitada:</strong> <span id="v-zone-summary">--</span></div>
       </div>
 
+      <!-- Tabla de Importes Desglosada (1.000 € + 21% IVA = 1.210 €) -->
       <div class="border-2 border-slate-900 rounded-xl overflow-hidden">
         <table class="w-full text-left border-collapse text-xs sm:text-sm">
           <thead>
@@ -1158,32 +1215,40 @@
         </table>
       </div>
 
-      <div class="p-4 rounded-xl bg-amber-50 border border-amber-300 text-xs space-y-1 text-slate-900">
-        <div class="font-black uppercase" data-i18n="v_bank_head">
-          Datos para Transferencia o Ingreso Bancario:
+      <!-- Cuenta Oficial BS BANC SABADELL Destacada Fino Filipino -->
+      <div class="p-5 rounded-xl bg-amber-50 border-2 border-amber-400 text-xs sm:text-sm space-y-2 text-slate-900 shadow-inner">
+        <div class="font-black uppercase text-slate-950 flex items-center justify-between">
+          <span data-i18n="v_bank_head">🏦 Datos Oficiales para Transferencia o Ingreso Bancario:</span>
+          <span class="px-2 py-0.5 rounded bg-slate-900 text-amber-300 font-mono text-[11px]" translate="no">BS BANC SABADELL</span>
         </div>
-        <div><strong data-i18n="v_beneficiary">Beneficiario:</strong> LEVEL PUNTO IMMO 24365 SLU (NIF B-26745430)</div>
+        <div><strong data-i18n="v_beneficiary">Beneficiario:</strong> <span translate="no">LEVEL PUNTO IMMO 24365 SLU (NIF B-26745430)</span></div>
+        <div class="p-3 rounded-lg bg-white border-2 border-slate-900 font-mono font-black text-sm sm:text-base text-slate-950 tracking-wider text-center select-all" translate="no">
+          BS BANC SABADELL · ES53 0081 0190 4800 0163 8565
+        </div>
         <div><strong data-i18n="v_concept_lbl">Concepto de la transferencia:</strong> <span id="v-concept" class="font-mono font-bold">LEVEL-HUNTER</span></div>
         <div class="text-[11px] text-slate-600 pt-1" data-i18n="v_guarantee_note">
           * El inicio de la campaña en firme queda vinculado a la validación de viabilidad hipotecaria por nuestro Broker oficial.
         </div>
       </div>
 
-      <div class="grid grid-cols-2 gap-8 pt-6 text-center text-xs">
-        <div class="border-t border-slate-400 pt-2">
-          <strong>LEVEL PUNTO IMMO 24365 SLU</strong><br>API 4173 · AICAT 14200
+      <!-- Firmas con "Mandante / Mandant: [Nombre del Cliente]" dinámico -->
+      <div class="grid grid-cols-2 gap-8 pt-6 text-center text-xs sm:text-sm">
+        <div class="border-t-2 border-slate-400 pt-2">
+          <strong translate="no">LEVEL PUNTO IMMO 24365 SLU</strong><br>
+          <span class="text-xs text-slate-600" translate="no">API 4173 · AICAT 14200</span>
         </div>
-        <div class="border-t border-slate-400 pt-2" data-i18n="v_sign_client">
-          Firma del Cliente Mandante
+        <div class="border-t-2 border-slate-400 pt-2">
+          <strong id="v-sign-client-dynamic">Mandante: --</strong>
         </div>
       </div>
 
-      <div class="flex flex-wrap gap-3 pt-2 no-print">
+      <!-- Botones del Volante: Guardar/Imprimir PDF + Pasarela TPV Banc Sabadell (Próximamente / Properament) -->
+      <div class="flex flex-col sm:flex-row gap-3 pt-2 no-print">
         <button type="button" onclick="printOnlyVoucher()" class="btn-action bg-slate-950 hover:bg-slate-800 text-white flex-1 text-xs uppercase">
           🖨️ <span data-i18n="v_btn_print">Guardar / Imprimir PDF</span>
         </button>
-        <button type="button" onclick="sendForDigitalSignature('encargo_level_hunter')" class="btn-action bg-emerald-600 hover:bg-emerald-500 text-white flex-1 text-xs uppercase">
-          ✍️ <span data-i18n="v_btn_docusign">Firmar desde el Móvil (DocuSign)</span>
+        <button type="button" onclick="notifyTpvSabadellSoon()" class="btn-action bg-sky-700 hover:bg-sky-600 text-white flex-1 text-xs uppercase border-2 border-sky-400 relative">
+          💳 <span data-i18n="v_btn_tpv">Pagar con Tarjeta · TPV Banc Sabadell (Próximamente)</span>
         </button>
         <button type="button" onclick="closeVoucherModal()" class="btn-action bg-slate-200 hover:bg-slate-300 text-slate-900 text-xs">
           ✕ <span data-i18n="v_btn_close">Cerrar</span>
@@ -1193,26 +1258,40 @@
     </div>
   </div>
 
-  <!-- ================= PIE DE PÁGINA CORPORATIVO ================= -->
-  <footer class="border-t-2 border-slate-800 bg-[#04070d] px-4 py-6 mt-12 no-print">
+  <!-- ================= MODAL LEGAL COMPLETO (AVISO LEGAL, PRIVACIDAD RGPD, COOKIES E IA) ================= -->
+  <div id="legal-modal" class="fixed inset-0 z-[90] bg-slate-950/90 backdrop-blur-md hidden items-center justify-center p-4 no-print">
+    <div class="card-panel max-w-2xl w-full p-6 sm:p-8 border-slate-700 bg-[#101826] space-y-4 max-h-[85vh] flex flex-col">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3 shrink-0">
+        <h4 id="legal-modal-title" class="text-base sm:text-lg font-extrabold text-emerald-400">Información Legal</h4>
+        <button type="button" onclick="closeLegalModal()" class="text-slate-400 hover:text-white text-lg font-bold px-2 py-1 cursor-pointer">✕</button>
+      </div>
+      <div id="legal-modal-body" class="text-sm text-slate-200 leading-relaxed space-y-3 overflow-y-auto pr-2"></div>
+    </div>
+  </div>
+
+  <!-- ================= PIE DE PÁGINA CORPORATIVO COMPLETO CON LEGAL, RGPD, COOKIES E IA ================= -->
+  <footer class="border-t-2 border-slate-800 bg-[#04070d] px-4 py-8 mt-12 no-print">
     <div class="max-w-5xl mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-xs text-slate-400">
-      <div class="space-y-1">
-        <div class="text-white font-bold" translate="no">
-          level.immo · app.level-i.com/donaciones-familiares
+      <div class="space-y-1.5">
+        <div class="text-white font-bold text-sm" translate="no">
+          © 2026 level.immo · app.level-i.com/donaciones-familiares
         </div>
-        <div class="font-mono text-[11px]" translate="no">
-          © 2026 LEVEL PUNTO IMMO 24365 SLU · NIF B-26745430 · API 4173 · AICAT 14200 · Travessera de Gràcia, 56, 3-1a, 08006 Barcelona
+        <div class="font-mono text-xs text-slate-300" translate="no">
+          LEVEL PUNTO IMMO 24365 SLU · NIF B-26745430 · API 4173 · AICAT 14200 · Travessera de Gràcia, 56, 3-1a, 08006 Barcelona
         </div>
       </div>
-      <div class="flex gap-4">
-        <button type="button" onclick="reopenGatekeeper()" class="hover:text-white underline cursor-pointer" data-i18n="ftr_lock">
-          Pantalla de inicio
+      <div class="flex flex-wrap gap-4 shrink-0 text-xs font-semibold">
+        <button type="button" onclick="openLegalModal('aviso')" class="hover:text-white underline cursor-pointer" data-i18n="footer_legal">Aviso Legal</button>
+        <button type="button" onclick="openLegalModal('privacidad')" class="hover:text-white underline cursor-pointer" data-i18n="footer_privacy">Privacidad y RGPD</button>
+        <button type="button" onclick="openLegalModal('cookies')" class="hover:text-white underline cursor-pointer" data-i18n="footer_cookies">Cookies e IA</button>
+        <button type="button" onclick="reopenGatekeeper()" class="text-emerald-400 hover:text-emerald-300 underline cursor-pointer" data-i18n="ftr_lock">
+          Vídeo Portada
         </button>
       </div>
     </div>
   </footer>
 
-  <!-- ================= LÓGICA JAVASCRIPT Y CONEXIÓN A MAKE ================= -->
+  <!-- ================= LÓGICA JAVASCRIPT Y CONEXIÓN TOTAL A WEBHOOKS DE MAKE ================= -->
   <script>
     const WEBHOOK_MAKE = "https://hook.eu1.make.com/loy5kvv4qmnvo748fmxo2qvt48mbf986";
     const WEBHOOK_ELENA_VENTAS = "https://hook.eu1.make.com/3w2wmbbcc3evnvg8ajo3kjkucrd6dfkw";
@@ -1220,6 +1299,8 @@
 
     let currentLang = 'es';
     let gateSum = 7;
+    let elenaSum = 7;
+    let currentVoterName = "--";
     const sessionId = "usr_" + Math.random().toString(36).substring(2, 11);
     let clienteIP = "Desconocida";
 
@@ -1244,6 +1325,17 @@
         audioEl.addEventListener('pause', syncMuteUI);
       }
     });
+
+    function replayIntroVideo() {
+      const introBgVideo = document.getElementById('intro-bg-video');
+      if (!introBgVideo) return;
+      introBgVideo.currentTime = 0;
+      introBgVideo.muted = false;
+      introBgVideo.play().catch(() => {
+        introBgVideo.muted = true;
+        introBgVideo.play();
+      });
+    }
 
     // SUBTÍTULOS SINCRONIZADOS (ES / CAT)
     const SUBTITLES_DATA = {
@@ -1319,7 +1411,6 @@
       box.textContent = `"${activeLine}"`;
     }
 
-    // Borrar el "0" molesto al hacer clic
     function clearZero(inputEl) {
       if (inputEl.value === "0" || parseFloat(inputEl.value) === 0) {
         inputEl.value = "";
@@ -1391,16 +1482,63 @@
       } catch (e) {}
     }
 
-    // DICCIONARIO PURO ES / CAT
+    // TEXTOS LEGALES COMPLETOS EN ESPAÑOL Y CATALÁN
+    const legalTexts = {
+      es: {
+        aviso_title: "Aviso Legal · LEVEL PUNTO IMMO 24365 SLU",
+        aviso_body: `<p>En cumplimiento de la Ley 34/2002 (LSSI-CE), se informa que <strong>level.immo</strong> y <strong>app.level-i.com</strong> están operadas por <strong>LEVEL PUNTO IMMO 24365 SLU</strong> (NIF B-26745430 · Travessera de Gràcia, 56, 3-1a, 08006 Barcelona · Agente de la Propiedad Inmobiliaria Colegiado API 4173 · AICAT 14200 · Correo: <code>level@level.immo</code>).</p><p>Las simulaciones hipotecarias, comparativas fiscales (Impuesto de Donaciones frente a Préstamo Familiar exento Modelo 600) y el generador documental tienen carácter orientativo y se validan bajo supervisión profesional colegiada API/AICAT y nuestro Broker hipotecario oficial.</p>`,
+        privacidad_title: "Política de Privacidad y Protección de Datos (RGPD / LOPDGDD)",
+        privacidad_body: `<p><strong>Responsable del Tratamiento:</strong> LEVEL PUNTO IMMO 24365 SLU (NIF B-26745430 · Travessera de Gràcia, 56, 3-1a, 08006 Barcelona · Email: <code>level@level.immo</code>).</p><p>Sus datos identificativos, de contacto (incluido correo electrónico y teléfono) y parámetros de simulación se tratan bajo estricta confidencialidad conforme al Reglamento (UE) 2016/679 (RGPD) con la única finalidad de gestionar su expediente de viabilidad hipotecaria, publicar su anuncio provisional en Demanda Activa y tramitar el mandato LEVEL-Hunter. Puede ejercer sus derechos de acceso, rectificación, supresión y portabilidad escribiendo a <code>level@level.immo</code>.</p>`,
+        cookies_title: "Política de Cookies e Inteligencia Artificial",
+        cookies_body: `<p>Esta plataforma utiliza únicamente almacenamiento técnico de sesión para recordar su preferencia de idioma (Español / Català) y el asistente automatizado <strong>Elena | AI Advisor Level-i</strong> para estructurar expedientes de compra a la carta bajo supervisión humana de agentes colegiados API 4173 · AICAT 14200.</p>`
+      },
+      ca: {
+        aviso_title: "Avís Legal · LEVEL PUNTO IMMO 24365 SLU",
+        aviso_body: `<p>En compliment de la Llei 34/2002 (LSSI-CE), s'informa que <strong>level.immo</strong> i <strong>app.level-i.com</strong> estan operades per <strong>LEVEL PUNTO IMMO 24365 SLU</strong> (NIF B-26745430 · Travessera de Gràcia, 56, 3-1a, 08006 Barcelona · Agent de la Propietat Immobiliària Col·legiat API 4173 · AICAT 14200 · Correu: <code>level@level.immo</code>).</p><p>Les simulacions hipotecàries, comparatives fiscals (Impost de Donacions enfront de Préstec Familiar exempt Model 600) i el generador documental tenen caràcter orientatiu i es validen sota supervisió professional col·legiada API/AICAT i el nostre Broker hipotecari oficial.</p>`,
+        privacidad_title: "Política de Privacitat i Protecció de Dades (RGPD / LOPDGDD)",
+        privacidad_body: `<p><strong>Responsable del Tractament:</strong> LEVEL PUNTO IMMO 24365 SLU (NIF B-26745430 · Travessera de Gràcia, 56, 3-1a, 08006 Barcelona · Email: <code>level@level.immo</code>).</p><p>Les seves dades identificatives, de contacte (inclòs correu electrònic i telèfon) i paràmetres de simulació es tracten sota estricta confidencialitat conforme al Reglament (UE) 2016/679 (RGPD) amb l'única finalitat de gestionar el seu expedient de viabilitat hipotecària, publicar el seu anunci provisional a Demanda Activa i tramitar el mandat LEVEL-Hunter. Pot exercir els seus drets d'accés, rectificació, supressió i portabilitat escrivint a <code>level@level.immo</code>.</p>`,
+        cookies_title: "Política de Cookies i Intel·ligència Artificial",
+        cookies_body: `<p>Aquesta plataforma utilitza únicament emmagatzematge tècnic de sessió per recordar la seva preferència d'idioma (Español / Català) i l'assistent automatitzat <strong>Elena | AI Advisor Level-i</strong> per estructurar expedients de compra a la carta sota supervisió humana d'agents col·legiats API 4173 · AICAT 14200.</p>`
+      }
+    };
+
+    function openLegalModal(type) {
+      const title = document.getElementById('legal-modal-title');
+      const body = document.getElementById('legal-modal-body');
+      const pack = legalTexts[currentLang] || legalTexts.es;
+      if (type === 'aviso') {
+        title.textContent = pack.aviso_title;
+        body.innerHTML = pack.aviso_body;
+      } else if (type === 'privacidad') {
+        title.textContent = pack.privacidad_title;
+        body.innerHTML = pack.privacidad_body;
+      } else {
+        title.textContent = pack.cookies_title;
+        body.innerHTML = pack.cookies_body;
+      }
+      document.getElementById('legal-modal').classList.remove('hidden');
+      document.getElementById('legal-modal').classList.add('flex');
+    }
+
+    function closeLegalModal() {
+      document.getElementById('legal-modal').classList.add('hidden');
+      document.getElementById('legal-modal').classList.remove('flex');
+    }
+
+    // DICCIONARIO PURO ES / CAT (CON "FASE" EN TODOS LOS BLOQUES)
     const i18n = {
       es: {
+        btn_replay_video: "Activar Vídeo / Sonido",
         gate_badge: "SERVICIO OFICIAL COLEGIADO API 4173 · AICAT 14200",
         gate_title: "Cómo ayudar a un hijo a comprar su casa sin perder dinero en impuestos",
         gate_desc: "Herramienta clara y gratuita para familias: compare cuánto cuesta una Donación frente a un Préstamo Familiar al 0%, calcule las cuotas reales y descargue el contrato legal listo para firmar.",
-        gate_sec_label: "🛡️ Acceso de seguridad (resuelva esta suma sencilla para entrar):",
+        gate_sec_label: "🛡️ Filtro de Seguridad (resuelva esta suma sencilla para entrar al simulador):",
         gate_how_much: "¿Cuánto es",
         gate_btn: "ENTRAR AHORA",
         gate_err: "El resultado no es correcto. Por favor, inténtelo de nuevo.",
+        footer_legal: "Aviso Legal",
+        footer_privacy: "Privacidad y RGPD",
+        footer_cookies: "Cookies e IA",
         hdr_cta: "Activar LEVEL-Hunter",
         s1_badge: "EXPLICADO CLARO, SIN TECNICISMOS Y CON LAS CUENTAS CLARAS",
         s1_title: "¿Quiere comprar su vivienda con ayuda de sus padres, pero teme a Hacienda o que el banco le diga que no?",
@@ -1412,7 +1550,7 @@
         sub_live_badge: "📝 SUBTÍTULOS EN DIRECTO (ESPAÑOL)",
         audio_h: "Audio Explicativo: Hipotecas Pre-Aprobadas y Compra a la Carta",
         audio_p: "Escuche con subtítulos grandes cómo protegemos el dinero de su familia y buscamos su piso ideal.",
-        s1_how_title: "🛠️ Cómo funciona el Montaje de la Operación (En 4 pasos sencillos):",
+        s1_how_title: "🛠️ Cómo funciona el Montaje de la Operación (En 4 fases sencillas):",
         step1_t: "Préstamo Familiar al 0% (No Donación)",
         step1_d: "En vez de regalar el dinero y pagar el Impuesto de Donaciones, sus padres se lo prestan a interés 0% firmando el contrato oficial que tiene más abajo y presentándolo en Hacienda (Modelo 600 exento: coste 0 €).",
         step2_t: "Cuota Pequeña y Plazo Amplio",
@@ -1421,7 +1559,7 @@
         step3_d: "Al entrar con el dinero de sus padres, usted pide mucha menos hipoteca al banco. Y si hace falta por su tipo de contrato, los padres pueden respaldar la operación con su pensión o vivienda libre de cargas.",
         step4_t: "Búsqueda Inmediata en Mercado Real",
         step4_d: "Mientras nuestro Broker tramita su hipoteca, activamos su anuncio en nuestro panel de Demanda Activa. Nuestros Advisors y colaboradores de la zona le buscan pisos antes de que salgan en internet.",
-        sim_badge: "🧮 PASO 1 · SIMULADOR CLARO A ANCHO COMPLETO (EL CERO SE BORRA SOLO AL HACER CLIC)",
+        sim_badge: "🧮 FASE 1 INTERACTIVA · SIMULADOR CLARO A ANCHO COMPLETO (EL CERO SE BORRA SOLO AL HACER CLIC)",
         sim_title: "Simulador de Compra, Ahorro Fiscal (Donación vs. Préstamo) y Cuota Hipotecaria",
         sim_reset_btn: "🔄 Poner todas las cifras a 0 €",
         sim_instructions: "👉 <strong>Instrucciones muy fáciles:</strong> Haga clic en cualquier casilla oscura y escriba su cifra (el cero inicial se quita solo). Los gastos de Notaría, Registro y Gestoría se calculan automáticamente al poner el precio de la vivienda.",
@@ -1482,7 +1620,7 @@
         fq3_a: "<strong>Del comprador:</strong> DNI, contrato de trabajo, últimas 3 nóminas (y justificantes del paro si es fijo discontinuo), Vida Laboral actualizada y extracto bancario de 6 meses. Si nunca ha hecho la declaración de la Renta, el certificado de retenciones e ingresos sustituye al IRPF.<br><strong>De los padres:</strong> DNI, justificante de la pensión, y Nota Simple de su vivienda libre de cargas + último recibo de IBI.",
         fq4_q: "4. ¿Qué incluye el servicio LEVEL-Hunter \"Compra a la Carta\" (1.000 € + IVA)?",
         fq4_a: "En cuanto nuestro Broker valida su viabilidad, activamos la búsqueda activa de su hogar: notificamos a nuestra red de colaboradores en la zona, buscamos viviendas antes de que suban de precio en los portales, revisamos cargas en Catastro y Registro y negociamos el precio a su favor para que ahorre miles de euros.",
-        dm_badge: "📡 PASO 2 INTERACTIVO · CONEXIÓN DIRECTA CON MERCADO REAL · LEVEL-HUNTER",
+        dm_badge: "📡 FASE 2 INTERACTIVA · CONEXIÓN DIRECTA CON MERCADO REAL · LEVEL-HUNTER",
         dm_title: "No pierda ningún piso mientras el banco tramita sus papeles: Publique su Demanda Activa",
         dm_top_btn: "Activar LEVEL-Hunter (1.000 € + IVA)",
         dm_why1_t: "1. ¿Qué pasa si espera al banco?",
@@ -1491,7 +1629,12 @@
         dm_why2_d: "En cuanto nuestro Broker acepta su estudio, publicamos su petición de compra en nuestro panel de <strong>Demanda Activa</strong> como comprador verificado en trámite.",
         dm_why3_t: "3. Aviso a Advisors y Fans de la Zona",
         dm_why3_d: "Al apretar el botón verde, todos nuestros Advisors, colaboradores y vecinos fans de la zona reciben una alerta en su móvil para ofrecerle pisos que aún no han salido en portales.",
-        dm_form_title: "✍️ Escriba cómo es la vivienda que busca para ver su anuncio:",
+        dm_form_title: "✍️ Escriba cómo es la vivienda que busca y sus datos de contacto para publicar su anuncio:",
+        dm_buyer_contact_head: "👤 Datos obligatorios del interesado comprador (para recibir las ofertas de viviendas):",
+        dm_lbl_buyer_name: "Nombre y apellidos del comprador (*):",
+        dm_lbl_buyer_email: "Correo electrónico del comprador (Obligatorio *):",
+        dm_lbl_buyer_phone: "Teléfono / WhatsApp del comprador (*):",
+        dm_err_contact: "⚠️ Por favor, introduzca su Nombre, un Correo Electrónico válido (con @) y su Teléfono para publicar su anuncio provisional.",
         dm_lbl_zone: "Municipio o Barrio donde quiere comprar:",
         dm_ph_zone: "Ej: Sabadell, Terrassa, Barcelona, La Ràpita, Tortosa...",
         dm_lbl_type: "Tipo de vivienda:",
@@ -1513,12 +1656,11 @@
         ld1_d: "Comprador con préstamo familiar firmado · Hasta 195.000 €",
         ld2_t: "Planta baja o casa cercana al mar (La Ràpita / Alcanar / Vinaròs)",
         ld2_d: "Aportación familiar + Hipoteca pre-aprobada · Hasta 165.000 €",
-        ct_badge: "📄 PASO 3 INTERACTIVO · DOCUMENTO OFICIAL GRATUITO PARA RELLENAR, DESCARGAR EN PDF O FIRMAR DIGITALMENTE",
+        ct_badge: "📄 FASE 3 INTERACTIVA · DOCUMENTO OFICIAL GRATUITO PARA RELLENAR E IMPRIMIR EN PDF",
         ct_title: "Contrato Estándar de Préstamo Familiar (0% Intereses)",
         ct_btn_copy: "Copiar Contrato",
         ct_btn_print: "Imprimir / Guardar PDF",
-        ct_btn_docusign: "Enviar a Firmar por Móvil / Email (DocuSign)",
-        ct_instructions: "👉 <strong>Muy fácil de rellenar:</strong> Escriba la ciudad, la fecha y el nombre, DNI y dirección de los padres (prestamistas) y de los hijos (prestatarios). Si son dos padres o dos compradores, pulse el botón <strong>\"+ Añadir otra persona\"</strong>. Puede imprimirlo en PDF o enviarlo para firma digital en el móvil.",
+        ct_instructions: "👉 <strong>Muy fácil de rellenar:</strong> Escriba la ciudad, la fecha y el nombre, DNI y dirección de los padres (prestamistas) y de los hijos (prestatarios). Si son dos padres o dos compradores, pulse el botón <strong>\"+ Añadir otra persona\"</strong>. Todo lo que escriba aparecerá al instante en el contrato legal de abajo listo para imprimir o guardar en PDF.",
         ct_lbl_city: "Ciudad de firma:",
         ct_ph_city: "Ej: Sabadell / Barcelona",
         ct_lbl_date: "Fecha (Día, Mes y Año):",
@@ -1538,12 +1680,13 @@
         elena_price_title: "📋 Condiciones Claras del Mandato LEVEL-Hunter:",
         elena_price_line1: "• Importe de activación del mandato: <strong>1.000,00 € + 21% IVA (210,00 €) = 1.210,00 €</strong>",
         elena_price_line2: "• Inicio de campaña: En el momento en que nuestro Broker acepte la viabilidad de su operación.",
-        elena_lbl_name: "Su Nombre y Apellidos:",
-        elena_lbl_phone: "Teléfono / WhatsApp:",
-        elena_lbl_dni: "Su DNI / NIE:",
-        elena_lbl_email: "Correo electrónico:",
-        elena_rgpd_txt: "Acepto abrir expediente con LEVEL PUNTO IMMO 24365 SLU y la Política de Privacidad RGPD.",
-        elena_err_msg: "Por favor, escriba su nombre y su teléfono válido para generar su documento de encargo.",
+        elena_lbl_name: "Su Nombre y Apellidos (*):",
+        elena_lbl_phone: "Teléfono / WhatsApp (*):",
+        elena_lbl_dni: "Su DNI / NIE (*):",
+        elena_lbl_email: "Correo electrónico del comprador (Obligatorio *):",
+        elena_math_lbl: "🛡️ Suma de seguridad:",
+        elena_rgpd_txt: "Acepto abrir expediente con LEVEL PUNTO IMMO 24365 SLU y la",
+        elena_err_msg: "⚠️ Por favor, rellene su Nombre, Teléfono, un Correo Electrónico válido (con @) y resuelva la suma de seguridad.",
         elena_btn_voucher: "Activar Expediente e Imprimir Hoja de Encargo (1.210 € IVA incl.)",
         v_webhook_ok: "🔔 ¡Expediente enviado en tiempo real a nuestra central y Advisors de zona!",
         v_doc_title: "HOJA DE ENCARGO Y VOLANTE DE PAGO",
@@ -1557,27 +1700,31 @@
         v_item_desc: "Publicación en Demanda Activa (app.level-i.com), alerta a colaboradores y Advisors de zona, búsqueda de activos off-market y coordinación con Broker hipotecario.",
         v_iva_label: "Impuesto sobre el Valor Añadido (IVA 21%)",
         v_total_label: "TOTAL A ABONAR (IVA INCLUIDO):",
-        v_bank_head: "Datos para Transferencia o Ingreso Bancario:",
+        v_bank_head: "🏦 Datos Oficiales para Transferencia o Ingreso Bancario:",
         v_beneficiary: "Beneficiario:",
         v_concept_lbl: "Concepto de la transferencia:",
         v_guarantee_note: "* El inicio de la campaña en firme queda vinculado a la validación de viabilidad hipotecaria por nuestro Broker oficial.",
-        v_sign_client: "Firma del Cliente Mandante",
+        v_mandante_prefix: "Mandante",
         v_btn_print: "Guardar / Imprimir PDF",
-        v_btn_docusign: "Firmar desde el Móvil (DocuSign)",
+        v_btn_tpv: "Pagar con Tarjeta · TPV Banc Sabadell (Próximamente)",
         v_btn_close: "Cerrar",
-        ftr_lock: "Pantalla de inicio",
+        ftr_lock: "Vídeo Portada",
         alert_copied: "✓ El texto completo del contrato se ha copiado al portapapeles.",
-        alert_published: "✓ ¡Su anuncio provisional ya está activo y enviado a nuestra red! Nuestros Advisors y colaboradores de la zona han recibido la alerta.",
-        alert_docusign: "✍️ ¡Solicitud de Firma Digital enviada! Recibirá el enlace seguro (tipo DocuSign) en su móvil y correo electrónico para firmar con el dedo sin necesidad de imprimir."
+        alert_published: "✓ ¡Su anuncio provisional ya está activo y enviado a nuestra central! Nuestros Advisors y colaboradores de la zona han recibido la alerta.",
+        alert_tpv_soon: "💳 Pasarela TPV Banc Sabadell (Próximamente): Estamos integrando el pago directo con tarjeta y facturación automática. Por ahora, puede realizar el abono mediante transferencia a la cuenta BS BANC SABADELL ES53 0081 0190 4800 0163 8565 indicada en su volante."
       },
       ca: {
+        btn_replay_video: "Activar Vídeo / So",
         gate_badge: "SERVEI OFICIAL COL·LEGIAT API 4173 · AICAT 14200",
         gate_title: "Com ajudar un fill a comprar casa seva sense perdre diners en impostos",
         gate_desc: "Eina clara i gratuïta per a famílies: compari quant costa una Donació enfront d'un Préstec Familiar al 0%, calculi les quotes reals i descarregui el contracte legal llest per signar.",
-        gate_sec_label: "🛡️ Accés de seguretat (resolgui aquesta suma senzilla per entrar):",
+        gate_sec_label: "🛡️ Filtre de Seguretat (resolgui aquesta suma senzilla per entrar al simulador):",
         gate_how_much: "Quant és",
         gate_btn: "ENTRAR ARA",
         gate_err: "El resultat no és correcte. Si us plau, torni-ho a provar.",
+        footer_legal: "Avís Legal",
+        footer_privacy: "Privacitat i RGPD",
+        footer_cookies: "Cookies i IA",
         hdr_cta: "Activar LEVEL-Hunter",
         s1_badge: "EXPLICAT CLAR, SENSE TECNICISMES I AMB ELS COMPTES CLARS",
         s1_title: "Vol comprar el seu habitatge amb l'ajuda dels seus pares, però té por d'Hisenda o que el banc li digui que no?",
@@ -1589,7 +1736,7 @@
         sub_live_badge: "📝 SUBTÍTOLS EN DIRECTE (CATALÀ)",
         audio_h: "Àudio Explicatiu: Hipoteques Pre-Aprovades i Compra a la Carta",
         audio_p: "Escolti amb subtítols grans com protegim els diners de la seva família i busquem el seu pis ideal.",
-        s1_how_title: "🛠️ Com funciona el Muntatge de l'Operació (En 4 passos senzills):",
+        s1_how_title: "🛠️ Com funciona el Muntatge de l'Operació (En 4 fases senzilles):",
         step1_t: "Préstec Familiar al 0% (No Donació)",
         step1_d: "En lloc de regalar els diners i pagar l'Impost de Donacions, els seus pares els hi presten a interès 0% signant el contracte oficial que té més avall i presentant-lo a Hisenda (Model 600 exempt: cost 0 €).",
         step2_t: "Quota Petita i Termini Ampli",
@@ -1598,7 +1745,7 @@
         step3_d: "En entrar amb els diners dels seus pares, vostè demana molta menys hipoteca al banc. I si cal pel seu tipus de contracte, els pares poden donar suport a l'operació amb la seva pensió o habitatge lliure de càrregues.",
         step4_t: "Cerca Immediata al Mercat Real",
         step4_d: "Mentre el nostre Broker tramita la seva hipoteca, activem el seu anunci al nostre panell de Demanda Activa. Els nostres Advisors i col·laboradors de la zona li busquen pisos abans que surtin a internet.",
-        sim_badge: "🧮 PAS 1 · SIMULADOR CLAR A AMPLE COMPLET (EL ZERO S'ESBORRA SOL EN FER CLIC)",
+        sim_badge: "🧮 FASE 1 INTERACTIVA · SIMULADOR CLAR A AMPLE COMPLET (EL ZERO S'ESBORRA SOL EN FER CLIC)",
         sim_title: "Simulador de Compra, Estalvi Fiscal (Donació vs. Préstec) i Quota Hipotecària",
         sim_reset_btn: "🔄 Posar totes les xifres a 0 €",
         sim_instructions: "👉 <strong>Instruccions molt fàcils:</strong> Faci clic a qualsevol casella fosca i escrigui la seva xifra (el zero inicial es treu sol). Les despeses de Notaria, Registre i Gestoria es calculen automàticament en posar el preu de l'habitatge.",
@@ -1659,7 +1806,7 @@
         fq3_a: "<strong>Del comprador:</strong> DNI, contracte de treball, últimes 3 nòmines (i justificants de l'atur si és fix discontinu), Vida Laboral actualitzada i extracte bancari de 6 mesos. Si mai ha fet la declaració de la Renda, el certificat de retencions i ingressos substitueix l'IRPF.<br><strong>Dels pares:</strong> DNI, justificant de la pensió, i Nota Simple del seu habitatge lliure de càrregues + últim rebut d'IBI.",
         fq4_q: "4. Què inclou el servei LEVEL-Hunter \"Compra a la Carta\" (1.000 € + IVA)?",
         fq4_a: "Tan bon punt el nostre Broker valida la seva viabilitat, activem la cerca activa de la seva llar: notifiquem a la nostra xarxa de col·laboradors a la zona, busquem habitatges abans que pugin de preu als portals, revisem càrregues al Cadastre i Registre i negociem el preu al seu favor perquè estalviï milers d'euros.",
-        dm_badge: "📡 PAS 2 INTERACTIU · CONNEXIÓ DIRECTA AMB MERCAT REAL · LEVEL-HUNTER",
+        dm_badge: "📡 FASE 2 INTERACTIVA · CONNEXIÓ DIRECTA AMB MERCAT REAL · LEVEL-HUNTER",
         dm_title: "No perdi cap pis mentre el banc tramita els seus papers: Publiqui la seva Demanda Activa",
         dm_top_btn: "Activar LEVEL-Hunter (1.000 € + IVA)",
         dm_why1_t: "1. Què passa si espera al banc?",
@@ -1668,7 +1815,12 @@
         dm_why2_d: "Tan bon punt el nostre Broker accepta el seu estudi, publiquem la seva petició de compra al nostre panell de <strong>Demanda Activa</strong> com a comprador verificat en tràmit.",
         dm_why3_t: "3. Avís a Advisors i Fans de la Zona",
         dm_why3_d: "En prémer el botó verd, tots els nostres Advisors, col·laboradors i veïns fans de la zona reben una alerta al seu mòbil per oferir-li pisos que encara no han sortit en portals.",
-        dm_form_title: "✍️ Escrigui com és l'habitatge que busca per veure el seu anunci:",
+        dm_form_title: "✍️ Escrigui com és l'habitatge que busca i les seves dades de contacte per publicar el seu anunci:",
+        dm_buyer_contact_head: "👤 Dades obligatòries de l'interessat comprador (per rebre les ofertes d'habitatges):",
+        dm_lbl_buyer_name: "Nom i cognoms del comprador (*):",
+        dm_lbl_buyer_email: "Correu electrònic del comprador (Obligatori *):",
+        dm_lbl_buyer_phone: "Telèfon / WhatsApp del comprador (*):",
+        dm_err_contact: "⚠️ Si us plau, introdueixi el seu Nom, un Correu Electrònic vàlid (amb @) i el seu Telèfon per publicar el seu anunci provisional.",
         dm_lbl_zone: "Municipi o Barri on vol comprar:",
         dm_ph_zone: "Ex: Sabadell, Terrassa, Barcelona, La Ràpita, Tortosa...",
         dm_lbl_type: "Tipus d'habitatge:",
@@ -1690,12 +1842,11 @@
         ld1_d: "Comprador amb préstec familiar signat · Fins a 195.000 €",
         ld2_t: "Planta baixa o casa propera al mar (La Ràpita / Alcanar / Vinaròs)",
         ld2_d: "Aportació familiar + Hipoteca pre-aprovada · Fins a 165.000 €",
-        ct_badge: "📄 PAS 3 INTERACTIU · DOCUMENT OFICIAL GRATUÏT PER OMPLIR, DESCARREGAR EN PDF O SIGNAR DIGITALMENT",
+        ct_badge: "📄 FASE 3 INTERACTIVA · DOCUMENT OFICIAL GRATUÏT PER OMPLIR I IMPRIMIR EN PDF",
         ct_title: "Contracte Estàndard de Préstec Familiar (0% Interessos)",
         ct_btn_copy: "Copiar Contracte",
         ct_btn_print: "Imprimir / Guardar PDF",
-        ct_btn_docusign: "Enviar a Signar pel Mòbil / Email (DocuSign)",
-        ct_instructions: "👉 <strong>Molt fàcil d'omplir:</strong> Escrigui la ciutat, la data i el nom, DNI i adreça dels pares (prestamistes) i dels fills (prestataris). Si són dos pares o dos compradors, premi el botó <strong>\"+ Afegir una altra persona\"</strong>. Pot imprimir-lo en PDF o enviar-lo per a signatura digital al mòbil.",
+        ct_instructions: "👉 <strong>Molt fàcil d'omplir:</strong> Escrigui la ciutat, la data i el nom, DNI i adreça dels pares (prestamistes) i dels fills (prestataris). Si són dos pares o dos compradors, premi el botó <strong>\"+ Afegir una altra persona\"</strong>. Tot el que escrigui apareixerà a l'instant al contracte legal de sota llest per imprimir o guardar en PDF.",
         ct_lbl_city: "Ciutat de signatura:",
         ct_ph_city: "Ex: Sabadell / Barcelona",
         ct_lbl_date: "Data (Dia, Mes i Any):",
@@ -1715,12 +1866,13 @@
         elena_price_title: "📋 Condicions Clares del Mandat LEVEL-Hunter:",
         elena_price_line1: "• Import d'activació del mandat: <strong>1.000,00 € + 21% IVA (210,00 €) = 1.210,00 €</strong>",
         elena_price_line2: "• Inici de campanya: En el moment en què el nostre Broker accepti la viabilitat de la seva operació.",
-        elena_lbl_name: "El seu Nom i Cognoms:",
-        elena_lbl_phone: "Telèfon / WhatsApp:",
-        elena_lbl_dni: "El seu DNI / NIE:",
-        elena_lbl_email: "Correu electrònic:",
-        elena_rgpd_txt: "Accepto obrir expedient amb LEVEL PUNTO IMMO 24365 SLU i la Política de Privacitat RGPD.",
-        elena_err_msg: "Si us plau, escrigui el seu nom i el seu telèfon vàlid per generar el seu document d'encàrrec.",
+        elena_lbl_name: "El seu Nom i Cognoms (*):",
+        elena_lbl_phone: "Telèfon / WhatsApp (*):",
+        elena_lbl_dni: "El seu DNI / NIE (*):",
+        elena_lbl_email: "Correu electrònic del comprador (Obligatori *):",
+        elena_math_lbl: "🛡️ Suma de seguretat:",
+        elena_rgpd_txt: "Accepto obrir expedient amb LEVEL PUNTO IMMO 24365 SLU i la",
+        elena_err_msg: "⚠️ Si us plau, ompli el seu Nom, Telèfon, un Correu Electrònic vàlid (amb @) i resolgui la suma de seguretat.",
         elena_btn_voucher: "Activar Expedient i Imprimir Full d'Encàrrec (1.210 € IVA incl.)",
         v_webhook_ok: "🔔 Expedient enviat en temps real a la nostra central i Advisors de zona!",
         v_doc_title: "FULL D'ENCÀRREC I VOLANT DE PAGAMENT",
@@ -1734,18 +1886,18 @@
         v_item_desc: "Publicació a Demanda Activa (app.level-i.com), alerta a col·laboradors i Advisors de zona, cerca d'actius off-market i coordinació amb Broker hipotecari.",
         v_iva_label: "Impost sobre el Valor Afegit (IVA 21%)",
         v_total_label: "TOTAL A ABONAR (IVA INCLÒS):",
-        v_bank_head: "Dades per a Transferència o Ingrés Bancari:",
+        v_bank_head: "🏦 Dades Oficials per a Transferència o Ingrés Bancari:",
         v_beneficiary: "Beneficiari:",
         v_concept_lbl: "Concepte de la transferència:",
         v_guarantee_note: "* L'inici de la campanya en ferm queda vinculat a la validació de viabilitat hipotecària pel nostre Broker oficial.",
-        v_sign_client: "Signatura del Client Mandant",
+        v_mandante_prefix: "Mandant",
         v_btn_print: "Guardar / Imprimir PDF",
-        v_btn_docusign: "Signar des del Mòbil (DocuSign)",
+        v_btn_tpv: "Pagar amb Targeta · TPV Banc Sabadell (Properament)",
         v_btn_close: "Tancar",
-        ftr_lock: "Pantalla d'inici",
+        ftr_lock: "Vídeo Portada",
         alert_copied: "✓ El text complet del contracte s'ha copiat al porta-retalls.",
-        alert_published: "✓ El seu anunci provisional ja està actiu i enviat a la nostra xarxa! Els nostres Advisors i col·laboradors de la zona han rebut l'alerta.",
-        alert_docusign: "✍️ Sol·licitud de Signatura Digital enviada! Rebrà l'enllaç segur (tipus DocuSign) al seu mòbil i correu electrònic per signar amb el dit sense necessitat d'imprimir."
+        alert_published: "✓ El seu anunci provisional ja està actiu i enviat a la nostra central! Els nostres Advisors i col·laboradors de la zona han rebut l'alerta.",
+        alert_tpv_soon: "💳 Passarel·la TPV Banc Sabadell (Properament): Estem integrant el pagament directe amb targeta i facturació automàtica. Per ara, pot realitzar l'abonament mitjançant transferència al compte BS BANC SABADELL ES53 0081 0190 4800 0163 8565 indicat al seu volant."
       }
     };
 
@@ -1755,6 +1907,12 @@
       gateSum = g1 + g2;
       document.getElementById('gate-num1').textContent = g1;
       document.getElementById('gate-num2').textContent = g2;
+
+      const e1 = Math.floor(Math.random() * 4) + 2;
+      const e2 = Math.floor(Math.random() * 4) + 2;
+      elenaSum = e1 + e2;
+      document.getElementById('elena-num1').textContent = e1;
+      document.getElementById('elena-num2').textContent = e2;
     }
     initMath();
 
@@ -1762,6 +1920,8 @@
       const val = parseInt(document.getElementById('gate-math-input').value, 10);
       if (val === gateSum) {
         playSpecialSuccessSound('radar');
+        const vid = document.getElementById('intro-bg-video');
+        if (vid) vid.pause();
         document.getElementById('gatekeeper-screen').classList.add('hidden');
         document.getElementById('gate-error').classList.add('hidden');
       } else {
@@ -1771,6 +1931,11 @@
 
     function reopenGatekeeper() {
       document.getElementById('gatekeeper-screen').classList.remove('hidden');
+      const vid = document.getElementById('intro-bg-video');
+      if (vid) {
+        vid.muted = true;
+        vid.play().catch(() => {});
+      }
     }
 
     function resetNumbersToZero() {
@@ -1816,6 +1981,9 @@
       } else if (lang === 'es' && fechaInput.value === "10 de novembre de 2026") {
         fechaInput.value = "10 de noviembre de 2026";
       }
+
+      // Actualizar etiqueta dinámica "Mandante / Mandant: Nombre" en el volante si está abierto
+      document.getElementById('v-sign-client-dynamic').textContent = `${dict.v_mandante_prefix}: ${currentVoterName}`;
 
       updateSubtitlesByProgress();
       syncMuteUI();
@@ -2074,35 +2242,6 @@
       setTimeout(() => document.body.classList.remove('print-mode-voucher'), 500);
     }
 
-    // SALIDA WEBHOOK 1: FIRMA DIGITAL DOCUSIGN / SIGNATURIT
-    function sendForDigitalSignature(docType) {
-      playSpecialSuccessSound('cash');
-      const contractText = document.getElementById('contract-document').innerText;
-      const name = document.getElementById('hunter-name').value.trim() || document.querySelector('.party-borrower input')?.value.trim() || 'Cliente Firma Digital';
-      const phone = document.getElementById('hunter-phone').value.trim() || 'Pendiente';
-      const email = document.getElementById('hunter-email').value.trim() || 'Pendiente';
-
-      const payload = {
-        evento: "solicitud_firma_digital_docusign",
-        origen_landing: "DONACIONES_FAMILIARES_LEVEL_HUNTER",
-        id_inmueble: ASSET_ID,
-        tipo_documento: docType,
-        idioma_sesion: currentLang,
-        solicitar_firma_digital: true,
-        id_sesion: sessionId,
-        ip_cliente: clienteIP,
-        cliente: { nombre: name, telefono: phone, email: email },
-        contenido_documento: contractText
-      };
-
-      Promise.allSettled([
-        fetch(WEBHOOK_ELENA_VENTAS, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) }),
-        fetch(WEBHOOK_MAKE, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) })
-      ]);
-
-      alert(i18n[currentLang].alert_docusign);
-    }
-
     function updateDemandaPreview() {
       const zonaInput = document.getElementById('d-zona').value.trim();
       const sel = document.getElementById('d-tipus');
@@ -2125,20 +2264,46 @@
       }
     }
 
-    // SALIDA WEBHOOK 2: PUBLICACIÓN DE ANUNCIO PROVISIONAL DE DEMANDA ACTIVA
+    // DISPARO WEBHOOK 1: PUBLICACIÓN DE ANUNCIO PROVISIONAL DE DEMANDA ACTIVA (EXIGE EMAIL DEL INTERESADO COMPRADOR)
     function publishProvisionalDemand() {
+      const buyerName = document.getElementById('d-buyer-name').value.trim();
+      const buyerEmail = document.getElementById('d-buyer-email').value.trim();
+      const buyerPhone = document.getElementById('d-buyer-phone').value.replace(/\D/g, '');
+      const errEl = document.getElementById('d-error-msg');
+
+      if (!buyerName || !buyerEmail.includes('@') || !buyerEmail.includes('.') || buyerPhone.length < 6) {
+        errEl.classList.remove('hidden');
+        return;
+      }
+      errEl.classList.add('hidden');
+
+      // Autocompletar también en el modal de Elena para ahorrarle trabajo al comprador
+      if (!document.getElementById('hunter-name').value) document.getElementById('hunter-name').value = buyerName;
+      if (!document.getElementById('hunter-email').value) document.getElementById('hunter-email').value = buyerEmail;
+      if (!document.getElementById('hunter-phone').value) document.getElementById('hunter-phone').value = buyerPhone;
+
       playSpecialSuccessSound('radar');
       const badge = document.getElementById('prev-badge-state');
       badge.textContent = i18n[currentLang].prev_badge_live;
       badge.className = "px-3 py-1 rounded-full bg-emerald-500 text-slate-950 font-mono text-xs font-black";
+
+      const isCatalanSession = (currentLang === 'ca');
+      const dossierLangCode = isCatalanSession ? 'CA' : 'ES';
 
       const payloadDemanda = {
         evento: "publicacion_demanda_activa_provisional",
         origen_landing: "DONACIONES_FAMILIARES_LEVEL_HUNTER",
         id_inmueble: ASSET_ID,
         idioma_sesion_web: currentLang,
+        idioma_dossier: dossierLangCode,
         id_sesion: sessionId,
         ip_cliente: clienteIP,
+        datos_usuario: {
+          nombre_completo: buyerName,
+          telefono: `+34 ${buyerPhone}`,
+          id_contacto: `34${buyerPhone}`,
+          email: buyerEmail
+        },
         anuncio_provisional: {
           zona: document.getElementById('d-zona').value.trim() || 'Por definir',
           titular_anuncio: document.getElementById('prev-titulo').textContent,
@@ -2198,15 +2363,17 @@
       document.getElementById('elena-modal').classList.remove('flex');
     }
 
-    // SALIDA WEBHOOK 3: ACTIVACIÓN DE MANDATO LEVEL-HUNTER Y GENERACIÓN DE VOLANTE (1.210 €)
+    // DISPARO WEBHOOK 2: ACTIVACIÓN DE MANDATO LEVEL-HUNTER Y GENERACIÓN DE VOLANTE (EMAIL OBLIGATORIO + SUMA + RGPD)
     function openVoucherFromElena() {
       const name = document.getElementById('hunter-name').value.trim();
       const prefix = document.getElementById('hunter-prefix').value || '+34';
       const rawPhone = document.getElementById('hunter-phone').value.replace(/\D/g, '');
-      const dni = document.getElementById('hunter-dni').value.trim() || 'No indicado';
-      const email = document.getElementById('hunter-email').value.trim() || 'pendiente@level.immo';
+      const dni = document.getElementById('hunter-dni').value.trim() || 'Pendiente';
+      const email = document.getElementById('hunter-email').value.trim();
+      const mathVal = parseInt(document.getElementById('elena-math-input').value, 10);
+      const rgpdChecked = document.getElementById('hunter-rgpd').checked;
 
-      if (!name || rawPhone.length < 6) {
+      if (!name || rawPhone.length < 6 || !email.includes('@') || !email.includes('.') || mathVal !== elenaSum || !rgpdChecked) {
         document.getElementById('hunter-error').classList.remove('hidden');
         return;
       }
@@ -2214,6 +2381,7 @@
 
       playSpecialSuccessSound('cash');
 
+      currentVoterName = name;
       const now = new Date();
       const pad = n => String(n).padStart(2, '0');
       const fechaHoy = `${pad(now.getDate())}/${pad(now.getMonth() + 1)}/${now.getFullYear()}`;
@@ -2243,13 +2411,15 @@
       const explicacionDetalle = isCatalanSession
         ? `ACTIVACIÓ MANDAT LEVEL-HUNTER + PRÉSTEC FAMILIAR (app.level-i.com/donaciones-familiares)\n` +
           `• Referència Volant de Pagament: ${refCode} (Import: 1.000 € + 21% IVA = 1.210,00 €)\n` +
-          `• Client Mandant: ${name} (DNI: ${dni})\n` +
+          `• Compte Bancari: BS BANC SABADELL ES53 0081 0190 4800 0163 8565\n` +
+          `• Client Mandant: ${name} (DNI: ${dni} | Email: ${email})\n` +
           `• Demanda Activa Publicada: ${resumenAnuncio}\n` +
           `• Preu Compra Simulat: ${preuCompra} | Aportació Pares (0%): ${aportacioFam}\n` +
           `• Hipoteca a Finançar: ${hipotecaSolicitada} | Quota Total: ${cuotaTotal} (Ràtio comprador: ${ratioEsfuerzo} | Conjunt amb pares: ${ratioConjunto})`
         : `ACTIVACIÓN MANDATO LEVEL-HUNTER + PRÉSTAMO FAMILIAR (app.level-i.com/donaciones-familiares)\n` +
           `• Referencia Volante de Pago: ${refCode} (Importe: 1.000 € + 21% IVA = 1.210,00 €)\n` +
-          `• Cliente Mandante: ${name} (DNI: ${dni})\n` +
+          `• Cuenta Bancaria: BS BANC SABADELL ES53 0081 0190 4800 0163 8565\n` +
+          `• Cliente Mandante: ${name} (DNI: ${dni} | Email: ${email})\n` +
           `• Demanda Activa Publicada: ${resumenAnuncio}\n` +
           `• Precio Compra Simulado: ${preuCompra} | Aportación Padres (0%): ${aportacioFam}\n` +
           `• Hipoteca a Financiar: ${hipotecaSolicitada} | Cuota Total: ${cuotaTotal} (Ratio comprador: ${ratioEsfuerzo} | Conjunto con padres: ${ratioConjunto})`;
@@ -2287,6 +2457,7 @@
           NOMBRE_COMPLETO: name,
           NOMBRE_PILA: firstName,
           ID_CONTACTO: idContactoDigits,
+          EMAIL_CLIENTE: email,
           TITULO_GESTION: tituloGestion,
           EXPLICACION_DETALLE: explicacionDetalle,
           ESTADO: "Volante emitido (1.210€). En revisión Broker",
@@ -2295,7 +2466,8 @@
           REFERENCIA_CATASTRAL: refCode,
           IDIOMA_DOSSIER: dossierLangCode,
           PRESUPUESTO_SIMULADO_WEB: "1.210,00 € (1.000 € + IVA)",
-          ESTADO_FACTURA: "Pendiente de abono volante"
+          CUENTA_ABONO: "BS BANC SABADELL ES53 0081 0190 4800 0163 8565",
+          ESTADO_FACTURA: "Pendiente de abono volante / TPV"
         }
       };
 
@@ -2304,6 +2476,7 @@
         fetch(WEBHOOK_MAKE, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) })
       ]);
 
+      const dict = i18n[currentLang];
       document.getElementById('v-date-now').textContent = fechaHoy;
       document.getElementById('v-ref-code').textContent = refCode;
       document.getElementById('v-name').textContent = name;
@@ -2312,10 +2485,30 @@
       document.getElementById('v-email').textContent = email;
       document.getElementById('v-zone-summary').textContent = resumenAnuncio;
       document.getElementById('v-concept').textContent = `${refCode} · ${name.toUpperCase()}`;
+      document.getElementById('v-sign-client-dynamic').textContent = `${dict.v_mandante_prefix}: ${name}`;
 
       closeElenaModal();
       document.getElementById('voucher-modal').classList.remove('hidden');
       document.getElementById('voucher-modal').classList.add('flex');
+    }
+
+    // DISPARO WEBHOOK 3: CLIC EN PASARELA TPV BANC SABADELL (PRÓXIMAMENTE / PROPERAMENT)
+    function notifyTpvSabadellSoon() {
+      playSpecialSuccessSound('radar');
+      const payloadTpv = {
+        evento: "intento_pago_tpv_sabadell_proximamente",
+        origen_landing: "DONACIONES_FAMILIARES_LEVEL_HUNTER",
+        referencia_volante: document.getElementById('v-ref-code').textContent,
+        cliente_mandante: document.getElementById('v-name').textContent,
+        telefono: document.getElementById('v-phone').textContent,
+        email: document.getElementById('v-email').textContent,
+        importe_tpv: "1.210,00 €"
+      };
+      Promise.allSettled([
+        fetch(WEBHOOK_ELENA_VENTAS, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payloadTpv) }),
+        fetch(WEBHOOK_MAKE, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payloadTpv) })
+      ]);
+      alert(i18n[currentLang].alert_tpv_soon);
     }
 
     function closeVoucherModal() {
