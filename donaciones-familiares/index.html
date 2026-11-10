@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
-  <title>Level.immo | Simulador, Préstec Familiar & LEVEL-Hunter "Compra a la Carta"</title>
+  <title>Level.immo | Simulador, Préstecs, LEVEL-Hunter & Demanda Activa</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <style>
@@ -41,18 +41,18 @@
   <div id="gatekeeper-screen" class="fixed inset-0 z-40 bg-[#060a10] overflow-y-auto no-print">
     <div class="relative z-10 min-h-[100dvh] max-w-4xl mx-auto px-4 py-8 flex flex-col justify-center items-center text-center space-y-6">
       <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full gold-badge text-xs font-bold uppercase">
-        <span>🏛️</span> <span>APP LEVEL-I · DONACIONS, PRÉSTECS & LEVEL-HUNTER</span>
+        <span>🏛️</span> <span>APP LEVEL-I · DONACIONS, PRÉSTECS & DEMANDA ACTIVA</span>
       </div>
       <h1 class="text-3xl sm:text-5xl font-black text-white leading-tight">
-        Simulador Patrimonial, Préstecs Familiars & Activació LEVEL-Hunter
+        Simulador Patrimonial, Préstecs Familiars & Demanda Activa "Compra a la Carta"
       </h1>
       <p class="text-slate-300 text-sm sm:text-base max-w-2xl">
-        Eina professional per calcular viabilitat hipotecària, generar contractes de préstec entre familiars i activar de manera immediata el servei "Compra a la Carta".
+        Eina professional dissenyada per a tothom. Calcula viabilitat, genera contractes entre familiars, explora la demanda activa actual i publica provisionalment el teu anunci per notificar a la xarxa d'Advisors i col·laboradors fans a la zona mentre surt la hipoteca pre-aprovada.
       </p>
 
       <div class="card-panel p-6 border-slate-700 bg-[#101826] max-w-md w-full space-y-4 text-left shadow-2xl">
         <div class="text-xs font-bold text-amber-400 uppercase tracking-wider">🛡️ Filtre de Seguretat (API 4173)</div>
-        <p class="text-xs text-slate-300">Resol la suma matemàtica per accedir al simulador, editor de contractes i al xat d'activació LEVEL-Hunter:</p>
+        <p class="text-xs text-slate-300">Resol la suma matemàtica per accedir a la plataforma:</p>
         <div class="flex items-center gap-3">
           <span id="gate-math-label" class="bg-slate-900 border border-slate-700 rounded px-3 py-2 text-sm font-bold text-white whitespace-nowrap">5 + 3 =</span>
           <input type="number" id="gate-math-input" placeholder="?" onkeydown="if(event.key==='Enter') verifyGatekeeper()" class="flex-1 bg-[#080d14] border border-slate-700 rounded px-3 py-2 text-center text-white font-bold focus:border-emerald-500 focus:outline-none" />
@@ -79,8 +79,8 @@
         <span class="text-[11px] text-slate-400 font-mono hidden sm:inline border-l border-slate-700 pl-3">app.level-i.com/donaciones-familiares</span>
       </div>
       <div class="flex items-center gap-2">
-        <button type="button" onclick="openElenaModal()" class="px-3 py-1.5 rounded bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-black transition cursor-pointer flex items-center gap-1 shadow-lg">
-          <span>🎯</span> Activar LEVEL-Hunter (1.000 € + IVA)
+        <button type="button" onclick="document.getElementById('demanda-section').scrollIntoView({behavior: 'smooth'})" class="px-3 py-1.5 rounded bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/40 text-emerald-300 text-xs font-bold transition cursor-pointer flex items-center gap-1">
+          <span>🎯</span> Demanda Activa & Anunci Provisional
         </button>
         <button type="button" onclick="window.print()" class="px-3 py-1.5 rounded bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/50 text-amber-300 text-xs font-bold transition cursor-pointer">
           🖨️ Imprimir
@@ -95,70 +95,77 @@
   <!-- ================= CONTENIDO PRINCIPAL ================= -->
   <main class="max-w-7xl mx-auto w-full px-4 py-8 space-y-10">
 
-    <div class="border-b border-slate-800 pb-5 flex flex-wrap items-center justify-between gap-4">
-      <div>
-        <div class="text-xs text-emerald-400 font-mono mb-1">app.level-i.com/donaciones-familiares</div>
-        <h2 class="text-2xl sm:text-3xl font-extrabold text-white">
-          Simulador Financer, Préstecs Familiars & LEVEL-Hunter "Compra a la Carta"
-        </h2>
-      </div>
-      <button type="button" onclick="openElenaModal()" class="px-5 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-sm uppercase tracking-wider transition emerald-glow flex items-center gap-2 cursor-pointer">
-        <span>🎯</span> Activar Mandat LEVEL-Hunter (1.000 € + IVA)
-      </button>
+    <div class="border-b border-slate-800 pb-5">
+      <div class="text-xs text-emerald-400 font-mono mb-1">app.level-i.com/donaciones-familiares</div>
+      <h2 class="text-2xl sm:text-3xl font-extrabold text-white">
+        Simulador Financer, Préstecs Familiars & Demanda Activa "Compra a la Carta"
+      </h2>
     </div>
 
-    <!-- BLOQUE 1: SIMULADOR FINANCIERO AVANZADO -->
+    <!-- BLOQUE 1: SIMULADOR FINANCIERO CON GASTOS DETALLADOS Y APORTACIÓN FAMILIAR -->
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
 
       <!-- Controles de Entrada (Izquierda) -->
       <div class="lg:col-span-6 card-panel p-6 space-y-5">
         <div class="flex items-center justify-between border-b border-slate-800 pb-3">
           <h3 class="text-base font-bold text-white flex items-center gap-2">
-            <span>🧮</span> Paràmetres del Simulador Econòmic
+            <span>🧮</span> Paràmetres del Simulador Econòmic (Fàcil i Intuïtiu)
           </h3>
           <span class="text-xs font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded">100% Modificable</span>
         </div>
 
         <div class="space-y-4 text-xs">
           <div>
-            <label class="text-[11px] font-bold uppercase text-slate-400 block mb-1">Preu de Venda de l'Inmueble (€):</label>
-            <input type="number" id="sim-preu" value="180000" step="5000" oninput="recalculateAll()" class="w-full bg-[#080d14] border border-amber-500/50 rounded p-2 text-amber-400 font-black focus:outline-none" />
+            <label class="text-[11px] font-bold uppercase text-amber-400 block mb-1">1. Preu de Venda / Adquisició de l'Inmueble (€):</label>
+            <input type="number" id="sim-preu" value="180000" step="5000" oninput="recalculateAll()" class="w-full bg-[#080d14] border border-amber-500/50 rounded p-2.5 text-amber-400 font-black text-sm focus:outline-none" />
+          </div>
+
+          <div class="p-3.5 rounded-lg bg-[#151f30] border border-slate-800 space-y-3">
+            <div class="text-[11px] font-bold text-slate-300 uppercase">2. Desglossament de Gastos d'Adquisició (Notaria, Registre, Impostos):</div>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="text-[10px] text-slate-400 block mb-1">Impostos (ITP / IVA %):</label>
+                <input type="number" id="sim-pct-impostos" value="10" step="0.5" oninput="recalculateAll()" class="w-full bg-[#080d14] border border-slate-700 rounded p-2 text-white font-bold focus:outline-none" />
+              </div>
+              <div>
+                <label class="text-[10px] text-slate-400 block mb-1">Notaria, Gestoria i Registre (€):</label>
+                <input type="number" id="sim-gastos-fijos" value="3500" step="100" oninput="recalculateAll()" class="w-full bg-[#080d14] border border-slate-700 rounded p-2 text-white font-bold focus:outline-none" />
+              </div>
+            </div>
+            <div class="flex justify-between text-[11px] text-amber-300 font-semibold pt-1 border-t border-slate-800">
+              <span>Total Estimat de Gastos:</span>
+              <span id="res-total-gastos">21.500 €</span>
+            </div>
           </div>
 
           <div>
-            <label class="text-[11px] font-bold uppercase text-slate-400 block mb-1">Import Aportació / Préstec Familiar dels Pares (€):</label>
-            <input type="number" id="sim-aportacio" value="50000" step="5000" oninput="recalculateAll()" class="w-full bg-[#080d14] border border-emerald-500/50 rounded p-2 text-emerald-400 font-black focus:outline-none" />
+            <label class="text-[11px] font-bold uppercase text-emerald-400 block mb-1">3. Aportació Total dels Familiars / Pares (€):</label>
+            <input type="number" id="sim-aportacio" value="60000" step="5000" oninput="recalculateAll()" class="w-full bg-[#080d14] border border-emerald-500/50 rounded p-2.5 text-emerald-400 font-black text-sm focus:outline-none" />
+            <span class="text-[10px] text-slate-400 block mt-1">Suma total aportada pels donants/prestadors per a entrada i/o gastos.</span>
           </div>
 
-          <div class="grid grid-cols-2 gap-3">
+          <div class="grid grid-cols-2 gap-3 pt-2 border-t border-slate-800">
             <div>
               <label class="text-[11px] font-bold uppercase text-slate-400 block mb-1">Ingressos Nets Mensuals (Nòmina) (€):</label>
               <input type="number" id="sim-ingressos" value="1800" step="100" oninput="recalculateAll()" class="w-full bg-[#080d14] border border-slate-700 rounded p-2 text-white font-bold focus:outline-none" />
             </div>
             <div>
-              <label class="text-[11px] font-bold uppercase text-slate-400 block mb-1">Despesa Lloguer Actual (€):</label>
-              <input type="number" id="sim-alquiler" value="750" step="50" oninput="recalculateAll()" class="w-full bg-[#080d14] border border-slate-700 rounded p-2 text-white font-bold focus:outline-none" />
-            </div>
-          </div>
-
-          <div class="grid grid-cols-2 gap-3">
-            <div>
               <label class="text-[11px] font-bold uppercase text-slate-400 block mb-1">Altres Prèstecs Vigents (Quota) (€):</label>
               <input type="number" id="sim-prestecs" value="150" step="25" oninput="recalculateAll()" class="w-full bg-[#080d14] border border-slate-700 rounded p-2 text-white font-bold focus:outline-none" />
             </div>
-            <div>
-              <label class="text-[11px] font-bold uppercase text-slate-400 block mb-1">Tipus d'Interès Hipoteca (TIN %) (Modificable):</label>
-              <input type="number" id="sim-tin" value="3.25" step="0.25" oninput="recalculateAll()" class="w-full bg-[#080d14] border border-slate-700 rounded p-2 text-amber-300 font-bold focus:outline-none" />
-            </div>
           </div>
 
-          <div class="grid grid-cols-2 gap-3">
+          <div class="grid grid-cols-3 gap-2">
             <div>
-              <label class="text-[11px] font-bold uppercase text-slate-400 block mb-1">Termini Hipoteca (Anys):</label>
+              <label class="text-[10px] font-bold uppercase text-slate-400 block mb-1">TIN Hipoteca (%):</label>
+              <input type="number" id="sim-tin" value="3.25" step="0.25" oninput="recalculateAll()" class="w-full bg-[#080d14] border border-slate-700 rounded p-2 text-amber-300 font-bold focus:outline-none" />
+            </div>
+            <div>
+              <label class="text-[10px] font-bold uppercase text-slate-400 block mb-1">Anys Hipoteca:</label>
               <input type="number" id="sim-anys-hipoteca" value="25" step="1" oninput="recalculateAll()" class="w-full bg-[#080d14] border border-slate-700 rounded p-2 text-white font-bold focus:outline-none" />
             </div>
             <div>
-              <label class="text-[11px] font-bold uppercase text-slate-400 block mb-1">Termini Préstec Familiar (Anys):</label>
+              <label class="text-[10px] font-bold uppercase text-slate-400 block mb-1">Anys Préstec Fam.:</label>
               <input type="number" id="sim-anys-familiar" value="10" step="1" oninput="recalculateAll()" class="w-full bg-[#080d14] border border-slate-700 rounded p-2 text-white font-bold focus:outline-none" />
             </div>
           </div>
@@ -169,71 +176,167 @@
       <div class="lg:col-span-6 card-panel p-6 space-y-5 bg-[#141f32]">
         <div class="flex items-center justify-between border-b border-slate-800 pb-3">
           <h3 class="text-base font-bold text-white flex items-center gap-2">
-            <span>📊</span> Resultats & Ràtio d'Esforç
+            <span>📊</span> Resultats & Viabilitat Bancaria
           </h3>
-          <span class="text-xs font-mono text-amber-400">Anàlisi de Riscos Bancaris</span>
+          <span class="text-xs font-mono text-amber-400">Anàlisi de Riscos</span>
         </div>
 
         <div class="space-y-3 text-xs">
           <div class="flex justify-between p-3 rounded bg-[#0b1320] border border-slate-800">
+            <span class="text-slate-300">Cost Total Inmoble (Preu + Gastos):</span>
+            <span class="font-extrabold text-white text-sm" id="res-cost-total">201.500 €</span>
+          </div>
+
+          <div class="flex justify-between p-3 rounded bg-[#0b1320] border border-slate-800">
             <span class="text-slate-300">Import a Finançar (Hipoteca Bancària):</span>
-            <span class="font-extrabold text-white text-sm" id="res-financar">130.000 €</span>
+            <span class="font-extrabold text-amber-400 text-sm" id="res-financar">141.500 €</span>
           </div>
 
           <div class="flex justify-between p-3 rounded bg-[#0b1320] border border-slate-800">
             <span class="text-slate-300">Quota Hipotecària Mensual:</span>
-            <span class="font-extrabold text-amber-400 text-sm" id="res-cuota-hipoteca">634,95 € / mes</span>
+            <span class="font-extrabold text-amber-400 text-sm" id="res-cuota-hipoteca">691,62 € / mes</span>
           </div>
 
           <div class="flex justify-between p-3 rounded bg-[#0b1320] border border-slate-800">
-            <span class="text-slate-300">Quota Préstec Familiar Mensual (0%):</span>
-            <span class="font-extrabold text-sky-400 text-sm" id="res-cuota-familiar">416,67 € / mes</span>
-          </div>
-
-          <div class="flex justify-between p-3 rounded bg-[#0b1320] border border-slate-800">
-            <span class="text-slate-300">Altres Prèstecs Vigents:</span>
-            <span class="font-extrabold text-slate-200 text-sm" id="res-altres-prestecs">150,00 € / mes</span>
+            <span class="text-slate-300">Quota Préstec Familiar Mensual:</span>
+            <span class="font-extrabold text-sky-400 text-sm" id="res-cuota-familiar">500,00 € / mes</span>
           </div>
 
           <div class="p-4 rounded-xl bg-[#080d14] border-2 border-emerald-500/50 space-y-2">
             <div class="flex justify-between items-center">
-              <span class="text-xs font-bold text-emerald-400 uppercase">Càrrega Financera Total (Hipoteca + Préstec + Altres):</span>
-              <span class="text-base font-black text-white" id="res-total-carga">1.201,62 € / mes</span>
+              <span class="text-xs font-bold text-emerald-400 uppercase">Càrrega Financera Total:</span>
+              <span class="text-base font-black text-white" id="res-total-carga">1.341,62 € / mes</span>
             </div>
             <div class="flex justify-between items-center border-t border-slate-800 pt-2">
-              <span class="text-xs font-bold text-amber-300 uppercase">Ràtio d'Esfuerç sobre Ingressos:</span>
-              <span class="text-lg font-black text-amber-400" id="res-ratio-esfuerzo">66,8% (Recomanat Aval)</span>
+              <span class="text-xs font-bold text-amber-300 uppercase">Ràtio d'Esforç sobre Ingressos:</span>
+              <span class="text-lg font-black text-amber-400" id="res-ratio-esfuerzo">74,5% (Requereix Aval)</span>
             </div>
           </div>
 
           <p class="text-[11px] text-slate-400 italic">
-            * Nota: L'alloguer actual deixarà de pagar-se en adquirir l'habitatge. La viabilitat es calcula sumant la nova hipoteca, el préstec familiar i els prèstecs anteriors.
+            * Càlcul automàtic basat en el preu de compra, l'aportació familiar i els gastos d'adquisició detallats.
           </p>
         </div>
       </div>
 
     </div>
 
-    <!-- BLOQUE BANNER ACTIVA LEVEL-HUNTER -->
-    <div class="card-panel p-6 sm:p-8 bg-gradient-to-r from-emerald-950/60 via-[#101826] to-slate-900 border-emerald-500/40 flex flex-col md:flex-row items-center justify-between gap-6">
-      <div class="space-y-2">
-        <span class="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 text-xs font-mono font-bold">🎯 SERVEI EXCLUSIU API 4173</span>
-        <h3 class="text-xl sm:text-2xl font-black text-white">Vols que trobem el teu habitatge abans que surti al mercat?</h3>
-        <p class="text-xs sm:text-sm text-slate-300 max-w-2xl leading-relaxed">
-          Mentre preposem la teva hipoteca amb el nostre Broker, activem la campana de cerca personalitzada amb <strong>LEVEL-Hunter "Compra a la Carta"</strong>. Sense inflar preus, estalviant comissions i accedint a propietats ocultes. Cost del mandat: <strong>1.000 € + IVA</strong>.
-        </p>
+    <!-- ================= BLOQUE 2: DEMANDA ACTIVA & ANUNCIO PROVISIONAL "COMPRA A LA CARTA" ================= -->
+    <div id="demanda-section" class="card-panel p-6 sm:p-8 space-y-6 border-emerald-500/50 bg-gradient-to-b from-[#101826] to-[#0c1422]">
+      <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800 pb-4">
+        <div>
+          <span class="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 text-xs font-mono font-bold">🎯 DEMANDA ACTIVA & CAPTACIÓ A LA CARTA</span>
+          <h3 class="text-lg sm:text-2xl font-black text-white mt-1">Previsualitza el teu Anunci Provisional & Consulta la Demanda Actual</h3>
+        </div>
+        <button type="button" onclick="openElenaModal()" class="px-5 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs uppercase tracking-wider transition emerald-glow cursor-pointer">
+          🚀 Activar Mandat LEVEL-Hunter (1.000 € + IVA)
+        </button>
       </div>
-      <button type="button" onclick="openElenaModal()" class="px-6 py-4 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs sm:text-sm uppercase tracking-wider transition emerald-glow shrink-0 cursor-pointer">
-        🚀 Obrir Expedient LEVEL-Hunter
-      </button>
+
+      <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+        Mentre preparessim el papeleo de la teva hipoteca pre-aprovada, pots <strong>previsualitzar i publicar provisionalment el teu anunci de cerca a la carta</strong>. La nostra xarxa d'Advisors i col·laboradors fans a la zona seran notificats de manera immediata en prémer el botó verd per començar a filtrar propietats <em>off-market</em>.
+      </p>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start pt-2">
+        
+        <!-- Izquierda: Formulario generador de la demanda provisional -->
+        <div class="lg:col-span-6 space-y-4 bg-[#151f30] p-5 rounded-xl border border-slate-800 text-xs">
+          <div class="font-bold text-amber-400 uppercase tracking-wider">📝 Configura el teu Anunci Provisional:</div>
+          
+          <div class="space-y-3">
+            <div>
+              <label class="text-[10px] font-bold uppercase text-slate-400 block mb-1">Zona / Municipi de Cerca:</label>
+              <input type="text" id="d-zona" value="Barcelona (Eixample / Gràcia) o Tarragona Costa" oninput="updateDemandaPreview()" class="w-full bg-[#080d14] border border-slate-700 rounded p-2 text-white font-bold focus:border-amber-400 focus:outline-none" />
+            </div>
+            
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label class="text-[10px] font-bold uppercase text-slate-400 block mb-1">Tipus d'Immoble:</label>
+                <select id="d-tipus" onchange="updateDemandaPreview()" class="w-full bg-[#080d14] border border-slate-700 rounded p-2 text-white font-bold focus:outline-none">
+                  <option value="Pis amb terrassa o balcó">Pis amb terrassa o balcó</option>
+                  <option value="Casa / Xalet independent">Casa / Xalet independent</option>
+                  <option value="Àtic exclusiu">Àtic exclusiu</option>
+                  <option value="Local / Inversió">Local / Inversió</option>
+                </select>
+              </div>
+              <div>
+                <label class="text-[10px] font-bold uppercase text-slate-400 block mb-1">Pressupost Màxim (€):</label>
+                <input type="number" id="d-pressupost" value="200000" step="10000" oninput="updateDemandaPreview()" class="w-full bg-[#080d14] border border-slate-700 rounded p-2 text-amber-400 font-bold focus:outline-none" />
+              </div>
+            </div>
+
+            <div>
+              <label class="text-[10px] font-bold uppercase text-slate-400 block mb-1">Requisits Especials (Ex: pàrquing, ascensor, 3 habitacions):</label>
+              <input type="text" id="d-requisits" value="Mínim 3 habitacions, ascensor obligatori i finançament pre-assegurat amb aportació familiar." oninput="updateDemandaPreview()" class="w-full bg-[#080d14] border border-slate-700 rounded p-2 text-white focus:outline-none" />
+            </div>
+
+            <div class="pt-2">
+              <button type="button" onclick="publishProvisionalDemand()" class="w-full py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs uppercase tracking-wider transition emerald-glow flex items-center justify-center gap-2 cursor-pointer">
+                <span>🟢 Publicar Anunci Provisional & Notificar a Advisors i Fans</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Derecha: Previsualización en tiempo real del Anuncio y Panel de Demandas Actuales -->
+        <div class="lg:col-span-6 space-y-4">
+          
+          <div class="p-5 rounded-xl bg-[#080d14] border-2 border-emerald-500/40 space-y-3 relative overflow-hidden">
+            <div class="absolute top-3 right-3 px-2.5 py-0.5 rounded bg-amber-500/20 text-amber-300 font-mono text-[10px] font-bold animate-pulse">
+              ⚡ PROVISIONAL · PENDIENT HIPOTECA
+            </div>
+            
+            <div class="text-[11px] font-bold uppercase text-emerald-400 tracking-wider">PREVISUALITZACIÓ DEL TEU ANUNCI ACTIU:</div>
+            
+            <div class="space-y-1.5 text-xs">
+              <div class="text-base font-extrabold text-white" id="prev-titulo">Cerca a la Carta: Pis amb terrassa o balcó a Barcelona (Eixample / Gràcia) o Tarragona Costa</div>
+              <div class="text-amber-400 font-mono font-bold">Pressupost Max: <span id="prev-pres">200.000 €</span></div>
+              <p class="text-slate-300 text-[11px] leading-relaxed" id="prev-req">Mínim 3 habitacions, ascensor obligatori i finançament pre-assegurat amb aportació familiar.</p>
+            </div>
+
+            <div class="border-t border-slate-800 pt-2 flex items-center justify-between text-[10px] text-slate-400 font-mono">
+              <span>Estat: Actiu per a xarxa API 4173</span>
+              <span id="prev-status" class="text-amber-400">⏳ En espera de validació broker</span>
+            </div>
+          </div>
+
+          <!-- Listado de Demandas Actuales publicadas en la plataforma -->
+          <div class="p-4 rounded-xl bg-[#151f30] border border-slate-800 space-y-3 text-xs">
+            <div class="font-bold text-amber-400 uppercase tracking-wider flex items-center justify-between">
+              <span>📡 Demanda Activa Actual a la Xarxa:</span>
+              <span class="text-[10px] font-mono text-slate-400">3 actius en cerca</span>
+            </div>
+            
+            <div class="space-y-2 text-[11px]">
+              <div class="p-2.5 rounded bg-[#0b1320] border border-slate-800 flex justify-between items-center">
+                <div>
+                  <div class="font-bold text-white">Xalet / Casa independent a Baix Ebre</div>
+                  <div class="text-slate-400">Pressupost: 240.000 € · Amb finançament aprovat</div>
+                </div>
+                <span class="px-2 py-1 rounded bg-emerald-500/20 text-emerald-400 font-mono text-[9px] font-bold">MATCH 94%</span>
+              </div>
+
+              <div class="p-2.5 rounded bg-[#0b1320] border border-slate-800 flex justify-between items-center">
+                <div>
+                  <div class="font-bold text-white">Àtic exclusiu amb terrassa a Terres de l'Ebre</div>
+                  <div class="text-slate-400">Pressupost: 160.000 € · Préstec familiar estructurat</div>
+                </div>
+                <span class="px-2 py-1 rounded bg-emerald-500/20 text-emerald-400 font-mono text-[9px] font-bold">MATCH 88%</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
     </div>
 
-    <!-- BLOQUE 2: EDITOR Y GENERADOR DEL CONTRATO DE PRÉSTAMO FAMILIAR -->
+    <!-- BLOQUE 3: EDITOR DINÁMICO DEL CONTRATO DE PRÉSTAMO FAMILIAR -->
     <div class="card-panel p-6 sm:p-8 space-y-6">
       <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800 pb-4">
         <div>
-          <span class="text-[11px] font-bold uppercase tracking-wider text-amber-400 block">📄 DOCUMENT LEGAL OFICIAL</span>
-          <h3 class="text-lg sm:text-xl font-extrabold text-white">Editor Dinàmic del Contracte de Préstec Familiar entre Particulars</h3>
+          <span class="text-[11px] font-bold uppercase tracking-wider text-amber-400 block">📄 DOCUMENT LEGAL OFICIAL (N PRESTAMISTAS & N PRESTATARIOS)</span>
+          <h3 class="text-lg sm:text-xl font-extrabold text-white">Editor Dinàmic del Contracte de Préstec Familiar</h3>
         </div>
         <div class="flex gap-2">
           <button type="button" onclick="copyContractText()" class="px-3.5 py-2 rounded bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs transition cursor-pointer">
@@ -245,44 +348,99 @@
         </div>
       </div>
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 bg-[#151f30] p-4 rounded-xl border border-slate-800 text-xs">
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 bg-[#151f30] p-5 rounded-xl border border-slate-800 text-xs">
         <div>
-          <label class="text-[10px] font-bold uppercase text-slate-400 block mb-1">Ciutat:</label>
-          <input type="text" id="c-ciudad" value="Barcelona" oninput="updateContractLive()" class="w-full bg-[#080d14] border border-slate-700 rounded p-2 text-white font-bold focus:border-amber-400 focus:outline-none" />
+          <label class="text-[10px] font-bold uppercase text-slate-400 block mb-1">Ciutat i Data:</label>
+          <input type="text" id="c-ciudad" value="Barcelona, a 07 de novembre de 2026" oninput="updateContractLive()" class="w-full bg-[#080d14] border border-slate-700 rounded p-2 text-white font-bold focus:outline-none" />
         </div>
         <div>
-          <label class="text-[10px] font-bold uppercase text-slate-400 block mb-1">Data (Dia / Mes / Any):</label>
-          <input type="text" id="c-fecha" value="07 de novembre de 2026" oninput="updateContractLive()" class="w-full bg-[#080d14] border border-slate-700 rounded p-2 text-white font-bold focus:border-amber-400 focus:outline-none" />
+          <label class="text-[10px] font-bold uppercase text-emerald-400 block mb-1">Tipus d'Interès Pactat (% TIN):</label>
+          <input type="number" id="c-interes-input" value="0" step="0.25" oninput="updateContractLive()" class="w-full bg-[#080d14] border border-emerald-500 rounded p-2 text-emerald-400 font-black focus:outline-none" />
+          <span class="text-[9px] text-slate-400 block mt-0.5">Per defecte 0% (requereix validació expressa).</span>
         </div>
         <div>
-          <label class="text-[10px] font-bold uppercase text-slate-400 block mb-1">Nom Prestamista/es (Pares):</label>
-          <input type="text" id="c-prestamista" value="D./Dña. Joan Garcia i Maria Pérez" oninput="updateContractLive()" class="w-full bg-[#080d14] border border-slate-700 rounded p-2 text-white font-bold focus:border-amber-400 focus:outline-none" />
+          <label class="text-[10px] font-bold uppercase text-amber-400 block mb-1">Estat de Validació Jurídica:</label>
+          <div id="validation-status" class="p-2 rounded bg-emerald-500/10 border border-emerald-500/40 text-emerald-400 font-bold text-center">
+            ✔ Tipus validat (0% Exent)
+          </div>
         </div>
-        <div>
-          <label class="text-[10px] font-bold uppercase text-slate-400 block mb-1">Nom Prestatari/ari (Fill/a):</label>
-          <input type="text" id="c-prestatario" value="D./Dña. Marc Garcia Pérez" oninput="updateContractLive()" class="w-full bg-[#080d14] border border-slate-700 rounded p-2 text-white font-bold focus:border-amber-400 focus:outline-none" />
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+        <div class="p-4 rounded-xl bg-[#151f30] border border-slate-800 space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="font-bold text-amber-400 uppercase">Prestamistes (Pares / Donants):</span>
+            <button type="button" onclick="addParty('prestamista')" class="px-2 py-1 rounded bg-amber-500/20 text-amber-300 text-[10px] font-bold cursor-pointer">+ Afegir Prestamista</button>
+          </div>
+          <div id="prestamistas-container" class="space-y-2">
+            <div class="flex gap-2 party-row">
+              <input type="text" placeholder="Nom i cognoms" value="Joan Garcia i Pérez" class="flex-1 bg-[#080d14] border border-slate-700 rounded p-2 text-white font-semibold" oninput="updateContractLive()" />
+              <input type="text" placeholder="DNI" value="35123456A" class="w-28 bg-[#080d14] border border-slate-700 rounded p-2 text-white font-mono" oninput="updateContractLive()" />
+            </div>
+            <div class="flex gap-2 party-row">
+              <input type="text" placeholder="Nom i cognoms" value="Maria Pérez i Gómez" class="flex-1 bg-[#080d14] border border-slate-700 rounded p-2 text-white font-semibold" oninput="updateContractLive()" />
+              <input type="text" placeholder="DNI" value="35654321B" class="w-28 bg-[#080d14] border border-slate-700 rounded p-2 text-white font-mono" oninput="updateContractLive()" />
+            </div>
+          </div>
+        </div>
+
+        <div class="p-4 rounded-xl bg-[#151f30] border border-slate-800 space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="font-bold text-emerald-400 uppercase">Prestataris (Fills / Compradors):</span>
+            <button type="button" onclick="addParty('prestatario')" class="px-2 py-1 rounded bg-emerald-500/20 text-emerald-300 text-[10px] font-bold cursor-pointer">+ Afegir Prestatari</button>
+          </div>
+          <div id="prestatarios-container" class="space-y-2">
+            <div class="flex gap-2 party-row-fill">
+              <input type="text" placeholder="Nom i cognoms" value="Marc Garcia Pérez" class="flex-1 bg-[#080d14] border border-slate-700 rounded p-2 text-white font-semibold" oninput="updateContractLive()" />
+              <input type="text" placeholder="DNI" value="46987654C" class="w-28 bg-[#080d14] border border-slate-700 rounded p-2 text-white font-mono" oninput="updateContractLive()" />
+            </div>
+          </div>
         </div>
       </div>
 
       <div id="contract-preview-box" class="bg-[#080d14] border border-slate-700 rounded-xl p-6 sm:p-8 font-mono text-xs sm:text-sm text-slate-200 leading-relaxed space-y-4">
-        <p class="text-center font-bold text-amber-400 text-base">CONTRATO DE PRÉSTAMO ENTRE PARTICULARES SIN INTERESES</p>
-        <p>En <span id="p-ciudad" class="text-emerald-400 font-bold">Barcelona</span>, a <span id="p-fecha" class="text-emerald-400 font-bold">07 de novembre de 2026</span></p>
+        <p class="text-center font-bold text-amber-400 text-base">CONTRATO DE PRÉSTAMO ENTRE PARTICULARES</p>
+        
+        <p>En <span id="p-ciudad" class="text-emerald-400 font-bold">Barcelona, a 07 de novembre de 2026</span></p>
+
         <p class="font-bold text-slate-300">REUNIDOS</p>
-        <p><strong>DE UNA PARTE,</strong> <span id="p-prestamista" class="text-amber-300 font-bold">D./Dña. Joan Garcia i Maria Pérez</span>, mayores de edad, provistos de DNI y con domicilio en [Dirección de los Prestamistas]. En adelante, el <strong>"PRESTAMISTA"</strong>.</p>
-        <p><strong>DE OTRA PARTE,</strong> <span id="p-prestatario" class="text-amber-300 font-bold">D./Dña. Marc Garcia Pérez</span>, mayor de edad, provisto de DNI y con domicilio en [Dirección del Prestatario]. En adelante, el <strong>"PRESTATARIO"</strong>.</p>
-        <p>Ambas partes se reconocen mutuamente la capacidad legal necesaria para el otorgamiento del presente contrato y, a tal efecto,</p>
+        
+        <p><strong>DE UNA PARTE (LOS PRESTAMISTAS):</strong><br>
+          <span id="p-prestamistas-list" class="text-amber-300 font-bold">
+            - D./Dña. Joan Garcia i Pérez, amb DNI 35123456A.<br>
+            - D./Dña. Maria Pérez i Gómez, amb DNI 35654321B.
+          </span><br>
+          En endavant, el <strong>"PRESTAMISTA"</strong>.
+        </p>
+
+        <p><strong>DE OTRA PARTE (LOS PRESTATARIOS):</strong><br>
+          <span id="p-prestatarios-list" class="text-emerald-300 font-bold">
+            - D./Dña. Marc Garcia Pérez, amb DNI 46987654C.
+          </span><br>
+          En endavant, el <strong>"PRESTATARIO"</strong>.
+        </p>
+
+        <p>Ambas partes se reconocen mutuamente la capacidad legal necesaria y,</p>
+
         <p class="font-bold text-slate-300">EXPONEN</p>
-        <p><strong>I.</strong> Que el PRESTAMISTA entrega en este acto al PRESTATARIO, que los recibe en concepto de préstamo, la cantidad de <span id="p-importe" class="text-emerald-400 font-bold">50.000,00</span> euros (<span id="p-importe-letra">50.000 €</span>).</p>
-        <p><strong>II.</strong> Que dicho préstamo se otorga de conformidad con los artículos 1740 y siguientes del Código Civil, y se regirá por las siguientes:</p>
+
+        <p><strong>I.</strong> Que el PRESTAMISTA entrega en este acto al PRESTATARIO, que los recibe en concepto de préstamo, la cantidad total de <span id="p-importe" class="text-emerald-400 font-bold">60.000,00</span> euros (<span id="p-importe-letra">60.000 €</span>).</p>
+
+        <p><strong>II.</strong> Que dicho préstamo se otorga de conformidad con los artículos 1740 y siguientes del Código Civil, bajo las siguientes:</p>
+
         <p class="font-bold text-slate-300">ESTIPULACIONES</p>
-        <p><strong>PRIMERA. - OBJETO DEL PRÉSTAMO:</strong> El PRESTAMISTA entrega en este acto al PRESTATARIO la cantidad citada mediante transferencia bancaria a la cuenta titularidad del PRESTATARIO.</p>
-        <p><strong>SEGUNDA. - TIPO DE INTERÉS:</strong> El presente préstamo se pacta de forma gratuita, estableciéndose un tipo de interés nominal anual del <span id="p-interes" class="text-amber-400 font-bold">0%</span> TIN.</p>
-        <p><strong>TERCERA. - PLAZO Y FORMA DE DEVOLUCIÓN:</strong> El plazo total para la devolución será de <span id="p-anys" class="text-amber-400 font-bold">10</span> años mediante <span id="p-cuotas" class="text-amber-400 font-bold">120</span> cuotas mensuales de <span id="p-cuota-val" class="text-emerald-400 font-bold">416,67</span> euros cada una.</p>
-        <p><strong>CUARTA. - AMORTIZACIÓN ANTICIPADA:</strong> El PRESTATARIO podrá devolver total o parcialmente el capital pendiente en cualquier momento sin penalización.</p>
-        <p><strong>QUINTA. - LIQUIDACIÓN FISCAL (MODELO 600):</strong> Presentación del Modelo 600 ante la Hacienda Autonómica solicitando la exención.</p>
-        <div class="grid grid-cols-2 gap-8 pt-12 text-center">
-          <div><div class="border-t border-slate-600 pt-2">Fdo. El Prestamista / Pares</div></div>
-          <div><div class="border-t border-slate-600 pt-2">Fdo. El Prestatario / Fill</div></div>
+
+        <p><strong>PRIMERA. - OBJETO DEL PRÉSTAMO:</strong> La suma prestada se destina a la aportación económica para la adquisición de vivienda habitual.</p>
+
+        <p><strong>SEGUNDA. - TIPO DE INTERÉS PACTADO:</strong> El presente préstamo se pacta expresamente a un tipo de interés nominal anual del <span id="p-interes-val" class="text-amber-400 font-bold">0%</span> TIN (<span id="p-interes-texto">Gratuït / Exent</span>), validado por ambas partes.</p>
+
+        <p><strong>TERCERA. - PLAZO Y DEVOLUCIÓN:</strong> El plazo total será de <span id="p-anys" class="text-amber-400 font-bold">10</span> anys (<span id="p-cuotas" class="text-amber-400 font-bold">120</span> quotes mensuals de <span id="p-cuota-val" class="text-emerald-400 font-bold">500,00</span> €).</p>
+
+        <p><strong>CUARTA. - LIQUIDACIÓN FISCAL (MODELO 600):</strong> Presentación obligatoria del Modelo 600 ante la Hacienda Autonómica.</p>
+
+        <div id="p-firmas-list" class="grid grid-cols-2 gap-8 pt-12 text-center text-xs">
+          <div><div class="border-t border-slate-600 pt-2">Fdo. Prestamista(s)</div></div>
+          <div><div class="border-t border-slate-600 pt-2">Fdo. Prestatario(s)</div></div>
         </div>
       </div>
     </div>
@@ -309,11 +467,10 @@
 
       <div class="p-4 sm:p-6 max-h-[84vh] overflow-y-auto space-y-4 text-xs">
         
-        <!-- Mensaje de Bienvenida de la IA Advisor -->
         <div class="p-4 rounded-xl bg-[#182334] border border-emerald-500/40 text-slate-200 space-y-3 leading-relaxed">
           <p id="elena-welcome-msg" class="font-medium text-white"></p>
           <p class="text-[11px] text-slate-300">
-            Mentre preparessim la teva hipoteca amb el nostre Broker, comencem la cerca de propietats ocultes que encara no han sortit al mercat. Sense inflar preus i estalviant comissions.
+            Mentre preparessim la teva hipoteca, comencem a seleccionar propietats que encara no s'han posat en venda. Sense inflar preus i estalviant comissions.
           </p>
           <div class="p-3 rounded bg-[#0c1320] border border-amber-500/50 space-y-1 font-mono text-[11px]">
             <div class="text-amber-400 font-bold">📋 Resum de Mandat LEVEL-Hunter:</div>
@@ -323,7 +480,6 @@
           </div>
         </div>
 
-        <!-- Formulario de Activación del Expediente -->
         <div class="space-y-3 pt-2">
           <input type="text" id="hunter-name" placeholder="Nom i cognoms del comprador" class="w-full bg-[#080d14] border border-slate-700 rounded-lg px-3 py-2.5 text-white focus:border-emerald-500 focus:outline-none" />
           
@@ -480,6 +636,8 @@
 
     function recalculateAll() {
       const preu = parseFloat(document.getElementById('sim-preu').value) || 0;
+      const pctImpostos = parseFloat(document.getElementById('sim-pct-impostos').value) || 0;
+      const gastosFijos = parseFloat(document.getElementById('sim-gastos-fijos').value) || 0;
       const aportacio = parseFloat(document.getElementById('sim-aportacio').value) || 0;
       const ingressos = parseFloat(document.getElementById('sim-ingressos').value) || 1;
       const prestecsVigents = parseFloat(document.getElementById('sim-prestecs').value) || 0;
@@ -487,8 +645,17 @@
       const anysHipoteca = parseFloat(document.getElementById('sim-anys-hipoteca').value) || 25;
       const anysFamiliar = parseFloat(document.getElementById('sim-anys-familiar').value) || 10;
 
-      const financar = Math.max(0, preu - aportacio);
-      document.getElementById('res-financar').textContent = financar.toLocaleString('es-ES') + ' €';
+      // Cálculo de gastos y coste total
+      const importImpostos = (preu * pctImpostos) / 100;
+      const totalGastos = importImpostos + gastosFijos;
+      document.getElementById('res-total-gastos').textContent = totalGastos.toLocaleString('es-ES', {maximumFractionDigits: 0}) + ' €';
+
+      const costTotal = preu + totalGastos;
+      document.getElementById('res-cost-total').textContent = costTotal.toLocaleString('es-ES', {maximumFractionDigits: 0}) + ' €';
+
+      // Importe a financiar (Coste total menos aportación familiar)
+      const financar = Math.max(0, costTotal - aportacio);
+      document.getElementById('res-financar').textContent = financar.toLocaleString('es-ES', {maximumFractionDigits: 0}) + ' €';
 
       const r = (tin / 100) / 12;
       const n = anysHipoteca * 12;
@@ -498,15 +665,15 @@
       const mesesFamiliar = anysFamiliar * 12;
       const cuotaFamiliar = aportacio > 0 ? aportacio / mesesFamiliar : 0;
       document.getElementById('res-cuota-familiar').textContent = cuotaFamiliar.toFixed(2) + ' € / mes';
-      document.getElementById('res-altres-prestecs').textContent = prestecsVigents.toFixed(2) + ' € / mes';
 
       const totalCarga = cuotaHipoteca + cuotaFamiliar + prestecsVigents;
       document.getElementById('res-total-carga').textContent = totalCarga.toFixed(2) + ' € / mes';
 
       const ratio = (totalCarga / ingressos) * 100;
       const ratioEl = document.getElementById('res-ratio-esfuerzo');
-      ratioEl.textContent = ratio.toFixed(1) + '% ' + (ratio > 35 ? '(Excedeix 35% - Requereix Aval)' : '(Viable)');
+      ratioEl.textContent = ratio.toFixed(1) + '% ' + (ratio > 35 ? '(Requereix Aval)' : '(Viable)');
 
+      // Actualizar texto del contrato
       document.getElementById('p-importe').textContent = aportacio.toLocaleString('es-ES', { minimumFractionDigits: 2 });
       document.getElementById('p-importe-letra').textContent = aportacio.toLocaleString('es-ES') + ' €';
       document.getElementById('p-anys').textContent = anysFamiliar;
@@ -514,11 +681,73 @@
       document.getElementById('p-cuota-val').textContent = cuotaFamiliar.toFixed(2);
     }
 
+    function updateDemandaPreview() {
+      const zona = document.getElementById('d-zona').value;
+      const tipus = document.getElementById('d-tipus').value;
+      const pressupost = parseFloat(document.getElementById('d-pressupost').value) || 0;
+      const requisits = document.getElementById('d-requisits').value;
+
+      document.getElementById('prev-titulo').textContent = `Cerca a la Carta: ${tipus} a ${zona}`;
+      document.getElementById('prev-pres').textContent = pressupost.toLocaleString('es-ES') + ' €';
+      document.getElementById('prev-req').textContent = requisits;
+    }
+
+    function publishProvisionalDemand() {
+      document.getElementById('prev-status').textContent = "🟢 Publicat provisionalment · Advisors notificats";
+      document.getElementById('prev-status').className = "text-emerald-400 font-bold";
+      alert("✓ Anunci de demanda activa publicat provisionalment! La xarxa d'Advisors i col·laboradors fans a la zona han estat notificats immediatament.");
+    }
+
+    function addParty(type) {
+      const container = document.getElementById(type === 'prestamista' ? 'prestamistas-container' : 'prestatarios-container');
+      const div = document.createElement('div');
+      div.className = "flex gap-2 " + (type === 'prestamista' ? 'party-row' : 'party-row-fill');
+      div.innerHTML = `
+        <input type="text" placeholder="Nom i cognoms" class="flex-1 bg-[#080d14] border border-slate-700 rounded p-2 text-white font-semibold" oninput="updateContractLive()" />
+        <input type="text" placeholder="DNI" class="w-28 bg-[#080d14] border border-slate-700 rounded p-2 text-white font-mono" oninput="updateContractLive()" />
+        <button type="button" onclick="this.parentElement.remove(); updateContractLive();" class="px-2 bg-rose-500/20 text-rose-300 rounded text-xs">✕</button>
+      `;
+      container.appendChild(div);
+      updateContractLive();
+    }
+
     function updateContractLive() {
       document.getElementById('p-ciudad').textContent = document.getElementById('c-ciudad').value;
-      document.getElementById('p-fecha').textContent = document.getElementById('c-fecha').value;
-      document.getElementById('p-prestamista').textContent = document.getElementById('c-prestamista').value;
-      document.getElementById('p-prestatario').textContent = document.getElementById('c-prestatario').value;
+      
+      const interesVal = parseFloat(document.getElementById('c-interes-input').value) || 0;
+      document.getElementById('p-interes-val').textContent = interesVal + '%';
+      document.getElementById('p-interes-texto').textContent = interesVal === 0 ? 'Gratuït / Exent' : 'Amb interessos pactats';
+
+      const statusEl = document.getElementById('validation-status');
+      if (interesVal === 0) {
+        statusEl.className = "p-2 rounded bg-emerald-500/10 border border-emerald-500/40 text-emerald-400 font-bold text-center";
+        statusEl.textContent = "✔ Tipus validat (0% Exent)";
+      } else {
+        statusEl.className = "p-2 rounded bg-amber-500/10 border border-amber-500/40 text-amber-400 font-bold text-center";
+        statusEl.textContent = `⚠ Tipus validat (${interesVal}% TIN)`;
+      }
+
+      // Recopilar prestamistas
+      const prestRows = document.querySelectorAll('.party-row');
+      let prestHtml = "";
+      prestRows.forEach((row, idx) => {
+        const inputs = row.querySelectorAll('input');
+        const nom = inputs[0].value.trim() || `Prestamista ${idx+1}`;
+        const dni = inputs[1].value.trim() || `DNI--`;
+        prestHtml += `- D./Dña. ${nom}, amb DNI ${dni}.<br>`;
+      });
+      document.getElementById('p-prestamistas-list').innerHTML = prestHtml;
+
+      // Recopilar prestatarios
+      const prestatRows = document.querySelectorAll('.party-row-fill');
+      let prestatHtml = "";
+      prestatRows.forEach((row, idx) => {
+        const inputs = row.querySelectorAll('input');
+        const nom = inputs[0].value.trim() || `Prestatari ${idx+1}`;
+        const dni = inputs[1].value.trim() || `DNI--`;
+        prestatHtml += `- D./Dña. ${nom}, amb DNI ${dni}.<br>`;
+      });
+      document.getElementById('p-prestatarios-list').innerHTML = prestatHtml;
     }
 
     function copyContractText() {
@@ -528,10 +757,8 @@
       });
     }
 
-    // Funciones del Chat Bot de Elena IA para LEVEL-Hunter
     function openElenaModal() {
-      const nameInput = document.getElementById('hunter-name').value.trim() || "amic/ga";
-      document.getElementById('elena-welcome-msg').textContent = `Hola ${nameInput}, estem encantats de saludar-te i que hagis pres una decisió tan important en la teva vida, com la de comprar la llar del teu futur. Mentre preparessim la teva hipoteca, comencem a seleccionar propietats que encara no s'han posat en venda. T'explico com ho fem, i t'obro expedient si prens la decisió en ferm. Tindràs tota la informació al moment, en temps real. Els comptes clars. No inflem preus. El nostre servei Premium està al teu abast i et permet estalviar un bon pessic.`;
+      document.getElementById('elena-welcome-msg').textContent = `Hola, estem encantats de saludar-te i que hagis pres una decisió tan important en la teva vida, com la de comprar la llar del teu futur. Mentre preparessim la teva hipoteca, comencem a seleccionar propietats que encara no s'han posat en venda. T'explico com ho fem, i t'obro expedient si prens la decisió en ferm. Tindràs tota la informació al moment, en temps real. Els comptes clars. No inflem preus. El nostre servei Premium està al teu abast i et permet estalviar un bon pessic.`;
       document.getElementById('elena-modal').classList.remove('hidden');
       document.getElementById('elena-modal').classList.add('flex');
     }
@@ -596,6 +823,8 @@
     }
 
     recalculateAll();
+    updateContractLive();
+    updateDemandaPreview();
   </script>
 </body>
 </html>
