@@ -11,7 +11,7 @@
       font-family: 'Inter', sans-serif;
       background-color: #070b12;
       color: #f8fafc;
-      font-size: 1.08rem;
+      font-size: 1.12rem;
       line-height: 1.65;
       overflow-x: hidden;
       -webkit-tap-highlight-color: transparent;
@@ -19,34 +19,45 @@
     .card-panel {
       background-color: #101929;
       border: 2px solid #26354d;
-      border-radius: 1.1rem;
+      border-radius: 1.15rem;
     }
     .gold-badge {
-      background: linear-gradient(90deg, rgba(217,119,6,0.25) 0%, rgba(245,158,11,0.1) 100%);
-      border: 1px solid rgba(245,158,11,0.55);
+      background: linear-gradient(90deg, rgba(217,119,6,0.28) 0%, rgba(245,158,11,0.12) 100%);
+      border: 1px solid rgba(245,158,11,0.6);
       color: #fbbf24;
     }
     .emerald-glow {
-      box-shadow: 0 0 32px rgba(16, 185, 129, 0.4);
+      box-shadow: 0 0 32px rgba(16, 185, 129, 0.45);
     }
     .input-clear {
       background-color: #05080f;
-      border: 2px solid #334155;
-      border-radius: 0.75rem;
-      padding: 0.75rem 1rem;
+      border: 2px solid #3b4d6b;
+      border-radius: 0.8rem;
+      padding: 0.85rem 1rem;
       color: #ffffff;
       font-weight: 800;
-      font-size: 1.15rem;
+      font-size: 1.25rem;
       width: 100%;
       transition: all 0.2s;
     }
     .input-clear:focus {
       outline: none;
       border-color: #10b981;
-      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+      background-color: #091120;
+      box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.25);
+    }
+    .input-readonly {
+      background-color: #0b1322;
+      border: 2px dashed #475569;
+      border-radius: 0.8rem;
+      padding: 0.85rem 1rem;
+      color: #cbd5e1;
+      font-weight: 800;
+      font-size: 1.2rem;
+      width: 100%;
     }
     .btn-action {
-      padding: 1rem 1.5rem;
+      padding: 1.05rem 1.5rem;
       font-size: 1.05rem;
       font-weight: 900;
       border-radius: 0.85rem;
@@ -55,7 +66,13 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 0.5rem;
+      gap: 0.55rem;
+    }
+    .intro-video-bg {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center center;
     }
 
     /* Sistema de impresión limpio e independiente por documento */
@@ -111,25 +128,50 @@
 </head>
 <body class="min-h-screen flex flex-col justify-between">
 
-  <!-- ================= PANTALLA DE ACCESO (GATEKEEPER) ================= -->
-  <div id="gatekeeper-screen" class="fixed inset-0 z-50 bg-[#04070d]/95 backdrop-blur-md overflow-y-auto no-print p-4 flex items-center justify-center">
-    <div class="card-panel p-6 sm:p-10 max-w-2xl w-full text-center space-y-6 shadow-2xl border-emerald-500/50">
+  <!-- ================= PANTALLA DE ENTRADA CON VÍDEO DUAL (PC/TABLET Y MÓVIL) + ALTA LEGIBILIDAD ================= -->
+  <div id="gatekeeper-screen" class="fixed inset-0 z-50 bg-[#04070d] overflow-y-auto no-print p-4 flex items-center justify-center">
+    
+    <!-- Fondo de Vídeo Dual Adaptativo (Vertical 9:16 para Móvil / Horizontal 16:9 para PC y Tablet) -->
+    <div class="fixed inset-0 overflow-hidden pointer-events-none z-0">
+      <video id="gate-bg-video" autoplay muted loop playsinline preload="auto" class="intro-video-bg filter brightness-[0.38] contrast-[1.12]">
+        <!-- Vídeo vertical específico para Móviles -->
+        <source media="(max-width: 767px)" src="https://app.level-i.com/donaciones-familiares/video-movil.mp4" type="video/mp4">
+        <source media="(max-width: 767px)" src="video-movil.mp4" type="video/mp4">
+        <!-- Vídeo horizontal para PC y Tablet -->
+        <source media="(min-width: 768px)" src="https://app.level-i.com/donaciones-familiares/video-pc.mp4" type="video/mp4">
+        <source media="(min-width: 768px)" src="https://app.level-i.com/consultoria/consultoria.mp4" type="video/mp4">
+        <source src="consultoria.mp4" type="video/mp4">
+      </video>
+      <!-- Velo de alto contraste pensado para que las personas mayores lean sin esfuerzo -->
+      <div class="absolute inset-0 bg-gradient-to-b from-[#04070d]/85 via-[#04070d]/70 to-[#04070d]/95"></div>
+    </div>
+
+    <div class="relative z-10 card-panel p-6 sm:p-10 max-w-2xl w-full text-center space-y-6 shadow-2xl border-emerald-500/60 bg-[#0b1322]/90 backdrop-blur-md">
       
-      <!-- Selector de Idioma en Portada -->
-      <div class="flex justify-between items-center border-b border-slate-800 pb-4">
+      <!-- Top Bar de Portada con Banderas SVG Reales (Sin emojis rotos) -->
+      <div class="flex flex-wrap justify-between items-center gap-3 border-b border-slate-700 pb-4">
         <div class="flex items-center gap-2" translate="no">
           <span class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-white text-slate-950 font-black text-lg">L</span>
           <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 -ml-1.5 mt-2"></span>
           <span class="font-black text-white text-lg">level.immo</span>
           <span class="text-xs font-mono text-emerald-400 border-l border-slate-700 pl-2">level-i.com</span>
         </div>
-        <div class="flex items-center gap-2 bg-slate-950 p-1.5 rounded-xl border border-slate-700" translate="no">
-          <button type="button" onclick="changeLanguage('es')" id="gate-lang-es" class="px-3 py-1.5 rounded-lg font-extrabold text-xs bg-emerald-500 text-slate-950 cursor-pointer">
-            🇪🇸 ES Español
+
+        <div class="flex items-center gap-2">
+          <button type="button" onclick="toggleGateVideoSound()" class="px-3 py-1.5 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/50 text-amber-300 text-xs font-bold cursor-pointer">
+            🔊 <span data-i18n="gate_sound_btn">Activar Sonido Vídeo</span>
           </button>
-          <button type="button" onclick="changeLanguage('ca')" id="gate-lang-ca" class="px-3 py-1.5 rounded-lg font-extrabold text-xs text-slate-300 hover:text-white cursor-pointer">
-            🏴 CAT Català
-          </button>
+
+          <div class="flex items-center gap-1.5 bg-slate-950 p-1.5 rounded-xl border border-slate-700" translate="no">
+            <button type="button" onclick="changeLanguage('es')" id="gate-lang-es" class="px-3 py-1.5 rounded-lg font-extrabold text-xs bg-emerald-500 text-slate-950 flex items-center gap-1.5 cursor-pointer">
+              <svg class="w-5 h-3.5 rounded-sm shrink-0 shadow" viewBox="0 0 60 40"><rect width="60" height="40" fill="#AA151B"/><rect y="10" width="60" height="20" fill="#F1BF00"/></svg>
+              <span>ES Español</span>
+            </button>
+            <button type="button" onclick="changeLanguage('ca')" id="gate-lang-ca" class="px-3 py-1.5 rounded-lg font-extrabold text-xs text-slate-200 hover:text-white flex items-center gap-1.5 cursor-pointer">
+              <svg class="w-5 h-3.5 rounded-sm shrink-0 shadow" viewBox="0 0 60 40"><rect width="60" height="40" fill="#FCDD09"/><rect y="4.4" width="60" height="4.4" fill="#DA121A"/><rect y="13.3" width="60" height="4.4" fill="#DA121A"/><rect y="22.2" width="60" height="4.4" fill="#DA121A"/><rect y="31.1" width="60" height="4.4" fill="#DA121A"/></svg>
+              <span>CAT Català</span>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -137,15 +179,15 @@
         <span>🏛️</span> <span data-i18n="gate_badge">SERVICIO OFICIAL COLEGIADO API 4173 · AICAT 14200</span>
       </div>
       
-      <h1 class="text-2xl sm:text-4xl font-black text-white leading-tight" data-i18n="gate_title">
+      <h1 class="text-2xl sm:text-4xl font-black text-white leading-tight drop-shadow" data-i18n="gate_title">
         Cómo ayudar a un hijo a comprar su casa sin perder dinero en impuestos
       </h1>
       
-      <p class="text-slate-200 text-base sm:text-lg" data-i18n="gate_desc">
+      <p class="text-slate-100 text-base sm:text-lg font-medium" data-i18n="gate_desc">
         Herramienta clara y gratuita para familias: compare cuánto cuesta una Donación frente a un Préstamo Familiar al 0%, calcule las cuotas reales y descargue el contrato legal listo para firmar.
       </p>
 
-      <div class="bg-slate-950 p-5 rounded-xl border-2 border-slate-700 space-y-3 text-left">
+      <div class="bg-slate-950/95 p-5 rounded-xl border-2 border-slate-700 space-y-3 text-left">
         <div class="text-sm font-extrabold text-amber-400 uppercase" data-i18n="gate_sec_label">
           🛡️ Acceso de seguridad (resuelva esta suma sencilla para entrar):
         </div>
@@ -163,17 +205,16 @@
         </p>
       </div>
 
-      <div class="text-xs text-slate-400 font-mono" translate="no">
+      <div class="text-xs text-slate-300 font-mono" translate="no">
         © 2026 LEVEL PUNTO IMMO 24365 SLU · API 4173 · AICAT 14200 · app.level-i.com/donaciones-familiares
       </div>
     </div>
   </div>
 
-  <!-- ================= CABECERA PRINCIPAL FIJA ================= -->
+  <!-- ================= CABECERA PRINCIPAL FIJA CON BANDERAS SVG REALES ================= -->
   <header class="sticky top-0 z-40 bg-[#070b12]/95 backdrop-blur border-b-2 border-slate-800 px-4 py-3 no-print">
     <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
       
-      <!-- Doble Marca Corporativa: level.immo + level-i.com -->
       <div class="flex items-center gap-3" translate="no">
         <a href="https://app.level-i.com/donaciones-familiares" class="flex items-center gap-2 text-white font-black text-xl tracking-tight">
           <span class="inline-flex items-center justify-center w-9 h-9 rounded-lg bg-white text-slate-950 font-black text-xl">L</span>
@@ -188,14 +229,16 @@
         </span>
       </div>
 
-      <!-- Banderas de Idioma Separadas + Acceso Directo -->
+      <!-- Banderas SVG Reales (Española y Senyera Catalana) + Botón LEVEL-Hunter -->
       <div class="flex flex-wrap items-center gap-2.5">
         <div class="flex items-center gap-1.5 bg-slate-950 p-1.5 rounded-xl border border-slate-700" translate="no">
-          <button type="button" onclick="changeLanguage('es')" id="btn-lang-es" class="px-3 py-1.5 rounded-lg font-extrabold text-xs bg-emerald-500 text-slate-950 transition cursor-pointer">
-            🇪🇸 ES Español
+          <button type="button" onclick="changeLanguage('es')" id="btn-lang-es" class="px-3 py-1.5 rounded-lg font-extrabold text-xs bg-emerald-500 text-slate-950 flex items-center gap-1.5 transition cursor-pointer">
+            <svg class="w-5 h-3.5 rounded-sm shrink-0 shadow" viewBox="0 0 60 40"><rect width="60" height="40" fill="#AA151B"/><rect y="10" width="60" height="20" fill="#F1BF00"/></svg>
+            <span>ES Español</span>
           </button>
-          <button type="button" onclick="changeLanguage('ca')" id="btn-lang-ca" class="px-3 py-1.5 rounded-lg font-extrabold text-xs text-slate-300 hover:text-white transition cursor-pointer">
-            🏴 CAT Català
+          <button type="button" onclick="changeLanguage('ca')" id="btn-lang-ca" class="px-3 py-1.5 rounded-lg font-extrabold text-xs text-slate-200 hover:text-white flex items-center gap-1.5 transition cursor-pointer">
+            <svg class="w-5 h-3.5 rounded-sm shrink-0 shadow" viewBox="0 0 60 40"><rect width="60" height="40" fill="#FCDD09"/><rect y="4.4" width="60" height="4.4" fill="#DA121A"/><rect y="13.3" width="60" height="4.4" fill="#DA121A"/><rect y="22.2" width="60" height="4.4" fill="#DA121A"/><rect y="31.1" width="60" height="4.4" fill="#DA121A"/></svg>
+            <span>CAT Català</span>
           </button>
         </div>
 
@@ -207,10 +250,10 @@
     </div>
   </header>
 
-  <!-- ================= CONTENIDO PRINCIPAL EN ORDEN LÓGICO ================= -->
+  <!-- ================= CONTENIDO PRINCIPAL EN EL NUEVO ORDEN EXACTO DEL VÍDEO ================= -->
   <main class="max-w-7xl mx-auto w-full px-4 py-8 space-y-12">
 
-    <!-- PASO 1: IDENTIFICACIÓN DEL USUARIO Y EXPLICACIÓN CLARA DEL MONTAJE -->
+    <!-- BLOQUE INTRODUCTORIO: EXPLICACIÓN DEL MONTAJE + AUDIO DE 4 MINUTOS -->
     <section class="card-panel p-6 sm:p-10 space-y-8 border-emerald-500/40 bg-gradient-to-b from-[#101929] to-[#0a101d]">
       <div class="flex flex-wrap items-center justify-between gap-3">
         <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full gold-badge text-xs font-extrabold uppercase">
@@ -281,7 +324,8 @@
         </div>
         <div class="w-full lg:w-96 bg-slate-900 p-3 rounded-xl border border-slate-700">
           <audio controls class="w-full">
-            <source src="https://app.level-i.com/audio/modelo-negocio.mp3" type="audio/mpeg">
+            <source src="https://app.level-i.com/donaciones-familiares/explicacion-elena.mp3" type="audio/mpeg">
+            <source src="explicacion-elena.mp3" type="audio/mpeg">
           </audio>
           <div class="text-[11px] font-mono text-emerald-400 text-right mt-1" data-i18n="audio_foot">
             Voz: Elena AI Advisor · level.immo
@@ -290,32 +334,32 @@
       </div>
     </section>
 
-    <!-- PASO 2: CALCULADORA Y COMPARADOR FISCAL (TODOS LOS IMPORTES A CERO EXCEPTO INTERÉS FIJO) -->
+    <!-- ================= PASO 1: SIMULADOR FINANCIERO MEJORADO SEGÚN TU VÍDEO ================= -->
     <section class="card-panel p-6 sm:p-10 space-y-8">
       <div class="border-b-2 border-slate-800 pb-4 flex flex-wrap items-center justify-between gap-4">
         <div>
           <span class="text-xs font-extrabold uppercase tracking-wider text-emerald-400 block" data-i18n="sim_badge">
-            🧮 PASO 1 INTERACTIVO · TODAS LAS CIFRAS A CERO PARA QUE HAGA SUS PROPIOS NÚMEROS
+            🧮 PASO 1 · SIMULADOR CLARO (EL CERO SE BORRA SOLO AL HACER CLIC PARA ESCRIBIR FÁCIL)
           </span>
           <h3 class="text-2xl sm:text-3xl font-black text-white mt-1" data-i18n="sim_title">
             Simulador de Compra, Ahorro Fiscal (Donación vs. Préstamo) y Cuota Hipotecaria
           </h3>
         </div>
-        <button type="button" onclick="resetNumbersToZero()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs border border-slate-600 cursor-pointer" data-i18n="sim_reset_btn">
+        <button type="button" onclick="resetNumbersToZero()" class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs border border-slate-600 cursor-pointer" data-i18n="sim_reset_btn">
           🔄 Poner todas las cifras a 0 €
         </button>
       </div>
 
       <p class="text-slate-200 text-base bg-slate-900/90 p-4 rounded-xl border border-slate-700" data-i18n="sim_instructions">
-        👉 <strong>Instrucciones muy fáciles:</strong> Escriba en las casillas oscuras el precio de la vivienda que quiere comprar, cuánto dinero le pueden dejar sus padres y cuánto gana al mes. Verá al instante cuánto cuesta todo y qué cuota le quedará.
+        👉 <strong>Instrucciones muy fáciles:</strong> Haga clic en cualquier casilla oscura y escriba su cifra (el cero inicial se quita solo). Los gastos de Notaría, Registro y Gestoría se calculan automáticamente al poner el precio de la vivienda.
       </p>
 
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         
-        <!-- COLUMNA IZQUIERDA: ENTRADA DE DATOS DEL USUARIO (A CERO) -->
+        <!-- COLUMNA IZQUIERDA: ENTRADA DE DATOS DEL USUARIO -->
         <div class="lg:col-span-6 space-y-6 bg-slate-950/80 p-6 rounded-2xl border-2 border-slate-800">
           
-          <!-- 1. Precio y Gastos de Compra -->
+          <!-- 1. Precio y Gastos de Compra (Con ITP 10% fijo y Notaría automática) -->
           <div class="space-y-4">
             <div class="text-base font-black text-amber-400 uppercase border-b border-slate-800 pb-2" data-i18n="box1_title">
               1. Datos de la vivienda y gastos de compra
@@ -325,23 +369,26 @@
               <label class="text-sm font-bold text-white block mb-1.5" data-i18n="lbl_price">
                 Precio de compra de la vivienda (€):
               </label>
-              <input type="number" id="sim-preu" value="0" min="0" step="5000" oninput="recalculateAll()" class="input-clear border-amber-500/60 text-amber-400" placeholder="0" />
+              <input type="number" id="sim-preu" value="0" min="0" step="5000" onfocus="clearZero(this)" onblur="restoreZero(this)" oninput="onPriceChange()" class="input-clear border-amber-500/60 text-amber-400" />
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label class="text-xs font-bold text-slate-300 block mb-1" data-i18n="lbl_tax_pct">
-                  Impuestos de compra (ITP / IVA %):
+                  Impuesto ITP / IVA (Fijo 10%):
                 </label>
-                <input type="number" id="sim-pct-impostos" value="10" min="0" step="0.5" oninput="recalculateAll()" class="input-clear text-base" />
+                <input type="text" id="sim-pct-impostos" value="10%" readonly class="input-readonly text-center" />
               </div>
               <div>
-                <label class="text-xs font-bold text-slate-300 block mb-1" data-i18n="lbl_notary">
-                  Notaría, Registro y Gestoría (€):
+                <label class="text-xs font-bold text-emerald-300 block mb-1" data-i18n="lbl_notary">
+                  Notaría, Registro y Gestoría (Automático €):
                 </label>
-                <input type="number" id="sim-gastos-fijos" value="0" min="0" step="250" oninput="recalculateAll()" class="input-clear text-base" placeholder="0" />
+                <input type="number" id="sim-gastos-fijos" value="0" min="0" step="100" onfocus="clearZero(this)" onblur="restoreZero(this)" oninput="recalculateAll()" class="input-clear text-base border-emerald-500/40" />
               </div>
             </div>
+            <span class="text-xs text-slate-400 block" data-i18n="lbl_notary_sub">
+              * Calculado automáticamente de forma aproximada según el precio de compra (puede ajustarlo si lo desea).
+            </span>
           </div>
 
           <!-- 2. Aportación Familiar -->
@@ -352,9 +399,9 @@
 
             <div>
               <label class="text-sm font-bold text-white block mb-1.5" data-i18n="lbl_family_aid">
-                Importe total que dejan los padres / familiares (€):
+                Importe total que aportan los padres / familiares (€):
               </label>
-              <input type="number" id="sim-aportacio" value="0" min="0" step="5000" oninput="recalculateAll()" class="input-clear border-emerald-500/60 text-emerald-400" placeholder="0" />
+              <input type="number" id="sim-aportacio" value="0" min="0" step="5000" onfocus="clearZero(this)" onblur="restoreZero(this)" oninput="recalculateAll()" class="input-clear border-emerald-500/60 text-emerald-400" />
             </div>
 
             <div class="grid grid-cols-2 gap-4">
@@ -362,36 +409,49 @@
                 <label class="text-xs font-bold text-slate-300 block mb-1" data-i18n="lbl_age_buyer">
                   Edad del comprador (Hijo/a):
                 </label>
-                <input type="number" id="sim-edad-hijo" value="0" min="0" max="99" oninput="recalculateAll()" class="input-clear text-base" placeholder="0" />
+                <input type="number" id="sim-edad-hijo" value="0" min="0" max="99" onfocus="clearZero(this)" onblur="restoreZero(this)" oninput="recalculateAll()" class="input-clear text-base" />
               </div>
               <div>
                 <label class="text-xs font-bold text-slate-300 block mb-1" data-i18n="lbl_age_parents">
                   Edad de los padres:
                 </label>
-                <input type="number" id="sim-edad-padres" value="0" min="0" max="99" oninput="recalculateAll()" class="input-clear text-base" placeholder="0" />
+                <input type="number" id="sim-edad-padres" value="0" min="0" max="99" onfocus="clearZero(this)" onblur="restoreZero(this)" oninput="recalculateAll()" class="input-clear text-base" />
               </div>
             </div>
           </div>
 
-          <!-- 3. Ingresos, Alquiler Actual y Otros Préstamos -->
+          <!-- 3. Ingresos claramente separados: Comprador vs Padres -->
           <div class="space-y-4 pt-3 border-t border-slate-800">
             <div class="text-base font-black text-sky-400 uppercase border-b border-slate-800 pb-2" data-i18n="box3_title">
-              3. Sus ingresos, alquiler actual y préstamos
+              3. Ingresos mensuales (Especificados por separado)
             </div>
 
-            <div>
-              <label class="text-sm font-bold text-white block mb-1.5" data-i18n="lbl_income">
-                Ingresos netos al mes (Nómina / Pensión) (€):
+            <div class="p-4 rounded-xl bg-slate-900 border-2 border-sky-500/50 space-y-2">
+              <label class="text-sm font-extrabold text-sky-300 block" data-i18n="lbl_income_buyer">
+                👤 Sueldo / Ingresos netos al mes DEL COMPRADOR (Hijo/a) (€):
               </label>
-              <input type="number" id="sim-ingressos" value="0" min="0" step="100" oninput="recalculateAll()" class="input-clear" placeholder="0" />
+              <input type="number" id="sim-ingressos" value="0" min="0" step="100" onfocus="clearZero(this)" onblur="restoreZero(this)" oninput="recalculateAll()" class="input-clear" />
+              <span class="text-xs text-slate-300 block" data-i18n="lbl_income_buyer_sub">
+                Indique lo que gana al mes la persona que va a comprar la casa.
+              </span>
+            </div>
+
+            <div class="p-4 rounded-xl bg-slate-900 border-2 border-amber-500/40 space-y-2">
+              <label class="text-sm font-extrabold text-amber-300 block" data-i18n="lbl_income_parents">
+                👨‍👩‍👧 Pensión / Ingresos netos al mes DE LOS PADRES (Avalistas) (€):
+              </label>
+              <input type="number" id="sim-ingressos-padres" value="0" min="0" step="100" onfocus="clearZero(this)" onblur="restoreZero(this)" oninput="recalculateAll()" class="input-clear text-base" />
+              <span class="text-xs text-slate-300 block" data-i18n="lbl_income_parents_sub">
+                Suma de las pensiones o ingresos de los padres (sirve de respaldo ante el banco si la cuota supera el 35% del sueldo del hijo/a).
+              </span>
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div class="p-3 rounded-xl bg-slate-900 border border-slate-700">
-                <label class="text-xs font-bold text-amber-300 block mb-1" data-i18n="lbl_rent_now">
-                  Gasto de Alquiler Actual (€/mes):
+                <label class="text-xs font-bold text-emerald-300 block mb-1" data-i18n="lbl_rent_now">
+                  Alquiler que paga hoy el comprador (€/mes):
                 </label>
-                <input type="number" id="sim-alquiler" value="0" min="0" step="50" oninput="recalculateAll()" class="input-clear text-base" placeholder="0" />
+                <input type="number" id="sim-alquiler" value="0" min="0" step="50" onfocus="clearZero(this)" onblur="restoreZero(this)" oninput="recalculateAll()" class="input-clear text-base" />
                 <span class="text-[11px] text-slate-400 block mt-1" data-i18n="lbl_rent_note">
                   * Al comprar su casa, dejará de pagar este alquiler.
                 </span>
@@ -399,17 +459,17 @@
 
               <div class="p-3 rounded-xl bg-slate-900 border border-slate-700">
                 <label class="text-xs font-bold text-rose-300 block mb-1" data-i18n="lbl_other_loans">
-                  Cuotas de Otros Préstamos (€/mes):
+                  Otros préstamos del comprador (€/mes):
                 </label>
-                <input type="number" id="sim-prestecs" value="0" min="0" step="25" oninput="recalculateAll()" class="input-clear text-base" placeholder="0" />
+                <input type="number" id="sim-prestecs" value="0" min="0" step="25" onfocus="clearZero(this)" onblur="restoreZero(this)" oninput="recalculateAll()" class="input-clear text-base" />
                 <span class="text-[11px] text-slate-400 block mt-1" data-i18n="lbl_loans_note">
-                  * Préstamos de coche, tarjetas o personales que sigue pagando.
+                  * Coche, tarjetas o préstamos que sigue pagando.
                 </span>
               </div>
             </div>
           </div>
 
-          <!-- 4. Tipo de Interés Fijo (Predefinido pero modificable) y Plazos -->
+          <!-- 4. Tipo de Interés Fijo y Plazos -->
           <div class="space-y-4 pt-3 border-t border-slate-800">
             <div class="text-base font-black text-purple-400 uppercase border-b border-slate-800 pb-2" data-i18n="box4_title">
               4. Tipo de interés fijo y plazos (Modificables)
@@ -420,7 +480,7 @@
                 <label class="text-xs font-bold text-amber-400 block mb-1" data-i18n="lbl_tin">
                   Interés Fijo Hipoteca (% TIN):
                 </label>
-                <input type="number" id="sim-tin" value="3.25" min="0" step="0.1" oninput="recalculateAll()" class="input-clear text-base border-amber-500/60 text-amber-300" />
+                <input type="number" id="sim-tin" value="3.25" min="0" step="0.05" oninput="recalculateAll()" class="input-clear text-base border-amber-500/60 text-amber-300" />
               </div>
               <div>
                 <label class="text-xs font-bold text-slate-300 block mb-1" data-i18n="lbl_years_mort">
@@ -439,7 +499,7 @@
 
         </div>
 
-        <!-- COLUMNA DERECHA: RESULTADOS CLAROS + CHOQUE FISCAL DONACIÓN VS PRÉSTAMO -->
+        <!-- COLUMNA DERECHA: RESULTADOS CLAROS SIN SOLAPAMIENTOS -->
         <div class="lg:col-span-6 space-y-6">
 
           <!-- Tarjeta 1: Comparativa de Carga Fiscal -->
@@ -486,77 +546,86 @@
             </div>
           </div>
 
-          <!-- Tarjeta 2: Desglose del Montaje de la Compra y Cuotas -->
+          <!-- Tarjeta 2: Desglose del Montaje de la Compra y Cuotas (Maquetación corregida sin solaparse) -->
           <div class="p-6 rounded-2xl bg-[#131e33] border-2 border-slate-700 space-y-4 shadow-xl">
             <h4 class="text-lg font-black text-white uppercase border-b border-slate-700 pb-2" data-i18n="res_box_title">
               📊 Desglose Completo de su Operación:
             </h4>
 
             <div class="space-y-2.5 text-sm">
-              <div class="flex justify-between p-3 rounded-lg bg-slate-950 border border-slate-800">
+              <div class="flex justify-between items-center p-3 rounded-lg bg-slate-950 border border-slate-800 gap-2">
                 <span class="text-slate-300" data-i18n="r_price">Precio de adquisición de la vivienda:</span>
-                <span class="font-bold text-white" id="res-preu-base">0 €</span>
+                <span class="font-bold text-white shrink-0" id="res-preu-base">0 €</span>
               </div>
 
-              <div class="flex justify-between p-3 rounded-lg bg-slate-950 border border-slate-800">
-                <span class="text-slate-300" data-i18n="r_expenses">+ Gastos de compra (Impuestos + Notaría/Registro):</span>
-                <span class="font-bold text-amber-300" id="res-total-gastos">0 €</span>
+              <div class="flex justify-between items-center p-3 rounded-lg bg-slate-950 border border-slate-800 gap-2">
+                <span class="text-slate-300" data-i18n="r_expenses">+ Gastos de compra (10% ITP + Notaría/Registro):</span>
+                <span class="font-bold text-amber-300 shrink-0" id="res-total-gastos">0 €</span>
               </div>
 
-              <div class="flex justify-between p-3.5 rounded-lg bg-slate-900 border-2 border-slate-700">
+              <div class="flex justify-between items-center p-3.5 rounded-lg bg-slate-900 border-2 border-slate-700 gap-2">
                 <span class="font-extrabold text-white" data-i18n="r_total_cost">= COSTE TOTAL DE LA OPERACIÓN (Precio + Gastos):</span>
-                <span class="font-black text-white text-lg" id="res-cost-total">0 €</span>
+                <span class="font-black text-white text-lg shrink-0" id="res-cost-total">0 €</span>
               </div>
 
-              <div class="flex justify-between p-3 rounded-lg bg-emerald-950/30 border border-emerald-500/40">
+              <div class="flex justify-between items-center p-3 rounded-lg bg-emerald-950/30 border border-emerald-500/40 gap-2">
                 <span class="text-emerald-300 font-bold" data-i18n="r_fam_aid">- Dinero aportado por los padres / familiares:</span>
-                <span class="font-black text-emerald-400 text-base" id="res-aportacio-view">0 €</span>
+                <span class="font-black text-emerald-400 text-base shrink-0" id="res-aportacio-view">0 €</span>
               </div>
 
-              <div class="flex justify-between p-4 rounded-xl bg-amber-500/15 border-2 border-amber-500/60">
+              <div class="flex justify-between items-center p-4 rounded-xl bg-amber-500/15 border-2 border-amber-500/60 gap-2">
                 <span class="font-black text-amber-300 uppercase" data-i18n="r_mortgage_need">= IMPORTE A FINANCIAR (HIPOTECA AL BANCO):</span>
-                <span class="font-black text-amber-400 text-xl" id="res-financar">0 €</span>
+                <span class="font-black text-amber-400 text-xl shrink-0" id="res-financar">0 €</span>
               </div>
             </div>
 
             <!-- Cuotas Mensuales -->
             <div class="pt-3 border-t border-slate-700 space-y-2.5 text-sm">
-              <div class="flex justify-between p-3 rounded-lg bg-slate-950 border border-slate-800">
-                <span class="text-slate-300" data-i18n="r_q_mort">Cuota mensual de la Hipoteca (al interés fijo elegido):</span>
-                <span class="font-black text-amber-400 text-base" id="res-cuota-hipoteca">0,00 € / mes</span>
+              <div class="flex justify-between items-center p-3 rounded-lg bg-slate-950 border border-slate-800 gap-2">
+                <span class="text-slate-300" data-i18n="r_q_mort">Cuota mensual de la Hipoteca:</span>
+                <span class="font-black text-amber-400 text-base shrink-0" id="res-cuota-hipoteca">0,00 € / mes</span>
               </div>
 
-              <div class="flex justify-between p-3 rounded-lg bg-slate-950 border border-slate-800">
+              <div class="flex justify-between items-center p-3 rounded-lg bg-slate-950 border border-slate-800 gap-2">
                 <span class="text-slate-300" data-i18n="r_q_fam">Cuota mensual del Préstamo a los Padres:</span>
-                <span class="font-black text-sky-400 text-base" id="res-cuota-familiar">0,00 € / mes</span>
+                <span class="font-black text-sky-400 text-base shrink-0" id="res-cuota-familiar">0,00 € / mes</span>
               </div>
 
-              <div class="flex justify-between p-3 rounded-lg bg-slate-950 border border-slate-800">
-                <span class="text-slate-300" data-i18n="r_q_other">Otros préstamos personales que ya tenía:</span>
-                <span class="font-bold text-rose-300" id="res-cuota-otros">0,00 € / mes</span>
+              <div class="flex justify-between items-center p-3 rounded-lg bg-slate-950 border border-slate-800 gap-2">
+                <span class="text-slate-300" data-i18n="r_q_other">Otros préstamos personales del comprador:</span>
+                <span class="font-bold text-rose-300 shrink-0" id="res-cuota-otros">0,00 € / mes</span>
               </div>
 
-              <div class="flex justify-between p-3 rounded-lg bg-emerald-950/30 border border-emerald-500/30">
+              <div class="flex justify-between items-center p-3 rounded-lg bg-emerald-950/30 border border-emerald-500/30 gap-2">
                 <span class="text-emerald-300 text-xs font-bold" data-i18n="r_rent_saved">✔ Alquiler actual que DEJARÁ de pagar cada mes:</span>
-                <span class="font-black text-emerald-400" id="res-alquiler-ahorro">0,00 € / mes</span>
+                <span class="font-black text-emerald-400 shrink-0" id="res-alquiler-ahorro">0,00 € / mes</span>
               </div>
             </div>
 
-            <!-- Ratio de Esfuerzo y Veredicto Bancario -->
-            <div class="p-4 rounded-xl bg-black border-2 border-emerald-500/60 space-y-2">
-              <div class="flex justify-between items-center">
+            <!-- Caja de Suma Total y Ratio corregida en bloques limpios (jamás se monta el texto) -->
+            <div class="p-5 rounded-xl bg-black border-2 border-emerald-500/70 space-y-3">
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 border-b border-slate-800 pb-3">
                 <span class="text-xs font-extrabold text-emerald-400 uppercase" data-i18n="r_total_monthly">
                   SUMA TOTAL DE CUOTAS AL MES (Hipoteca + Padres + Otros):
                 </span>
-                <span class="text-lg font-black text-white" id="res-total-carga">0,00 € / mes</span>
+                <span class="text-2xl font-black text-white whitespace-nowrap" id="res-total-carga">0,00 € / mes</span>
               </div>
-              <div class="flex justify-between items-center border-t border-slate-800 pt-2">
+
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 border-b border-slate-800 pb-3">
                 <span class="text-xs font-extrabold text-amber-300 uppercase" data-i18n="r_effort_label">
-                  RATIO DE ESFUERZO (% de su nómina):
+                  RATIO DE ESFUERZO (Sobre el sueldo del comprador):
                 </span>
-                <span class="text-lg font-black text-slate-300" id="res-ratio-esfuerzo">0%</span>
+                <span class="text-2xl font-black text-slate-300 whitespace-nowrap" id="res-ratio-esfuerzo">0%</span>
               </div>
-              <div id="res-bank-verdict" class="text-xs text-slate-300 pt-1 font-medium" data-i18n="r_verdict_wait">
+
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 border-b border-slate-800 pb-3">
+                <span class="text-xs font-extrabold text-sky-300 uppercase" data-i18n="r_effort_joint_label">
+                  RATIO CON EL RESPALDO DE LOS PADRES (Comprador + Padres):
+                </span>
+                <span class="text-lg font-black text-sky-400 whitespace-nowrap" id="res-ratio-conjunto">0%</span>
+              </div>
+
+              <div id="res-bank-verdict" class="text-sm text-slate-200 pt-1 font-semibold leading-relaxed" data-i18n="r_verdict_wait">
                 Introduzca los importes arriba para ver el diagnóstico automático de los bancos.
               </div>
             </div>
@@ -568,147 +637,64 @@
       </div>
     </section>
 
-    <!-- PASO 3: EDITOR DINÁMICO DEL CONTRATO DE PRÉSTAMO FAMILIAR -->
-    <section id="sec-contract" class="card-panel p-6 sm:p-10 space-y-6">
-      
-      <div id="contract-controls" class="space-y-6 no-print">
-        <div class="flex flex-wrap items-center justify-between gap-4 border-b-2 border-slate-800 pb-4">
-          <div>
-            <span class="text-xs font-extrabold uppercase tracking-wider text-amber-400 block" data-i18n="ct_badge">
-              📄 PASO 2 INTERACTIVO · DOCUMENTO OFICIAL GRATUITO PARA RELLENAR E IMPRIMIR EN PDF
-            </span>
-            <h3 class="text-2xl sm:text-3xl font-black text-white mt-1" data-i18n="ct_title">
-              Contrato Estándar de Préstamo Familiar (0% Intereses)
-            </h3>
-          </div>
-          <div class="flex flex-wrap gap-2.5">
-            <button type="button" onclick="copyContractText()" class="btn-action bg-slate-800 hover:bg-slate-700 text-white text-xs py-3 px-4 border border-slate-600">
-              📋 <span data-i18n="ct_btn_copy">Copiar Contrato</span>
-            </button>
-            <button type="button" onclick="printOnlyContract()" class="btn-action bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs py-3 px-5 shadow-lg">
-              🖨️ <span data-i18n="ct_btn_print">Imprimir / Descargar Contrato en PDF</span>
-            </button>
-          </div>
-        </div>
-
-        <p class="text-slate-200 text-base bg-slate-900/90 p-4 rounded-xl border border-slate-700" data-i18n="ct_instructions">
-          👉 <strong>Muy fácil de rellenar:</strong> Escriba la ciudad, la fecha y el nombre, DNI y dirección de los padres (prestamistas) y de los hijos (prestatarios). Si son dos padres o dos compradores, pulse el botón <strong>"+ Añadir otra persona"</strong>. Todo lo que escriba aparecerá al instante en el documento legal de abajo.
-        </p>
-
-        <!-- Fila 1: Ciudad, Fecha, Interés y Validación Obligatoria -->
-        <div class="grid grid-cols-1 md:grid-cols-12 gap-4 bg-slate-950 p-5 rounded-2xl border-2 border-slate-800">
-          <div class="md:col-span-3">
-            <label class="text-xs font-bold uppercase text-slate-300 block mb-1" data-i18n="ct_lbl_city">Ciudad de firma:</label>
-            <input type="text" id="c-ciudad" value="" oninput="updateContractLive()" data-i18n-placeholder="ct_ph_city" placeholder="Ej: Sabadell / Barcelona" class="input-clear text-sm" />
-          </div>
-          <div class="md:col-span-3">
-            <label class="text-xs font-bold uppercase text-slate-300 block mb-1" data-i18n="ct_lbl_date">Fecha (Día, Mes y Año):</label>
-            <input type="text" id="c-fecha" value="10 de noviembre de 2026" oninput="updateContractLive()" class="input-clear text-sm" />
-          </div>
-          <div class="md:col-span-3">
-            <label class="text-xs font-bold uppercase text-emerald-400 block mb-1" data-i18n="ct_lbl_interest">
-              Interés del Préstamo Familiar (% anual):
-            </label>
-            <input type="number" id="c-interes-input" value="0" min="0" step="0.25" oninput="onInterestChange()" class="input-clear text-sm border-emerald-500 text-emerald-400" />
-          </div>
-          <div class="md:col-span-3 flex flex-col justify-end">
-            <label class="flex items-start gap-2.5 p-3 rounded-xl bg-amber-500/15 border-2 border-amber-500/60 cursor-pointer">
-              <input type="checkbox" id="c-validate-interest" onchange="updateContractLive()" class="mt-1 w-5 h-5 accent-emerald-500 shrink-0" />
-              <span class="text-xs font-extrabold text-amber-300 leading-snug" data-i18n="ct_lbl_validate_chk">
-                Confirmo y valido expresamente este tipo de interés (por defecto 0% gratuito).
-              </span>
-            </label>
-          </div>
-        </div>
-
-        <!-- Fila 2: Lista dinámica de Prestamistas (Padres) y Prestatarios (Hijos) -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          
-          <!-- Prestamistas (Padres) -->
-          <div class="p-5 rounded-2xl bg-slate-950 border-2 border-amber-500/40 space-y-4">
-            <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-3">
-              <div>
-                <span class="text-sm font-black text-amber-400 uppercase block" data-i18n="ct_lenders_title">
-                  👨‍👩‍👧‍👦 LOS PRESTAMISTAS (Padres / Familiares que dejan el dinero)
-                </span>
-                <span class="text-xs text-slate-400" data-i18n="ct_lenders_sub">Puede añadir 1, 2 o más titulares</span>
-              </div>
-              <button type="button" onclick="addParty('prestamista')" class="px-3 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs cursor-pointer">
-                + <span data-i18n="ct_btn_add_person">Añadir otra persona</span>
-              </button>
-            </div>
-            <div id="prestamistas-container" class="space-y-3">
-              <div class="p-3 rounded-xl bg-slate-900 border border-slate-700 space-y-2 party-lender">
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                  <input type="text" data-i18n-placeholder="ph_fullname" placeholder="Nombre y dos apellidos" oninput="updateContractLive()" class="sm:col-span-2 input-clear text-xs py-2" />
-                  <input type="text" data-i18n-placeholder="ph_dni" placeholder="DNI / NIE" oninput="updateContractLive()" class="input-clear text-xs py-2 font-mono uppercase" />
-                </div>
-                <input type="text" data-i18n-placeholder="ph_address" placeholder="Domicilio completo (Calle, número, piso, ciudad)" oninput="updateContractLive()" class="input-clear text-xs py-2" />
-              </div>
-            </div>
-          </div>
-
-          <!-- Prestatarios (Hijos / Compradores) -->
-          <div class="p-5 rounded-2xl bg-slate-950 border-2 border-emerald-500/40 space-y-4">
-            <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-3">
-              <div>
-                <span class="text-sm font-black text-emerald-400 uppercase block" data-i18n="ct_borrowers_title">
-                  🏠 LOS PRESTATARIOS (Hijo/a o Compradores que reciben el dinero)
-                </span>
-                <span class="text-xs text-slate-400" data-i18n="ct_borrowers_sub">Puede añadir 1 o más compradores</span>
-              </div>
-              <button type="button" onclick="addParty('prestatario')" class="px-3 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs cursor-pointer">
-                + <span data-i18n="ct_btn_add_person">Añadir otra persona</span>
-              </button>
-            </div>
-            <div id="prestatarios-container" class="space-y-3">
-              <div class="p-3 rounded-xl bg-slate-900 border border-slate-700 space-y-2 party-borrower">
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                  <input type="text" data-i18n-placeholder="ph_fullname" placeholder="Nombre y dos apellidos" oninput="updateContractLive()" class="sm:col-span-2 input-clear text-xs py-2" />
-                  <input type="text" data-i18n-placeholder="ph_dni" placeholder="DNI / NIE" oninput="updateContractLive()" class="input-clear text-xs py-2 font-mono uppercase" />
-                </div>
-                <input type="text" data-i18n-placeholder="ph_address" placeholder="Domicilio completo (Calle, número, piso, ciudad)" oninput="updateContractLive()" class="input-clear text-xs py-2" />
-              </div>
-            </div>
-          </div>
-
-        </div>
-
-        <!-- Fila 3: Cuenta bancaria opcional para transferencia -->
-        <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
-          <label class="text-xs font-bold uppercase text-slate-300 block mb-1" data-i18n="ct_lbl_iban">
-            Número de cuenta bancaria (IBAN) o forma de entrega del dinero (Opcional):
-          </label>
-          <input type="text" id="c-iban" value="" oninput="updateContractLive()" data-i18n-placeholder="ct_ph_iban" placeholder="Ej: Transferencia bancaria a la cuenta ES00 0000 0000 0000 0000 0000" class="input-clear text-xs py-2.5" />
-        </div>
+    <!-- ================= PREGUNTAS FRECUENTES (FAQ) COLOCADAS JUSTO ENTRE EL SIMULADOR Y EL SIGUIENTE PASO (MIN. 04:15 DEL VÍDEO) ================= -->
+    <section class="card-panel p-6 sm:p-10 space-y-6 border-amber-500/40">
+      <div class="border-b-2 border-slate-800 pb-4">
+        <span class="text-xs font-extrabold uppercase tracking-wider text-amber-400 block" data-i18n="faq_badge">
+          ❓ RESPUESTAS CLARAS ANTES DE PUBLICAR SU BÚSQUEDA Y FIRMAR EL CONTRATO
+        </span>
+        <h3 class="text-2xl sm:text-3xl font-black text-white mt-1" data-i18n="faq_title">
+          Preguntas Frecuentes (FAQ) y Documentación que piden los Bancos
+        </h3>
       </div>
 
-      <!-- DOCUMENTO IMPRIMIBLE DEL CONTRATO (CON SELLO LEVEL-I.COM & LEVEL.IMMO) -->
-      <div id="contract-document" class="bg-[#05080f] border-2 border-slate-600 rounded-2xl p-6 sm:p-10 space-y-5 text-sm leading-relaxed">
-        
-        <div class="flex flex-wrap items-center justify-between gap-2 border-b-2 border-slate-700 pb-4" translate="no">
-          <div class="flex items-center gap-2">
-            <span class="inline-flex items-center justify-center w-7 h-7 rounded bg-white text-slate-950 font-black">L</span>
-            <span class="font-black text-base text-white">level.immo</span>
-            <span class="text-xs font-mono text-emerald-400">· app.level-i.com/donaciones-familiares</span>
-          </div>
-          <div class="text-[11px] font-mono text-slate-400">
-            MODELO LEGAL GRATUITO · LEVEL PUNTO IMMO 24365 SLU · API 4173 · AICAT 14200
-          </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
+        <div class="p-5 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+          <h4 class="font-black text-amber-400 text-base" data-i18n="fq1_q">
+            1. ¿Por qué es mejor el Préstamo Familiar que una Donación?
+          </h4>
+          <p class="text-slate-300" data-i18n="fq1_a">
+            Porque una donación obliga a pagar el Impuesto de Donaciones y gastos de notaría, y si se transfiere el dinero sin papeles Hacienda puede multarle. En cambio, el Préstamo Familiar al 0% firmado en contrato privado y presentado con el Modelo 600 es 100% legal y paga <strong>0 € de impuestos</strong>.
+          </p>
         </div>
 
-        <div id="contract-body-content" class="space-y-4 font-serif text-base"></div>
+        <div class="p-5 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+          <h4 class="font-black text-amber-400 text-base" data-i18n="fq2_q">
+            2. ¿Los padres pueden dejarnos el dinero y además avalar la hipoteca?
+          </h4>
+          <p class="text-slate-300" data-i18n="fq2_a">
+            <strong>Sí, y a los bancos les encanta.</strong> Si el comprador tiene un contrato fijo discontinuo o ingresos justos, el hecho de que los padres presten la entrada y respalden la operación como pensionistas con una vivienda libre de cargas multiplica las probabilidades de que el banco apruebe la hipoteca.
+          </p>
+        </div>
 
+        <div class="p-5 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+          <h4 class="font-black text-amber-400 text-base" data-i18n="fq3_q">
+            3. ¿Qué papeles me va a pedir el banco (incluso si nunca he hecho la Renta)?
+          </h4>
+          <p class="text-slate-300" data-i18n="fq3_a">
+            <strong>Del comprador:</strong> DNI, contrato de trabajo, últimas 3 nóminas (y justificantes del paro si es fijo discontinuo), Vida Laboral actualizada y extracto bancario de 6 meses. Si nunca ha hecho la declaración de la Renta, el certificado de retenciones e ingresos sustituye al IRPF.<br>
+            <strong>De los padres:</strong> DNI, justificante de la pensión, y Nota Simple de su vivienda libre de cargas + último recibo de IBI.
+          </p>
+        </div>
+
+        <div class="p-5 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+          <h4 class="font-black text-amber-400 text-base" data-i18n="fq4_q">
+            4. ¿Qué incluye el servicio LEVEL-Hunter "Compra a la Carta" (1.000 € + IVA)?
+          </h4>
+          <p class="text-slate-300" data-i18n="fq4_a">
+            En cuanto nuestro Broker valida su viabilidad, activamos la búsqueda activa de su hogar: notificamos a nuestra red de colaboradores en la zona, buscamos viviendas antes de que suban de precio en los portales, revisamos cargas en Catastro y Registro y negociamos el precio a su favor para que ahorre miles de euros.
+          </p>
+        </div>
       </div>
     </section>
 
-    <!-- PASO 4: PANEL DE DEMANDA ACTIVA EN MERCADO REAL Y ACTIVACIÓN LEVEL-HUNTER -->
+    <!-- ================= PASO 2: PANEL DE DEMANDA ACTIVA EN MERCADO REAL Y ACTIVACIÓN LEVEL-HUNTER ================= -->
     <section id="demanda-section" class="card-panel p-6 sm:p-10 space-y-8 border-emerald-500/60 bg-gradient-to-b from-[#0e192d] to-[#070b12]">
       
       <div class="flex flex-wrap items-center justify-between gap-4 border-b-2 border-slate-800 pb-5">
         <div>
           <span class="px-3.5 py-1.5 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-mono font-extrabold uppercase" data-i18n="dm_badge">
-            📡 CONEXIÓN DIRECTA CON MERCADO REAL · LEVEL-HUNTER "COMPRA A LA CARTA"
+            📡 PASO 2 INTERACTIVO · CONEXIÓN DIRECTA CON MERCADO REAL · LEVEL-HUNTER
           </span>
           <h3 class="text-2xl sm:text-3xl font-black text-white mt-2" data-i18n="dm_title">
             No pierda ningún piso mientras el banco tramita sus papeles: Publique su Demanda Activa
@@ -719,7 +705,6 @@
         </button>
       </div>
 
-      <!-- Explicación clara de cómo funciona la Demanda Activa -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div class="p-5 rounded-xl bg-slate-950 border border-slate-800 space-y-1.5">
           <div class="text-amber-400 font-black text-sm uppercase" data-i18n="dm_why1_t">1. ¿Qué pasa si espera al banco?</div>
@@ -743,7 +728,6 @@
 
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         
-        <!-- Izquierda: Configurar y Previsualizar el Anuncio del Usuario -->
         <div class="lg:col-span-6 space-y-4 bg-slate-950 p-6 rounded-2xl border-2 border-slate-800">
           <h4 class="text-base font-black text-amber-400 uppercase" data-i18n="dm_form_title">
             ✍️ Escriba cómo es la vivienda que busca para ver su anuncio:
@@ -773,7 +757,7 @@
                 <label class="text-xs font-bold text-slate-300 block mb-1" data-i18n="dm_lbl_budget">
                   Presupuesto máximo de compra (€):
                 </label>
-                <input type="number" id="d-pressupost" value="0" min="0" step="5000" oninput="updateDemandaPreview()" class="input-clear text-sm text-amber-400" placeholder="0" />
+                <input type="number" id="d-pressupost" value="0" min="0" step="5000" onfocus="clearZero(this)" onblur="restoreZero(this)" oninput="updateDemandaPreview()" class="input-clear text-sm text-amber-400" />
               </div>
             </div>
 
@@ -790,7 +774,6 @@
           </div>
         </div>
 
-        <!-- Derecha: Tarjeta Previsualización en Vivo + Demandas Reales Activas -->
         <div class="lg:col-span-6 space-y-5">
           
           <div class="p-6 rounded-2xl bg-[#050911] border-2 border-emerald-500 space-y-3 relative shadow-2xl">
@@ -853,54 +836,132 @@
       </div>
     </section>
 
-    <!-- PASO 5: PREGUNTAS FRECUENTES (FAQ's) Y DOCUMENTACIÓN QUE PIDEN LOS BANCOS -->
-    <section class="card-panel p-6 sm:p-10 space-y-6">
-      <div class="border-b-2 border-slate-800 pb-4">
-        <span class="text-xs font-extrabold uppercase tracking-wider text-amber-400 block" data-i18n="faq_badge">
-          ❓ RESPUESTAS CLARAS A TODAS SUS DUDAS Y PAPELES DEL BANCO
-        </span>
-        <h3 class="text-2xl sm:text-3xl font-black text-white mt-1" data-i18n="faq_title">
-          Preguntas Frecuentes (FAQ) y Documentación necesaria
-        </h3>
+    <!-- ================= PASO 3 (AL FINAL COMO PEDISTE EN EL VÍDEO): CONTRATO DE PRÉSTAMO FAMILIAR + FIRMA DIGITAL ================= -->
+    <section id="sec-contract" class="card-panel p-6 sm:p-10 space-y-6">
+      
+      <div id="contract-controls" class="space-y-6 no-print">
+        <div class="flex flex-wrap items-center justify-between gap-4 border-b-2 border-slate-800 pb-4">
+          <div>
+            <span class="text-xs font-extrabold uppercase tracking-wider text-amber-400 block" data-i18n="ct_badge">
+              📄 PASO 3 INTERACTIVO · DOCUMENTO OFICIAL GRATUITO PARA RELLENAR, DESCARGAR EN PDF O FIRMAR DIGITALMENTE
+            </span>
+            <h3 class="text-2xl sm:text-3xl font-black text-white mt-1" data-i18n="ct_title">
+              Contrato Estándar de Préstamo Familiar (0% Intereses)
+            </h3>
+          </div>
+          <div class="flex flex-wrap gap-2.5">
+            <button type="button" onclick="copyContractText()" class="btn-action bg-slate-800 hover:bg-slate-700 text-white text-xs py-3 px-4 border border-slate-600">
+              📋 <span data-i18n="ct_btn_copy">Copiar Contrato</span>
+            </button>
+            <button type="button" onclick="printOnlyContract()" class="btn-action bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs py-3 px-5 shadow-lg">
+              🖨️ <span data-i18n="ct_btn_print">Imprimir / Guardar PDF</span>
+            </button>
+            <button type="button" onclick="sendForDigitalSignature('contrato_prestamo_familiar')" class="btn-action bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs py-3 px-5 shadow-lg">
+              ✍️ <span data-i18n="ct_btn_docusign">Enviar a Firmar por Móvil / Email (DocuSign)</span>
+            </button>
+          </div>
+        </div>
+
+        <p class="text-slate-200 text-base bg-slate-900/90 p-4 rounded-xl border border-slate-700" data-i18n="ct_instructions">
+          👉 <strong>Muy fácil de rellenar:</strong> Escriba la ciudad, la fecha y el nombre, DNI y dirección de los padres (prestamistas) y de los hijos (prestatarios). Si son dos padres o dos compradores, pulse el botón <strong>"+ Añadir otra persona"</strong>. Puede imprimirlo en PDF o enviarlo para firma digital en el móvil.
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-4 bg-slate-950 p-5 rounded-2xl border-2 border-slate-800">
+          <div class="md:col-span-3">
+            <label class="text-xs font-bold uppercase text-slate-300 block mb-1" data-i18n="ct_lbl_city">Ciudad de firma:</label>
+            <input type="text" id="c-ciudad" value="" oninput="updateContractLive()" data-i18n-placeholder="ct_ph_city" placeholder="Ej: Sabadell / Barcelona" class="input-clear text-sm" />
+          </div>
+          <div class="md:col-span-3">
+            <label class="text-xs font-bold uppercase text-slate-300 block mb-1" data-i18n="ct_lbl_date">Fecha (Día, Mes y Año):</label>
+            <input type="text" id="c-fecha" value="10 de noviembre de 2026" oninput="updateContractLive()" class="input-clear text-sm" />
+          </div>
+          <div class="md:col-span-3">
+            <label class="text-xs font-bold uppercase text-emerald-400 block mb-1" data-i18n="ct_lbl_interest">
+              Interés del Préstamo Familiar (% anual):
+            </label>
+            <input type="number" id="c-interes-input" value="0" min="0" step="0.25" oninput="onInterestChange()" class="input-clear text-sm border-emerald-500 text-emerald-400" />
+          </div>
+          <div class="md:col-span-3 flex flex-col justify-end">
+            <label class="flex items-start gap-2.5 p-3 rounded-xl bg-amber-500/15 border-2 border-amber-500/60 cursor-pointer">
+              <input type="checkbox" id="c-validate-interest" onchange="updateContractLive()" class="mt-1 w-5 h-5 accent-emerald-500 shrink-0" />
+              <span class="text-xs font-extrabold text-amber-300 leading-snug" data-i18n="ct_lbl_validate_chk">
+                Confirmo y valido expresamente este tipo de interés (por defecto 0% gratuito).
+              </span>
+            </label>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          
+          <div class="p-5 rounded-2xl bg-slate-950 border-2 border-amber-500/40 space-y-4">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-3">
+              <div>
+                <span class="text-sm font-black text-amber-400 uppercase block" data-i18n="ct_lenders_title">
+                  👨‍👩‍👧‍👦 LOS PRESTAMISTAS (Padres / Familiares que dejan el dinero)
+                </span>
+                <span class="text-xs text-slate-400" data-i18n="ct_lenders_sub">Puede añadir 1, 2 o más titulares</span>
+              </div>
+              <button type="button" onclick="addParty('prestamista')" class="px-3 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs cursor-pointer">
+                + <span data-i18n="ct_btn_add_person">Añadir otra persona</span>
+              </button>
+            </div>
+            <div id="prestamistas-container" class="space-y-3">
+              <div class="p-3 rounded-xl bg-slate-900 border border-slate-700 space-y-2 party-lender">
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                  <input type="text" data-i18n-placeholder="ph_fullname" placeholder="Nombre y dos apellidos" oninput="updateContractLive()" class="sm:col-span-2 input-clear text-xs py-2" />
+                  <input type="text" data-i18n-placeholder="ph_dni" placeholder="DNI / NIE" oninput="updateContractLive()" class="input-clear text-xs py-2 font-mono uppercase" />
+                </div>
+                <input type="text" data-i18n-placeholder="ph_address" placeholder="Domicilio completo (Calle, número, piso, ciudad)" oninput="updateContractLive()" class="input-clear text-xs py-2" />
+              </div>
+            </div>
+          </div>
+
+          <div class="p-5 rounded-2xl bg-slate-950 border-2 border-emerald-500/40 space-y-4">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-3">
+              <div>
+                <span class="text-sm font-black text-emerald-400 uppercase block" data-i18n="ct_borrowers_title">
+                  🏠 LOS PRESTATARIOS (Hijo/a o Compradores que reciben el dinero)
+                </span>
+                <span class="text-xs text-slate-400" data-i18n="ct_borrowers_sub">Puede añadir 1 o más compradores</span>
+              </div>
+              <button type="button" onclick="addParty('prestatario')" class="px-3 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs cursor-pointer">
+                + <span data-i18n="ct_btn_add_person">Añadir otra persona</span>
+              </button>
+            </div>
+            <div id="prestatarios-container" class="space-y-3">
+              <div class="p-3 rounded-xl bg-slate-900 border border-slate-700 space-y-2 party-borrower">
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                  <input type="text" data-i18n-placeholder="ph_fullname" placeholder="Nombre y dos apellidos" oninput="updateContractLive()" class="sm:col-span-2 input-clear text-xs py-2" />
+                  <input type="text" data-i18n-placeholder="ph_dni" placeholder="DNI / NIE" oninput="updateContractLive()" class="input-clear text-xs py-2 font-mono uppercase" />
+                </div>
+                <input type="text" data-i18n-placeholder="ph_address" placeholder="Domicilio completo (Calle, número, piso, ciudad)" oninput="updateContractLive()" class="input-clear text-xs py-2" />
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
+          <label class="text-xs font-bold uppercase text-slate-300 block mb-1" data-i18n="ct_lbl_iban">
+            Número de cuenta bancaria (IBAN) o forma de entrega del dinero (Opcional):
+          </label>
+          <input type="text" id="c-iban" value="" oninput="updateContractLive()" data-i18n-placeholder="ct_ph_iban" placeholder="Ej: Transferencia bancaria a la cuenta ES00 0000 0000 0000 0000 0000" class="input-clear text-xs py-2.5" />
+        </div>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
-        <div class="p-5 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
-          <h4 class="font-black text-amber-400 text-base" data-i18n="fq1_q">
-            1. ¿Por qué es mejor el Préstamo Familiar que una Donación?
-          </h4>
-          <p class="text-slate-300" data-i18n="fq1_a">
-            Porque una donación obliga a pagar el Impuesto de Donaciones y gastos de notaría, y si se transfiere el dinero sin papeles Hacienda puede multarle. En cambio, el Préstamo Familiar al 0% firmado en contrato privado y presentado con el Modelo 600 es 100% legal y paga <strong>0 € de impuestos</strong>.
-          </p>
+      <div id="contract-document" class="bg-[#05080f] border-2 border-slate-600 rounded-2xl p-6 sm:p-10 space-y-5 text-sm leading-relaxed">
+        <div class="flex flex-wrap items-center justify-between gap-2 border-b-2 border-slate-700 pb-4" translate="no">
+          <div class="flex items-center gap-2">
+            <span class="inline-flex items-center justify-center w-7 h-7 rounded bg-white text-slate-950 font-black">L</span>
+            <span class="font-black text-base text-white">level.immo</span>
+            <span class="text-xs font-mono text-emerald-400">· app.level-i.com/donaciones-familiares</span>
+          </div>
+          <div class="text-[11px] font-mono text-slate-400">
+            MODELO LEGAL GRATUITO · LEVEL PUNTO IMMO 24365 SLU · API 4173 · AICAT 14200
+          </div>
         </div>
 
-        <div class="p-5 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
-          <h4 class="font-black text-amber-400 text-base" data-i18n="fq2_q">
-            2. ¿Los padres pueden dejarnos el dinero y además avalar la hipoteca?
-          </h4>
-          <p class="text-slate-300" data-i18n="fq2_a">
-            <strong>Sí, y a los bancos les encanta.</strong> Si el comprador tiene un contrato fijo discontinuo o ingresos justos, el hecho de que los padres presten la entrada y respalden la operación como pensionistas con una vivienda libre de cargas multiplica las probabilidades de que el banco apruebe la hipoteca.
-          </p>
-        </div>
-
-        <div class="p-5 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
-          <h4 class="font-black text-amber-400 text-base" data-i18n="fq3_q">
-            3. ¿Qué papeles me va a pedir el banco (incluso si nunca he hecho la Renta)?
-          </h4>
-          <p class="text-slate-300" data-i18n="fq3_a">
-            <strong>Del comprador:</strong> DNI, contrato de trabajo, últimas 3 nóminas (y justificantes del paro si es fijo discontinuo), Vida Laboral actualizada y extracto bancario de 6 meses. Si nunca ha hecho la declaración de la Renta, el certificado de retenciones e ingresos sustituye al IRPF.<br>
-            <strong>De los padres:</strong> DNI, justificante de la pensión, y Nota Simple de su vivienda libre de cargas + último recibo de IBI.
-          </p>
-        </div>
-
-        <div class="p-5 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
-          <h4 class="font-black text-amber-400 text-base" data-i18n="fq4_q">
-            4. ¿Qué incluye el servicio LEVEL-Hunter "Compra a la Carta" (1.000 € + IVA)?
-          </h4>
-          <p class="text-slate-300" data-i18n="fq4_a">
-            En cuanto nuestro Broker valida su viabilidad, activamos la búsqueda activa de su hogar: notificamos a nuestra red de colaboradores en la zona, buscamos viviendas antes de que suban de precio en los portales, revisamos cargas en Catastro y Registro y negociamos el precio a su favor para que ahorre miles de euros.
-          </p>
-        </div>
+        <div id="contract-body-content" class="space-y-4 font-serif text-base"></div>
       </div>
     </section>
 
@@ -991,17 +1052,15 @@
     </div>
   </div>
 
-  <!-- ================= MODAL HOJA DE ENCARGO Y VOLANTE DE PAGO PERSONALIZADO LEVEL.IMMO / LEVEL-I.COM ================= -->
+  <!-- ================= MODAL HOJA DE ENCARGO Y VOLANTE DE PAGO + OPCIÓN DE FIRMA DIGITAL DOCUSIGN ================= -->
   <div id="voucher-modal" class="fixed inset-0 z-[80] bg-slate-950/95 backdrop-blur-md hidden items-center justify-center p-4 overflow-y-auto">
     <div id="voucher-printable" class="max-w-2xl w-full p-6 sm:p-10 bg-white text-slate-950 rounded-2xl space-y-6 shadow-2xl border-4 border-slate-900 my-auto">
       
-      <!-- Banner de Confirmación de Envío a Central -->
       <div class="p-3 rounded-xl bg-emerald-100 border-2 border-emerald-500 text-emerald-950 text-xs font-extrabold flex items-center justify-between no-print">
         <span data-i18n="v_webhook_ok">🔔 ¡Expediente enviado en tiempo real a nuestra central y Advisors de zona!</span>
         <span class="font-mono">API 4173</span>
       </div>
 
-      <!-- Cabecera Oficial Personalizada con ambos logos y SLU -->
       <div class="flex flex-wrap items-start justify-between gap-4 border-b-2 border-slate-900 pb-4">
         <div class="space-y-1" translate="no">
           <div class="flex items-center gap-2">
@@ -1028,7 +1087,6 @@
         </div>
       </div>
 
-      <!-- Datos del Cliente -->
       <div class="p-4 rounded-xl bg-slate-100 border border-slate-300 space-y-1.5 text-xs sm:text-sm">
         <div class="font-black uppercase text-slate-900" data-i18n="v_client_head">
           Datos del Cliente Mandante (Comprador):
@@ -1042,7 +1100,6 @@
         <div><strong data-i18n="v_lbl_search">Búsqueda solicitada:</strong> <span id="v-zone-summary">--</span></div>
       </div>
 
-      <!-- Tabla de Importes Desglosada (1.000 € + 21% IVA) -->
       <div class="border-2 border-slate-900 rounded-xl overflow-hidden">
         <table class="w-full text-left border-collapse text-xs sm:text-sm">
           <thead>
@@ -1079,7 +1136,6 @@
         </table>
       </div>
 
-      <!-- Instrucciones de Pago y Firma -->
       <div class="p-4 rounded-xl bg-amber-50 border border-amber-300 text-xs space-y-1 text-slate-900">
         <div class="font-black uppercase" data-i18n="v_bank_head">
           Datos para Transferencia o Ingreso Bancario:
@@ -1100,10 +1156,13 @@
         </div>
       </div>
 
-      <!-- Botones del Volante (No salen al imprimir) -->
+      <!-- Botones del Volante: Imprimir PDF o Enviar a Firma Digital DocuSign -->
       <div class="flex flex-wrap gap-3 pt-2 no-print">
         <button type="button" onclick="printOnlyVoucher()" class="btn-action bg-slate-950 hover:bg-slate-800 text-white flex-1 text-xs uppercase">
-          🖨️ <span data-i18n="v_btn_print">Imprimir / Guardar PDF del Encargo</span>
+          🖨️ <span data-i18n="v_btn_print">Guardar / Imprimir PDF</span>
+        </button>
+        <button type="button" onclick="sendForDigitalSignature('encargo_level_hunter')" class="btn-action bg-emerald-600 hover:bg-emerald-500 text-white flex-1 text-xs uppercase">
+          ✍️ <span data-i18n="v_btn_docusign">Firmar desde el Móvil (DocuSign)</span>
         </button>
         <button type="button" onclick="closeVoucherModal()" class="btn-action bg-slate-200 hover:bg-slate-300 text-slate-900 text-xs">
           ✕ <span data-i18n="v_btn_close">Cerrar</span>
@@ -1126,13 +1185,13 @@
       </div>
       <div class="flex gap-4">
         <button type="button" onclick="reopenGatekeeper()" class="hover:text-white underline cursor-pointer" data-i18n="ftr_lock">
-          Pantalla de inicio
+          Pantalla de inicio y Vídeo
         </button>
       </div>
     </div>
   </footer>
 
-  <!-- ================= LÓGICA JAVASCRIPT: SONIDO ESPECIAL + WEBHOOKS MAKE + BILINGÜE ES/CAT ================= -->
+  <!-- ================= LÓGICA JAVASCRIPT COMPLETA ================= -->
   <script>
     const WEBHOOK_MAKE = "https://hook.eu1.make.com/loy5kvv4qmnvo748fmxo2qvt48mbf986";
     const WEBHOOK_ELENA_VENTAS = "https://hook.eu1.make.com/3w2wmbbcc3evnvg8ajo3kjkucrd6dfkw";
@@ -1148,7 +1207,46 @@
       .then(data => { clienteIP = data.ip || "Desconocida"; })
       .catch(() => {});
 
-    // GENERADOR DE SONIDO ESPECIAL NATIVO (WEB AUDIO API) - SIN ARCHIVOS EXTERNOS
+    // UX PARA PERSONAS MAYORES: Borrar el "0" molesto al hacer clic y restaurarlo si queda vacío
+    function clearZero(inputEl) {
+      if (inputEl.value === "0" || parseFloat(inputEl.value) === 0) {
+        inputEl.value = "";
+      }
+    }
+    function restoreZero(inputEl) {
+      if (inputEl.value.trim() === "") {
+        inputEl.value = "0";
+        recalculateAll();
+      }
+    }
+
+    // Cuando cambia el precio de la vivienda, calcular automáticamente Notaría, Registro y Gestoría (~1,5% con mínimo 1.800 €)
+    function onPriceChange() {
+      const preu = parseFloat(document.getElementById('sim-preu').value) || 0;
+      const gastosInput = document.getElementById('sim-gastos-fijos');
+      if (preu > 0) {
+        const autoGastos = Math.max(1800, Math.round((preu * 0.015) / 50) * 50);
+        gastosInput.value = autoGastos;
+      } else {
+        gastosInput.value = 0;
+      }
+      // Sincronizar también el presupuesto de Demanda Activa si aún está a 0
+      const presDemanda = document.getElementById('d-pressupost');
+      if (preu > 0 && (parseFloat(presDemanda.value) || 0) === 0) {
+        presDemanda.value = preu;
+        updateDemandaPreview();
+      }
+      recalculateAll();
+    }
+
+    function toggleGateVideoSound() {
+      const vid = document.getElementById('gate-bg-video');
+      if (!vid) return;
+      vid.muted = !vid.muted;
+      if (!vid.muted) vid.play().catch(() => {});
+    }
+
+    // GENERADOR DE SONIDO ESPECIAL NATIVO (WEB AUDIO API)
     function playSpecialSuccessSound(type = 'cash') {
       try {
         const AudioCtx = window.AudioContext || window.webkitAudioContext;
@@ -1157,36 +1255,30 @@
         const now = ctx.currentTime;
 
         if (type === 'cash') {
-          // Sonido "Cha-Ching / Campana de Caja Registradora VIP" (Para Volante de Pago / Encargo)
-          const notes = [1046.50, 1318.51, 1567.98, 2093.00]; // C6, E6, G6, C7
+          const notes = [1046.50, 1318.51, 1567.98, 2093.00];
           notes.forEach((freq, idx) => {
             const osc = ctx.createOscillator();
             const gain = ctx.createGain();
             osc.type = idx === notes.length - 1 ? 'triangle' : 'sine';
             osc.frequency.setValueAtTime(freq, now + idx * 0.075);
-
             gain.gain.setValueAtTime(0.001, now + idx * 0.075);
             gain.gain.exponentialRampToValueAtTime(0.28, now + idx * 0.075 + 0.02);
             gain.gain.exponentialRampToValueAtTime(0.0001, now + idx * 0.075 + 0.65);
-
             osc.connect(gain);
             gain.connect(ctx.destination);
             osc.start(now + idx * 0.075);
             osc.stop(now + idx * 0.075 + 0.7);
           });
         } else {
-          // Sonido Radar / Alerta de Red Activa (Para Publicación de Anuncio Provisional)
-          const freqs = [587.33, 880.00, 1174.66]; // D5, A5, D6
+          const freqs = [587.33, 880.00, 1174.66];
           freqs.forEach((freq, idx) => {
             const osc = ctx.createOscillator();
             const gain = ctx.createGain();
             osc.type = 'sine';
             osc.frequency.setValueAtTime(freq, now + idx * 0.09);
-
             gain.gain.setValueAtTime(0.001, now + idx * 0.09);
             gain.gain.exponentialRampToValueAtTime(0.22, now + idx * 0.09 + 0.02);
             gain.gain.exponentialRampToValueAtTime(0.0001, now + idx * 0.09 + 0.45);
-
             osc.connect(gain);
             gain.connect(ctx.destination);
             osc.start(now + idx * 0.09);
@@ -1196,9 +1288,10 @@
       } catch (e) {}
     }
 
-    // Diccionario 100% puro sin mezclar Español y Catalán
+    // DICCIONARIO PURO ES / CAT
     const i18n = {
       es: {
+        gate_sound_btn: "Activar Sonido Vídeo",
         gate_badge: "SERVICIO OFICIAL COLEGIADO API 4173 · AICAT 14200",
         gate_title: "Cómo ayudar a un hijo a comprar su casa sin perder dinero en impuestos",
         gate_desc: "Herramienta clara y gratuita para familias: compare cuánto cuesta una Donación frente a un Préstamo Familiar al 0%, calcule las cuotas reales y descargue el contrato legal listo para firmar.",
@@ -1222,24 +1315,28 @@
         audio_h: "Escuche en 4 minutos por qué somos su mejor opción (Audio Claro)",
         audio_p: "Si prefiere que se lo expliquemos de viva voz sin tener que leer, pulse el botón de reproducción. Le contamos cómo protegemos a su familia y cómo encontramos su vivienda ideal sin inflar precios.",
         audio_foot: "Voz: Elena AI Advisor · level.immo",
-        sim_badge: "🧮 PASO 1 INTERACTIVO · TODAS LAS CIFRAS A CERO PARA QUE HAGA SUS PROPIOS NÚMEROS",
+        sim_badge: "🧮 PASO 1 · SIMULADOR CLARO (EL CERO SE BORRA SOLO AL HACER CLIC PARA ESCRIBIR FÁCIL)",
         sim_title: "Simulador de Compra, Ahorro Fiscal (Donación vs. Préstamo) y Cuota Hipotecaria",
         sim_reset_btn: "🔄 Poner todas las cifras a 0 €",
-        sim_instructions: "👉 <strong>Instrucciones muy fáciles:</strong> Escriba en las casillas oscuras el precio de la vivienda que quiere comprar, cuánto dinero le pueden dejar sus padres y cuánto gana al mes. Verá al instante cuánto cuesta todo y qué cuota le quedará.",
+        sim_instructions: "👉 <strong>Instrucciones muy fáciles:</strong> Haga clic en cualquier casilla oscura y escriba su cifra (el cero inicial se quita solo). Los gastos de Notaría, Registro y Gestoría se calculan automáticamente al poner el precio de la vivienda.",
         box1_title: "1. Datos de la vivienda y gastos de compra",
         lbl_price: "Precio de compra de la vivienda (€):",
-        lbl_tax_pct: "Impuestos de compra (ITP / IVA %):",
-        lbl_notary: "Notaría, Registro y Gestoría (€):",
+        lbl_tax_pct: "Impuesto ITP / IVA (Fijo 10%):",
+        lbl_notary: "Notaría, Registro y Gestoría (Automático €):",
+        lbl_notary_sub: "* Calculado automáticamente de forma aproximada según el precio de compra (puede ajustarlo si lo desea).",
         box2_title: "2. Dinero que aportan los padres / familiares",
-        lbl_family_aid: "Importe total que dejan los padres / familiares (€):",
+        lbl_family_aid: "Importe total que aportan los padres / familiares (€):",
         lbl_age_buyer: "Edad del comprador (Hijo/a):",
         lbl_age_parents: "Edad de los padres:",
-        box3_title: "3. Sus ingresos, alquiler actual y préstamos",
-        lbl_income: "Ingresos netos al mes (Nómina / Pensión) (€):",
-        lbl_rent_now: "Gasto de Alquiler Actual (€/mes):",
+        box3_title: "3. Ingresos mensuales (Especificados por separado)",
+        lbl_income_buyer: "👤 Sueldo / Ingresos netos al mes DEL COMPRADOR (Hijo/a) (€):",
+        lbl_income_buyer_sub: "Indique lo que gana al mes la persona que va a comprar la casa.",
+        lbl_income_parents: "👨‍👩‍👧 Pensión / Ingresos netos al mes DE LOS PADRES (Avalistas) (€):",
+        lbl_income_parents_sub: "Suma de las pensiones o ingresos de los padres (sirve de respaldo ante el banco si la cuota supera el 35% del sueldo del hijo/a).",
+        lbl_rent_now: "Alquiler que paga hoy el comprador (€/mes):",
         lbl_rent_note: "* Al comprar su casa, dejará de pagar este alquiler.",
-        lbl_other_loans: "Cuotas de Otros Préstamos (€/mes):",
-        lbl_loans_note: "* Préstamos de coche, tarjetas o personales que sigue pagando.",
+        lbl_other_loans: "Otros préstamos del comprador (€/mes):",
+        lbl_loans_note: "* Coche, tarjetas o préstamos que sigue pagando.",
         box4_title: "4. Tipo de interés fijo y plazos (Modificables)",
         lbl_tin: "Interés Fijo Hipoteca (% TIN):",
         lbl_years_mort: "Plazo Hipoteca (Años):",
@@ -1254,40 +1351,32 @@
         tax_opt3_d: "Exento al 100% de impuestos (Modelo 600) y sin gastos de notario usando nuestro contrato gratuito.",
         res_box_title: "📊 Desglose Completo de su Operación:",
         r_price: "Precio de adquisición de la vivienda:",
-        r_expenses: "+ Gastos de compra (Impuestos + Notaría/Registro):",
+        r_expenses: "+ Gastos de compra (10% ITP + Notaría/Registro):",
         r_total_cost: "= COSTE TOTAL DE LA OPERACIÓN (Precio + Gastos):",
         r_fam_aid: "- Dinero aportado por los padres / familiares:",
         r_mortgage_need: "= IMPORTE A FINANCIAR (HIPOTECA AL BANCO):",
-        r_q_mort: "Cuota mensual de la Hipoteca (al interés fijo elegido):",
+        r_q_mort: "Cuota mensual de la Hipoteca:",
         r_q_fam: "Cuota mensual del Préstamo a los Padres:",
-        r_q_other: "Otros préstamos personales que ya tenía:",
+        r_q_other: "Otros préstamos personales del comprador:",
         r_rent_saved: "✔ Alquiler actual que DEJARÁ de pagar cada mes:",
         r_total_monthly: "SUMA TOTAL DE CUOTAS AL MES (Hipoteca + Padres + Otros):",
-        r_effort_label: "RATIO DE ESFUERZO (% de su nómina):",
+        r_effort_label: "RATIO DE ESFUERZO (Sobre el sueldo del comprador):",
+        r_effort_joint_label: "RATIO CON EL RESPALDO DE LOS PADRES (Comprador + Padres):",
         r_verdict_wait: "Introduzca los importes arriba para ver el diagnóstico automático de los bancos.",
-        r_verdict_ok: "✅ OPERACIÓN MUY VIABLE: Las cuotas representan un porcentaje sano de sus ingresos.",
-        r_verdict_warn: "⚠️ REQUIERE RESPALDO FAMILIAR / AVAL: La suma de cuotas supera el 35% de su nómina. Con el respaldo de sus padres (pensionistas con propiedad libre de cargas) o alargando el plazo del préstamo familiar, la operación es viable.",
-        ct_badge: "📄 PASO 2 INTERACTIVO · DOCUMENTO OFICIAL GRATUITO PARA RELLENAR E IMPRIMIR EN PDF",
-        ct_title: "Contrato Estándar de Préstamo Familiar (0% Intereses)",
-        ct_btn_copy: "Copiar Contrato",
-        ct_btn_print: "Imprimir / Descargar Contrato en PDF",
-        ct_instructions: "👉 <strong>Muy fácil de rellenar:</strong> Escriba la ciudad, la fecha y el nombre, DNI y dirección de los padres (prestamistas) y de los hijos (prestatarios). Si son dos padres o dos compradores, pulse el botón <strong>\"+ Añadir otra persona\"</strong>. Todo lo que escriba aparecerá al instante en el documento legal de abajo.",
-        ct_lbl_city: "Ciudad de firma:",
-        ct_ph_city: "Ej: Sabadell / Barcelona",
-        ct_lbl_date: "Fecha (Día, Mes y Año):",
-        ct_lbl_interest: "Interés del Préstamo Familiar (% anual):",
-        ct_lbl_validate_chk: "Confirmo y valido expresamente este tipo de interés (por defecto 0% gratuito).",
-        ct_lenders_title: "👨‍👩‍👧‍👦 LOS PRESTAMISTAS (Padres / Familiares que dejan el dinero)",
-        ct_lenders_sub: "Puede añadir 1, 2 o más titulares",
-        ct_borrowers_title: "🏠 LOS PRESTATARIOS (Hijo/a o Compradores que reciben el dinero)",
-        ct_borrowers_sub: "Puede añadir 1 o más compradores",
-        ct_btn_add_person: "Añadir otra persona",
-        ph_fullname: "Nombre y dos apellidos",
-        ph_dni: "DNI / NIE",
-        ph_address: "Domicilio completo (Calle, número, piso, ciudad)",
-        ct_lbl_iban: "Número de cuenta bancaria (IBAN) o forma de entrega del dinero (Opcional):",
-        ct_ph_iban: "Ej: Transferencia bancaria a la cuenta ES00 0000 0000 0000 0000 0000",
-        dm_badge: "📡 CONEXIÓN DIRECTA CON MERCADO REAL · LEVEL-HUNTER \"COMPRA A LA CARTA\"",
+        r_verdict_ok: "✅ OPERACIÓN VIABLE POR SÍ MISMA: Las cuotas están por debajo del 35% del sueldo del comprador.",
+        r_verdict_joint_ok: "✅ OPERACIÓN VIABLE CON EL RESPALDO DE LOS PADRES: Aunque la cuota supera el 35% del sueldo del comprador solo, al sumar la pensión/respaldo de los padres el esfuerzo conjunto es muy seguro para el banco.",
+        r_verdict_warn: "⚠️ REQUIERE AVAL SÓLIDO O ALARGAR PLAZO: La cuota supera el 35% recomendado. Conviene poner el préstamo familiar a 15 años o aportar mayor entrada.",
+        faq_badge: "❓ RESPUESTAS CLARAS ANTES DE PUBLICAR SU BÚSQUEDA Y FIRMAR EL CONTRATO",
+        faq_title: "Preguntas Frecuentes (FAQ) y Documentación que piden los Bancos",
+        fq1_q: "1. ¿Por qué es mejor el Préstamo Familiar que una Donación?",
+        fq1_a: "Porque una donación obliga a pagar el Impuesto de Donaciones y gastos de notaría, y si se transfiere el dinero sin papeles Hacienda puede multarle. En cambio, el Préstamo Familiar al 0% firmado en contrato privado y presentado con el Modelo 600 es 100% legal y paga <strong>0 € de impuestos</strong>.",
+        fq2_q: "2. ¿Los padres pueden dejarnos el dinero y además avalar la hipoteca?",
+        fq2_a: "<strong>Sí, y a los bancos les encanta.</strong> Si el comprador tiene un contrato fijo discontinuo o ingresos justos, el hecho de que los padres presten la entrada y respalden la operación como pensionistas con una vivienda libre de cargas multiplica las probabilidades de que el banco apruebe la hipoteca.",
+        fq3_q: "3. ¿Qué papeles me va a pedir el banco (incluso si nunca he hecho la Renta)?",
+        fq3_a: "<strong>Del comprador:</strong> DNI, contrato de trabajo, últimas 3 nóminas (y justificantes del paro si es fijo discontinuo), Vida Laboral actualizada y extracto bancario de 6 meses. Si nunca ha hecho la declaración de la Renta, el certificado de retenciones e ingresos sustituye al IRPF.<br><strong>De los padres:</strong> DNI, justificante de la pensión, y Nota Simple de su vivienda libre de cargas + último recibo de IBI.",
+        fq4_q: "4. ¿Qué incluye el servicio LEVEL-Hunter \"Compra a la Carta\" (1.000 € + IVA)?",
+        fq4_a: "En cuanto nuestro Broker valida su viabilidad, activamos la búsqueda activa de su hogar: notificamos a nuestra red de colaboradores en la zona, buscamos viviendas antes de que suban de precio en los portales, revisamos cargas en Catastro y Registro y negociamos el precio a su favor para que ahorre miles de euros.",
+        dm_badge: "📡 PASO 2 INTERACTIVO · CONEXIÓN DIRECTA CON MERCADO REAL · LEVEL-HUNTER",
         dm_title: "No pierda ningún piso mientras el banco tramita sus papeles: Publique su Demanda Activa",
         dm_top_btn: "Activar LEVEL-Hunter (1.000 € + IVA)",
         dm_why1_t: "1. ¿Qué pasa si espera al banco?",
@@ -1318,16 +1407,27 @@
         ld1_d: "Comprador con préstamo familiar firmado · Hasta 195.000 €",
         ld2_t: "Planta baja o casa cercana al mar (La Ràpita / Alcanar / Vinaròs)",
         ld2_d: "Aportación familiar + Hipoteca pre-aprobada · Hasta 165.000 €",
-        faq_badge: "❓ RESPUESTAS CLARAS A TODAS SUS DUDAS Y PAPELES DEL BANCO",
-        faq_title: "Preguntas Frecuentes (FAQ) y Documentación necesaria",
-        fq1_q: "1. ¿Por qué es mejor el Préstamo Familiar que una Donación?",
-        fq1_a: "Porque una donación obliga a pagar el Impuesto de Donaciones y gastos de notaría, y si se transfiere el dinero sin papeles Hacienda puede multarle. En cambio, el Préstamo Familiar al 0% firmado en contrato privado y presentado con el Modelo 600 es 100% legal y paga <strong>0 € de impuestos</strong>.",
-        fq2_q: "2. ¿Los padres pueden dejarnos el dinero y además avalar la hipoteca?",
-        fq2_a: "<strong>Sí, y a los bancos les encanta.</strong> Si el comprador tiene un contrato fijo discontinuo o ingresos justos, el hecho de que los padres presten la entrada y respalden la operación como pensionistas con una vivienda libre de cargas multiplica las probabilidades de que el banco apruebe la hipoteca.",
-        fq3_q: "3. ¿Qué papeles me va a pedir el banco (incluso si nunca he hecho la Renta)?",
-        fq3_a: "<strong>Del comprador:</strong> DNI, contrato de trabajo, últimas 3 nóminas (y justificantes del paro si es fijo discontinuo), Vida Laboral actualizada y extracto bancario de 6 meses. Si nunca ha hecho la declaración de la Renta, el certificado de retenciones e ingresos sustituye al IRPF.<br><strong>De los padres:</strong> DNI, justificante de la pensión, y Nota Simple de su vivienda libre de cargas + último recibo de IBI.",
-        fq4_q: "4. ¿Qué incluye el servicio LEVEL-Hunter \"Compra a la Carta\" (1.000 € + IVA)?",
-        fq4_a: "En cuanto nuestro Broker valida su viabilidad, activamos la búsqueda activa de su hogar: notificamos a nuestra red de colaboradores en la zona, buscamos viviendas antes de que suban de precio en los portales, revisamos cargas en Catastro y Registro y negociamos el precio a su favor para que ahorre miles de euros.",
+        ct_badge: "📄 PASO 3 INTERACTIVO · DOCUMENTO OFICIAL GRATUITO PARA RELLENAR, DESCARGAR EN PDF O FIRMAR DIGITALMENTE",
+        ct_title: "Contrato Estándar de Préstamo Familiar (0% Intereses)",
+        ct_btn_copy: "Copiar Contrato",
+        ct_btn_print: "Imprimir / Guardar PDF",
+        ct_btn_docusign: "Enviar a Firmar por Móvil / Email (DocuSign)",
+        ct_instructions: "👉 <strong>Muy fácil de rellenar:</strong> Escriba la ciudad, la fecha y el nombre, DNI y dirección de los padres (prestamistas) y de los hijos (prestatarios). Si son dos padres o dos compradores, pulse el botón <strong>\"+ Añadir otra persona\"</strong>. Puede imprimirlo en PDF o enviarlo para firma digital en el móvil.",
+        ct_lbl_city: "Ciudad de firma:",
+        ct_ph_city: "Ej: Sabadell / Barcelona",
+        ct_lbl_date: "Fecha (Día, Mes y Año):",
+        ct_lbl_interest: "Interés del Préstamo Familiar (% anual):",
+        ct_lbl_validate_chk: "Confirmo y valido expresamente este tipo de interés (por defecto 0% gratuito).",
+        ct_lenders_title: "👨‍👩‍👧‍👦 LOS PRESTAMISTAS (Padres / Familiares que dejan el dinero)",
+        ct_lenders_sub: "Puede añadir 1, 2 o más titulares",
+        ct_borrowers_title: "🏠 LOS PRESTATARIOS (Hijo/a o Compradores que reciben el dinero)",
+        ct_borrowers_sub: "Puede añadir 1 o más compradores",
+        ct_btn_add_person: "Añadir otra persona",
+        ph_fullname: "Nombre y dos apellidos",
+        ph_dni: "DNI / NIE",
+        ph_address: "Domicilio completo (Calle, número, piso, ciudad)",
+        ct_lbl_iban: "Número de cuenta bancaria (IBAN) o forma de entrega del dinero (Opcional):",
+        ct_ph_iban: "Ej: Transferencia bancaria a la cuenta ES00 0000 0000 0000 0000 0000",
         elena_modal_sub: "Apertura de Expediente LEVEL-Hunter \"Compra a la Carta\"",
         elena_price_title: "📋 Condiciones Claras del Mandato LEVEL-Hunter:",
         elena_price_line1: "• Importe de activación del mandato: <strong>1.000,00 € + 21% IVA (210,00 €) = 1.210,00 €</strong>",
@@ -1356,13 +1456,16 @@
         v_concept_lbl: "Concepto de la transferencia:",
         v_guarantee_note: "* El inicio de la campaña en firme queda vinculado a la validación de viabilidad hipotecaria por nuestro Broker oficial.",
         v_sign_client: "Firma del Cliente Mandante",
-        v_btn_print: "Imprimir / Guardar PDF del Encargo",
+        v_btn_print: "Guardar / Imprimir PDF",
+        v_btn_docusign: "Firmar desde el Móvil (DocuSign)",
         v_btn_close: "Cerrar",
-        ftr_lock: "Pantalla de inicio",
+        ftr_lock: "Pantalla de inicio y Vídeo",
         alert_copied: "✓ El texto completo del contrato se ha copiado al portapapeles.",
-        alert_published: "✓ ¡Su anuncio provisional ya está activo! Nuestros Advisors y colaboradores de la zona han recibido la alerta sonora."
+        alert_published: "✓ ¡Su anuncio provisional ya está activo! Nuestros Advisors y colaboradores de la zona han recibido la alerta sonora.",
+        alert_docusign: "✍️ ¡Solicitud de Firma Digital enviada! Recibirá el enlace seguro (tipo DocuSign) en su móvil y correo electrónico para firmar con el dedo sin necesidad de imprimir."
       },
       ca: {
+        gate_sound_btn: "Activar So Vídeo",
         gate_badge: "SERVEI OFICIAL COL·LEGIAT API 4173 · AICAT 14200",
         gate_title: "Com ajudar un fill a comprar casa seva sense perdre diners en impostos",
         gate_desc: "Eina clara i gratuïta per a famílies: compari quant costa una Donació enfront d'un Préstec Familiar al 0%, calculi les quotes reals i descarregui el contracte legal llest per signar.",
@@ -1386,24 +1489,28 @@
         audio_h: "Escolti en 4 minuts per què som la seva millor opció (Àudio Clar)",
         audio_p: "Si prefereix que li ho expliquem de viva veu sense haver de llegir, premi el botó de reproducció. Li expliquem com protegim la seva família i com trobem el seu habitatge ideal sense inflar preus.",
         audio_foot: "Veu: Elena AI Advisor · level.immo",
-        sim_badge: "🧮 PAS 1 INTERACTIU · TOTES LES XIFRES A ZERO PERQUÈ FACI ELS SEUS PROPIS NÚMEROS",
+        sim_badge: "🧮 PAS 1 · SIMULADOR CLAR (EL ZERO S'ESBORRA SOL EN FER CLIC PER ESCRIURE FÀCIL)",
         sim_title: "Simulador de Compra, Estalvi Fiscal (Donació vs. Préstec) i Quota Hipotecària",
         sim_reset_btn: "🔄 Posar totes les xifres a 0 €",
-        sim_instructions: "👉 <strong>Instruccions molt fàcils:</strong> Escrigui a les caselles fosques el preu de l'habitatge que vol comprar, quants diners li poden deixar els seus pares i quant guanya al mes. Veurà a l'instant quant costa tot i quina quota li quedarà.",
+        sim_instructions: "👉 <strong>Instruccions molt fàcils:</strong> Faci clic a qualsevol casella fosca i escrigui la seva xifra (el zero inicial es treu sol). Les despeses de Notaria, Registre i Gestoria es calculen automàticament en posar el preu de l'habitatge.",
         box1_title: "1. Dades de l'habitatge i despeses de compra",
         lbl_price: "Preu de compra de l'habitatge (€):",
-        lbl_tax_pct: "Impostos de compra (ITP / IVA %):",
-        lbl_notary: "Notaria, Registre i Gestoria (€):",
+        lbl_tax_pct: "Impost ITP / IVA (Fix 10%):",
+        lbl_notary: "Notaria, Registre i Gestoria (Automàtic €):",
+        lbl_notary_sub: "* Calculat automàticament de forma aproximada segons el preu de compra (pot ajustar-lo si ho desitja).",
         box2_title: "2. Diners que aporten els pares / familiars",
-        lbl_family_aid: "Import total que deixen els pares / familiars (€):",
+        lbl_family_aid: "Import total que aporten els pares / familiars (€):",
         lbl_age_buyer: "Edat del comprador (Fill/a):",
         lbl_age_parents: "Edat dels pares:",
-        box3_title: "3. Els seus ingressos, lloguer actual i préstecs",
-        lbl_income: "Ingressos nets al mes (Nòmina / Pensió) (€):",
-        lbl_rent_now: "Despesa de Lloguer Actual (€/mes):",
+        box3_title: "3. Ingressos mensuals (Especificats per separat)",
+        lbl_income_buyer: "👤 Sou / Ingressos nets al mes DEL COMPRADOR (Fill/a) (€):",
+        lbl_income_buyer_sub: "Indiqui el que guanya al mes la persona que comprarà la casa.",
+        lbl_income_parents: "👨‍👩‍👧 Pensió / Ingressos nets al mes DELS PARES (Avaladors) (€):",
+        lbl_income_parents_sub: "Suma de les pensions o ingressos dels pares (serveix de suport davant del banc si la quota supera el 35% del sou del fill/a).",
+        lbl_rent_now: "Lloguer que paga avui el comprador (€/mes):",
         lbl_rent_note: "* En comprar casa seva, deixarà de pagar aquest lloguer.",
-        lbl_other_loans: "Quotes d'Altres Préstecs (€/mes):",
-        lbl_loans_note: "* Préstecs de cotxe, targetes o personals que continua pagant.",
+        lbl_other_loans: "Altres préstecs del comprador (€/mes):",
+        lbl_loans_note: "* Cotxe, targetes o préstecs que continua pagant.",
         box4_title: "4. Tipus d'interès fix i terminis (Modificables)",
         lbl_tin: "Interès Fix Hipoteca (% TIN):",
         lbl_years_mort: "Termini Hipoteca (Anys):",
@@ -1418,40 +1525,32 @@
         tax_opt3_d: "Exempt al 100% d'impostos (Model 600) i sense despeses de notari usant el nostre contracte gratuït.",
         res_box_title: "📊 Desglossament Complet de la seva Operació:",
         r_price: "Preu d'adquisició de l'habitatge:",
-        r_expenses: "+ Despeses de compra (Impostos + Notaria/Registre):",
+        r_expenses: "+ Despeses de compra (10% ITP + Notaria/Registre):",
         r_total_cost: "= COST TOTAL DE L'OPERACIÓ (Preu + Despeses):",
         r_fam_aid: "- Diners aportats pels pares / familiars:",
         r_mortgage_need: "= IMPORT A FINANÇAR (HIPOTECA AL BANC):",
-        r_q_mort: "Quota mensual de la Hipoteca (a l'interès fix triat):",
+        r_q_mort: "Quota mensual de la Hipoteca:",
         r_q_fam: "Quota mensual del Préstec als Pares:",
-        r_q_other: "Altres préstecs personals que ja tenia:",
+        r_q_other: "Altres préstecs personals del comprador:",
         r_rent_saved: "✔ Lloguer actual que DEIXARÀ de pagar cada mes:",
         r_total_monthly: "SUMA TOTAL DE QUOTES AL MES (Hipoteca + Pares + Altres):",
-        r_effort_label: "RÀTIO D'ESFORÇ (% de la seva nòmina):",
+        r_effort_label: "RÀTIO D'ESFORÇ (Sobre el sou del comprador):",
+        r_effort_joint_label: "RÀTIO AMB EL SUPORT DELS PARES (Comprador + Pares):",
         r_verdict_wait: "Introdueixi els imports a dalt per veure el diagnòstic automàtic dels bancs.",
-        r_verdict_ok: "✅ OPERACIÓ MOLT VIABLE: Les quotes representen un percentatge sa dels seus ingressos.",
-        r_verdict_warn: "⚠️ REQUEREIX SUPORT FAMILIAR / AVAL: La suma de quotes supera el 35% de la seva nòmina. Amb el suport dels seus pares (pensionistes amb propietat lliure de càrregues) o allargant el termini del préstec familiar, l'operació és viable.",
-        ct_badge: "📄 PAS 2 INTERACTIU · DOCUMENT OFICIAL GRATUÏT PER OMPLIR I IMPRIMIR EN PDF",
-        ct_title: "Contracte Estàndard de Préstec Familiar (0% Interessos)",
-        ct_btn_copy: "Copiar Contracte",
-        ct_btn_print: "Imprimir / Descarregar Contracte en PDF",
-        ct_instructions: "👉 <strong>Molt fàcil d'omplir:</strong> Escrigui la ciutat, la data i el nom, DNI i adreça dels pares (prestamistes) i dels fills (prestataris). Si són dos pares o dos compradors, premi el botó <strong>\"+ Afegir una altra persona\"</strong>. Tot el que escrigui apareixerà a l'instant al document legal de sota.",
-        ct_lbl_city: "Ciutat de signatura:",
-        ct_ph_city: "Ex: Sabadell / Barcelona",
-        ct_lbl_date: "Data (Dia, Mes i Any):",
-        ct_lbl_interest: "Interès del Préstec Familiar (% anual):",
-        ct_lbl_validate_chk: "Confirmo i valido expressament aquest tipus d'interès (per defecte 0% gratuït).",
-        ct_lenders_title: "👨‍👩‍👧‍👦 ELS PRESTAMISTES (Pares / Familiars que deixen els diners)",
-        ct_lenders_sub: "Pot afegir 1, 2 o més titulars",
-        ct_borrowers_title: "🏠 ELS PRESTATARIS (Fill/a o Compradors que reben els diners)",
-        ct_borrowers_sub: "Pot afegir 1 o més compradors",
-        ct_btn_add_person: "Afegir una altra persona",
-        ph_fullname: "Nom i dos cognoms",
-        ph_dni: "DNI / NIE",
-        ph_address: "Domicili complet (Carrer, número, pis, ciutat)",
-        ct_lbl_iban: "Número de compte bancari (IBAN) o forma de lliurament dels diners (Opcional):",
-        ct_ph_iban: "Ex: Transferència bancària al compte ES00 0000 0000 0000 0000 0000",
-        dm_badge: "📡 CONNEXIÓ DIRECTA AMB MERCAT REAL · LEVEL-HUNTER \"COMPRA A LA CARTA\"",
+        r_verdict_ok: "✅ OPERACIÓ VIABLE PER SI MATEIXA: Les quotes estan per sota del 35% del sou del comprador.",
+        r_verdict_joint_ok: "✅ OPERACIÓ VIABLE AMB EL SUPORT DELS PARES: Tot i que la quota supera el 35% del sou del comprador sol, en sumar la pensió/suport dels pares l'esforç conjunt és molt segur per al banc.",
+        r_verdict_warn: "⚠️ REQUEREIX AVAL SÒLID O ALLARGAR TERMINI: La quota supera el 35% recomanat. Convé posar el préstec familiar a 15 anys o aportar més entrada.",
+        faq_badge: "❓ RESPOSTES CLARES ABANS DE PUBLICAR LA SEVA CERCA I SIGNAR EL CONTRACTE",
+        faq_title: "Preguntes Freqüents (FAQ) i Documentació que demanen els Bancs",
+        fq1_q: "1. Per què és millor el Préstec Familiar que una Donació?",
+        fq1_a: "Perquè una donació obliga a pagar l'Impost de Donacions i despeses de notaria, i si es transfereixen els diners sense papers Hisenda pot multar-lo. En canvi, el Préstec Familiar al 0% signat en contracte privat i presentat amb el Model 600 és 100% legal i paga <strong>0 € d'impostos</strong>.",
+        fq2_q: "2. Els pares poden deixar-nos els diners i a més avalar la hipoteca?",
+        fq2_a: "<strong>Sí, i als bancs els encanta.</strong> Si el comprador té un contracte fix discontinu o ingressos justos, el fet que els pares prestin l'entrada i donin suport a l'operació com a pensionistes amb un habitatge lliure de càrregues multiplica les probabilitats que el banc aprovi la hipoteca.",
+        fq3_q: "3. Quins papers em demanarà el banc (fins i tot si mai he fet la Renda)?",
+        fq3_a: "<strong>Del comprador:</strong> DNI, contracte de treball, últimes 3 nòmines (i justificants de l'atur si és fix discontinu), Vida Laboral actualitzada i extracte bancari de 6 mesos. Si mai ha fet la declaració de la Renda, el certificat de retencions i ingressos substitueix l'IRPF.<br><strong>Dels pares:</strong> DNI, justificant de la pensió, i Nota Simple del seu habitatge lliure de càrregues + últim rebut d'IBI.",
+        fq4_q: "4. Què inclou el servei LEVEL-Hunter \"Compra a la Carta\" (1.000 € + IVA)?",
+        fq4_a: "Tan bon punt el nostre Broker valida la seva viabilitat, activem la cerca activa de la seva llar: notifiquem a la nostra xarxa de col·laboradors a la zona, busquem habitatges abans que pugin de preu als portals, revisem càrregues al Cadastre i Registre i negociem el preu al seu favor perquè estalviï milers d'euros.",
+        dm_badge: "📡 PAS 2 INTERACTIU · CONNEXIÓ DIRECTA AMB MERCAT REAL · LEVEL-HUNTER",
         dm_title: "No perdi cap pis mentre el banc tramita els seus papers: Publiqui la seva Demanda Activa",
         dm_top_btn: "Activar LEVEL-Hunter (1.000 € + IVA)",
         dm_why1_t: "1. Què passa si espera al banc?",
@@ -1482,16 +1581,27 @@
         ld1_d: "Comprador amb préstec familiar signat · Fins a 195.000 €",
         ld2_t: "Planta baixa o casa propera al mar (La Ràpita / Alcanar / Vinaròs)",
         ld2_d: "Aportació familiar + Hipoteca pre-aprovada · Fins a 165.000 €",
-        faq_badge: "❓ RESPOSTES CLARES A TOTS ELS SEUS DUBTES I PAPERS DEL BANC",
-        faq_title: "Preguntes Freqüents (FAQ) i Documentació necessària",
-        fq1_q: "1. Per què és millor el Préstec Familiar que una Donació?",
-        fq1_a: "Perquè una donació obliga a pagar l'Impost de Donacions i despeses de notaria, i si es transfereixen els diners sense papers Hisenda pot multar-lo. En canvi, el Préstec Familiar al 0% signat en contracte privat i presentat amb el Model 600 és 100% legal i paga <strong>0 € d'impostos</strong>.",
-        fq2_q: "2. Els pares poden deixar-nos els diners i a més avalar la hipoteca?",
-        fq2_a: "<strong>Sí, i als bancs els encanta.</strong> Si el comprador té un contracte fix discontinu o ingressos justos, el fet que els pares prestin l'entrada i donin suport a l'operació com a pensionistes amb un habitatge lliure de càrregues multiplica les probabilitats que el banc aprovi la hipoteca.",
-        fq3_q: "3. Quins papers em demanarà el banc (fins i tot si mai he fet la Renda)?",
-        fq3_a: "<strong>Del comprador:</strong> DNI, contracte de treball, últimes 3 nòmines (i justificants de l'atur si és fix discontinu), Vida Laboral actualitzada i extracte bancari de 6 mesos. Si mai ha fet la declaració de la Renda, el certificat de retencions i ingressos substitueix l'IRPF.<br><strong>Dels pares:</strong> DNI, justificant de la pensió, i Nota Simple del seu habitatge lliure de càrregues + últim rebut d'IBI.",
-        fq4_q: "4. Què inclou el servei LEVEL-Hunter \"Compra a la Carta\" (1.000 € + IVA)?",
-        fq4_a: "Tan bon punt el nostre Broker valida la seva viabilitat, activem la cerca activa de la seva llar: notifiquem a la nostra xarxa de col·laboradors a la zona, busquem habitatges abans que pugin de preu als portals, revisem càrregues al Cadastre i Registre i negociem el preu al seu favor perquè estalviï milers d'euros.",
+        ct_badge: "📄 PAS 3 INTERACTIU · DOCUMENT OFICIAL GRATUÏT PER OMPLIR, DESCARREGAR EN PDF O SIGNAR DIGITALMENT",
+        ct_title: "Contracte Estàndard de Préstec Familiar (0% Interessos)",
+        ct_btn_copy: "Copiar Contracte",
+        ct_btn_print: "Imprimir / Guardar PDF",
+        ct_btn_docusign: "Enviar a Signar pel Mòbil / Email (DocuSign)",
+        ct_instructions: "👉 <strong>Molt fàcil d'omplir:</strong> Escrigui la ciutat, la data i el nom, DNI i adreça dels pares (prestamistes) i dels fills (prestataris). Si són dos pares o dos compradors, premi el botó <strong>\"+ Afegir una altra persona\"</strong>. Pot imprimir-lo en PDF o enviar-lo per a signatura digital al mòbil.",
+        ct_lbl_city: "Ciutat de signatura:",
+        ct_ph_city: "Ex: Sabadell / Barcelona",
+        ct_lbl_date: "Data (Dia, Mes i Any):",
+        ct_lbl_interest: "Interès del Préstec Familiar (% anual):",
+        ct_lbl_validate_chk: "Confirmo i valido expressament aquest tipus d'interès (per defecte 0% gratuït).",
+        ct_lenders_title: "👨‍👩‍👧‍👦 ELS PRESTAMISTES (Pares / Familiars que deixen els diners)",
+        ct_lenders_sub: "Pot afegir 1, 2 o més titulars",
+        ct_borrowers_title: "🏠 ELS PRESTATARIS (Fill/a o Compradors que reben els diners)",
+        ct_borrowers_sub: "Pot afegir 1 o més compradors",
+        ct_btn_add_person: "Afegir una altra persona",
+        ph_fullname: "Nom i dos cognoms",
+        ph_dni: "DNI / NIE",
+        ph_address: "Domicili complet (Carrer, número, pis, ciutat)",
+        ct_lbl_iban: "Número de compte bancari (IBAN) o forma de lliurament dels diners (Opcional):",
+        ct_ph_iban: "Ex: Transferència bancària al compte ES00 0000 0000 0000 0000 0000",
         elena_modal_sub: "Obertura d'Expedient LEVEL-Hunter \"Compra a la Carta\"",
         elena_price_title: "📋 Condicions Clares del Mandat LEVEL-Hunter:",
         elena_price_line1: "• Import d'activació del mandat: <strong>1.000,00 € + 21% IVA (210,00 €) = 1.210,00 €</strong>",
@@ -1520,11 +1630,13 @@
         v_concept_lbl: "Concepte de la transferència:",
         v_guarantee_note: "* L'inici de la campanya en ferm queda vinculat a la validació de viabilitat hipotecària pel nostre Broker oficial.",
         v_sign_client: "Signatura del Client Mandant",
-        v_btn_print: "Imprimir / Guardar PDF de l'Encàrrec",
+        v_btn_print: "Guardar / Imprimir PDF",
+        v_btn_docusign: "Signar des del Mòbil (DocuSign)",
         v_btn_close: "Tancar",
-        ftr_lock: "Pantalla d'inici",
+        ftr_lock: "Pantalla d'inici i Vídeo",
         alert_copied: "✓ El text complet del contracte s'ha copiat al porta-retalls.",
-        alert_published: "✓ El seu anunci provisional ja està actiu! Els nostres Advisors i col·laboradors de la zona han rebut l'alerta sonora."
+        alert_published: "✓ El seu anunci provisional ja està actiu! Els nostres Advisors i col·laboradors de la zona han rebut l'alerta sonora.",
+        alert_docusign: "✍️ Sol·licitud de Signatura Digital enviada! Rebrà l'enllaç segur (tipus DocuSign) al seu mòbil i correu electrònic per signar amb el dit sense necessitat d'imprimir."
       }
     };
 
@@ -1541,6 +1653,8 @@
       const val = parseInt(document.getElementById('gate-math-input').value, 10);
       if (val === gateSum) {
         playSpecialSuccessSound('radar');
+        const vid = document.getElementById('gate-bg-video');
+        if (vid) vid.pause();
         document.getElementById('gatekeeper-screen').classList.add('hidden');
         document.getElementById('gate-error').classList.add('hidden');
       } else {
@@ -1550,6 +1664,8 @@
 
     function reopenGatekeeper() {
       document.getElementById('gatekeeper-screen').classList.remove('hidden');
+      const vid = document.getElementById('gate-bg-video');
+      if (vid) vid.play().catch(() => {});
     }
 
     function resetNumbersToZero() {
@@ -1559,6 +1675,7 @@
       document.getElementById('sim-edad-hijo').value = 0;
       document.getElementById('sim-edad-padres').value = 0;
       document.getElementById('sim-ingressos').value = 0;
+      document.getElementById('sim-ingressos-padres').value = 0;
       document.getElementById('sim-alquiler').value = 0;
       document.getElementById('sim-prestecs').value = 0;
       document.getElementById('sim-tin').value = 3.25;
@@ -1569,8 +1686,8 @@
       currentLang = lang;
       document.getElementById('html-root').lang = lang;
 
-      const activeClass = "px-3 py-1.5 rounded-lg font-extrabold text-xs bg-emerald-500 text-slate-950 transition cursor-pointer";
-      const inactiveClass = "px-3 py-1.5 rounded-lg font-extrabold text-xs text-slate-300 hover:text-white transition cursor-pointer";
+      const activeClass = "px-3 py-1.5 rounded-lg font-extrabold text-xs bg-emerald-500 text-slate-950 flex items-center gap-1.5 transition cursor-pointer";
+      const inactiveClass = "px-3 py-1.5 rounded-lg font-extrabold text-xs text-slate-200 hover:text-white flex items-center gap-1.5 transition cursor-pointer";
 
       document.getElementById('btn-lang-es').className = (lang === 'es') ? activeClass : inactiveClass;
       document.getElementById('btn-lang-ca').className = (lang === 'ca') ? activeClass : inactiveClass;
@@ -1607,10 +1724,11 @@
 
     function recalculateAll() {
       const preu = parseFloat(document.getElementById('sim-preu').value) || 0;
-      const pctImpostos = parseFloat(document.getElementById('sim-pct-impostos').value) || 0;
+      const pctImpostos = 10; // Fijo 10% como indicado en el vídeo
       const gastosFijos = parseFloat(document.getElementById('sim-gastos-fijos').value) || 0;
       const aportacio = parseFloat(document.getElementById('sim-aportacio').value) || 0;
-      const ingressos = parseFloat(document.getElementById('sim-ingressos').value) || 0;
+      const ingressosHijo = parseFloat(document.getElementById('sim-ingressos').value) || 0;
+      const ingressosPadres = parseFloat(document.getElementById('sim-ingressos-padres').value) || 0;
       const alquiler = parseFloat(document.getElementById('sim-alquiler').value) || 0;
       const prestecsVigents = parseFloat(document.getElementById('sim-prestecs').value) || 0;
       const tin = parseFloat(document.getElementById('sim-tin').value) || 0;
@@ -1668,27 +1786,29 @@
       document.getElementById('res-total-carga').textContent = fmtDec(totalCarga);
 
       const ratioEl = document.getElementById('res-ratio-esfuerzo');
+      const ratioJointEl = document.getElementById('res-ratio-conjunto');
       const verdictEl = document.getElementById('res-bank-verdict');
       const dict = i18n[currentLang];
 
-      if (ingressos <= 0 && totalCarga <= 0) {
-        ratioEl.textContent = "0%";
-        ratioEl.className = "text-lg font-black text-slate-300";
+      const ratioHijo = ingressosHijo > 0 ? (totalCarga / ingressosHijo) * 100 : 0;
+      const totalIngresosConjuntos = ingressosHijo + ingressosPadres;
+      const ratioConjunto = totalIngresosConjuntos > 0 ? (totalCarga / totalIngresosConjuntos) * 100 : 0;
+
+      ratioEl.textContent = ingressosHijo > 0 ? ratioHijo.toFixed(1) + "%" : "0%";
+      ratioJointEl.textContent = totalIngresosConjuntos > 0 ? ratioConjunto.toFixed(1) + "%" : "0%";
+
+      if (totalCarga <= 0 || (ingressosHijo <= 0 && ingressosPadres <= 0)) {
+        ratioEl.className = "text-2xl font-black text-slate-300";
         verdictEl.innerHTML = dict.r_verdict_wait;
-      } else if (ingressos <= 0 && totalCarga > 0) {
-        ratioEl.textContent = "-- %";
-        ratioEl.className = "text-lg font-black text-amber-400";
-        verdictEl.innerHTML = dict.r_verdict_wait;
+      } else if (ingressosHijo > 0 && ratioHijo <= 35) {
+        ratioEl.className = "text-2xl font-black text-emerald-400";
+        verdictEl.innerHTML = dict.r_verdict_ok;
+      } else if (totalIngresosConjuntos > 0 && ratioConjunto <= 35) {
+        ratioEl.className = "text-2xl font-black text-amber-400";
+        verdictEl.innerHTML = dict.r_verdict_joint_ok;
       } else {
-        const ratio = (totalCarga / ingressos) * 100;
-        ratioEl.textContent = ratio.toFixed(1) + "%";
-        if (ratio <= 35) {
-          ratioEl.className = "text-xl font-black text-emerald-400";
-          verdictEl.innerHTML = dict.r_verdict_ok;
-        } else {
-          ratioEl.className = "text-xl font-black text-amber-400";
-          verdictEl.innerHTML = dict.r_verdict_warn;
-        }
+        ratioEl.className = "text-2xl font-black text-rose-400";
+        verdictEl.innerHTML = dict.r_verdict_warn;
       }
 
       updateContractLive();
@@ -1849,6 +1969,31 @@
       setTimeout(() => document.body.classList.remove('print-mode-voucher'), 500);
     }
 
+    // ENVÍO A FIRMA DIGITAL (DOCUSIGN / SIGNATURIT VÍA MAKE WEBHOOK)
+    function sendForDigitalSignature(docType) {
+      playSpecialSuccessSound('cash');
+      const contractText = document.getElementById('contract-document').innerText;
+      const name = document.getElementById('hunter-name').value.trim() || document.querySelector('.party-borrower input')?.value.trim() || 'Cliente Firma Digital';
+      const phone = document.getElementById('hunter-phone').value.trim() || 'Pendiente';
+      const email = document.getElementById('hunter-email').value.trim() || 'Pendiente';
+
+      const payload = {
+        evento: "solicitud_firma_digital_docusign",
+        tipo_documento: docType,
+        idioma_sesion: currentLang,
+        solicitar_firma_digital: true,
+        cliente: { nombre: name, telefono: phone, email: email },
+        contenido_documento: contractText
+      };
+
+      Promise.allSettled([
+        fetch(WEBHOOK_ELENA_VENTAS, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) }),
+        fetch(WEBHOOK_MAKE, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) })
+      ]);
+
+      alert(i18n[currentLang].alert_docusign);
+    }
+
     function updateDemandaPreview() {
       const zonaInput = document.getElementById('d-zona').value.trim();
       const sel = document.getElementById('d-tipus');
@@ -1916,7 +2061,6 @@
       document.getElementById('elena-modal').classList.remove('flex');
     }
 
-    // ENVÍO AUTOMÁTICO A WEBHOOKS DE MAKE + SONIDO DE ÉXITO "CHA-CHING" + APERTURA DE VOLANTE DE PAGO
     function openVoucherFromElena() {
       const name = document.getElementById('hunter-name').value.trim();
       const prefix = document.getElementById('hunter-prefix').value || '+34';
@@ -1930,7 +2074,6 @@
       }
       document.getElementById('hunter-error').classList.add('hidden');
 
-      // 1. Disparo del Sonido Especial "Cha-Ching"
       playSpecialSuccessSound('cash');
 
       const now = new Date();
@@ -1950,8 +2093,8 @@
       const hipotecaSolicitada = document.getElementById('res-financar').textContent;
       const cuotaTotal = document.getElementById('res-total-carga').textContent;
       const ratioEsfuerzo = document.getElementById('res-ratio-esfuerzo').textContent;
+      const ratioConjunto = document.getElementById('res-ratio-conjunto').textContent;
 
-      // Regla de idioma del dossier para Make: Catalán si la sesión es 'ca', Castellano para el resto
       const isCatalanSession = (currentLang === 'ca');
       const dossierLangCode = isCatalanSession ? 'CA' : 'ES';
 
@@ -1965,13 +2108,13 @@
           `• Client Mandant: ${name} (DNI: ${dni})\n` +
           `• Demanda Activa Publicada: ${resumenAnuncio}\n` +
           `• Preu Compra Simulat: ${preuCompra} | Aportació Pares (0%): ${aportacioFam}\n` +
-          `• Hipoteca a Finançar: ${hipotecaSolicitada} | Quota Total: ${cuotaTotal} (Ràtio: ${ratioEsfuerzo})`
+          `• Hipoteca a Finançar: ${hipotecaSolicitada} | Quota Total: ${cuotaTotal} (Ràtio comprador: ${ratioEsfuerzo} | Conjunt amb pares: ${ratioConjunto})`
         : `ACTIVACIÓN MANDATO LEVEL-HUNTER + PRÉSTAMO FAMILIAR (app.level-i.com/donaciones-familiares)\n` +
           `• Referencia Volante de Pago: ${refCode} (Importe: 1.000 € + 21% IVA = 1.210,00 €)\n` +
           `• Cliente Mandante: ${name} (DNI: ${dni})\n` +
           `• Demanda Activa Publicada: ${resumenAnuncio}\n` +
           `• Precio Compra Simulado: ${preuCompra} | Aportación Padres (0%): ${aportacioFam}\n` +
-          `• Hipoteca a Financiar: ${hipotecaSolicitada} | Cuota Total: ${cuotaTotal} (Ratio: ${ratioEsfuerzo})`;
+          `• Hipoteca a Financiar: ${hipotecaSolicitada} | Cuota Total: ${cuotaTotal} (Ratio comprador: ${ratioEsfuerzo} | Conjunto con padres: ${ratioConjunto})`;
 
       const observacionesTexto = `🎯 LEVEL-HUNTER 1.210€ (IVA incl.) | Ref: ${refCode} | Tel/WhatsApp: ${fullPhoneFormatted} | Email: ${email} | Idioma Dossier: ${dossierLangCode}`;
 
@@ -1998,7 +2141,8 @@
           aportacion_familiar_prestamo_0: aportacioFam,
           importe_hipoteca: hipotecaSolicitada,
           cuota_mensual_total: cuotaTotal,
-          ratio_esfuerzo: ratioEsfuerzo,
+          ratio_esfuerzo_comprador: ratioEsfuerzo,
+          ratio_esfuerzo_conjunto_padres: ratioConjunto,
           anuncio_demanda_activa: resumenAnuncio
         },
         tabla_servicios_gestion: {
@@ -2017,21 +2161,11 @@
         }
       };
 
-      // 2. Envío en paralelo a tus 2 Webhooks de Make
       Promise.allSettled([
-        fetch(WEBHOOK_ELENA_VENTAS, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload)
-        }),
-        fetch(WEBHOOK_MAKE, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload)
-        })
+        fetch(WEBHOOK_ELENA_VENTAS, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) }),
+        fetch(WEBHOOK_MAKE, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) })
       ]);
 
-      // 3. Rellenar y mostrar Hoja de Encargo / Volante de Pago
       document.getElementById('v-date-now').textContent = fechaHoy;
       document.getElementById('v-ref-code').textContent = refCode;
       document.getElementById('v-name').textContent = name;
@@ -2051,7 +2185,6 @@
       document.getElementById('voucher-modal').classList.remove('flex');
     }
 
-    // Inicializar por defecto en Español (ES) con todas las cifras a 0 €
     changeLanguage('es');
   </script>
 </body>
