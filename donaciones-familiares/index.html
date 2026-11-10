@@ -68,7 +68,7 @@
       justify-content: center;
       gap: 0.55rem;
     }
-    .intro-video-bg {
+    .intro-media-bg {
       width: 100%;
       height: 100%;
       object-fit: cover;
@@ -128,27 +128,36 @@
 </head>
 <body class="min-h-screen flex flex-col justify-between">
 
-  <!-- ================= PANTALLA DE ENTRADA CON VÍDEO DUAL (PC/TABLET Y MÓVIL) + ALTA LEGIBILIDAD ================= -->
+  <!-- ================= PANTALLA DE ENTRADA CON FONDOS ADAPTATIVOS (PC/TABLET Y MÓVIL) ================= -->
   <div id="gatekeeper-screen" class="fixed inset-0 z-50 bg-[#04070d] overflow-y-auto no-print p-4 flex items-center justify-center">
     
-    <!-- Fondo de Vídeo Dual Adaptativo (Vertical 9:16 para Móvil / Horizontal 16:9 para PC y Tablet) -->
+    <!-- Fondo Dual Adaptativo: Soporta Imágenes (JPG/PNG/WEBP) y Vídeos (MP4) diferenciados para Móvil vs PC/Tablet -->
     <div class="fixed inset-0 overflow-hidden pointer-events-none z-0">
-      <video id="gate-bg-video" autoplay muted loop playsinline preload="auto" class="intro-video-bg filter brightness-[0.38] contrast-[1.12]">
+      <picture id="gate-bg-picture" class="w-full h-full block">
+        <!-- Imagen vertical para Móviles (hasta 767px) -->
+        <source id="src-img-mobile" media="(max-width: 767px)" srcset="https://app.level-i.com/donaciones-familiares/bg-movil.jpg">
+        <!-- Imagen horizontal para PC y Tablet (768px en adelante) -->
+        <source id="src-img-desktop" media="(min-width: 768px)" srcset="https://app.level-i.com/donaciones-familiares/bg-pc.jpg">
+        <img id="gate-bg-img" src="https://app.level-i.com/donaciones-familiares/bg-pc.jpg" alt="Level.immo" class="intro-media-bg filter brightness-[0.38] contrast-[1.12]" onerror="this.style.display='none'" />
+      </picture>
+
+      <video id="gate-bg-video" autoplay muted loop playsinline preload="auto" class="intro-media-bg filter brightness-[0.38] contrast-[1.12] absolute inset-0">
         <!-- Vídeo vertical específico para Móviles -->
-        <source media="(max-width: 767px)" src="https://app.level-i.com/donaciones-familiares/video-movil.mp4" type="video/mp4">
-        <source media="(max-width: 767px)" src="video-movil.mp4" type="video/mp4">
+        <source media="(max-width: 767px)" src="https://app.level-i.com/donaciones-familiares/intro-movil.mp4" type="video/mp4">
+        <source media="(max-width: 767px)" src="intro-movil.mp4" type="video/mp4">
         <!-- Vídeo horizontal para PC y Tablet -->
-        <source media="(min-width: 768px)" src="https://app.level-i.com/donaciones-familiares/video-pc.mp4" type="video/mp4">
+        <source media="(min-width: 768px)" src="https://app.level-i.com/donaciones-familiares/intro-pc.mp4" type="video/mp4">
         <source media="(min-width: 768px)" src="https://app.level-i.com/consultoria/consultoria.mp4" type="video/mp4">
         <source src="consultoria.mp4" type="video/mp4">
       </video>
-      <!-- Velo de alto contraste pensado para que las personas mayores lean sin esfuerzo -->
+
+      <!-- Velo oscuro de alto contraste para lectura perfecta por personas mayores -->
       <div class="absolute inset-0 bg-gradient-to-b from-[#04070d]/85 via-[#04070d]/70 to-[#04070d]/95"></div>
     </div>
 
     <div class="relative z-10 card-panel p-6 sm:p-10 max-w-2xl w-full text-center space-y-6 shadow-2xl border-emerald-500/60 bg-[#0b1322]/90 backdrop-blur-md">
       
-      <!-- Top Bar de Portada con Banderas SVG Reales (Sin emojis rotos) -->
+      <!-- Top Bar de Portada con Banderas SVG Reales -->
       <div class="flex flex-wrap justify-between items-center gap-3 border-b border-slate-700 pb-4">
         <div class="flex items-center gap-2" translate="no">
           <span class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-white text-slate-950 font-black text-lg">L</span>
@@ -157,21 +166,15 @@
           <span class="text-xs font-mono text-emerald-400 border-l border-slate-700 pl-2">level-i.com</span>
         </div>
 
-        <div class="flex items-center gap-2">
-          <button type="button" onclick="toggleGateVideoSound()" class="px-3 py-1.5 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/50 text-amber-300 text-xs font-bold cursor-pointer">
-            🔊 <span data-i18n="gate_sound_btn">Activar Sonido Vídeo</span>
+        <div class="flex items-center gap-1.5 bg-slate-950 p-1.5 rounded-xl border border-slate-700" translate="no">
+          <button type="button" onclick="changeLanguage('es')" id="gate-lang-es" class="px-3 py-1.5 rounded-lg font-extrabold text-xs bg-emerald-500 text-slate-950 flex items-center gap-1.5 cursor-pointer">
+            <svg class="w-5 h-3.5 rounded-sm shrink-0 shadow" viewBox="0 0 60 40"><rect width="60" height="40" fill="#AA151B"/><rect y="10" width="60" height="20" fill="#F1BF00"/></svg>
+            <span>ES Español</span>
           </button>
-
-          <div class="flex items-center gap-1.5 bg-slate-950 p-1.5 rounded-xl border border-slate-700" translate="no">
-            <button type="button" onclick="changeLanguage('es')" id="gate-lang-es" class="px-3 py-1.5 rounded-lg font-extrabold text-xs bg-emerald-500 text-slate-950 flex items-center gap-1.5 cursor-pointer">
-              <svg class="w-5 h-3.5 rounded-sm shrink-0 shadow" viewBox="0 0 60 40"><rect width="60" height="40" fill="#AA151B"/><rect y="10" width="60" height="20" fill="#F1BF00"/></svg>
-              <span>ES Español</span>
-            </button>
-            <button type="button" onclick="changeLanguage('ca')" id="gate-lang-ca" class="px-3 py-1.5 rounded-lg font-extrabold text-xs text-slate-200 hover:text-white flex items-center gap-1.5 cursor-pointer">
-              <svg class="w-5 h-3.5 rounded-sm shrink-0 shadow" viewBox="0 0 60 40"><rect width="60" height="40" fill="#FCDD09"/><rect y="4.4" width="60" height="4.4" fill="#DA121A"/><rect y="13.3" width="60" height="4.4" fill="#DA121A"/><rect y="22.2" width="60" height="4.4" fill="#DA121A"/><rect y="31.1" width="60" height="4.4" fill="#DA121A"/></svg>
-              <span>CAT Català</span>
-            </button>
-          </div>
+          <button type="button" onclick="changeLanguage('ca')" id="gate-lang-ca" class="px-3 py-1.5 rounded-lg font-extrabold text-xs text-slate-200 hover:text-white flex items-center gap-1.5 cursor-pointer">
+            <svg class="w-5 h-3.5 rounded-sm shrink-0 shadow" viewBox="0 0 60 40"><rect width="60" height="40" fill="#FCDD09"/><rect y="4.4" width="60" height="4.4" fill="#DA121A"/><rect y="13.3" width="60" height="4.4" fill="#DA121A"/><rect y="22.2" width="60" height="4.4" fill="#DA121A"/><rect y="31.1" width="60" height="4.4" fill="#DA121A"/></svg>
+            <span>CAT Català</span>
+          </button>
         </div>
       </div>
 
@@ -229,7 +232,6 @@
         </span>
       </div>
 
-      <!-- Banderas SVG Reales (Española y Senyera Catalana) + Botón LEVEL-Hunter -->
       <div class="flex flex-wrap items-center gap-2.5">
         <div class="flex items-center gap-1.5 bg-slate-950 p-1.5 rounded-xl border border-slate-700" translate="no">
           <button type="button" onclick="changeLanguage('es')" id="btn-lang-es" class="px-3 py-1.5 rounded-lg font-extrabold text-xs bg-emerald-500 text-slate-950 flex items-center gap-1.5 transition cursor-pointer">
@@ -250,10 +252,10 @@
     </div>
   </header>
 
-  <!-- ================= CONTENIDO PRINCIPAL EN EL NUEVO ORDEN EXACTO DEL VÍDEO ================= -->
+  <!-- ================= CONTENIDO PRINCIPAL ================= -->
   <main class="max-w-7xl mx-auto w-full px-4 py-8 space-y-12">
 
-    <!-- BLOQUE INTRODUCTORIO: EXPLICACIÓN DEL MONTAJE + AUDIO DE 4 MINUTOS -->
+    <!-- BLOQUE INTRODUCTORIO + SECCIÓN DE AUDIO CON MUTE GIGANTE Y SUBTÍTULOS EN VIVO -->
     <section class="card-panel p-6 sm:p-10 space-y-8 border-emerald-500/40 bg-gradient-to-b from-[#101929] to-[#0a101d]">
       <div class="flex flex-wrap items-center justify-between gap-3">
         <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full gold-badge text-xs font-extrabold uppercase">
@@ -269,6 +271,64 @@
         <p class="text-slate-200 text-base sm:text-lg leading-relaxed" data-i18n="s1_lead">
           Muchas personas trabajadoras pagan su alquiler religiosamente mes a mes, pero no tienen ahorros suficientes para la entrada de un piso o tienen contratos discontinuos. Cuando los padres (pensionistas o ahorradores) quieren dejarles ese dinero, <strong>cometen el error de hacer una transferencia directa o una donación cara</strong>. Aquí le enseñamos cómo montar la operación de forma 100% legal, pagando 0 € de impuestos por el préstamo familiar y logrando que el banco apruebe la hipoteca.
         </p>
+      </div>
+
+      <!-- ================= SECCIÓN DE LOCUCIÓN SUBTITULADA CON MUTE GIGANTE POR DEFECTO ================= -->
+      <div class="relative rounded-2xl bg-[#060b16] border-4 border-amber-500/80 p-6 sm:p-8 shadow-2xl overflow-hidden space-y-5">
+        
+        <!-- CAPA GIGANTE DE MUTE POR DEFECTO (OCUPA TODA LA ZONA HASTA QUE EL USUARIO LA TOCA) -->
+        <div id="giant-mute-overlay" onclick="toggleAudioMuteGiant()" class=" inset-0 z-20 bg-gradient-to-r from-amber-500/95 via-amber-400/95 to-emerald-400/95 text-slate-950 rounded-xl p-6 sm:p-8 flex flex-col items-center justify-center text-center cursor-pointer shadow-2xl hover:brightness-105 transition border-4 border-white">
+          <div class="text-5xl sm:text-6xl mb-2 animate-bounce" id="giant-mute-icon">🔇</div>
+          <div class="text-xl sm:text-3xl font-black uppercase tracking-tight leading-tight" id="giant-mute-title" data-i18n="mute_big_title">
+            LOCUCIÓN EN SILENCIO (MUTE ACTIVADO POR DEFECTO)
+          </div>
+          <div class="text-sm sm:text-lg font-extrabold mt-2 bg-slate-950 text-amber-300 px-5 py-2.5 rounded-xl shadow-lg" id="giant-mute-sub" data-i18n="mute_big_sub">
+            👉 PULSE AQUÍ EN CUALQUIER PARTE PARA ACTIVAR LA VOZ DE ELENA Y VER LOS SUBTÍTULOS
+          </div>
+        </div>
+
+        <!-- Cabecera y Controles del Audio Breve + Botón de Silenciar / Activar -->
+        <div class="flex flex-wrap items-center justify-between gap-4">
+          <div class="flex items-center gap-3">
+            <span class="text-3xl">🎧</span>
+            <div>
+              <h3 class="text-lg sm:text-xl font-black text-amber-400" data-i18n="audio_h">
+                Locución Breve Explicativa con Subtítulos Grandes (Elena AI Advisor)
+              </h3>
+              <p class="text-xs sm:text-sm text-slate-300" data-i18n="audio_p">
+                Escuche en pocos segundos cómo protegemos el dinero de su familia y buscamos su piso ideal.
+              </p>
+            </div>
+          </div>
+
+          <button type="button" id="btn-toggle-mute-inline" onclick="toggleAudioMuteGiant()" class="px-5 py-3 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-black text-sm uppercase tracking-wider cursor-pointer shadow-lg flex items-center gap-2">
+            <span id="inline-mute-icon">🔇</span>
+            <span id="inline-mute-text" data-i18n="btn_mute_now">Silenciar Voz (Mute)</span>
+          </button>
+        </div>
+
+        <!-- PANTALLA DE SUBTÍTULOS EN GRANDE (ESTILO TELEVISIÓN PARA PERSONAS MAYORES) -->
+        <div class="p-5 sm:p-6 rounded-2xl bg-black border-2 border-slate-700 min-h-[110px] flex flex-col items-center justify-center text-center shadow-inner">
+          <span class="text-[11px] font-mono uppercase tracking-widest text-emerald-400 mb-1" data-i18n="sub_live_badge">
+            📝 SUBTÍTULOS EN DIRECTO (ESPAÑOL / CATALÀ)
+          </span>
+          <p id="live-subtitle-box" class="text-lg sm:text-2xl font-extrabold text-amber-300 leading-snug">
+            "Hola, estamos encantados de saludarte y de que hayas tomado una decisión tan importante en tu vida, como la de comprar el hogar de tu futuro..."
+          </p>
+        </div>
+
+        <!-- Reproductor nativo sincronizado (Por defecto Muted) -->
+        <div class="bg-slate-900 p-3 rounded-xl border border-slate-700 flex flex-col sm:flex-row items-center gap-4">
+          <audio id="elena-main-audio" controls muted preload="metadata" class="w-full">
+            <source id="src-elena-audio-1" src="https://app.level-i.com/donaciones-familiares/elena-intro.mp3" type="audio/mpeg">
+            <source id="src-elena-audio-2" src="elena-intro.mp3" type="audio/mpeg">
+            <source id="src-elena-audio-3" src="https://app.level-i.com/audio/modelo-negocio.mp3" type="audio/mpeg">
+          </audio>
+          <span id="audio-duration-badge" class="text-xs font-mono text-emerald-400 whitespace-nowrap px-2">
+            Elena IA · Subtitulado
+          </span>
+        </div>
+
       </div>
 
       <!-- El Montaje en 4 pasos sencillos -->
@@ -311,30 +371,9 @@
           </div>
         </div>
       </div>
-
-      <!-- Audio Explicación de 4 Minutos -->
-      <div class="p-5 sm:p-6 rounded-2xl bg-[#070d19] border-2 border-amber-500/50 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
-        <div class="space-y-1.5 max-w-2xl">
-          <div class="text-amber-400 font-black text-base sm:text-lg flex items-center gap-2">
-            <span>🎧</span> <span data-i18n="audio_h">Escuche en 4 minutos por qué somos su mejor opción (Audio Claro)</span>
-          </div>
-          <p class="text-slate-300 text-sm" data-i18n="audio_p">
-            Si prefiere que se lo expliquemos de viva voz sin tener que leer, pulse el botón de reproducción. Le contamos cómo protegemos a su familia y cómo encontramos su vivienda ideal sin inflar precios.
-          </p>
-        </div>
-        <div class="w-full lg:w-96 bg-slate-900 p-3 rounded-xl border border-slate-700">
-          <audio controls class="w-full">
-            <source src="https://app.level-i.com/donaciones-familiares/explicacion-elena.mp3" type="audio/mpeg">
-            <source src="explicacion-elena.mp3" type="audio/mpeg">
-          </audio>
-          <div class="text-[11px] font-mono text-emerald-400 text-right mt-1" data-i18n="audio_foot">
-            Voz: Elena AI Advisor · level.immo
-          </div>
-        </div>
-      </div>
     </section>
 
-    <!-- ================= PASO 1: SIMULADOR FINANCIERO MEJORADO SEGÚN TU VÍDEO ================= -->
+    <!-- ================= PASO 1: SIMULADOR FINANCIERO ================= -->
     <section class="card-panel p-6 sm:p-10 space-y-8">
       <div class="border-b-2 border-slate-800 pb-4 flex flex-wrap items-center justify-between gap-4">
         <div>
@@ -359,7 +398,7 @@
         <!-- COLUMNA IZQUIERDA: ENTRADA DE DATOS DEL USUARIO -->
         <div class="lg:col-span-6 space-y-6 bg-slate-950/80 p-6 rounded-2xl border-2 border-slate-800">
           
-          <!-- 1. Precio y Gastos de Compra (Con ITP 10% fijo y Notaría automática) -->
+          <!-- 1. Precio y Gastos de Compra -->
           <div class="space-y-4">
             <div class="text-base font-black text-amber-400 uppercase border-b border-slate-800 pb-2" data-i18n="box1_title">
               1. Datos de la vivienda y gastos de compra
@@ -546,7 +585,7 @@
             </div>
           </div>
 
-          <!-- Tarjeta 2: Desglose del Montaje de la Compra y Cuotas (Maquetación corregida sin solaparse) -->
+          <!-- Tarjeta 2: Desglose del Montaje de la Compra y Cuotas -->
           <div class="p-6 rounded-2xl bg-[#131e33] border-2 border-slate-700 space-y-4 shadow-xl">
             <h4 class="text-lg font-black text-white uppercase border-b border-slate-700 pb-2" data-i18n="res_box_title">
               📊 Desglose Completo de su Operación:
@@ -602,7 +641,7 @@
               </div>
             </div>
 
-            <!-- Caja de Suma Total y Ratio corregida en bloques limpios (jamás se monta el texto) -->
+            <!-- Caja de Suma Total y Ratio en bloques limpios -->
             <div class="p-5 rounded-xl bg-black border-2 border-emerald-500/70 space-y-3">
               <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 border-b border-slate-800 pb-3">
                 <span class="text-xs font-extrabold text-emerald-400 uppercase" data-i18n="r_total_monthly">
@@ -637,7 +676,7 @@
       </div>
     </section>
 
-    <!-- ================= PREGUNTAS FRECUENTES (FAQ) COLOCADAS JUSTO ENTRE EL SIMULADOR Y EL SIGUIENTE PASO (MIN. 04:15 DEL VÍDEO) ================= -->
+    <!-- ================= PREGUNTAS FRECUENTES (FAQ) ENTRE SIMULADOR Y DEMANDA ACTIVA ================= -->
     <section class="card-panel p-6 sm:p-10 space-y-6 border-amber-500/40">
       <div class="border-b-2 border-slate-800 pb-4">
         <span class="text-xs font-extrabold uppercase tracking-wider text-amber-400 block" data-i18n="faq_badge">
@@ -688,7 +727,7 @@
       </div>
     </section>
 
-    <!-- ================= PASO 2: PANEL DE DEMANDA ACTIVA EN MERCADO REAL Y ACTIVACIÓN LEVEL-HUNTER ================= -->
+    <!-- ================= PASO 2: PANEL DE DEMANDA ACTIVA EN MERCADO REAL (CON SALIDA A WEBHOOK MAKE) ================= -->
     <section id="demanda-section" class="card-panel p-6 sm:p-10 space-y-8 border-emerald-500/60 bg-gradient-to-b from-[#0e192d] to-[#070b12]">
       
       <div class="flex flex-wrap items-center justify-between gap-4 border-b-2 border-slate-800 pb-5">
@@ -836,7 +875,7 @@
       </div>
     </section>
 
-    <!-- ================= PASO 3 (AL FINAL COMO PEDISTE EN EL VÍDEO): CONTRATO DE PRÉSTAMO FAMILIAR + FIRMA DIGITAL ================= -->
+    <!-- ================= PASO 3 (AL FINAL): CONTRATO DE PRÉSTAMO FAMILIAR + FIRMA DIGITAL DOCUSIGN ================= -->
     <section id="sec-contract" class="card-panel p-6 sm:p-10 space-y-6">
       
       <div id="contract-controls" class="space-y-6 no-print">
@@ -1052,7 +1091,7 @@
     </div>
   </div>
 
-  <!-- ================= MODAL HOJA DE ENCARGO Y VOLANTE DE PAGO + OPCIÓN DE FIRMA DIGITAL DOCUSIGN ================= -->
+  <!-- ================= MODAL HOJA DE ENCARGO Y VOLANTE DE PAGO + FIRMA DIGITAL DOCUSIGN ================= -->
   <div id="voucher-modal" class="fixed inset-0 z-[80] bg-slate-950/95 backdrop-blur-md hidden items-center justify-center p-4 overflow-y-auto">
     <div id="voucher-printable" class="max-w-2xl w-full p-6 sm:p-10 bg-white text-slate-950 rounded-2xl space-y-6 shadow-2xl border-4 border-slate-900 my-auto">
       
@@ -1156,7 +1195,6 @@
         </div>
       </div>
 
-      <!-- Botones del Volante: Imprimir PDF o Enviar a Firma Digital DocuSign -->
       <div class="flex flex-wrap gap-3 pt-2 no-print">
         <button type="button" onclick="printOnlyVoucher()" class="btn-action bg-slate-950 hover:bg-slate-800 text-white flex-1 text-xs uppercase">
           🖨️ <span data-i18n="v_btn_print">Guardar / Imprimir PDF</span>
@@ -1191,8 +1229,17 @@
     </div>
   </footer>
 
-  <!-- ================= LÓGICA JAVASCRIPT COMPLETA ================= -->
+  <!-- ================= CONFIGURACIÓN CENTRAL Y LÓGICA JAVASCRIPT ================= -->
   <script>
+    // ============================================================================
+    // 1. CONFIGURACIÓN RÁPIDA DE URLs DE FONDOS Y AUDIO CORTO + WEBHOOKS DE MAKE
+    // ============================================================================
+    const CONFIG_MEDIA = {
+      bgDesktopImg: "https://app.level-i.com/donaciones-familiares/bg-pc.jpg",
+      bgMobileImg:  "https://app.level-i.com/donaciones-familiares/bg-movil.jpg",
+      audioLocucion: "https://app.level-i.com/donaciones-familiares/elena-intro.mp3"
+    };
+
     const WEBHOOK_MAKE = "https://hook.eu1.make.com/loy5kvv4qmnvo748fmxo2qvt48mbf986";
     const WEBHOOK_ELENA_VENTAS = "https://hook.eu1.make.com/3w2wmbbcc3evnvg8ajo3kjkucrd6dfkw";
     const ASSET_ID = "DONACIONES-FAMILIARES-LEVEL-HUNTER";
@@ -1207,7 +1254,111 @@
       .then(data => { clienteIP = data.ip || "Desconocida"; })
       .catch(() => {});
 
-    // UX PARA PERSONAS MAYORES: Borrar el "0" molesto al hacer clic y restaurarlo si queda vacío
+    // Aplicar las URLs configuradas arriba al cargar
+    window.addEventListener('DOMContentLoaded', () => {
+      const imgMob = document.getElementById('src-img-mobile');
+      const imgDesk = document.getElementById('src-img-desktop');
+      const imgFallback = document.getElementById('gate-bg-img');
+      if (imgMob) imgMob.srcset = CONFIG_MEDIA.bgMobileImg;
+      if (imgDesk) imgDesk.srcset = CONFIG_MEDIA.bgDesktopImg;
+      if (imgFallback) imgFallback.src = CONFIG_MEDIA.bgDesktopImg;
+
+      const audioEl = document.getElementById('elena-main-audio');
+      const srcAudio1 = document.getElementById('src-elena-audio-1');
+      if (srcAudio1 && CONFIG_MEDIA.audioLocucion) {
+        srcAudio1.src = CONFIG_MEDIA.audioLocucion;
+      }
+
+      if (audioEl) {
+        audioEl.muted = true; // Siempre en MUTE por defecto
+        audioEl.addEventListener('loadedmetadata', () => {
+          const secs = Math.round(audioEl.duration || 0);
+          if (secs > 0) {
+            document.getElementById('audio-duration-badge').textContent = `${secs}s · Elena IA`;
+          }
+        });
+        audioEl.addEventListener('timeupdate', updateSubtitlesByProgress);
+        audioEl.addEventListener('volumechange', syncMuteUI);
+      }
+    });
+
+    // ============================================================================
+    // 2. SISTEMA DE MUTE GIGANTE Y SUBTÍTULOS SINCRONIZADOS (ES / CAT)
+    // ============================================================================
+    const SUBTITLES_DATA = {
+      es: [
+        { pct: 0.00, text: "Hola, estamos encantados de saludarte y de que hayas tomado una decisión tan importante en tu vida, como la de comprar el hogar de tu futuro." },
+        { pct: 0.28, text: "Mientras preparamos tu hipoteca, empezamos a seleccionar propiedades que todavía no se han puesto en venta." },
+        { pct: 0.56, text: "Te explico cómo lo hacemos, y te abro expediente si tomas la decisión en firme. Tendrás toda la información al momento, en tiempo real." },
+        { pct: 0.80, text: "Las cuentas claras. No inflamos precios. Nuestro servicio Premium está a tu alcance, y te permite ahorrar un buen pellizco." }
+      ],
+      ca: [
+        { pct: 0.00, text: "Hola, estem encantats de saludar-te i que hagis pres una decisió tan important en la teva vida, com la de comprar la llar del teu futur." },
+        { pct: 0.28, text: "Mentre preparem la teva hipoteca, comencem a seleccionar propietats que encara no s'han posat en venda." },
+        { pct: 0.56, text: "T'explico com ho fem, i t'obro expedient si prens la decisió en ferm. Tindràs tota la informació al moment, en temps real." },
+        { pct: 0.80, text: "Els comptes clars. No inflem preus. El nostre servei Premium està al teu abast, i et permet estalviar un bon pessic." }
+      ]
+    };
+
+    function toggleAudioMuteGiant() {
+      const audioEl = document.getElementById('elena-main-audio');
+      const giantOverlay = document.getElementById('giant-mute-overlay');
+      if (!audioEl) return;
+
+      if (audioEl.muted || audioEl.paused) {
+        audioEl.muted = false;
+        audioEl.volume = 1.0;
+        if (audioEl.currentTime === 0 || audioEl.ended) {
+          audioEl.currentTime = 0;
+        }
+        audioEl.play().catch(() => {});
+        if (giantOverlay) giantOverlay.classList.add('hidden');
+      } else {
+        audioEl.muted = true;
+        audioEl.pause();
+        if (giantOverlay) giantOverlay.classList.remove('hidden');
+      }
+      syncMuteUI();
+    }
+
+    function syncMuteUI() {
+      const audioEl = document.getElementById('elena-main-audio');
+      const giantOverlay = document.getElementById('giant-mute-overlay');
+      const iconInline = document.getElementById('inline-mute-icon');
+      const txtInline = document.getElementById('inline-mute-text');
+      const dict = i18n[currentLang];
+
+      if (!audioEl) return;
+      if (audioEl.muted || audioEl.paused) {
+        if (giantOverlay) giantOverlay.classList.remove('hidden');
+        if (iconInline) iconInline.textContent = "🔊";
+        if (txtInline) txtInline.textContent = dict.btn_unmute_now;
+      } else {
+        if (giantOverlay) giantOverlay.classList.add('hidden');
+        if (iconInline) iconInline.textContent = "🔇";
+        if (txtInline) txtInline.textContent = dict.btn_mute_now;
+      }
+    }
+
+    function updateSubtitlesByProgress() {
+      const audioEl = document.getElementById('elena-main-audio');
+      const box = document.getElementById('live-subtitle-box');
+      if (!audioEl || !box) return;
+
+      const dur = audioEl.duration || 22; // Se adapta automáticamente aunque el audio sea corto
+      const progress = dur > 0 ? (audioEl.currentTime / dur) : 0;
+      const list = SUBTITLES_DATA[currentLang] || SUBTITLES_DATA.es;
+
+      let activeLine = list[0].text;
+      for (let i = 0; i < list.length; i++) {
+        if (progress >= list[i].pct) {
+          activeLine = list[i].text;
+        }
+      }
+      box.textContent = `"${activeLine}"`;
+    }
+
+    // UX PARA PERSONAS MAYORES: Borrar el "0" molesto al hacer clic
     function clearZero(inputEl) {
       if (inputEl.value === "0" || parseFloat(inputEl.value) === 0) {
         inputEl.value = "";
@@ -1220,7 +1371,6 @@
       }
     }
 
-    // Cuando cambia el precio de la vivienda, calcular automáticamente Notaría, Registro y Gestoría (~1,5% con mínimo 1.800 €)
     function onPriceChange() {
       const preu = parseFloat(document.getElementById('sim-preu').value) || 0;
       const gastosInput = document.getElementById('sim-gastos-fijos');
@@ -1230,7 +1380,6 @@
       } else {
         gastosInput.value = 0;
       }
-      // Sincronizar también el presupuesto de Demanda Activa si aún está a 0
       const presDemanda = document.getElementById('d-pressupost');
       if (preu > 0 && (parseFloat(presDemanda.value) || 0) === 0) {
         presDemanda.value = preu;
@@ -1239,14 +1388,7 @@
       recalculateAll();
     }
 
-    function toggleGateVideoSound() {
-      const vid = document.getElementById('gate-bg-video');
-      if (!vid) return;
-      vid.muted = !vid.muted;
-      if (!vid.muted) vid.play().catch(() => {});
-    }
-
-    // GENERADOR DE SONIDO ESPECIAL NATIVO (WEB AUDIO API)
+    // GENERADOR DE SONIDO ESPECIAL NATIVO ("CHA-CHING" / RADAR)
     function playSpecialSuccessSound(type = 'cash') {
       try {
         const AudioCtx = window.AudioContext || window.webkitAudioContext;
@@ -1291,7 +1433,6 @@
     // DICCIONARIO PURO ES / CAT
     const i18n = {
       es: {
-        gate_sound_btn: "Activar Sonido Vídeo",
         gate_badge: "SERVICIO OFICIAL COLEGIADO API 4173 · AICAT 14200",
         gate_title: "Cómo ayudar a un hijo a comprar su casa sin perder dinero en impuestos",
         gate_desc: "Herramienta clara y gratuita para familias: compare cuánto cuesta una Donación frente a un Préstamo Familiar al 0%, calcule las cuotas reales y descargue el contrato legal listo para firmar.",
@@ -1303,6 +1444,13 @@
         s1_badge: "EXPLICADO CLARO, SIN TECNICISMOS Y CON LAS CUENTAS CLARAS",
         s1_title: "¿Quiere comprar su vivienda con ayuda de sus padres, pero teme a Hacienda o que el banco le diga que no?",
         s1_lead: "Muchas personas trabajadoras pagan su alquiler religiosamente mes a mes, pero no tienen ahorros suficientes para la entrada de un piso o tienen contratos discontinuos. Cuando los padres (pensionistas o ahorradores) quieren dejarles ese dinero, <strong>cometen el error de hacer una transferencia directa o una donación cara</strong>. Aquí le enseñamos cómo montar la operación de forma 100% legal, pagando 0 € de impuestos por el préstamo familiar y logrando que el banco apruebe la hipoteca.",
+        mute_big_title: "LOCUCIÓN EN SILENCIO (MUTE ACTIVADO POR DEFECTO)",
+        mute_big_sub: "👉 PULSE AQUÍ EN CUALQUIER PARTE PARA ACTIVAR LA VOZ DE ELENA Y VER LOS SUBTÍTULOS",
+        btn_mute_now: "Silenciar Voz (Mute)",
+        btn_unmute_now: "Activar Voz (Quitar Mute)",
+        sub_live_badge: "📝 SUBTÍTULOS EN DIRECTO (ESPAÑOL)",
+        audio_h: "Locución Breve Explicativa con Subtítulos Grandes (Elena AI Advisor)",
+        audio_p: "Escuche en pocos segundos cómo protegemos el dinero de su familia y buscamos su piso ideal.",
         s1_how_title: "🛠️ Cómo funciona el Montaje de la Operación (En 4 pasos sencillos):",
         step1_t: "Préstamo Familiar al 0% (No Donación)",
         step1_d: "En vez de regalar el dinero y pagar el Impuesto de Donaciones, sus padres se lo prestan a interés 0% firmando el contrato oficial que tiene más abajo y presentándolo en Hacienda (Modelo 600 exento: coste 0 €).",
@@ -1312,9 +1460,6 @@
         step3_d: "Al entrar con el dinero de sus padres, usted pide mucha menos hipoteca al banco. Y si hace falta por su tipo de contrato, los padres pueden respaldar la operación con su pensión o vivienda libre de cargas.",
         step4_t: "Búsqueda Inmediata en Mercado Real",
         step4_d: "Mientras nuestro Broker tramita su hipoteca, activamos su anuncio en nuestro panel de Demanda Activa. Nuestros Advisors y colaboradores de la zona le buscan pisos antes de que salgan en internet.",
-        audio_h: "Escuche en 4 minutos por qué somos su mejor opción (Audio Claro)",
-        audio_p: "Si prefiere que se lo expliquemos de viva voz sin tener que leer, pulse el botón de reproducción. Le contamos cómo protegemos a su familia y cómo encontramos su vivienda ideal sin inflar precios.",
-        audio_foot: "Voz: Elena AI Advisor · level.immo",
         sim_badge: "🧮 PASO 1 · SIMULADOR CLARO (EL CERO SE BORRA SOLO AL HACER CLIC PARA ESCRIBIR FÁCIL)",
         sim_title: "Simulador de Compra, Ahorro Fiscal (Donación vs. Préstamo) y Cuota Hipotecaria",
         sim_reset_btn: "🔄 Poner todas las cifras a 0 €",
@@ -1461,11 +1606,10 @@
         v_btn_close: "Cerrar",
         ftr_lock: "Pantalla de inicio y Vídeo",
         alert_copied: "✓ El texto completo del contrato se ha copiado al portapapeles.",
-        alert_published: "✓ ¡Su anuncio provisional ya está activo! Nuestros Advisors y colaboradores de la zona han recibido la alerta sonora.",
+        alert_published: "✓ ¡Su anuncio provisional ya está activo y enviado a nuestra red! Nuestros Advisors y colaboradores de la zona han recibido la alerta.",
         alert_docusign: "✍️ ¡Solicitud de Firma Digital enviada! Recibirá el enlace seguro (tipo DocuSign) en su móvil y correo electrónico para firmar con el dedo sin necesidad de imprimir."
       },
       ca: {
-        gate_sound_btn: "Activar So Vídeo",
         gate_badge: "SERVEI OFICIAL COL·LEGIAT API 4173 · AICAT 14200",
         gate_title: "Com ajudar un fill a comprar casa seva sense perdre diners en impostos",
         gate_desc: "Eina clara i gratuïta per a famílies: compari quant costa una Donació enfront d'un Préstec Familiar al 0%, calculi les quotes reals i descarregui el contracte legal llest per signar.",
@@ -1477,6 +1621,13 @@
         s1_badge: "EXPLICAT CLAR, SENSE TECNICISMES I AMB ELS COMPTES CLARS",
         s1_title: "Vol comprar el seu habitatge amb l'ajuda dels seus pares, però té por d'Hisenda o que el banc li digui que no?",
         s1_lead: "Moltes persones treballadores paguen el seu lloguer puntualment mes a mes, però no tenen estalvis suficients per a l'entrada d'un pis o tenen contractes discontinus. Quan els pares (pensionistes o estalviadors) volen deixar-los aquests diners, <strong>cometen l'error de fer una transferència directa o una donació cara</strong>. Aquí li ensenyem com muntar l'operació de forma 100% legal, pagant 0 € d'impostos pel préstec familiar i aconseguint que el banc aprovi la hipoteca.",
+        mute_big_title: "LOCUCIÓ EN SILENCI (MUTE ACTIVAT PER DEFECTE)",
+        mute_big_sub: "👉 PREMI AQUÍ EN QUALSEVOL PART PER ACTIVAR LA VEU D'ELENA I VEURE ELS SUBTÍTOLS",
+        btn_mute_now: "Silenciar Veu (Mute)",
+        btn_unmute_now: "Activar Veu (Treure Mute)",
+        sub_live_badge: "📝 SUBTÍTOLS EN DIRECTE (CATALÀ)",
+        audio_h: "Locució Breu Explicativa amb Subtítols Grans (Elena AI Advisor)",
+        audio_p: "Escolti en pocs segons com protegim els diners de la seva família i busquem el seu pis ideal.",
         s1_how_title: "🛠️ Com funciona el Muntatge de l'Operació (En 4 passos senzills):",
         step1_t: "Préstec Familiar al 0% (No Donació)",
         step1_d: "En lloc de regalar els diners i pagar l'Impost de Donacions, els seus pares els hi presten a interès 0% signant el contracte oficial que té més avall i presentant-lo a Hisenda (Model 600 exempt: cost 0 €).",
@@ -1486,9 +1637,6 @@
         step3_d: "En entrar amb els diners dels seus pares, vostè demana molta menys hipoteca al banc. I si cal pel seu tipus de contracte, els pares poden donar suport a l'operació amb la seva pensió o habitatge lliure de càrregues.",
         step4_t: "Cerca Immediata al Mercat Real",
         step4_d: "Mentre el nostre Broker tramita la seva hipoteca, activem el seu anunci al nostre panell de Demanda Activa. Els nostres Advisors i col·laboradors de la zona li busquen pisos abans que surtin a internet.",
-        audio_h: "Escolti en 4 minuts per què som la seva millor opció (Àudio Clar)",
-        audio_p: "Si prefereix que li ho expliquem de viva veu sense haver de llegir, premi el botó de reproducció. Li expliquem com protegim la seva família i com trobem el seu habitatge ideal sense inflar preus.",
-        audio_foot: "Veu: Elena AI Advisor · level.immo",
         sim_badge: "🧮 PAS 1 · SIMULADOR CLAR (EL ZERO S'ESBORRA SOL EN FER CLIC PER ESCRIURE FÀCIL)",
         sim_title: "Simulador de Compra, Estalvi Fiscal (Donació vs. Préstec) i Quota Hipotecària",
         sim_reset_btn: "🔄 Posar totes les xifres a 0 €",
@@ -1635,7 +1783,7 @@
         v_btn_close: "Tancar",
         ftr_lock: "Pantalla d'inici i Vídeo",
         alert_copied: "✓ El text complet del contracte s'ha copiat al porta-retalls.",
-        alert_published: "✓ El seu anunci provisional ja està actiu! Els nostres Advisors i col·laboradors de la zona han rebut l'alerta sonora.",
+        alert_published: "✓ El seu anunci provisional ja està actiu i enviat a la nostra xarxa! Els nostres Advisors i col·laboradors de la zona han rebut l'alerta.",
         alert_docusign: "✍️ Sol·licitud de Signatura Digital enviada! Rebrà l'enllaç segur (tipus DocuSign) al seu mòbil i correu electrònic per signar amb el dit sense necessitat d'imprimir."
       }
     };
@@ -1712,6 +1860,8 @@
         fechaInput.value = "10 de noviembre de 2026";
       }
 
+      updateSubtitlesByProgress();
+      syncMuteUI();
       recalculateAll();
       updateDemandaPreview();
       refreshElenaGreeting();
@@ -1724,7 +1874,7 @@
 
     function recalculateAll() {
       const preu = parseFloat(document.getElementById('sim-preu').value) || 0;
-      const pctImpostos = 10; // Fijo 10% como indicado en el vídeo
+      const pctImpostos = 10;
       const gastosFijos = parseFloat(document.getElementById('sim-gastos-fijos').value) || 0;
       const aportacio = parseFloat(document.getElementById('sim-aportacio').value) || 0;
       const ingressosHijo = parseFloat(document.getElementById('sim-ingressos').value) || 0;
@@ -1969,7 +2119,7 @@
       setTimeout(() => document.body.classList.remove('print-mode-voucher'), 500);
     }
 
-    // ENVÍO A FIRMA DIGITAL (DOCUSIGN / SIGNATURIT VÍA MAKE WEBHOOK)
+    // SALIDA WEBHOOK 1: FIRMA DIGITAL DOCUSIGN / SIGNATURIT
     function sendForDigitalSignature(docType) {
       playSpecialSuccessSound('cash');
       const contractText = document.getElementById('contract-document').innerText;
@@ -1979,9 +2129,13 @@
 
       const payload = {
         evento: "solicitud_firma_digital_docusign",
+        origen_landing: "DONACIONES_FAMILIARES_LEVEL_HUNTER",
+        id_inmueble: ASSET_ID,
         tipo_documento: docType,
         idioma_sesion: currentLang,
         solicitar_firma_digital: true,
+        id_sesion: sessionId,
+        ip_cliente: clienteIP,
         cliente: { nombre: name, telefono: phone, email: email },
         contenido_documento: contractText
       };
@@ -2016,11 +2170,39 @@
       }
     }
 
+    // SALIDA WEBHOOK 2: PUBLICACIÓN DE ANUNCIO PROVISIONAL DE DEMANDA ACTIVA
     function publishProvisionalDemand() {
       playSpecialSuccessSound('radar');
       const badge = document.getElementById('prev-badge-state');
       badge.textContent = i18n[currentLang].prev_badge_live;
       badge.className = "px-2.5 py-1 rounded-full bg-emerald-500 text-slate-950 font-mono text-[11px] font-black";
+
+      const payloadDemanda = {
+        evento: "publicacion_demanda_activa_provisional",
+        origen_landing: "DONACIONES_FAMILIARES_LEVEL_HUNTER",
+        id_inmueble: ASSET_ID,
+        idioma_sesion_web: currentLang,
+        id_sesion: sessionId,
+        ip_cliente: clienteIP,
+        anuncio_provisional: {
+          zona: document.getElementById('d-zona').value.trim() || 'Por definir',
+          titular_anuncio: document.getElementById('prev-titulo').textContent,
+          presupuesto: document.getElementById('prev-pres').textContent,
+          requisitos: document.getElementById('prev-req').textContent
+        },
+        simulacion_actual: {
+          precio_vivienda: document.getElementById('res-preu-base').textContent,
+          aportacion_padres: document.getElementById('res-aportacio-view').textContent,
+          hipoteca_necesaria: document.getElementById('res-financar').textContent,
+          cuota_total: document.getElementById('res-total-carga').textContent
+        }
+      };
+
+      Promise.allSettled([
+        fetch(WEBHOOK_ELENA_VENTAS, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payloadDemanda) }),
+        fetch(WEBHOOK_MAKE, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payloadDemanda) })
+      ]);
+
       alert(i18n[currentLang].alert_published);
     }
 
@@ -2061,6 +2243,7 @@
       document.getElementById('elena-modal').classList.remove('flex');
     }
 
+    // SALIDA WEBHOOK 3: ACTIVACIÓN DE MANDATO LEVEL-HUNTER Y GENERACIÓN DE VOLANTE (1.210 €)
     function openVoucherFromElena() {
       const name = document.getElementById('hunter-name').value.trim();
       const prefix = document.getElementById('hunter-prefix').value || '+34';
