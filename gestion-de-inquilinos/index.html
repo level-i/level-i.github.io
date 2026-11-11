@@ -3283,7 +3283,6 @@ async function enviarMensajeBotChat(e) {
     box.scrollTop = box.scrollHeight;
   }
 }
-
 function abrirModal(id) { document.getElementById(id).style.display = "flex"; }
 function cerrarModal(id) { document.getElementById(id).style.display = "none"; }
 function escaparHTML(s) {
@@ -3293,12 +3292,94 @@ function escaparHTML(s) {
 }
 
 // =========================================================================
-// DETECTOR AUTOMÁTICO DE ?code= DESDE WHATSAPP Y PUENTE CON MAKE
+// DETECTOR AUTOMÁTICO DE ?code=, MEJORAS VISUALES Y PUENTE CON MAKE
 // =========================================================================
 (function inicializarAccesoDirectoWhatsApp() {
   var URL_DATOS_MAKE = "https://hook.eu1.make.com/tfk9n3nefcufj183eth64m2e257kch5q";
+  window.URL_WEBHOOK_TOC_TOC = "https://hook.eu1.make.com/flpdnde7wmt72tovyup6yjfkk7yuwmy6";
+  window.URL_WEBHOOK_PORTAL_DATOS = URL_DATOS_MAKE;
+
+  function aplicarAjustesVisualesDelVideo() {
+    // 1. Ocultar la etiqueta superior "Área Privada · v3.5 Definitiva"
+    var elementos = document.querySelectorAll("#main-layout span, #main-layout div");
+    for (var i = 0; i < elementos.length; i++) {
+      var el = elementos[i];
+      if (el.children.length === 0 && el.textContent.indexOf("v3.5 Definitiva") !== -1) {
+        el.style.display = "none";
+      }
+    }
+
+    // 2. Cambiar "FTP (level.immo)" / "Fotos FTP" por "Galería Multimedia"
+    var nodosProp = document.querySelectorAll("#vista-propietaria-carmen *");
+    for (var j = 0; j < nodosProp.length; j++) {
+      var n = nodosProp[j];
+      if (n.children.length === 0 && n.textContent && n.textContent.indexOf("FTP") !== -1) {
+        n.textContent = n.textContent
+          .replace(/fotos FTP \(level\.immo\)/gi, "galería multimedia")
+          .replace(/\(FOTOS FTP LEVEL\.IMMO\)/gi, "(GALERÍA MULTIMEDIA)")
+          .replace(/servidor FTP de Level\.immo/gi, "repositorio multimedia de Level.immo")
+          .replace(/Actualizar Fotos FTP \.\.\./gi, "Actualizar Galería Multimedia")
+          .replace(/Fotos FTP/gi, "Galería Multimedia");
+      }
+    }
+
+    // 3. Plegar la sección "ASIGNAR ABOGADO / SERVICIOS JURÍDICOS" en modo acordeón
+    var bloques = document.querySelectorAll("#vista-propietaria-carmen div");
+    for (var k = 0; k < bloques.length; k++) {
+      var box = bloques[k];
+      if (!box.dataset.acordeonAbogado && box.innerHTML.indexOf("ASIGNAR ABOGADO / SERVICIOS JURÍDICOS") !== -1 && box.querySelector("input")) {
+        var hijos = Array.from(box.children);
+        var esContenedorDirecto = hijos.some(function(h) {
+          return h.textContent.indexOf("ASIGNAR ABOGADO") !== -1 && !h.querySelector("input");
+        });
+
+        if (esContenedorDirecto && hijos.length > 1) {
+          box.dataset.acordeonAbogado = "true";
+          var barraTitulo = hijos[0];
+          barraTitulo.style.cursor = "pointer";
+          barraTitulo.title = "Haz clic para mostrar u ocultar el formulario de alta de abogado";
+
+          var etiquetaDerecha = barraTitulo.querySelector("span:last-child, div:last-child");
+          if (etiquetaDerecha && etiquetaDerecha !== barraTitulo.firstElementChild) {
+            etiquetaDerecha.innerHTML = "➕ Desplegar Alta de Abogado ▾";
+            etiquetaDerecha.style.cursor = "pointer";
+          }
+
+          for (var m = 1; m < hijos.length; m++) {
+            hijos[m].style.display = "none";
+          }
+
+          barraTitulo.addEventListener("click", (function(listaHijos, badge) {
+            return function() {
+              var cerrado = listaHijos[1].style.display === "none";
+              for (var x = 1; x < listaHijos.length; x++) {
+                listaHijos[x].style.display = cerrado ? "" : "none";
+              }
+              if (badge) {
+                badge.innerHTML = cerrado ? "➖ Ocultar Formulario ▴" : "➕ Desplegar Alta de Abogado ▾";
+              }
+            };
+          })(hijos, etiquetaDerecha));
+        }
+      }
+    }
+  }
+
+  // 4. Mantener visible el botón "👑 Área Propietario" al cambiar a la pestaña de Residente
+  var mostrarVistaOriginal = window.mostrarVistaInterna;
+  if (typeof mostrarVistaOriginal === "function") {
+    window.mostrarVistaInterna = function(vista) {
+      mostrarVistaOriginal(vista);
+      if (window.sesionActiva && (window.sesionActiva.rol === "PROPIETARIO" || String(window.sesionActiva.codigo_inquilino).indexOf("CLI-") === 0)) {
+        var btnProp = document.getElementById("btn-tab-propietaria");
+        if (btnProp) btnProp.style.display = "inline-flex";
+      }
+    };
+  }
 
   async function conectarConPortalDatos(identificador, rolForzado) {
+    aplicarAjustesVisualesDelVideo();
+
     var codUpper = String(identificador || "").trim().toUpperCase();
     var esProp = rolForzado === "PROPIETARIO" || codUpper.indexOf("CLI-") === 0 || codUpper.indexOf("PROP-") === 0;
     var esAbg = rolForzado === "ABOGADO" || codUpper.indexOf("ID_LEG") === 0 || codUpper.indexOf("ABO-") === 0;
@@ -3311,7 +3392,11 @@ function escaparHTML(s) {
     window.sesionActiva.rol = rolDetectado;
     window.sesionActiva.tabla_filtro = tablaDetectada;
 
-    // Mostrar feedback en pantalla mientras consulta Make
+    var tabProp = document.getElementById("btn-tab-propietaria");
+    if (esProp && tabProp) {
+      tabProp.style.display = "inline-flex";
+    }
+
     var msgExito = document.getElementById("msg-exito");
     var msgError = document.getElementById("msg-error");
     if (msgError) msgError.style.display = "none";
@@ -3343,43 +3428,46 @@ function escaparHTML(s) {
         datosMake = null;
       }
 
-      // Si tenemos función interna de hidratación de datos en el script de 3000 líneas, llamarla:
       if (datosMake && typeof window.aplicarDatosExpediente === "function") {
         window.aplicarDatosExpediente(datosMake);
       } else if (datosMake && typeof window.hidratarPortalConMake === "function") {
         window.hidratarPortalConMake(datosMake);
       }
 
-      // Abrir el Dashboard a pantalla completa directamente en la vista correspondiente
-      var loginSec = document.getElementById("login-section");
-      var dashSec = document.getElementById("portal-dashboard");
-      var mainLay = document.getElementById("main-layout");
-
-      if (loginSec) loginSec.style.display = "none";
-      if (dashSec) dashSec.style.display = "block";
-      if (mainLay) mainLay.classList.add("fullscreen-mode");
-
-      if (esProp) {
-        mostrarVistaInterna("propietaria");
-      } else {
-        mostrarVistaInterna("residente");
+      // Actualizar el saludo con el nombre real del propietario
+      var nombrePila = (datosMake && (datosMake.nombre_propietario || datosMake.nombre || (datosMake.fields && (datosMake.fields["Nombre de pila"] || datosMake.fields.Propietario)))) || (codUpper === "CLI-001" ? "Carmen Forcadell" : "");
+      if (nombrePila && esProp) {
+        var textos = document.querySelectorAll("#vista-propietaria-carmen p, #vista-propietaria-carmen div, #vista-propietaria-carmen h2, #vista-propietaria-carmen span");
+        for (var s = 0; s < textos.length; s++) {
+          if (textos[s].innerHTML.indexOf("Propietario/a Titular") !== -1) {
+            textos[s].innerHTML = textos[s].innerHTML.replace(/Propietario\/a Titular/g, escaparHTML(nombrePila));
+          }
+        }
       }
 
     } catch (err) {
       console.warn("Aviso al consultar Portal Datos Inquilinos:", err);
-      // Si es Propietario, abrimos igualmente el panel de propietaria diseñado
-      if (esProp) {
-        document.getElementById("login-section").style.display = "none";
-        document.getElementById("portal-dashboard").style.display = "block";
-        document.getElementById("main-layout").classList.add("fullscreen-mode");
-        mostrarVistaInterna("propietaria");
-      }
+    }
+
+    var loginSec = document.getElementById("login-section");
+    var dashSec = document.getElementById("portal-dashboard");
+    var mainLay = document.getElementById("main-layout");
+
+    if (loginSec) loginSec.style.display = "none";
+    if (dashSec) dashSec.style.display = "block";
+    if (mainLay) mainLay.classList.add("fullscreen-mode");
+
+    if (esProp) {
+      window.mostrarVistaInterna("propietaria");
+    } else {
+      window.mostrarVistaInterna("residente");
     }
   }
 
   window.conectarConPortalDatos = conectarConPortalDatos;
 
   function verificarParametroUrl() {
+    aplicarAjustesVisualesDelVideo();
     var params = new URLSearchParams(window.location.search);
     var codeParam = (params.get("code") || "").trim();
     if (codeParam !== "") {
@@ -3396,5 +3484,3 @@ function escaparHTML(s) {
 </script>
 </body>
 </html>
-
-  
