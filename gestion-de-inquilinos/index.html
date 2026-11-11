@@ -3288,6 +3288,47 @@ function escaparHTML(s) {
     return { '&':'&amp;', '<':'&lt;', '>':'&gt;', "'":'&#39;', '"':'&quot;' }[c];
   });
 }
+  // =========================================================================
+// AUTO-LOGIN DIRECTO DESDE ENLACE DE WHATSAPP (?code=CLI-001 / ?code=INQ-001)
+// =========================================================================
+window.addEventListener("DOMContentLoaded", function() {
+  var params = new URLSearchParams(window.location.search);
+  var codeUrl = (params.get("code") || "").trim().toUpperCase();
+
+  if (codeUrl !== "") {
+    // 1. Determinar rol y tabla según el prefijo del código
+    var esPropietario = codeUrl.indexOf("CLI-") === 0 || codeUrl.indexOf("PROP-") === 0;
+    var esAbogado = codeUrl.indexOf("ID_LEG") === 0 || codeUrl.indexOf("ABO-") === 0;
+
+    if (window.sesionActiva) {
+      window.sesionActiva.codigo_inquilino = codeUrl;
+      window.sesionActiva["DNI-NIE-CIF"] = codeUrl;
+      if (esPropietario) {
+        window.sesionActiva.rol = "PROPIETARIO";
+        window.sesionActiva.tabla_filtro = "PROPERTY_PROPIETARIOS";
+      } else if (esAbogado) {
+        window.sesionActiva.rol = "ABOGADO";
+        window.sesionActiva.tabla_filtro = "PROPERTY_PROPIETARIOS_LEGAL_SERVICES";
+      } else {
+        window.sesionActiva.rol = "INQUILINO";
+        window.sesionActiva.tabla_filtro = "PROPERTY_INQUILINOS";
+      }
+    }
+
+    // 2. Si tienes función de carga directa del expediente, dispararla;
+    // o bien activar la vista correspondiente inmediatamente:
+    if (typeof window.cargarDatosPortal === "function") {
+      window.cargarDatosPortal(codeUrl);
+    } else if (typeof window.consultarExpedienteMake === "function") {
+      window.consultarExpedienteMake(codeUrl);
+    } else if (esPropietario) {
+      // Mostrar directamente el panel de Propietaria que diseñamos
+      document.getElementById("login-section").style.display = "none";
+      document.getElementById("portal-dashboard").style.display = "block";
+      mostrarVistaInterna("propietaria");
+    }
+  }
+});
 </script>
 </body>
 </html>
