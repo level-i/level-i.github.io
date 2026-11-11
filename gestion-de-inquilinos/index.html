@@ -3130,7 +3130,6 @@ window.enviarAutorizacionAbogado = function(e) {
     asunto_email: "⚖️ Credenciales de Acceso Jurídico y Bienvenida · Consola Level.immo",
     cuerpo_email_html: cuerpoEmailHTML
   };
-
   fetch(URL_WEBHOOK_LEGAL_SERVICES, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -3168,7 +3167,9 @@ function volverFaseDni() {
     btnPin.innerText = "Entrar al Portal a Pantalla Completa →";
     btnPin.disabled = false;
   }
-  window.pintarSumaLevel();
+  if (typeof window.pintarSumaLevel === "function") {
+    window.pintarSumaLevel();
+  }
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
@@ -3179,15 +3180,15 @@ function mostrarVistaInterna(vista) {
   var tabProp = document.getElementById("btn-tab-propietaria");
 
   if (vista === "propietaria") {
-    panelCarmen.style.display = "block";
-    panelRes.style.display = "none";
-    tabProp.classList.add("active");
-    tabRes.classList.remove("active");
+    if (panelCarmen) panelCarmen.style.display = "block";
+    if (panelRes) panelRes.style.display = "none";
+    if (tabProp) tabProp.classList.add("active");
+    if (tabRes) tabRes.classList.remove("active");
   } else {
-    panelCarmen.style.display = "none";
-    panelRes.style.display = "block";
-    tabRes.classList.add("active");
-    tabProp.classList.remove("active");
+    if (panelCarmen) panelCarmen.style.display = "none";
+    if (panelRes) panelRes.style.display = "block";
+    if (tabRes) tabRes.classList.add("active");
+    if (tabProp) tabProp.classList.remove("active");
   }
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
@@ -3202,10 +3203,12 @@ function cerrarSesion() {
   window.CARTERA_PROPIEDADES = [];
   window.RECIBOS_CARTERA = [];
   window.SUMINISTROS_GASTOS = [];
-  window.sesionActiva["DNI-NIE-CIF"] = "";
-  window.sesionActiva.codigo_inquilino = "";
-  window.sesionActiva.rol = "INQUILINO";
-  window.sesionActiva.tabla_filtro = "PROPERTY_INQUILINOS";
+  if (window.sesionActiva) {
+    window.sesionActiva["DNI-NIE-CIF"] = "";
+    window.sesionActiva.codigo_inquilino = "";
+    window.sesionActiva.rol = "INQUILINO";
+    window.sesionActiva.tabla_filtro = "PROPERTY_INQUILINOS";
+  }
   var inpDni = document.getElementById("input-dni");
   if (inpDni) inpDni.value = "";
   var chkPriv = document.getElementById("chk-privacidad");
@@ -3244,7 +3247,7 @@ async function enviarMensajeBotChat(e) {
   btn.disabled = true;
   box.scrollTop = box.scrollHeight;
 
-  var dniChat = window.sesionActiva["DNI-NIE-CIF"] || "NO_IDENTIFICADO";
+  var dniChat = (window.sesionActiva && window.sesionActiva["DNI-NIE-CIF"]) || "NO_IDENTIFICADO";
 
   try {
     var res = await fetch(URL_WEBHOOK_BOT_CHAT, {
@@ -3252,13 +3255,13 @@ async function enviarMensajeBotChat(e) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         origen: "PORTAL_ALQUILERES_LEVEL",
-        tabla_destino: window.sesionActiva.tabla_filtro,
-        rol: window.sesionActiva.rol,
+        tabla_destino: window.sesionActiva ? window.sesionActiva.tabla_filtro : "PROPERTY_INQUILINOS",
+        rol: window.sesionActiva ? window.sesionActiva.rol : "INQUILINO",
         "DNI-NIE-CIF": dniChat,
         dni: dniChat,
-        codigo_inquilino: window.sesionActiva.codigo_inquilino || "",
-        propiedad: window.sesionActiva.propiedad || "",
-        idioma: window.sesionActiva.idioma,
+        codigo_inquilino: (window.sesionActiva && window.sesionActiva.codigo_inquilino) || "",
+        propiedad: (window.sesionActiva && window.sesionActiva.propiedad) || "",
+        idioma: (window.sesionActiva && window.sesionActiva.idioma) || "es",
         mensaje: texto
       })
     });
@@ -3288,47 +3291,110 @@ function escaparHTML(s) {
     return { '&':'&amp;', '<':'&lt;', '>':'&gt;', "'":'&#39;', '"':'&quot;' }[c];
   });
 }
-  // =========================================================================
-// AUTO-LOGIN DIRECTO DESDE ENLACE DE WHATSAPP (?code=CLI-001 / ?code=INQ-001)
+
 // =========================================================================
-window.addEventListener("DOMContentLoaded", function() {
-  var params = new URLSearchParams(window.location.search);
-  var codeUrl = (params.get("code") || "").trim().toUpperCase();
+// DETECTOR AUTOMÁTICO DE ?code= DESDE WHATSAPP Y PUENTE CON MAKE
+// =========================================================================
+(function inicializarAccesoDirectoWhatsApp() {
+  var URL_DATOS_MAKE = "https://hook.eu1.make.com/tfk9n3nefcufj183eth64m2e257kch5q";
 
-  if (codeUrl !== "") {
-    // 1. Determinar rol y tabla según el prefijo del código
-    var esPropietario = codeUrl.indexOf("CLI-") === 0 || codeUrl.indexOf("PROP-") === 0;
-    var esAbogado = codeUrl.indexOf("ID_LEG") === 0 || codeUrl.indexOf("ABO-") === 0;
+  async function conectarConPortalDatos(identificador, rolForzado) {
+    var codUpper = String(identificador || "").trim().toUpperCase();
+    var esProp = rolForzado === "PROPIETARIO" || codUpper.indexOf("CLI-") === 0 || codUpper.indexOf("PROP-") === 0;
+    var esAbg = rolForzado === "ABOGADO" || codUpper.indexOf("ID_LEG") === 0 || codUpper.indexOf("ABO-") === 0;
+    var rolDetectado = esProp ? "PROPIETARIO" : (esAbg ? "ABOGADO" : "INQUILINO");
+    var tablaDetectada = esProp ? "PROPERTY_PROPIETARIOS" : (esAbg ? "PROPERTY_PROPIETARIOS_LEGAL_SERVICES" : "PROPERTY_INQUILINOS");
 
-    if (window.sesionActiva) {
-      window.sesionActiva.codigo_inquilino = codeUrl;
-      window.sesionActiva["DNI-NIE-CIF"] = codeUrl;
-      if (esPropietario) {
-        window.sesionActiva.rol = "PROPIETARIO";
-        window.sesionActiva.tabla_filtro = "PROPERTY_PROPIETARIOS";
-      } else if (esAbogado) {
-        window.sesionActiva.rol = "ABOGADO";
-        window.sesionActiva.tabla_filtro = "PROPERTY_PROPIETARIOS_LEGAL_SERVICES";
+    window.sesionActiva = window.sesionActiva || {};
+    window.sesionActiva["DNI-NIE-CIF"] = codUpper;
+    window.sesionActiva.codigo_inquilino = codUpper;
+    window.sesionActiva.rol = rolDetectado;
+    window.sesionActiva.tabla_filtro = tablaDetectada;
+
+    // Mostrar feedback en pantalla mientras consulta Make
+    var msgExito = document.getElementById("msg-exito");
+    var msgError = document.getElementById("msg-error");
+    if (msgError) msgError.style.display = "none";
+    if (msgExito) {
+      msgExito.innerHTML = "⏳ <strong>Acceso directo verificado (" + escaparHTML(codUpper) + ")</strong>. Abriendo panel de " + rolDetectado + "...";
+      msgExito.style.display = "block";
+    }
+
+    try {
+      var res = await fetch(URL_DATOS_MAKE, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          origen: "LINK_WHATSAPP_DIRECTO",
+          "DNI-NIE-CIF": codUpper,
+          dni: codUpper,
+          code: codUpper,
+          codigo_inquilino: codUpper,
+          rol: rolDetectado,
+          tabla_filtro: tablaDetectada
+        })
+      });
+
+      var rawText = await res.text();
+      var datosMake = null;
+      try {
+        datosMake = JSON.parse(rawText);
+      } catch (e) {
+        datosMake = null;
+      }
+
+      // Si tenemos función interna de hidratación de datos en el script de 3000 líneas, llamarla:
+      if (datosMake && typeof window.aplicarDatosExpediente === "function") {
+        window.aplicarDatosExpediente(datosMake);
+      } else if (datosMake && typeof window.hidratarPortalConMake === "function") {
+        window.hidratarPortalConMake(datosMake);
+      }
+
+      // Abrir el Dashboard a pantalla completa directamente en la vista correspondiente
+      var loginSec = document.getElementById("login-section");
+      var dashSec = document.getElementById("portal-dashboard");
+      var mainLay = document.getElementById("main-layout");
+
+      if (loginSec) loginSec.style.display = "none";
+      if (dashSec) dashSec.style.display = "block";
+      if (mainLay) mainLay.classList.add("fullscreen-mode");
+
+      if (esProp) {
+        mostrarVistaInterna("propietaria");
       } else {
-        window.sesionActiva.rol = "INQUILINO";
-        window.sesionActiva.tabla_filtro = "PROPERTY_INQUILINOS";
+        mostrarVistaInterna("residente");
+      }
+
+    } catch (err) {
+      console.warn("Aviso al consultar Portal Datos Inquilinos:", err);
+      // Si es Propietario, abrimos igualmente el panel de propietaria diseñado
+      if (esProp) {
+        document.getElementById("login-section").style.display = "none";
+        document.getElementById("portal-dashboard").style.display = "block";
+        document.getElementById("main-layout").classList.add("fullscreen-mode");
+        mostrarVistaInterna("propietaria");
       }
     }
+  }
 
-    // 2. Si tienes función de carga directa del expediente, dispararla;
-    // o bien activar la vista correspondiente inmediatamente:
-    if (typeof window.cargarDatosPortal === "function") {
-      window.cargarDatosPortal(codeUrl);
-    } else if (typeof window.consultarExpedienteMake === "function") {
-      window.consultarExpedienteMake(codeUrl);
-    } else if (esPropietario) {
-      // Mostrar directamente el panel de Propietaria que diseñamos
-      document.getElementById("login-section").style.display = "none";
-      document.getElementById("portal-dashboard").style.display = "block";
-      mostrarVistaInterna("propietaria");
+  window.conectarConPortalDatos = conectarConPortalDatos;
+
+  function verificarParametroUrl() {
+    var params = new URLSearchParams(window.location.search);
+    var codeParam = (params.get("code") || "").trim();
+    if (codeParam !== "") {
+      conectarConPortalDatos(codeParam);
     }
   }
-});
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", verificarParametroUrl);
+  } else {
+    verificarParametroUrl();
+  }
+})();
 </script>
 </body>
 </html>
+
+  
