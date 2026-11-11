@@ -166,7 +166,7 @@
         }
 
         /* ==========================================
-           2. HEADER SUPERIOR STICKY
+           2. HEADER SUPERIOR STICKY + SELECTOR BANDERAS SVG
            ========================================== */
         header {
             position: sticky;
@@ -227,18 +227,77 @@
 
         .nav-pill:hover { border-color: var(--accent-green); color: #fff; }
 
-        .header-right { display: flex; align-items: center; gap: 10px; }
+        .header-right { display: flex; align-items: center; gap: 10px; position: relative; }
 
-        .lang-select {
+        /* SELECTOR PERSONALIZADO CON BANDERAS SVG REALES */
+        .custom-lang-dropdown {
+            position: relative;
+            user-select: none;
+        }
+
+        .custom-lang-btn {
             background: var(--bg-card);
             border: 1px solid var(--accent-gold);
             color: var(--text-main);
             padding: 7px 12px;
             border-radius: 6px;
-            font-size: 12px;
-            font-weight: bold;
+            font-size: 12.5px;
+            font-weight: 700;
             cursor: pointer;
-            outline: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 132px;
+            justify-content: space-between;
+            transition: border-color 0.2s;
+        }
+
+        .custom-lang-btn:hover {
+            border-color: var(--accent-green);
+        }
+
+        .lang-flag-svg {
+            width: 20px;
+            height: 14px;
+            border-radius: 2px;
+            flex-shrink: 0;
+            box-shadow: 0 0 3px rgba(0,0,0,0.6);
+            display: inline-block;
+        }
+
+        .custom-lang-menu {
+            display: none;
+            position: absolute;
+            top: calc(100% + 6px);
+            right: 0;
+            width: 100%;
+            background: var(--bg-panel);
+            border: 1px solid var(--accent-gold);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.8);
+            z-index: 2000;
+        }
+
+        .custom-lang-menu.open {
+            display: block;
+        }
+
+        .custom-lang-option {
+            padding: 9px 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12.5px;
+            font-weight: 700;
+            color: var(--text-main);
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+
+        .custom-lang-option:hover {
+            background: var(--bg-card);
+            color: var(--accent-gold);
         }
 
         /* ==========================================
@@ -976,12 +1035,14 @@
 
         .link-btn {
             background: none; border: none;
-            color: var(--accent-blue);
+            color: var(--accent-gold);
             text-decoration: underline;
             padding: 0; font-size: inherit;
             cursor: pointer; font-family: inherit;
-            font-weight: 600;
+            font-weight: 700;
         }
+
+        .link-btn:hover { color: #fff; }
         
         .btn-action-ps {
             width: 100%;
@@ -1238,7 +1299,7 @@
     </div>
 
     <!-- ========================================================= -->
-    <!-- 2. HEADER SUPERIOR STICKY (CASTELLANO / CATALÀ)           -->
+    <!-- 2. HEADER SUPERIOR STICKY CON BANDERAS SVG REALES         -->
     <!-- ========================================================= -->
     <header>
         <div class="brand-left">
@@ -1260,10 +1321,41 @@
         </div>
 
         <div class="header-right">
-            <select id="language-selector" class="lang-select" onchange="setLanguage(this.value)">
-                <option value="es" selected>🇪🇸 Castellano</option>
-                <option value="ca">🟨 Català</option>
-            </select>
+            <!-- Input oculto que mantiene compatibilidad con el resto del script -->
+            <input type="hidden" id="language-selector" value="es">
+
+            <!-- Selector visual con banderas SVG reales (España y Senyera Catalana) -->
+            <div class="custom-lang-dropdown" id="custom-lang-dropdown">
+                <button type="button" class="custom-lang-btn" id="custom-lang-btn" onclick="toggleLangMenu(event)">
+                    <span style="display:flex; align-items:center; gap:8px;" id="current-lang-display">
+                        <svg class="lang-flag-svg" viewBox="0 0 60 40" xmlns="http://www.w3.org/2000/svg">
+                            <rect width="60" height="40" fill="#AA151B"/>
+                            <rect y="10" width="60" height="20" fill="#F1BF00"/>
+                        </svg>
+                        <span>Castellano</span>
+                    </span>
+                    <span style="font-size:10px; color:var(--accent-gold);">▼</span>
+                </button>
+                <div class="custom-lang-menu" id="custom-lang-menu">
+                    <div class="custom-lang-option" onclick="selectCustomLanguage('es')">
+                        <svg class="lang-flag-svg" viewBox="0 0 60 40" xmlns="http://www.w3.org/2000/svg">
+                            <rect width="60" height="40" fill="#AA151B"/>
+                            <rect y="10" width="60" height="20" fill="#F1BF00"/>
+                        </svg>
+                        <span>Castellano</span>
+                    </div>
+                    <div class="custom-lang-option" onclick="selectCustomLanguage('ca')">
+                        <svg class="lang-flag-svg" viewBox="0 0 60 40" xmlns="http://www.w3.org/2000/svg">
+                            <rect width="60" height="40" fill="#FCDD09"/>
+                            <rect y="4.44" width="60" height="4.44" fill="#DA121A"/>
+                            <rect y="13.33" width="60" height="4.44" fill="#DA121A"/>
+                            <rect y="22.22" width="60" height="4.44" fill="#DA121A"/>
+                            <rect y="31.11" width="60" height="4.44" fill="#DA121A"/>
+                        </svg>
+                        <span>Català</span>
+                    </div>
+                </div>
+            </div>
         </div>
     </header>
 
@@ -1648,7 +1740,7 @@
 
     <div class="toast-notification" id="toast-msg"></div>
 
-    <!-- MODAL AVISO LEGAL RÁPIDO -->
+    <!-- MODAL AVISO LEGAL RÁPIDO (Z-INDEX MÁXIMO PARA VERSE SIEMPRE ENCIMA) -->
     <div id="modal-legal-rapido" class="modal-overlay" style="z-index: 10000001;" onclick="this.style.display='none'">
         <div class="elena-modal-box" style="max-width: 520px;" onclick="event.stopPropagation()">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
@@ -1659,7 +1751,7 @@
         </div>
     </div>
 
-    <!-- MODAL ELENA (VISITAS E INVERSIÓN) -->
+    <!-- MODAL ELENA (VISITAS E INVERSIÓN) CON ENLACES LEGALES ACTIVOS -->
     <div id="modal-elena" class="modal-overlay" style="z-index: 10000;">
         <div class="elena-modal-box">
             <div class="elena-header">
@@ -1678,10 +1770,18 @@
                     </div>
                     <input type="number" id="captcha-input" placeholder="..." style="width: 100%; background: var(--bg-panel); border: 1px solid var(--border-color); color: #fff; padding: 10px; border-radius: 6px; font-size: 14px; text-align: center; margin-bottom: 12px; outline: none;">
                     
-                    <label style="font-size: 11.5px; color: var(--text-muted); display: flex; align-items: flex-start; gap: 8px; cursor: pointer; line-height: 1.4;">
-                        <input type="checkbox" id="legal-consent" style="margin-top: 3px; accent-color: var(--accent-green);">
-                        <span data-i18n="elena_sec_legal">He leído y acepto la Política de Privacidad, el Aviso Legal y consiento ser atendido de forma automatizada por el sistema de Inteligencia Artificial de Level.immo.</span>
-                    </label>
+                    <div style="font-size: 11.5px; color: var(--text-muted); display: flex; align-items: flex-start; gap: 8px; line-height: 1.45;">
+                        <input type="checkbox" id="legal-consent" style="margin-top: 3px; accent-color: var(--accent-green); cursor: pointer;">
+                        <div>
+                            <label for="legal-consent" style="cursor:pointer;" data-i18n="elena_legal_1">He leído y acepto la</label>
+                            <button type="button" class="link-btn" onclick="abrirModalLegalRapido('privacidad')" data-i18n="elena_legal_priv">Política de Privacidad</button>,
+                            <span data-i18n="elena_legal_2">el</span>
+                            <button type="button" class="link-btn" onclick="abrirModalLegalRapido('aviso')" data-i18n="elena_legal_aviso">Aviso Legal</button>
+                            <span data-i18n="elena_legal_3">y las</span>
+                            <button type="button" class="link-btn" onclick="abrirModalLegalRapido('cookies')" data-i18n="elena_legal_cookies">Cookies e IA</button>,
+                            <label for="legal-consent" style="cursor:pointer;" data-i18n="elena_legal_4">y consiento ser atendido de forma automatizada por el sistema de Inteligencia Artificial de Level.immo.</label>
+                        </div>
+                    </div>
 
                     <button class="btn-action-chat" style="margin-top:14px;" onclick="superarCaptchaElena()" data-i18n="btn_verificar_elena">✅ Verificar y Hablar con Elena IA</button>
                 </div>
@@ -1754,7 +1854,7 @@
                         <div class="input-group-sim">
                             <label>WhatsApp</label>
                             <div class="phone-input-wrapper">
-                                <span class="phone-prefix-fixed">🇪🇸 +34</span>
+                                <span class="phone-prefix-fixed">+34</span>
                                 <input type="tel" id="ps-field-telefono" required pattern="[6789][0-9]{8}" maxlength="9" placeholder="600123456">
                             </div>
                         </div>
@@ -1834,15 +1934,14 @@
 
                     <div class="legal-check-container">
                         <input type="checkbox" id="ps-legal-check" required>
-                        <label for="ps-legal-check">
-                            <span data-i18n="ps_legal_txt_1">He leído y acepto la</span>
-                            <button type="button" class="link-btn" onclick="abrirModalLegalRapido('privacidad')" data-i18n="footer_privacidad">Privacidad y RGPD</button>
-                            <span>,</span>
+                        <div>
+                            <label for="ps-legal-check" style="cursor:pointer;" data-i18n="ps_legal_txt_1">He leído y acepto la</label>
+                            <button type="button" class="link-btn" onclick="abrirModalLegalRapido('privacidad')" data-i18n="footer_privacidad">Privacidad y RGPD</button>,
                             <button type="button" class="link-btn" onclick="abrirModalLegalRapido('aviso')" data-i18n="footer_aviso">Aviso Legal</button>
                             <span>y</span>
                             <button type="button" class="link-btn" onclick="abrirModalLegalRapido('cookies')" data-i18n="footer_cookies">Cookies e IA</button>.
-                            <span data-i18n="ps_legal_txt_2">Autorizo el contacto de Level.immo y la derivación al bróker bajo cifrado seguro.</span>
-                        </label>
+                            <label for="ps-legal-check" style="cursor:pointer;" data-i18n="ps_legal_txt_2">Autorizo el contacto de Level.immo y la derivación al bróker bajo cifrado seguro.</label>
+                        </div>
                     </div>
 
                     <button type="submit" id="ps-btn-enviar-final" class="btn-action-ps" data-i18n="ps_btn_enviar">
@@ -1949,7 +2048,13 @@
                 baja_txt: "Para tramitar la baja, resuelve esta prueba matemática:", btn_confirmar_baja: "Confirmar Baja",
                 elena_sub: "● Recepción & Lista Prioritaria · La Ràpita (CP 43540)", btn_cerrar: "✕ Cerrar",
                 elena_sec_title: "Verificación de Seguridad:", elena_sec_txt: "Para iniciar con Elena IA y registrar tu solicitud prioritaria de visita, resuelve la suma: ¿Cuánto es",
-                elena_sec_legal: "He leído y acepto la Política de Privacidad, el Aviso Legal y consiento ser atendido de forma automatizada por el sistema de Inteligencia Artificial de Level.immo.",
+                elena_legal_1: "He leído y acepto la",
+                elena_legal_priv: "Política de Privacidad",
+                elena_legal_2: "el",
+                elena_legal_aviso: "Aviso Legal",
+                elena_legal_3: "y las",
+                elena_legal_cookies: "Cookies e IA",
+                elena_legal_4: "y consiento ser atendido de forma automatizada por el sistema de Inteligencia Artificial de Level.immo.",
                 btn_verificar_elena: "✅ Verificar y Hablar con Elena IA",
                 ps_intro_elena: "Completa tus datos para evaluar tu poder de compra real según la tipología del inmueble. No te pediremos documentación ahora.",
                 ps_label_tipo: "Tipo de Operación / Destino", ps_opt_1: "🏠 Vivienda Habitual / Residencial (Plazo máx. 30 años | 80% LTV)", ps_opt_2: "🏖️ Segunda Residencia / Costa (Plazo máx. 30 años | 70-80% LTV)", ps_opt_3: "📈 Inversión Patrimonial (Plazo máx. 25-30 años | 70-80% LTV)", ps_opt_4: "🏢 Local Comercial o Activo Terciario (Plazo máx. 15 años | Máx. 70% LTV)",
@@ -2028,14 +2133,20 @@
                 faq_3_q: "📅 Com funciona l'ordre de prioritat per visitar la propietat?",
                 faq_3_a: "En prémer el botó de sol·licitud de visita, la nostra assistent Elena IA recollirà les teves preferències i agendarà una breu entrevista telefònica amb el Responsable de Vendes de la Zona (CP 43540). A més, rebràs accés a la teva Zona Privada personal per consultar el teu torn de visita.",
                 legal_priv_q: "🔒 Política de Privadesa",
-                legal_priv_a: "<strong>1. Responsable del Tractament</strong><br>Raó Social: LEVEL PUNTO IMMO 24365 SLU<br>NIF: B-26745430<br>Domicili Social: Travessera de Gràcia, 56, 3-1a, 08006 Barcelona<br>Email de Contacte: level@level.immo",
+                legal_priv_a: "<strong>1. Responsable del Tractament</strong><br>Raó Social: LEVEL PUNTO IMMO 24365 SLU<br>NIF: B-26745430<br>Domicili Social: Travessera de Gràcia, 56, 3-1a, 08006 Barcelona<br>Email de Contacte: level@level.immo<br><br><strong>2. Objecte i Finalitat</strong><br>La present política regula el tractament de les dades recollides a través de level.immo. La finalitat exclusiva és la prestació de serveis d'auditoria, consultoria i intel·ligència immobiliària sol·licitats per l'usuari, així com la gestió de les comunicacions derivades d'aquesta relació comercial.",
                 legal_aviso_q: "⚖️ Avís Legal", legal_aviso_a: "<strong>Informació del Titular</strong><br>Entitat: LEVEL PUNTO IMMO 24365 SLU · NIF: B-26745430<br>Domicili: Travessera de Gràcia, 56, 3-1a, 08006 Barcelona<br>Registre Oficial: API 4173 · AICAT 14200",
                 legal_cookie_q: "🍪 Política de Cookies i Intel·ligència Artificial", legal_cookie_a: "Utilitzem cookies tècniques necessàries per mantenir la teva sessió activa i assegurar el funcionament del sistema multiidioma, així com assistència automatitzada mitjançant Intel·ligència Artificial (Elena IA).",
                 footer_servicios: "Serveis Presencials a:", footer_aviso: "Avís Legal", footer_privacidad: "Privadesa i RGPD", footer_cookies: "Cookies i IA", footer_baja: "🛑 Sol·licitar la baixa",
                 baja_txt: "Per tramitar la baixa, resol aquesta prova matemàtica:", btn_confirmar_baja: "Confirmar Baixa",
                 elena_sub: "● Recepció & Llista Prioritària · La Ràpita (CP 43540)", btn_cerrar: "✕ Tancar",
                 elena_sec_title: "Verificació de Seguretat:", elena_sec_txt: "Per iniciar amb Elena IA i registrar la teva sol·licitud prioritària, resol la suma: Quant és",
-                elena_sec_legal: "He llegit i accepto la Política de Privadesa, l'Avís Legal i consento ser atès de forma automatitzada pel sistema d'Intel·ligència Artificial de Level.immo.",
+                elena_legal_1: "He llegit i accepto la",
+                elena_legal_priv: "Política de Privadesa",
+                elena_legal_2: "l'",
+                elena_legal_aviso: "Avís Legal",
+                elena_legal_3: "i les",
+                elena_legal_cookies: "Cookies i IA",
+                elena_legal_4: "i consento ser atès de forma automatitzada pel sistema d'Intel·ligència Artificial de Level.immo.",
                 btn_verificar_elena: "✅ Verificar i Parlar amb Elena IA",
                 ps_intro_elena: "Completa les teves dades per avaluar el teu poder de compra real segons la tipologia de l'immoble. No et demanarem documentació ara.",
                 ps_label_tipo: "Tipus d'Operació / Destinació", ps_opt_1: "🏠 Habitatge Habitual / Residencial (Termini màx. 30 anys | 80% LTV)", ps_opt_2: "🏖️ Segona Residència / Costa (Termini màx. 30 anys | 70-80% LTV)", ps_opt_3: "📈 Inversió Patrimonial (Termini màx. 25-30 anys | 70-80% LTV)", ps_opt_4: "🏢 Local Comercial o Actiu Terciari (Termini màx. 15 anys | Màx. 70% LTV)",
@@ -2049,6 +2160,30 @@
                 ps_btn_enviar: "Activar Demanda i Enviar a Tràmit", ps_btn_volver: "← Tornar Enrere", ps_success_title: "Sol·licitud de Pre-scoring Registrada!", btn_aceptar_fin: "Acceptar i Finalitzar"
             }
         };
+
+        const SVG_FLAG_ES = `<svg class="lang-flag-svg" viewBox="0 0 60 40" xmlns="http://www.w3.org/2000/svg"><rect width="60" height="40" fill="#AA151B"/><rect y="10" width="60" height="20" fill="#F1BF00"/></svg>`;
+        const SVG_FLAG_CA = `<svg class="lang-flag-svg" viewBox="0 0 60 40" xmlns="http://www.w3.org/2000/svg"><rect width="60" height="40" fill="#FCDD09"/><rect y="4.44" width="60" height="4.44" fill="#DA121A"/><rect y="13.33" width="60" height="4.44" fill="#DA121A"/><rect y="22.22" width="60" height="4.44" fill="#DA121A"/><rect y="31.11" width="60" height="4.44" fill="#DA121A"/></svg>`;
+
+        function toggleLangMenu(e) {
+            e.stopPropagation();
+            document.getElementById('custom-lang-menu').classList.toggle('open');
+        }
+
+        function selectCustomLanguage(lang) {
+            document.getElementById('custom-lang-menu').classList.remove('open');
+            const display = document.getElementById('current-lang-display');
+            if (lang === 'ca') {
+                display.innerHTML = `${SVG_FLAG_CA}<span>Català</span>`;
+            } else {
+                display.innerHTML = `${SVG_FLAG_ES}<span>Castellano</span>`;
+            }
+            setLanguage(lang);
+        }
+
+        document.addEventListener('click', function() {
+            const menu = document.getElementById('custom-lang-menu');
+            if (menu) menu.classList.remove('open');
+        });
 
         function aplicarTraduccion(lang) {
             const dic = traducciones[lang] || traducciones['es'];
@@ -2381,6 +2516,7 @@
 
         function setLanguage(lang) {
             document.getElementById('language-selector').value = lang;
+            document.getElementById('html-root').setAttribute('lang', lang);
             document.getElementById('html-root').setAttribute('dir', 'ltr');
             aplicarTraduccion(lang);
         }
@@ -2437,7 +2573,7 @@
         function cerrarModalElena() { document.getElementById('modal-elena').style.display = 'none'; }
 
         function superarCaptchaElena() {
-            if (!document.getElementById('legal-consent').checked) { alert("⚠️ Debes aceptar la Política de Privacidad."); return; }
+            if (!document.getElementById('legal-consent').checked) { alert("⚠️ Debes marcar la casilla aceptando la Política de Privacidad y el Aviso Legal."); return; }
             if (parseInt(document.getElementById('captcha-input').value) !== captchaRespuesta) { alert("⚠️ La suma matemática no es correcta."); return; }
             document.getElementById('elena-step-captcha').style.display = 'none';
             document.getElementById('elena-step-chat').style.display = 'flex';
