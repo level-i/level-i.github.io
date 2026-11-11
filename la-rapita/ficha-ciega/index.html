@@ -344,7 +344,6 @@
 
                     <h1 class="montsia-title" data-i18n="title_main">Local Comercial para Profesional Independiente + Vivienda Anexa Reformada en La Ràpita</h1>
 
-                    <!-- GRID AMPLIADO A 5 TARJETAS PARA INCLUIR CERTIFICACIÓN Y CÉDULA -->
                     <div class="montsia-tech-grid">
                         <div class="tech-card" style="border-color: var(--accent-green);">
                             <div class="tech-label" data-i18n="tech_1_label">PVP Orientativo</div>
@@ -433,13 +432,17 @@
                 <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3011.6675037195435!2d0.5916422758117709!3d40.61962304958931!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x12a0f8bf3c88029d%3A0xdfeb34d402fa6212!2sCarrer%20de%20Sant%20Francesc%2C%205%2C%2043540%20Sant%20Carles%20de%20la%20R%C3%A0pita%2C%20Tarragona!5e0!3m2!1ses!2ses!4v1700000000000!5m2!1ses!2ses" width="100%" height="280" style="border:0; filter: invert(90%) hue-rotate(180deg) brightness(85%) contrast(85%);" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
             </div>
             
-            <h3 class="montsia-title" style="margin-bottom: 15px;" data-i18n="sim_title">Simula tu cuota hipotecaria</h3>
-            <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 22px;" data-i18n="sim_sub">Modifica tu aportación inicial (el mínimo recomendado cubre el 20% del precio + 10% de gastos aprox.), plazo y tipo de interés. <em>Datos puramente orientativos y no vinculantes.</em></p>
+            <h3 class="montsia-title" style="margin-bottom: 15px;" data-i18n="sim_title">Simula tu operación de compra</h3>
+            <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 22px;" data-i18n="sim_sub_new">Introduce tu aportación inicial para calcular la cuota y visualizar el detalle de gastos asociados a la compra de este inmueble.</p>
 
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 20px;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 15px; margin-bottom: 20px;">
+                <div class="input-group-sim">
+                    <label data-i18n="sim_precio_fijo">Precio de Venta (Fijo)</label>
+                    <input type="text" value="72.000 €" readonly disabled style="background-color: #05080c; color: var(--accent-gold); font-weight: bold; cursor: not-allowed; opacity: 0.8;">
+                </div>
                 <div class="input-group-sim">
                     <label data-i18n="sim_label_aportacion">Aportación Inicial (€)</label>
-                    <input type="number" id="sim-aportacion" value="21600" min="0" step="500" oninput="calcularCuotaLocal()">
+                    <input type="number" id="sim-aportacion" value="23000" min="0" step="500" oninput="calcularCuotaLocal()">
                 </div>
                 <div class="input-group-sim">
                     <label data-i18n="sim_label_plazo">Plazo (Años)</label>
@@ -451,15 +454,61 @@
                     </select>
                 </div>
                 <div class="input-group-sim">
-                    <label data-i18n="sim_label_interes">Tipo de Interés (%)</label>
+                    <label data-i18n="sim_label_interes">Interés Fijo Actual (%)</label>
                     <input type="number" id="sim-interes" value="2.95" step="0.1" oninput="calcularCuotaLocal()">
                 </div>
             </div>
 
-            <div class="scoring-preview-box" style="margin-bottom: 20px;">
-                <div class="scoring-label" style="font-size: 11px;" data-i18n="sim_label_cuota">Cuota Mensual Estimada</div>
-                <div id="sim-cuota-result" style="font-size: 32px; font-weight: 900; color: var(--accent-blue); margin: 6px 0;">-- € / mes</div>
-                <div style="font-size: 12px; color: var(--text-muted);"><span data-i18n="sim_label_capital">Capital a financiar:</span> <strong id="sim-capital-result" style="color: #fff;">-- €</strong></div>
+            <!-- DETALLE DE LA OPERACIÓN -->
+            <div class="scoring-preview-box" style="margin-bottom: 20px; text-align: left; padding: 22px;">
+                <h4 style="margin: 0 0 15px 0; color: var(--accent-blue); font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;" data-i18n="sim_desglose_title">Desglose Estimado de Gastos y Capital</h4>
+                
+                <div style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 8px;">
+                    <span style="color: var(--text-muted);" data-i18n="sim_precio_inmueble">Precio del inmueble:</span>
+                    <strong style="color: #fff;">72.000 €</strong>
+                </div>
+                
+                <div style="font-size: 12px; color: var(--text-muted); margin-top: 10px; margin-bottom: 4px; font-weight: bold;" data-i18n="sim_gastos_title">Gastos de Compraventa (aprox. 12%):</div>
+                <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px; padding-left: 10px;">
+                    <span style="color: var(--text-muted);" data-i18n="sim_gastos_itp">• Impuestos (ITP 10% CAT):</span>
+                    <span style="color: #ccc;">7.200 €</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px; padding-left: 10px;">
+                    <span style="color: var(--text-muted);" data-i18n="sim_gastos_notaria">• Notaría (estimado):</span>
+                    <span style="color: #ccc;">600 €</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px; padding-left: 10px;">
+                    <span style="color: var(--text-muted);" data-i18n="sim_gastos_registro">• Registro Propiedad (estimado):</span>
+                    <span style="color: #ccc;">400 €</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 12px; padding-left: 10px;">
+                    <span style="color: var(--text-muted);" data-i18n="sim_gastos_gestoria">• Gestoría (estimado):</span>
+                    <span style="color: #ccc;">400 €</span>
+                </div>
+                
+                <div style="display: flex; justify-content: space-between; font-size: 13px; border-top: 1px dashed var(--border-color); padding-top: 8px; margin-top: 8px;">
+                    <span style="color: var(--text-muted);" data-i18n="sim_gastos_total">Suma total de gastos:</span>
+                    <strong style="color: var(--accent-orange);">8.600 €</strong>
+                </div>
+                
+                <div style="display: flex; justify-content: space-between; font-size: 13px; border-bottom: 1px solid var(--border-color); padding-bottom: 12px; margin-top: 12px;">
+                    <span style="color: var(--text-muted);" data-i18n="sim_aportacion_res">Tu Aportación Inicial:</span>
+                    <strong style="color: var(--accent-green);" id="sim-desglose-aportacion">23.000 €</strong>
+                </div>
+                
+                <div style="display: flex; justify-content: space-between; align-items: center; font-size: 15px; margin-top: 15px;">
+                    <span style="color: #fff; font-weight: bold;" data-i18n="sim_label_capital">Capital a Financiar:</span>
+                    <strong style="color: #fff; font-size: 18px;" id="sim-capital-result">57.600 €</strong>
+                </div>
+                
+                <!-- BLOQUE CUOTA FINAL -->
+                <div style="text-align: center; margin-top: 20px; background: rgba(16, 185, 129, 0.05); padding: 18px; border-radius: 10px; border: 1px solid rgba(16, 185, 129, 0.2);">
+                    <div class="scoring-label" style="font-size: 11px; color: var(--accent-green); text-transform: uppercase; font-weight: bold;" data-i18n="sim_label_cuota">Cuota Mensual Estimada</div>
+                    <div id="sim-cuota-result" style="font-size: 34px; font-weight: 900; color: #fff; margin: 8px 0;">-- € / mes</div>
+                    <div style="font-size: 10px; color: var(--text-muted); line-height: 1.4; margin-top: 8px;" data-i18n="sim_aviso_legal">
+                        <em>* Aviso legal: El contenido de esta simulación no es vinculante, sino meramente informativo. Sujeto a estudio de viabilidad y aprobación bancaria definitiva.</em>
+                    </div>
+                </div>
             </div>
 
             <!-- BOTÓN GESTIÓN HIPOTECA -->
@@ -798,11 +847,22 @@
                 btn_like: "Me Gusta este Activo", btn_share: "Compartir esta Ficha", btn_elena_main: "📅 ME INTERESA ESTE ACTIVO · SOLICITAR VISITA Y AGENDAR CON ELENA IA",
                 tag_galeria: "<span class='gold-pulse-dot'></span> Galería del Activo",
                 tag_simulador: "<span class='gold-pulse-dot' style='background-color: var(--accent-blue);'></span> Ubicación del Activo y Simulador Financiero",
-                sim_title: "Simula tu cuota hipotecaria",
-                sim_sub: "Modifica tu aportación inicial (el mínimo recomendado cubre el 20% del precio + 10% de gastos aprox.), plazo y tipo de interés. <em>Datos puramente orientativos y no vinculantes.</em>",
-                sim_label_aportacion: "Aportación Inicial (€)", sim_label_plazo: "Plazo (Años)", sim_label_interes: "Tipo de Interés (%)",
+                sim_title: "Simula tu operación de compra",
+                sim_sub_new: "Introduce tu aportación inicial para calcular la cuota y visualizar el detalle de gastos asociados a la compra de este inmueble.",
+                sim_precio_fijo: "Precio de Venta (Fijo)",
+                sim_desglose_title: "Desglose Estimado de Gastos y Capital",
+                sim_precio_inmueble: "Precio del inmueble:",
+                sim_gastos_title: "Gastos de Compraventa (aprox. 12%):",
+                sim_gastos_itp: "• Impuestos (ITP 10% CAT):",
+                sim_gastos_notaria: "• Notaría (estimado):",
+                sim_gastos_registro: "• Registro Propiedad (estimado):",
+                sim_gastos_gestoria: "• Gestoría (estimado):",
+                sim_gastos_total: "Suma total de gastos:",
+                sim_aportacion_res: "Tu Aportación Inicial:",
+                sim_label_aportacion: "Aportación Inicial (€)", sim_label_plazo: "Plazo (Años)", sim_label_interes: "Interés Fijo Actual (%)",
                 sim_plazo_15: "15 años", sim_plazo_20: "20 años", sim_plazo_25: "25 años", sim_plazo_30: "30 años",
-                sim_label_cuota: "Cuota Mensual Estimada", sim_label_capital: "Capital a financiar:", btn_hipoteca: "⚡ GESTIÓN DE HIPOTECA PRE-APROBADA",
+                sim_label_cuota: "Cuota Mensual Estimada", sim_label_capital: "Capital a Financiar:", btn_hipoteca: "⚡ GESTIÓN DE HIPOTECA PRE-APROBADA",
+                sim_aviso_legal: "* Aviso legal: El contenido de esta simulación no es vinculante, sino meramente informativo. Sujeto a estudio de viabilidad y aprobación bancaria definitiva.",
                 tag_faqs: "<span class='gold-pulse-dot'></span> Consultoría Técnica | Preguntas Frecuentes (FAQs)", faqs_title: "Todo lo que necesitas saber sobre esta Ficha Ciega",
                 faq_1_q: "🔒 ¿Por qué el vídeo del interior aparece con efecto de confidencialidad (blur)?",
                 faq_1_a: "En Level.immo protegemos rigurosamente la privacidad de los propietarios y la exclusividad comercial de nuestros activos en Ficha Ciega mientras se completa la verificación documental. El contenido íntegro y sin filtros se desbloquea de forma privada tras la validación con Elena AI Advisor.",
@@ -853,11 +913,22 @@
                 btn_like: "M'agrada aquest Actiu", btn_share: "Compartir aquesta Fitxa", btn_elena_main: "📅 M'INTERESSA AQUEST ACTIU · SOL·LICITAR VISITA I AGENDAR AMB ELENA IA",
                 tag_galeria: "<span class='gold-pulse-dot'></span> Galeria de l'Actiu",
                 tag_simulador: "<span class='gold-pulse-dot' style='background-color: var(--accent-blue);'></span> Ubicació de l'Actiu i Simulador Financer",
-                sim_title: "Simula la teva quota hipotecària",
-                sim_sub: "Modifica la teva aportació inicial (el mínim recomanat cobreix el 20% del preu + 10% de despeses aprox.), termini i tipus d'interès. <em>Dades purament orientatives i no vinculants.</em>",
-                sim_label_aportacion: "Aportació Inicial (€)", sim_label_plazo: "Termini (Anys)", sim_label_interes: "Tipus d'Interès (%)",
+                sim_title: "Simula la teva operació de compra",
+                sim_sub_new: "Introdueix la teva aportació inicial per calcular la quota i visualitzar el detall de despeses associades a la compra d'aquest immoble.",
+                sim_precio_fijo: "Preu de Venda (Fix)",
+                sim_desglose_title: "Desglossament Estimat de Despeses i Capital",
+                sim_precio_inmueble: "Preu de l'immoble:",
+                sim_gastos_title: "Despeses de Compravenda (aprox. 12%):",
+                sim_gastos_itp: "• Impostos (ITP 10% CAT):",
+                sim_gastos_notaria: "• Notaria (estimat):",
+                sim_gastos_registro: "• Registre Propietat (estimat):",
+                sim_gastos_gestoria: "• Gestoria (estimat):",
+                sim_gastos_total: "Suma total de despeses:",
+                sim_aportacion_res: "La teva Aportació Inicial:",
+                sim_label_aportacion: "Aportació Inicial (€)", sim_label_plazo: "Termini (Anys)", sim_label_interes: "Interès Fix Actual (%)",
                 sim_plazo_15: "15 anys", sim_plazo_20: "20 anys", sim_plazo_25: "25 anys", sim_plazo_30: "30 anys",
-                sim_label_cuota: "Quota Mensual Estimada", sim_label_capital: "Capital a finançar:", btn_hipoteca: "⚡ GESTIÓ D'HIPOTECA PRE-APROVADA",
+                sim_label_cuota: "Quota Mensual Estimada", sim_label_capital: "Capital a Finançar:", btn_hipoteca: "⚡ GESTIÓ D'HIPOTECA PRE-APROVADA",
+                sim_aviso_legal: "* Avís legal: El contingut d'aquesta simulació no és vinculant, sinó merament informatiu. Subjecte a estudi de viabilitat i aprovació bancària definitiva.",
                 tag_faqs: "<span class='gold-pulse-dot'></span> Consultoria Tècnica | Preguntes Freqüents (FAQs)", faqs_title: "Tot el que necessites saber sobre aquesta Fitxa Cega",
                 faq_1_q: "🔒 Per què el vídeo de l'interior apareix amb efecte de confidencialitat (blur)?",
                 faq_1_a: "A Level.immo protegim rigorosament la privacitat dels propietaris i l'exclusivitat comercial dels nostres actius en Fitxa Cega mentre es completa la verificació documental. El contingut íntegre i sense filtres es desbloqueja de forma privada després de la validació amb Elena AI Advisor.",
@@ -998,23 +1069,34 @@
 
 
         // ==========================================
-        // SIMULADOR BÁSICO FICHA CIEGA
+        // SIMULADOR BÁSICO FICHA CIEGA ACTUALIZADO
         // ==========================================
         function calcularCuotaLocal() {
             const precio = 72000;
+            
+            // Desglose fijo de gastos para un inmueble de 72.000€ (Aprox 12%)
+            const gastos_itp = 7200; // 10%
+            const gastos_notaria = 600;
+            const gastos_registro = 400;
+            const gastos_gestoria = 400;
+            const gastosTotales = gastos_itp + gastos_notaria + gastos_registro + gastos_gestoria; // 8600€
+
             let aportacion = document.getElementById('sim-aportacion').value;
-            // Si el campo está vacío, consideramos aportación 0 para el cálculo temporal,
-            // pero mantenemos el campo vacío visualmente.
             aportacion = aportacion === "" ? 0 : parseFloat(aportacion);
             
             const plazoAnios = parseInt(document.getElementById('sim-plazo').value) || 30;
             const interesAnual = parseFloat(document.getElementById('sim-interes').value) || 0;
 
-            const gastos = 7200; // Aprox 10% de 72.000
-            let capital = precio - (aportacion - gastos); 
+            // Actualizar vista de la aportación introducida por el usuario
+            const elAportacion = document.getElementById('sim-desglose-aportacion');
+            if (elAportacion) elAportacion.innerText = fmt(aportacion) + " €";
 
+            // El capital a financiar es: Precio Inmueble + Gastos - Dinero que aporta el usuario
+            let capital = (precio + gastosTotales) - aportacion; 
+
+            // Filtros de seguridad en frontend
             if (capital < 0) capital = 0;
-            if (capital > precio) capital = precio; 
+            if (capital > (precio + gastosTotales)) capital = (precio + gastosTotales); 
 
             document.getElementById('sim-capital-result').innerText = fmt(capital) + " €";
 
@@ -1027,8 +1109,11 @@
             const n = plazoAnios * 12;
             let cuota = 0;
 
-            if (r === 0) { cuota = capital / n; } 
-            else { cuota = capital * (r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1); }
+            if (r === 0) { 
+                cuota = capital / n; 
+            } else { 
+                cuota = capital * (r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1); 
+            }
 
             document.getElementById('sim-cuota-result').innerText = fmt(cuota) + " € / mes";
         }
@@ -1373,7 +1458,6 @@
 
         function evaluarPreScoringCompleto() {
             const tipologia = document.getElementById('ps-field-tipologia').value;
-            // Manejamos strings vacíos para no romper el cálculo
             const edad = document.getElementById('ps-field-edad').value === "" ? 0 : parseInt(document.getElementById('ps-field-edad').value, 10);
             const ingresos = document.getElementById('ps-field-ingresos').value === "" ? 0 : parseFloat(document.getElementById('ps-field-ingresos').value);
             const cargas = document.getElementById('ps-field-cargas').value === "" ? 0 : parseFloat(document.getElementById('ps-field-cargas').value);
