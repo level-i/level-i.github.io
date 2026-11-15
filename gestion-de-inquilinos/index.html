@@ -4018,5 +4018,376 @@ window.renderizarPortalConDatos = function(data, identificador) {
   }
 };
 </script>
+<script>
+// ============================================================================
+// MOTOR MULTI-IDIOMA REAL (8 IDIOMAS) + PARCHE DE CARTERA, RECIBOS Y MAPA
+// ============================================================================
+const I18N_DICCIONARIO = {
+  es: {
+    nav_demanda_mob: "🎯 Demanda", nav_mercado_mob: "📡 Mercado", nav_usuarios_mob: "🔑 Usuarios",
+    nav_demanda: "🎯 Demanda Activa", nav_mercado_real: "📡 Mercado Real", nav_inquilinos: "👥 Acceso a Usuarios",
+    nav_chivatazo: "📣 Chivatazo Nacional", nav_equipos: "💼 Únete al Equipo de Advisors en tu Zona",
+    nav_poblaciones_titulo: "📍 Servicios Presenciales en:",
+    link_legal: "Aviso Legal", link_privacidad: "Privacidad y LOPD", link_cookies: "Cookies e IA",
+    topbar_title: "Consola PropTech · Reverse Market & Gestión Autónoma de Alquileres",
+    login_title: "Acceso Residentes, Propietarios y Servicios Jurídicos",
+    login_desc: "Introduce tu DNI/NIE/CIF para acceder de forma segura a tu panel privado y recibir tu PIN temporal de 4 cifras por WhatsApp.",
+    label_dni: "DNI / NIE / CIF del Titular o Letrado Autorizado",
+    chk_accept_prefix: "Acepto las", chk_accept_link: "Condiciones y la Privacidad",
+    chk_accept_suffix: "Autorizo la consulta cifrada de mi expediente y el envío de PIN por WhatsApp.",
+    btn_request_pin: "Solicitar Verificación VIP →",
+    pin_sent_title: "¡Solicitud enviada a tu WhatsApp!",
+    pin_sent_desc: "Introduce el PIN temporal de 4 cifras recibido en tu WhatsApp para abrir tu expediente a pantalla completa:",
+    btn_enter_portal: "Entrar al Portal a Pantalla Completa →", btn_back: "← Volver atrás",
+    tab_resident: "🏠 Expediente del Residente",
+    tab_owner: "👑 Área Propietario (Cartera, Suministros, TPV, Avisos y Abogado)",
+    btn_toggle_sidebars: "⛶ Mostrar/Ocultar Paneles Laterales", btn_logout: "✕ Cerrar Sesión",
+    owner_area_header: "👑 ÁREA SEGURA DEL PROPIETARIO · GESTIÓN AUTÓNOMA EN TIEMPO REAL",
+    owner_hello: "Hola,", exp_box_title: "🏠 EXPEDIENTE Y PROPIEDAD",
+    lbl_tenant: "Inquilino / Titular:", lbl_property: "Inmueble(s):", lbl_address: "Dirección / Ubicación:",
+    lbl_map_box: "📍 Geolocalización y Navegación GPS:",
+    btn_drive_auto: "Cómo llegar (Auto)", btn_open_maps: "Google Maps", btn_fly_3d: "Vuelo 3D",
+    btn_view_contract: "📄 Ver Ficha, Contrato, Fiscalidad e IBAN",
+    avisos_box_title: "📢 AVISOS Y NOTIFICACIONES DEL INMUEBLE",
+    inc_box_title: "🛠️ INCIDENCIAS Y PARTES (HISTÓRICO TRAZABLE TIPO CHAT)",
+    recibos_box_title: "🧾 EXTRACTOS DE ALQUILER, SUMINISTROS (DEBE/HABER), PAGO TPV Y FACTURAS PDF",
+    side_sec_title: "🛡️ ARQUITECTURA AUTOMÁTICA", side_rule_title: "⚖️ SALDO VIVO Y FISCALIDAD",
+    side_sup_title: "💬 ELENA IA ADVISOR 24/7", btn_talk_elena: "💬 Hablar con Elena IA",
+    chat_welcome: "Hola, soy Elena IA Advisor. Todas nuestras conversaciones sobre alquileres, suministros o incidencias quedan registradas en tu expediente. ¿En qué puedo ayudarte hoy?",
+    math_prefix: "Verificación: ¿Cuánto es "
+  },
+  ca: {
+    nav_demanda_mob: "🎯 Demanda", nav_mercado_mob: "📡 Mercat", nav_usuarios_mob: "🔑 Usuaris",
+    nav_demanda: "🎯 Demanda Activa", nav_mercado_real: "📡 Mercat Real", nav_inquilinos: "👥 Accés d'Usuaris",
+    nav_chivatazo: "📣 Xivatazo Nacional", nav_equipos: "💼 Uneix-te a l'Equip d'Advisors a la teva Zona",
+    nav_poblaciones_titulo: "📍 Serveis Presencials a:",
+    link_legal: "Avís Legal", link_privacidad: "Privacitat i LOPD", link_cookies: "Cookies i IA",
+    topbar_title: "Consola PropTech · Reverse Market & Gestió Autònoma de Lloguers",
+    login_title: "Accés Residents, Propietaris i Serveis Jurídics",
+    login_desc: "Introdueix el teu DNI/NIE/CIF per accedir de forma segura al teu panell privat i rebre el teu PIN temporal de 4 xifres per WhatsApp.",
+    label_dni: "DNI / NIE / CIF del Titular o Lletrat Autoritzat",
+    chk_accept_prefix: "Accepto les", chk_accept_link: "Condicions i la Privacitat",
+    chk_accept_suffix: "Autoritzo la consulta xifrada del meu expedient i l'enviament de PIN per WhatsApp.",
+    btn_request_pin: "Sol·licitar Verificació VIP →",
+    pin_sent_title: "Sol·licitud enviada al teu WhatsApp!",
+    pin_sent_desc: "Introdueix el PIN temporal de 4 xifres rebut al teu WhatsApp per obrir el teu expedient a pantalla completa:",
+    btn_enter_portal: "Entrar al Portal a Pantalla Completa →", btn_back: "← Tornar enrere",
+    tab_resident: "🏠 Expedient del Resident",
+    tab_owner: "👑 Àrea Propietari (Cartera, Subministraments, TPV, Avisos i Advocat)",
+    btn_toggle_sidebars: "⛶ Mostrar/Ocultar Panells Laterals", btn_logout: "✕ Tancar Sessió",
+    owner_area_header: "👑 ÀREA SEGURA DEL PROPIETARI · GESTIÓ AUTÒNOMA EN TEMPS REAL",
+    owner_hello: "Hola,", exp_box_title: "🏠 EXPEDIENT I PROPIETAT",
+    lbl_tenant: "Llogater / Titular:", lbl_property: "Immoble(s):", lbl_address: "Adreça / Ubicació:",
+    lbl_map_box: "📍 Geolocalització i Navegació GPS:",
+    btn_drive_auto: "Com arribar-hi (Cotxe)", btn_open_maps: "Google Maps", btn_fly_3d: "Vol 3D",
+    btn_view_contract: "📄 Veure Fitxa, Contracte, Fiscalitat i IBAN",
+    avisos_box_title: "📢 AVISOS I NOTIFICACIONS DE L'IMMOBLE",
+    inc_box_title: "🛠️ INCIDÈNCIES I COMUNICATS (HISTÒRIC TRAÇABLE TIPUS XAT)",
+    recibos_box_title: "🧾 EXTRACTES DE LLOGUER, SUBMINISTRAMENTS (DEURE/HAVER), PAGAMENT TPV I FACTURES PDF",
+    side_sec_title: "🛡️ ARQUITECTURA AUTOMÀTICA", side_rule_title: "⚖️ SALDO VIU I FISCALITAT",
+    side_sup_title: "💬 ELENA IA ADVISOR 24/7", btn_talk_elena: "💬 Parlar amb Elena IA",
+    chat_welcome: "Hola, sóc l'Elena IA Advisor. Totes les nostres converses sobre lloguers, subministraments o incidències queden registrades al teu expedient. En què et puc ajudar avui?",
+    math_prefix: "Verificació: Quant és "
+  },
+  en: {
+    nav_demanda_mob: "🎯 Demand", nav_mercado_mob: "📡 Market", nav_usuarios_mob: "🔑 Users",
+    nav_demanda: "🎯 Active Demand", nav_mercado_real: "📡 Real Market", nav_inquilinos: "👥 User Access",
+    nav_chivatazo: "📣 Property Tip-Off", nav_equipos: "💼 Join the Advisors Team in your Area",
+    nav_poblaciones_titulo: "📍 On-site Services in:",
+    link_legal: "Legal Notice", link_privacidad: "Privacy & GDPR", link_cookies: "Cookies & AI",
+    topbar_title: "PropTech Console · Reverse Market & Autonomous Rental Management",
+    login_title: "Residents, Owners & Legal Services Access",
+    login_desc: "Enter your ID/Tax Number (DNI/NIE/CIF) to securely access your private panel and receive your 4-digit temporary PIN via WhatsApp.",
+    label_dni: "ID / Tax Number of Holder or Authorized Lawyer",
+    chk_accept_prefix: "I accept the", chk_accept_link: "Terms & Privacy Policy",
+    chk_accept_suffix: "I authorize encrypted access to my file and WhatsApp PIN delivery.",
+    btn_request_pin: "Request VIP Verification →",
+    pin_sent_title: "Request sent to your WhatsApp!",
+    pin_sent_desc: "Enter the 4-digit temporary PIN received on your WhatsApp to open your full-screen file:",
+    btn_enter_portal: "Enter Full-Screen Portal →", btn_back: "← Go back",
+    tab_resident: "🏠 Resident File",
+    tab_owner: "👑 Owner Area (Portfolio, Utilities, POS, Notices & Lawyer)",
+    btn_toggle_sidebars: "⛶ Show/Hide Sidebars", btn_logout: "✕ Log Out",
+    owner_area_header: "👑 SECURE OWNER AREA · REAL-TIME AUTONOMOUS MANAGEMENT",
+    owner_hello: "Hello,", exp_box_title: "🏠 FILE & PROPERTY",
+    lbl_tenant: "Tenant / Holder:", lbl_property: "Property(ies):", lbl_address: "Address / Location:",
+    lbl_map_box: "📍 Geolocation & GPS Navigation:",
+    btn_drive_auto: "Directions (Car)", btn_open_maps: "Google Maps", btn_fly_3d: "3D Flight",
+    btn_view_contract: "📄 View File, Lease, Tax & IBAN",
+    avisos_box_title: "📢 PROPERTY NOTICES & ALERTS",
+    inc_box_title: "🛠️ INCIDENTS & TICKETS (TRACEABLE CHAT HISTORY)",
+    recibos_box_title: "🧾 RENT & UTILITY STATEMENTS (DEBIT/CREDIT), CARD POS & PDF INVOICES",
+    side_sec_title: "🛡️ AUTOMATED ARCHITECTURE", side_rule_title: "⚖️ LIVE BALANCE & TAX",
+    side_sup_title: "💬 ELENA AI ADVISOR 24/7", btn_talk_elena: "💬 Chat with Elena AI",
+    chat_welcome: "Hello, I am Elena AI Advisor. All our conversations regarding rent, utilities, or incidents are logged in your file. How can I help you today?",
+    math_prefix: "Verification: What is "
+  },
+  fr: {
+    nav_demanda_mob: "🎯 Demande", nav_mercado_mob: "📡 Marché", nav_usuarios_mob: "🔑 Accès",
+    nav_demanda: "🎯 Demande Active", nav_mercado_real: "📡 Marché Réel", nav_inquilinos: "👥 Accès Utilisateurs",
+    nav_chivatazo: "📣 Alerte Nationale", nav_equipos: "💼 Rejoignez l'équipe d'Advisors",
+    nav_poblaciones_titulo: "📍 Services Présentiels à :",
+    link_legal: "Mentions Légales", link_privacidad: "Confidentialité", link_cookies: "Cookies & IA",
+    topbar_title: "Console PropTech · Reverse Market & Gestion Locative Autonome",
+    login_title: "Accès Résidents, Propriétaires et Services Juridiques",
+    login_desc: "Saisissez votre DNI/NIE/CIF pour accéder en toute sécurité à votre espace privé et recevoir votre code PIN à 4 chiffres par WhatsApp.",
+    label_dni: "DNI / NIE / CIF du Titulaire ou Avocat Autorisé",
+    chk_accept_prefix: "J'accepte les", chk_accept_link: "Conditions et la Confidentialité",
+    chk_accept_suffix: "J'autorise la consultation chiffrée de mon dossier et l'envoi du PIN par WhatsApp.",
+    btn_request_pin: "Demander la Vérification VIP →",
+    pin_sent_title: "Demande envoyée sur votre WhatsApp !",
+    pin_sent_desc: "Saisissez le code PIN temporaire à 4 chiffres reçu sur WhatsApp :",
+    btn_enter_portal: "Entrer sur le Portail →", btn_back: "← Retour",
+    tab_resident: "🏠 Dossier du Résident",
+    tab_owner: "👑 Espace Propriétaire (Portefeuille, Charges, TPV, Avis & Avocat)",
+    btn_toggle_sidebars: "⛶ Afficher/Masquer les Panneaux", btn_logout: "✕ Déconnexion",
+    owner_area_header: "👑 ESPACE SÉCURISÉ PROPRIÉTAIRE · GESTION EN TEMPS RÉEL",
+    owner_hello: "Bonjour,", exp_box_title: "🏠 DOSSIER ET BIEN",
+    lbl_tenant: "Locataire / Titulaire :", lbl_property: "Bien(s) :", lbl_address: "Adresse / Lieu :",
+    lbl_map_box: "📍 Géolocalisation et Navigation GPS :",
+    btn_drive_auto: "Itinéraire (Auto)", btn_open_maps: "Google Maps", btn_fly_3d: "Vol 3D",
+    btn_view_contract: "📄 Voir Fiche, Contrat, Fiscalité et IBAN",
+    avisos_box_title: "📢 AVIS ET NOTIFICATIONS DU BIEN",
+    inc_box_title: "🛠️ INCIDENTS ET TICKETS (HISTORIQUE CHAT)",
+    recibos_box_title: "🧾 RELEVÉS DE LOYER, CHARGES (DÉBIT/CRÉDIT), PAIEMENT TPV ET FACTURES PDF",
+    side_sec_title: "🛡️ ARCHITECTURE AUTOMATIQUE", side_rule_title: "⚖️ SOLDE ACTUEL ET FISCALITÉ",
+    side_sup_title: "💬 ELENA IA ADVISOR 24/7", btn_talk_elena: "💬 Parler avec Elena IA",
+    chat_welcome: "Bonjour, je suis Elena IA Advisor. Toutes nos conversations sur les loyers, charges ou incidents sont enregistrées dans votre dossier. Comment puis-je vous aider ?",
+    math_prefix: "Vérification : Combien font "
+  },
+  de: {
+    nav_demanda_mob: "🎯 Nachfrage", nav_mercado_mob: "📡 Markt", nav_usuarios_mob: "🔑 Nutzer",
+    nav_demanda: "🎯 Aktive Nachfrage", nav_mercado_real: "📡 Realer Markt", nav_inquilinos: "👥 Benutzerzugang",
+    nav_chivatazo: "📣 Immobilien-Tipp", nav_equipos: "💼 Werden Sie Advisor in Ihrer Region",
+    nav_poblaciones_titulo: "📍 Vor-Ort-Service in:",
+    link_legal: "Impressum", link_privacidad: "Datenschutz", link_cookies: "Cookies & KI",
+    topbar_title: "PropTech-Konsole · Reverse Market & Autonome Mietverwaltung",
+    login_title: "Zugang für Mieter, Eigentümer und Rechtsdienste",
+    login_desc: "Geben Sie Ihre Ausweis-/Steuernummer (DNI/NIE/CIF) ein, um sicher auf Ihr privates Panel zuzugreifen und Ihre 4-stellige PIN per WhatsApp zu erhalten.",
+    label_dni: "DNI / NIE / CIF des Inhabers oder autorisierten Anwalts",
+    chk_accept_prefix: "Ich akzeptiere die", chk_accept_link: "Bedingungen & Datenschutz",
+    chk_accept_suffix: "Ich autorisiere die verschlüsselte Abfrage meiner Akte und den PIN-Versand per WhatsApp.",
+    btn_request_pin: "VIP-Verifizierung anfordern →",
+    pin_sent_title: "Anfrage an Ihr WhatsApp gesendet!",
+    pin_sent_desc: "Geben Sie die 4-stellige temporäre PIN ein, die Sie per WhatsApp erhalten haben:",
+    btn_enter_portal: "Portal im Vollbildmodus öffnen →", btn_back: "← Zurück",
+    tab_resident: "🏠 Mieterakte",
+    tab_owner: "👑 Eigentümerbereich (Portfolio, Nebenkosten, POS, Hinweise & Anwalt)",
+    btn_toggle_sidebars: "⛶ Seitenleisten ein-/ausblenden", btn_logout: "✕ Abmelden",
+    owner_area_header: "👑 SICHERER EIGENTÜMERBEREICH · ECHTZEIT-VERWALTUNG",
+    owner_hello: "Hallo,", exp_box_title: "🏠 AKTE & IMMOBILIE",
+    lbl_tenant: "Mieter / Inhaber:", lbl_property: "Immobilie(n):", lbl_address: "Adresse / Standort:",
+    lbl_map_box: "📍 Geolokalisierung & GPS-Navigation:",
+    btn_drive_auto: "Route (Auto)", btn_open_maps: "Google Maps", btn_fly_3d: "3D-Flug",
+    btn_view_contract: "📄 Datenblatt, Vertrag, Steuern & IBAN",
+    avisos_box_title: "📢 MITTEILUNGEN & HINWEISE ZUR IMMOBILIE",
+    inc_box_title: "🛠️ VORVÄLLE & TICKETS (CHAT-VERLAUF)",
+    recibos_box_title: "🧾 MIET- & NEBENKOSTENABRECHNUNGEN (SOLL/HABEN), KARTENZAHLUNG & PDF",
+    side_sec_title: "🛡️ AUTOMATISCHE ARCHITEKTUR", side_rule_title: "⚖️ AKTUELLER SALDO & STEUERN",
+    side_sup_title: "💬 ELENA KI-ADVISOR 24/7", btn_talk_elena: "💬 Mit Elena KI sprechen",
+    chat_welcome: "Hallo, ich bin Elena KI-Advisor. Alle unsere Gespräche über Miete, Nebenkosten oder Vorfälle werden in Ihrer Akte protokolliert. Wie kann ich Ihnen helfen?",
+    math_prefix: "Überprüfung: Was ergibt "
+  },
+  it: {
+    nav_demanda_mob: "🎯 Domanda", nav_mercado_mob: "📡 Mercato", nav_usuarios_mob: "🔑 Utenti",
+    nav_demanda: "🎯 Domanda Attiva", nav_mercado_real: "📡 Mercato Reale", nav_inquilinos: "👥 Accesso Utenti",
+    nav_chivatazo: "📣 Segnalazione Immobili", nav_equipos: "💼 Unisciti al Team di Advisors",
+    nav_poblaciones_titulo: "📍 Servizi in Presenza a:",
+    link_legal: "Note Legali", link_privacidad: "Privacy e GDPR", link_cookies: "Cookie e IA",
+    topbar_title: "Console PropTech · Reverse Market e Gestione Autonoma Affitti",
+    login_title: "Accesso Residenti, Proprietari e Servizi Legali",
+    login_desc: "Inserisci il tuo DNI/NIE/CIF per accedere in sicurezza al tuo pannello privato e ricevere il PIN temporaneo a 4 cifre su WhatsApp.",
+    label_dni: "DNI / NIE / CIF del Titolare o Avvocato Autorizzato",
+    chk_accept_prefix: "Accetto i", chk_accept_link: "Termini e la Privacy",
+    chk_accept_suffix: "Autorizzo la consultazione crittografata della mia pratica e l'invio del PIN via WhatsApp.",
+    btn_request_pin: "Richiedi Verifica VIP →",
+    pin_sent_title: "Richiesta inviata al tuo WhatsApp!",
+    pin_sent_desc: "Inserisci il PIN temporaneo di 4 cifre ricevuto su WhatsApp:",
+    btn_enter_portal: "Entra nel Portale a Schermo Intero →", btn_back: "← Indietro",
+    tab_resident: "🏠 Fascicolo del Residente",
+    tab_owner: "👑 Area Proprietario (Portafoglio, Utenze, POS, Avvisi e Avvocato)",
+    btn_toggle_sidebars: "⛶ Mostra/Nascondi Pannelli Laterali", btn_logout: "✕ Esci",
+    owner_area_header: "👑 AREA SICURA PROPRIETARIO · GESTIONE IN TEMPO REALE",
+    owner_hello: "Ciao,", exp_box_title: "🏠 FASCICOLO E IMMOBILE",
+    lbl_tenant: "Inquilino / Titolare:", lbl_property: "Immobile/i:", lbl_address: "Indirizzo / Posizione:",
+    lbl_map_box: "📍 Geolocalizzazione e Navigazione GPS:",
+    btn_drive_auto: "Indicazioni (Auto)", btn_open_maps: "Google Maps", btn_fly_3d: "Volo 3D",
+    btn_view_contract: "📄 Vedi Scheda, Contratto, Fisco e IBAN",
+    avisos_box_title: "📢 AVVISI E NOTIFICHE DELL'IMMOBILE",
+    inc_box_title: "🛠️ SEGNALAZIONI E GUASTI (CRONOLOGIA CHAT)",
+    recibos_box_title: "🧾 ESTRATTI AFFITTO, UTENZE (DARE/AVERE), PAGAMENTO POS E FATTURE PDF",
+    side_sec_title: "🛡️ ARCHITETTURA AUTOMATICA", side_rule_title: "⚖️ SALDO ATTIVO E FISCO",
+    side_sup_title: "💬 ELENA IA ADVISOR 24/7", btn_talk_elena: "💬 Parla con Elena IA",
+    chat_welcome: "Ciao, sono Elena IA Advisor. Tutte le nostre conversazioni su affitti, utenze o guasti sono registrate nel tuo fascicolo. Come posso aiutarti oggi?",
+    math_prefix: "Verifica: Quanto fa "
+  },
+  ar: {
+    nav_demanda_mob: "🎯 الطلب", nav_mercado_mob: "📡 السوق", nav_usuarios_mob: "🔑 المستخدمين",
+    nav_demanda: "🎯 الطلب النشط", nav_mercado_real: "📡 السوق الحقيقي", nav_inquilinos: "👥 دخول المستخدمين",
+    nav_chivatazo: "📣 إشعار عقاري", nav_equipos: "💼 انضم إلى فريق المستشارين",
+    nav_poblaciones_titulo: "📍 خدمات حضورية في:",
+    link_legal: "إشعار قانوني", link_privacidad: "الخصوصية وحماية البيانات", link_cookies: "ملفات تعريف الارتباط والذكاء الاصطناعي",
+    topbar_title: "منصة PropTech · الإدارة الذاتية للإيجارات والعقارات",
+    login_title: "دخول المقيمين، الملاك والخدمات القانونية",
+    login_desc: "أدخل رقم الهوية (DNI/NIE/CIF) للوصول الآمن إلى لوحتك الخاصة واستلام رمز PIN المكون من 4 أرقام عبر واتساب.",
+    label_dni: "رقم الهوية / الضريبة للمالك أو المحامي المعتمد",
+    chk_accept_prefix: "أوافق على", chk_accept_link: "الشروط والخصوصية",
+    chk_accept_suffix: "أصرح بالاطلاع المشفر على ملفي وإرسال رمز PIN عبر واتساب.",
+    btn_request_pin: "طلب التحقق VIP ←",
+    pin_sent_title: "تم إرسال الطلب إلى واتساب الخاص بك!",
+    pin_sent_desc: "أدخل رمز PIN المؤقت المكون من 4 أرقام المستلم عبر واتساب:",
+    btn_enter_portal: "الدخول إلى البوابة بملء الشاشة ←", btn_back: "→ رجوع",
+    tab_resident: "🏠 ملف المقيم",
+    tab_owner: "👑 منطقة المالك (المحفظة، الفواتير، الدفع، الإشعارات والمحامي)",
+    btn_toggle_sidebars: "⛶ إظهار/إخفاء القوائم الجانبية", btn_logout: "✕ تسجيل الخروج",
+    owner_area_header: "👑 منطقة المالك الآمنة · إدارة فورية",
+    owner_hello: "مرحباً،", exp_box_title: "🏠 الملف والعقار",
+    lbl_tenant: "المستأجر / صاحب العلاقة:", lbl_property: "العقار (العقارات):", lbl_address: "العنوان / الموقع:",
+    lbl_map_box: "📍 الموقع الجغرافي والملاحة GPS:",
+    btn_drive_auto: "الاتجاهات (بالسيارة)", btn_open_maps: "خرائط جوجل", btn_fly_3d: "جولة ثلاثية الأبعاد",
+    btn_view_contract: "📄 عرض البطاقة، العقد، الضرائب و IBAN",
+    avisos_box_title: "📢 إشعارات وتنبيهات العقار",
+    inc_box_title: "🛠️ البلاغات والصيانة (سجل المحادثات)",
+    recibos_box_title: "🧾 كشوف الإيجار، الفواتير (مدين/دائن)، الدفع بالبطاقة وفواتير PDF",
+    side_sec_title: "🛡️ بنية تلقائية آمنة", side_rule_title: "⚖️ الرصيد الحي والضرائب",
+    side_sup_title: "💬 المستشارة الذكية إيلينا 24/7", btn_talk_elena: "💬 التحدث مع إيلينا",
+    chat_welcome: "مرحباً، أنا المستشارة الذكية إيلينا. جميع محادثاتنا حول الإيجارات أو الفواتير أو الصيانة مسجلة في ملفك. كيف يمكنني مساعدتك اليوم؟",
+    math_prefix: "تحقق الأمان: كم يساوي "
+  },
+  zh: {
+    nav_demanda_mob: "🎯 需求", nav_mercado_mob: "📡 市场", nav_usuarios_mob: "🔑 用户",
+    nav_demanda: "🎯 活跃需求", nav_mercado_real: "📡 真实市场", nav_inquilinos: "👥 用户门户登录",
+    nav_chivatazo: "📣 全国房源线索", nav_equipos: "💼 加入您所在区域的顾问团队",
+    nav_poblaciones_titulo: "📍 线下服务覆盖城市：",
+    link_legal: "法律声明", link_privacidad: "隐私与数据保护", link_cookies: "Cookies 与 AI",
+    topbar_title: "PropTech 控制台 · 逆向市场与智能租赁管理",
+    login_title: "租户、业主及法律服务安全登录",
+    login_desc: "输入您的身份证号/税号 (DNI/NIE/CIF) 安全访问私人面板，并通过 WhatsApp 接收 4 位临时 PIN 码。",
+    label_dni: "持有人或授权律师的 DNI / NIE / CIF",
+    chk_accept_prefix: "我接受", chk_accept_link: "条款与隐私政策",
+    chk_accept_suffix: "我授权加密查询我的档案并通过 WhatsApp 发送 PIN 码。",
+    btn_request_pin: "申请 VIP 验证 →",
+    pin_sent_title: "验证码已发送至您的 WhatsApp！",
+    pin_sent_desc: "输入您在 WhatsApp 收到的 4 位临时 PIN 码以全屏打开档案：",
+    btn_enter_portal: "全屏进入门户 →", btn_back: "← 返回",
+    tab_resident: "🏠 租户档案",
+    tab_owner: "👑 业主专区（房产组合、水电煤、POS收款、通知与律师）",
+    btn_toggle_sidebars: "⛶ 显示/隐藏侧边栏", btn_logout: "✕ 退出登录",
+    owner_area_header: "👑 业主安全专区 · 实时自主管理",
+    owner_hello: "您好，", exp_box_title: "🏠 档案与房产信息",
+    lbl_tenant: "租户 / 持有人：", lbl_property: "房产：", lbl_address: "地址 / 位置：",
+    lbl_map_box: "📍 地理定位与 GPS 车载导航：",
+    btn_drive_auto: "驾车导航", btn_open_maps: "谷歌地图", btn_fly_3d: "3D 实景飞行",
+    btn_view_contract: "📄 查看房产卡、合同、税务及 IBAN",
+    avisos_box_title: "📢 房产通知与公告",
+    inc_box_title: "🛠️ 报修与工单（可追溯聊天记录）",
+    recibos_box_title: "🧾 租金与水电账单明细（借/贷）、银行卡支付及 PDF 发票",
+    side_sec_title: "🛡️ 自动化安全架构", side_rule_title: "⚖️ 实时余额与税务",
+    side_sup_title: "💬 ELENA AI 顾问 24/7", btn_talk_elena: "💬 与 Elena AI 对话",
+    chat_welcome: "您好，我是 Elena AI 租赁顾问。我们关于租金、水电费或报修的所有对话均记录在您的档案中。今天有什么可以帮您？",
+    math_prefix: "安全验证：请问 "
+  }
+};
+
+// 1. Activar el traductor real para los 8 idiomas
+window.cambiarIdioma = function(lang) {
+  var l = I18N_DICCIONARIO[lang] ? lang : "es";
+  window.sesionActiva.idioma = l;
+  document.documentElement.lang = l;
+  document.documentElement.dir = (l === "ar") ? "rtl" : "ltr";
+
+  var dict = I18N_DICCIONARIO[l];
+  document.querySelectorAll("[data-i18n]").forEach(function(el) {
+    var key = el.getAttribute("data-i18n");
+    if (dict[key]) {
+      el.innerText = dict[key];
+    }
+  });
+
+  // Actualizar la pregunta matemática en el idioma elegido
+  var qElem = document.getElementById("lvl-math-question");
+  var iElem = document.getElementById("input-math");
+  if (qElem) {
+    var n1 = Math.floor(Math.random() * 9) + 1;
+    var n2 = Math.floor(Math.random() * 9) + 1;
+    window.respuestaCorrectaLevel = n1 + n2;
+    qElem.innerText = (dict.math_prefix || "Verificación: ¿Cuánto es ") + n1 + " + " + n2 + "?";
+    if (iElem) iElem.value = "";
+  }
+};
+
+// 2. Asegurar lectura de Arrays JSON desde Make (cartera_inmuebles y recibos_lista)
+function asegurarArrayDesdeMake(raw) {
+  if (!raw) return [];
+  if (Array.isArray(raw)) return raw;
+  if (typeof raw === "string") {
+    var s = raw.trim();
+    if (!s || s === "[]" || s === "NONE") return [];
+    try {
+      var p = JSON.parse(s);
+      if (Array.isArray(p)) return p;
+      if (p && Array.isArray(p.items)) return p.items;
+      if (p && p.data && Array.isArray(p.data.items)) return p.data.items;
+      if (typeof p === "object" && p !== null) return [p];
+    } catch (e) { return []; }
+  }
+  if (typeof raw === "object") {
+    if (Array.isArray(raw.items)) return raw.items;
+    if (raw.data && Array.isArray(raw.data.items)) return raw.data.items;
+    if (Array.isArray(raw.value)) return raw.value;
+    if (raw.fields || raw.record_id) return [raw];
+  }
+  return [];
+}
+
+// 3. Arreglar Mapa para que C/ Sunyer, 33 CP 43530 ALCANAR no se vaya a La Ràpita
+var _oldActualizarMapa = window.actualizarMapaInmueble;
+window.actualizarMapaInmueble = function(direccion, nombrePropiedad, lat, lon) {
+  var dirLimpia = direccion;
+  if (direccion && direccion !== "---") {
+    dirLimpia = String(direccion).replace(/\bCP\s*/gi, "").trim();
+    if (!/españa|spain|tarragona|barcelona|castell/i.test(dirLimpia)) {
+      dirLimpia += ", Tarragona, España";
+    }
+  }
+  // Si no hay coordenadas exactas pero sí tenemos dirección real (ej. C/ Sunyer, 33, 43530 ALCANAR), priorizamos la dirección real
+  if ((!lat || !lon) && dirLimpia && dirLimpia !== "---") {
+    var q = encodeURIComponent(dirLimpia);
+    var mapIframe = document.getElementById("property-map-iframe");
+    var btnDrive = document.getElementById("btn-drive-gps");
+    var btnGmaps = document.getElementById("btn-open-gmaps");
+    var btnEarth = document.getElementById("btn-open-earth");
+    if (mapIframe) mapIframe.src = "https://maps.google.com/maps?q=" + q + "&t=&z=16&ie=UTF8&iwloc=&output=embed";
+    if (btnDrive) btnDrive.href = "https://www.google.com/maps/dir/?api=1&destination=" + q + "&travelmode=driving";
+    if (btnGmaps) btnGmaps.href = "https://www.google.com/maps/search/?api=1&query=" + q;
+    if (btnEarth) btnEarth.href = "https://earth.google.com/web/search/" + q;
+    return;
+  }
+  return _oldActualizarMapa(dirLimpia, nombrePropiedad, lat, lon);
+};
+
+// 4. Conectar cartera_inmuebles, recibos_lista y etiquetas de Propietario
+var _oldRenderizarPortal = window.renderizarPortalConDatos;
+window.renderizarPortalConDatos = function(data, identificador) {
+  if (data) {
+    data.cartera_inmuebles = asegurarArrayDesdeMake(data.cartera_inmuebles || data.propiedades_raw);
+    data.recibos_lista = asegurarArrayDesdeMake(data.recibos_lista || data.PROPERTY_SUMINISTROS_Y_GASTOS);
+    if (!data.PROPIEDAD && data.cartera_inmuebles.length > 0) {
+      data.PROPIEDAD = data.cartera_inmuebles.map(function(it) {
+        var f = it.fields || it;
+        return f.PROPIEDAD || f.Propiedad || f.nombre_propiedad || "";
+      }).filter(Boolean).join(", ");
+    }
+  }
+  _oldRenderizarPortal(data, identificador);
+
+  if (window.sesionActiva && window.sesionActiva.rol === "PROPIETARIO") {
+    var lblRol = document.getElementById("lbl-titular-rol");
+    if (lblRol) lblRol.innerText = "Propietario / Arrendador:";
+    var titCaja = document.getElementById("titulo-caja-expediente");
+    if (titCaja) titCaja.innerText = "👑 FICHA DEL PROPIETARIO Y CARTERA";
+  }
+};
+</script>
 </body>
 </html>
