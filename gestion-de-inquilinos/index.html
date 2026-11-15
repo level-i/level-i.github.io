@@ -3955,5 +3955,68 @@ document.addEventListener("DOMContentLoaded", function() {
   }
 });
 </script>
+<script>
+// ============================================================================
+// PARCHE SEGURO (NO BORRA NADA DEL ARCHIVO ORIGINAL DE 3959 LÍNEAS)
+// ============================================================================
+function asegurarArrayDesdeMake(raw) {
+  if (!raw) return [];
+  if (Array.isArray(raw)) return raw;
+  if (typeof raw === "string") {
+    var s = raw.trim();
+    if (!s || s === "[]" || s === "NONE") return [];
+    try {
+      var p = JSON.parse(s);
+      if (Array.isArray(p)) return p;
+      if (p && Array.isArray(p.items)) return p.items;
+      if (p && p.data && Array.isArray(p.data.items)) return p.data.items;
+      if (typeof p === "object" && p !== null) return [p];
+    } catch (e) { return []; }
+  }
+  if (typeof raw === "object") {
+    if (Array.isArray(raw.items)) return raw.items;
+    if (raw.data && Array.isArray(raw.data.items)) return raw.data.items;
+    if (Array.isArray(raw.value)) return raw.value;
+    if (raw.fields || raw.record_id) return [raw];
+  }
+  return [];
+}
+
+// 1. Arreglar Mapa para que C/ Sunyer, 33 CP 43530 ALCANAR no se vaya a La Ràpita
+var _oldActualizarMapa = window.actualizarMapaInmueble;
+window.actualizarMapaInmueble = function(direccion, nombrePropiedad, lat, lon) {
+  var dirLimpia = direccion;
+  if (direccion && direccion !== "---") {
+    dirLimpia = String(direccion).replace(/\bCP\s*/gi, "").trim();
+    if (!/españa|spain|tarragona|barcelona|castell/i.test(dirLimpia)) {
+      dirLimpia += ", Tarragona, España";
+    }
+  }
+  return _oldActualizarMapa(dirLimpia, nombrePropiedad, lat, lon);
+};
+
+// 2. Asegurar que cartera_inmuebles y recibos_lista se lean aunque Make los envíe como texto JSON
+var _oldRenderizarPortal = window.renderizarPortalConDatos;
+window.renderizarPortalConDatos = function(data, identificador) {
+  if (data) {
+    data.cartera_inmuebles = asegurarArrayDesdeMake(data.cartera_inmuebles || data.propiedades_raw);
+    data.recibos_lista = asegurarArrayDesdeMake(data.recibos_lista || data.PROPERTY_SUMINISTROS_Y_GASTOS);
+    if (!data.PROPIEDAD && data.cartera_inmuebles.length > 0) {
+      data.PROPIEDAD = data.cartera_inmuebles.map(function(it) {
+        var f = it.fields || it;
+        return f.PROPIEDAD || f.Propiedad || f.nombre_propiedad || "";
+      }).filter(Boolean).join(", ");
+    }
+  }
+  _oldRenderizarPortal(data, identificador);
+
+  if (window.sesionActiva && window.sesionActiva.rol === "PROPIETARIO") {
+    var lblRol = document.getElementById("lbl-titular-rol");
+    if (lblRol) lblRol.innerText = "Propietario / Arrendador:";
+    var titCaja = document.getElementById("titulo-caja-expediente");
+    if (titCaja) titCaja.innerText = "👑 FICHA DEL PROPIETARIO Y CARTERA";
+  }
+};
+</script>
 </body>
 </html>
