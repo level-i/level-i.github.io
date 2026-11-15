@@ -3943,20 +3943,15 @@ document.addEventListener("DOMContentLoaded", function() {
     if (el) el.textContent = ahora.toLocaleDateString("es-ES") + " | " + ahora.toLocaleTimeString("es-ES");
   }, 1000);
 
+  // BLINDAJE DE SEGURIDAD: ?code= NUNCA salta el login ni el PIN de WhatsApp.
+  // Solo pre-rellena el campo identificador para que el titular solicite su PIN.
   var params = new URLSearchParams(window.location.search);
   var codeUrl = (params.get("code") || "").trim();
   if (codeUrl !== "" && codeUrl !== "200") {
-    var codUpper = codeUrl.toUpperCase();
-    window.sesionActiva["DNI-NIE-CIF"] = codUpper;
-    window.sesionActiva.codigo_inquilino = codUpper;
-    if (codUpper.indexOf("CLI-") === 0 || codUpper.indexOf("PROP-") === 0) {
-      window.sesionActiva.rol = "PROPIETARIO";
-      window.sesionActiva.tabla_filtro = "PROPERTY_PROPIETARIOS";
-    } else if (codUpper.indexOf("ABO-") === 0 || codUpper.indexOf("ID_LEG") === 0) {
-      window.sesionActiva.rol = "ABOGADO";
-      window.sesionActiva.tabla_filtro = "PROPERTY_PROPIETARIOS_LEGAL_SERVICES";
+    var inpDni = document.getElementById("input-dni");
+    if (inpDni) {
+      inpDni.value = codeUrl.toUpperCase();
     }
-    cargarExpedienteDesdeMake(codUpper, "");
   }
 });
 </script>
