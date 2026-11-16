@@ -4227,5 +4227,108 @@ document.addEventListener("DOMContentLoaded", function() {
   }
 });
 </script>
+ <script>
+// ============================================================================
+// FILTRO COMBINADO DE RECIBOS POR PROPIEDAD + ESTADO (ESCALABLE A 100+ PISOS)
+// ============================================================================
+window.filtroPropiedadRecibos = "TODAS";
+
+window.seleccionarPropiedadRecibos = function(nombreProp) {
+  window.filtroPropiedadRecibos = nombreProp || "TODAS";
+  renderizarCarteraYRecibosPropietario(
+    document.getElementById("input-buscar-cartera") ? document.getElementById("input-buscar-cartera").value : ""
+  );
+};
+
+(function() {
+  var renderOriginal = window.renderizarCarteraYRecibosPropietario;
+  window.renderizarCarteraYRecibosPropietario = function(filtroTexto) {
+    renderOriginal(filtroTexto);
+
+    var contRecibos = document.getElementById("contenedor-recibos-propietario");
+    if (!contRecibos) return;
+
+    var barraProp = document.getElementById("barra-filtro-propiedad-recibos");
+    if (!barraProp) {
+      barraProp = document.createElement("div");
+      barraProp.id = "barra-filtro-propiedad-recibos";
+      barraProp.style.cssText = "display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:14px; padding:10px 14px; background:var(--bg-input); border:1px solid var(--border); border-radius:10px;";
+      contRecibos.parentNode.insertBefore(barraProp, contRecibos);
+    }
+
+    var props = window.CARTERA_PROPIEDADES || [];
+    var propActiva = window.filtroPropiedadRecibos || "TODAS";
+
+    var recibosFiltrados = (window.RECIBOS_CARTERA || []).filter(function(r) {
+      var coincideProp = (propActiva === "TODAS") ||
+        String(r.propiedad || "").toUpperCase().includes(propActiva.toUpperCase()) ||
+        propActiva.toUpperCase().includes(String(r.propiedad || "").toUpperCase());
+
+      if (!coincideProp) return false;
+      if (window.filtroRecibosActual === "PENDIENTE") return String(r.estado || "").toUpperCase() === "PENDIENTE";
+      if (window.filtroRecibosActual === "ABONADO") return String(r.estado || "").toUpperCase().includes("ABONADO");
+      return true;
+    });
+
+    var chipsHTML = '<button type="button" class="prop-chip ' + (propActiva === "TODAS" ? "active" : "") + '" onclick="seleccionarPropiedadRecibos(\'TODAS\')">🏛️ Todas (' + (window.RECIBOS_CARTERA || []).length + ')</button>';
+    if (props.length <= 8) {
+      chipsHTML += props.map(function(p) {
+        var countP = (window.RECIBOS_CARTERA || []).filter(function(r) {
+          return String(r.propiedad || "").toUpperCase().includes(String(p.nombre_propiedad || "").toUpperCase());
+        }).length;
+        var act = (propActiva.toUpperCase() === String(p.nombre_propiedad || "").toUpperCase()) ? "active" : "";
+        return '<button type="button" class="prop-chip ' + act + '" onclick="seleccionarPropiedadRecibos(\'' + escaparHTML(p.nombre_propiedad) + '\')">🏠 ' + escaparHTML(p.nombre_propiedad) + ' (' + countP + ')</button>';
+      }).join("");
+    }
+
+    var selectHTML = '<select class="form-input" style="width:auto; min-width:210px; padding:6px 12px; font-size:12px; cursor:pointer;" onchange="seleccionarPropiedadRecibos(this.value)">' +
+      '<option value="TODAS"' + (propActiva === "TODAS" ? " selected" : "") + '>🔍 Filtrar por inmueble (Todos: ' + props.length + ')</option>' +
+      props.map(function(p) {
+        var sel = (propActiva.toUpperCase() === String(p.nombre_propiedad || "").toUpperCase()) ? " selected" : "";
+        return '<option value="' + escaparHTML(p.nombre_propiedad) + '"' + sel + '>🏠 ' + escaparHTML(p.nombre_propiedad) + ' · ' + escaparHTML(p.inquilino || "") + '</option>';
+      }).join("") +
+    '</select>';
+
+    barraProp.innerHTML =
+      '<div class="prop-chips-bar" style="margin-top:0;">' + chipsHTML + '</div>' +
+      '<div style="display:flex; align-items:center; gap:8px;">' +
+        '<span style="font-size:12px; color:var(--emerald); font-weight:700;">Mostrando ' + recibosFiltrados.length + ' recibo(s)</span>' +
+        selectHTML +
+      '</div>';
+
+    if (recibosFiltrados.length === 0) {
+      contRecibos.innerHTML = "<div style='padding:14px; color:var(--text-muted);'>No hay recibos para la propiedad <strong>" + escaparHTML(propActiva) + "</strong> en este filtro.</div>";
+      return;
+    }
+
+    contRecibos.innerHTML = recibosFiltrados.map(function(r) {
+      var esPendiente = String(r.estado || "").toUpperCase() === "PENDIENTE";
+      var calcTPV = calcularComisionTPVPropietario(r.total_con_impuestos || r.importe);
+      return '<div class="receipt-row ' + (esPendiente ? 'pending' : 'haber-row') + '">' +
+        '<div class="receipt-info">' +
+          '<div class="receipt-concept">' + escaparHTML(r.concepto || "") + ' · <span style="color:var(--emerald);">' + escaparHTML(r.propiedad || "") + '</span></div>' +
+          '<div class="receipt-meta">' +
+            'Nº ' + escaparHTML(r.id_recibo || "") + ' · Fecha: ' + escaparHTML(r.periodo || "") +
+            ' · Inquilino: <strong>' + escaparHTML(r.inquilino || "---") + '</strong>' +
+            ' · Debe: <strong>' + formatearEuros(r.debe) + '</strong> | Haber: <strong>' + formatearEuros(r.haber) + '</strong>' +
+            (r.iva_pct > 0 || r.irpf_pct > 0 ? ' · (IVA ' + (r.iva_pct*100) + '% / IRPF ' + (r.irpf_pct*100) + '%)' : '') +
+            ' · Neto TPV Prop.: <span style="color:var(--amber);">' + formatearEuros(calcTPV.neto) + '</span>' +
+          '</div>' +
+        '</div>' +
+        '<div class="receipt-actions">' +
+          '<span class="receipt-amount">' + escaparHTML(r.importe || "") + '</span>' +
+          '<button type="button" class="btn-outline-sm" onclick="abrirModalSuministroManual(\'' + escaparHTML(r.propiedad || "") + '\', \'' + escaparHTML(r.id_recibo || "") + '\')">✏️ Editar</button>' +
+          (esPendiente
+            ? '<span class="badge badge-danger">DEBE / PENDIENTE</span>' +
+              '<button type="button" class="btn-mark-paid" onclick="marcarReciboComoAbonado(\'' + escaparHTML(r.id_recibo || "") + '\')">✓ Pasar a Abonado + PDF</button>'
+            : '<span class="badge badge-success">HABER / ABONADO</span>' +
+              '<button type="button" class="btn-pdf-receipt" onclick="descargarReciboPDF(\'' + escaparHTML(r.id_recibo || "") + '\')">📄 Factura / Recibo PDF</button>'
+          ) +
+        '</div>' +
+      '</div>';
+    }).join("");
+  };
+})();
+</script> 
 </body>
 </html>
