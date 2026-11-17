@@ -4906,7 +4906,6 @@ pintarFichaExpedienteEnPantalla = function(d) {
   var esPropietario = (window.sesionActiva.rol === "PROPIETARIO");
   var esAbogado = (window.sesionActiva.rol === "ABOGADO");
 
-  // 1. Obtener DNI y nombre del inquilino activo
   var dniTitular = formatearCampoValor(obtenerDniUnificado(d)) || window.sesionActiva["DNI-NIE-CIF"] || "";
   var nombreTitular = formatearCampoValor(
     d.Arrendatario || d.nombre_inquilino || d["Nombre Inquilinos"] || d.INQUILINO || d.nombre || d.Nombre_Inquilino ||
@@ -4918,7 +4917,6 @@ pintarFichaExpedienteEnPantalla = function(d) {
     d["Autho-code-abogado"] || d.codigo_propietario || d.Search_Code || d.codigo_inquilino || d.code
   ) || window.sesionActiva.codigo_inquilino || "---";
 
-  // 2. Buscar si el inquilino tiene una propiedad asignada en la cartera o en los recibos
   var propiedadNombre = formatearCampoValor(
     d.PROPERTY_PROPIEDADES || d["Propiedad arrendada"] || d.nombre_propiedad || d.PROPIEDAD || d.propiedad || d.propiedades_autorizadas
   );
@@ -4936,7 +4934,7 @@ pintarFichaExpedienteEnPantalla = function(d) {
              String(p.inquilino || "").toUpperCase().includes(nombreTitular.toUpperCase());
     });
     if (propMatch) propiedadNombre = propMatch.nombre_propiedad;
-    else propiedadNombre = window.CARTERA_PROPIEDADES[0].nombre_propiedad; // Fallback al primer inmueble
+    else propiedadNombre = window.CARTERA_PROPIEDADES[0].nombre_propiedad;
   }
 
   var fichaProp = (window.CARTERA_PROPIEDADES || []).find(function(p) {
@@ -4971,7 +4969,6 @@ pintarFichaExpedienteEnPantalla = function(d) {
     contrato_renta: resumenContrato
   };
 
-  // 3. Pintar en los elementos HTML del expediente del residente
   var lblRol = document.getElementById("lbl-titular-rol");
   if (lblRol) {
     lblRol.innerText = esPropietario ? "Propietario / Arrendador:" : "Inquilino / Titular:";
@@ -4984,10 +4981,8 @@ pintarFichaExpedienteEnPantalla = function(d) {
   document.getElementById("val-direccion").innerText = direccionTexto;
   document.getElementById("val-contrato-renta").innerText = resumenContrato || "---";
 
-  // Actualizar saldo vivo real del inquilino (calculado de sus recibos)
   actualizarTarjetaSaldoVivoEnPantalla();
 
-  // Galería de fotos del inmueble en el expediente
   var fotosFinales = limpiarListaUrlsMultimedia(
     (Array.isArray(fichaProp.fotos) && fichaProp.fotos.length > 0)
       ? fichaProp.fotos
@@ -5008,7 +5003,6 @@ pintarFichaExpedienteEnPantalla = function(d) {
     }
   }
 
-  // Avisos de la propiedad
   var avisoTexto = formatearCampoValor(fichaProp.avisos || d.avisos || d["Avisos Generales"] || "");
   var htmlAvisos = "";
   var saldoNum = calcularSaldoVivoPropiedad(propiedadNombre, fichaProp.deuda);
@@ -5023,77 +5017,9 @@ pintarFichaExpedienteEnPantalla = function(d) {
     elAvisos.innerHTML = htmlAvisos || "<div style='color:var(--text-muted);'>Sin avisos pendientes en este expediente.</div>";
   }
 
-  // Pintar libro de recibos filtrado exclusivamente para este inquilino / inmueble
-  renderizarRecibosInquilino(propiedadNombre, dniTitular);
-
-  // Actualizar mapa GPS con la dirección real del inmueble
+  renderizarRecibosInquilino(propiedadNombre, esPropietario ? "" : dniTitular);
   actualizarMapaInmueble(direccionTexto, propiedadNombre, fichaProp.lat || d.lat, fichaProp.lon || d.lon);
 };
-
-  var lblRol = document.getElementById("lbl-titular-rol");
-  if (lblRol) {
-    lblRol.innerText = (esPropietario && !d.inquilino) ? "Propietario / Arrendador:" : "Inquilino / Titular:";
-  }
-
-  document.getElementById("val-nombre").innerText = nombreTitular;
-  document.getElementById("val-dni").innerText = dniTitular + " · " + detectarPersonalidadPorDni(dniTitular);
-  document.getElementById("val-codigo-autho").innerText = codigoAutho;
-  document.getElementById("val-propiedad").innerText = propiedadNombre;
-  document.getElementById("val-direccion").innerText = direccionTexto;
-  document.getElementById("val-contrato-renta").innerText = resumenContrato || "---";
-
-  actualizarTarjetaSaldoVivoEnPantalla();
-
-  var fotosFinales = limpiarListaUrlsMultimedia(
-    (Array.isArray(fichaProp.fotos) && fichaProp.fotos.length > 0)
-      ? fichaProp.fotos
-      : normalizarPropiedadDesdeMake(d).fotos
-  );
-
-  var wrapFotos = document.getElementById("wrap-galeria-fotos");
-  var galeriaBox = document.getElementById("val-fotos");
-  if (Array.isArray(fotosFinales) && fotosFinales.length > 0) {
-    wrapFotos.style.display = "block";
-    galeriaBox.innerHTML = fotosFinales.map(function(u) {
-      return '<img src="' + escaparHTML(u) + '" alt="' + escaparHTML(propiedadNombre) + '" onclick="abrirFotoEnLightbox(this.src)">';
-    }).join("");
-  } else {
-    wrapFotos.style.display = "none";
-    galeriaBox.innerHTML = "";
-  }
-
-  var avisoTexto = formatearCampoValor(d.avisos || fichaProp.avisos || d["Avisos Generales"] || "");
-  var htmlAvisos = "";
-  var saldoNum = calcularSaldoVivoPropiedad(fichaProp.nombre_propiedad ? fichaProp.nombre_propiedad : "", deudaTexto);
-  if (saldoNum < 0) {
-    htmlAvisos += '<div style="background:var(--danger-soft); border-left:3px solid var(--danger); padding:10px 12px; border-radius:8px; color:#fca5a5; margin-bottom:8px;">🚨 <strong>Saldo pendiente de regularización (Debe):</strong> ' + formatearEuros(Math.abs(saldoNum)) + '</div>';
-  }
-  if (revisionTexto) {
-    htmlAvisos += '<div style="background:var(--bg-input); border-left:3px solid var(--amber); padding:10px 12px; border-radius:8px; color:#e2e8f0; margin-bottom:8px;">📅 <strong>Próxima revisión contractual:</strong> ' + escaparHTML(revisionTexto) + '</div>';
-  }
-  if (d.avisos_html) htmlAvisos += d.avisos_html;
-  else if (avisoTexto) {
-    htmlAvisos += '<div style="background:var(--bg-input); border-left:3px solid var(--emerald); padding:10px 12px; border-radius:8px; color:#e2e8f0;">📢 ' + escaparHTML(avisoTexto) + '</div>';
-  }
-  document.getElementById("val-avisos").innerHTML = htmlAvisos || "<div style='color:var(--text-muted);'>Sin avisos pendientes en este expediente.</div>";
-
-  var incTexto = formatearCampoValor(d.incidencias || fichaProp.incidencias || d.PROPERTY_INCIDENCIAS || d["PROPERTY_INCIDENCIAS 2"] || d.incidencias_items);
-  if (Array.isArray(d.incidencias_lista) && d.incidencias_lista.length > 0) {
-    window.INCIDENCIAS_LISTA = d.incidencias_lista;
-    renderizarHiloIncidenciasEnPantalla();
-  } else if (d.incidencias_html) {
-    document.getElementById("val-incidencias").innerHTML = d.incidencias_html;
-  } else if (incTexto) {
-    document.getElementById("val-incidencias").innerHTML = '<div class="incidencia-thread-card"><div class="incidencia-msg-bubble">🛠️ ' + escaparHTML(incTexto) + '</div></div>';
-  } else if (window.INCIDENCIAS_LISTA.length === 0) {
-    document.getElementById("val-incidencias").innerHTML = "<div style='color:var(--text-muted);'>Sin incidencias activas registradas en este expediente.</div>";
-  }
-
-  if (d.recibos_html) document.getElementById("val-recibos").innerHTML = d.recibos_html;
-  else renderizarRecibosInquilino(fichaProp.nombre_propiedad || "", esPropietario ? "" : dniTitular);
-
-  actualizarMapaInmueble(direccionTexto, propiedadNombre, fichaProp.lat || d.lat, fichaProp.lon || d.lon);
-}
 
 function renderizarPortalConDatos(data, identificador) {
   document.getElementById("login-section").style.display = "none";
@@ -5215,7 +5141,7 @@ window.enviarAutorizacionAbogado = function(e) {
     body: JSON.stringify(payloadLegal)
   })
   .then(function() {
-    msgExitoLegal.innerHTML = "✅ <strong>" + escaparHTML(nombreAbg) + " (" + escaparHTML(dniAbg) + ")</strong> autorizado con acceso a impresión de informes judiciales en PDF.";
+    msgExitoLegal.innerHTML = "✅ <strong>" + escaparHTML(nombreAbg) + " (" + escaparHTML(dniAbg) + ")</strong> autorizado con acceso a informes judiciales en PDF.";
     msgExitoLegal.style.display = "block";
     btnAbg.innerText = "⚖️ Asignar Abogado en Base de Datos y Enviar Email de Bienvenida →";
     btnAbg.disabled = false;
@@ -5275,7 +5201,7 @@ async function enviarMensajeBotChat(e) {
 
     box.innerHTML += '<div style="background:#1e293b; color:#e2e8f0; padding:10px 12px; border-radius:12px 12px 12px 2px; max-width:86%; line-height:1.45;">' + escaparHTML(contestacion) + '</div>';
   } catch (err) {
-    box.innerHTML += '<div style="background:var(--danger-soft); color:#fca5a5; padding:8px 12px; border-radius:8px; font-size:12px;">Mensaje guardado localmente. Reconectando con PROPERTY_GESTION...</div>';
+    box.innerHTML += '<div style="background:var(--danger-soft); color:#fca5a5; padding:8px 12px; border-radius:8px; font-size:12px;">Mensaje guardado localmente. Reconectando...</div>';
   } finally {
     btn.disabled = false;
     box.scrollTop = box.scrollHeight;
@@ -5339,25 +5265,6 @@ function cerrarSesion() {
   volverFaseDni();
 }
 
-document.addEventListener("DOMContentLoaded", function() {
-  limpiarEstadoUI();
-  window.pintarSumaLevel();
-  setInterval(function() {
-    var ahora = new Date();
-    var el = document.getElementById("live-clock");
-    if (el) el.textContent = ahora.toLocaleDateString("es-ES") + " | " + ahora.toLocaleTimeString("es-ES");
-  }, 1000);
-
-  var params = new URLSearchParams(window.location.search);
-  var codeUrl = (params.get("code") || "").trim();
-  if (codeUrl !== "" && codeUrl !== "200") {
-    var inpDni = document.getElementById("input-dni");
-    if (inpDni) {
-      inpDni.value = codeUrl.toUpperCase();
-    }
-  }
-});
-window.pintarSumaLevel();
 function sincronizarBookYPortadaEnBD(p) {
   if (!p || !p.nombre_propiedad) return;
   var lista = limpiarListaUrlsMultimedia(p.fotos || []);
@@ -5392,6 +5299,26 @@ window.eliminarFotoDelBookInmueble = function(nombrePropiedad, idxBorrar) {
   });
   if (p) sincronizarBookYPortadaEnBD(p);
 };
+
+document.addEventListener("DOMContentLoaded", function() {
+  limpiarEstadoUI();
+  window.pintarSumaLevel();
+  setInterval(function() {
+    var ahora = new Date();
+    var el = document.getElementById("live-clock");
+    if (el) el.textContent = ahora.toLocaleDateString("es-ES") + " | " + ahora.toLocaleTimeString("es-ES");
+  }, 1000);
+
+  var params = new URLSearchParams(window.location.search);
+  var codeUrl = (params.get("code") || "").trim();
+  if (codeUrl !== "" && codeUrl !== "200") {
+    var inpDni = document.getElementById("input-dni");
+    if (inpDni) {
+      inpDni.value = codeUrl.toUpperCase();
+    }
+  }
+});
+window.pintarSumaLevel();
 </script>
 </body>
 </html>
