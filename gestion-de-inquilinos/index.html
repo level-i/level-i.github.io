@@ -2651,6 +2651,47 @@ function mostrarIframePdfEnVisor(urlPdf, concepto, propiedad) {
   }
 }
 
+window.abrirFotoEnLightbox = function(urlImg) {
+  var lb = document.getElementById("level-lightbox-overlay");
+  if (!lb) {
+    lb = document.createElement("div");
+    lb.id = "level-lightbox-overlay";
+    lb.style.cssText = "position:fixed; inset:0; background:rgba(4,7,14,0.94); z-index:99999; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:24px;";
+    document.body.appendChild(lb);
+  }
+  lb.innerHTML =
+    '<div style="width:100%; max-width:1100px; display:flex; justify-content:flex-end; margin-bottom:12px;">' +
+      '<button type="button" onclick="document.getElementById(\'level-lightbox-overlay\').style.display=\'none\'" style="background:var(--danger); color:#fff; border:2px solid #fff; padding:8px 18px; border-radius:8px; font-size:14px; font-weight:900; cursor:pointer; box-shadow:0 4px 15px rgba(0,0,0,0.5);">✕ Cerrar Imagen</button>' +
+    '</div>' +
+    '<img src="' + escaparHTML(urlImg) + '" style="max-width:95vw; max-height:82vh; object-fit:contain; border-radius:10px; border:2px solid var(--emerald); box-shadow:0 15px 40px rgba(0,0,0,0.8);">';
+  lb.style.display = "flex";
+};
+
+window.establecerComoPortadaInmueble = function(nombrePropiedad, urlElegida) {
+  var p = (window.CARTERA_PROPIEDADES || []).find(function(item) {
+    return String(item.nombre_propiedad || "").toUpperCase() === String(nombrePropiedad || "").toUpperCase();
+  });
+  if (!p) return;
+  p.foto_portada = urlElegida;
+  var inpPortada = document.getElementById("prop-alta-portada");
+  if (inpPortada) inpPortada.value = urlElegida;
+  renderizarCarteraYRecibosPropietario();
+  abrirBookFotosInmueble(nombrePropiedad);
+};
+
+window.eliminarFotoDelBookInmueble = function(nombrePropiedad, idxBorrar) {
+  var p = (window.CARTERA_PROPIEDADES || []).find(function(item) {
+    return String(item.nombre_propiedad || "").toUpperCase() === String(nombrePropiedad || "").toUpperCase();
+  });
+  if (!p || !Array.isArray(p.fotos)) return;
+  var borrada = p.fotos.splice(idxBorrar, 1)[0];
+  if (p.foto_portada === borrada) {
+    p.foto_portada = p.fotos.length > 0 ? p.fotos[0] : "";
+  }
+  renderizarCarteraYRecibosPropietario();
+  abrirBookFotosInmueble(nombrePropiedad);
+};
+
 window.abrirBookFotosInmueble = function(nombrePropiedad) {
   var p = (window.CARTERA_PROPIEDADES || []).find(function(item) {
     return String(item.nombre_propiedad || "").toUpperCase() === String(nombrePropiedad || "").toUpperCase();
@@ -2659,6 +2700,7 @@ window.abrirBookFotosInmueble = function(nombrePropiedad) {
 
   var fotos = Array.isArray(p.fotos) ? p.fotos : [];
   var portada = p.foto_portada || (fotos.length > 0 ? fotos[0] : "");
+  var esProp = (window.sesionActiva.rol === "PROPIETARIO");
   var titulo = document.getElementById("visor-titulo");
   var caja = document.getElementById("visor-contenido-nativo");
   var modal = document.getElementById("modal-visor-seguro");
@@ -2667,32 +2709,38 @@ window.abrirBookFotosInmueble = function(nombrePropiedad) {
   titulo.innerText = "📸 Book Fotográfico de Estado de Entrega · " + (p.nombre_propiedad || "") + " (" + fotos.length + " imágenes)";
 
   if (fotos.length === 0 && !portada) {
-    caja.innerHTML = '<div style="padding:24px; color:var(--text-muted);">Este inmueble aún no tiene fotografías publicadas en el FTP de <code>level.immo</code>.</div>';
+    caja.innerHTML = '<div style="padding:24px; color:var(--text-muted);">Este inmueble aún no tiene fotografías publicadas en <code>level.immo</code>.</div>';
   } else {
     caja.innerHTML =
       '<div style="margin-bottom:16px; padding:12px 16px; background:var(--bg-input); border-left:4px solid var(--emerald); border-radius:8px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">' +
         '<div>' +
           '<div style="font-size:13px; font-weight:800; color:#fff;">Acta Fotográfica de Estado del Inmueble (' + escaparHTML(p.direccion || "") + ')</div>' +
-          '<div style="font-size:12px; color:var(--text-muted);">Repositorio certificado en <code>level.immo</code> para constancia contractual de entrega y conservación.</div>' +
+          '<div style="font-size:12px; color:var(--text-muted);">Haz clic en cualquier imagen para verla en grande sin salir de la pantalla, o pulsa <strong>⭐ Portada</strong> para elegir la principal.</div>' +
         '</div>' +
-        (window.sesionActiva.rol === "PROPIETARIO"
-          ? '<button type="button" class="btn-outline-sm" style="border-color:var(--amber); color:var(--amber);" onclick="cerrarVisorSeguro(); abrirModalAltaPropiedad(\'' + escaparHTML(p.nombre_propiedad) + '\')">📤 Añadir / Cambiar Fotos FTP</button>'
+        (esProp
+          ? '<button type="button" class="btn-outline-sm" style="border-color:var(--amber); color:var(--amber);" onclick="cerrarVisorSeguro(); abrirModalAltaPropiedad(\'' + escaparHTML(p.nombre_propiedad) + '\')">📸 Añadir Fotos / Vídeo</button>'
           : '') +
       '</div>' +
       (portada
-        ? '<div style="margin-bottom:18px;">' +
-            '<div style="font-size:11.5px; font-weight:800; color:var(--amber); text-transform:uppercase; margin-bottom:6px;">⭐ Imagen de Portada Principal</div>' +
-            '<img src="' + escaparHTML(portada) + '" alt="Portada" style="width:100%; max-height:340px; object-fit:cover; border-radius:12px; border:2px solid var(--amber); cursor:pointer;" onclick="window.open(this.src, \'_blank\')">' +
+        ? '<div style="margin-bottom:18px; text-align:center; background:#060a12; padding:12px; border-radius:12px; border:2px solid var(--amber);">' +
+            '<div style="font-size:11.5px; font-weight:800; color:var(--amber); text-transform:uppercase; margin-bottom:8px;">⭐ Imagen de Portada Principal</div>' +
+            '<img src="' + escaparHTML(portada) + '" alt="Portada" style="max-width:100%; max-height:380px; object-fit:contain; border-radius:8px; cursor:pointer;" onclick="abrirFotoEnLightbox(this.src)">' +
           '</div>'
         : '') +
       '<div style="font-size:11.5px; font-weight:800; color:var(--emerald); text-transform:uppercase; margin-bottom:8px;">📷 Book Completo del Inmueble (' + fotos.length + ' fotografías)</div>' +
-      '<div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(210px, 1fr)); gap:12px;">' +
+      '<div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(220px, 1fr)); gap:12px;">' +
         fotos.map(function(u, idx) {
-          return '<div style="background:var(--bg-input); border:1px solid var(--border); border-radius:10px; overflow:hidden;">' +
-            '<img src="' + escaparHTML(u) + '" alt="Foto ' + (idx + 1) + '" style="width:100%; height:155px; object-fit:cover; cursor:pointer; display:block;" onclick="window.open(this.src, \'_blank\')">' +
-            '<div style="padding:6px 10px; font-size:11px; color:var(--text-muted); display:flex; justify-content:space-between;">' +
-              '<span>Imagen #' + (idx + 1) + '</span>' +
-              '<a href="' + escaparHTML(u) + '" target="_blank" rel="noopener" style="color:var(--emerald); text-decoration:none; font-weight:700;">Ampliar ↗</a>' +
+          var esEstaPortada = (u === portada);
+          return '<div style="background:var(--bg-input); border:1px solid ' + (esEstaPortada ? 'var(--amber)' : 'var(--border)') + '; border-radius:10px; overflow:hidden;">' +
+            '<img src="' + escaparHTML(u) + '" alt="Foto ' + (idx + 1) + '" style="width:100%; height:160px; object-fit:cover; cursor:pointer; display:block;" onclick="abrirFotoEnLightbox(this.src)">' +
+            '<div style="padding:8px 10px; font-size:11px; color:var(--text-muted); display:flex; justify-content:space-between; align-items:center; gap:4px; flex-wrap:wrap;">' +
+              '<button type="button" onclick="abrirFotoEnLightbox(\'' + escaparHTML(u) + '\')" style="background:transparent; border:none; color:var(--emerald); font-weight:800; cursor:pointer; font-size:11.5px;">🔍 Ampliar</button>' +
+              (esProp
+                ? '<div style="display:flex; gap:6px;">' +
+                    '<button type="button" onclick="establecerComoPortadaInmueble(\'' + escaparHTML(p.nombre_propiedad) + '\', \'' + escaparHTML(u) + '\')" style="background:' + (esEstaPortada ? 'var(--amber)' : 'rgba(245,158,11,0.15)') + '; color:' + (esEstaPortada ? '#042f2e' : 'var(--amber)') + '; border:1px solid var(--amber); border-radius:5px; padding:3px 7px; font-size:10.5px; font-weight:800; cursor:pointer;">⭐ Portada</button>' +
+                    '<button type="button" onclick="eliminarFotoDelBookInmueble(\'' + escaparHTML(p.nombre_propiedad) + '\', ' + idx + ')" style="background:var(--danger-soft); color:#fca5a5; border:1px solid var(--danger); border-radius:5px; padding:3px 7px; font-size:10.5px; font-weight:800; cursor:pointer;" title="Quitar foto">🗑️</button>' +
+                  '</div>'
+                : '') +
             '</div>' +
           '</div>';
         }).join("") +
