@@ -4461,6 +4461,25 @@ window.precargarPropiedadExistente = function(clave) {
   }
 };
 
+
+window.seleccionarPortadaEnModal = function(urlElegida) {
+  var inpPortada = document.getElementById("prop-alta-portada");
+  var inpFotos = document.getElementById("prop-alta-fotos");
+  var nombreP = document.getElementById("prop-alta-nombre").value.trim();
+  if (inpPortada) inpPortada.value = urlElegida;
+  if (nombreP) {
+    var p = (window.CARTERA_PROPIEDADES || []).find(function(item) {
+      return String(item.nombre_propiedad || "").toUpperCase() === nombreP.toUpperCase();
+    });
+    if (p) {
+      p.foto_portada = urlElegida;
+      guardarCacheMultimediaPropiedad(p.nombre_propiedad, p.fotos || [], urlElegida);
+    }
+  }
+  previsualizarFotosModal(inpFotos ? inpFotos.value : "");
+  renderizarCarteraYRecibosPropietario();
+};
+
 window.previsualizarFotosModal = function(cadenaUrls) {
   var cont = document.getElementById("preview-fotos-modal");
   var inpPortada = document.getElementById("prop-alta-portada");
@@ -4490,25 +4509,7 @@ window.previsualizarFotosModal = function(cadenaUrls) {
     '</div>';
   }).join("");
 };
-
-window.seleccionarPortadaEnModal = function(urlElegida) {
-  var inpPortada = document.getElementById("prop-alta-portada");
-  var inpFotos = document.getElementById("prop-alta-fotos");
-  var nombreP = document.getElementById("prop-alta-nombre").value.trim();
-  if (inpPortada) inpPortada.value = urlElegida;
-  if (nombreP) {
-    var p = (window.CARTERA_PROPIEDADES || []).find(function(item) {
-      return String(item.nombre_propiedad || "").toUpperCase() === nombreP.toUpperCase();
-    });
-    if (p) {
-      p.foto_portada = urlElegida;
-      guardarCacheMultimediaPropiedad(p.nombre_propiedad, p.fotos || [], urlElegida);
-    }
-  }
-  previsualizarFotosModal(inpFotos ? inpFotos.value : "");
-  renderizarCarteraYRecibosPropietario();
-};
-
+  
 window.quitarFotoIndividualModal = function(idxBorrar) {
   var inpFotos = document.getElementById("prop-alta-fotos");
   var inpPortada = document.getElementById("prop-alta-portada");
