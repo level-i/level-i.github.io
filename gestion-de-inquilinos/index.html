@@ -1488,11 +1488,14 @@
         <div id="status-ftp-upload" style="font-size:12px; color:var(--text-muted); margin-top:6px;"></div>
       </div>
 
-      <div class="form-group">
-        <label for="prop-alta-fotos" class="form-label">Enlaces de Galería Multimedia (URLs separadas por comas)</label>
-        <input type="text" id="prop-alta-fotos" class="form-input" placeholder="https://level.immo/uploads/..." oninput="previsualizarFotosModal(this.value)">
-        <div id="preview-fotos-modal" class="property-gallery" style="margin-top:8px;"></div>
-      </div>
+      <!-- Busca tu formulario actual de subida de fotos y déjalo así: -->
+<div class="form-group">
+  <label for="input-fotos">Seleccionar fotos (máx. 20):</label>
+  <input type="file" id="input-fotos" accept="image/*" multiple onchange="manejarPrevisualizacion(event)">
+</div>
+
+<!-- Añade este contenedor justo debajo del input para que aparezcan las miniaturas -->
+<div id="galeria-preview" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(75px, 1fr)); gap: 10px; margin-top: 12px;"></div>
 
       <div class="form-group">
         <label for="prop-alta-avisos" class="form-label">Avisos Generales / Observaciones de la Vivienda</label>
@@ -4504,6 +4507,52 @@ document.addEventListener("DOMContentLoaded", function() {
     }
   }
 });
+</script>
+<script>
+  window.manejarPrevisualizacion = function(event) {
+    const files = event.target.files;
+    const previewContainer = document.getElementById("galeria-preview");
+    previewContainer.innerHTML = ""; // Limpiar previsualizaciones anteriores
+
+    // 1. Control de límite máximo (20 fotos)
+    if (files.length > 20) {
+      alert("⚠️ Solo puedes seleccionar un máximo de 20 imágenes por lote.");
+      event.target.value = ""; // Limpia la selección del input
+      return;
+    }
+
+    // 2. Recorrer los archivos seleccionados para mostrarlos
+    Array.from(files).forEach((file) => {
+      // Control de peso individual (máximo 10 MB por foto antes de comprimir)
+      if (file.size > 10 * 1024 * 1024) {
+        alert(`La imagen "${file.name}" supera el límite de 10 MB y se omitirá.`);
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        // Crear contenedor individual para cada miniatura
+        const wrapper = document.createElement("div");
+        wrapper.style.position = "relative";
+        wrapper.style.width = "75px";
+        wrapper.style.height = "75px";
+
+        // Crear la etiqueta de imagen con estilo fino y bordes redondeados
+        const img = document.createElement("img");
+        img.src = e.target.result;
+        img.style.width = "100%";
+        img.style.height = "100%";
+        img.style.objectFit = "cover";
+        img.style.borderRadius = "8px";
+        img.style.border = "1px solid rgba(255, 255, 255, 0.2)";
+        img.style.boxShadow = "0 3px 6px rgba(0, 0, 0, 0.15)";
+
+        wrapper.appendChild(img);
+        previewContainer.appendChild(wrapper);
+      };
+      reader.readAsDataURL(file);
+    });
+  };
 </script>
 </body>
 </html>
