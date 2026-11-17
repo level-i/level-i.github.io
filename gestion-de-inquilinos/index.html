@@ -4612,60 +4612,102 @@ document.addEventListener("DOMContentLoaded", function() {
     }
   }
 });
-</script>
 <script>
+  window.archivosSeleccionadosFTP = [];
+
   window.manejarPrevisualizacion = function(event) {
     const input = event.target;
-    const files = input.files;
-    const previewContainer = document.getElementById("galeria-preview");
+    const files = Array.from(input.files || []);
     const statusEl = document.getElementById("status-ftp-upload");
-    if (previewContainer) previewContainer.innerHTML = "";
 
-    // 1. Control de límite máximo (20 fotos)
     if (files.length > 20) {
       alert("⚠️ Solo puedes seleccionar un máximo de 20 imágenes por lote.");
       input.value = "";
-      if (statusEl) statusEl.innerHTML = "<span style='color:var(--danger);'>⚠️ Selección cancelada: máximo 20 fotografías por subida.</span>";
+      window.archivosSeleccionadosFTP = [];
+      renderizarMiniaturasFTP();
       return;
     }
 
-    // 2. Filtrar archivos que superen 10 MB y construir la lista válida
-    const dt = new DataTransfer();
-    Array.from(files).forEach((file) => {
+    window.archivosSeleccionadosFTP = [];
+    files.forEach((file) => {
       if (file.size > 10 * 1024 * 1024) {
         alert(`⚠️ La imagen "${file.name}" supera el límite de 10 MB y se ha omitido.`);
         return;
       }
-      dt.items.add(file);
-
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        const wrapper = document.createElement("div");
-        wrapper.style.position = "relative";
-        wrapper.style.width = "75px";
-        wrapper.style.height = "75px";
-
-        const img = document.createElement("img");
-        img.src = e.target.result;
-        img.title = file.name + " (" + (file.size / 1024 / 1024).toFixed(2) + " MB)";
-        img.style.width = "100%";
-        img.style.height = "100%";
-        img.style.objectFit = "cover";
-        img.style.borderRadius = "8px";
-        img.style.border = "1px solid rgba(16, 185, 129, 0.45)";
-        img.style.boxShadow = "0 3px 6px rgba(0, 0, 0, 0.25)";
-
-        wrapper.appendChild(img);
-        if (previewContainer) previewContainer.appendChild(wrapper);
-      };
-      reader.readAsDataURL(file);
+      window.archivosSeleccionadosFTP.push(file);
     });
 
-    input.files = dt.files;
-    if (statusEl && dt.files.length > 0) {
-      statusEl.innerHTML = "<span style='color:var(--emerald);'>📸 " + dt.files.length + " imagen(es) lista(s). Pulsa <strong>☁️ Subir al FTP y Obtener Enlace</strong> para enviarlas a Make.</span>";
-    }
+    sincronizarInputArchivosFTP();
+    renderizarMiniaturasFTP();
   };
+
+  window.eliminarFotoPrevisualizacion = function(index) {
+    window.archivosSeleccionadosFTP.splice(index, 1);
+    sincronizarInputArchivosFTP();
+    renderizarMiniaturasFTP();
+  };
+
+  function sincronizarInputArchivosFTP() {
+    const input = document.getElementById("prop-file-ftp");
+    const statusEl = document.getElementById("status-ftp-upload");
+    if (!input) return;
+
+    const dt = new DataTransfer();
+    window.archivosSeleccionadosFTP.forEach((f) => dt.items.add(f));
+    input.files = dt.files;
+
+    if (statusEl) {
+      if (dt.files.length > 0) {
+        statusEl.innerHTML = "<span style='color:var(--emerald);'>📸 " + dt.files.length + " imagen(es) lista(s). Pulsa <strong>☁️ Subir al FTP y Obtener Enlace</strong> o quita las que no quieras con la ✕.</span>";
+      } else {
+        statusEl.innerHTML = "<span style='color:var(--text-muted);'>Ningún archivo seleccionado.</span>";
+      }
+    }
+  }
+
+  function renderizarMiniaturasFTP() {
+    const previewContainer = document.getElementById("galeria-preview");
+    if (!previewContainer) return;
+    previewContainer.innerHTML = "";
+
+    window.archivosSeleccionadosFTP.forEach((file, idx) => {
+      const wrapper = document.createElement("div");
+      wrapper.style.position = "relative";
+      wrapper.style.width = "80px";
+      wrapper.style.height = "80px";
+
+      const img = document.createElement("img");
+      img.title = file.name + " (" + (file.size / 1024 / 1024).toFixed(2) + " MB)";
+      img.style.width = "100%";
+      img.style.height = "100%";
+      img.style.objectFit = "cover";
+      img.style.borderRadius = "8px";
+      img.style.border = "1px solid rgba(16, 185, 129, 0.45)";
+      img.style.boxShadow = "0 3px 6px rgba(0, 0, 0, 0.25)";
+
+      const reader = new FileReader();
+      reader.onload = function(e) { img.src = e.target.result; };
+      reader.readAsDataURL(file);
+
+      // Botón X para quitar la foto si no la quieres
+      const btnClose = document.createElement("button");
+      btnClose.type = "button";
+      btnClose.innerHTML = "✕";
+      btnClose.title = "Quitar esta imagen";
+      btnClose.style.cssText = "position:absolute; top:-6px; right:-6px; width:22px; height:22px; border-radius:50%; background:var(--danger); color:#fff; border:1px solid #fff; font-size:11px; font-weight:900; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 5px rgba(0,0,0,0.4);";
+      btnClose.onclick = function() { window.eliminarFotoPrevisualizacion(idx); };
+
+      // Etiqueta con el peso abajo
+      const badgeSize = document.createElement("span");
+      badgeSize.innerText = (file.size / 1024 / 1024).toFixed(1) + "MB";
+      badgeSize.style.cssText = "position:absolute; bottom:3px; left:3px; background:rgba(6,10,18,0.85); color:#fff; font-size:9.5px; font-weight:700; padding:1px 4px; border-radius:4px;";
+
+      wrapper.appendChild(img);
+      wrapper.appendChild(btnClose);
+      wrapper.appendChild(badgeSize);
+      previewContainer.appendChild(wrapper);
+    });
+  }
 </script>
 </body>
 </html>
