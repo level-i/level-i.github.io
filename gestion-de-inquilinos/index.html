@@ -4902,45 +4902,56 @@ function cargarExpedienteDesdeMake(identificador, pinIntroducido) {
   });
 }
 
-function pintarFichaExpedienteEnPantalla(d) {
+pintarFichaExpedienteEnPantalla = function(d) {
   var esPropietario = (window.sesionActiva.rol === "PROPIETARIO");
+  var esAbogado = (window.sesionActiva.rol === "ABOGADO");
 
+  // 1. Obtener DNI y nombre del inquilino activo
+  var dniTitular = formatearCampoValor(obtenerDniUnificado(d)) || window.sesionActiva["DNI-NIE-CIF"] || "";
   var nombreTitular = formatearCampoValor(
     d.Arrendatario || d.nombre_inquilino || d["Nombre Inquilinos"] || d.INQUILINO || d.nombre || d.Nombre_Inquilino ||
-    d["Nombre Propietaria"] || d.Propietario || d.nombre_propietario || d.nombre_abogado || d["Nombre de pila"]
+    d["Nombre Propietaria"] || d.Propietario || d.nombre_propietario || d.nombre_abogado
   ) || window.sesionActiva.nombre || "---";
 
-  var dniTitular = formatearCampoValor(obtenerDniUnificado(d)) || window.sesionActiva["DNI-NIE-CIF"] || "---";
   var codigoAutho = formatearCampoValor(
     d["Autho-code-inquilino"] || d["Autho-code-propietario"] || d["Auto-code-propietario"] ||
     d["Autho-code-abogado"] || d.codigo_propietario || d.Search_Code || d.codigo_inquilino || d.code
   ) || window.sesionActiva.codigo_inquilino || "---";
 
+  // 2. Buscar si el inquilino tiene una propiedad asignada en la cartera o en los recibos
   var propiedadNombre = formatearCampoValor(
     d.PROPERTY_PROPIEDADES || d["Propiedad arrendada"] || d.nombre_propiedad || d.PROPIEDAD || d.propiedad || d.propiedades_autorizadas
-  ) || "";
+  );
+
+  if ((!propiedadNombre || propiedadNombre === "---") && dniTitular) {
+    var recEncontrado = (window.RECIBOS_CARTERA || []).find(function(r) {
+      return obtenerDniUnificado(r).toUpperCase().includes(dniTitular.toUpperCase()) && r.propiedad && r.propiedad !== "---";
+    });
+    if (recEncontrado) propiedadNombre = recEncontrado.propiedad;
+  }
 
   if ((!propiedadNombre || propiedadNombre === "---") && window.CARTERA_PROPIEDADES.length > 0) {
-    propiedadNombre = window.CARTERA_PROPIEDADES.map(function(p) { return p.nombre_propiedad; }).filter(Boolean).join(", ");
+    var propMatch = window.CARTERA_PROPIEDADES.find(function(p) {
+      return obtenerDniUnificado(p).toUpperCase().includes(dniTitular.toUpperCase()) ||
+             String(p.inquilino || "").toUpperCase().includes(nombreTitular.toUpperCase());
+    });
+    if (propMatch) propiedadNombre = propMatch.nombre_propiedad;
+    else propiedadNombre = window.CARTERA_PROPIEDADES[0].nombre_propiedad; // Fallback al primer inmueble
   }
-  if (!propiedadNombre) propiedadNombre = "---";
 
-  var fichaProp = window.CARTERA_PROPIEDADES.find(function(p) {
-    return String(p.nombre_propiedad || "").toUpperCase() === propiedadNombre.toUpperCase();
+  var fichaProp = (window.CARTERA_PROPIEDADES || []).find(function(p) {
+    return String(p.nombre_propiedad || "").toUpperCase() === String(propiedadNombre || "").toUpperCase();
   }) || (window.CARTERA_PROPIEDADES.length > 0 ? window.CARTERA_PROPIEDADES[0] : {});
 
   var direccionTexto = formatearCampoValor(
     fichaProp.direccion || d["Dirección del Inmueble"] || d["DIRECCIÓN INMUEBLE"] || d.Direccion || d.ubicacion
   ) || (window.CARTERA_PROPIEDADES.length > 0 ? window.CARTERA_PROPIEDADES[0].direccion : "---");
 
-  var dirFiscalOculta = formatearCampoValor(d.direccion_fiscal || d["DIRECCIÓN FISCAL"] || "");
-
   var rentaTexto = formatearCampoValor(fichaProp.cuota || d.cuota || d["Precio Alquiler"] || d.renta_mensual || d.renta || "");
   if (rentaTexto && !rentaTexto.includes("€")) rentaTexto = rentaTexto + " €/mes";
 
   var revisionTexto = formatearFechaHoraBD(fichaProp.revision || d.revision || d["Próxima Revisión Alquiler"] || "");
-  var deudaTexto = formatearCampoValor(fichaProp.deuda || d.deuda || d.Deuda || "");
-  var ibanTexto = formatearCampoValor(fichaProp.iban || d["IBAN Bancario Propietario"] || d["IBAN Bancario"] || d.iban || d.IBAN || window.EXPEDIENTE_ACTUAL.iban || "");
+  var ibanTexto = formatearCampoValor(fichaProp.iban || d["IBAN Bancario Propietario"] || d["IBAN Bancario"] || d.iban || d.IBAN || "");
   var estadoTexto = formatearCampoValor(d.estado_contrato || d["Estado Recibo"] || d.estado || "ACTIVO");
 
   var resumenContrato = [
@@ -4956,10 +4967,68 @@ function pintarFichaExpedienteEnPantalla(d) {
     codigo: codigoAutho,
     propiedad: propiedadNombre,
     direccion: direccionTexto,
-    direccion_fiscal: dirFiscalOculta,
     iban: ibanTexto,
     contrato_renta: resumenContrato
   };
+
+  // 3. Pintar en los elementos HTML del expediente del residente
+  var lblRol = document.getElementById("lbl-titular-rol");
+  if (lblRol) {
+    lblRol.innerText = esPropietario ? "Propietario / Arrendador:" : "Inquilino / Titular:";
+  }
+
+  document.getElementById("val-nombre").innerText = nombreTitular;
+  document.getElementById("val-dni").innerText = (dniTitular || "---") + " · " + detectarPersonalidadPorDni(dniTitular);
+  document.getElementById("val-codigo-autho").innerText = codigoAutho;
+  document.getElementById("val-propiedad").innerText = propiedadNombre;
+  document.getElementById("val-direccion").innerText = direccionTexto;
+  document.getElementById("val-contrato-renta").innerText = resumenContrato || "---";
+
+  // Actualizar saldo vivo real del inquilino (calculado de sus recibos)
+  actualizarTarjetaSaldoVivoEnPantalla();
+
+  // Galería de fotos del inmueble en el expediente
+  var fotosFinales = limpiarListaUrlsMultimedia(
+    (Array.isArray(fichaProp.fotos) && fichaProp.fotos.length > 0)
+      ? fichaProp.fotos
+      : normalizarPropiedadDesdeMake(d).fotos
+  );
+
+  var wrapFotos = document.getElementById("wrap-galeria-fotos");
+  var galeriaBox = document.getElementById("val-fotos");
+  if (wrapFotos && galeriaBox) {
+    if (Array.isArray(fotosFinales) && fotosFinales.length > 0) {
+      wrapFotos.style.display = "block";
+      galeriaBox.innerHTML = fotosFinales.map(function(u) {
+        return '<img src="' + escaparHTML(u) + '" alt="' + escaparHTML(propiedadNombre) + '" onclick="abrirFotoEnLightbox(this.src)">';
+      }).join("");
+    } else {
+      wrapFotos.style.display = "none";
+      galeriaBox.innerHTML = "";
+    }
+  }
+
+  // Avisos de la propiedad
+  var avisoTexto = formatearCampoValor(fichaProp.avisos || d.avisos || d["Avisos Generales"] || "");
+  var htmlAvisos = "";
+  var saldoNum = calcularSaldoVivoPropiedad(propiedadNombre, fichaProp.deuda);
+  if (saldoNum < 0) {
+    htmlAvisos += '<div style="background:var(--danger-soft); border-left:3px solid var(--danger); padding:10px 12px; border-radius:8px; color:#fca5a5; margin-bottom:8px;">🚨 <strong>Saldo pendiente de regularización (Debe):</strong> ' + formatearEuros(Math.abs(saldoNum)) + '</div>';
+  }
+  if (avisoTexto) {
+    htmlAvisos += '<div style="background:var(--bg-input); border-left:3px solid var(--emerald); padding:10px 12px; border-radius:8px; color:#e2e8f0;">📢 ' + escaparHTML(avisoTexto) + '</div>';
+  }
+  var elAvisos = document.getElementById("val-avisos");
+  if (elAvisos) {
+    elAvisos.innerHTML = htmlAvisos || "<div style='color:var(--text-muted);'>Sin avisos pendientes en este expediente.</div>";
+  }
+
+  // Pintar libro de recibos filtrado exclusivamente para este inquilino / inmueble
+  renderizarRecibosInquilino(propiedadNombre, dniTitular);
+
+  // Actualizar mapa GPS con la dirección real del inmueble
+  actualizarMapaInmueble(direccionTexto, propiedadNombre, fichaProp.lat || d.lat, fichaProp.lon || d.lon);
+};
 
   var lblRol = document.getElementById("lbl-titular-rol");
   if (lblRol) {
