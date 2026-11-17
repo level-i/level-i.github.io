@@ -1476,27 +1476,31 @@
         </div>
       </div>
 
-      <!-- SUBIDA DIRECTA DE ARCHIVOS AL FTP VÍA PROPERTY_GESTION -->
-      <div class="form-group" style="background:var(--bg-input); padding:12px; border-radius:10px; border:1px dashed var(--emerald);">
-        <label for="prop-file-ftp" class="form-label" style="color:var(--emerald);">📤 Subir Archivos de Fotografía al FTP de level.immo (vía PROPERTY_GESTION)</label>
+      <!-- SUBIDA UNIFICADA DE ARCHIVOS AL FTP CON PREVISUALIZACIÓN Y LÍMITE DE 20 FOTOS / 10 MB -->
+      <div class="form-group" style="background:var(--bg-input); padding:14px; border-radius:10px; border:1px dashed var(--emerald);">
+        <label for="prop-file-ftp" class="form-label" style="color:var(--emerald);">📤 Subir Fotografías al FTP de level.immo (Máx. 20 fotos · Máx. 10 MB c/u)</label>
         <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
-          <input type="file" id="prop-file-ftp" accept="image/*" multiple class="form-input" style="flex:1; padding:8px;">
-          <button type="button" class="btn-outline-sm" id="btn-subir-ftp-now" style="border-color:var(--emerald); color:var(--emerald); padding:10px 14px;" onclick="subirArchivosFtpMake()">
+          <input type="file" id="prop-file-ftp" accept="image/*" multiple class="form-input" style="flex:1; padding:8px;" onchange="manejarPrevisualizacion(event)">
+          <button type="button" class="btn-outline-sm" id="btn-subir-ftp-now" style="border-color:var(--emerald); color:var(--emerald); padding:10px 14px; font-weight:800;" onclick="subirArchivosFtpMake()">
             ☁️ Subir al FTP y Obtener Enlace
           </button>
         </div>
-        <div id="status-ftp-upload" style="font-size:12px; color:var(--text-muted); margin-top:6px;"></div>
+        <!-- Cuadrícula fina de previsualización antes de subir -->
+        <div id="galeria-preview" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(75px, 1fr)); gap: 10px; margin-top: 12px;"></div>
+        <div id="status-ftp-upload" style="font-size:12px; color:var(--text-muted); margin-top:8px;"></div>
       </div>
 
-      <!-- Busca tu formulario actual de subida de fotos y déjalo así: -->
-<div class="form-group">
-  <label for="input-fotos">Seleccionar fotos (máx. 20):</label>
-  <input type="file" id="input-fotos" accept="image/*" multiple onchange="manejarPrevisualizacion(event)">
-</div>
+      <div class="form-group">
+        <label for="prop-alta-portada" class="form-label" style="color:var(--amber);">⭐ URL Imagen de Portada Principal (FTP level.immo)</label>
+        <input type="text" id="prop-alta-portada" class="form-input" placeholder="https://level.immo/uploads/propiedades/portada.jpg (Se rellena automático al subir)">
+      </div>
 
-<!-- Añade este contenedor justo debajo del input para que aparezcan las miniaturas -->
-<div id="galeria-preview" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(75px, 1fr)); gap: 10px; margin-top: 12px;"></div>
-
+      <div class="form-group">
+        <label for="prop-alta-fotos" class="form-label">📸 URLs del Book Completo (Separadas por comas · Se rellena automático al subir al FTP)</label>
+        <input type="text" id="prop-alta-fotos" class="form-input" placeholder="https://level.immo/uploads/propiedades/foto1.jpg, ..." oninput="previsualizarFotosModal(this.value)">
+        <div id="preview-fotos-modal" class="property-gallery" style="margin-top:8px;"></div>
+      </div>
+      
       <div class="form-group">
         <label for="prop-alta-avisos" class="form-label">Avisos Generales / Observaciones de la Vivienda</label>
         <input type="text" id="prop-alta-avisos" class="form-input" placeholder="Observaciones del inmueble">
@@ -1893,7 +1897,7 @@ const TPV_COMISION_FIJA_EUROS      = 10.00;
 const TPV_COMISION_PORCENTAJE      = 0.015;
 
 // ============================================================================
-// DICCIONARIO BILINGÜE (ESPAÑOL Y CATALÁN)
+// DICCIONARIO MULTILINGÜE (ESPAÑOL, CATALÁN, INGLÉS, FRANCÉS Y ALEMÁN)
 // ============================================================================
 const I18N_DICCIONARIO = {
   es: {
@@ -1969,6 +1973,117 @@ const I18N_DICCIONARIO = {
     btn_talk_elena: "💬 Parlar amb Elena IA",
     chat_welcome: "Hola, sóc l'Elena IA Advisor. Totes les nostres converses sobre lloguers, subministraments o incidències queden registrades al teu expedient. En què et puc ajudar avui?",
     math_prefix: "Verificació: Quant és "
+  },
+  en: {
+    nav_demanda_mob: "🎯 Demand", nav_mercado_mob: "📡 Market", nav_usuarios_mob: "🔑 Users",
+    nav_demanda: "🎯 Active Demand", nav_mercado_real: "📡 Real Market", nav_inquilinos: "👥 User Access",
+    nav_chivatazo: "📣 National Tip-Off", nav_equipos: "💼 Join the Advisors Team in your Area",
+    nav_poblaciones_titulo: "📍 On-site Services in:",
+    link_legal: "Legal Notice", link_privacidad: "Privacy & GDPR", link_cookies: "Cookies & AI",
+    topbar_title: "PropTech Console · Reverse Market & Autonomous Rental Management",
+    badge_encrypted: "Multi-Role Encrypted Access",
+    login_title: "Access for Residents, Owners & Legal Services",
+    login_desc: "Enter your ID/NIE/Tax ID to securely access your private dashboard and receive your 4-digit temporary PIN via WhatsApp.",
+    label_dni: "Holder or Authorized Lawyer ID / NIE / Tax ID",
+    chk_accept_prefix: "I accept the", chk_accept_link: "Terms and Privacy Policy",
+    chk_accept_suffix: "I authorize encrypted access to my file and receiving a PIN via WhatsApp.",
+    btn_request_pin: "Request VIP Verification →",
+    pin_sent_title: "Request sent to your WhatsApp!",
+    pin_sent_desc: "Enter the 4-digit temporary PIN received on your WhatsApp to open your full-screen dashboard:",
+    btn_enter_portal: "Enter Full-Screen Portal →", btn_back: "← Go back",
+    tab_resident: "🏠 Resident File",
+    tab_owner: "👑 Owner Area (Portfolio, Utilities, POS, Notices & Lawyer)",
+    btn_toggle_sidebars: "⛶ Show/Hide Sidebars", btn_logout: "✕ Log Out",
+    owner_area_header: "👑 SECURE OWNER AREA · REAL-TIME AUTONOMOUS MANAGEMENT",
+    owner_hello: "Hello,", exp_box_title: "🏠 FILE & PROPERTY",
+    lbl_tenant: "Tenant / Holder:", lbl_property: "Property(ies):", lbl_address: "Address / Location:",
+    lbl_map_box: "📍 Geolocation & GPS Navigation:",
+    btn_drive_auto: "Directions (Car)", btn_open_maps: "Google Maps", btn_fly_3d: "3D Flight",
+    btn_view_contract: "📄 View File, Contract, Taxes & IBAN",
+    avisos_box_title: "📢 PROPERTY NOTICES & ALERTS",
+    inc_box_title: "🛠️ INCIDENTS & REPORTS (TRACEABLE CHAT HISTORY)",
+    recibos_box_title: "🧾 RENT & UTILITY STATEMENTS (DEBIT/CREDIT), CARD POS & PDF INVOICES",
+    side_sec_title: "🛡️ AUTOMATIC ARCHITECTURE", side_rule_title: "⚖️ LIVE BALANCE & TAXATION",
+    side_rule_desc: "The system calculates the Current Live Balance (Credit - Debit) in real time, automatically applying VAT and withholding tax according to the tenant's Tax ID.",
+    side_sup_title: "💬 ELENA AI ADVISOR 24/7",
+    side_sup_desc: "Proactive WhatsApp notifications for billing cycles, utility alerts and traceable incident history.",
+    btn_talk_elena: "💬 Talk to Elena AI",
+    chat_welcome: "Hello, I am Elena AI Advisor. All our conversations regarding rent, utilities or incidents are logged in your file. How can I help you today?",
+    math_prefix: "Verification: What is "
+  },
+  fr: {
+    nav_demanda_mob: "🎯 Demande", nav_mercado_mob: "📡 Marché", nav_usuarios_mob: "🔑 Accès",
+    nav_demanda: "🎯 Demande Active", nav_mercado_real: "📡 Marché Réel", nav_inquilinos: "👥 Accès Utilisateurs",
+    nav_chivatazo: "📣 Alerte Nationale", nav_equipos: "💼 Rejoignez l'Équipe d'Advisors",
+    nav_poblaciones_titulo: "📍 Services Présentiels à :",
+    link_legal: "Mentions Légales", link_privacidad: "Confidentialité & RGPD", link_cookies: "Cookies & IA",
+    topbar_title: "Console PropTech · Reverse Market & Gestion Locative Autonome",
+    badge_encrypted: "Accès Chiffré Multi-Rôle",
+    login_title: "Accès Résidents, Propriétaires et Services Juridiques",
+    login_desc: "Saisissez votre DNI/NIE/CIF pour accéder en toute sécurité à votre espace privé et recevoir votre code PIN temporaire à 4 chiffres par WhatsApp.",
+    label_dni: "DNI / NIE / CIF du Titulaire ou Avocat Autorisé",
+    chk_accept_prefix: "J'accepte les", chk_accept_link: "Conditions et la Confidentialité",
+    chk_accept_suffix: "J'autorise la consultation chiffrée de mon dossier et l'envoi du PIN par WhatsApp.",
+    btn_request_pin: "Demander la Vérification VIP →",
+    pin_sent_title: "Demande envoyée sur votre WhatsApp !",
+    pin_sent_desc: "Saisissez le code PIN temporaire à 4 chiffres reçu sur WhatsApp pour ouvrir votre dossier en plein écran :",
+    btn_enter_portal: "Entrer sur le Portail Plein Écran →", btn_back: "← Retour",
+    tab_resident: "🏠 Dossier du Résident",
+    tab_owner: "👑 Espace Propriétaire (Portefeuille, Charges, TPV, Avis & Avocat)",
+    btn_toggle_sidebars: "⛶ Afficher/Masquer les Panneaux", btn_logout: "✕ Déconnexion",
+    owner_area_header: "👑 ESPACE PROPRIÉTAIRE SÉCURISÉ · GESTION AUTONOME EN TEMPS RÉEL",
+    owner_hello: "Bonjour,", exp_box_title: "🏠 DOSSIER ET PROPRIÉTÉ",
+    lbl_tenant: "Locataire / Titulaire :", lbl_property: "Bien(s) :", lbl_address: "Adresse / Localisation :",
+    lbl_map_box: "📍 Géolocalisation et Navigation GPS :",
+    btn_drive_auto: "Itinéraire (Voiture)", btn_open_maps: "Google Maps", btn_fly_3d: "Vol 3D",
+    btn_view_contract: "📄 Voir Fiche, Contrat, Fiscalité et IBAN",
+    avisos_box_title: "📢 AVIS ET NOTIFICATIONS DU BIEN",
+    inc_box_title: "🛠️ INCIDENTS ET INTERVENTIONS (HISTORIQUE CHAT TRAÇABLE)",
+    recibos_box_title: "🧾 RELEVÉS DE LOYER, CHARGES (DÉBIT/CRÉDIT), PAIEMENT TPV ET FACTURES PDF",
+    side_sec_title: "🛡️ ARCHITECTURE AUTOMATIQUE", side_rule_title: "⚖️ SOLDE ACTUEL ET FISCALITÉ",
+    side_rule_desc: "Le système calcule en temps réel le Solde Actuel (Crédit - Débit) en appliquant automatiquement la TVA et les retenues fiscales selon le profil du locataire.",
+    side_sup_title: "💬 ELENA IA ADVISOR 24/7",
+    side_sup_desc: "Notifications proactives par WhatsApp des échéances, relevés de charges et suivi historique des incidents.",
+    btn_talk_elena: "💬 Parler avec Elena IA",
+    chat_welcome: "Bonjour, je suis Elena IA Advisor. Toutes nos conversations sur les loyers, charges ou incidents sont enregistrées dans votre dossier. Comment puis-je vous aider ?",
+    math_prefix: "Vérification : Combien font "
+  },
+  de: {
+    nav_demanda_mob: "🎯 Nachfrage", nav_mercado_mob: "📡 Markt", nav_usuarios_mob: "🔑 Zugang",
+    nav_demanda: "🎯 Aktive Nachfrage", nav_mercado_real: "📡 Realer Markt", nav_inquilinos: "👥 Benutzerzugang",
+    nav_chivatazo: "📣 Nationaler Tipp", nav_equipos: "💼 Werden Sie Advisor in Ihrer Region",
+    nav_poblaciones_titulo: "📍 Vor-Ort-Service in:",
+    link_legal: "Impressum", link_privacidad: "Datenschutz & DSGVO", link_cookies: "Cookies & KI",
+    topbar_title: "PropTech-Konsole · Reverse Market & Autonome Mietverwaltung",
+    badge_encrypted: "Verschlüsselter Multi-Rollen-Zugang",
+    login_title: "Zugang für Mieter, Eigentümer und Rechtsdienste",
+    login_desc: "Geben Sie Ihre Ausweis-/Steuernummer (DNI/NIE/CIF) ein, um sicher auf Ihr privates Panel zuzugreifen und Ihre 4-stellige PIN per WhatsApp zu erhalten.",
+    label_dni: "DNI / NIE / CIF des Inhabers oder autorisierten Anwalts",
+    chk_accept_prefix: "Ich akzeptiere die", chk_accept_link: "Bedingungen und den Datenschutz",
+    chk_accept_suffix: "Ich autorisiere die verschlüsselte Abfrage meiner Akte und den PIN-Versand per WhatsApp.",
+    btn_request_pin: "VIP-Verifizierung anfordern →",
+    pin_sent_title: "Anfrage an Ihr WhatsApp gesendet!",
+    pin_sent_desc: "Geben Sie die 4-stellige PIN aus WhatsApp ein, um Ihre Akte im Vollbildmodus zu öffnen:",
+    btn_enter_portal: "Portal im Vollbildmodus öffnen →", btn_back: "← Zurück",
+    tab_resident: "🏠 Mieterakte",
+    tab_owner: "👑 Eigentümerbereich (Portfolio, Nebenkosten, POS, Hinweise & Anwalt)",
+    btn_toggle_sidebars: "⛶ Seitenleisten ein-/ausblenden", btn_logout: "✕ Abmelden",
+    owner_area_header: "👑 SICHERER EIGENTÜMERBEREICH · AUTONOME ECHTZEIT-VERWALTUNG",
+    owner_hello: "Hallo,", exp_box_title: "🏠 AKTE & IMMOBILIE",
+    lbl_tenant: "Mieter / Inhaber:", lbl_property: "Immobilie(n):", lbl_address: "Adresse / Standort:",
+    lbl_map_box: "📍 Geolokalisierung & GPS-Navigation:",
+    btn_drive_auto: "Route (Auto)", btn_open_maps: "Google Maps", btn_fly_3d: "3D-Flug",
+    btn_view_contract: "📄 Datenblatt, Vertrag, Steuern & IBAN",
+    avisos_box_title: "📢 HINWEISE & BENACHRICHTIGUNGEN DER IMMOBILIE",
+    inc_box_title: "🛠️ VORVÄLLE & MELDUNGEN (NACHVOLLZIEHBARER CHAT-VERLAUF)",
+    recibos_box_title: "🧾 MIET- & NEBENKOSTENABRECHNUNGEN (SOLL/HABEN), KARTENZAHLUNG & PDF-BELEGE",
+    side_sec_title: "🛡️ AUTOMATISCHE ARCHITEKTUR", side_rule_title: "⚖️ AKTUELLER SALDO & STEUERN",
+    side_rule_desc: "Das System berechnet in Echtzeit den aktuellen Saldo (Haben - Soll) inklusive automatischer MwSt.- und Steuerberechnung.",
+    side_sup_title: "💬 ELENA KI-ADVISOR 24/7",
+    side_sup_desc: "Proaktive WhatsApp-Benachrichtigungen für Abrechnungen, Nebenkosten und Vorfallshistorie.",
+    btn_talk_elena: "💬 Mit Elena KI sprechen",
+    chat_welcome: "Hallo, ich bin Elena KI-Advisor. Alle Gespräche über Mieten, Nebenkosten oder Vorfälle werden in Ihrer Akte protokolliert. Wie kann ich Ihnen heute helfen?",
+    math_prefix: "Verifizierung: Was ergibt "
   }
 };
 
@@ -2023,22 +2138,12 @@ function limpiarEstadoUI() {
     }
   }
 
-  // Asegurar campo de Imagen de Portada en el modal de propiedad
-  var inputFotosBook = document.getElementById("prop-alta-fotos");
-  if (inputFotosBook && !document.getElementById("prop-alta-portada")) {
-    var grupoBook = inputFotosBook.parentElement;
-    var divPortada = document.createElement("div");
-    divPortada.className = "form-group";
-    divPortada.innerHTML =
-      '<label for="prop-alta-portada" class="form-label" style="color:var(--amber);">⭐ URL Imagen de Portada Principal (FTP level.immo)</label>' +
-      '<input type="text" id="prop-alta-portada" class="form-input" placeholder="https://level.immo/uploads/propiedades/portada.jpg (Si se deja vacío, usará la 1ª foto del Book)">';
-    grupoBook.parentNode.insertBefore(divPortada, grupoBook);
-  }
-
+  // Mantener únicamente los 5 idiomas oficiales: Español, Catalán, Inglés, Francés y Alemán
   var selIdioma = document.getElementById("lang-selector");
   if (selIdioma) {
+    var idiomasPermitidos = ["es", "ca", "en", "fr", "de"];
     Array.from(selIdioma.options).forEach(function(opt) {
-      if (opt.value !== "es" && opt.value !== "ca") {
+      if (idiomasPermitidos.indexOf(opt.value) === -1) {
         opt.remove();
       }
     });
@@ -4510,48 +4615,56 @@ document.addEventListener("DOMContentLoaded", function() {
 </script>
 <script>
   window.manejarPrevisualizacion = function(event) {
-    const files = event.target.files;
+    const input = event.target;
+    const files = input.files;
     const previewContainer = document.getElementById("galeria-preview");
-    previewContainer.innerHTML = ""; // Limpiar previsualizaciones anteriores
+    const statusEl = document.getElementById("status-ftp-upload");
+    if (previewContainer) previewContainer.innerHTML = "";
 
     // 1. Control de límite máximo (20 fotos)
     if (files.length > 20) {
       alert("⚠️ Solo puedes seleccionar un máximo de 20 imágenes por lote.");
-      event.target.value = ""; // Limpia la selección del input
+      input.value = "";
+      if (statusEl) statusEl.innerHTML = "<span style='color:var(--danger);'>⚠️ Selección cancelada: máximo 20 fotografías por subida.</span>";
       return;
     }
 
-    // 2. Recorrer los archivos seleccionados para mostrarlos
+    // 2. Filtrar archivos que superen 10 MB y construir la lista válida
+    const dt = new DataTransfer();
     Array.from(files).forEach((file) => {
-      // Control de peso individual (máximo 10 MB por foto antes de comprimir)
       if (file.size > 10 * 1024 * 1024) {
-        alert(`La imagen "${file.name}" supera el límite de 10 MB y se omitirá.`);
+        alert(`⚠️ La imagen "${file.name}" supera el límite de 10 MB y se ha omitido.`);
         return;
       }
+      dt.items.add(file);
 
       const reader = new FileReader();
       reader.onload = function(e) {
-        // Crear contenedor individual para cada miniatura
         const wrapper = document.createElement("div");
         wrapper.style.position = "relative";
         wrapper.style.width = "75px";
         wrapper.style.height = "75px";
 
-        // Crear la etiqueta de imagen con estilo fino y bordes redondeados
         const img = document.createElement("img");
         img.src = e.target.result;
+        img.title = file.name + " (" + (file.size / 1024 / 1024).toFixed(2) + " MB)";
         img.style.width = "100%";
         img.style.height = "100%";
         img.style.objectFit = "cover";
         img.style.borderRadius = "8px";
-        img.style.border = "1px solid rgba(255, 255, 255, 0.2)";
-        img.style.boxShadow = "0 3px 6px rgba(0, 0, 0, 0.15)";
+        img.style.border = "1px solid rgba(16, 185, 129, 0.45)";
+        img.style.boxShadow = "0 3px 6px rgba(0, 0, 0, 0.25)";
 
         wrapper.appendChild(img);
-        previewContainer.appendChild(wrapper);
+        if (previewContainer) previewContainer.appendChild(wrapper);
       };
       reader.readAsDataURL(file);
     });
+
+    input.files = dt.files;
+    if (statusEl && dt.files.length > 0) {
+      statusEl.innerHTML = "<span style='color:var(--emerald);'>📸 " + dt.files.length + " imagen(es) lista(s). Pulsa <strong>☁️ Subir al FTP y Obtener Enlace</strong> para enviarlas a Make.</span>";
+    }
   };
 </script>
 </body>
