@@ -1914,14 +1914,14 @@
 // ENDPOINTS DE MAKE: CEREBRO CENTRALIZADO PROPERTY_GESTION + LOGIN TOC_TOC
 // ============================================================================
 const URL_WEBHOOK_PROPERTY_GESTION = "https://hook.eu1.make.com/j44fpvkmiv7ua8tttys25hehwbf9em8l";
-const URL_WEBHOOK_TOC_TOC          = "https://hook.eu1.make.com/flpdnde7wmt72tovyup6yjfkk7yuwmy6";
-const URL_WEBHOOK_PORTAL_DATOS     = "https://hook.eu1.make.com/j44fpvkmiv7ua8tttys25hehwbf9em8l";
-const URL_WEBHOOK_LEGAL_SERVICES   = "https://hook.eu1.make.com/7h10etd9klntm41oebrg4m1buc903uh4";
+const URL_WEBHOOK_TOC_TOC = "https://hook.eu1.make.com/flpdnde7wmt72tovyup6yjfkk7yuwmy6";
+const URL_WEBHOOK_PORTAL_DATOS = "https://hook.eu1.make.com/j44fpvkmiv7ua8tttys25hehwbf9em8l";
+const URL_WEBHOOK_LEGAL_SERVICES = "https://hook.eu1.make.com/7h10etd9klntm41oebrg4m1buc903uh4";
 
-const TABLE_ID_SUMINISTROS_GASTOS  = "tblOH6z7lROOWHkG";
-const TPV_UMBRAL_FIJO_EUROS        = 1000.00;
-const TPV_COMISION_FIJA_EUROS      = 10.00;
-const TPV_COMISION_PORCENTAJE      = 0.015;
+const TABLE_ID_SUMINISTROS_GASTOS = "tblOH6z7lROOWHkG";
+const TPV_UMBRAL_FIJO_EUROS = 1000.00;
+const TPV_COMISION_FIJA_EUROS = 10.00;
+const TPV_COMISION_PORCENTAJE = 0.015;
 
 // ============================================================================
 // DICCIONARIO MULTILINGÜE (ESPAÑOL, CATALÁN, INGLÉS, FRANCÉS Y ALEMÁN)
@@ -1961,7 +1961,7 @@ const I18N_DICCIONARIO = {
     side_sup_title: "💬 ELENA IA ADVISOR 24/7",
     side_sup_desc: "Notificaciones proactivas por WhatsApp de aperturas de facturación, avisos de suministros y registro histórico de incidencias.",
     btn_talk_elena: "💬 Hablar con Elena IA",
-    chat_welcome: "Hola, soy Elena IA Advisor. Todas nuestras conversaciones sobre alquileres, suministros o incidencias quedan registradas en tu expediente. ¿En qué puedo ayudarte hoy?",
+    chat_welcome: "Hola, soy Elena IA Advisor de Level.immo Alquileres. Todas nuestras conversaciones quedan registradas en tu expediente. ¿En qué puedo ayudarte hoy?",
     math_prefix: "Verificación: ¿Cuánto es "
   },
   ca: {
@@ -2114,19 +2114,16 @@ const I18N_DICCIONARIO = {
   }
 };
 
-// ============================================================================
-// ESTADO DINÁMICO EN TIEMPO REAL
-// ============================================================================
 window.CARTERA_PROPIEDADES = [];
-window.SUMINISTROS_GASTOS  = [];
-window.RECIBOS_CARTERA     = [];
-window.INCIDENCIAS_LISTA   = [];
-window.EXPEDIENTE_ACTUAL   = {};
+window.SUMINISTROS_GASTOS = [];
+window.RECIBOS_CARTERA = [];
+window.INCIDENCIAS_LISTA = [];
+window.EXPEDIENTE_ACTUAL = {};
 
-window.filtroRecibosActual    = "TODOS";
+window.filtroRecibosActual = "TODOS";
 window.filtroPropiedadRecibos = "TODAS";
 window.respuestaCorrectaLevel = 0;
-window.datosEnSecreto         = null;
+window.datosEnSecreto = null;
 window.sesionActiva = {
   "DNI-NIE-CIF": "",
   codigo_inquilino: "",
@@ -2134,6 +2131,7 @@ window.sesionActiva = {
   tabla_filtro: "PROPERTY_INQUILINOS",
   propiedad: "",
   nombre: "",
+  nombre_pila: "",
   idioma: "es"
 };
 
@@ -2143,9 +2141,6 @@ function escaparHTML(s) {
   });
 }
 
-// ============================================================================
-// LIMPIADOR AUTOMÁTICO DEL DOM E INYECCIÓN DE CAMPO PORTADA
-// ============================================================================
 function limpiarEstadoUI() {
   var chipsMapa = document.getElementById("chips-mapa-propietario");
   if (chipsMapa) chipsMapa.innerHTML = "";
@@ -2165,7 +2160,6 @@ function limpiarEstadoUI() {
     }
   }
 
-  // Mantener únicamente los 5 idiomas oficiales: Español, Catalán, Inglés, Francés y Alemán
   var selIdioma = document.getElementById("lang-selector");
   if (selIdioma) {
     var idiomasPermitidos = ["es", "ca", "en", "fr", "de"];
@@ -2177,9 +2171,6 @@ function limpiarEstadoUI() {
   }
 }
 
-// ============================================================================
-// PARSEADOR DE JSON BLINDADO Y FORMATEADORES RECURSIVOS
-// ============================================================================
 function parsearJsonBlindadoMake(rawText) {
   var s = String(rawText || "").trim();
   if (!s) return {};
@@ -2358,7 +2349,7 @@ function calcularSaldoVivoPropiedad(nombrePropiedad, fallbackDeuda) {
     var sumaDebe = 0;
     movs.forEach(function(m) {
       sumaHaber += parsearNumeroContable(m.haber);
-      sumaDebe  += parsearNumeroContable(m.total_con_impuestos || m.debe);
+      sumaDebe += parsearNumeroContable(m.total_con_impuestos || m.debe);
     });
     if (sumaHaber > 0 || sumaDebe > 0) {
       return +(sumaHaber - sumaDebe).toFixed(2);
@@ -2369,9 +2360,6 @@ function calcularSaldoVivoPropiedad(nombrePropiedad, fallbackDeuda) {
   return dNum > 0 ? -Math.abs(dNum) : dNum;
 }
 
-// ============================================================================
-// NORMALIZADORES DE DATOS DESDE MAKE (PROPIEDADES Y RECIBOS)
-// ============================================================================
 function extraerRegistroMake(rawPayload, identificadorBuscado) {
   if (!rawPayload) return {};
   var target = String(identificadorBuscado || window.sesionActiva["DNI-NIE-CIF"] || "").trim().toUpperCase();
@@ -2423,20 +2411,23 @@ function normalizarPropiedadDesdeMake(itemProp) {
   var direccionProp = formatearCampoValor(
     f["Dirección del Inmueble"] || f["DIRECCIÓN INMUEBLE"] || f.Direccion || f.direccion || "---"
   );
+  var domicilioSocialProp = formatearCampoValor(
+    f["DIRECCIÓN FISCAL"] || f["Domicilio Social"] || f.direccion_fiscal || f.domicilio_notificaciones || ""
+  );
   var cuotaProp = formatearCampoValor(
     f["Precio Alquiler"] || f["Renta Mensual"] || f.cuota || f.renta_mensual || f.Renta || ""
   );
   if (cuotaProp && !cuotaProp.includes("€")) cuotaProp = cuotaProp + " €/mes";
 
   var sumaHaberProp = parsearNumeroContable(formatearCampoValor(f.Suma_Haber || f.Total_Ingresado_Haber || 0));
-  var sumaDebeProp  = parsearNumeroContable(formatearCampoValor(f.Suma_Debe || f.Total_Gastos_Debe || 0));
-  var deudaRaw      = formatearCampoValor(f.Saldo_Vivo_Actual !== undefined ? f.Saldo_Vivo_Actual : (f.Deuda !== undefined ? f.Deuda : (f.deuda || "0")));
-  var saldoVivo     = (f.Saldo_Vivo_Actual !== undefined)
+  var sumaDebeProp = parsearNumeroContable(formatearCampoValor(f.Suma_Debe || f.Total_Gastos_Debe || 0));
+  var deudaRaw = formatearCampoValor(f.Saldo_Vivo_Actual !== undefined ? f.Saldo_Vivo_Actual : (f.Deuda !== undefined ? f.Deuda : (f.deuda || "0")));
+  var saldoVivo = (f.Saldo_Vivo_Actual !== undefined)
     ? parsearNumeroContable(formatearCampoValor(f.Saldo_Vivo_Actual))
     : ((sumaHaberProp > 0 || sumaDebeProp > 0) ? +(sumaHaberProp - sumaDebeProp).toFixed(2) : -Math.abs(parsearNumeroContable(deudaRaw)));
 
   var reglaFact = formatearCampoValor(f["Regla de Facturación"] || f.regla_facturacion || "AGUA Y LUZ");
-  var tipoUso   = formatearCampoValor(f.Tipo_Inmueble || f.Uso || "VIVIENDA");
+  var tipoUso = formatearCampoValor(f.Tipo_Inmueble || f.Uso || "VIVIENDA");
   var revisionProp = formatearFechaHoraBD(f["Próxima Revisión Alquiler"] || f.revision || "");
   var ibanProp = formatearCampoValor(f["IBAN Bancario Propietario"] || f["IBAN Bancario"] || f.IBAN || f.iban || window.EXPEDIENTE_ACTUAL.iban || "");
   var inquilinoProp = formatearCampoValor(
@@ -2454,7 +2445,6 @@ function normalizarPropiedadDesdeMake(itemProp) {
   if (isNaN(lat)) lat = "";
   if (isNaN(lon)) lon = "";
 
-  // Priorizar URLs públicas alojadas en el FTP (Fotos_URL) y soportar adjuntos
   var listaFotos = [];
   var urlsFtpStr = formatearCampoValor(f.Fotos_URL || f.fotos_url || "");
   if (urlsFtpStr && urlsFtpStr.includes("http")) {
@@ -2489,6 +2479,7 @@ function normalizarPropiedadDesdeMake(itemProp) {
     record_id: recId,
     nombre_propiedad: nombreProp,
     direccion: direccionProp,
+    domicilio_social: domicilioSocialProp,
     renta_mensual: cuotaProp,
     cuota: cuotaProp,
     deuda: deudaRaw,
@@ -2549,11 +2540,11 @@ function normalizarReciboDesdeMake(r) {
   var fechaVal = formatearFechaHoraBD(f.Fecha_Valor || f["Fecha Valor"] || f.Fecha || f.periodo || f["Fecha del Contrato"] || "");
   var periodo = [mesTexto, fechaVal].filter(Boolean).join(" · ") || new Date().toLocaleDateString("es-ES");
 
-  var baseNum  = parsearNumeroContable(formatearCampoValor(f.Importe !== undefined ? f.Importe : (f["Alquiler Base Oculto"] !== undefined ? f["Alquiler Base Oculto"] : f.importe)));
-  var debeNum  = parsearNumeroContable(formatearCampoValor(f.Debe !== undefined ? f.Debe : (f.DEBE !== undefined ? f.DEBE : f.debe)));
+  var baseNum = parsearNumeroContable(formatearCampoValor(f.Importe !== undefined ? f.Importe : (f["Alquiler Base Oculto"] !== undefined ? f["Alquiler Base Oculto"] : f.importe)));
+  var debeNum = parsearNumeroContable(formatearCampoValor(f.Debe !== undefined ? f.Debe : (f.DEBE !== undefined ? f.DEBE : f.debe)));
   var haberNum = parsearNumeroContable(formatearCampoValor(f.Haber !== undefined ? f.Haber : (f.HABER !== undefined ? f.HABER : f.haber)));
-  var ivaPct   = parsearNumeroContable(formatearCampoValor(f.Iva_Aplicable !== undefined ? f.Iva_Aplicable : (f.Porcentaje_IVA || 0)));
-  var irpfPct  = parsearNumeroContable(formatearCampoValor(f.IRPF_Aplicable !== undefined ? f.IRPF_Aplicable : (f.Porcentaje_IRPF || 0)));
+  var ivaPct = parsearNumeroContable(formatearCampoValor(f.Iva_Aplicable !== undefined ? f.Iva_Aplicable : (f.Porcentaje_IVA || 0)));
+  var irpfPct = parsearNumeroContable(formatearCampoValor(f.IRPF_Aplicable !== undefined ? f.IRPF_Aplicable : (f.Porcentaje_IRPF || 0)));
 
   var estadoRaw = formatearCampoValor(f["Estado Recibo"] || f.estado || f.Estado || (haberNum > 0 && debeNum === 0 ? "Abonado" : "Pendiente"));
   var esAbonado = estadoRaw.toUpperCase().includes("ABONADO") || estadoRaw.toUpperCase().includes("PAGADO") || (haberNum > 0 && debeNum === 0);
@@ -2602,9 +2593,6 @@ function normalizarReciboDesdeMake(r) {
   };
 }
 
-// ============================================================================
-// VISORES DE PDF ORIGINAL (FTP LEVEL.IMMO), BOOK DE FOTOS Y FACTURAS IMPRESAS
-// ============================================================================
 window.abrirOSincronizarPdfRecibo = async function(idRecibo) {
   var rec = (window.RECIBOS_CARTERA || []).find(function(r) { return String(r.id_recibo) === String(idRecibo); });
   if (!rec) return;
@@ -2621,12 +2609,12 @@ window.abrirOSincronizarPdfRecibo = async function(idRecibo) {
   if (rec.file_token_pdf) {
     if (titulo && caja && modal) {
       titulo.innerText = "☁️ Publicando Factura PDF en el FTP de level.immo...";
-      caja.innerHTML = '<div style="padding:30px; text-align:center; color:var(--neon-cyan); font-weight:700;">⏳ Generando enlace público en el FTP de <code>level.immo</code> y guardándolo en <code>URL_Factura_FTP</code>...</div>';
+      caja.innerHTML = '<div style="padding:30px; text-align:center; color:var(--neon-cyan); font-weight:700;">⏳ Generando enlace público en el FTP de <code>level.immo</code>...</div>';
       modal.style.display = "flex";
     }
 
     var cleanName = String(rec.id_recibo + "_" + (rec.nombre_archivo_pdf || "factura.pdf")).replace(/[^a-zA-Z0-9._-]/g, "_");
-    var urlEsperadaFtp = "https://level.immo/uploads/facturas/" + cleanName;
+    var urlEsperadaFtp = "https://level.immo/app-alquileres-propiedades/" + cleanName;
 
     try {
       var res = await fetch(URL_WEBHOOK_PROPERTY_GESTION, {
@@ -2654,7 +2642,7 @@ window.abrirOSincronizarPdfRecibo = async function(idRecibo) {
       mostrarIframePdfEnVisor(urlFinal, rec.concepto, rec.propiedad);
     } catch (e) {
       if (caja) {
-        caja.innerHTML = '<div style="padding:20px; color:#fca5a5;">⚠️ Conecta la 4ª rama en Make para publicar automáticamente el archivo en el FTP de <code>level.immo</code>.</div>';
+        caja.innerHTML = '<div style="padding:20px; color:#fca5a5;">⚠️ Error al sincronizar el PDF con el FTP.</div>';
       }
     }
   }
@@ -2668,7 +2656,7 @@ function mostrarIframePdfEnVisor(urlPdf, concepto, propiedad) {
     titulo.innerText = "📎 Factura Oficial de Suministro · " + (concepto || "") + " (" + (propiedad || "") + ")";
     caja.innerHTML =
       '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; padding:10px 14px; background:var(--bg-input); border:1px solid var(--border); border-radius:8px;">' +
-        '<span style="font-size:12.5px; color:var(--emerald);">✅ Enlace público FTP: <code>' + escaparHTML(urlPdf) + '</code></span>' +
+        '<span style="font-size:12.5px; color:var(--emerald);">✅ Enlace público FTP verificado</span>' +
         '<a href="' + escaparHTML(urlPdf) + '" target="_blank" rel="noopener" class="btn-pdf-receipt" style="text-decoration:none;">⬇️ Abrir / Descargar PDF</a>' +
       '</div>' +
       '<iframe src="' + escaparHTML(urlPdf) + '" style="width:100%; height:72vh; border:1px solid var(--border); border-radius:10px; background:#fff;" title="Factura PDF"></iframe>';
@@ -2678,50 +2666,6 @@ function mostrarIframePdfEnVisor(urlPdf, concepto, propiedad) {
   }
 }
 
-window.abrirFotoEnLightbox = function(urlImg) {
-  var lb = document.getElementById("level-lightbox-overlay");
-  if (!lb) {
-    lb = document.createElement("div");
-    lb.id = "level-lightbox-overlay";
-    lb.style.cssText = "position:fixed; inset:0; background:rgba(4,7,14,0.94); z-index:99999; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:24px;";
-    document.body.appendChild(lb);
-  }
-  lb.innerHTML =
-    '<div style="width:100%; max-width:1100px; display:flex; justify-content:flex-end; margin-bottom:12px;">' +
-      '<button type="button" onclick="document.getElementById(\'level-lightbox-overlay\').style.display=\'none\'" style="background:var(--danger); color:#fff; border:2px solid #fff; padding:8px 18px; border-radius:8px; font-size:14px; font-weight:900; cursor:pointer; box-shadow:0 4px 15px rgba(0,0,0,0.5);">✕ Cerrar Imagen</button>' +
-    '</div>' +
-    '<img src="' + escaparHTML(urlImg) + '" style="max-width:95vw; max-height:82vh; object-fit:contain; border-radius:10px; border:2px solid var(--emerald); box-shadow:0 15px 40px rgba(0,0,0,0.8);">';
-  lb.style.display = "flex";
-};
-
-window.establecerComoPortadaInmueble = function(nombrePropiedad, urlElegida) {
-  var p = (window.CARTERA_PROPIEDADES || []).find(function(item) {
-    return String(item.nombre_propiedad || "").toUpperCase() === String(nombrePropiedad || "").toUpperCase();
-  });
-  if (!p) return;
-  p.foto_portada = urlElegida;
-  var inpPortada = document.getElementById("prop-alta-portada");
-  if (inpPortada) inpPortada.value = urlElegida;
-  renderizarCarteraYRecibosPropietario();
-  abrirBookFotosInmueble(nombrePropiedad);
-};
-
-window.eliminarFotoDelBookInmueble = function(nombrePropiedad, idxBorrar) {
-  var p = (window.CARTERA_PROPIEDADES || []).find(function(item) {
-    return String(item.nombre_propiedad || "").toUpperCase() === String(nombrePropiedad || "").toUpperCase();
-  });
-  if (!p || !Array.isArray(p.fotos)) return;
-  var borrada = p.fotos.splice(idxBorrar, 1)[0];
-  if (p.foto_portada === borrada) {
-    p.foto_portada = p.fotos.length > 0 ? p.fotos[0] : "";
-  }
-  renderizarCarteraYRecibosPropietario();
-  abrirBookFotosInmueble(nombrePropiedad);
-};
-
-// ============================================================================
-// ENDPOINTS DE MAKE Y DICCIONARIOS MULTILINGÜES (ES, CA, EN, FR, DE)
-// ============================================================================
 var I18N_PANEL_INTERNO = {
   es: {
     owner_intro: "Audita el saldo vivo actual de cada propiedad, sube facturas reales de suministros (luz, agua) o cargos varios, emite avisos a tus inquilinos, gestiona liquidaciones TPV y autoriza a tu abogado:",
@@ -2739,74 +2683,6 @@ var I18N_PANEL_INTERNO = {
     sec_abg: "⚖️ ASIGNAR ABOGADO / SERVICIOS JURÍDICOS Y ENVIAR BIENVENIDA",
     saldo_t: "Saldo Vivo Actual a Fecha de Hoy (Haber - Debe)", saldo_s: "Suma acumulada de entregas a cuenta menos facturas y vencimientos",
     btn_inc: "➕ Abrir Parte / Responder", ph_search: "🔍 Buscar piso, dirección o inquilino..."
-  },
-  ca: {
-    owner_intro: "Audita el saldo viu actual de cada propietat, puja factures reals de subministraments (llum, aigua) o càrrecs diversos, emet avisos als teus llogaters, gestiona liquidacions TPV i autoritza el teu advocat:",
-    c1_t: "🚨 Radar de Cobraments i TPV", c1_p: "Control de lloguers (dia 1) i subministraments pendents, abonament manual o via TPV (10 € comissió servei) i emissió de Rebut/Factura PDF.", c1_b: "Veure Rebuts Pendents i Emetre PDF",
-    c2_t: "⚡ Pujar Subministrament o Càrrec Manual", c2_p: "Registra o edita factures reals de llum, aigua, reparacions o altres conceptes al Deure/Haver de l'immoble i notifica amb Elena IA.", c2_b: "➕ Pujar / Editar Rebut o Despesa",
-    c3_t: "📢 Emetre Avís o Notificació", c3_p: "Publica avisos generals al panell del llogater i envia notificació immediata per WhatsApp mitjançant Elena IA Advisor.", c3_b: "📣 Redactar Avís / Notificació",
-    c4_t: "⚖️ Informe Jurídic / Pericial", c4_p: "Genera a l'instant el dossier complet en PDF amb extracte Deure/Haver, rebuts impagats i xat històric d'incidències.", c4_b: "🖨️ Descarregar Informe PDF",
-    cfg_h: "🚀 CONFIGURACIÓ DE CARTERA · ALTA DE PROPIETATS (GALERIA MULTIMÈDIA) I ASSIGNACIÓ DE LLOGATERS",
-    cfg_p: "Incorpora nous immobles a la teva cartera o selecciona qualsevol de les teves propietats actives per pujar fotografies i vídeo directament al repositori multimèdia de level.immo, definir regles de facturació o vincular arrendataris.",
-    btn_alta_p: "➕ Alta de Propietat / Pujar Fotos i Vídeo →", btn_alta_i: "👤 Donar d'Alta / Assignar Llogater a Propietat →",
-    sec_fichas: "🏛️ FITXES D'IMMOBLES, SALDO VIU ACTUAL (HAVER - DEURE) I LLOGATERS",
-    sec_sum: "⚡ MOTOR COMPTABLE DE SUBMINISTRAMENTS I DESPESES (DEURE / HAVER / IVA / IRPF)", btn_add_sum: "➕ Afegir Factura / Assentament Comptable",
-    sec_rec: "🧾 LLIBRE DE REBUTS I FACTURES (LLOGUER DIA 1, SUBMINISTRAMENTS I LIQUIDACIÓ TPV)",
-    sec_geo: "🚗 GEOLOCALITZACIÓ DINÀMICA DE CARTERA I NAVEGACIÓ GPS EN COTXE",
-    sec_abg: "⚖️ ASSIGNAR ADVOCAT / SERVEIS JURÍDICS I ENVIAR BENVINGUDA",
-    saldo_t: "Saldo Viu Actual a Data d'Avui (Haver - Deure)", saldo_s: "Suma acumulada de lliuraments a compte menys factures i venciments",
-    btn_inc: "➕ Obrir Comunicat / Respondre", ph_search: "🔍 Cercar pis, adreça o llogater..."
-  },
-  en: {
-    owner_intro: "Audit the live balance of each property, upload real utility bills (electricity, water) or miscellaneous charges, issue notices to your tenants, manage POS settlements and authorize your lawyer:",
-    c1_t: "🚨 Collections & POS Radar", c1_p: "Track rent (day 1) and pending utilities, manual or card POS payments (€10 service fee) and issue PDF Receipts/Invoices.", c1_b: "View Pending Receipts & Issue PDF",
-    c2_t: "⚡ Upload Utility or Manual Charge", c2_p: "Log or edit real electricity, water, repair bills or other items in the Debit/Credit ledger and notify via Elena AI.", c2_b: "➕ Upload / Edit Receipt or Expense",
-    c3_t: "📢 Issue Notice or Alert", c3_p: "Post general notices on the tenant's dashboard and trigger instant WhatsApp notifications via Elena AI Advisor.", c3_b: "📣 Write Notice / Notification",
-    c4_t: "⚖️ Legal / Expert Report", c4_p: "Instantly generate the full PDF dossier with Debit/Credit statement, unpaid receipts and traceable incident chat history.", c4_b: "🖨️ Download PDF Report",
-    cfg_h: "🚀 PORTFOLIO SETUP · ADD PROPERTIES (MEDIA GALLERY) & ASSIGN TENANTS",
-    cfg_p: "Add new properties to your portfolio or select any active property to upload photos and video directly to the level.immo media repository, set billing rules or link tenants.",
-    btn_alta_p: "➕ Add Property / Upload Photos & Video →", btn_alta_i: "👤 Register / Assign Tenant to Property →",
-    sec_fichas: "🏛️ PROPERTY CARDS, CURRENT LIVE BALANCE (CREDIT - DEBIT) & TENANTS",
-    sec_sum: "⚡ UTILITIES & EXPENSES ACCOUNTING ENGINE (DEBIT / CREDIT / VAT / TAX)", btn_add_sum: "➕ Add Invoice / Accounting Entry",
-    sec_rec: "🧾 RECEIPTS & INVOICES LEDGER (DAY 1 RENT, UTILITIES & POS SETTLEMENT)",
-    sec_geo: "🚗 DYNAMIC PORTFOLIO GEOLOCATION & CAR GPS NAVIGATION",
-    sec_abg: "⚖️ ASSIGN LAWYER / LEGAL SERVICES & SEND WELCOME EMAIL",
-    saldo_t: "Current Live Balance as of Today (Credit - Debit)", saldo_s: "Cumulative sum of payments on account minus bills and due dates",
-    btn_inc: "➕ Open Ticket / Reply", ph_search: "🔍 Search property, address or tenant..."
-  },
-  fr: {
-    owner_intro: "Auditez le solde actuel de chaque bien, téléchargez les factures réelles (électricité, eau) ou charges diverses, envoyez des avis aux locataires, gérez les encaissements TPV et autorisez votre avocat :",
-    c1_t: "🚨 Radar d'Encaissements & TPV", c1_p: "Suivi des loyers (jour 1) et charges en attente, paiement manuel ou par carte TPV (frais 10 €) et émission de Quittance/Facture PDF.", c1_b: "Voir Quittances en Attente & PDF",
-    c2_t: "⚡ Ajouter Charge ou Facture Manuelle", c2_p: "Enregistrez ou modifiez les factures d'eau, d'électricité, réparations ou autres au Débit/Crédit du bien et notifiez via Elena IA.", c2_b: "➕ Ajouter / Modifier Quittance ou Frais",
-    c3_t: "📢 Émettre un Avis ou Notification", c3_p: "Publiez des avis sur le portail du locataire et envoyez une notification immédiate par WhatsApp via Elena IA Advisor.", c3_b: "📣 Rédiger Avis / Notification",
-    c4_t: "⚖️ Rapport Juridique / Expertise", c4_p: "Générez instantanément le dossier PDF complet avec extrait Débit/Crédit, impayés et historique complet des incidents.", c4_b: "🖨️ Télécharger Rapport PDF",
-    cfg_h: "🚀 CONFIGURATION DU PORTEFEUILLE · AJOUT DE BIENS (GALERIE MÉDIA) & LOCATAIRES",
-    cfg_p: "Ajoutez de nouveaux biens à votre portefeuille ou sélectionnez un bien actif pour téléverser des photos et vidéos sur level.immo, définir la facturation ou lier un locataire.",
-    btn_alta_p: "➕ Ajouter un Bien / Photos & Vidéo →", btn_alta_i: "👤 Enregistrer / Assigner Locataire au Bien →",
-    sec_fichas: "🏛️ FICHES DES BIENS, SOLDE ACTUEL (CRÉDIT - DÉBIT) & LOCATAIRES",
-    sec_sum: "⚡ MOTEUR COMPTABLE DES CHARGES ET DÉPENSES (DÉBIT / CRÉDIT / TVA)", btn_add_sum: "➕ Ajouter Facture / Écriture Comptable",
-    sec_rec: "🧾 LIVRE DES QUITTANCES ET FACTURES (LOYER JOUR 1, CHARGES & TPV)",
-    sec_geo: "🚗 GÉOLOCALISATION DYNAMIQUE DU PORTEFEUILLE & NAVIGATION GPS AUTO",
-    sec_abg: "⚖️ ASSIGNER AVOCAT / SERVICES JURIDIQUES & ENVOYER BIENVENUE",
-    saldo_t: "Solde Actuel à ce Jour (Crédit - Débit)", saldo_s: "Somme cumulée des acomptes versés moins les factures et échéances",
-    btn_inc: "➕ Ouvrir Ticket / Répondre", ph_search: "🔍 Rechercher bien, adresse ou locataire..."
-  },
-  de: {
-    owner_intro: "Prüfen Sie den aktuellen Saldo jeder Immobilie, laden Sie echte Nebenkostenabrechnungen (Strom, Wasser) hoch, senden Sie Hinweise an Mieter, verwalten Sie POS-Zahlungen und autorisieren Sie Ihren Anwalt:",
-    c1_t: "🚨 Inkasso- & POS-Radar", c1_p: "Kontrolle von Mieten (Tag 1) und offenen Nebenkosten, manuelle Zahlung oder per POS-Karte (10 € Gebühr) sowie PDF-Quittung/Rechnung.", c1_b: "Offene Belege prüfen & PDF erstellen",
-    c2_t: "⚡ Nebenkosten oder Beleg hochladen", c2_p: "Erfassen oder bearbeiten Sie Strom-, Wasser-, Reparaturrechnungen im Soll/Haben der Immobilie und benachrichtigen Sie per Elena KI.", c2_b: "➕ Beleg oder Kosten hinzufügen/bearbeiten",
-    c3_t: "📢 Hinweis oder Mitteilung senden", c3_p: "Veröffentlichen Sie Hinweise im Mieterportal und senden Sie sofortige WhatsApp-Benachrichtigungen über Elena KI-Advisor.", c3_b: "📣 Hinweis / Mitteilung verfassen",
-    c4_t: "⚖️ Rechts- / Gutachterbericht", c4_p: "Erstellen Sie sofort das komplette PDF-Dossier mit Soll/Haben-Auszug, offenen Posten und komplettem Vorfalls-Chatverlauf.", c4_b: "🖨️ PDF-Bericht herunterladen",
-    cfg_h: "🚀 PORTFOLIO-KONFIGURATION · IMMOBILIEN ANLEGEN (MEDIEN-GALERIE) & MIETER ZUWEISEN",
-    cfg_p: "Fügen Sie Ihrem Portfolio neue Immobilien hinzu oder wählen Sie ein aktives Objekt aus, um Fotos und Videos direkt auf level.immo hochzuladen oder Mieter zuzuweisen.",
-    btn_alta_p: "➕ Immobilie anlegen / Fotos & Video →", btn_alta_i: "👤 Mieter registrieren / Immobilie zuweisen →",
-    sec_fichas: "🏛️ IMMOBILIENKARTEN, AKTUELLER SALDO (HABEN - SOLL) & MIETER",
-    sec_sum: "⚡ BUCHHALTUNGSMOTOR FÜR NEBENKOSTEN & AUSGABEN (SOLL / HABEN / MWST)", btn_add_sum: "➕ Rechnung / Buchungssatz hinzufügen",
-    sec_rec: "🧾 QUITTUNGS- & RECHNUNGSBUCH (MIETE TAG 1, NEBENKOSTEN & POS-ABRECHNUNG)",
-    sec_geo: "🚗 DYNAMISCHE PORTFOLIO-GEOLOKALISIERUNG & AUTO-GPS-NAVIGATION",
-    sec_abg: "⚖️ ANWALT / RECHTSDIENSTE ZUWEISEN & WILLKOMMENS-E-MAIL SENDEN",
-    saldo_t: "Aktueller Saldo zum heutigen Tag (Haben - Soll)", saldo_s: "Kumulierte Summe der Anzahlungen abzüglich Rechnungen und Fälligkeiten",
-    btn_inc: "➕ Ticket öffnen / Antworten", ph_search: "🔍 Wohnung, Adresse oder Mieter suchen..."
   }
 };
 
@@ -2823,77 +2699,29 @@ window.cambiarIdioma = function(lang) {
       el.innerText = dict[key];
     }
   });
-
-  var p = I18N_PANEL_INTERNO[l] || I18N_PANEL_INTERNO.es;
-  var ownerGreeting = document.getElementById("owner-greeting-name");
-  if (ownerGreeting && ownerGreeting.parentElement) {
-    var nombreActual = ownerGreeting.innerText;
-    ownerGreeting.parentElement.innerHTML = '<span data-i18n="owner_hello">' + dict.owner_hello + '</span> <strong style="color:#fff;" id="owner-greeting-name">' + nombreActual + '</strong>. ' + p.owner_intro;
-  }
-
-  var cards = document.querySelectorAll("#vista-propietaria-carmen .owner-card");
-  if (cards.length >= 4) {
-    cards[0].querySelector("h3").innerText = p.c1_t; cards[0].querySelector("p").innerText = p.c1_p; cards[0].querySelector("button").innerText = p.c1_b;
-    cards[1].querySelector("h3").innerText = p.c2_t; cards[1].querySelector("p").innerText = p.c2_p; cards[1].querySelector("button").innerText = p.c2_b;
-    cards[2].querySelector("h3").innerText = p.c3_t; cards[2].querySelector("p").innerText = p.c3_p; cards[2].querySelector("button").innerText = p.c3_b;
-    cards[3].querySelector("h3").innerText = p.c4_t; cards[3].querySelector("p").innerText = p.c4_p; cards[3].querySelector("button").innerText = p.c4_b;
-  }
-
-  var panelesOwner = document.querySelectorAll("#vista-propietaria-carmen > .panel-box");
-  if (panelesOwner.length >= 6) {
-    panelesOwner[0].querySelector(".panel-header span:first-child").innerText = p.cfg_h;
-    panelesOwner[0].querySelector("p").innerText = p.cfg_p;
-    var btnsAlta = panelesOwner[0].querySelectorAll("button");
-    if (btnsAlta.length >= 2) { btnsAlta[0].innerText = p.btn_alta_p; btnsAlta[1].innerText = p.btn_alta_i; }
-
-    panelesOwner[1].querySelector(".panel-header span:first-child").innerText = p.sec_fichas;
-    panelesOwner[2].querySelector(".panel-header span:first-child").innerText = p.sec_sum;
-    var btnSum = panelesOwner[2].querySelector(".panel-header button");
-    if (btnSum) btnSum.innerText = p.btn_add_sum;
-
-    panelesOwner[3].querySelector(".panel-header span:first-child").innerText = p.sec_rec;
-    panelesOwner[4].querySelector(".panel-header span:first-child").innerText = p.sec_geo;
-    panelesOwner[5].querySelector(".panel-header span:first-child").innerText = p.sec_abg;
-  }
-
-  var subSaldo = document.getElementById("sub-saldo-vivo");
-  if (subSaldo && subSaldo.previousElementSibling) {
-    subSaldo.previousElementSibling.innerText = p.saldo_t;
-    subSaldo.innerText = p.saldo_s;
-  }
-  var btnInc = document.getElementById("btn-nueva-incidencia-res");
-  if (btnInc) btnInc.innerText = p.btn_inc;
-  var inpBuscar = document.getElementById("input-buscar-cartera");
-  if (inpBuscar) inpBuscar.placeholder = p.ph_search;
-
   window.pintarSumaLevel();
 };
 
-// ============================================================================
-// GESTIÓN DE PREVISUALIZACIÓN, PORTADA Y BOOK FOTOGRÁFICO LIGHTBOX
-// ============================================================================
 window.archivosSeleccionadosFTP = [];
 
 window.manejarPrevisualizacion = function(event) {
-  const input = event.target;
-  const files = Array.from(input.files || []);
-  const statusEl = document.getElementById("status-ftp-upload");
+  var input = event.target;
+  var nuevos = Array.from(input.files || []);
+  if (!Array.isArray(window.archivosSeleccionadosFTP)) window.archivosSeleccionadosFTP = [];
 
-  if (files.length > 20) {
-    alert("⚠️ Solo puedes seleccionar un máximo de 20 archivos por lote.");
-    input.value = "";
-    window.archivosSeleccionadosFTP = [];
-    renderizarMiniaturasFTP();
-    return;
-  }
-
-  window.archivosSeleccionadosFTP = [];
-  files.forEach((file) => {
-    if (file.size > 25 * 1024 * 1024) {
-      alert(`⚠️ El archivo "${file.name}" supera el límite de 25 MB y se ha omitido.`);
+  nuevos.forEach(function(file) {
+    if (window.archivosSeleccionadosFTP.length >= 20) {
+      alert("⚠️ Máximo 20 archivos por lote.");
       return;
     }
-    window.archivosSeleccionadosFTP.push(file);
+    if (file.size > 25 * 1024 * 1024) {
+      alert('⚠️ El archivo "' + file.name + '" supera los 25 MB.');
+      return;
+    }
+    var yaExiste = window.archivosSeleccionadosFTP.some(function(f) {
+      return f.name === file.name && f.size === file.size;
+    });
+    if (!yaExiste) window.archivosSeleccionadosFTP.push(file);
   });
 
   sincronizarInputArchivosFTP();
@@ -2907,17 +2735,17 @@ window.eliminarFotoPrevisualizacion = function(index) {
 };
 
 function sincronizarInputArchivosFTP() {
-  const input = document.getElementById("prop-file-ftp");
-  const statusEl = document.getElementById("status-ftp-upload");
+  var input = document.getElementById("prop-file-ftp");
+  var statusEl = document.getElementById("status-ftp-upload");
   if (!input) return;
 
-  const dt = new DataTransfer();
-  window.archivosSeleccionadosFTP.forEach((f) => dt.items.add(f));
+  var dt = new DataTransfer();
+  window.archivosSeleccionadosFTP.forEach(function(f) { dt.items.add(f); });
   input.files = dt.files;
 
   if (statusEl) {
     if (dt.files.length > 0) {
-      statusEl.innerHTML = "<span style='color:var(--emerald);'>📸 " + dt.files.length + " archivo(s) listo(s). Pulsa <strong>☁️ Subir Fotos / Vídeo y Guardar</strong> o quita los que no quieras con la ✕.</span>";
+      statusEl.innerHTML = "<span style='color:var(--emerald);'>📸 " + dt.files.length + " archivo(s) listo(s). Pulsa <strong>☁️ Publicar Archivos Ahora</strong>.</span>";
     } else {
       statusEl.innerHTML = "<span style='color:var(--text-muted);'>Ningún archivo seleccionado.</span>";
     }
@@ -2925,46 +2753,33 @@ function sincronizarInputArchivosFTP() {
 }
 
 function renderizarMiniaturasFTP() {
-  const previewContainer = document.getElementById("galeria-preview");
+  var previewContainer = document.getElementById("galeria-preview");
   if (!previewContainer) return;
   previewContainer.innerHTML = "";
 
-  window.archivosSeleccionadosFTP.forEach((file, idx) => {
-    const wrapper = document.createElement("div");
-    wrapper.style.position = "relative";
-    wrapper.style.width = "80px";
-    wrapper.style.height = "80px";
+  window.archivosSeleccionadosFTP.forEach(function(file, idx) {
+    var wrapper = document.createElement("div");
+    wrapper.style.cssText = "position:relative; width:80px; height:80px;";
 
-    const thumbElem = document.createElement(file.type.startsWith("video/") ? "video" : "img");
-    thumbElem.style.width = "100%";
-    thumbElem.style.height = "100%";
-    thumbElem.style.objectFit = "cover";
-    thumbElem.style.borderRadius = "8px";
-    thumbElem.style.border = "1px solid rgba(16, 185, 129, 0.45)";
-    thumbElem.style.boxShadow = "0 3px 6px rgba(0, 0, 0, 0.25)";
+    var thumbElem = document.createElement(file.type.startsWith("video/") ? "video" : "img");
+    thumbElem.style.cssText = "width:100%; height:100%; object-fit:cover; border-radius:8px; border:1px solid rgba(16,185,129,0.45);";
 
     if (file.type.startsWith("image/")) {
-      const reader = new FileReader();
+      var reader = new FileReader();
       reader.onload = function(e) { thumbElem.src = e.target.result; };
       reader.readAsDataURL(file);
     } else {
       thumbElem.style.background = "#000";
     }
 
-    const btnClose = document.createElement("button");
+    var btnClose = document.createElement("button");
     btnClose.type = "button";
     btnClose.innerHTML = "✕";
-    btnClose.title = "Quitar este archivo";
-    btnClose.style.cssText = "position:absolute; top:-6px; right:-6px; width:22px; height:22px; border-radius:50%; background:var(--danger); color:#fff; border:1px solid #fff; font-size:11px; font-weight:900; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 5px rgba(0,0,0,0.4);";
+    btnClose.style.cssText = "position:absolute; top:-6px; right:-6px; width:22px; height:22px; border-radius:50%; background:var(--danger); color:#fff; border:1px solid #fff; font-size:11px; font-weight:900; cursor:pointer;";
     btnClose.onclick = function() { window.eliminarFotoPrevisualizacion(idx); };
-
-    const badgeSize = document.createElement("span");
-    badgeSize.innerText = (file.size / 1024 / 1024).toFixed(1) + "MB";
-    badgeSize.style.cssText = "position:absolute; bottom:3px; left:3px; background:rgba(6,10,18,0.85); color:#fff; font-size:9.5px; font-weight:700; padding:1px 4px; border-radius:4px;";
 
     wrapper.appendChild(thumbElem);
     wrapper.appendChild(btnClose);
-    wrapper.appendChild(badgeSize);
     previewContainer.appendChild(wrapper);
   });
 }
@@ -2980,37 +2795,12 @@ window.abrirFotoEnLightbox = function(urlImg) {
   var esVideo = /\.(mp4|mov|webm|ogg)$/i.test(urlImg);
   lb.innerHTML =
     '<div style="width:100%; max-width:1100px; display:flex; justify-content:flex-end; margin-bottom:12px;">' +
-      '<button type="button" onclick="document.getElementById(\'level-lightbox-overlay\').style.display=\'none\'" style="background:var(--danger); color:#fff; border:2px solid #fff; padding:8px 18px; border-radius:8px; font-size:14px; font-weight:900; cursor:pointer; box-shadow:0 4px 15px rgba(0,0,0,0.5);">✕ Cerrar</button>' +
+      '<button type="button" onclick="document.getElementById(\'level-lightbox-overlay\').style.display=\'none\'" style="background:var(--danger); color:#fff; border:2px solid #fff; padding:8px 18px; border-radius:8px; font-size:14px; font-weight:900; cursor:pointer;">✕ Cerrar</button>' +
     '</div>' +
     (esVideo
-      ? '<video src="' + escaparHTML(urlImg) + '" controls autoplay style="max-width:95vw; max-height:82vh; border-radius:10px; border:2px solid var(--emerald); box-shadow:0 15px 40px rgba(0,0,0,0.8);"></video>'
-      : '<img src="' + escaparHTML(urlImg) + '" style="max-width:95vw; max-height:82vh; object-fit:contain; border-radius:10px; border:2px solid var(--emerald); box-shadow:0 15px 40px rgba(0,0,0,0.8);">');
+      ? '<video src="' + escaparHTML(urlImg) + '" controls autoplay style="max-width:95vw; max-height:82vh; border-radius:10px; border:2px solid var(--emerald);"></video>'
+      : '<img src="' + escaparHTML(urlImg) + '" style="max-width:95vw; max-height:82vh; object-fit:contain; border-radius:10px; border:2px solid var(--emerald);">');
   lb.style.display = "flex";
-};
-
-window.establecerComoPortadaInmueble = function(nombrePropiedad, urlElegida) {
-  var p = (window.CARTERA_PROPIEDADES || []).find(function(item) {
-    return String(item.nombre_propiedad || "").toUpperCase() === String(nombrePropiedad || "").toUpperCase();
-  });
-  if (!p) return;
-  p.foto_portada = urlElegida;
-  var inpPortada = document.getElementById("prop-alta-portada");
-  if (inpPortada) inpPortada.value = urlElegida;
-  renderizarCarteraYRecibosPropietario();
-  abrirBookFotosInmueble(nombrePropiedad);
-};
-
-window.eliminarFotoDelBookInmueble = function(nombrePropiedad, idxBorrar) {
-  var p = (window.CARTERA_PROPIEDADES || []).find(function(item) {
-    return String(item.nombre_propiedad || "").toUpperCase() === String(nombrePropiedad || "").toUpperCase();
-  });
-  if (!p || !Array.isArray(p.fotos)) return;
-  var borrada = p.fotos.splice(idxBorrar, 1)[0];
-  if (p.foto_portada === borrada) {
-    p.foto_portada = p.fotos.length > 0 ? p.fotos[0] : "";
-  }
-  renderizarCarteraYRecibosPropietario();
-  abrirBookFotosInmueble(nombrePropiedad);
 };
 
 window.abrirBookFotosInmueble = function(nombrePropiedad) {
@@ -3030,14 +2820,14 @@ window.abrirBookFotosInmueble = function(nombrePropiedad) {
   titulo.innerText = "📸 Book Fotográfico y Vídeo · " + (p.nombre_propiedad || "") + " (" + fotos.length + " archivos)";
 
   if (fotos.length === 0 && !portada) {
-    caja.innerHTML = '<div style="padding:24px; color:var(--text-muted);">Este inmueble aún no tiene archivos multimedia publicados en <code>level.immo</code>.</div>';
+    caja.innerHTML = '<div style="padding:24px; color:var(--text-muted);">Este inmueble aún no tiene archivos multimedia publicados.</div>';
   } else {
     var esPortadaVideo = /\.(mp4|mov|webm|ogg)$/i.test(portada);
     caja.innerHTML =
       '<div style="margin-bottom:16px; padding:12px 16px; background:var(--bg-input); border-left:4px solid var(--emerald); border-radius:8px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">' +
         '<div>' +
           '<div style="font-size:13px; font-weight:800; color:#fff;">Acta Multimedia del Inmueble (' + escaparHTML(p.direccion || "") + ')</div>' +
-          '<div style="font-size:12px; color:var(--text-muted);">Haz clic en cualquier imagen o vídeo para abrirlo en grande, o pulsa <strong>⭐ Portada</strong> para fijar la principal.</div>' +
+          '<div style="font-size:12px; color:var(--text-muted);">Haz clic en cualquier imagen para ampliarla o pulsa <strong>⭐ Portada</strong>.</div>' +
         '</div>' +
         (esProp
           ? '<button type="button" class="btn-outline-sm" style="border-color:var(--amber); color:var(--amber);" onclick="cerrarVisorSeguro(); abrirModalAltaPropiedad(\'' + escaparHTML(p.nombre_propiedad) + '\')">📸 Añadir Fotos / Vídeo</button>'
@@ -3051,21 +2841,17 @@ window.abrirBookFotosInmueble = function(nombrePropiedad) {
               : '<img src="' + escaparHTML(portada) + '" alt="Portada" style="max-width:100%; max-height:380px; object-fit:contain; border-radius:8px; cursor:pointer;" onclick="abrirFotoEnLightbox(this.src)">') +
           '</div>'
         : '') +
-      '<div style="font-size:11.5px; font-weight:800; color:var(--emerald); text-transform:uppercase; margin-bottom:8px;">📁 Repositorio Multimedia (' + fotos.length + ' archivos)</div>' +
       '<div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(220px, 1fr)); gap:12px;">' +
         fotos.map(function(u, idx) {
           var esEstaPortada = (u === portada);
-          var esVideoItem = /\.(mp4|mov|webm|ogg)$/i.test(u);
           return '<div style="background:var(--bg-input); border:1px solid ' + (esEstaPortada ? 'var(--amber)' : 'var(--border)') + '; border-radius:10px; overflow:hidden;">' +
-            (esVideoItem
-              ? '<div style="width:100%; height:160px; background:#000; display:flex; align-items:center; justify-content:center; cursor:pointer;" onclick="abrirFotoEnLightbox(\'' + escaparHTML(u) + '\')"><span style="color:#fff; font-weight:800; font-size:13px;">▶ Reproducir Vídeo</span></div>'
-              : '<img src="' + escaparHTML(u) + '" alt="Multimedia ' + (idx + 1) + '" style="width:100%; height:160px; object-fit:cover; cursor:pointer; display:block;" onclick="abrirFotoEnLightbox(this.src)">') +
-            '<div style="padding:8px 10px; font-size:11px; color:var(--text-muted); display:flex; justify-content:space-between; align-items:center; gap:4px; flex-wrap:wrap;">' +
-              '<button type="button" onclick="abrirFotoEnLightbox(\'' + escaparHTML(u) + '\')" style="background:transparent; border:none; color:var(--emerald); font-weight:800; cursor:pointer; font-size:11.5px;">🔍 Ver en grande</button>' +
+            '<img src="' + escaparHTML(u) + '" alt="Multimedia ' + (idx + 1) + '" style="width:100%; height:160px; object-fit:cover; cursor:pointer; display:block;" onclick="abrirFotoEnLightbox(this.src)">' +
+            '<div style="padding:8px 10px; font-size:11px; display:flex; justify-content:space-between; align-items:center;">' +
+              '<button type="button" onclick="abrirFotoEnLightbox(\'' + escaparHTML(u) + '\')" style="background:transparent; border:none; color:var(--emerald); font-weight:800; cursor:pointer;">🔍 Ampliar</button>' +
               (esProp
                 ? '<div style="display:flex; gap:6px;">' +
                     '<button type="button" onclick="establecerComoPortadaInmueble(\'' + escaparHTML(p.nombre_propiedad) + '\', \'' + escaparHTML(u) + '\')" style="background:' + (esEstaPortada ? 'var(--amber)' : 'rgba(245,158,11,0.15)') + '; color:' + (esEstaPortada ? '#042f2e' : 'var(--amber)') + '; border:1px solid var(--amber); border-radius:5px; padding:3px 7px; font-size:10.5px; font-weight:800; cursor:pointer;">⭐ Portada</button>' +
-                    '<button type="button" onclick="eliminarFotoDelBookInmueble(\'' + escaparHTML(p.nombre_propiedad) + '\', ' + idx + ')" style="background:var(--danger-soft); color:#fca5a5; border:1px solid var(--danger); border-radius:5px; padding:3px 7px; font-size:10.5px; font-weight:800; cursor:pointer;" title="Quitar archivo">🗑️</button>' +
+                    '<button type="button" onclick="eliminarFotoDelBookInmueble(\'' + escaparHTML(p.nombre_propiedad) + '\', ' + idx + ')" style="background:var(--danger-soft); color:#fca5a5; border:1px solid var(--danger); border-radius:5px; padding:3px 7px; font-size:10.5px; font-weight:800; cursor:pointer;">🗑️</button>' +
                   '</div>'
                 : '') +
             '</div>' +
@@ -3095,10 +2881,7 @@ window.descargarReciboPDF = function(idRecibo) {
   var tituloDoc = llevaImpuestos ? "Factura / Recibo de Arrendamiento" : "Recibo Oficial de Arrendamiento / Suministros";
 
   var ventanaPDF = window.open("", "_blank", "width=880,height=940");
-  if (!ventanaPDF) {
-    alert("Por favor, permite las ventanas emergentes para descargar el documento en PDF.");
-    return;
-  }
+  if (!ventanaPDF) return;
 
   var filasImpuestosHTML = "";
   if (llevaImpuestos) {
@@ -3116,49 +2899,34 @@ window.descargarReciboPDF = function(idRecibo) {
     '<title>' + escaparHTML(tituloDoc) + ' ' + escaparHTML(rec.id_recibo) + '</title>' +
     '<style>' +
       '@page { size: A4; margin: 18mm; }' +
-      'body { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; color: #1e293b; background: #ffffff; margin: 0; padding: 20px; }' +
-      '.sheet { max-width: 740px; margin: 0 auto; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 36px; }' +
-      '.header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #0f172a; padding-bottom: 18px; margin-bottom: 22px; }' +
+      'body { font-family: Helvetica, Arial, sans-serif; color: #1e293b; background: #fff; margin: 0; padding: 20px; }' +
+      '.sheet { max-width: 740px; margin: 0 auto; border: 1px solid #cbd5e1; border-radius: 8px; padding: 36px; }' +
+      '.header { display: flex; justify-content: space-between; border-bottom: 2px solid #0f172a; padding-bottom: 18px; margin-bottom: 22px; }' +
       '.title-doc { font-size: 20px; font-weight: 800; color: #0f172a; text-transform: uppercase; }' +
-      '.doc-num { font-size: 13px; font-weight: 700; color: #475569; margin-top: 4px; }' +
       '.stamp { display: inline-block; margin-top: 6px; padding: 6px 14px; border: 2px solid #10b981; color: #047857; background: #ecfdf5; font-weight: 800; font-size: 12px; border-radius: 6px; }' +
       '.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 24px; }' +
-      '.box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px; }' +
-      '.box-title { font-size: 10.5px; font-weight: 800; text-transform: uppercase; color: #64748b; margin-bottom: 6px; }' +
-      '.box-val { font-size: 13px; font-weight: 600; color: #0f172a; line-height: 1.5; }' +
+      '.box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px; font-size: 13px; }' +
       'table { width: 100%; border-collapse: collapse; margin-bottom: 26px; }' +
-      'th { background: #0f172a; color: #ffffff; text-align: left; padding: 11px 14px; font-size: 11px; text-transform: uppercase; }' +
-      'td { padding: 12px 14px; border-bottom: 1px solid #e2e8f0; font-size: 13px; color: #334155; }' +
-      '.total-row td { background: #f1f5f9; font-weight: 800; font-size: 15.5px; color: #0f172a; border-top: 2px solid #0f172a; border-bottom: 2px solid #0f172a; }' +
-      '.signatures { display: flex; justify-content: space-between; margin-top: 44px; padding-top: 18px; border-top: 1px solid #cbd5e1; }' +
-      '.sig-box { width: 45%; text-align: center; font-size: 12px; color: #475569; }' +
-      '.sig-line { margin-top: 44px; border-top: 1px solid #94a3b8; padding-top: 6px; font-weight: 700; color: #0f172a; }' +
-      '.no-print { text-align: center; margin-bottom: 18px; }' +
-      '.btn-print { background: #0f172a; color: #ffffff; border: none; padding: 10px 20px; border-radius: 6px; font-weight: 700; font-size: 13px; cursor: pointer; }' +
-      '@media print { .no-print { display: none; } body { padding: 0; } .sheet { border: none; } }' +
+      'th { background: #0f172a; color: #fff; text-align: left; padding: 11px 14px; font-size: 11px; text-transform: uppercase; }' +
+      'td { padding: 12px 14px; border-bottom: 1px solid #e2e8f0; font-size: 13px; }' +
+      '.total-row td { background: #f1f5f9; font-weight: 800; font-size: 15.5px; border-top: 2px solid #0f172a; }' +
+      '@media print { .no-print { display: none; } }' +
     '</style></head><body>' +
-    '<div class="no-print"><button class="btn-print" onclick="window.print()">🖨️ Descargar / Guardar en PDF (A4)</button></div>' +
+    '<div class="no-print" style="text-align:center; margin-bottom:16px;"><button onclick="window.print()" style="background:#0f172a; color:#fff; border:none; padding:10px 20px; border-radius:6px; font-weight:700; cursor:pointer;">🖨️ Descargar / Guardar en PDF (A4)</button></div>' +
     '<div class="sheet">' +
       '<div class="header">' +
-        '<div><div class="title-doc">' + escaparHTML(tituloDoc) + '</div><div class="doc-num">Referencia Nº ' + escaparHTML(rec.id_recibo) + ' · Fecha Valor: ' + escaparHTML(rec.periodo) + '</div></div>' +
-        '<div style="text-align:right;">' + selloEstado + '</div>' +
+        '<div><div class="title-doc">' + escaparHTML(tituloDoc) + '</div><div>Referencia Nº ' + escaparHTML(rec.id_recibo) + ' · Fecha: ' + escaparHTML(rec.periodo) + '</div></div>' +
+        '<div>' + selloEstado + '</div>' +
       '</div>' +
       '<div class="grid-2">' +
-        '<div class="box"><div class="box-title">Parte Arrendadora / Propietario</div><div class="box-val"><strong>' + escaparHTML(nombreEmisor) + '</strong><br>Inmueble: ' + escaparHTML(rec.propiedad) + '<br>IBAN: ' + escaparHTML(ibanRecibo) + '</div></div>' +
-        '<div class="box"><div class="box-title">Parte Arrendataria / Inquilino</div><div class="box-val"><strong>' + escaparHTML(rec.inquilino) + '</strong><br>DNI/NIE/CIF: ' + escaparHTML(dniRecibo) + ' (' + detectarPersonalidadPorDni(dniRecibo) + ')<br>Fecha Abono: <strong>' + escaparHTML(fechaAbono) + '</strong></div></div>' +
+        '<div class="box"><strong>Parte Arrendadora:</strong><br>' + escaparHTML(nombreEmisor) + '<br>Inmueble: ' + escaparHTML(rec.propiedad) + '<br>IBAN: ' + escaparHTML(ibanRecibo) + '</div>' +
+        '<div class="box"><strong>Parte Arrendataria:</strong><br>' + escaparHTML(rec.inquilino) + '<br>DNI/NIE/CIF: ' + escaparHTML(dniRecibo) + '<br>Fecha Abono: ' + escaparHTML(fechaAbono) + '</div>' +
       '</div>' +
-      '<table>' +
-        '<thead><tr><th>Concepto / Detalle</th><th>Categoría</th><th>Fecha / Periodo</th><th style="text-align:right;">Importe Base</th></tr></thead>' +
-        '<tbody>' +
-          '<tr><td><strong>' + escaparHTML(rec.concepto) + '</strong></td><td>' + escaparHTML(rec.tipo) + '</td><td>' + escaparHTML(rec.periodo) + '</td><td style="text-align:right; font-weight:700;">' + formatearEuros(base) + '</td></tr>' +
-          filasImpuestosHTML +
-          '<tr class="total-row"><td colspan="3">TOTAL DOCUMENTO (IMPUESTOS INCLUIDOS)</td><td style="text-align:right;">' + formatearEuros(totalFinal) + '</td></tr>' +
-        '</tbody>' +
-      '</table>' +
-      '<div class="signatures">' +
-        '<div class="sig-box">Por la Propiedad Arrendadora<div class="sig-line">' + escaparHTML(nombreEmisor) + '</div></div>' +
-        '<div class="sig-box">Por la Parte Arrendataria<div class="sig-line">' + escaparHTML(rec.inquilino) + '</div></div>' +
-      '</div>' +
+      '<table><thead><tr><th>Concepto</th><th>Categoría</th><th>Periodo</th><th style="text-align:right;">Importe</th></tr></thead><tbody>' +
+        '<tr><td><strong>' + escaparHTML(rec.concepto) + '</strong></td><td>' + escaparHTML(rec.tipo) + '</td><td>' + escaparHTML(rec.periodo) + '</td><td style="text-align:right;">' + formatearEuros(base) + '</td></tr>' +
+        filasImpuestosHTML +
+        '<tr class="total-row"><td colspan="3">TOTAL DOCUMENTO</td><td style="text-align:right;">' + formatearEuros(totalFinal) + '</td></tr>' +
+      '</tbody></table>' +
     '</div>' +
     '<script>setTimeout(function(){ window.print(); }, 400);<\/script>' +
     '</body></html>';
@@ -3170,7 +2938,6 @@ window.descargarReciboPDF = function(idRecibo) {
 
 window.imprimirInformeEjecutivoAbogadoPDF = function() {
   var exp = window.EXPEDIENTE_ACTUAL || {};
-  var esPropietario = (window.sesionActiva.rol === "PROPIETARIO");
   var propFiltro = exp.propiedad && exp.propiedad !== "---" && !exp.propiedad.includes(",") ? exp.propiedad : "";
   var movs = window.RECIBOS_CARTERA.filter(function(r) {
     return !propFiltro || String(r.propiedad || "").toUpperCase().includes(propFiltro.toUpperCase());
@@ -3180,94 +2947,22 @@ window.imprimirInformeEjecutivoAbogadoPDF = function() {
   var sumaDebe = 0;
   movs.forEach(function(m) {
     sumaHaber += parsearNumeroContable(m.haber);
-    sumaDebe  += parsearNumeroContable(m.total_con_impuestos || m.debe);
+    sumaDebe += parsearNumeroContable(m.total_con_impuestos || m.debe);
   });
   var saldoVivo = +(sumaHaber - sumaDebe).toFixed(2);
-  var impagados = movs.filter(function(m) { return String(m.estado).toUpperCase() === "PENDIENTE"; });
 
   var w = window.open("", "_blank", "width=940,height=960");
-  if (!w) {
-    alert("Permite las ventanas emergentes para generar el Informe Ejecutivo Judicial en PDF.");
-    return;
-  }
+  if (!w) return;
 
-  var filasMovs = movs.length === 0
-    ? '<tr><td colspan="6" style="text-align:center;">Sin movimientos contables cargados en este expediente.</td></tr>'
-    : movs.map(function(m) {
-        return '<tr>' +
-          '<td>' + escaparHTML(m.id_recibo) + '</td>' +
-          '<td>' + escaparHTML(m.periodo) + '</td>' +
-          '<td><strong>' + escaparHTML(m.propiedad) + '</strong> · ' + escaparHTML(m.concepto) + '</td>' +
-          '<td style="text-align:right; color:#b91c1c;">' + (m.debe > 0 ? formatearEuros(m.total_con_impuestos) : '-') + '</td>' +
-          '<td style="text-align:right; color:#047857;">' + (m.haber > 0 ? formatearEuros(m.haber) : '-') + '</td>' +
-          '<td><strong>' + escaparHTML(m.estado) + '</strong></td>' +
-        '</tr>';
-      }).join("");
-
-  var incHtml = window.INCIDENCIAS_LISTA.length > 0
-    ? window.INCIDENCIAS_LISTA.map(function(inc) {
-        return '<div style="border-bottom:1px solid #e2e8f0; padding:8px 0; font-size:12.5px;">' +
-          '<strong>[' + escaparHTML(inc.fecha || "---") + '] ' + escaparHTML(inc.titulo || "Incidencia") + ' (' + escaparHTML(inc.autor || "Sistema") + '):</strong> ' +
-          escaparHTML(inc.mensaje || "") +
-        '</div>';
-      }).join("")
-    : '<div style="font-size:12.5px; color:#475569;">' + escaparHTML(document.getElementById("val-incidencias") ? document.getElementById("val-incidencias").innerText : "Sin incidencias registradas.") + '</div>';
-
-  var etiquetaTitular = esPropietario ? "Titular / Arrendador:" : "Titular / Arrendatario:";
-
-  var htmlDoc = '<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">' +
-    '<title>Informe Ejecutivo Judicial · Expediente ' + escaparHTML(propFiltro || "Cartera Completa") + '</title>' +
-    '<style>' +
-      '@page { size: A4; margin: 15mm; }' +
-      'body { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; color: #0f172a; background: #fff; margin: 0; padding: 20px; }' +
-      '.report { max-width: 820px; margin: 0 auto; }' +
-      '.top-banner { border-bottom: 3px solid #0f172a; padding-bottom: 14px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: flex-end; }' +
-      'h1 { font-size: 19px; text-transform: uppercase; margin: 0; color: #0f172a; }' +
-      'h2 { font-size: 13.5px; text-transform: uppercase; background: #0f172a; color: #fff; padding: 8px 12px; margin: 20px 0 10px 0; border-radius: 4px; }' +
-      '.summary-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 18px; }' +
-      '.kpi { border: 1px solid #cbd5e1; background: #f8fafc; padding: 12px; border-radius: 6px; }' +
-      '.kpi-lbl { font-size: 10.5px; text-transform: uppercase; color: #64748b; font-weight: 800; }' +
-      '.kpi-val { font-size: 16px; font-weight: 900; margin-top: 4px; }' +
-      'table { width: 100%; border-collapse: collapse; font-size: 12px; margin-bottom: 16px; }' +
-      'th { background: #e2e8f0; color: #0f172a; text-align: left; padding: 8px; font-weight: 800; border: 1px solid #cbd5e1; }' +
-      'td { padding: 8px; border: 1px solid #cbd5e1; }' +
-      '.no-print { text-align: center; margin-bottom: 16px; }' +
-      '@media print { .no-print { display: none; } body { padding: 0; } }' +
-    '</style></head><body>' +
-    '<div class="no-print"><button onclick="window.print()" style="background:#0f172a; color:#fff; border:none; padding:10px 22px; border-radius:6px; font-weight:800; cursor:pointer;">🖨️ Imprimir / Guardar Informe Judicial en PDF</button></div>' +
-    '<div class="report">' +
-      '<div class="top-banner">' +
-        '<div><h1>Informe Ejecutivo de Auditoría Jurídica y Contable</h1><div style="font-size:12px; color:#475569; margin-top:4px;">Certificación de Saldos (Debe/Haber), Suministros e Histórico de Incidencias · API 4173 · AICAT 14200</div></div>' +
-        '<div style="text-align:right; font-size:11.5px;"><strong>Fecha Emisión:</strong> ' + new Date().toLocaleString("es-ES") + '<br><strong>Solicitante:</strong> ' + escaparHTML(window.sesionActiva.nombre || "---") + ' (' + escaparHTML(window.sesionActiva["DNI-NIE-CIF"]) + ')</div>' +
-      '</div>' +
-      '<h2>1. Identificación del Expediente y Cartera</h2>' +
-      '<div style="font-size:12.5px; line-height:1.6; background:#f8fafc; padding:12px; border:1px solid #cbd5e1; border-radius:6px;">' +
-        '<strong>Inmueble(s):</strong> ' + escaparHTML(exp.propiedad || "Cartera General") + ' · <strong>Ubicación:</strong> ' + escaparHTML(exp.direccion || "---") + '<br>' +
-        '<strong>' + etiquetaTitular + '</strong> ' + escaparHTML(exp.nombre || "---") + ' · <strong>DNI/NIE/CIF:</strong> ' + escaparHTML(exp.dni || "---") + ' · <strong>Código Autorización:</strong> ' + escaparHTML(exp.codigo || "---") + '<br>' +
-        '<strong>Condiciones y Cuenta IBAN:</strong> ' + escaparHTML(exp.contrato_renta || "---") +
-      '</div>' +
-      '<h2>2. Liquidación Contable y Saldo Vivo a Fecha Actual</h2>' +
-      '<div class="summary-grid">' +
-        '<div class="kpi"><div class="kpi-lbl">Total Pagos Aportados (Haber)</div><div class="kpi-val" style="color:#047857;">' + formatearEuros(sumaHaber) + '</div></div>' +
-        '<div class="kpi"><div class="kpi-lbl">Total Cargos y Facturas (Debe)</div><div class="kpi-val" style="color:#b91c1c;">' + formatearEuros(sumaDebe) + '</div></div>' +
-        '<div class="kpi"><div class="kpi-lbl">Saldo Vivo Actual (Haber - Debe)</div><div class="kpi-val" style="color:' + (saldoVivo >= 0 ? '#047857' : '#b91c1c') + ';">' + formatearEuros(saldoVivo) + ' (' + impagados.length + ' recibos pendientes)</div></div>' +
-      '</div>' +
-      '<h2>3. Extracto Detallado de Movimientos (Alquileres y Suministros)</h2>' +
-      '<table><thead><tr><th>Ref. ID</th><th>Fecha Valor</th><th>Inmueble y Concepto</th><th style="text-align:right;">Cargo (DEBE)</th><th style="text-align:right;">Abono (HABER)</th><th>Estado</th></tr></thead><tbody>' + filasMovs + '</tbody></table>' +
-      '<h2>4. Trazabilidad de Avisos e Histórico de Incidencias (Chat Registrado)</h2>' +
-      '<div style="border:1px solid #cbd5e1; border-radius:6px; padding:12px; background:#f8fafc;">' + incHtml + '</div>' +
-    '</div>' +
-    '<script>setTimeout(function(){ window.print(); }, 450);<\/script>' +
-    '</body></html>';
+  var filasMovs = movs.map(function(m) {
+    return '<tr><td>' + escaparHTML(m.id_recibo) + '</td><td>' + escaparHTML(m.periodo) + '</td><td>' + escaparHTML(m.propiedad) + ' · ' + escaparHTML(m.concepto) + '</td><td style="text-align:right; color:#b91c1c;">' + (m.debe > 0 ? formatearEuros(m.total_con_impuestos) : '-') + '</td><td style="text-align:right; color:#047857;">' + (m.haber > 0 ? formatearEuros(m.haber) : '-') + '</td><td>' + escaparHTML(m.estado) + '</td></tr>';
+  }).join("");
 
   w.document.open();
-  w.document.write(htmlDoc);
+  w.document.write('<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Informe Ejecutivo Judicial</title><style>body{font-family:Helvetica,Arial,sans-serif;padding:24px;color:#0f172a;}table{width:100%;border-collapse:collapse;font-size:12px;margin-top:14px;}th,td{border:1px solid #cbd5e1;padding:8px;text-align:left;}th{background:#e2e8f0;}</style></head><body><h1>Informe Ejecutivo de Auditoría Jurídica y Contable</h1><p><strong>Inmueble(s):</strong> ' + escaparHTML(exp.propiedad || "Cartera") + ' · <strong>Titular(es):</strong> ' + escaparHTML(exp.nombre || "---") + ' (' + escaparHTML(exp.dni || "---") + ')</p><p><strong>Saldo Vivo Actual (Haber - Debe):</strong> ' + formatearEuros(saldoVivo) + '</p><table><thead><tr><th>ID</th><th>Fecha</th><th>Concepto</th><th>Debe</th><th>Haber</th><th>Estado</th></tr></thead><tbody>' + filasMovs + '</tbody></table><script>setTimeout(function(){window.print();},450);<\/script></body></html>');
   w.document.close();
 };
 
-// ============================================================================
-// PASARELA DE PAGO TPV
-// ============================================================================
 window.abrirModalPagoTPV = function(idRecibo) {
   var rec = window.RECIBOS_CARTERA.find(function(r) { return String(r.id_recibo) === String(idRecibo); });
   if (!rec) return;
@@ -3281,7 +2976,6 @@ window.abrirModalPagoTPV = function(idRecibo) {
     "Neto a transferir al Propietario: " + formatearEuros(calc.neto) + " (Descontados " + formatearEuros(calc.comision) + " · " + calc.regla + ")";
   document.getElementById("tpv-nombre-pagador").value = rec.inquilino && rec.inquilino !== "---" ? rec.inquilino : "";
   document.getElementById("msg-tpv-exito").style.display = "none";
-
   document.getElementById("modal-pasarela-tpv").style.display = "flex";
 };
 
@@ -3298,7 +2992,6 @@ window.procesarPagoTarjetaTPV = function(e) {
 
   var calc = calcularComisionTPVPropietario(rec.total_con_impuestos || rec.importe);
   btn.disabled = true;
-  btn.innerText = "Procesando cobro TPV y ordenando transferencia automática...";
 
   rec.estado = "Abonado";
   rec.haber = calc.bruto;
@@ -3318,10 +3011,9 @@ window.procesarPagoTarjetaTPV = function(e) {
       pagador_tarjeta: pagador,
       relacion_pagador: relacion,
       importe_bruto_cobrado: calc.bruto,
+      Haber: calc.bruto,
       comision_servicio_level: calc.comision,
-      regla_comision_aplicada: calc.regla,
       importe_neto_transferir_propietario: calc.neto,
-      iban_destino_propietario: rec.iban || window.EXPEDIENTE_ACTUAL.iban || "",
       notificar_elena_whatsapp: true
     })
   }).catch(function(){});
@@ -3330,14 +3022,11 @@ window.procesarPagoTarjetaTPV = function(e) {
   renderizarRecibosInquilino(window.sesionActiva.propiedad, window.sesionActiva["DNI-NIE-CIF"]);
   actualizarTarjetaSaldoVivoEnPantalla();
 
-  msg.innerHTML = "✅ <strong>¡Pago procesado con éxito!</strong> Recibo abonado en el Haber. Liquidación neta de <strong>" + formatearEuros(calc.neto) + "</strong> programada para el propietario (descontados " + formatearEuros(calc.comision) + " de servicio TPV).";
+  msg.innerHTML = "✅ <strong>¡Pago procesado con éxito!</strong> Recibo abonado en el Haber.";
   msg.style.display = "block";
-  btn.innerText = "💳 Pagar Ahora con Tarjeta y Descargar Recibo Oficial PDF →";
   btn.disabled = false;
 
-  setTimeout(function() {
-    window.descargarReciboPDF(rec.id_recibo);
-  }, 600);
+  setTimeout(function() { window.descargarReciboPDF(rec.id_recibo); }, 600);
 };
 
 window.marcarReciboComoAbonado = function(idRecibo) {
@@ -3348,7 +3037,6 @@ window.marcarReciboComoAbonado = function(idRecibo) {
   rec.haber = parsearNumeroContable(rec.total_con_impuestos || rec.importe);
   rec.fecha_pago = new Date().toLocaleDateString("es-ES");
   rec.metodo_pago = "Transferencia / Manual";
-  var dniRec = obtenerDniUnificado(rec);
 
   fetch(URL_WEBHOOK_PROPERTY_GESTION, {
     method: "POST",
@@ -3361,7 +3049,7 @@ window.marcarReciboComoAbonado = function(idRecibo) {
       Haber: rec.haber,
       fecha_pago: rec.fecha_pago,
       propiedad: rec.propiedad,
-      "DNI-NIE-CIF": dniRec,
+      "DNI-NIE-CIF": obtenerDniUnificado(rec),
       importe: rec.importe,
       notificar_elena_whatsapp: true
     })
@@ -3370,18 +3058,9 @@ window.marcarReciboComoAbonado = function(idRecibo) {
   renderizarCarteraYRecibosPropietario();
   renderizarRecibosInquilino(window.sesionActiva.propiedad, window.sesionActiva["DNI-NIE-CIF"]);
   actualizarTarjetaSaldoVivoEnPantalla();
-
-  var modalVisor = document.getElementById("modal-visor-seguro");
-  if (modalVisor && modalVisor.style.display === "flex") {
-    abrirVisorNativoPropietario("morosidad");
-  }
-
   window.descargarReciboPDF(idRecibo);
 };
 
-// ============================================================================
-// SUBIDA DIRECTA DE FOTOS Y FACTURAS AL FTP DE LEVEL.IMMO VÍA PROPERTY_GESTION
-// ============================================================================
 function convertirArchivoABase64(file) {
   return new Promise(function(resolve, reject) {
     var reader = new FileReader();
@@ -3390,9 +3069,6 @@ function convertirArchivoABase64(file) {
     reader.readAsDataURL(file);
   });
 }
-// ============================================================================
-// BLOQUE FINAL UNIFICADO: MULTIMEDIA ACUMULATIVO, RADAR, MULTI-TITULARES Y LOGIN
-// ============================================================================
 
 function limpiarListaUrlsMultimedia(cadenaOArray) {
   var arr = [];
@@ -3409,13 +3085,7 @@ function limpiarListaUrlsMultimedia(cadenaOArray) {
   }
   var unicas = [];
   arr.forEach(function(u) {
-    if (
-      u &&
-      u.startsWith("http") &&
-      !u.includes("open.larksuite.com") &&
-      !u.includes("feishu.cn") &&
-      unicas.indexOf(u) === -1
-    ) {
+    if (u && u.startsWith("http") && !u.includes("open.larksuite.com") && !u.includes("feishu.cn") && unicas.indexOf(u) === -1) {
       unicas.push(u);
     }
   });
@@ -3450,10 +3120,18 @@ function obtenerTitularesRealesPropiedad(p) {
   var dnis = String(obtenerDniUnificado(p) || "").split(",").map(function(s) { return s.trim(); }).filter(Boolean);
   var totalTitulares = Math.max(nombres.length, dnis.length);
 
+  var paresDetallados = [];
+  for (var i = 0; i < totalTitulares; i++) {
+    var nomI = nombres[i] || ("Titular " + (i + 1));
+    var dniI = dnis[i] || "";
+    paresDetallados.push(dniI ? (nomI + " (" + dniI + ")") : nomI);
+  }
+
   if (nombres.length === 0) {
     return {
       corto: dnis.length > 1 ? (dnis[0] + " (+" + (dnis.length - 1) + ")") : (dnis[0] || "---"),
       completo: dnis.join(" · ") || "---",
+      detallado: paresDetallados.join(" · ") || "---",
       dnis: dnis.join(", ") || "---",
       total: totalTitulares
     };
@@ -3462,6 +3140,7 @@ function obtenerTitularesRealesPropiedad(p) {
   return {
     corto: totalTitulares > 1 ? (nombres[0] + " (+" + (totalTitulares - 1) + ")") : nombres[0],
     completo: nombres.join(" · "),
+    detallado: paresDetallados.join(" · "),
     dnis: dnis.join(", "),
     total: totalTitulares
   };
@@ -3480,7 +3159,6 @@ function enriquecerDatosCarteraYLimpiarRecibosVacios() {
   if (Array.isArray(window.CARTERA_PROPIEDADES)) {
     window.CARTERA_PROPIEDADES.forEach(function(p) {
       if (!p.inquilino_original) p.inquilino_original = p.inquilino;
-      // Recuperar también fotos guardadas en navegador para esta propiedad si Make solo devolvió 1
       var cacheKey = "LEVEL_BOOK_" + String(p.nombre_propiedad || "").toUpperCase();
       var cachePortadaKey = "LEVEL_PORTADA_" + String(p.nombre_propiedad || "").toUpperCase();
       var guardadasLocal = "";
@@ -3501,6 +3179,7 @@ function enriquecerDatosCarteraYLimpiarRecibosVacios() {
       var infoT = obtenerTitularesRealesPropiedad(p);
       p.inquilino = infoT.corto;
       p.inquilino_completo = infoT.completo;
+      p.inquilino_detallado = infoT.detallado;
       p.dnis_completos = infoT.dnis;
       p.total_titulares = infoT.total;
     });
@@ -3518,6 +3197,7 @@ function guardarCacheMultimediaPropiedad(nombreProp, arrayFotos, urlPortada) {
   } catch (_) {}
 }
 
+// Subida con prefijo único por propiedad + sello temporal para que 200 "cocina.jpg" nunca colisionen
 window.subirArchivosFtpMake = async function() {
   var fileInput = document.getElementById("prop-file-ftp");
   var statusEl = document.getElementById("status-ftp-upload");
@@ -3529,13 +3209,14 @@ window.subirArchivosFtpMake = async function() {
   var inputUrls = document.getElementById("prop-alta-fotos");
   var inpPortada = document.getElementById("prop-alta-portada");
   var nombreProp = document.getElementById("prop-alta-nombre").value.trim() || "inmueble";
+  var slugProp = nombreProp.toLowerCase().replace(/[^a-z0-9]/g, "") || "prop";
 
   var listaSubir = (window.archivosSeleccionadosFTP && window.archivosSeleccionadosFTP.length > 0)
     ? window.archivosSeleccionadosFTP
     : Array.from((fileInput && fileInput.files) || []);
 
   if (listaSubir.length === 0) {
-    if (statusEl) statusEl.innerHTML = "<span style='color:var(--amber);'>⚠️ Selecciona primero al menos una foto o vídeo en «Elegir archivos».</span>";
+    if (statusEl) statusEl.innerHTML = "<span style='color:var(--amber);'>⚠️ Selecciona primero al menos una foto o vídeo.</span>";
     return;
   }
 
@@ -3554,7 +3235,9 @@ window.subirArchivosFtpMake = async function() {
     if (radarPct) radarPct.innerText = pct + "%";
     if (radarTxt) radarTxt.innerText = "📡 Subiendo (" + (i + 1) + "/" + listaSubir.length + "): " + f.name;
 
-    var cleanName = f.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+    var baseFile = f.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+    var uniqueStamp = Date.now().toString(36) + (i + 1);
+    var cleanName = slugProp + "_" + uniqueStamp + "_" + baseFile;
     var urlPublicaReal = "https://level.immo/app-alquileres-propiedades/" + cleanName;
     var acumuladoHastaAhora = previasLimpias.concat(nuevasUrls, [urlPublicaReal]).filter(function(v, idx, self) {
       return self.indexOf(v) === idx;
@@ -3610,11 +3293,28 @@ window.subirArchivosFtpMake = async function() {
   previsualizarFotosModal(todasJuntas.join(", "));
   renderizarCarteraYRecibosPropietario();
 
-  if (radarTxt) radarTxt.innerText = "✅ ¡" + nuevasUrls.length + " archivo(s) añadidos al Book (" + todasJuntas.length + " en total)!";
-  if (statusEl) statusEl.innerHTML = "<span style='color:var(--emerald); font-weight:700;'>✅ Book actualizado con " + todasJuntas.length + " fotos. Pulsa «💾 Guardar Propiedad» abajo.</span>";
+  if (radarTxt) radarTxt.innerText = "✅ ¡" + nuevasUrls.length + " archivo(s) añadidos con nombre único (" + todasJuntas.length + " en total)!";
+  if (statusEl) statusEl.innerHTML = "<span style='color:var(--emerald); font-weight:700;'>✅ Book actualizado. Pulsa «💾 Guardar Propiedad» abajo.</span>";
   btn.innerText = "☁️ Publicar Archivos Ahora";
   btn.disabled = false;
 };
+
+function sincronizarBookYPortadaEnBD(p) {
+  if (!p || !p.nombre_propiedad) return;
+  var lista = limpiarListaUrlsMultimedia(p.fotos || []);
+  var portada = p.foto_portada || (lista[0] || "");
+  fetch(URL_WEBHOOK_PROPERTY_GESTION, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      accion: "subir_archivo_ftp_level_immo",
+      propiedad: p.nombre_propiedad,
+      nombre_archivo: (portada.split("/").pop() || "portada.jpg"),
+      foto_portada_url: portada,
+      todas_las_fotos_url: lista.join(", ")
+    })
+  }).catch(function(){});
+}
 
 window.establecerComoPortadaInmueble = function(nombrePropiedad, urlElegida) {
   var p = (window.CARTERA_PROPIEDADES || []).find(function(item) {
@@ -3625,6 +3325,7 @@ window.establecerComoPortadaInmueble = function(nombrePropiedad, urlElegida) {
   var inpPortada = document.getElementById("prop-alta-portada");
   if (inpPortada) inpPortada.value = urlElegida;
   guardarCacheMultimediaPropiedad(p.nombre_propiedad, p.fotos || [], urlElegida);
+  sincronizarBookYPortadaEnBD(p);
   renderizarCarteraYRecibosPropietario();
   abrirBookFotosInmueble(nombrePropiedad);
 };
@@ -3639,11 +3340,11 @@ window.eliminarFotoDelBookInmueble = function(nombrePropiedad, idxBorrar) {
     p.foto_portada = p.fotos.length > 0 ? p.fotos[0] : "";
   }
   guardarCacheMultimediaPropiedad(p.nombre_propiedad, p.fotos, p.foto_portada);
+  sincronizarBookYPortadaEnBD(p);
   renderizarCarteraYRecibosPropietario();
   abrirBookFotosInmueble(nombrePropiedad);
 };
 
-// GESTIÓN MANUAL DE SUMINISTROS, RECIBOS VARIOS Y AVISOS
 window.abrirModalSuministroManual = function(propPreseleccionada, idReciboEditar) {
   poblarSelectoresPropiedadesModales();
   document.getElementById("msg-sum-exito").style.display = "none";
@@ -3687,7 +3388,6 @@ window.guardarMovimientoSuministroManual = async function(e) {
   var btn = document.getElementById("btn-guardar-sum-manual");
   var msg = document.getElementById("msg-sum-exito");
   btn.disabled = true;
-  btn.innerText = "Sincronizando con tabla SUMINISTROS Y GASTOS...";
 
   var idEdit = document.getElementById("sum-edit-id").value;
   var idReciboFinal = idEdit || ("ID-ALQ-" + new Date().getFullYear() + String(Math.floor(Math.random()*9000+1000)));
@@ -3707,7 +3407,7 @@ window.guardarMovimientoSuministroManual = async function(e) {
   var archivoNombre = "";
   var urlFtpGenerada = "";
   if (fileInput && fileInput.files && fileInput.files[0]) {
-    archivoNombre = String(idReciboFinal + "_" + fileInput.files[0].name).replace(/[^a-zA-Z0-9._-]/g, "_");
+    archivoNombre = String(idReciboFinal + "_" + Date.now().toString(36) + "_" + fileInput.files[0].name).replace(/[^a-zA-Z0-9._-]/g, "_");
     urlFtpGenerada = "https://level.immo/app-alquileres-propiedades/" + archivoNombre;
     try { archivoBase64 = await convertirArchivoABase64(fileInput.files[0]); } catch (_) {}
   }
@@ -3737,17 +3437,6 @@ window.guardarMovimientoSuministroManual = async function(e) {
   } else {
     window.RECIBOS_CARTERA.unshift(nuevoMov);
   }
-
-  window.SUMINISTROS_GASTOS.unshift({
-    id_recibo: nuevoMov.id_recibo,
-    propiedad: prop,
-    concepto: nuevoMov.concepto,
-    importe: formatearEuros(totalFinal),
-    debe: nuevoMov.debe,
-    haber: nuevoMov.haber,
-    iban: fichaProp.iban || window.EXPEDIENTE_ACTUAL.iban || "---",
-    estado: nuevoMov.estado
-  });
 
   renderizarCarteraYRecibosPropietario();
   renderizarRecibosInquilino(window.sesionActiva.propiedad, window.sesionActiva["DNI-NIE-CIF"]);
@@ -3780,7 +3469,6 @@ window.guardarMovimientoSuministroManual = async function(e) {
 
   msg.innerHTML = "✅ Apunte registrado en <strong>SUMINISTROS Y GASTOS</strong> (" + escaparHTML(prop) + ").";
   msg.style.display = "block";
-  btn.innerText = "⚡ Registrar en SUMINISTROS Y GASTOS y Actualizar Saldo Vivo →";
   btn.disabled = false;
 };
 
@@ -3819,7 +3507,7 @@ window.guardarAvisoManualPropietario = function(e) {
     })
   }).catch(function(){});
 
-  msg.innerHTML = "✅ Aviso publicado en el expediente de <strong>" + escaparHTML(prop) + "</strong> y enviado a Elena IA Advisor.";
+  msg.innerHTML = "✅ Aviso publicado en el expediente de <strong>" + escaparHTML(prop) + "</strong>.";
   msg.style.display = "block";
 };
 
@@ -3839,12 +3527,11 @@ window.enviarIncidenciaHistoricoMake = async function(e) {
   var msg = document.getElementById("msg-inc-exito");
 
   btn.disabled = true;
-  btn.innerText = "Registrando en histórico de incidencias...";
 
   var fotoB64 = "";
   var fotoNombre = "";
   if (fileInp && fileInp.files && fileInp.files[0]) {
-    fotoNombre = fileInp.files[0].name;
+    fotoNombre = Date.now().toString(36) + "_" + fileInp.files[0].name.replace(/[^a-zA-Z0-9._-]/g, "_");
     try { fotoB64 = await convertirArchivoABase64(fileInp.files[0]); } catch (_) {}
   }
 
@@ -3878,16 +3565,14 @@ window.enviarIncidenciaHistoricoMake = async function(e) {
     })
   }).catch(function(){});
 
-  msg.innerHTML = "✅ Mensaje añadido al histórico trazable de la incidencia y notificado por WhatsApp.";
+  msg.innerHTML = "✅ Mensaje añadido al histórico trazable de la incidencia.";
   msg.style.display = "block";
-  btn.innerText = "💬 Guardar en Histórico de Incidencias y Notificar por WhatsApp →";
   btn.disabled = false;
 };
 
 function renderizarHiloIncidenciasEnPantalla() {
   var box = document.getElementById("val-incidencias");
-  if (!box) return;
-  if (window.INCIDENCIAS_LISTA.length === 0) return;
+  if (!box || window.INCIDENCIAS_LISTA.length === 0) return;
 
   box.innerHTML = window.INCIDENCIAS_LISTA.map(function(it) {
     var badgeUrg = it.urgencia === "URGENTE" ? "badge-danger" : (it.urgencia === "ALTA" ? "badge-warning" : "badge-success");
@@ -3957,149 +3642,74 @@ function renderizarCarteraYRecibosPropietario(filtroTexto) {
     }).join("") + '<button type="button" class="prop-chip active" onclick="precargarPropiedadExistente(\'NUEVA\')">➕ Nueva Propiedad</button>';
   }
 
-  if (chipsMapa) {
-    if (window.CARTERA_PROPIEDADES.length > 0) {
-      chipsMapa.innerHTML = window.CARTERA_PROPIEDADES.map(function(p, idx) {
-        var chipId = "chip-owner-dyn-" + idx;
-        var latNum = p.lat || "";
-        var lonNum = p.lon || "";
-        var dirClean = (p.direccion && p.direccion !== "---") ? p.direccion : p.nombre_propiedad;
-        return '<button type="button" class="prop-chip ' + (idx === 0 ? 'active' : '') + '" id="' + chipId + '" onclick="seleccionarMapaPropietario(\'' + escaparHTML(dirClean) + '\', \'' + latNum + '\', \'' + lonNum + '\', \'' + chipId + '\')">📍 ' + (idx + 1) + '. ' + escaparHTML(p.nombre_propiedad) + '</button>';
-      }).join("");
-      var p0 = window.CARTERA_PROPIEDADES[0];
-      seleccionarMapaPropietario((p0.direccion && p0.direccion !== "---") ? p0.direccion : p0.nombre_propiedad, p0.lat || "", p0.lon || "", "chip-owner-dyn-0");
-    } else {
-      chipsMapa.innerHTML = "<span style='font-size:12px; color:var(--text-muted);'>Sin propiedades geolocalizadas en cartera.</span>";
-    }
-  }
-
-  if (chipsAbogado) {
-    if (window.CARTERA_PROPIEDADES.length > 0) {
-      chipsAbogado.innerHTML = window.CARTERA_PROPIEDADES.map(function(p) {
-        return '<button type="button" class="prop-chip" onclick="togglePropiedadAbogado(\'' + escaparHTML(p.nombre_propiedad) + '\')">+ ' + escaparHTML(p.nombre_propiedad) + '</button>';
-      }).join("") + '<button type="button" class="prop-chip" onclick="seleccionarTodasPropiedadesAbogado()">✓ Todas</button>';
-      var inpPropAbg = document.getElementById("input-prop-abogado");
-      if (inpPropAbg && !inpPropAbg.value) {
-        inpPropAbg.value = window.CARTERA_PROPIEDADES.map(function(p) { return p.nombre_propiedad; }).join(", ");
-      }
-    } else {
-      chipsAbogado.innerHTML = "";
-    }
-  }
-
-  if (listaProps.length === 0) {
-    contCartera.innerHTML = "<div style='padding:14px; color:var(--text-muted);'>No se han encontrado inmuebles para este filtro.</div>";
-  } else {
-    contCartera.innerHTML = listaProps.map(function(p) {
-      var saldoProp = calcularSaldoVivoPropiedad(p.nombre_propiedad, p.deuda);
-      var badgeSaldo = saldoProp >= 0
-        ? '<span class="badge badge-success">Saldo Vivo: +' + formatearEuros(saldoProp) + '</span>'
-        : '<span class="badge badge-danger">Saldo Vivo: ' + formatearEuros(saldoProp) + '</span>';
-
-      var numFotos = Array.isArray(p.fotos) ? p.fotos.length : 0;
-      var urlPortada = p.foto_portada || (numFotos > 0 ? p.fotos[0] : "");
-      var bloquePortadaHTML = urlPortada
-        ? '<div style="position:relative; margin-bottom:10px; border-radius:8px; overflow:hidden; border:1px solid var(--border); height:145px; background:#090d16; cursor:pointer;" onclick="abrirBookFotosInmueble(\'' + escaparHTML(p.nombre_propiedad || "") + '\')">' +
-            '<img src="' + escaparHTML(urlPortada) + '" alt="' + escaparHTML(p.nombre_propiedad) + '" style="width:100%; height:100%; object-fit:cover; display:block;">' +
-            '<span style="position:absolute; bottom:8px; right:8px; background:rgba(6,10,18,0.88); color:var(--emerald); border:1px solid var(--emerald); padding:4px 9px; border-radius:6px; font-size:11px; font-weight:800;">📸 Ver Book (' + numFotos + ' fotos)</span>' +
-          '</div>'
-        : '';
-
-      return '<div class="portfolio-card">' +
-        '<div>' +
-          bloquePortadaHTML +
-          '<div class="portfolio-card-header">' +
-            '<div>' +
-              '<div class="portfolio-title">🏠 ' + escaparHTML(p.nombre_propiedad || "---") + '</div>' +
-              '<div class="portfolio-sub">' + escaparHTML(p.direccion || "---") + '</div>' +
-            '</div>' +
-            badgeSaldo +
-          '</div>' +
-          '<div class="info-row"><span class="info-label">Inquilino(s):</span><span class="info-value" title="' + escaparHTML(p.inquilino_completo || "") + '">' + escaparHTML(p.inquilino || "---") + '</span></div>' +
-          '<div class="info-row"><span class="info-label">DNI-NIE-CIF:</span><span class="info-value">' + escaparHTML(obtenerDniUnificado(p) || "---") + '</span></div>' +
-          '<div class="info-row"><span class="info-label">Renta / Suministros:</span><span class="info-value" style="color:var(--emerald);">' + escaparHTML(p.renta_mensual || "---") + ' · ' + escaparHTML(p.regla_facturacion || "AGUA Y LUZ") + '</span></div>' +
-        '</div>' +
-        '<div style="display:flex; gap:6px; flex-wrap:wrap; padding-top:8px; border-top:1px solid rgba(30,41,59,0.6);">' +
-          '<button type="button" class="btn-outline-sm" style="flex:1; font-weight:700; border-color:var(--emerald); color:var(--emerald);" onclick="inspeccionarInmuebleComoResidente(\'' + escaparHTML(p.nombre_propiedad || "") + '\')">👁️ Expediente</button>' +
-          '<button type="button" class="btn-outline-sm" onclick="abrirBookFotosInmueble(\'' + escaparHTML(p.nombre_propiedad || "") + '\')">📷 Book (' + numFotos + ')</button>' +
-          '<button type="button" class="btn-outline-sm" onclick="abrirModalSuministroManual(\'' + escaparHTML(p.nombre_propiedad || "") + '\')">⚡ +Recibo</button>' +
-          '<button type="button" class="btn-outline-sm" style="border-color:var(--amber); color:var(--amber);" onclick="abrirModalAltaPropiedad(\'' + escaparHTML(p.nombre_propiedad || "") + '\')">📸 Fotos</button>' +
-        '</div>' +
-      '</div>';
+  if (chipsMapa && window.CARTERA_PROPIEDADES.length > 0) {
+    chipsMapa.innerHTML = window.CARTERA_PROPIEDADES.map(function(p, idx) {
+      var chipId = "chip-owner-dyn-" + idx;
+      var dirClean = (p.direccion && p.direccion !== "---") ? p.direccion : p.nombre_propiedad;
+      return '<button type="button" class="prop-chip ' + (idx === 0 ? 'active' : '') + '" id="' + chipId + '" onclick="seleccionarMapaPropietario(\'' + escaparHTML(dirClean) + '\', \'' + (p.lat || "") + '\', \'' + (p.lon || "") + '\', \'' + chipId + '\')">📍 ' + (idx + 1) + '. ' + escaparHTML(p.nombre_propiedad) + '</button>';
     }).join("");
+    var p0 = window.CARTERA_PROPIEDADES[0];
+    seleccionarMapaPropietario((p0.direccion && p0.direccion !== "---") ? p0.direccion : p0.nombre_propiedad, p0.lat || "", p0.lon || "", "chip-owner-dyn-0");
   }
 
-  if (contSuministros) {
-    if (window.SUMINISTROS_GASTOS.length === 0) {
-      contSuministros.innerHTML = "<div style='padding:12px; color:var(--text-muted);'>Puedes subir facturas reales de luz/agua o provisiones pulsando <strong>➕ Añadir Factura / Apunte Contable</strong>.</div>";
-    } else {
-      contSuministros.innerHTML = window.SUMINISTROS_GASTOS.map(function(s) {
-        return '<div class="receipt-row">' +
-          '<div class="receipt-info">' +
-            '<div class="receipt-concept">⚡ ' + escaparHTML(s.concepto || "") + ' · <span style="color:var(--neon-cyan);">' + escaparHTML(s.propiedad || "") + '</span></div>' +
-            '<div class="receipt-meta">IBAN: <strong>' + escaparHTML(s.iban || "---") + '</strong> · Tabla: <code>' + TABLE_ID_SUMINISTROS_GASTOS + '</code></div>' +
-          '</div>' +
-          '<div class="receipt-actions">' +
-            '<span class="receipt-amount">' + escaparHTML(s.importe || "") + '</span>' +
-            '<span class="badge badge-info">' + escaparHTML(s.estado || "") + '</span>' +
-          '</div>' +
-        '</div>';
-      }).join("");
+  if (chipsAbogado && window.CARTERA_PROPIEDADES.length > 0) {
+    chipsAbogado.innerHTML = window.CARTERA_PROPIEDADES.map(function(p) {
+      return '<button type="button" class="prop-chip" onclick="togglePropiedadAbogado(\'' + escaparHTML(p.nombre_propiedad) + '\')">+ ' + escaparHTML(p.nombre_propiedad) + '</button>';
+    }).join("") + '<button type="button" class="prop-chip" onclick="seleccionarTodasPropiedadesAbogado()">✓ Todas</button>';
+    var inpPropAbg = document.getElementById("input-prop-abogado");
+    if (inpPropAbg && !inpPropAbg.value) {
+      inpPropAbg.value = window.CARTERA_PROPIEDADES.map(function(p) { return p.nombre_propiedad; }).join(", ");
     }
   }
 
-  var barraProp = document.getElementById("barra-filtro-propiedad-recibos");
-  if (!barraProp) {
-    barraProp = document.createElement("div");
-    barraProp.id = "barra-filtro-propiedad-recibos";
-    barraProp.style.cssText = "display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:14px; padding:10px 14px; background:var(--bg-input); border:1px solid var(--border); border-radius:10px;";
-    contRecibos.parentNode.insertBefore(barraProp, contRecibos);
-  }
+  contCartera.innerHTML = listaProps.map(function(p) {
+    var saldoProp = calcularSaldoVivoPropiedad(p.nombre_propiedad, p.deuda);
+    var badgeSaldo = saldoProp >= 0
+      ? '<span class="badge badge-success">Saldo Vivo: +' + formatearEuros(saldoProp) + '</span>'
+      : '<span class="badge badge-danger">Saldo Vivo: ' + formatearEuros(saldoProp) + '</span>';
 
-  var props = window.CARTERA_PROPIEDADES || [];
+    var numFotos = Array.isArray(p.fotos) ? p.fotos.length : 0;
+    var urlPortada = p.foto_portada || (numFotos > 0 ? p.fotos[0] : "");
+    var bloquePortadaHTML = urlPortada
+      ? '<div style="position:relative; margin-bottom:10px; border-radius:8px; overflow:hidden; border:1px solid var(--border); height:145px; background:#090d16; cursor:pointer;" onclick="abrirBookFotosInmueble(\'' + escaparHTML(p.nombre_propiedad || "") + '\')">' +
+          '<img src="' + escaparHTML(urlPortada) + '" alt="' + escaparHTML(p.nombre_propiedad) + '" style="width:100%; height:100%; object-fit:cover; display:block;">' +
+          '<span style="position:absolute; bottom:8px; right:8px; background:rgba(6,10,18,0.88); color:var(--emerald); border:1px solid var(--emerald); padding:4px 9px; border-radius:6px; font-size:11px; font-weight:800;">📸 Ver Book (' + numFotos + ' fotos)</span>' +
+        '</div>'
+      : '';
+
+    return '<div class="portfolio-card">' +
+      '<div>' +
+        bloquePortadaHTML +
+        '<div class="portfolio-card-header">' +
+          '<div>' +
+            '<div class="portfolio-title">🏠 ' + escaparHTML(p.nombre_propiedad || "---") + '</div>' +
+            '<div class="portfolio-sub">' + escaparHTML(p.direccion || "---") + '</div>' +
+          '</div>' +
+          badgeSaldo +
+        '</div>' +
+        '<div class="info-row"><span class="info-label">Inquilino(s):</span><span class="info-value" title="' + escaparHTML(p.inquilino_detallado || p.inquilino_completo || "") + '">' + escaparHTML(p.inquilino || "---") + '</span></div>' +
+        '<div class="info-row"><span class="info-label">DNI-NIE-CIF:</span><span class="info-value">' + escaparHTML(obtenerDniUnificado(p) || "---") + '</span></div>' +
+        '<div class="info-row"><span class="info-label">Renta / Suministros:</span><span class="info-value" style="color:var(--emerald);">' + escaparHTML(p.renta_mensual || "---") + ' · ' + escaparHTML(p.regla_facturacion || "AGUA Y LUZ") + '</span></div>' +
+      '</div>' +
+      '<div style="display:flex; gap:6px; flex-wrap:wrap; padding-top:8px; border-top:1px solid rgba(30,41,59,0.6);">' +
+        '<button type="button" class="btn-outline-sm" style="flex:1; font-weight:700; border-color:var(--emerald); color:var(--emerald);" onclick="inspeccionarInmuebleComoResidente(\'' + escaparHTML(p.nombre_propiedad || "") + '\')">👁️ Expediente</button>' +
+        '<button type="button" class="btn-outline-sm" onclick="abrirBookFotosInmueble(\'' + escaparHTML(p.nombre_propiedad || "") + '\')">📷 Book (' + numFotos + ')</button>' +
+        '<button type="button" class="btn-outline-sm" onclick="abrirModalSuministroManual(\'' + escaparHTML(p.nombre_propiedad || "") + '\')">⚡ +Recibo</button>' +
+        '<button type="button" class="btn-outline-sm" style="border-color:var(--amber); color:var(--amber);" onclick="abrirModalAltaPropiedad(\'' + escaparHTML(p.nombre_propiedad || "") + '\')">📸 Fotos</button>' +
+      '</div>' +
+    '</div>';
+  }).join("");
+
   var propActiva = window.filtroPropiedadRecibos || "TODAS";
-
   var recibosFiltrados = (window.RECIBOS_CARTERA || []).filter(function(r) {
     var coincideProp = (propActiva === "TODAS") ||
       String(r.propiedad || "").toUpperCase().includes(propActiva.toUpperCase()) ||
       propActiva.toUpperCase().includes(String(r.propiedad || "").toUpperCase());
-
     if (!coincideProp) return false;
     if (window.filtroRecibosActual === "PENDIENTE") return String(r.estado || "").toUpperCase() === "PENDIENTE";
     if (window.filtroRecibosActual === "ABONADO") return String(r.estado || "").toUpperCase().includes("ABONADO");
     return true;
   });
-
-  var chipsHTML = '<button type="button" class="prop-chip ' + (propActiva === "TODAS" ? "active" : "") + '" onclick="seleccionarPropiedadRecibos(\'TODAS\')">🏛️ Todas (' + (window.RECIBOS_CARTERA || []).length + ')</button>';
-  if (props.length <= 8) {
-    chipsHTML += props.map(function(p) {
-      var countP = (window.RECIBOS_CARTERA || []).filter(function(r) {
-        return String(r.propiedad || "").toUpperCase().includes(String(p.nombre_propiedad || "").toUpperCase());
-      }).length;
-      var act = (propActiva.toUpperCase() === String(p.nombre_propiedad || "").toUpperCase()) ? "active" : "";
-      return '<button type="button" class="prop-chip ' + act + '" onclick="seleccionarPropiedadRecibos(\'' + escaparHTML(p.nombre_propiedad) + '\')">🏠 ' + escaparHTML(p.nombre_propiedad) + ' (' + countP + ')</button>';
-    }).join("");
-  }
-
-  var selectHTML = '<select class="form-input" style="width:auto; min-width:210px; padding:6px 12px; font-size:12px; cursor:pointer;" onchange="seleccionarPropiedadRecibos(this.value)">' +
-    '<option value="TODAS"' + (propActiva === "TODAS" ? " selected" : "") + '>🔍 Filtrar por inmueble (Todos: ' + props.length + ')</option>' +
-    props.map(function(p) {
-      var sel = (propActiva.toUpperCase() === String(p.nombre_propiedad || "").toUpperCase()) ? " selected" : "";
-      return '<option value="' + escaparHTML(p.nombre_propiedad) + '"' + sel + '>🏠 ' + escaparHTML(p.nombre_propiedad) + ' · ' + escaparHTML(p.inquilino || "") + '</option>';
-    }).join("") +
-  '</select>';
-
-  barraProp.innerHTML =
-    '<div class="prop-chips-bar" style="margin-top:0;">' + chipsHTML + '</div>' +
-    '<div style="display:flex; align-items:center; gap:8px;">' +
-      '<span style="font-size:12px; color:var(--emerald); font-weight:700;">Mostrando ' + recibosFiltrados.length + ' recibo(s)</span>' +
-      selectHTML +
-    '</div>';
-
-  if (recibosFiltrados.length === 0) {
-    contRecibos.innerHTML = "<div style='padding:14px; color:var(--text-muted);'>No hay recibos para la propiedad <strong>" + escaparHTML(propActiva) + "</strong> en este filtro.</div>";
-    return;
-  }
 
   contRecibos.innerHTML = recibosFiltrados.map(function(r) {
     var esPendiente = String(r.estado || "").toUpperCase() === "PENDIENTE";
@@ -4116,7 +3726,6 @@ function renderizarCarteraYRecibosPropietario(filtroTexto) {
           'Nº ' + escaparHTML(r.id_recibo || "") + ' · Fecha: ' + escaparHTML(r.periodo || "") +
           ' · Inquilino: <strong>' + escaparHTML(r.inquilino || "---") + '</strong>' +
           ' · Debe: <strong>' + formatearEuros(r.debe) + '</strong> | Haber: <strong>' + formatearEuros(r.haber) + '</strong>' +
-          (r.iva_pct > 0 || r.irpf_pct > 0 ? ' · (IVA ' + (r.iva_pct*100) + '% / IRPF ' + (r.irpf_pct*100) + '%)' : '') +
           ' · Neto TPV Prop.: <span style="color:var(--amber);">' + formatearEuros(calcTPV.neto) + '</span>' +
         '</div>' +
       '</div>' +
@@ -4146,10 +3755,8 @@ function renderizarRecibosInquilino(nombrePropiedad, dniTitular) {
     if (!dniClean && (!propClean || propClean === "---" || propClean.includes(","))) return true;
     var dniRec = obtenerDniUnificado(r).toUpperCase();
     var propRec = String(r.propiedad || "").toUpperCase();
-    var dirRec  = String(r.direccion || "").toUpperCase();
     if (dniClean && dniRec && dniRec.includes(dniClean)) return true;
     if (propClean && propClean !== "---" && propRec && (propRec.includes(propClean) || propClean.includes(propRec))) return true;
-    if (propClean && propClean !== "---" && dirRec && dirRec.includes(propClean)) return true;
     return false;
   });
 
@@ -4170,24 +3777,16 @@ function renderizarRecibosInquilino(nombrePropiedad, dniTitular) {
 
     return '<div class="receipt-row ' + (esPendiente ? 'pending' : 'haber-row') + '">' +
       '<div class="receipt-info">' +
-        '<div class="receipt-concept">' + escaparHTML(r.concepto || "") + (r.propiedad && r.propiedad !== "---" ? ' (' + escaparHTML(r.propiedad) + ')' : '') + '</div>' +
-        '<div class="receipt-meta">' +
-          'Ref. Nº ' + escaparHTML(r.id_recibo || "") + ' · Fecha Valor: ' + escaparHTML(r.periodo || "") +
-          (r.debe > 0 ? ' · Cargo (Debe): <strong>' + formatearEuros(r.total_con_impuestos) + '</strong>' : '') +
-          (r.haber > 0 ? ' · Entrega (Haber): <strong>' + formatearEuros(r.haber) + '</strong>' : '') +
-        '</div>' +
+        '<div class="receipt-concept">' + escaparHTML(r.concepto || "") + '</div>' +
+        '<div class="receipt-meta">Ref. Nº ' + escaparHTML(r.id_recibo || "") + ' · Fecha Valor: ' + escaparHTML(r.periodo || "") + '</div>' +
       '</div>' +
       '<div class="receipt-actions">' +
         '<span class="receipt-amount">' + escaparHTML(r.importe || "") + '</span>' +
         btnPdfProveedor +
         (esPendiente
           ? '<span class="badge badge-danger">PENDIENTE DE PAGO</span>' +
-            (!esAbogado
-              ? '<button type="button" class="btn-tpv-card" onclick="abrirModalPagoTPV(\'' + escaparHTML(r.id_recibo || "") + '\')">💳 Pagar con Tarjeta (Titular o Familiar)</button>'
-              : '') +
-            (esPropietario
-              ? '<button type="button" class="btn-mark-paid" onclick="marcarReciboComoAbonado(\'' + escaparHTML(r.id_recibo || "") + '\')">✓ Abonado Manual</button>'
-              : '')
+            (!esAbogado ? '<button type="button" class="btn-tpv-card" onclick="abrirModalPagoTPV(\'' + escaparHTML(r.id_recibo || "") + '\')">💳 Pagar con Tarjeta</button>' : '') +
+            (esPropietario ? '<button type="button" class="btn-mark-paid" onclick="marcarReciboComoAbonado(\'' + escaparHTML(r.id_recibo || "") + '\')">✓ Abonado Manual</button>' : '')
           : '<span class="badge badge-success">ABONADO (' + escaparHTML(r.fecha_pago || "") + ')</span>' +
             '<button type="button" class="btn-pdf-receipt" onclick="descargarReciboPDF(\'' + escaparHTML(r.id_recibo || "") + '\')">📄 Descargar Recibo PDF</button>'
         ) +
@@ -4222,15 +3821,16 @@ window.inspeccionarInmuebleComoResidente = function(nombrePropiedad) {
     var lblRol = document.getElementById("lbl-titular-rol");
     if (lblRol) lblRol.innerText = "Inquilino(s) Titular(es) (" + (infoT.total || 1) + "):";
 
-    document.getElementById("val-nombre").innerText = infoT.completo || ficha.inquilino || "---";
+    document.getElementById("val-nombre").innerText = infoT.detallado || infoT.completo || ficha.inquilino || "---";
     document.getElementById("val-dni").innerText = (infoT.dnis || obtenerDniUnificado(ficha) || "---") + " · " + detectarPersonalidadPorDni(infoT.dnis);
     document.getElementById("val-propiedad").innerText = ficha.nombre_propiedad;
     document.getElementById("val-direccion").innerText = ficha.direccion || "---";
 
     window.EXPEDIENTE_ACTUAL.propiedad = ficha.nombre_propiedad;
-    window.EXPEDIENTE_ACTUAL.nombre = infoT.completo;
+    window.EXPEDIENTE_ACTUAL.nombre = infoT.detallado || infoT.completo;
     window.EXPEDIENTE_ACTUAL.dni = infoT.dnis;
     window.EXPEDIENTE_ACTUAL.direccion = ficha.direccion;
+    window.EXPEDIENTE_ACTUAL.domicilio_social = ficha.domicilio_social || ficha.direccion;
 
     actualizarTarjetaSaldoVivoEnPantalla();
     renderizarRecibosInquilino(ficha.nombre_propiedad, "");
@@ -4248,19 +3848,13 @@ window.inspeccionarInmuebleComoResidente = function(nombrePropiedad) {
       navBar.innerHTML =
         '<button type="button" onclick="mostrarVistaInterna(\'propietaria\')" style="background:var(--amber); color:#042f2e; border:none; padding:8px 16px; border-radius:8px; font-weight:900; font-size:13px; cursor:pointer;">⬅️ Volver a Cartera de Propiedades</button>' +
         '<div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">' +
-          '<span style="font-size:12px; color:var(--text-muted); font-weight:700;">Viendo expediente de:</span>' +
           (window.CARTERA_PROPIEDADES || []).map(function(p) {
             var act = String(p.nombre_propiedad).toUpperCase() === String(ficha.nombre_propiedad).toUpperCase();
             return '<button type="button" class="prop-chip ' + (act ? 'active' : '') + '" onclick="inspeccionarInmuebleComoResidente(\'' + escaparHTML(p.nombre_propiedad) + '\')">🏠 ' + escaparHTML(p.nombre_propiedad) + '</button>';
           }).join("") +
         '</div>';
     }
-
-    document.querySelectorAll("#val-fotos img").forEach(function(img) {
-      img.onclick = function() { window.abrirFotoEnLightbox(this.src); };
-    });
   }
-
   window.scrollTo({ top: 0, behavior: "smooth" });
 };
 
@@ -4277,9 +3871,9 @@ function poblarSelectoresPropiedadesModales() {
   var opciones = window.CARTERA_PROPIEDADES;
   var htmlOpts = opciones.length > 0
     ? opciones.map(function(p) {
-        return '<option value="' + escaparHTML(p.nombre_propiedad) + '">' + escaparHTML(p.nombre_propiedad) + (p.direccion && p.direccion !== "---" ? ' (' + escaparHTML(p.direccion) + ')' : '') + '</option>';
+        return '<option value="' + escaparHTML(p.nombre_propiedad) + '">' + escaparHTML(p.nombre_propiedad) + '</option>';
       }).join("")
-    : '<option value="">-- Sin propiedades cargadas en cartera --</option>';
+    : '<option value="">-- Sin propiedades cargadas --</option>';
 
   ["inq-alta-prop", "sum-propiedad", "aviso-propiedad"].forEach(function(id) {
     var el = document.getElementById(id);
@@ -4290,68 +3884,34 @@ function poblarSelectoresPropiedadesModales() {
 window.abrirVisorNativoPropietario = function(modo) {
   var titulo = document.getElementById("visor-titulo");
   var caja = document.getElementById("visor-contenido-nativo");
-
   if (modo === "morosidad") {
     titulo.innerText = "🚨 Radar de Cobros, Liquidaciones TPV y Emisión de Facturas/Recibos PDF";
     var pendientes = window.RECIBOS_CARTERA.filter(function(r) { return String(r.estado || "").toUpperCase() === "PENDIENTE"; });
-    var abonados = window.RECIBOS_CARTERA.filter(function(r) { return String(r.estado || "").toUpperCase() !== "PENDIENTE"; });
-
-    caja.innerHTML =
-      '<div style="margin-bottom:18px;">' +
-        '<h4 style="color:#fca5a5; margin-bottom:10px; font-size:13.5px;">🔴 RECIBOS PENDIENTES EN EL DEBE (' + pendientes.length + ')</h4>' +
-        (pendientes.length === 0
-          ? '<div style="padding:14px; background:var(--bg-input); border-radius:8px; color:var(--emerald);">✅ Todos los recibos están al corriente de pago.</div>'
-          : pendientes.map(function(r) {
-              return '<div class="receipt-row pending">' +
-                '<div class="receipt-info">' +
-                  '<div class="receipt-concept">' + escaparHTML(r.concepto || "") + ' · <span style="color:var(--amber);">' + escaparHTML(r.propiedad || "") + '</span></div>' +
-                  '<div class="receipt-meta">Inquilino: ' + escaparHTML(r.inquilino || "") + ' (' + escaparHTML(obtenerDniUnificado(r)) + ') · Fecha: ' + escaparHTML(r.periodo || "") + '</div>' +
-                '</div>' +
-                '<div class="receipt-actions">' +
-                  '<span class="receipt-amount">' + escaparHTML(r.importe || "") + '</span>' +
-                  '<button type="button" class="btn-mark-paid" onclick="marcarReciboComoAbonado(\'' + escaparHTML(r.id_recibo || "") + '\')">✓ Marcar Abonado + Generar PDF</button>' +
-                '</div>' +
-              '</div>';
-            }).join("")
-        ) +
-      '</div>' +
-      '<div>' +
-        '<h4 style="color:var(--emerald); margin-bottom:10px; font-size:13.5px;">🟢 HISTORIAL DE ABONOS EN EL HABER CON PDF DISPONIBLE (' + abonados.length + ')</h4>' +
-        abonados.map(function(r) {
-          return '<div class="receipt-row haber-row">' +
-            '<div class="receipt-info">' +
-              '<div class="receipt-concept">' + escaparHTML(r.concepto || "") + ' · ' + escaparHTML(r.propiedad || "") + '</div>' +
-              '<div class="receipt-meta">Abonado (' + escaparHTML(r.fecha_pago || "") + ') · Nº ' + escaparHTML(r.id_recibo || "") + '</div>' +
-            '</div>' +
-            '<div class="receipt-actions">' +
-              '<span class="receipt-amount">' + escaparHTML(r.importe || "") + '</span>' +
-              '<button type="button" class="btn-pdf-receipt" onclick="descargarReciboPDF(\'' + escaparHTML(r.id_recibo || "") + '\')">📄 Descargar PDF</button>' +
-            '</div>' +
-          '</div>';
-        }).join("") +
-      '</div>';
+    caja.innerHTML = pendientes.length === 0
+      ? '<div style="padding:14px; color:var(--emerald);">✅ Todos los recibos están al corriente de pago.</div>'
+      : pendientes.map(function(r) {
+          return '<div class="receipt-row pending"><div class="receipt-info"><div class="receipt-concept">' + escaparHTML(r.concepto) + ' · ' + escaparHTML(r.propiedad) + '</div></div><div class="receipt-actions"><span class="receipt-amount">' + escaparHTML(r.importe) + '</span><button type="button" class="btn-mark-paid" onclick="marcarReciboComoAbonado(\'' + escaparHTML(r.id_recibo) + '\')">✓ Marcar Abonado + PDF</button></div></div>';
+        }).join("");
   }
   document.getElementById("modal-visor-seguro").style.display = "flex";
 };
 
+// Ficha completa con todos los titulares (nombre + DNI al lado) y domicilio social/fiscal para notificaciones
 window.abrirFichaContratoActual = function() {
   var exp = window.EXPEDIENTE_ACTUAL || {};
-  var esPropietario = (window.sesionActiva.rol === "PROPIETARIO");
   var propCalc = (exp.propiedad && !exp.propiedad.includes(",")) ? exp.propiedad : "";
   var saldoNum = calcularSaldoVivoPropiedad(propCalc, 0);
-  var lblTitular = esPropietario ? "Titular / Arrendador:" : "Titular / Arrendatario:";
-  var lblInmueble = esPropietario ? "Inmueble(s) en Cartera:" : "Inmueble Arrendado:";
+  var domNotif = exp.domicilio_social || exp.direccion_fiscal || exp.direccion || "---";
 
-  document.getElementById("visor-titulo").innerText = "📄 Ficha Contractual, Fiscalidad, Saldo Vivo e IBAN · " + (exp.propiedad || "---");
+  document.getElementById("visor-titulo").innerText = "📄 Ficha Contractual, Co-Titulares, Domicilio Fiscal e IBAN · " + (exp.propiedad || "---");
   document.getElementById("visor-contenido-nativo").innerHTML =
     '<div class="panel-box" style="background:var(--bg-input); margin-bottom:0;">' +
-      '<div class="info-row"><span class="info-label">' + lblTitular + '</span><span class="info-value">' + escaparHTML(exp.nombre || "---") + '</span></div>' +
-      '<div class="info-row"><span class="info-label">DNI-NIE-CIF / Personalidad:</span><span class="info-value">' + escaparHTML(exp.dni || "---") + ' (' + detectarPersonalidadPorDni(exp.dni) + ')</span></div>' +
-      '<div class="info-row"><span class="info-label">Código Autorización:</span><span class="info-value">' + escaparHTML(exp.codigo || "---") + '</span></div>' +
-      '<div class="info-row"><span class="info-label">' + lblInmueble + '</span><span class="info-value" style="color:var(--emerald);">' + escaparHTML(exp.propiedad || "---") + '</span></div>' +
-      '<div class="info-row"><span class="info-label">Ubicación del Inmueble:</span><span class="info-value">' + escaparHTML(exp.direccion || "---") + '</span></div>' +
+      '<div class="info-row"><span class="info-label">Lista Completa de Titulares y DNI/NIE/CIF:</span><span class="info-value" style="color:var(--emerald);">' + escaparHTML(exp.nombre || "---") + '</span></div>' +
+      '<div class="info-row"><span class="info-label">Personalidad Fiscal:</span><span class="info-value">' + escaparHTML(exp.dni || "---") + ' (' + detectarPersonalidadPorDni(exp.dni) + ')</span></div>' +
+      '<div class="info-row"><span class="info-label">Domicilio Social / Fiscal (A efectos de notificaciones):</span><span class="info-value" style="color:var(--amber);">' + escaparHTML(domNotif) + '</span></div>' +
+      '<div class="info-row"><span class="info-label">Inmueble Arrendado:</span><span class="info-value">' + escaparHTML(exp.propiedad || "---") + ' (' + escaparHTML(exp.direccion || "---") + ')</span></div>' +
       '<div class="info-row"><span class="info-label">Cuenta IBAN Asociada:</span><span class="info-value" style="color:var(--neon-cyan);">' + escaparHTML(exp.iban || "---") + '</span></div>' +
-      '<div class="info-row"><span class="info-label">Condiciones / Renta:</span><span class="info-value" style="color:var(--amber);">' + escaparHTML(exp.contrato_renta || "---") + '</span></div>' +
+      '<div class="info-row"><span class="info-label">Condiciones / Renta:</span><span class="info-value">' + escaparHTML(exp.contrato_renta || "---") + '</span></div>' +
       '<div class="info-row"><span class="info-label">Saldo Vivo Actual (Haber - Debe):</span><span class="info-value" style="color:' + (saldoNum >= 0 ? 'var(--neon-green)' : 'var(--danger)') + ';">' + formatearEuros(saldoNum) + '</span></div>' +
     '</div>';
   document.getElementById("modal-visor-seguro").style.display = "flex";
@@ -4365,18 +3925,13 @@ function construirQueryMapaDesdeDatosReales(direccionTexto, lat, lon) {
   }
   var d = String(direccionTexto || "").replace(/\bCP\s*/gi, "").trim();
   if (!d || d === "---") return "";
-  if (!/españa|spain/i.test(d)) {
-    d += ", España";
-  }
+  if (!/españa|spain/i.test(d)) d += ", España";
   return encodeURIComponent(d);
 }
 
 window.seleccionarMapaPropietario = function(direccionONombre, lat, lon, chipId) {
   document.querySelectorAll("#chips-mapa-propietario .prop-chip").forEach(function(c) { c.classList.remove("active"); });
-  if (chipId) {
-    var activeChip = document.getElementById(chipId);
-    if (activeChip) activeChip.classList.add("active");
-  }
+  if (chipId && document.getElementById(chipId)) document.getElementById(chipId).classList.add("active");
   var q = construirQueryMapaDesdeDatosReales(direccionONombre, lat, lon);
   if (!q) return;
   document.getElementById("owner-map-iframe").src = "https://maps.google.com/maps?q=" + q + "&t=&z=17&ie=UTF8&iwloc=&output=embed";
@@ -4389,16 +3944,11 @@ function actualizarMapaInmueble(direccion, nombrePropiedad, lat, lon) {
   var texto = (direccion && direccion !== "---") ? direccion : nombrePropiedad;
   var queryGPS = construirQueryMapaDesdeDatosReales(texto, lat, lon);
   if (!queryGPS) return;
-
   var mapIframe = document.getElementById("property-map-iframe");
-  var btnDrive = document.getElementById("btn-drive-gps");
-  var btnGmaps = document.getElementById("btn-open-gmaps");
-  var btnEarth = document.getElementById("btn-open-earth");
-
   if (mapIframe) mapIframe.src = "https://maps.google.com/maps?q=" + queryGPS + "&t=&z=16&ie=UTF8&iwloc=&output=embed";
-  if (btnDrive) btnDrive.href = "https://www.google.com/maps/dir/?api=1&destination=" + queryGPS + "&travelmode=driving";
-  if (btnGmaps) btnGmaps.href = "https://www.google.com/maps/search/?api=1&query=" + queryGPS;
-  if (btnEarth) btnEarth.href = "https://earth.google.com/web/search/" + queryGPS;
+  document.getElementById("btn-drive-gps").href = "https://www.google.com/maps/dir/?api=1&destination=" + queryGPS + "&travelmode=driving";
+  document.getElementById("btn-open-gmaps").href = "https://www.google.com/maps/search/?api=1&query=" + queryGPS;
+  document.getElementById("btn-open-earth").href = "https://earth.google.com/web/search/" + queryGPS;
 }
 
 window.abrirModalAltaPropiedad = function(nombrePropOpcional) {
@@ -4447,20 +3997,7 @@ window.precargarPropiedadExistente = function(clave) {
     document.getElementById("prop-alta-avisos").value = "";
     previsualizarFotosModal("");
   }
-
-  var barra = document.getElementById("chips-modal-alta-propiedad");
-  if (barra) {
-    barra.querySelectorAll(".prop-chip").forEach(function(btn) {
-      var txt = btn.innerText.toUpperCase();
-      if (clave === "NUEVA") {
-        btn.classList.toggle("active", txt.includes("NUEVA"));
-      } else {
-        btn.classList.toggle("active", txt.includes(String(clave).toUpperCase()));
-      }
-    });
-  }
 };
-
 
 window.seleccionarPortadaEnModal = function(urlElegida) {
   var inpPortada = document.getElementById("prop-alta-portada");
@@ -4509,7 +4046,7 @@ window.previsualizarFotosModal = function(cadenaUrls) {
     '</div>';
   }).join("");
 };
-  
+
 window.quitarFotoIndividualModal = function(idxBorrar) {
   var inpFotos = document.getElementById("prop-alta-fotos");
   var inpPortada = document.getElementById("prop-alta-portada");
@@ -4518,12 +4055,8 @@ window.quitarFotoIndividualModal = function(idxBorrar) {
   var urls = limpiarListaUrlsMultimedia(inpFotos.value);
   var quitada = urls.splice(idxBorrar, 1)[0];
   inpFotos.value = urls.join(", ");
-  if (inpPortada && inpPortada.value === quitada) {
-    inpPortada.value = urls[0] || "";
-  }
-  if (nombreP) {
-    guardarCacheMultimediaPropiedad(nombreP, urls, inpPortada ? inpPortada.value : "");
-  }
+  if (inpPortada && inpPortada.value === quitada) inpPortada.value = urls[0] || "";
+  if (nombreP) guardarCacheMultimediaPropiedad(nombreP, urls, inpPortada ? inpPortada.value : "");
   previsualizarFotosModal(inpFotos.value);
 };
 
@@ -4542,24 +4075,20 @@ window.guardarNuevaPropiedad = function(e) {
   var btn = document.getElementById("btn-guardar-propiedad");
   var msgExito = document.getElementById("msg-prop-exito");
   btn.disabled = true;
-  btn.innerText = "Sincronizando propiedad con PROPERTY_GESTION...";
 
   var nombreP = document.getElementById("prop-alta-nombre").value.trim();
   var tipoUso = document.getElementById("prop-alta-tipo").value;
-  var dirP    = document.getElementById("prop-alta-dir").value.trim();
-  var rentaP  = document.getElementById("prop-alta-renta").value.trim();
-  var latP    = parseFloat(document.getElementById("prop-alta-lat").value.trim()) || "";
-  var lonP    = parseFloat(document.getElementById("prop-alta-lon").value.trim()) || "";
-  var reglaP  = document.getElementById("prop-alta-regla").value;
-  var revP    = document.getElementById("prop-alta-revision").value.trim();
-  var ibanP   = document.getElementById("prop-alta-iban").value.trim();
+  var dirP = document.getElementById("prop-alta-dir").value.trim();
+  var rentaP = document.getElementById("prop-alta-renta").value.trim();
+  var latP = parseFloat(document.getElementById("prop-alta-lat").value.trim()) || "";
+  var lonP = parseFloat(document.getElementById("prop-alta-lon").value.trim()) || "";
+  var reglaP = document.getElementById("prop-alta-regla").value;
+  var revP = document.getElementById("prop-alta-revision").value.trim();
+  var ibanP = document.getElementById("prop-alta-iban").value.trim();
   var fotosLimpias = limpiarListaUrlsMultimedia(document.getElementById("prop-alta-fotos").value);
   var fotosRaw = fotosLimpias.join(", ");
   var inpPortada = document.getElementById("prop-alta-portada");
-  var portadaRaw = inpPortada ? inpPortada.value.trim() : "";
-  if (!portadaRaw && fotosLimpias.length > 0) {
-    portadaRaw = fotosLimpias[0];
-  }
+  var portadaRaw = inpPortada ? inpPortada.value.trim() : (fotosLimpias[0] || "");
   var avisosP = document.getElementById("prop-alta-avisos").value.trim();
 
   guardarCacheMultimediaPropiedad(nombreP, fotosLimpias, portadaRaw);
@@ -4585,7 +4114,6 @@ window.guardarNuevaPropiedad = function(e) {
   });
 
   if (idxExistente >= 0) {
-    nuevaFicha.inquilino = window.CARTERA_PROPIEDADES[idxExistente].inquilino || "---";
     window.CARTERA_PROPIEDADES[idxExistente] = Object.assign({}, window.CARTERA_PROPIEDADES[idxExistente], nuevaFicha);
   } else {
     window.CARTERA_PROPIEDADES.push(nuevaFicha);
@@ -4600,17 +4128,12 @@ window.guardarNuevaPropiedad = function(e) {
     body: JSON.stringify({
       accion: "alta_o_edicion_propiedad",
       "DNI-NIE-CIF": window.sesionActiva["DNI-NIE-CIF"],
-      dni_propietario: window.sesionActiva["DNI-NIE-CIF"],
-      nombre_propietario: window.sesionActiva.nombre,
       propiedad: nombreP,
       PROPIEDAD: nombreP,
       Tipo_Inmueble: tipoUso,
       Regla_Facturacion: reglaP,
       direccion: dirP,
       cuota: rentaP,
-      lat: latP,
-      lon: lonP,
-      revision: revP,
       iban: ibanP,
       Foto_Portada_URL: portadaRaw,
       Fotos_URL: fotosRaw,
@@ -4618,17 +4141,9 @@ window.guardarNuevaPropiedad = function(e) {
       todas_las_fotos_url: fotosRaw,
       avisos: avisosP
     })
-  })
-  .then(function() {
-    msgExito.innerHTML = "✅ Propiedad <strong>" + escaparHTML(nombreP) + "</strong> actualizada con su Foto de Portada y Book (" + fotosLimpias.length + " fotos).";
+  }).finally(function() {
+    msgExito.innerHTML = "✅ Propiedad <strong>" + escaparHTML(nombreP) + "</strong> actualizada.";
     msgExito.style.display = "block";
-    btn.innerText = "💾 Guardar Propiedad en Cartera y Sincronizar con PROPERTY_GESTION →";
-    btn.disabled = false;
-  })
-  .catch(function() {
-    msgExito.innerHTML = "✅ Propiedad <strong>" + escaparHTML(nombreP) + "</strong> guardada en la consola activa.";
-    msgExito.style.display = "block";
-    btn.innerText = "💾 Guardar Propiedad en Cartera y Sincronizar con PROPERTY_GESTION →";
     btn.disabled = false;
   });
 };
@@ -4644,27 +4159,14 @@ window.guardarNuevoInquilino = function(e) {
   var btn = document.getElementById("btn-guardar-inquilino");
   var msgExito = document.getElementById("msg-inq-exito");
   btn.disabled = true;
-  btn.innerText = "Registrando inquilino en PROPERTY_GESTION...";
 
   var propSel = document.getElementById("inq-alta-prop").value;
   var persSel = document.getElementById("inq-alta-personalidad").value;
   var nombreInq = document.getElementById("inq-alta-nombre").value.trim();
   var dniInq = document.getElementById("inq-alta-dni").value.trim().toUpperCase().replace(/[^A-Z0-9-]/g, "");
   var telInq = document.getElementById("inq-alta-tel").value.trim().replace(/[^0-9]/g, "");
-  if (telInq.length === 9 && (telInq.startsWith("6") || telInq.startsWith("7"))) {
-    telInq = "34" + telInq;
-  }
+  if (telInq.length === 9 && (telInq.startsWith("6") || telInq.startsWith("7"))) telInq = "34" + telInq;
   var emailInq = document.getElementById("inq-alta-email").value.trim();
-
-  var fichaP = window.CARTERA_PROPIEDADES.find(function(p) {
-    return String(p.nombre_propiedad || "").toUpperCase() === propSel.toUpperCase();
-  });
-  if (fichaP) {
-    fichaP.inquilino_original = nombreInq;
-    fichaP.inquilino = nombreInq;
-    fichaP["DNI-NIE-CIF"] = dniInq;
-    renderizarCarteraYRecibosPropietario();
-  }
 
   fetch(URL_WEBHOOK_PROPERTY_GESTION, {
     method: "POST",
@@ -4679,17 +4181,9 @@ window.guardarNuevoInquilino = function(e) {
       Telefono: telInq,
       Email: emailInq
     })
-  })
-  .then(function() {
-    msgExito.innerHTML = "✅ Inquilino <strong>" + escaparHTML(nombreInq) + " (" + escaparHTML(dniInq) + ")</strong> asignado a <strong>" + escaparHTML(propSel) + "</strong>.";
+  }).finally(function() {
+    msgExito.innerHTML = "✅ Inquilino <strong>" + escaparHTML(nombreInq) + "</strong> asignado a <strong>" + escaparHTML(propSel) + "</strong>.";
     msgExito.style.display = "block";
-    btn.innerText = "👤 Registrar Inquilino en Base de Datos y Activar Notificaciones Elena IA →";
-    btn.disabled = false;
-  })
-  .catch(function() {
-    msgExito.innerHTML = "✅ Inquilino <strong>" + escaparHTML(nombreInq) + "</strong> vinculado en cartera.";
-    msgExito.style.display = "block";
-    btn.innerText = "👤 Registrar Inquilino en Base de Datos y Activar Notificaciones Elena IA →";
     btn.disabled = false;
   });
 };
@@ -4707,8 +4201,7 @@ window.togglePropiedadAbogado = function(nombre) {
 window.seleccionarTodasPropiedadesAbogado = function() {
   var inp = document.getElementById("input-prop-abogado");
   if (!inp) return;
-  var nombres = window.CARTERA_PROPIEDADES.map(function(p) { return p.nombre_propiedad; }).filter(Boolean);
-  inp.value = nombres.join(", ");
+  inp.value = window.CARTERA_PROPIEDADES.map(function(p) { return p.nombre_propiedad; }).filter(Boolean).join(", ");
 };
 
 window.pintarSumaLevel = function() {
@@ -4862,23 +4355,22 @@ function cargarExpedienteDesdeMake(identificador, pinIntroducido) {
 
   var dniValor = window.sesionActiva["DNI-NIE-CIF"] || identificador;
   var codigoInq = window.sesionActiva.codigo_inquilino || identificador;
-  var payload = {
-    accion: "obtener_expediente_portal",
-    table_id_suministros: TABLE_ID_SUMINISTROS_GASTOS,
-    code: codigoInq,
-    "DNI-NIE-CIF": dniValor,
-    dni: dniValor,
-    codigo_inquilino: codigoInq,
-    pin: pinIntroducido || "",
-    PIN_Temporal: pinIntroducido || "",
-    rol: window.sesionActiva.rol,
-    tabla_filtro: window.sesionActiva.tabla_filtro
-  };
 
   fetch(URL_WEBHOOK_PORTAL_DATOS, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload)
+    body: JSON.stringify({
+      accion: "obtener_expediente_portal",
+      table_id_suministros: TABLE_ID_SUMINISTROS_GASTOS,
+      code: codigoInq,
+      "DNI-NIE-CIF": dniValor,
+      dni: dniValor,
+      codigo_inquilino: codigoInq,
+      pin: pinIntroducido || "",
+      PIN_Temporal: pinIntroducido || "",
+      rol: window.sesionActiva.rol,
+      tabla_filtro: window.sesionActiva.tabla_filtro
+    })
   })
   .then(function(response) { return response.text(); })
   .then(function(rawText) {
@@ -4902,15 +4394,20 @@ function cargarExpedienteDesdeMake(identificador, pinIntroducido) {
   });
 }
 
-pintarFichaExpedienteEnPantalla = function(d) {
+function pintarFichaExpedienteEnPantalla(d) {
   var esPropietario = (window.sesionActiva.rol === "PROPIETARIO");
-  var esAbogado = (window.sesionActiva.rol === "ABOGADO");
 
   var dniTitular = formatearCampoValor(obtenerDniUnificado(d)) || window.sesionActiva["DNI-NIE-CIF"] || "";
   var nombreTitular = formatearCampoValor(
     d.Arrendatario || d.nombre_inquilino || d["Nombre Inquilinos"] || d.INQUILINO || d.nombre || d.Nombre_Inquilino ||
     d["Nombre Propietaria"] || d.Propietario || d.nombre_propietario || d.nombre_abogado
   ) || window.sesionActiva.nombre || "---";
+
+  var nombrePilaBD = formatearCampoValor(d["Nombre de pila"] || d.nombre_pila || "");
+  if (!nombrePilaBD && nombreTitular && nombreTitular !== "---") {
+    nombrePilaBD = nombreTitular.split(",")[0].trim().split(" ")[0].trim();
+  }
+  window.sesionActiva.nombre_pila = nombrePilaBD;
 
   var codigoAutho = formatearCampoValor(
     d["Autho-code-inquilino"] || d["Autho-code-propietario"] || d["Auto-code-propietario"] ||
@@ -4941,9 +4438,18 @@ pintarFichaExpedienteEnPantalla = function(d) {
     return String(p.nombre_propiedad || "").toUpperCase() === String(propiedadNombre || "").toUpperCase();
   }) || (window.CARTERA_PROPIEDADES.length > 0 ? window.CARTERA_PROPIEDADES[0] : {});
 
+  var infoTitulares = obtenerTitularesRealesPropiedad(fichaProp.nombre_propiedad ? fichaProp : d);
+  var textoTitularesMostrar = (infoTitulares && infoTitulares.detallado && infoTitulares.detallado !== "---" && !esPropietario)
+    ? infoTitulares.detallado
+    : nombreTitular;
+
   var direccionTexto = formatearCampoValor(
     fichaProp.direccion || d["Dirección del Inmueble"] || d["DIRECCIÓN INMUEBLE"] || d.Direccion || d.ubicacion
   ) || (window.CARTERA_PROPIEDADES.length > 0 ? window.CARTERA_PROPIEDADES[0].direccion : "---");
+
+  var domSocialFiscal = formatearCampoValor(
+    d["DIRECCIÓN FISCAL"] || d.direccion_fiscal || d["Domicilio Social"] || fichaProp.domicilio_social || ""
+  );
 
   var rentaTexto = formatearCampoValor(fichaProp.cuota || d.cuota || d["Precio Alquiler"] || d.renta_mensual || d.renta || "");
   if (rentaTexto && !rentaTexto.includes("€")) rentaTexto = rentaTexto + " €/mes";
@@ -4956,28 +4462,31 @@ pintarFichaExpedienteEnPantalla = function(d) {
     estadoTexto,
     rentaTexto ? "Alquiler: " + rentaTexto : "",
     revisionTexto ? "Próx. Revisión: " + revisionTexto : "",
-    ibanTexto ? "IBAN: " + ibanTexto : ""
+    ibanTexto ? "IBAN: " + ibanTexto : "",
+    domSocialFiscal ? "Domicilio Notificaciones: " + domSocialFiscal : ""
   ].filter(Boolean).join(" · ");
 
   window.EXPEDIENTE_ACTUAL = {
-    nombre: nombreTitular,
-    dni: dniTitular,
+    nombre: textoTitularesMostrar,
+    nombre_pila: nombrePilaBD,
+    dni: infoTitulares.dnis && infoTitulares.dnis !== "---" ? infoTitulares.dnis : dniTitular,
     codigo: codigoAutho,
     propiedad: propiedadNombre,
     direccion: direccionTexto,
+    domicilio_social: domSocialFiscal || direccionTexto,
     iban: ibanTexto,
     contrato_renta: resumenContrato
   };
 
   var lblRol = document.getElementById("lbl-titular-rol");
   if (lblRol) {
-    lblRol.innerText = esPropietario ? "Propietario / Arrendador:" : "Inquilino / Titular:";
+    lblRol.innerText = esPropietario ? "Propietario / Arrendador:" : "Titular(es) y DNI/NIE/CIF:";
   }
 
-  document.getElementById("val-nombre").innerText = nombreTitular;
-  document.getElementById("val-dni").innerText = (dniTitular || "---") + " · " + detectarPersonalidadPorDni(dniTitular);
+  document.getElementById("val-nombre").innerText = textoTitularesMostrar;
+  document.getElementById("val-dni").innerText = (window.EXPEDIENTE_ACTUAL.dni || "---") + " · " + detectarPersonalidadPorDni(window.EXPEDIENTE_ACTUAL.dni) + (domSocialFiscal ? " · Dom. Social: " + domSocialFiscal : "");
   document.getElementById("val-codigo-autho").innerText = codigoAutho;
-  document.getElementById("val-propiedad").innerText = propiedadNombre;
+  document.getElementById("val-propiedad").innerText = propiedadNombre || "---";
   document.getElementById("val-direccion").innerText = direccionTexto;
   document.getElementById("val-contrato-renta").innerText = resumenContrato || "---";
 
@@ -5019,7 +4528,7 @@ pintarFichaExpedienteEnPantalla = function(d) {
 
   renderizarRecibosInquilino(propiedadNombre, esPropietario ? "" : dniTitular);
   actualizarMapaInmueble(direccionTexto, propiedadNombre, fichaProp.lat || d.lat, fichaProp.lon || d.lon);
-};
+}
 
 function renderizarPortalConDatos(data, identificador) {
   document.getElementById("login-section").style.display = "none";
@@ -5061,7 +4570,7 @@ function renderizarPortalConDatos(data, identificador) {
   window.sesionActiva["DNI-NIE-CIF"] = dniActivo;
   window.sesionActiva.propiedad = window.EXPEDIENTE_ACTUAL.propiedad;
 
-  document.getElementById("badge-titular-activo").innerText = window.sesionActiva.rol + ": " + nombreActivo + " (" + dniActivo + ")";
+  document.getElementById("badge-titular-activo").innerText = window.sesionActiva.rol + ": " + (window.sesionActiva.nombre_pila || nombreActivo) + " (" + dniActivo + ")";
 
   var bannerAbogado = document.getElementById("lawyer-executive-banner");
   var btnPdfResAbg = document.getElementById("btn-residente-pdf-abogado");
@@ -5072,7 +4581,7 @@ function renderizarPortalConDatos(data, identificador) {
     document.getElementById("btn-tab-residente").innerText = "🏠 Ficha General / Inspección de Inmueble";
     document.getElementById("titulo-caja-expediente").innerText = "👑 FICHA DEL PROPIETARIO Y CARTERA";
     document.getElementById("lbl-titular-rol").innerText = "Propietario / Arrendador:";
-    document.getElementById("owner-greeting-name").innerText = nombreActivo;
+    document.getElementById("owner-greeting-name").innerText = window.sesionActiva.nombre_pila || nombreActivo;
     if (bannerAbogado) bannerAbogado.style.display = "none";
     if (btnPdfResAbg) btnPdfResAbg.style.display = "inline-flex";
     if (btnQuickAviso) btnQuickAviso.style.display = "inline-flex";
@@ -5092,7 +4601,7 @@ function renderizarPortalConDatos(data, identificador) {
     document.getElementById("btn-tab-propietaria").style.display = "none";
     document.getElementById("btn-tab-residente").innerText = "🏠 Expediente del Residente";
     document.getElementById("titulo-caja-expediente").innerText = "🏠 EXPEDIENTE Y PROPIEDAD";
-    document.getElementById("lbl-titular-rol").innerText = "Inquilino / Titular:";
+    document.getElementById("lbl-titular-rol").innerText = "Titular(es) y DNI/NIE/CIF:";
     if (bannerAbogado) bannerAbogado.style.display = "none";
     if (btnPdfResAbg) btnPdfResAbg.style.display = "none";
     if (btnQuickAviso) btnQuickAviso.style.display = "none";
@@ -5120,25 +4629,23 @@ window.enviarAutorizacionAbogado = function(e) {
   btnAbg.innerText = "Registrando abogado y enviando bienvenida...";
   btnAbg.disabled = true;
 
-  var payloadLegal = {
-    accion: "autorizar_abogado",
-    "DNI-NIE-CIF": dniAbg,
-    dni_abogado: dniAbg,
-    dni_propietario: window.sesionActiva["DNI-NIE-CIF"] || "",
-    nombre_propietario: window.sesionActiva.nombre || "Propiedad Titular",
-    autho_code_abogado: "ABO-" + dniAbg,
-    nombre_abogado: nombreAbg,
-    email_abogado: emailAbg,
-    telefono_abogado: telAbg,
-    propiedades_autorizadas: propAbg,
-    estado_acceso: estadoAbg,
-    enviar_email_bienvenida: enviarMail
-  };
-
   fetch(URL_WEBHOOK_LEGAL_SERVICES, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payloadLegal)
+    body: JSON.stringify({
+      accion: "autorizar_abogado",
+      "DNI-NIE-CIF": dniAbg,
+      dni_abogado: dniAbg,
+      dni_propietario: window.sesionActiva["DNI-NIE-CIF"] || "",
+      nombre_propietario: window.sesionActiva.nombre || "Propiedad Titular",
+      autho_code_abogado: "ABO-" + dniAbg,
+      nombre_abogado: nombreAbg,
+      email_abogado: emailAbg,
+      telefono_abogado: telAbg,
+      propiedades_autorizadas: propAbg,
+      estado_acceso: estadoAbg,
+      enviar_email_bienvenida: enviarMail
+    })
   })
   .then(function() {
     msgExitoLegal.innerHTML = "✅ <strong>" + escaparHTML(nombreAbg) + " (" + escaparHTML(dniAbg) + ")</strong> autorizado con acceso a informes judiciales en PDF.";
@@ -5153,8 +4660,36 @@ window.enviarAutorizacionAbogado = function(e) {
   });
 };
 
-function abrirChatElena() { document.getElementById("elena-chat-window").style.display = "flex"; }
-function cerrarChatElena() { document.getElementById("elena-chat-window").style.display = "none"; }
+// Síntesis de voz de Elena IA Alquileres + saludo por Nombre de Pila + derivación a compra/venta
+function hablarConVozElena(texto) {
+  try {
+    if ("speechSynthesis" in window) {
+      window.speechSynthesis.cancel();
+      var utter = new SpeechSynthesisUtterance(texto);
+      utter.lang = "es-ES";
+      utter.rate = 1.02;
+      window.speechSynthesis.speak(utter);
+    }
+  } catch (_) {}
+}
+
+function abrirChatElena() {
+  var win = document.getElementById("elena-chat-window");
+  var box = document.getElementById("chat-messages-box");
+  win.style.display = "flex";
+  var pila = (window.sesionActiva && window.sesionActiva.nombre_pila) || "amigo/a";
+  if (box && !box.getAttribute("data-greeted")) {
+    box.setAttribute("data-greeted", "1");
+    var saludoPersonal = "Hola " + pila + ", soy Elena IA de la App de Alquileres de Level.immo (todos los derechos reservados). Si necesitas revisar tus recibos, corregir tu nombre de pila o comunicar una incidencia estoy a tu disposición; y si deseas comprar o vender un inmueble, te paso directamente con Elena de intermediación inmobiliaria.";
+    box.innerHTML = '<div style="background:#1e293b; color:#e2e8f0; padding:10px 12px; border-radius:12px 12px 12px 2px; max-width:86%; line-height:1.45;">🔊 ' + escaparHTML(saludoPersonal) + '</div>';
+    hablarConVozElena(saludoPersonal);
+  }
+}
+
+function cerrarChatElena() {
+  if ("speechSynthesis" in window) window.speechSynthesis.cancel();
+  document.getElementById("elena-chat-window").style.display = "none";
+}
 
 async function enviarMensajeBotChat(e) {
   e.preventDefault();
@@ -5170,28 +4705,35 @@ async function enviarMensajeBotChat(e) {
   box.scrollTop = box.scrollHeight;
 
   var dniChat = (window.sesionActiva && window.sesionActiva["DNI-NIE-CIF"]) || "NO_IDENTIFICADO";
+  var quiereComprarOVender = /\b(comprar|vender|compra|venta|hipoteca|tasar|valorar)\b/i.test(texto);
 
   try {
     var res = await fetch(URL_WEBHOOK_PROPERTY_GESTION, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        accion: "elena_chat_alquileres",
-        origen: "PORTAL_ALQUILERES_LEVEL",
+        accion: quiereComprarOVender ? "derivar_a_elena_inmobiliaria_general" : "elena_chat_alquileres",
+        origen: "APP_ALQUILERES_LEVEL_IMMO",
         tabla_destino: window.sesionActiva ? window.sesionActiva.tabla_filtro : "PROPERTY_INQUILINOS",
         rol: window.sesionActiva ? window.sesionActiva.rol : "INQUILINO",
+        nombre_pila: (window.sesionActiva && window.sesionActiva.nombre_pila) || "",
         nombre_usuario: (window.sesionActiva && window.sesionActiva.nombre) || "",
         "DNI-NIE-CIF": dniChat,
         codigo_inquilino: (window.sesionActiva && window.sesionActiva.codigo_inquilino) || "",
         propiedad: (window.sesionActiva && window.sesionActiva.propiedad) || "",
         idioma: (window.sesionActiva && window.sesionActiva.idioma) || "es",
         mensaje: texto,
+        responder_en_voz: true,
         guardar_en_historico: true
       })
     });
 
     var raw = await res.text();
-    var contestacion = "He recibido tu consulta y ha quedado registrada en el historial de tu expediente de alquiler.";
+    var pila = (window.sesionActiva && window.sesionActiva.nombre_pila) || "";
+    var contestacion = quiereComprarOVender
+      ? (pila ? pila + ", te" : "Te") + " paso ahora mismo con el escenario principal de Elena Inmobiliaria para gestionar tu operación de compra/venta con acceso prioritario desde Alquileres."
+      : "Perfecto " + pila + ", he registrado tu solicitud en tu expediente de Level.immo Alquileres.";
+
     try {
       var j = parsearJsonBlindadoMake(raw);
       contestacion = j.respuesta || j.message || j.output || contestacion;
@@ -5199,9 +4741,10 @@ async function enviarMensajeBotChat(e) {
       if (raw && raw !== "Accepted") contestacion = raw;
     }
 
-    box.innerHTML += '<div style="background:#1e293b; color:#e2e8f0; padding:10px 12px; border-radius:12px 12px 12px 2px; max-width:86%; line-height:1.45;">' + escaparHTML(contestacion) + '</div>';
+    box.innerHTML += '<div style="background:#1e293b; color:#e2e8f0; padding:10px 12px; border-radius:12px 12px 12px 2px; max-width:86%; line-height:1.45;">🔊 ' + escaparHTML(contestacion) + '</div>';
+    hablarConVozElena(contestacion);
   } catch (err) {
-    box.innerHTML += '<div style="background:var(--danger-soft); color:#fca5a5; padding:8px 12px; border-radius:8px; font-size:12px;">Mensaje guardado localmente. Reconectando...</div>';
+    box.innerHTML += '<div style="background:var(--danger-soft); color:#fca5a5; padding:8px 12px; border-radius:8px; font-size:12px;">Mensaje guardado localmente.</div>';
   } finally {
     btn.disabled = false;
     box.scrollTop = box.scrollHeight;
@@ -5237,9 +4780,6 @@ function mostrarVistaInterna(vista) {
     if (tabRes) tabRes.classList.add("active");
     if (tabProp) tabProp.classList.remove("active");
   }
-  if (window.sesionActiva && (window.sesionActiva.rol === "PROPIETARIO" || String(window.sesionActiva.codigo_inquilino).indexOf("CLI-") === 0)) {
-    if (tabProp) tabProp.style.display = "inline-flex";
-  }
 }
 
 function alternarPantallaCompleta() { document.getElementById("main-layout").classList.toggle("fullscreen-mode"); }
@@ -5259,46 +4799,8 @@ function cerrarSesion() {
   document.getElementById("portal-dashboard").style.display = "none";
   document.getElementById("login-section").style.display = "block";
   document.getElementById("main-layout").classList.remove("fullscreen-mode");
-  if (window.history && window.history.replaceState) {
-    window.history.replaceState({}, document.title, window.location.pathname);
-  }
   volverFaseDni();
 }
-
-function sincronizarBookYPortadaEnBD(p) {
-  if (!p || !p.nombre_propiedad) return;
-  var lista = limpiarListaUrlsMultimedia(p.fotos || []);
-  var portada = p.foto_portada || (lista[0] || "");
-  fetch(URL_WEBHOOK_PROPERTY_GESTION, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      accion: "subir_archivo_ftp_level_immo",
-      propiedad: p.nombre_propiedad,
-      nombre_archivo: (portada.split("/").pop() || "portada.jpg"),
-      foto_portada_url: portada,
-      todas_las_fotos_url: lista.join(", ")
-    })
-  }).catch(function(){});
-}
-
-var _baseEstablecerPortada = window.establecerComoPortadaInmueble;
-window.establecerComoPortadaInmueble = function(nombrePropiedad, urlElegida) {
-  if (typeof _baseEstablecerPortada === "function") _baseEstablecerPortada(nombrePropiedad, urlElegida);
-  var p = (window.CARTERA_PROPIEDADES || []).find(function(item) {
-    return String(item.nombre_propiedad || "").toUpperCase() === String(nombrePropiedad || "").toUpperCase();
-  });
-  if (p) sincronizarBookYPortadaEnBD(p);
-};
-
-var _baseEliminarFotoBook = window.eliminarFotoDelBookInmueble;
-window.eliminarFotoDelBookInmueble = function(nombrePropiedad, idxBorrar) {
-  if (typeof _baseEliminarFotoBook === "function") _baseEliminarFotoBook(nombrePropiedad, idxBorrar);
-  var p = (window.CARTERA_PROPIEDADES || []).find(function(item) {
-    return String(item.nombre_propiedad || "").toUpperCase() === String(nombrePropiedad || "").toUpperCase();
-  });
-  if (p) sincronizarBookYPortadaEnBD(p);
-};
 
 document.addEventListener("DOMContentLoaded", function() {
   limpiarEstadoUI();
@@ -5313,9 +4815,7 @@ document.addEventListener("DOMContentLoaded", function() {
   var codeUrl = (params.get("code") || "").trim();
   if (codeUrl !== "" && codeUrl !== "200") {
     var inpDni = document.getElementById("input-dni");
-    if (inpDni) {
-      inpDni.value = codeUrl.toUpperCase();
-    }
+    if (inpDni) inpDni.value = codeUrl.toUpperCase();
   }
 });
 window.pintarSumaLevel();
