@@ -1476,30 +1476,381 @@
         </div>
       </div>
 
-      <!-- SUBIDA UNIFICADA DE ARCHIVOS AL FTP CON PREVISUALIZACIÓN Y LÍMITE DE 20 FOTOS / 10 MB -->
-      <div class="form-group" style="background:var(--bg-input); padding:14px; border-radius:10px; border:1px dashed var(--emerald);">
-        <label for="prop-file-ftp" class="form-label" style="color:var(--emerald);">📤 Subir Fotografías al FTP de level.immo (Máx. 20 fotos · Máx. 10 MB c/u)</label>
-        <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
-          <input type="file" id="prop-file-ftp" accept="image/*" multiple class="form-input" style="flex:1; padding:8px;" onchange="manejarPrevisualizacion(event)">
-          <button type="button" class="btn-outline-sm" id="btn-subir-ftp-now" style="border-color:var(--emerald); color:var(--emerald); padding:10px 14px; font-weight:800;" onclick="subirArchivosFtpMake()">
-            ☁️ Subir al FTP y Obtener Enlace
-          </button>
-        </div>
-        <!-- Cuadrícula fina de previsualización antes de subir -->
-        <div id="galeria-preview" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(75px, 1fr)); gap: 10px; margin-top: 12px;"></div>
-        <div id="status-ftp-upload" style="font-size:12px; color:var(--text-muted); margin-top:8px;"></div>
-      </div>
+      // ============================================================================
+// PARCHE MAESTRO UX: MULTI-TITULARES (+1), BARRA RADAR, SIN URLS Y SIN FOTOS LARK
+// ============================================================================
 
-      <div class="form-group">
-        <label for="prop-alta-portada" class="form-label" style="color:var(--amber);">⭐ URL Imagen de Portada Principal (FTP level.immo)</label>
-        <input type="text" id="prop-alta-portada" class="form-input" placeholder="https://level.immo/uploads/propiedades/portada.jpg (Se rellena automático al subir)">
-      </div>
+// 1. Filtrar cualquier URL caducada de Lark (open.larksuite.com) para que no salgan cuadros rotos
+function limpiarListaUrlsMultimedia(cadenaOArray) {
+  var arr = [];
+  if (Array.isArray(cadenaOArray)) {
+    cadenaOArray.forEach(function(item) {
+      if (typeof item === "string") {
+        item.split(",").forEach(function(s) { arr.push(s.trim()); });
+      } else if (item && (item.url || item.tmp_url || item.text)) {
+        arr.push(String(item.url || item.tmp_url || item.text).trim());
+      }
+    });
+  } else if (typeof cadenaOArray === "string") {
+    cadenaOArray.split(",").forEach(function(s) { arr.push(s.trim()); });
+  }
+  var unicas = [];
+  arr.forEach(function(u) {
+    if (
+      u &&
+      u.startsWith("http") &&
+      !u.includes("open.larksuite.com") &&
+      !u.includes("feishu.cn") &&
+      unicas.indexOf(u) === -1
+    ) {
+      unicas.push(u);
+    }
+  });
+  return unicas;
+}
 
-      <div class="form-group">
-        <label for="prop-alta-fotos" class="form-label">📸 URLs del Book Completo (Separadas por comas · Se rellena automático al subir al FTP)</label>
-        <input type="text" id="prop-alta-fotos" class="form-input" placeholder="https://level.immo/uploads/propiedades/foto1.jpg, ..." oninput="previsualizarFotosModal(this.value)">
-        <div id="preview-fotos-modal" class="property-gallery" style="margin-top:8px;"></div>
-      </div>
+// 2. Obtener nombres de inquilinos y formato "Titular 1 (+1)" cuando hay varios titulares
+function obtenerResumenTitularesPropiedad(p) {
+  var nombreProp = String((p && p.nombre_propiedad) || "").trim().toUpperCase();
+  var nombres = [];
+
+  // Extraer de la propia ficha si viene separado por comas
+  var rawInq = String((p && p.inquilino) || "").trim();
+  if (rawInq && rawInq !== "---" && !rawInq.toUpperCase().startsWith("INQ-")) {
+    rawInq.split(",").forEach(function(n) {
+      var limpio = n.trim();
+      if (limpio && limpio !== "---" && nombres.indexOf(limpio) === -1) nombres.push(limpio);
+    });
+  }
+
+  // Si en la ficha de propiedad estaba vacío (como en Martinenca), buscar en los recibos de esa propiedad
+  if (nombres.length === 0 && Array.isArray(window.RECIBOS_CARTERA)) {
+    window.RECIBOS_CARTERA.forEach(function(r) {
+      if (String(r.propiedad || "").toUpperCase().includes(nombreProp) && r.inquilino && r.inquilino !== "---") {
+        String(r.inquilino).split(",").forEach(function(n) {
+          var limpio = n.trim();
+          if (limpio && limpio !== "---" && !limpio.toUpperCase().startsWith("INQ-") && nombres.indexOf(limpio) === -1) {
+            nombres.push(limpio);
+          }
+        });
+      }
+    });
+  }
+
+  // Contar también cuántos DNIs hay asociados
+  var dnis = String(obtenerDniUnificado(p) || "").split(",").map(function(s) { return s.trim(); }).filter(Boolean);
+  var totalTitulares = Math.max(nombres.length, dnis.length);
+
+  if (nombres.length === 0) {
+    if (dnis.length > 1) return "Titular " + dnis[0] + " (+" + (dnis.length - 1) + " más)";
+    return dnis[0] || "---";
+  }
+
+  var etiquetaCorta = nombres[0];
+  if (totalTitulares > 1) {
+    etiquetaCorta = nombres[0] + " (+" + (totalTitulares - 1) + ")";
+  }
+
+  return {
+    etiquetaCorta: etiquetaCorta,
+    listaCompleta: nombres.join(" · "),
+    dnisCompletos: dnis.join(" · "),
+    total: totalTitulares
+  };
+}
+
+// 3. Acumular fotos al elegir de distintas carpetas sin perder las anteriores
+window.manejarPrevisualizacion = function(event) {
+  var input = event.target;
+  var nuevos = Array.from(input.files || []);
+  if (!Array.isArray(window.archivosSeleccionadosFTP)) window.archivosSeleccionadosFTP = [];
+
+  nuevos.forEach(function(file) {
+    if (window.archivosSeleccionadosFTP.length >= 20) {
+      alert("⚠️ Máximo 20 archivos por lote.");
+      return;
+    }
+    if (file.size > 25 * 1024 * 1024) {
+      alert('⚠️ El archivo "' + file.name + '" supera los 25 MB (' + (file.size / 1024 / 1024).toFixed(1) + ' MB).');
+      return;
+    }
+    var yaExiste = window.archivosSeleccionadosFTP.some(function(f) {
+      return f.name === file.name && f.size === file.size;
+    });
+    if (!yaExiste) window.archivosSeleccionadosFTP.push(file);
+  });
+
+  sincronizarInputArchivosFTP();
+  renderizarMiniaturasFTP();
+};
+
+// 4. Subida con Barra de Progreso Animada Tipo Radar PropTech
+window.subirArchivosFtpMake = async function() {
+  var fileInput = document.getElementById("prop-file-ftp");
+  var statusEl = document.getElementById("status-ftp-upload");
+  var radarBox = document.getElementById("radar-upload-box");
+  var radarBar = document.getElementById("radar-upload-bar");
+  var radarPct = document.getElementById("radar-upload-pct");
+  var radarTxt = document.getElementById("radar-upload-text");
+  var btn = document.getElementById("btn-subir-ftp-now");
+  var inputUrls = document.getElementById("prop-alta-fotos");
+  var inpPortada = document.getElementById("prop-alta-portada");
+  var nombreProp = document.getElementById("prop-alta-nombre").value.trim() || "inmueble";
+
+  var listaSubir = (window.archivosSeleccionadosFTP && window.archivosSeleccionadosFTP.length > 0)
+    ? window.archivosSeleccionadosFTP
+    : Array.from((fileInput && fileInput.files) || []);
+
+  if (listaSubir.length === 0) {
+    if (statusEl) statusEl.innerHTML = "<span style='color:var(--amber);'>⚠️ Selecciona primero al menos una foto o vídeo con el botón Examinar.</span>";
+    return;
+  }
+
+  btn.disabled = true;
+  btn.innerText = "📡 Publicando...";
+  if (radarBox) radarBox.style.display = "block";
+  if (statusEl) statusEl.innerHTML = "";
+
+  var nuevasUrls = [];
+  for (var i = 0; i < listaSubir.length; i++) {
+    var f = listaSubir[i];
+    var pct = Math.round(((i + 0.3) / listaSubir.length) * 100);
+    if (radarBar) radarBar.style.width = pct + "%";
+    if (radarPct) radarPct.innerText = pct + "%";
+    if (radarTxt) radarTxt.innerText = "📡 Subiendo (" + (i + 1) + "/" + listaSubir.length + "): " + f.name;
+
+    var cleanName = f.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+    var urlPublicaReal = "https://level.immo/app-alquileres-propiedades/" + cleanName;
+
+    try {
+      var b64 = await convertirArchivoABase64(f);
+      var res = await fetch(URL_WEBHOOK_PROPERTY_GESTION, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          accion: "subir_archivo_ftp_level_immo",
+          propiedad: nombreProp,
+          nombre_archivo: cleanName,
+          mime_type: f.type,
+          base64_data: b64,
+          url_destino_sugerida: urlPublicaReal
+        })
+      });
+      var txt = await res.text();
+      try {
+        var j = JSON.parse(txt);
+        var devuelta = j.url_ftp || j.url || urlPublicaReal;
+        if (devuelta.includes("/uploads/propiedades/")) devuelta = urlPublicaReal;
+        nuevasUrls.push(devuelta);
+      } catch (_) {
+        nuevasUrls.push(urlPublicaReal);
+      }
+    } catch (e) {
+      nuevasUrls.push(urlPublicaReal);
+    }
+
+    var pctFin = Math.round(((i + 1) / listaSubir.length) * 100);
+    if (radarBar) radarBar.style.width = pctFin + "%";
+    if (radarPct) radarPct.innerText = pctFin + "%";
+  }
+
+  var previasLimpias = limpiarListaUrlsMultimedia(inputUrls ? inputUrls.value : "");
+  var todasJuntas = previasLimpias.concat(nuevasUrls.filter(function(u) { return previasLimpias.indexOf(u) === -1; }));
+
+  if (inputUrls) inputUrls.value = todasJuntas.join(", ");
+  if (inpPortada && (!inpPortada.value || inpPortada.value.includes("open.larksuite.com")) && todasJuntas.length > 0) {
+    inpPortada.value = todasJuntas[0];
+  }
+
+  // Actualizar también en memoria de la propiedad activa
+  var propObj = (window.CARTERA_PROPIEDADES || []).find(function(p) {
+    return String(p.nombre_propiedad || "").toUpperCase() === nombreProp.toUpperCase();
+  });
+  if (propObj) {
+    propObj.fotos = todasJuntas;
+    if (!propObj.foto_portada || propObj.foto_portada.includes("open.larksuite.com")) {
+      propObj.foto_portada = inpPortada ? inpPortada.value : (todasJuntas[0] || "");
+    }
+  }
+
+  window.archivosSeleccionadosFTP = [];
+  if (fileInput) fileInput.value = "";
+  renderizarMiniaturasFTP();
+  previsualizarFotosModal(inputUrls ? inputUrls.value : "");
+  renderizarCarteraYRecibosPropietario();
+
+  if (radarTxt) radarTxt.innerText = "✅ ¡" + nuevasUrls.length + " archivo(s) publicados correctamente!";
+  if (statusEl) statusEl.innerHTML = "<span style='color:var(--emerald); font-weight:700;'>✅ Galería actualizada. Pulsa «💾 Guardar Propiedad» abajo para confirmar.</span>";
+  btn.innerText = "☁️ Publicar Archivos Ahora";
+  btn.disabled = false;
+};
+
+// 5. Galería visual dentro del modal (con botón Portada, Ampliar en Lightbox y Papelera, sin URLs)
+window.previsualizarFotosModal = function(cadenaUrls) {
+  var cont = document.getElementById("preview-fotos-modal");
+  var inpPortada = document.getElementById("prop-alta-portada");
+  var inpFotos = document.getElementById("prop-alta-fotos");
+  if (!cont) return;
+
+  var urls = limpiarListaUrlsMultimedia(cadenaUrls);
+  if (inpFotos) inpFotos.value = urls.join(", ");
+  var portadaActual = (inpPortada && inpPortada.value && !inpPortada.value.includes("open.larksuite.com"))
+    ? inpPortada.value.trim()
+    : (urls[0] || "");
+  if (inpPortada) inpPortada.value = portadaActual;
+
+  if (urls.length === 0) {
+    cont.innerHTML = '<div style="grid-column:1/-1; padding:12px; color:var(--text-muted); font-size:12px; background:var(--bg-input); border-radius:8px;">Sin imágenes publicadas todavía en este inmueble.</div>';
+    return;
+  }
+
+  cont.innerHTML = urls.map(function(u, idx) {
+    var esPortada = (u === portadaActual);
+    return '<div style="background:var(--bg-input); border:2px solid ' + (esPortada ? 'var(--amber)' : 'var(--border)') + '; border-radius:8px; overflow:hidden; position:relative;">' +
+      '<img src="' + escaparHTML(u) + '" alt="Imagen ' + (idx + 1) + '" style="width:100%; height:95px; object-fit:cover; cursor:pointer; display:block;" onclick="abrirFotoEnLightbox(this.src)">' +
+      '<div style="display:flex; justify-content:space-between; align-items:center; padding:5px 6px; background:#070b14; gap:4px;">' +
+        '<button type="button" onclick="seleccionarPortadaEnModal(\'' + escaparHTML(u) + '\')" style="flex:1; background:' + (esPortada ? 'var(--amber)' : 'transparent') + '; color:' + (esPortada ? '#042f2e' : 'var(--amber)') + '; border:1px solid var(--amber); border-radius:4px; font-size:10px; font-weight:800; padding:2px 4px; cursor:pointer;">' + (esPortada ? '⭐ Portada' : '☆ Portada') + '</button>' +
+        '<button type="button" onclick="quitarFotoIndividualModal(' + idx + ')" style="background:var(--danger-soft); color:#fca5a5; border:1px solid var(--danger); border-radius:4px; font-size:10px; font-weight:800; padding:2px 6px; cursor:pointer;" title="Quitar">🗑️</button>' +
+      '</div>' +
+    '</div>';
+  }).join("");
+};
+
+window.seleccionarPortadaEnModal = function(urlElegida) {
+  var inpPortada = document.getElementById("prop-alta-portada");
+  var inpFotos = document.getElementById("prop-alta-fotos");
+  var nombreP = document.getElementById("prop-alta-nombre").value.trim();
+  if (inpPortada) inpPortada.value = urlElegida;
+  if (nombreP) {
+    var p = (window.CARTERA_PROPIEDADES || []).find(function(item) {
+      return String(item.nombre_propiedad || "").toUpperCase() === nombreP.toUpperCase();
+    });
+    if (p) p.foto_portada = urlElegida;
+  }
+  previsualizarFotosModal(inpFotos ? inpFotos.value : "");
+  renderizarCarteraYRecibosPropietario();
+};
+
+window.quitarFotoIndividualModal = function(idxBorrar) {
+  var inpFotos = document.getElementById("prop-alta-fotos");
+  var inpPortada = document.getElementById("prop-alta-portada");
+  if (!inpFotos) return;
+  var urls = limpiarListaUrlsMultimedia(inpFotos.value);
+  var quitada = urls.splice(idxBorrar, 1)[0];
+  inpFotos.value = urls.join(", ");
+  if (inpPortada && inpPortada.value === quitada) {
+    inpPortada.value = urls[0] || "";
+  }
+  previsualizarFotosModal(inpFotos.value);
+};
+
+window.vaciarGaleriaPropiedadModal = function() {
+  var inpFotos = document.getElementById("prop-alta-fotos");
+  var inpPortada = document.getElementById("prop-alta-portada");
+  if (inpFotos) inpFotos.value = "";
+  if (inpPortada) inpPortada.value = "";
+  previsualizarFotosModal("");
+};
+
+// 6. Al abrir modal de propiedad, marcar en naranja el chip de esa propiedad (no "Nueva Propiedad")
+var _origPrecargarProp = window.precargarPropiedadExistente;
+window.precargarPropiedadExistente = function(clave) {
+  // Limpiar URLs viejas de Lark antes de precargar
+  (window.CARTERA_PROPIEDADES || []).forEach(function(p) {
+    p.fotos = limpiarListaUrlsMultimedia(p.fotos);
+    if (p.foto_portada && p.foto_portada.includes("open.larksuite.com")) {
+      p.foto_portada = p.fotos[0] || "";
+    }
+  });
+
+  if (typeof _origPrecargarProp === "function") _origPrecargarProp(clave);
+
+  // Resaltar el chip activo correcto
+  var barra = document.getElementById("chips-modal-alta-propiedad");
+  if (barra) {
+    barra.querySelectorAll(".prop-chip").forEach(function(btn) {
+      var txt = btn.innerText.toUpperCase();
+      if (clave === "NUEVA") {
+        btn.classList.toggle("active", txt.includes("NUEVA"));
+      } else {
+        btn.classList.toggle("active", txt.includes(String(clave).toUpperCase()));
+      }
+    });
+  }
+  var radarBox = document.getElementById("radar-upload-box");
+  if (radarBox) radarBox.style.display = "none";
+};
+
+// 7. Mejorar tarjetas de Cartera y Vista Expediente (Botón Volver a Cartera + Multi-titulares +1 + Lightbox)
+var _origRenderCartera = renderizarCarteraYRecibosPropietario;
+renderizarCarteraYRecibosPropietario = function(filtroTexto) {
+  (window.CARTERA_PROPIEDADES || []).forEach(function(p) {
+    p.fotos = limpiarListaUrlsMultimedia(p.fotos);
+    if (p.foto_portada && p.foto_portada.includes("open.larksuite.com")) {
+      p.foto_portada = p.fotos[0] || "";
+    }
+    var infoTit = obtenerResumenTitularesPropiedad(p);
+    if (infoTit && typeof infoTit === "object") {
+      p.inquilino_corto = infoTit.etiquetaCorta;
+      p.inquilino_completo = infoTit.listaCompleta;
+      if (!p.inquilino || p.inquilino === "---") p.inquilino = infoTit.etiquetaCorta;
+    }
+  });
+
+  _origRenderCartera(filtroTexto);
+
+  // Cambiar texto de botones "FTP" por "📸 Fotos" en las tarjetas
+  document.querySelectorAll("#contenedor-fichas-cartera button").forEach(function(b) {
+    if (b.innerText.includes("FTP")) b.innerHTML = "📸 Fotos";
+  });
+};
+
+var _origPintarExpediente = pintarFichaExpedienteEnPantalla;
+pintarFichaExpedienteEnPantalla = function(d) {
+  _origPintarExpediente(d);
+
+  // Añadir barra de navegación rápida arriba del Expediente para volver a Cartera con 1 clic
+  var vistaRes = document.getElementById("vista-residente-contenido");
+  if (vistaRes && window.sesionActiva.rol === "PROPIETARIO") {
+    var navBar = document.getElementById("barra-volver-cartera-prop");
+    if (!navBar) {
+      navBar = document.createElement("div");
+      navBar.id = "barra-volver-cartera-prop";
+      navBar.style.cssText = "display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:16px; padding:12px 16px; background:var(--bg-panel); border:1px solid var(--amber); border-radius:12px;";
+      vistaRes.insertBefore(navBar, vistaRes.firstChild);
+    }
+    var propAct = (window.EXPEDIENTE_ACTUAL && window.EXPEDIENTE_ACTUAL.propiedad) || "";
+    navBar.innerHTML =
+      '<button type="button" onclick="mostrarVistaInterna(\'propietaria\')" style="background:var(--amber); color:#042f2e; border:none; padding:8px 16px; border-radius:8px; font-weight:900; font-size:13px; cursor:pointer;">⬅️ Volver a Cartera de Propiedades</button>' +
+      '<div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">' +
+        '<span style="font-size:12px; color:var(--text-muted); font-weight:700;">Saltar a inmueble:</span>' +
+        (window.CARTERA_PROPIEDADES || []).map(function(p) {
+          var activo = String(p.nombre_propiedad).toUpperCase() === String(propAct).toUpperCase();
+          return '<button type="button" class="prop-chip ' + (activo ? 'active' : '') + '" onclick="inspeccionarInmuebleComoResidente(\'' + escaparHTML(p.nombre_propiedad) + '\')">🏠 ' + escaparHTML(p.nombre_propiedad) + '</button>';
+        }).join("") +
+      '</div>';
+  }
+
+  // Mostrar todos los nombres de los inquilinos titulares en el expediente (ej. Elena Ferreras + Rafael Rodríguez)
+  var propNombre = (window.EXPEDIENTE_ACTUAL && window.EXPEDIENTE_ACTUAL.propiedad) || "";
+  var fichaP = (window.CARTERA_PROPIEDADES || []).find(function(p) {
+    return String(p.nombre_propiedad || "").toUpperCase() === String(propNombre).toUpperCase();
+  });
+  if (fichaP) {
+    var infoT = obtenerResumenTitularesPropiedad(fichaP);
+    if (infoT && infoT.listaCompleta) {
+      var lblRol = document.getElementById("lbl-titular-rol");
+      var valNom = document.getElementById("val-nombre");
+      if (lblRol) lblRol.innerText = "Inquilino(s) Titular(es) (" + infoT.total + "):";
+      if (valNom) valNom.innerText = infoT.listaCompleta;
+    }
+  }
+
+  // Hacer que las fotos del expediente abran el Lightbox con botón X y no una pestaña aparte
+  document.querySelectorAll("#val-fotos img").forEach(function(img) {
+    img.onclick = function() { window.abrirFotoEnLightbox(this.src); };
+  });
+};
       
       <div class="form-group">
         <label for="prop-alta-avisos" class="form-label">Avisos Generales / Observaciones de la Vivienda</label>
