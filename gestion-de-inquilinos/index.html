@@ -5288,6 +5288,40 @@ document.addEventListener("DOMContentLoaded", function() {
   }
 });
 window.pintarSumaLevel();
+function sincronizarBookYPortadaEnBD(p) {
+  if (!p || !p.nombre_propiedad) return;
+  var lista = limpiarListaUrlsMultimedia(p.fotos || []);
+  var portada = p.foto_portada || (lista[0] || "");
+  fetch(URL_WEBHOOK_PROPERTY_GESTION, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      accion: "subir_archivo_ftp_level_immo",
+      propiedad: p.nombre_propiedad,
+      nombre_archivo: (portada.split("/").pop() || "portada.jpg"),
+      foto_portada_url: portada,
+      todas_las_fotos_url: lista.join(", ")
+    })
+  }).catch(function(){});
+}
+
+var _baseEstablecerPortada = window.establecerComoPortadaInmueble;
+window.establecerComoPortadaInmueble = function(nombrePropiedad, urlElegida) {
+  if (typeof _baseEstablecerPortada === "function") _baseEstablecerPortada(nombrePropiedad, urlElegida);
+  var p = (window.CARTERA_PROPIEDADES || []).find(function(item) {
+    return String(item.nombre_propiedad || "").toUpperCase() === String(nombrePropiedad || "").toUpperCase();
+  });
+  if (p) sincronizarBookYPortadaEnBD(p);
+};
+
+var _baseEliminarFotoBook = window.eliminarFotoDelBookInmueble;
+window.eliminarFotoDelBookInmueble = function(nombrePropiedad, idxBorrar) {
+  if (typeof _baseEliminarFotoBook === "function") _baseEliminarFotoBook(nombrePropiedad, idxBorrar);
+  var p = (window.CARTERA_PROPIEDADES || []).find(function(item) {
+    return String(item.nombre_propiedad || "").toUpperCase() === String(nombrePropiedad || "").toUpperCase();
+  });
+  if (p) sincronizarBookYPortadaEnBD(p);
+};
 </script>
 </body>
 </html>
