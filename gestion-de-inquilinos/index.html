@@ -3390,32 +3390,182 @@ function convertirArchivoABase64(file) {
     reader.readAsDataURL(file);
   });
 }
+// ============================================================================
+// BLOQUE FINAL UNIFICADO: MULTIMEDIA ACUMULATIVO, RADAR, MULTI-TITULARES Y LOGIN
+// ============================================================================
+
+function limpiarListaUrlsMultimedia(cadenaOArray) {
+  var arr = [];
+  if (Array.isArray(cadenaOArray)) {
+    cadenaOArray.forEach(function(item) {
+      if (typeof item === "string") {
+        item.split(",").forEach(function(s) { arr.push(s.trim()); });
+      } else if (item && (item.url || item.tmp_url || item.text)) {
+        arr.push(String(item.url || item.tmp_url || item.text).trim());
+      }
+    });
+  } else if (typeof cadenaOArray === "string") {
+    cadenaOArray.split(",").forEach(function(s) { arr.push(s.trim()); });
+  }
+  var unicas = [];
+  arr.forEach(function(u) {
+    if (
+      u &&
+      u.startsWith("http") &&
+      !u.includes("open.larksuite.com") &&
+      !u.includes("feishu.cn") &&
+      unicas.indexOf(u) === -1
+    ) {
+      unicas.push(u);
+    }
+  });
+  return unicas;
+}
+
+function obtenerTitularesRealesPropiedad(p) {
+  var nombreProp = String((p && p.nombre_propiedad) || "").trim().toUpperCase();
+  var nombres = [];
+
+  var rawInq = String((p && (p.inquilino_original || p.inquilino)) || "").trim();
+  if (rawInq && rawInq !== "---" && !rawInq.toUpperCase().startsWith("INQ-")) {
+    rawInq.replace(/\(\+\d+.*?\)/g, "").split(",").forEach(function(n) {
+      var limpio = n.trim();
+      if (limpio && limpio !== "---" && nombres.indexOf(limpio) === -1) nombres.push(limpio);
+    });
+  }
+
+  if (nombres.length === 0 && Array.isArray(window.RECIBOS_CARTERA)) {
+    window.RECIBOS_CARTERA.forEach(function(r) {
+      if (String(r.propiedad || "").toUpperCase().includes(nombreProp) && r.inquilino && r.inquilino !== "---") {
+        String(r.inquilino).split(",").forEach(function(n) {
+          var limpio = n.trim();
+          if (limpio && limpio !== "---" && !limpio.toUpperCase().startsWith("INQ-") && nombres.indexOf(limpio) === -1) {
+            nombres.push(limpio);
+          }
+        });
+      }
+    });
+  }
+
+  var dnis = String(obtenerDniUnificado(p) || "").split(",").map(function(s) { return s.trim(); }).filter(Boolean);
+  var totalTitulares = Math.max(nombres.length, dnis.length);
+
+  if (nombres.length === 0) {
+    return {
+      corto: dnis.length > 1 ? (dnis[0] + " (+" + (dnis.length - 1) + ")") : (dnis[0] || "---"),
+      completo: dnis.join(" · ") || "---",
+      dnis: dnis.join(", ") || "---",
+      total: totalTitulares
+    };
+  }
+
+  return {
+    corto: totalTitulares > 1 ? (nombres[0] + " (+" + (totalTitulares - 1) + ")") : nombres[0],
+    completo: nombres.join(" · "),
+    dnis: dnis.join(", "),
+    total: totalTitulares
+  };
+}
+
+function enriquecerDatosCarteraYLimpiarRecibosVacios() {
+  if (Array.isArray(window.RECIBOS_CARTERA)) {
+    window.RECIBOS_CARTERA = window.RECIBOS_CARTERA.filter(function(r) {
+      var imp = parsearNumeroContable(r.total_con_impuestos || r.importe || r.debe || r.haber);
+      var sinProp = !r.propiedad || r.propiedad === "---";
+      var esGenerico = String(r.concepto || "").includes("Movimiento Contable");
+      return !(imp === 0 && (sinProp || esGenerico));
+    });
+  }
+
+  if (Array.isArray(window.CARTERA_PROPIEDADES)) {
+    window.CARTERA_PROPIEDADES.forEach(function(p) {
+      if (!p.inquilino_original) p.inquilino_original = p.inquilino;
+      // Recuperar también fotos guardadas en navegador para esta propiedad si Make solo devolvió 1
+      var cacheKey = "LEVEL_BOOK_" + String(p.nombre_propiedad || "").toUpperCase();
+      var cachePortadaKey = "LEVEL_PORTADA_" + String(p.nombre_propiedad || "").toUpperCase();
+      var guardadasLocal = "";
+      var portadaLocal = "";
+      try {
+        guardadasLocal = localStorage.getItem(cacheKey) || "";
+        portadaLocal = localStorage.getItem(cachePortadaKey) || "";
+      } catch (_) {}
+
+      var Combinadas = limpiarListaUrlsMultimedia([].concat(p.fotos || [], guardadasLocal ? guardadasLocal.split(",") : []));
+      p.fotos = Combinadas;
+      if (portadaLocal && Combinadas.indexOf(portadaLocal) !== -1) {
+        p.foto_portada = portadaLocal;
+      } else if (!p.foto_portada || p.foto_portada.includes("open.larksuite.com")) {
+        p.foto_portada = Combinadas[0] || "";
+      }
+
+      var infoT = obtenerTitularesRealesPropiedad(p);
+      p.inquilino = infoT.corto;
+      p.inquilino_completo = infoT.completo;
+      p.dnis_completos = infoT.dnis;
+      p.total_titulares = infoT.total;
+    });
+  }
+}
+
+function guardarCacheMultimediaPropiedad(nombreProp, arrayFotos, urlPortada) {
+  if (!nombreProp) return;
+  var limpias = limpiarListaUrlsMultimedia(arrayFotos);
+  var keyF = "LEVEL_BOOK_" + String(nombreProp).toUpperCase();
+  var keyP = "LEVEL_PORTADA_" + String(nombreProp).toUpperCase();
+  try {
+    localStorage.setItem(keyF, limpias.join(", "));
+    if (urlPortada) localStorage.setItem(keyP, urlPortada);
+  } catch (_) {}
+}
 
 window.subirArchivosFtpMake = async function() {
   var fileInput = document.getElementById("prop-file-ftp");
   var statusEl = document.getElementById("status-ftp-upload");
+  var radarBox = document.getElementById("radar-upload-box");
+  var radarBar = document.getElementById("radar-upload-bar");
+  var radarPct = document.getElementById("radar-upload-pct");
+  var radarTxt = document.getElementById("radar-upload-text");
   var btn = document.getElementById("btn-subir-ftp-now");
   var inputUrls = document.getElementById("prop-alta-fotos");
   var inpPortada = document.getElementById("prop-alta-portada");
   var nombreProp = document.getElementById("prop-alta-nombre").value.trim() || "inmueble";
 
-  if (!fileInput || !fileInput.files || fileInput.files.length === 0) {
-    statusEl.innerHTML = "<span style='color:var(--amber);'>⚠️ Selecciona primero una o varias imágenes de tu dispositivo.</span>";
+  var listaSubir = (window.archivosSeleccionadosFTP && window.archivosSeleccionadosFTP.length > 0)
+    ? window.archivosSeleccionadosFTP
+    : Array.from((fileInput && fileInput.files) || []);
+
+  if (listaSubir.length === 0) {
+    if (statusEl) statusEl.innerHTML = "<span style='color:var(--amber);'>⚠️ Selecciona primero al menos una foto o vídeo en «Elegir archivos».</span>";
     return;
   }
 
   btn.disabled = true;
-  btn.innerText = "Subiendo al FTP...";
-  statusEl.innerHTML = "⏳ Enviando " + fileInput.files.length + " imagen(es) al servidor FTP de level.immo vía Make...";
+  btn.innerText = "📡 Publicando...";
+  if (radarBox) radarBox.style.display = "block";
+  if (statusEl) statusEl.innerHTML = "";
 
+  var previasLimpias = limpiarListaUrlsMultimedia(inputUrls ? inputUrls.value : "");
   var nuevasUrls = [];
-  for (var i = 0; i < fileInput.files.length; i++) {
-    var f = fileInput.files[i];
+
+  for (var i = 0; i < listaSubir.length; i++) {
+    var f = listaSubir[i];
+    var pct = Math.round(((i + 0.3) / listaSubir.length) * 100);
+    if (radarBar) radarBar.style.width = pct + "%";
+    if (radarPct) radarPct.innerText = pct + "%";
+    if (radarTxt) radarTxt.innerText = "📡 Subiendo (" + (i + 1) + "/" + listaSubir.length + "): " + f.name;
+
     var cleanName = f.name.replace(/[^a-zA-Z0-9._-]/g, "_");
-    var urlEsperadaFtp = "https://level.immo/uploads/propiedades/" + encodeURIComponent(nombreProp.toLowerCase().replace(/\s+/g, "-")) + "_" + cleanName;
+    var urlPublicaReal = "https://level.immo/app-alquileres-propiedades/" + cleanName;
+    var acumuladoHastaAhora = previasLimpias.concat(nuevasUrls, [urlPublicaReal]).filter(function(v, idx, self) {
+      return self.indexOf(v) === idx;
+    });
+    var portadaElegida = (inpPortada && inpPortada.value && !inpPortada.value.includes("open.larksuite.com"))
+      ? inpPortada.value
+      : acumuladoHastaAhora[0];
+
     try {
       var b64 = await convertirArchivoABase64(f);
-      var res = await fetch(URL_WEBHOOK_PROPERTY_GESTION, {
+      await fetch(URL_WEBHOOK_PROPERTY_GESTION, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -3424,36 +3574,76 @@ window.subirArchivosFtpMake = async function() {
           nombre_archivo: cleanName,
           mime_type: f.type,
           base64_data: b64,
-          url_destino_sugerida: urlEsperadaFtp
+          url_destino_sugerida: urlPublicaReal,
+          foto_portada_url: portadaElegida,
+          todas_las_fotos_url: acumuladoHastaAhora.join(", ")
         })
       });
-      var txt = await res.text();
-      try {
-        var j = JSON.parse(txt);
-        nuevasUrls.push(j.url_ftp || j.url || urlEsperadaFtp);
-      } catch (_) {
-        nuevasUrls.push(urlEsperadaFtp);
-      }
+      nuevasUrls.push(urlPublicaReal);
     } catch (e) {
-      nuevasUrls.push(urlEsperadaFtp);
+      nuevasUrls.push(urlPublicaReal);
     }
+
+    var pctFin = Math.round(((i + 1) / listaSubir.length) * 100);
+    if (radarBar) radarBar.style.width = pctFin + "%";
+    if (radarPct) radarPct.innerText = pctFin + "%";
   }
 
-  var actuales = inputUrls.value.trim();
-  inputUrls.value = actuales ? (actuales + ", " + nuevasUrls.join(", ")) : nuevasUrls.join(", ");
-  if (inpPortada && !inpPortada.value.trim() && nuevasUrls.length > 0) {
-    inpPortada.value = nuevasUrls[0];
+  var todasJuntas = previasLimpias.concat(nuevasUrls.filter(function(u) { return previasLimpias.indexOf(u) === -1; }));
+  if (inputUrls) inputUrls.value = todasJuntas.join(", ");
+  if (inpPortada && (!inpPortada.value || inpPortada.value.includes("open.larksuite.com")) && todasJuntas.length > 0) {
+    inpPortada.value = todasJuntas[0];
   }
-  previsualizarFotosModal(inputUrls.value);
 
-  statusEl.innerHTML = "<span style='color:var(--emerald);'>✅ " + nuevasUrls.length + " fotografía(s) enviada(s) a PROPERTY_GESTION y enlazada(s).</span>";
-  btn.innerText = "☁️ Subir al FTP y Obtener Enlace";
+  var propObj = (window.CARTERA_PROPIEDADES || []).find(function(p) {
+    return String(p.nombre_propiedad || "").toUpperCase() === nombreProp.toUpperCase();
+  });
+  if (propObj) {
+    propObj.fotos = todasJuntas;
+    propObj.foto_portada = (inpPortada && inpPortada.value) ? inpPortada.value : (todasJuntas[0] || "");
+  }
+  guardarCacheMultimediaPropiedad(nombreProp, todasJuntas, inpPortada ? inpPortada.value : "");
+
+  window.archivosSeleccionadosFTP = [];
+  if (fileInput) fileInput.value = "";
+  renderizarMiniaturasFTP();
+  previsualizarFotosModal(todasJuntas.join(", "));
+  renderizarCarteraYRecibosPropietario();
+
+  if (radarTxt) radarTxt.innerText = "✅ ¡" + nuevasUrls.length + " archivo(s) añadidos al Book (" + todasJuntas.length + " en total)!";
+  if (statusEl) statusEl.innerHTML = "<span style='color:var(--emerald); font-weight:700;'>✅ Book actualizado con " + todasJuntas.length + " fotos. Pulsa «💾 Guardar Propiedad» abajo.</span>";
+  btn.innerText = "☁️ Publicar Archivos Ahora";
   btn.disabled = false;
 };
 
-// ============================================================================
+window.establecerComoPortadaInmueble = function(nombrePropiedad, urlElegida) {
+  var p = (window.CARTERA_PROPIEDADES || []).find(function(item) {
+    return String(item.nombre_propiedad || "").toUpperCase() === String(nombrePropiedad || "").toUpperCase();
+  });
+  if (!p) return;
+  p.foto_portada = urlElegida;
+  var inpPortada = document.getElementById("prop-alta-portada");
+  if (inpPortada) inpPortada.value = urlElegida;
+  guardarCacheMultimediaPropiedad(p.nombre_propiedad, p.fotos || [], urlElegida);
+  renderizarCarteraYRecibosPropietario();
+  abrirBookFotosInmueble(nombrePropiedad);
+};
+
+window.eliminarFotoDelBookInmueble = function(nombrePropiedad, idxBorrar) {
+  var p = (window.CARTERA_PROPIEDADES || []).find(function(item) {
+    return String(item.nombre_propiedad || "").toUpperCase() === String(nombrePropiedad || "").toUpperCase();
+  });
+  if (!p || !Array.isArray(p.fotos)) return;
+  var borrada = p.fotos.splice(idxBorrar, 1)[0];
+  if (p.foto_portada === borrada) {
+    p.foto_portada = p.fotos.length > 0 ? p.fotos[0] : "";
+  }
+  guardarCacheMultimediaPropiedad(p.nombre_propiedad, p.fotos, p.foto_portada);
+  renderizarCarteraYRecibosPropietario();
+  abrirBookFotosInmueble(nombrePropiedad);
+};
+
 // GESTIÓN MANUAL DE SUMINISTROS, RECIBOS VARIOS Y AVISOS
-// ============================================================================
 window.abrirModalSuministroManual = function(propPreseleccionada, idReciboEditar) {
   poblarSelectoresPropiedadesModales();
   document.getElementById("msg-sum-exito").style.display = "none";
@@ -3497,7 +3687,7 @@ window.guardarMovimientoSuministroManual = async function(e) {
   var btn = document.getElementById("btn-guardar-sum-manual");
   var msg = document.getElementById("msg-sum-exito");
   btn.disabled = true;
-  btn.innerText = "Sincronizando con tabla SUMINISTROS Y GASTOS y FTP...";
+  btn.innerText = "Sincronizando con tabla SUMINISTROS Y GASTOS...";
 
   var idEdit = document.getElementById("sum-edit-id").value;
   var idReciboFinal = idEdit || ("ID-ALQ-" + new Date().getFullYear() + String(Math.floor(Math.random()*9000+1000)));
@@ -3518,7 +3708,7 @@ window.guardarMovimientoSuministroManual = async function(e) {
   var urlFtpGenerada = "";
   if (fileInput && fileInput.files && fileInput.files[0]) {
     archivoNombre = String(idReciboFinal + "_" + fileInput.files[0].name).replace(/[^a-zA-Z0-9._-]/g, "_");
-    urlFtpGenerada = "https://level.immo/uploads/facturas/" + archivoNombre;
+    urlFtpGenerada = "https://level.immo/app-alquileres-propiedades/" + archivoNombre;
     try { archivoBase64 = await convertirArchivoABase64(fileInput.files[0]); } catch (_) {}
   }
 
@@ -3526,7 +3716,7 @@ window.guardarMovimientoSuministroManual = async function(e) {
   var nuevoMov = normalizarReciboDesdeMake({
     id_recibo: idReciboFinal,
     Propiedad: prop,
-    inquilino: fichaProp.inquilino || "---",
+    inquilino: fichaProp.inquilino_completo || fichaProp.inquilino || "---",
     "DNI-NIE-CIF": obtenerDniUnificado(fichaProp),
     Fecha_Valor: fecha,
     Categoria: categoria,
@@ -3588,7 +3778,7 @@ window.guardarMovimientoSuministroManual = async function(e) {
     })
   }).catch(function(){});
 
-  msg.innerHTML = "✅ Apunte registrado en <strong>SUMINISTROS Y GASTOS</strong> (" + escaparHTML(prop) + ")" + (urlFtpGenerada ? " con enlace FTP <code>" + escaparHTML(urlFtpGenerada) + "</code>" : "") + ".";
+  msg.innerHTML = "✅ Apunte registrado en <strong>SUMINISTROS Y GASTOS</strong> (" + escaparHTML(prop) + ").";
   msg.style.display = "block";
   btn.innerText = "⚡ Registrar en SUMINISTROS Y GASTOS y Actualizar Saldo Vivo →";
   btn.disabled = false;
@@ -3621,6 +3811,7 @@ window.guardarAvisoManualPropietario = function(e) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       accion: "publicar_aviso_manual",
+      table_id: "tblWhJlgGJL8swxG",
       propiedad: prop,
       aviso_texto: texto,
       autor: window.sesionActiva.nombre,
@@ -3632,9 +3823,6 @@ window.guardarAvisoManualPropietario = function(e) {
   msg.style.display = "block";
 };
 
-// ============================================================================
-// INCIDENCIAS CON HISTÓRICO TIPO CHAT
-// ============================================================================
 window.abrirModalNuevaIncidencia = function() {
   document.getElementById("msg-inc-exito").style.display = "none";
   document.getElementById("inc-mensaje").value = "";
@@ -3676,6 +3864,7 @@ window.enviarIncidenciaHistoricoMake = async function(e) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       accion: "registrar_incidencia_chat",
+      table_id: "tblGK9zxFpdhK8Oo",
       propiedad: nuevoItem.propiedad,
       "DNI-NIE-CIF": window.sesionActiva["DNI-NIE-CIF"],
       rol_autor: window.sesionActiva.rol,
@@ -3715,9 +3904,6 @@ function renderizarHiloIncidenciasEnPantalla() {
   }).join("");
 }
 
-// ============================================================================
-// RENDERIZADO DINÁMICO DE CARTERA (CON PORTADA Y BOOK), FILTRO DE RECIBOS Y PDF
-// ============================================================================
 function actualizarTarjetaSaldoVivoEnPantalla() {
   var elSaldo = document.getElementById("val-saldo-vivo");
   if (!elSaldo) return;
@@ -3739,6 +3925,8 @@ window.seleccionarPropiedadRecibos = function(nombreProp) {
 };
 
 function renderizarCarteraYRecibosPropietario(filtroTexto) {
+  enriquecerDatosCarteraYLimpiarRecibosVacios();
+
   var contCartera = document.getElementById("contenedor-fichas-cartera");
   var contRecibos = document.getElementById("contenedor-recibos-propietario");
   var contSuministros = document.getElementById("contenedor-suministros-propietario");
@@ -3753,7 +3941,7 @@ function renderizarCarteraYRecibosPropietario(filtroTexto) {
     if (!q) return true;
     return String(p.nombre_propiedad || "").toLowerCase().includes(q) ||
            String(p.direccion || "").toLowerCase().includes(q) ||
-           String(p.inquilino || "").toLowerCase().includes(q) ||
+           String(p.inquilino_completo || p.inquilino || "").toLowerCase().includes(q) ||
            obtenerDniUnificado(p).toLowerCase().includes(q);
   });
 
@@ -3813,7 +4001,7 @@ function renderizarCarteraYRecibosPropietario(filtroTexto) {
       var bloquePortadaHTML = urlPortada
         ? '<div style="position:relative; margin-bottom:10px; border-radius:8px; overflow:hidden; border:1px solid var(--border); height:145px; background:#090d16; cursor:pointer;" onclick="abrirBookFotosInmueble(\'' + escaparHTML(p.nombre_propiedad || "") + '\')">' +
             '<img src="' + escaparHTML(urlPortada) + '" alt="' + escaparHTML(p.nombre_propiedad) + '" style="width:100%; height:100%; object-fit:cover; display:block;">' +
-            '<span style="position:absolute; bottom:8px; right:8px; background:rgba(6,10,18,0.85); color:var(--emerald); border:1px solid var(--emerald); padding:4px 9px; border-radius:6px; font-size:11px; font-weight:800;">📸 Ver Book (' + numFotos + ' fotos)</span>' +
+            '<span style="position:absolute; bottom:8px; right:8px; background:rgba(6,10,18,0.88); color:var(--emerald); border:1px solid var(--emerald); padding:4px 9px; border-radius:6px; font-size:11px; font-weight:800;">📸 Ver Book (' + numFotos + ' fotos)</span>' +
           '</div>'
         : '';
 
@@ -3827,7 +4015,7 @@ function renderizarCarteraYRecibosPropietario(filtroTexto) {
             '</div>' +
             badgeSaldo +
           '</div>' +
-          '<div class="info-row"><span class="info-label">Inquilino:</span><span class="info-value">' + escaparHTML(p.inquilino || "---") + '</span></div>' +
+          '<div class="info-row"><span class="info-label">Inquilino(s):</span><span class="info-value" title="' + escaparHTML(p.inquilino_completo || "") + '">' + escaparHTML(p.inquilino || "---") + '</span></div>' +
           '<div class="info-row"><span class="info-label">DNI-NIE-CIF:</span><span class="info-value">' + escaparHTML(obtenerDniUnificado(p) || "---") + '</span></div>' +
           '<div class="info-row"><span class="info-label">Renta / Suministros:</span><span class="info-value" style="color:var(--emerald);">' + escaparHTML(p.renta_mensual || "---") + ' · ' + escaparHTML(p.regla_facturacion || "AGUA Y LUZ") + '</span></div>' +
         '</div>' +
@@ -3835,7 +4023,7 @@ function renderizarCarteraYRecibosPropietario(filtroTexto) {
           '<button type="button" class="btn-outline-sm" style="flex:1; font-weight:700; border-color:var(--emerald); color:var(--emerald);" onclick="inspeccionarInmuebleComoResidente(\'' + escaparHTML(p.nombre_propiedad || "") + '\')">👁️ Expediente</button>' +
           '<button type="button" class="btn-outline-sm" onclick="abrirBookFotosInmueble(\'' + escaparHTML(p.nombre_propiedad || "") + '\')">📷 Book (' + numFotos + ')</button>' +
           '<button type="button" class="btn-outline-sm" onclick="abrirModalSuministroManual(\'' + escaparHTML(p.nombre_propiedad || "") + '\')">⚡ +Recibo</button>' +
-          '<button type="button" class="btn-outline-sm" onclick="abrirModalAltaPropiedad(\'' + escaparHTML(p.nombre_propiedad || "") + '\')">📤 FTP</button>' +
+          '<button type="button" class="btn-outline-sm" style="border-color:var(--amber); color:var(--amber);" onclick="abrirModalAltaPropiedad(\'' + escaparHTML(p.nombre_propiedad || "") + '\')">📸 Fotos</button>' +
         '</div>' +
       '</div>';
     }).join("");
@@ -3860,7 +4048,6 @@ function renderizarCarteraYRecibosPropietario(filtroTexto) {
     }
   }
 
-  // Barra de filtro por inmueble encima del Libro de Recibos
   var barraProp = document.getElementById("barra-filtro-propiedad-recibos");
   if (!barraProp) {
     barraProp = document.createElement("div");
@@ -4021,11 +4208,59 @@ window.filtrarRecibosPropietario = function(estado, btnElem) {
 };
 
 window.inspeccionarInmuebleComoResidente = function(nombrePropiedad) {
-  var ficha = window.CARTERA_PROPIEDADES.find(function(p) {
+  enriquecerDatosCarteraYLimpiarRecibosVacios();
+  var ficha = (window.CARTERA_PROPIEDADES || []).find(function(p) {
     return String(p.nombre_propiedad || "").toUpperCase() === String(nombrePropiedad || "").toUpperCase();
   });
-  if (ficha) pintarFichaExpedienteEnPantalla(ficha);
+
   mostrarVistaInterna("residente");
+
+  if (ficha) {
+    pintarFichaExpedienteEnPantalla(ficha);
+
+    var infoT = obtenerTitularesRealesPropiedad(ficha);
+    var lblRol = document.getElementById("lbl-titular-rol");
+    if (lblRol) lblRol.innerText = "Inquilino(s) Titular(es) (" + (infoT.total || 1) + "):";
+
+    document.getElementById("val-nombre").innerText = infoT.completo || ficha.inquilino || "---";
+    document.getElementById("val-dni").innerText = (infoT.dnis || obtenerDniUnificado(ficha) || "---") + " · " + detectarPersonalidadPorDni(infoT.dnis);
+    document.getElementById("val-propiedad").innerText = ficha.nombre_propiedad;
+    document.getElementById("val-direccion").innerText = ficha.direccion || "---";
+
+    window.EXPEDIENTE_ACTUAL.propiedad = ficha.nombre_propiedad;
+    window.EXPEDIENTE_ACTUAL.nombre = infoT.completo;
+    window.EXPEDIENTE_ACTUAL.dni = infoT.dnis;
+    window.EXPEDIENTE_ACTUAL.direccion = ficha.direccion;
+
+    actualizarTarjetaSaldoVivoEnPantalla();
+    renderizarRecibosInquilino(ficha.nombre_propiedad, "");
+    actualizarMapaInmueble(ficha.direccion, ficha.nombre_propiedad, ficha.lat, ficha.lon);
+
+    var vistaRes = document.getElementById("vista-residente-contenido");
+    if (vistaRes && window.sesionActiva.rol === "PROPIETARIO") {
+      var navBar = document.getElementById("barra-volver-cartera-prop");
+      if (!navBar) {
+        navBar = document.createElement("div");
+        navBar.id = "barra-volver-cartera-prop";
+        navBar.style.cssText = "display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:16px; padding:12px 16px; background:var(--bg-panel); border:1px solid var(--amber); border-radius:12px;";
+        vistaRes.insertBefore(navBar, vistaRes.firstChild);
+      }
+      navBar.innerHTML =
+        '<button type="button" onclick="mostrarVistaInterna(\'propietaria\')" style="background:var(--amber); color:#042f2e; border:none; padding:8px 16px; border-radius:8px; font-weight:900; font-size:13px; cursor:pointer;">⬅️ Volver a Cartera de Propiedades</button>' +
+        '<div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">' +
+          '<span style="font-size:12px; color:var(--text-muted); font-weight:700;">Viendo expediente de:</span>' +
+          (window.CARTERA_PROPIEDADES || []).map(function(p) {
+            var act = String(p.nombre_propiedad).toUpperCase() === String(ficha.nombre_propiedad).toUpperCase();
+            return '<button type="button" class="prop-chip ' + (act ? 'active' : '') + '" onclick="inspeccionarInmuebleComoResidente(\'' + escaparHTML(p.nombre_propiedad) + '\')">🏠 ' + escaparHTML(p.nombre_propiedad) + '</button>';
+          }).join("") +
+        '</div>';
+    }
+
+    document.querySelectorAll("#val-fotos img").forEach(function(img) {
+      img.onclick = function() { window.abrirFotoEnLightbox(this.src); };
+    });
+  }
+
   window.scrollTo({ top: 0, behavior: "smooth" });
 };
 
@@ -4052,9 +4287,6 @@ function poblarSelectoresPropiedadesModales() {
   });
 }
 
-// ============================================================================
-// VISORES NATIVOS Y GEOLOCALIZACIÓN GPS REAL
-// ============================================================================
 window.abrirVisorNativoPropietario = function(modo) {
   var titulo = document.getElementById("visor-titulo");
   var caja = document.getElementById("visor-contenido-nativo");
@@ -4169,20 +4401,20 @@ function actualizarMapaInmueble(direccion, nombrePropiedad, lat, lon) {
   if (btnEarth) btnEarth.href = "https://earth.google.com/web/search/" + queryGPS;
 }
 
-// ============================================================================
-// ALTAS Y EDICIONES DE PROPIEDADES (PORTADA + BOOK FTP) E INQUILINOS
-// ============================================================================
 window.abrirModalAltaPropiedad = function(nombrePropOpcional) {
   limpiarEstadoUI();
   renderizarCarteraYRecibosPropietario();
   document.getElementById("msg-prop-exito").style.display = "none";
   document.getElementById("status-ftp-upload").innerText = "";
+  var radarBox = document.getElementById("radar-upload-box");
+  if (radarBox) radarBox.style.display = "none";
   if (nombrePropOpcional) precargarPropiedadExistente(nombrePropOpcional);
   else precargarPropiedadExistente("NUEVA");
   document.getElementById("modal-alta-propiedad").style.display = "flex";
 };
 
 window.precargarPropiedadExistente = function(clave) {
+  enriquecerDatosCarteraYLimpiarRecibosVacios();
   var existente = window.CARTERA_PROPIEDADES.find(function(p) {
     return String(p.nombre_propiedad || "").toUpperCase() === String(clave || "").toUpperCase();
   });
@@ -4196,9 +4428,10 @@ window.precargarPropiedadExistente = function(clave) {
     document.getElementById("prop-alta-lon").value = existente.lon || "";
     document.getElementById("prop-alta-revision").value = existente.revision || "";
     document.getElementById("prop-alta-iban").value = existente.iban || window.EXPEDIENTE_ACTUAL.iban || "";
-    var fotosStr = Array.isArray(existente.fotos) ? existente.fotos.join(", ") : "";
+    var fotosLimpias = limpiarListaUrlsMultimedia(existente.fotos);
+    var fotosStr = fotosLimpias.join(", ");
     document.getElementById("prop-alta-fotos").value = fotosStr;
-    if (inpPortada) inpPortada.value = existente.foto_portada || "";
+    if (inpPortada) inpPortada.value = existente.foto_portada || (fotosLimpias[0] || "");
     document.getElementById("prop-alta-avisos").value = existente.avisos || "";
     previsualizarFotosModal(fotosStr);
   } else {
@@ -4214,15 +4447,93 @@ window.precargarPropiedadExistente = function(clave) {
     document.getElementById("prop-alta-avisos").value = "";
     previsualizarFotosModal("");
   }
+
+  var barra = document.getElementById("chips-modal-alta-propiedad");
+  if (barra) {
+    barra.querySelectorAll(".prop-chip").forEach(function(btn) {
+      var txt = btn.innerText.toUpperCase();
+      if (clave === "NUEVA") {
+        btn.classList.toggle("active", txt.includes("NUEVA"));
+      } else {
+        btn.classList.toggle("active", txt.includes(String(clave).toUpperCase()));
+      }
+    });
+  }
 };
 
 window.previsualizarFotosModal = function(cadenaUrls) {
   var cont = document.getElementById("preview-fotos-modal");
+  var inpPortada = document.getElementById("prop-alta-portada");
+  var inpFotos = document.getElementById("prop-alta-fotos");
   if (!cont) return;
-  var urls = String(cadenaUrls || "").split(",").map(function(s) { return s.trim(); }).filter(function(s) { return s.startsWith("http"); });
-  cont.innerHTML = urls.map(function(u) {
-    return '<img src="' + escaparHTML(u) + '" alt="Vista previa Galería" onclick="window.open(this.src, \'_blank\')">';
+
+  var urls = limpiarListaUrlsMultimedia(cadenaUrls);
+  if (inpFotos) inpFotos.value = urls.join(", ");
+  var portadaActual = (inpPortada && inpPortada.value && !inpPortada.value.includes("open.larksuite.com"))
+    ? inpPortada.value.trim()
+    : (urls[0] || "");
+  if (inpPortada) inpPortada.value = portadaActual;
+
+  if (urls.length === 0) {
+    cont.innerHTML = '<div style="grid-column:1/-1; padding:12px; color:var(--text-muted); font-size:12px; background:var(--bg-input); border-radius:8px;">Sin imágenes publicadas todavía en este inmueble.</div>';
+    return;
+  }
+
+  cont.innerHTML = urls.map(function(u, idx) {
+    var esPortada = (u === portadaActual);
+    return '<div style="background:var(--bg-input); border:2px solid ' + (esPortada ? 'var(--amber)' : 'var(--border)') + '; border-radius:8px; overflow:hidden; position:relative;">' +
+      '<img src="' + escaparHTML(u) + '" alt="Imagen ' + (idx + 1) + '" style="width:100%; height:95px; object-fit:cover; cursor:pointer; display:block;" onclick="abrirFotoEnLightbox(this.src)">' +
+      '<div style="display:flex; justify-content:space-between; align-items:center; padding:5px 6px; background:#070b14; gap:4px;">' +
+        '<button type="button" onclick="seleccionarPortadaEnModal(\'' + escaparHTML(u) + '\')" style="flex:1; background:' + (esPortada ? 'var(--amber)' : 'transparent') + '; color:' + (esPortada ? '#042f2e' : 'var(--amber)') + '; border:1px solid var(--amber); border-radius:4px; font-size:10px; font-weight:800; padding:2px 4px; cursor:pointer;">' + (esPortada ? '⭐ Portada' : '☆ Portada') + '</button>' +
+        '<button type="button" onclick="quitarFotoIndividualModal(' + idx + ')" style="background:var(--danger-soft); color:#fca5a5; border:1px solid var(--danger); border-radius:4px; font-size:10px; font-weight:800; padding:2px 6px; cursor:pointer;" title="Quitar">🗑️</button>' +
+      '</div>' +
+    '</div>';
   }).join("");
+};
+
+window.seleccionarPortadaEnModal = function(urlElegida) {
+  var inpPortada = document.getElementById("prop-alta-portada");
+  var inpFotos = document.getElementById("prop-alta-fotos");
+  var nombreP = document.getElementById("prop-alta-nombre").value.trim();
+  if (inpPortada) inpPortada.value = urlElegida;
+  if (nombreP) {
+    var p = (window.CARTERA_PROPIEDADES || []).find(function(item) {
+      return String(item.nombre_propiedad || "").toUpperCase() === nombreP.toUpperCase();
+    });
+    if (p) {
+      p.foto_portada = urlElegida;
+      guardarCacheMultimediaPropiedad(p.nombre_propiedad, p.fotos || [], urlElegida);
+    }
+  }
+  previsualizarFotosModal(inpFotos ? inpFotos.value : "");
+  renderizarCarteraYRecibosPropietario();
+};
+
+window.quitarFotoIndividualModal = function(idxBorrar) {
+  var inpFotos = document.getElementById("prop-alta-fotos");
+  var inpPortada = document.getElementById("prop-alta-portada");
+  var nombreP = document.getElementById("prop-alta-nombre").value.trim();
+  if (!inpFotos) return;
+  var urls = limpiarListaUrlsMultimedia(inpFotos.value);
+  var quitada = urls.splice(idxBorrar, 1)[0];
+  inpFotos.value = urls.join(", ");
+  if (inpPortada && inpPortada.value === quitada) {
+    inpPortada.value = urls[0] || "";
+  }
+  if (nombreP) {
+    guardarCacheMultimediaPropiedad(nombreP, urls, inpPortada ? inpPortada.value : "");
+  }
+  previsualizarFotosModal(inpFotos.value);
+};
+
+window.vaciarGaleriaPropiedadModal = function() {
+  var inpFotos = document.getElementById("prop-alta-fotos");
+  var inpPortada = document.getElementById("prop-alta-portada");
+  var nombreP = document.getElementById("prop-alta-nombre").value.trim();
+  if (inpFotos) inpFotos.value = "";
+  if (inpPortada) inpPortada.value = "";
+  if (nombreP) guardarCacheMultimediaPropiedad(nombreP, [], "");
+  previsualizarFotosModal("");
 };
 
 window.guardarNuevaPropiedad = function(e) {
@@ -4241,13 +4552,16 @@ window.guardarNuevaPropiedad = function(e) {
   var reglaP  = document.getElementById("prop-alta-regla").value;
   var revP    = document.getElementById("prop-alta-revision").value.trim();
   var ibanP   = document.getElementById("prop-alta-iban").value.trim();
-  var fotosRaw = document.getElementById("prop-alta-fotos").value.trim();
+  var fotosLimpias = limpiarListaUrlsMultimedia(document.getElementById("prop-alta-fotos").value);
+  var fotosRaw = fotosLimpias.join(", ");
   var inpPortada = document.getElementById("prop-alta-portada");
   var portadaRaw = inpPortada ? inpPortada.value.trim() : "";
-  if (!portadaRaw && fotosRaw) {
-    portadaRaw = fotosRaw.split(",")[0].trim();
+  if (!portadaRaw && fotosLimpias.length > 0) {
+    portadaRaw = fotosLimpias[0];
   }
   var avisosP = document.getElementById("prop-alta-avisos").value.trim();
+
+  guardarCacheMultimediaPropiedad(nombreP, fotosLimpias, portadaRaw);
 
   var nuevaFicha = normalizarPropiedadDesdeMake({
     PROPIEDAD: nombreP,
@@ -4287,6 +4601,7 @@ window.guardarNuevaPropiedad = function(e) {
       "DNI-NIE-CIF": window.sesionActiva["DNI-NIE-CIF"],
       dni_propietario: window.sesionActiva["DNI-NIE-CIF"],
       nombre_propietario: window.sesionActiva.nombre,
+      propiedad: nombreP,
       PROPIEDAD: nombreP,
       Tipo_Inmueble: tipoUso,
       Regla_Facturacion: reglaP,
@@ -4298,11 +4613,13 @@ window.guardarNuevaPropiedad = function(e) {
       iban: ibanP,
       Foto_Portada_URL: portadaRaw,
       Fotos_URL: fotosRaw,
+      foto_portada_url: portadaRaw,
+      todas_las_fotos_url: fotosRaw,
       avisos: avisosP
     })
   })
   .then(function() {
-    msgExito.innerHTML = "✅ Propiedad <strong>" + escaparHTML(nombreP) + "</strong> actualizada con su Foto de Portada y Book en <code>PROPERTY_GESTION</code>.";
+    msgExito.innerHTML = "✅ Propiedad <strong>" + escaparHTML(nombreP) + "</strong> actualizada con su Foto de Portada y Book (" + fotosLimpias.length + " fotos).";
     msgExito.style.display = "block";
     btn.innerText = "💾 Guardar Propiedad en Cartera y Sincronizar con PROPERTY_GESTION →";
     btn.disabled = false;
@@ -4342,6 +4659,7 @@ window.guardarNuevoInquilino = function(e) {
     return String(p.nombre_propiedad || "").toUpperCase() === propSel.toUpperCase();
   });
   if (fichaP) {
+    fichaP.inquilino_original = nombreInq;
     fichaP.inquilino = nombreInq;
     fichaP["DNI-NIE-CIF"] = dniInq;
     renderizarCarteraYRecibosPropietario();
@@ -4392,9 +4710,6 @@ window.seleccionarTodasPropiedadesAbogado = function() {
   inp.value = nombres.join(", ");
 };
 
-// ============================================================================
-// LOGIN E IDIOMAS (SIN BUCLES RECURSIVOS)
-// ============================================================================
 window.pintarSumaLevel = function() {
   var qElem = document.getElementById("lvl-math-question");
   var iElem = document.getElementById("input-math");
@@ -4407,67 +4722,6 @@ window.pintarSumaLevel = function() {
     qElem.innerText = (dict.math_prefix || "Verificación: ¿Cuánto es ") + n1 + " + " + n2 + "?";
     if (iElem) iElem.value = "";
   }
-};
-
-
-window.cambiarIdioma = function(lang) {
-  var l = I18N_DICCIONARIO[lang] ? lang : "es";
-  window.sesionActiva.idioma = l;
-  document.documentElement.lang = l;
-  document.documentElement.dir = "ltr";
-
-  var dict = I18N_DICCIONARIO[l];
-  document.querySelectorAll("[data-i18n]").forEach(function(el) {
-    var key = el.getAttribute("data-i18n");
-    if (dict[key]) {
-      el.innerText = dict[key];
-    }
-  });
-
-  // Traducir todo el panel interior automáticamente
-  var p = I18N_PANEL_INTERNO[l] || I18N_PANEL_INTERNO.es;
-  var ownerGreeting = document.getElementById("owner-greeting-name");
-  if (ownerGreeting && ownerGreeting.parentElement) {
-    var nombreActual = ownerGreeting.innerText;
-    ownerGreeting.parentElement.innerHTML = '<span data-i18n="owner_hello">' + dict.owner_hello + '</span> <strong style="color:#fff;" id="owner-greeting-name">' + nombreActual + '</strong>. ' + p.owner_intro;
-  }
-
-  var cards = document.querySelectorAll("#vista-propietaria-carmen .owner-card");
-  if (cards.length >= 4) {
-    cards[0].querySelector("h3").innerText = p.c1_t; cards[0].querySelector("p").innerText = p.c1_p; cards[0].querySelector("button").innerText = p.c1_b;
-    cards[1].querySelector("h3").innerText = p.c2_t; cards[1].querySelector("p").innerText = p.c2_p; cards[1].querySelector("button").innerText = p.c2_b;
-    cards[2].querySelector("h3").innerText = p.c3_t; cards[2].querySelector("p").innerText = p.c3_p; cards[2].querySelector("button").innerText = p.c3_b;
-    cards[3].querySelector("h3").innerText = p.c4_t; cards[3].querySelector("p").innerText = p.c4_p; cards[3].querySelector("button").innerText = p.c4_b;
-  }
-
-  var panelesOwner = document.querySelectorAll("#vista-propietaria-carmen > .panel-box");
-  if (panelesOwner.length >= 6) {
-    panelesOwner[0].querySelector(".panel-header span:first-child").innerText = p.cfg_h;
-    panelesOwner[0].querySelector("p").innerText = p.cfg_p;
-    var btnsAlta = panelesOwner[0].querySelectorAll("button");
-    if (btnsAlta.length >= 2) { btnsAlta[0].innerText = p.btn_alta_p; btnsAlta[1].innerText = p.btn_alta_i; }
-
-    panelesOwner[1].querySelector(".panel-header span:first-child").innerText = p.sec_fichas;
-    panelesOwner[2].querySelector(".panel-header span:first-child").innerText = p.sec_sum;
-    var btnSum = panelesOwner[2].querySelector(".panel-header button");
-    if (btnSum) btnSum.innerText = p.btn_add_sum;
-
-    panelesOwner[3].querySelector(".panel-header span:first-child").innerText = p.sec_rec;
-    panelesOwner[4].querySelector(".panel-header span:first-child").innerText = p.sec_geo;
-    panelesOwner[5].querySelector(".panel-header span:first-child").innerText = p.sec_abg;
-  }
-
-  var subSaldo = document.getElementById("sub-saldo-vivo");
-  if (subSaldo && subSaldo.previousElementSibling) {
-    subSaldo.previousElementSibling.innerText = p.saldo_t;
-    subSaldo.innerText = p.saldo_s;
-  }
-  var btnInc = document.getElementById("btn-nueva-incidencia-res");
-  if (btnInc) btnInc.innerText = p.btn_inc;
-  var inpBuscar = document.getElementById("input-buscar-cartera");
-  if (inpBuscar) inpBuscar.placeholder = p.ph_search;
-
-  window.pintarSumaLevel();
 };
 
 window.llamarAlWebhook = function() {
@@ -4720,16 +4974,18 @@ function pintarFichaExpedienteEnPantalla(d) {
 
   actualizarTarjetaSaldoVivoEnPantalla();
 
-  var fotosFinales = (Array.isArray(fichaProp.fotos) && fichaProp.fotos.length > 0)
-    ? fichaProp.fotos
-    : normalizarPropiedadDesdeMake(d).fotos;
+  var fotosFinales = limpiarListaUrlsMultimedia(
+    (Array.isArray(fichaProp.fotos) && fichaProp.fotos.length > 0)
+      ? fichaProp.fotos
+      : normalizarPropiedadDesdeMake(d).fotos
+  );
 
   var wrapFotos = document.getElementById("wrap-galeria-fotos");
   var galeriaBox = document.getElementById("val-fotos");
   if (Array.isArray(fotosFinales) && fotosFinales.length > 0) {
     wrapFotos.style.display = "block";
     galeriaBox.innerHTML = fotosFinales.map(function(u) {
-      return '<img src="' + escaparHTML(u) + '" alt="' + escaparHTML(propiedadNombre) + '" onclick="window.open(this.src, \'_blank\')">';
+      return '<img src="' + escaparHTML(u) + '" alt="' + escaparHTML(propiedadNombre) + '" onclick="abrirFotoEnLightbox(this.src)">';
     }).join("");
   } else {
     wrapFotos.style.display = "none";
@@ -4783,6 +5039,8 @@ function renderizarPortalConDatos(data, identificador) {
   var rawRecibos = asegurarArrayDesdeMake(data.recibos_lista || data.suministros_items || data.PROPERTY_SUMINISTROS_Y_GASTOS);
   window.RECIBOS_CARTERA = rawRecibos.map(normalizarReciboDesdeMake);
   window.SUMINISTROS_GASTOS = asegurarArrayDesdeMake(data.suministros_lista);
+
+  enriquecerDatosCarteraYLimpiarRecibosVacios();
 
   var rolDetectado = String(data.rol || window.sesionActiva.rol || "INQUILINO").toUpperCase();
   var codCheck = String(data.codigo_propietario || data.codigo_inquilino || data["Autho-code-propietario"] || data["Auto-code-propietario"] || data["Autho-code-abogado"] || identificador || "").toUpperCase();
@@ -4899,9 +5157,6 @@ window.enviarAutorizacionAbogado = function(e) {
   });
 };
 
-// ============================================================================
-// CHAT DE ELENA IA ADVISOR
-// ============================================================================
 function abrirChatElena() { document.getElementById("elena-chat-window").style.display = "flex"; }
 function cerrarChatElena() { document.getElementById("elena-chat-window").style.display = "none"; }
 
@@ -5032,102 +5287,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
   }
 });
-
-  window.archivosSeleccionadosFTP = [];
-
-  window.manejarPrevisualizacion = function(event) {
-    const input = event.target;
-    const files = Array.from(input.files || []);
-    const statusEl = document.getElementById("status-ftp-upload");
-
-    if (files.length > 20) {
-      alert("⚠️ Solo puedes seleccionar un máximo de 20 imágenes por lote.");
-      input.value = "";
-      window.archivosSeleccionadosFTP = [];
-      renderizarMiniaturasFTP();
-      return;
-    }
-
-    window.archivosSeleccionadosFTP = [];
-    files.forEach((file) => {
-      if (file.size > 10 * 1024 * 1024) {
-        alert(`⚠️ La imagen "${file.name}" supera el límite de 10 MB y se ha omitido.`);
-        return;
-      }
-      window.archivosSeleccionadosFTP.push(file);
-    });
-
-    sincronizarInputArchivosFTP();
-    renderizarMiniaturasFTP();
-  };
-
-  window.eliminarFotoPrevisualizacion = function(index) {
-    window.archivosSeleccionadosFTP.splice(index, 1);
-    sincronizarInputArchivosFTP();
-    renderizarMiniaturasFTP();
-  };
-
-  function sincronizarInputArchivosFTP() {
-    const input = document.getElementById("prop-file-ftp");
-    const statusEl = document.getElementById("status-ftp-upload");
-    if (!input) return;
-
-    const dt = new DataTransfer();
-    window.archivosSeleccionadosFTP.forEach((f) => dt.items.add(f));
-    input.files = dt.files;
-
-    if (statusEl) {
-      if (dt.files.length > 0) {
-        statusEl.innerHTML = "<span style='color:var(--emerald);'>📸 " + dt.files.length + " imagen(es) lista(s). Pulsa <strong>☁️ Subir al FTP y Obtener Enlace</strong> o quita las que no quieras con la ✕.</span>";
-      } else {
-        statusEl.innerHTML = "<span style='color:var(--text-muted);'>Ningún archivo seleccionado.</span>";
-      }
-    }
-  }
-
-  function renderizarMiniaturasFTP() {
-    const previewContainer = document.getElementById("galeria-preview");
-    if (!previewContainer) return;
-    previewContainer.innerHTML = "";
-
-    window.archivosSeleccionadosFTP.forEach((file, idx) => {
-      const wrapper = document.createElement("div");
-      wrapper.style.position = "relative";
-      wrapper.style.width = "80px";
-      wrapper.style.height = "80px";
-
-      const img = document.createElement("img");
-      img.title = file.name + " (" + (file.size / 1024 / 1024).toFixed(2) + " MB)";
-      img.style.width = "100%";
-      img.style.height = "100%";
-      img.style.objectFit = "cover";
-      img.style.borderRadius = "8px";
-      img.style.border = "1px solid rgba(16, 185, 129, 0.45)";
-      img.style.boxShadow = "0 3px 6px rgba(0, 0, 0, 0.25)";
-
-      const reader = new FileReader();
-      reader.onload = function(e) { img.src = e.target.result; };
-      reader.readAsDataURL(file);
-
-      // Botón X para quitar la foto si no la quieres
-      const btnClose = document.createElement("button");
-      btnClose.type = "button";
-      btnClose.innerHTML = "✕";
-      btnClose.title = "Quitar esta imagen";
-      btnClose.style.cssText = "position:absolute; top:-6px; right:-6px; width:22px; height:22px; border-radius:50%; background:var(--danger); color:#fff; border:1px solid #fff; font-size:11px; font-weight:900; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 5px rgba(0,0,0,0.4);";
-      btnClose.onclick = function() { window.eliminarFotoPrevisualizacion(idx); };
-
-      // Etiqueta con el peso abajo
-      const badgeSize = document.createElement("span");
-      badgeSize.innerText = (file.size / 1024 / 1024).toFixed(1) + "MB";
-      badgeSize.style.cssText = "position:absolute; bottom:3px; left:3px; background:rgba(6,10,18,0.85); color:#fff; font-size:9.5px; font-weight:700; padding:1px 4px; border-radius:4px;";
-
-      wrapper.appendChild(img);
-      wrapper.appendChild(btnClose);
-      wrapper.appendChild(badgeSize);
-      previewContainer.appendChild(wrapper);
-    });
-  }
+window.pintarSumaLevel();
 </script>
 </body>
 </html>
