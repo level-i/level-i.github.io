@@ -1784,17 +1784,52 @@
       Abona este recibo cómodamente con <strong>tu tarjeta o con la tarjeta de cualquier familiar o amigo</strong>. El recibo quedará marcado como <strong>ABONADO</strong> en el acto, podrás descargar tu justificante oficial en PDF y el importe se transferirá automáticamente a la cuenta del propietario.
     </p>
 
-    <div class="panel-box" style="background:var(--bg-input); margin-bottom:16px; border-color:#3b82f6;">
-      <div class="info-row"><span class="info-label">Recibo / Concepto:</span><span class="info-value" id="tpv-lbl-concepto">---</span></div>
+   <div class="panel-box" style="background:var(--bg-input); margin-bottom:16px; border-color:#3b82f6;">
+      <div class="info-row">
+        <span class="info-label">Recibo / Concepto:</span>
+        <span class="info-value" style="display:flex; align-items:center; gap:6px; justify-content:flex-end;">
+          <span id="tpv-lbl-concepto">---</span>
+          <button type="button" class="btn-outline-sm" style="padding:3px 8px; font-size:11px;" onclick="copiarTextoTPV('tpv-lbl-concepto', this)">📋 Copiar</button>
+        </span>
+      </div>
       <div class="info-row"><span class="info-label">Inmueble / Titular:</span><span class="info-value" id="tpv-lbl-propiedad">---</span></div>
-      <div class="info-row"><span class="info-label">Importe a Pagar por el Inquilino (0 € recargo):</span><span class="info-value" style="font-size:18px; color:var(--neon-green);" id="tpv-lbl-importe">---</span></div>
+      <div class="info-row">
+        <span class="info-label">IBAN Transferencia (Propietario):</span>
+        <span class="info-value" style="display:flex; align-items:center; gap:6px; justify-content:flex-end; color:var(--neon-cyan);">
+          <span id="tpv-lbl-iban">---</span>
+          <button type="button" class="btn-outline-sm" style="padding:3px 8px; font-size:11px; border-color:var(--neon-cyan); color:var(--neon-cyan);" onclick="copiarTextoTPV('tpv-lbl-iban', this)">📋 Copiar IBAN</button>
+        </span>
+      </div>
+      <div class="info-row"><span class="info-label">Importe a Pagar (0 € recargo):</span><span class="info-value" style="font-size:18px; color:var(--neon-green);" id="tpv-lbl-importe">---</span></div>
       <div class="info-row" id="tpv-row-desglose-propietario" style="border-top:1px dashed var(--border); margin-top:6px; padding-top:10px;">
         <span class="info-label" style="font-size:12px;">Liquidación Automática al Propietario (Servicio Gestión TPV):</span>
         <span class="info-value" style="font-size:12px; color:var(--amber);" id="tpv-lbl-neto-propietario">---</span>
       </div>
+
+      <!-- QR SEPA + ACCESO RÁPIDO A BANCOS + HOJA DE PAGO -->
+      <div style="margin-top:14px; padding-top:14px; border-top:1px solid var(--border); display:flex; gap:14px; align-items:center; flex-wrap:wrap;">
+        <div style="background:#fff; padding:6px; border-radius:8px; text-align:center;">
+          <img id="tpv-qr-sepa" src="" alt="QR SEPA Transferencia" style="width:105px; height:105px; display:block;">
+          <div style="font-size:9.5px; color:#0f172a; font-weight:800; margin-top:3px;">QR SEPA (App Banco)</div>
+        </div>
+        <div style="flex:1; min-width:210px;">
+          <div style="font-size:11.5px; font-weight:700; color:var(--text-muted); margin-bottom:8px;">🏦 Acceso rápido a tu Banca Online:</div>
+          <div style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:10px;">
+            <a href="https://www.caixabank.es" target="_blank" rel="noopener" class="btn-outline-sm" style="text-decoration:none; font-size:11px;">CaixaBank</a>
+            <a href="https://www.bancosantander.es" target="_blank" rel="noopener" class="btn-outline-sm" style="text-decoration:none; font-size:11px;">Santander</a>
+            <a href="https://www.bbva.es" target="_blank" rel="noopener" class="btn-outline-sm" style="text-decoration:none; font-size:11px;">BBVA</a>
+            <a href="https://www.bancsabadell.com" target="_blank" rel="noopener" class="btn-outline-sm" style="text-decoration:none; font-size:11px;">Sabadell</a>
+            <a href="https://www.ing.es" target="_blank" rel="noopener" class="btn-outline-sm" style="text-decoration:none; font-size:11px;">ING</a>
+            <a href="https://www.bankinter.com" target="_blank" rel="noopener" class="btn-outline-sm" style="text-decoration:none; font-size:11px;">Bankinter</a>
+          </div>
+          <button type="button" class="btn-outline-sm" style="width:100%; border-color:var(--emerald); color:var(--emerald); font-weight:800;" onclick="imprimirHojaPagoTransferencia()">
+            🖨️ Imprimir Hoja de Pago (Ventanilla / Cajero)
+          </button>
+        </div>
+      </div>
     </div>
 
-<form onsubmit="procesarPagoTarjetaTPV(event)">
+    <form onsubmit="procesarPagoTarjetaTPV(event)">
       <input type="hidden" id="tpv-id-recibo" value="">
       <div class="grid-2col" style="display:none; margin-bottom:14px;">
         <div class="form-group" style="margin-bottom:0;">
@@ -1811,15 +1846,15 @@
       </div>
 
       <div style="background:var(--amber-soft); border:1px solid var(--amber); color:var(--amber); padding:14px; border-radius:10px; text-align:center; font-size:13.5px; font-weight:700; margin-bottom:14px;">
-        🛠️ Servicio de pago con tarjeta (TPV) en mantenimiento.<br>
-        <span style="font-size:12px; font-weight:500; color:#e2e8f0;">Estamos ultimando la conexión bancaria segura. Mientras tanto, puedes realizar el abono por transferencia al IBAN del contrato.</span>
+        <span id="tpv-maint-title">🛠️ Servicio de pago con tarjeta (TPV) en mantenimiento.</span><br>
+        <span id="tpv-maint-desc" style="font-size:12px; font-weight:500; color:#e2e8f0;">Estamos ultimando la conexión bancaria segura. Mientras tanto, puedes realizar el abono por transferencia al IBAN del contrato.</span>
       </div>
 
       <button type="button" id="btn-confirmar-tpv" class="btn-primary" style="background:#334155; color:var(--text-muted);" onclick="cerrarModal('modal-pasarela-tpv')">
         Entendido · Cerrar
       </button>
       <div id="msg-tpv-exito" class="status-msg ok"></div>
-    </form>    
+    </form>     
   </div>
 </div>
 
