@@ -3294,16 +3294,169 @@ window.abrirModalPagoTPV = function(idRecibo) {
   var rec = window.RECIBOS_CARTERA.find(function(r) { return String(r.id_recibo) === String(idRecibo); });
   if (!rec) return;
 
+  window.abrirModalPagoTPV = function(idRecibo) {
+  if (window.sesionActiva && window.sesionActiva.rol === "ABOGADO") return;
+  var rec = window.RECIBOS_CARTERA.find(function(r) { return String(r.id_recibo) === String(idRecibo); });
+  if (!rec) return;
+
   var calc = calcularComisionTPVPropietario(rec.total_con_impuestos || rec.importe);
+  var ibanRaw = rec.iban || window.EXPEDIENTE_ACTUAL.iban || "Consultar contrato";
+  var ibanLimpio = String(ibanRaw).replace(/\s+/g, "").toUpperCase();
+  var beneficiario = String(rec.propietario || "Propiedad Arrendadora").slice(0, 70);
+  var conceptoTexto = rec.concepto + " (Nº " + rec.id_recibo + ")";
+
   document.getElementById("tpv-id-recibo").value = rec.id_recibo;
-  document.getElementById("tpv-lbl-concepto").innerText = rec.concepto + " (Nº " + rec.id_recibo + ")";
+  document.getElementById("tpv-lbl-concepto").innerText = conceptoTexto;
   document.getElementById("tpv-lbl-propiedad").innerText = rec.propiedad + " · " + rec.inquilino;
+  document.getElementById("tpv-lbl-iban").innerText = ibanRaw;
   document.getElementById("tpv-lbl-importe").innerText = formatearEuros(calc.bruto);
+
+  var rowDesglose = document.getElementById("tpv-row-desglose-propietario");
+  if (rowDesglose) {
+    rowDesglose.style.display = (window.sesionActiva && window.sesionActiva.rol === "PROPIETARIO") ? "flex" : "none";
+  }
   document.getElementById("tpv-lbl-neto-propietario").innerText =
     "Neto a transferir al Propietario: " + formatearEuros(calc.neto) + " (Descontados " + formatearEuros(calc.comision) + " · " + calc.regla + ")";
+
+  var qrImg = document.getElementById("tpv-qr-sepa");
+  if (qrImg) {
+    var payloadEpc = [
+      "BCD", "002", "1", "SCT", "",
+      beneficiario,
+      ibanLimpio,
+      "EUR" + calc.bruto.toFixed(2),
+      "", "",
+      conceptoTexto.slice(0, 140)
+    ].join("\n");
+    qrImg.src = "https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=" + encodeURIComponent(payloadEpc);
+  }
+
+  var tLang = I18N_PANEL_INTERNO[(window.sesionActiva && window.sesionActiva.idioma) || "es"] || I18N_PANEL_INTERNO.es;
+  var elMaintT = document.getElementById("tpv-maint-title");
+  var elMaintD = document.getElementById("tpv-maint-desc");
+  if (elMaintT) elMaintT.innerText = tLang.tpv_maint_title;
+  if (elMaintD) elMaintD.innerText = tLang.tpv_maint_desc;
+
   document.getElementById("tpv-nombre-pagador").value = rec.inquilino && rec.inquilino !== "---" ? rec.inquilino : "";
   document.getElementById("msg-tpv-exito").style.display = "none";
   document.getElementById("modal-pasarela-tpv").style.display = "flex";
+};
+
+window.copiarTextoTPV = function(idElemento, btn) {
+  var el = document.getElementById(idElemento);
+  if (!el) return;
+  var txt = el.innerText.trim();
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(txt).then(function() {
+      var orig = btn.innerText;
+      btn.innerText = "✓ Copiado";
+      setTimeout(function() { btn.innerText = orig; }, 1600);
+    });
+  }
+};
+
+window.imprimirHojaPagoTransferencia = function() {
+  var concepto = document.getElementById("tpv-lbl-concepto").innerText;
+  var prop = document.getElementById("tpv-lbl-propiedad").innerText;
+  var iban = document.getElementById("tpv-lbl-iban").innerText;
+  var importe = document.getElementById("tpv-lbl-importe").innerText;
+  var qrSrc = document.getElementById("tpv-qr-sepa").src;
+
+  var w = window.open("", "_blank", "width=780,height=840");
+  if (!w) return;
+  w.document.open();
+  w.document.write(
+    '<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Hoja de Pago por Transferencia</title>' +
+    '<style>body{font-family:Helvetica,Arial,sans-serif;padding:30px;color:#0f172a;} .box{border:2px solid #0f172a;border-radius:10px;padding:24px;max-width:650px;margin:0 auto;} .row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #cbd5e1;font-size:15px;} .big{font-size:20px;font-weight:800;color:#047857;}</style></head><body>' +
+    '<div class="box"><h2 style="margin-top:0;">Hoja de Pago por Transferencia / Ventanilla</h2>' +
+    '<div class="row"><span>Inmueble / Titular:</span><strong>' + escaparHTML(prop) + '</strong></div>' +
+    '<div class="row"><span>Concepto obligatorio:</span><strong>' + escaparHTML(concepto) + '</strong></div>' +
+    '<div class="row"><span>IBAN Beneficiario:</span><strong style="font-size:17px;">' + escaparHTML(iban) + '</strong></div>' +
+    '<div class="row"><span>Importe Exacto:</span><span class="big">' + escaparHTML(importe) + '</span></div>' +
+    '<div style="text-align:center;margin-top:20px;"><img src="' + qrSrc + '" style="width:150px;height:150px;"><div style="font-size:12px;color:#475569;margin-top:6px;">Escanea este código QR SEPA desde tu app bancaria compatible</div></div></div>' +
+    '<script>setTimeout(function(){window.print();},400);<\/script></body></html>'
+  );
+  w.document.close();
+};
+
+window.abrirModalEnlacePagoAbogado = function(idRecibo) {
+  var rec = window.RECIBOS_CARTERA.find(function(r) { return String(r.id_recibo) === String(idRecibo); });
+  if (!rec) return;
+
+  document.getElementById("abg-pay-id-recibo").value = rec.id_recibo;
+  document.getElementById("abg-pay-concepto").innerText = rec.concepto + " (Nº " + rec.id_recibo + ")";
+  document.getElementById("abg-pay-propiedad").innerText = rec.propiedad + " · " + rec.inquilino;
+  document.getElementById("abg-pay-importe").innerText = formatearEuros(rec.total_con_impuestos || rec.importe);
+  document.getElementById("abg-pay-iban").innerText = rec.iban || window.EXPEDIENTE_ACTUAL.iban || "Consultar contrato";
+  document.getElementById("abg-pay-nota").value = "";
+  document.getElementById("msg-abg-pay-exito").style.display = "none";
+  document.getElementById("msg-abg-pay-error").style.display = "none";
+  document.getElementById("modal-enlace-pago-abogado").style.display = "flex";
+};
+
+window.enviarEnlacePagoAbogado = function(e) {
+  e.preventDefault();
+  var idRec = document.getElementById("abg-pay-id-recibo").value;
+  var metodo = document.getElementById("abg-pay-metodo").value;
+  var enviarWa = document.getElementById("abg-pay-chk-wa").checked;
+  var enviarEmail = document.getElementById("abg-pay-chk-email").checked;
+  var nota = document.getElementById("abg-pay-nota").value.trim();
+  var btn = document.getElementById("btn-enviar-enlace-abg");
+  var msgOk = document.getElementById("msg-abg-pay-exito");
+  var msgErr = document.getElementById("msg-abg-pay-error");
+
+  msgOk.style.display = "none";
+  msgErr.style.display = "none";
+
+  if (!enviarWa && !enviarEmail) {
+    msgErr.innerText = "⚠️ Selecciona al menos un canal de envío (WhatsApp o Correo Electrónico).";
+    msgErr.style.display = "block";
+    return;
+  }
+
+  var rec = window.RECIBOS_CARTERA.find(function(r) { return String(r.id_recibo) === String(idRec); });
+  if (!rec) return;
+
+  var dniInq = obtenerDniUnificado(rec) || "";
+  var enlaceDirectoPortal = "https://app.level-i.com/gestion-de-alquileres?code=" + encodeURIComponent(dniInq);
+
+  btn.disabled = true;
+  btn.innerText = "Enviando requerimiento de pago...";
+
+  fetch(URL_WEBHOOK_PROPERTY_GESTION, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      accion: "enviar_enlace_pago_abogado",
+      id_recibo: rec.id_recibo,
+      propiedad: rec.propiedad,
+      concepto: rec.concepto,
+      importe: formatearEuros(rec.total_con_impuestos || rec.importe),
+      iban_propietario: rec.iban || window.EXPEDIENTE_ACTUAL.iban || "",
+      inquilino: rec.inquilino,
+      "DNI-NIE-CIF": dniInq,
+      metodo_pago_solicitado: metodo,
+      enviar_whatsapp: enviarWa,
+      enviar_email: enviarEmail,
+      nota_abogado: nota,
+      enlace_pago_portal: enlaceDirectoPortal,
+      solicitado_por_abogado: window.sesionActiva.nombre || "Servicios Jurídicos",
+      dni_abogado: window.sesionActiva["DNI-NIE-CIF"] || ""
+    })
+  })
+  .then(function() {
+    var canales = [enviarWa ? "WhatsApp" : "", enviarEmail ? "Email" : ""].filter(Boolean).join(" y ");
+    msgOk.innerHTML = "✅ Solicitud de envío cursada por <strong>" + canales + "</strong> (" + metodo + ") para el recibo <strong>" + escaparHTML(rec.id_recibo) + "</strong>.";
+    msgOk.style.display = "block";
+  })
+  .catch(function() {
+    msgErr.innerText = "❌ Error de conexión al enviar la orden a Make.";
+    msgErr.style.display = "block";
+  })
+  .finally(function() {
+    btn.disabled = false;
+    btn.innerText = "📩 Generar y Enviar Enlace de Pago al Inquilino →";
+  });
 };
 
 window.procesarPagoTarjetaTPV = function(e) {
@@ -4277,12 +4430,7 @@ function renderizarRecibosInquilino(nombrePropiedad, dniTitular) {
         btnPdfProveedor +
         (esPendiente
           ? '<span class="badge badge-danger">PENDIENTE DE PAGO</span>' +
-            (!esAbogado ? '<button type="button" class="btn-tpv-card" onclick="abrirModalPagoTPV(\'' + escaparHTML(r.id_recibo || "") + '\')">💳 Pagar con Tarjeta</button>' : '') +
-            (esPropietario ? '<button type="button" class="btn-mark-paid" onclick="marcarReciboComoAbonado(\'' + escaparHTML(r.id_recibo || "") + '\')">' + escaparHTML(t.btn_mark_paid) + '</button>' : '')
-          : '<span class="badge badge-success">ABONADO (' + escaparHTML(r.fecha_pago || "") + ')</span>' +
-            (esPropietario ? '<button type="button" class="btn-outline-sm" style="border-color:var(--danger); color:#fca5a5; font-weight:800;" onclick="revertirReciboAPendiente(\'' + escaparHTML(r.id_recibo || "") + '\')">' + escaparHTML(t.btn_revert_pend) + '</button>' : '') +
-            '<button type="button" class="btn-pdf-receipt" onclick="descargarReciboPDF(\'' + escaparHTML(r.id_recibo || "") + '\')">' + escaparHTML(t.btn_pdf) + '</button>'
-        ) +
+            
       '</div>' +
     '</div>';
   }).join("");
