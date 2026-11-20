@@ -3263,11 +3263,23 @@ window.descargarReciboPDF = function(idRecibo) {
   ventanaPDF.document.close();
 };
 
+
+  function fechaValorATimestamp(rec) {
+  var txt = String((rec && (rec.fecha_emision || rec.periodo)) || "");
+  var mDmy = txt.match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+  if (mDmy) return new Date(parseInt(mDmy[3], 10), parseInt(mDmy[2], 10) - 1, parseInt(mDmy[1], 10)).getTime();
+  var mIso = txt.match(/(\d{4})-(\d{1,2})-(\d{1,2})/);
+  if (mIso) return new Date(parseInt(mIso[1], 10), parseInt(mIso[2], 10) - 1, parseInt(mIso[3], 10)).getTime();
+  return 0;
+}
+
 window.imprimirInformeEjecutivoAbogadoPDF = function() {
   var exp = window.EXPEDIENTE_ACTUAL || {};
   var propFiltro = exp.propiedad && exp.propiedad !== "---" && !exp.propiedad.includes(",") ? exp.propiedad : "";
   var movs = window.RECIBOS_CARTERA.filter(function(r) {
     return !propFiltro || String(r.propiedad || "").toUpperCase().includes(propFiltro.toUpperCase());
+  }).sort(function(a, b) {
+    return fechaValorATimestamp(a) - fechaValorATimestamp(b);
   });
 
   var sumaHaber = 0;
@@ -4298,11 +4310,6 @@ function renderizarCarteraYRecibosPropietario(filtroTexto) {
     chipsAbogado.innerHTML = window.CARTERA_PROPIEDADES.map(function(p) {
       return '<button type="button" class="prop-chip" onclick="togglePropiedadAbogado(\'' + escaparHTML(p.nombre_propiedad) + '\')">+ ' + escaparHTML(p.nombre_propiedad) + '</button>';
     }).join("") + '<button type="button" class="prop-chip" onclick="seleccionarTodasPropiedadesAbogado()">✓ Todas</button>';
-    var inpPropAbg = document.getElementById("input-prop-abogado");
-    if (inpPropAbg && !inpPropAbg.value) {
-      inpPropAbg.value = window.CARTERA_PROPIEDADES.map(function(p) { return p.nombre_propiedad; }).join(", ");
-    }
-  }
 
   contCartera.innerHTML = listaProps.map(function(p) {
     var saldoProp = calcularSaldoVivoPropiedad(p.nombre_propiedad, p.deuda);
@@ -5592,6 +5599,26 @@ document.addEventListener("DOMContentLoaded", function() {
   }
 });
 window.pintarSumaLevel();
+var params = new URLSearchParams(window.location.search);
+  var codeUrl = (params.get("code") || "").trim();
+  if (codeUrl !== "" && codeUrl !== "200") {
+    var inpDni = document.getElementById("input-dni");
+    if (inpDni) inpDni.value = codeUrl.toUpperCase();
+  }
+
+  var inpPin = document.getElementById("input-pin-user");
+  if (inpPin) {
+    inpPin.addEventListener("keydown", function(e) {
+      if (e.key === "Enter") { e.preventDefault(); validarPin(); }
+    });
+  }
+  var inpMath = document.getElementById("input-math");
+  if (inpMath) {
+    inpMath.addEventListener("keydown", function(e) {
+      if (e.key === "Enter") { e.preventDefault(); llamarAlWebhook(); }
+    });
+  }
+});
 </script>
 </body>
 </html>
