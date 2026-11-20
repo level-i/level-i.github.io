@@ -1794,27 +1794,32 @@
       </div>
     </div>
 
-    <form onsubmit="procesarPagoTarjetaTPV(event)">
+<form onsubmit="procesarPagoTarjetaTPV(event)">
       <input type="hidden" id="tpv-id-recibo" value="">
-      <div class="grid-2col" style="margin-bottom:14px;">
+      <div class="grid-2col" style="display:none; margin-bottom:14px;">
         <div class="form-group" style="margin-bottom:0;">
-          <label for="tpv-nombre-pagador" class="form-label">Nombre del Titular de la Tarjeta (Inquilino, Familiar o Amigo) *</label>
-          <input type="text" id="tpv-nombre-pagador" class="form-input" placeholder="Nombre del titular de la tarjeta" required>
+          <label for="tpv-nombre-pagador" class="form-label">Nombre del Titular de la Tarjeta</label>
+          <input type="text" id="tpv-nombre-pagador" class="form-input">
         </div>
         <div class="form-group" style="margin-bottom:0;">
           <label for="tpv-relacion-pagador" class="form-label">Pagado por:</label>
-          <select id="tpv-relacion-pagador" class="form-input" style="cursor:pointer;">
+          <select id="tpv-relacion-pagador" class="form-input">
             <option value="TITULAR">👤 El propio Inquilino Titular</option>
             <option value="AUTORIZADO">🤝 Autorizado (Familiar / Ayuda puntual)</option>
           </select>
         </div>
       </div>
 
-      <button type="submit" id="btn-confirmar-tpv" class="btn-primary" style="background:linear-gradient(90deg, #2563eb 0%, #10b981 100%); color:#ffffff;">
-        💳 Pagar Ahora con Tarjeta y Descargar Recibo Oficial PDF →
+      <div style="background:var(--amber-soft); border:1px solid var(--amber); color:var(--amber); padding:14px; border-radius:10px; text-align:center; font-size:13.5px; font-weight:700; margin-bottom:14px;">
+        🛠️ Servicio de pago con tarjeta (TPV) en mantenimiento.<br>
+        <span style="font-size:12px; font-weight:500; color:#e2e8f0;">Estamos ultimando la conexión bancaria segura. Mientras tanto, puedes realizar el abono por transferencia al IBAN del contrato.</span>
+      </div>
+
+      <button type="button" id="btn-confirmar-tpv" class="btn-primary" style="background:#334155; color:var(--text-muted);" onclick="cerrarModal('modal-pasarela-tpv')">
+        Entendido · Cerrar
       </button>
       <div id="msg-tpv-exito" class="status-msg ok"></div>
-    </form>
+    </form>    
   </div>
 </div>
 
@@ -3194,6 +3199,8 @@ window.abrirModalPagoTPV = function(idRecibo) {
 
 window.procesarPagoTarjetaTPV = function(e) {
   e.preventDefault();
+  alert("🛠️ Servicio de pago con tarjeta (TPV) en mantenimiento. Disponible próximamente.");
+  return;
   var idRec = document.getElementById("tpv-id-recibo").value;
   var pagador = document.getElementById("tpv-nombre-pagador").value.trim();
   var relacion = document.getElementById("tpv-relacion-pagador").value;
