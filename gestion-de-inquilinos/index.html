@@ -1858,6 +1858,66 @@
   </div>
 </div>
 
+<!-- ==========================================================================
+     MODAL 7: ENVIAR ENLACE DE PAGO AL INQUILINO (SOLO ABOGADO / REQUERIMIENTO)
+     ========================================================================== -->
+<div id="modal-enlace-pago-abogado" class="modal-backdrop" onclick="if(event.target === this) cerrarModal('modal-enlace-pago-abogado')">
+  <div class="modal-card">
+    <button class="modal-close-x" onclick="cerrarModal('modal-enlace-pago-abogado')" aria-label="Cerrar">&times;</button>
+    <h3 style="color:var(--amber); margin-bottom:10px; padding-bottom:10px; border-bottom:1px solid var(--border);">
+      ⚖️ Enviar Enlace / Instrucciones de Pago al Inquilino
+    </h3>
+    <p style="font-size:12.5px; color:var(--text-muted); margin-bottom:14px; line-height:1.5;">
+      Como servicio jurídico no puedes ejecutar el pago directamente, pero puedes remitir al arrendatario el enlace de pago o los datos de transferencia por Email y/o WhatsApp.
+    </p>
+
+    <div class="panel-box" style="background:var(--bg-input); margin-bottom:14px; border-color:var(--amber);">
+      <div class="info-row"><span class="info-label">Recibo / Concepto:</span><span class="info-value" id="abg-pay-concepto">---</span></div>
+      <div class="info-row"><span class="info-label">Inmueble / Inquilino:</span><span class="info-value" id="abg-pay-propiedad">---</span></div>
+      <div class="info-row"><span class="info-label">Importe Reclamado:</span><span class="info-value" style="color:var(--danger); font-size:16px;" id="abg-pay-importe">---</span></div>
+      <div class="info-row"><span class="info-label">IBAN Propietario:</span><span class="info-value" style="color:var(--neon-cyan);" id="abg-pay-iban">---</span></div>
+    </div>
+
+    <form onsubmit="enviarEnlacePagoAbogado(event)">
+      <input type="hidden" id="abg-pay-id-recibo" value="">
+
+      <div class="form-group">
+        <label for="abg-pay-metodo" class="form-label">Método de Pago a incluir en el envío *</label>
+        <select id="abg-pay-metodo" class="form-input" style="cursor:pointer;">
+          <option value="AMBOS">💳🏦 Ambos (Enlace Tarjeta TPV + Datos Transferencia IBAN)</option>
+          <option value="TRANSFERENCIA">🏦 Solo Transferencia Bancaria (IBAN + Concepto)</option>
+          <option value="TARJETA">💳 Solo Enlace de Pago con Tarjeta (TPV)</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Canales de envío al inquilino (elige uno o ambos) *</label>
+        <div class="grid-2col" style="margin-bottom:0;">
+          <div class="privacy-box" style="margin-bottom:0;">
+            <input type="checkbox" id="abg-pay-chk-wa" checked>
+            <label for="abg-pay-chk-wa" style="color:#e2e8f0;"><strong>📲 WhatsApp</strong> (vía Elena IA)</label>
+          </div>
+          <div class="privacy-box" style="margin-bottom:0;">
+            <input type="checkbox" id="abg-pay-chk-email" checked>
+            <label for="abg-pay-chk-email" style="color:#e2e8f0;"><strong>📧 Correo Electrónico</strong></label>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="abg-pay-nota" class="form-label">Nota / Requerimiento adicional (Opcional)</label>
+        <textarea id="abg-pay-nota" rows="2" class="form-input" placeholder="Ej: Rogamos regularice el importe en un plazo máximo de 48h..."></textarea>
+      </div>
+
+      <button type="submit" id="btn-enviar-enlace-abg" class="btn-primary" style="background:var(--amber); color:#042f2e;">
+        📩 Generar y Enviar Enlace de Pago al Inquilino →
+      </button>
+      <div id="msg-abg-pay-exito" class="status-msg ok"></div>
+      <div id="msg-abg-pay-error" class="status-msg err"></div>
+    </form>
+  </div>
+</div>
+  
 <!-- VENTANA DE CHAT DE ELENA IA ADVISOR -->
 <div id="elena-chat-window">
   <div style="background:#131c31; padding:12px 16px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--border);">
