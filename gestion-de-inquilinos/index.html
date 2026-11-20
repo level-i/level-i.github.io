@@ -3290,10 +3290,6 @@ window.imprimirInformeEjecutivoAbogadoPDF = function() {
   w.document.close();
 };
 
-window.abrirModalPagoTPV = function(idRecibo) {
-  var rec = window.RECIBOS_CARTERA.find(function(r) { return String(r.id_recibo) === String(idRecibo); });
-  if (!rec) return;
-
   window.abrirModalPagoTPV = function(idRecibo) {
   if (window.sesionActiva && window.sesionActiva.rol === "ABOGADO") return;
   var rec = window.RECIBOS_CARTERA.find(function(r) { return String(r.id_recibo) === String(idRecibo); });
@@ -4429,8 +4425,17 @@ function renderizarRecibosInquilino(nombrePropiedad, dniTitular) {
         '<span class="receipt-amount">' + escaparHTML(r.importe || "") + '</span>' +
         btnPdfProveedor +
         (esPendiente
+          (esPendiente
           ? '<span class="badge badge-danger">PENDIENTE DE PAGO</span>' +
-            
+            (!esAbogado
+              ? '<button type="button" class="btn-tpv-card" style="background:#334155; border-color:var(--amber); color:var(--amber); box-shadow:none;" onclick="abrirModalPagoTPV(\'' + escaparHTML(r.id_recibo || "") + '\')">' + escaparHTML(t.btn_tpv_maint) + '</button>'
+              : '<button type="button" class="btn-outline-sm" style="border-color:var(--amber); color:var(--amber); font-weight:800;" onclick="abrirModalEnlacePagoAbogado(\'' + escaparHTML(r.id_recibo || "") + '\')">📩 Enviar Enlace de Pago</button>'
+            ) +
+            (esPropietario ? '<button type="button" class="btn-mark-paid" onclick="marcarReciboComoAbonado(\'' + escaparHTML(r.id_recibo || "") + '\')">' + escaparHTML(t.btn_mark_paid) + '</button>' : '')
+          : '<span class="badge badge-success">ABONADO (' + escaparHTML(r.fecha_pago || "") + ')</span>' +
+            (esPropietario ? '<button type="button" class="btn-outline-sm" style="border-color:var(--danger); color:#fca5a5; font-weight:800;" onclick="revertirReciboAPendiente(\'' + escaparHTML(r.id_recibo || "") + '\')">' + escaparHTML(t.btn_revert_pend) + '</button>' : '') +
+            '<button type="button" class="btn-pdf-receipt" onclick="descargarReciboPDF(\'' + escaparHTML(r.id_recibo || "") + '\')">' + escaparHTML(t.btn_pdf) + '</button>'
+        ) +
       '</div>' +
     '</div>';
   }).join("");
