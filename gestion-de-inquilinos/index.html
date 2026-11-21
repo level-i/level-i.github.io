@@ -500,19 +500,45 @@
   .info-label { color: var(--text-muted); }
   .info-value { font-weight: 700; color: #fff; text-align: right; }
 
-  /* BARRA ESPECIAL PARA EL ABOGADO / SERVICIOS JURÍDICOS */
-  #lawyer-executive-banner {
-    display: none;
-    background: linear-gradient(90deg, rgba(59, 130, 246, 0.18) 0%, rgba(16, 185, 129, 0.14) 100%);
-    border: 1px solid var(--blue);
-    border-radius: 14px;
-    padding: 18px 22px;
-    margin-bottom: 22px;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 16px;
-  }
+  <!-- BARRA EXCLUSIVA PARA SERVICIOS JURÍDICOS / ABOGADO AUTORIZADO -->
+        <div id="lawyer-executive-banner" style="flex-direction:column; align-items:stretch; padding:0; overflow:hidden;">
+          <div style="width:100%; background:#071224; border-bottom:1px solid rgba(197,160,89,0.35);">
+            <img
+              src="https://level.immo/app-alquileres-propiedades/banner_level_immo_2026_mail.jpg"
+              alt="Level.immo · Servicios Jurídicos Autorizados · Consola de Auditoría"
+              onerror="this.style.display='none'; document.getElementById('banner-juridico-fallback').style.display='flex';"
+              style="width:100%; max-height:135px; object-fit:cover; display:block;"
+            >
+            <div id="banner-juridico-fallback" style="display:none; padding:18px 26px; align-items:center; justify-content:space-between; background:linear-gradient(90deg, #071224 0%, #0d1d3a 65%, #112647 100%);">
+              <div>
+                <div style="display:flex; align-items:baseline; color:#fff; font-weight:900; font-size:28px; letter-spacing:-0.5px;">
+                  <span>L</span><span style="display:inline-block; width:9px; height:9px; background:#10b981; border-radius:50%; margin:0 5px;"></span><span>Level.immo</span>
+                </div>
+                <div style="color:#d99b26; font-size:11.5px; font-weight:800; letter-spacing:1.2px; margin-top:4px;">
+                  SERVICIOS JURÍDICOS AUTORIZADOS · CONSOLA DE AUDITORÍA
+                </div>
+              </div>
+              <div style="font-size:38px; opacity:0.35;">⚖️</div>
+            </div>
+          </div>
+
+          <div style="padding:18px 22px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px;">
+            <div>
+              <div style="font-size:15px; font-weight:800; color:#fff; display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                ⚖️ CONSOLA DE AUDITORÍA JURÍDICA Y PERICIAL (MODO LECTURA CERTIFICADA)
+                <span class="badge badge-info">CREDENCIAL ACTIVA</span>
+              </div>
+              <div style="font-size:12.5px; color:var(--text-muted); margin-top:4px;">
+                Acceso autorizado a contratos, saldo vivo contable ordenado por Fecha Valor (Debe/Haber), desglose de impagos e histórico íntegro de incidencias.
+              </div>
+            </div>
+            <div style="display:flex; gap:10px; flex-wrap:wrap;">
+              <button type="button" class="btn-primary" style="width:auto; background:var(--amber); color:#042f2e; padding:10px 18px;" onclick="imprimirInformeEjecutivoAbogadoPDF()">
+                🖨️ Imprimir Informe Ejecutivo Judicial (PDF A4)
+              </button>
+            </div>
+          </div>
+        </div>
 
   /* SALDO VIVO ACTUAL (TARJETA DESTACADA) */
   .saldo-vivo-card {
@@ -2786,6 +2812,34 @@ function normalizarPropiedadDesdeMake(itemProp) {
   };
 }
 
+function convertirFechaAInputISO(fechaStr) {
+  var s = String(fechaStr || "").trim();
+  if (!s) return new Date().toISOString().split("T")[0];
+  var mIso = s.match(/(\d{4})[-\/](\d{1,2})[-\/](\d{1,2})/);
+  if (mIso) {
+    return mIso[1] + "-" + String(mIso[2]).padStart(2, "0") + "-" + String(mIso[3]).padStart(2, "0");
+  }
+  var mDmy = s.match(/(\d{1,2})[-\/](\d{1,2})[-\/](\d{4})/);
+  if (mDmy) {
+    return mDmy[3] + "-" + String(mDmy[2]).padStart(2, "0") + "-" + String(mDmy[1]).padStart(2, "0");
+  }
+  return new Date().toISOString().split("T")[0];
+}
+
+function formatearFechaValorVisual(fechaStr) {
+  var s = String(fechaStr || "").trim();
+  if (!s) return "";
+  var mIso = s.match(/(\d{4})[-\/](\d{1,2})[-\/](\d{1,2})/);
+  if (mIso) {
+    return String(mIso[3]).padStart(2, "0") + "/" + String(mIso[2]).padStart(2, "0") + "/" + mIso[1];
+  }
+  var mDmy = s.match(/(\d{1,2})[-\/](\d{1,2})[-\/](\d{4})/);
+  if (mDmy) {
+    return String(mDmy[1]).padStart(2, "0") + "/" + String(mDmy[2]).padStart(2, "0") + "/" + mDmy[3];
+  }
+  return s;
+}
+
 function normalizarReciboDesdeMake(r) {
   var f = r && r.fields ? r.fields : (r || {});
   var recId = (r && r.record_id) ? r.record_id : (f.record_id || "");
@@ -2817,12 +2871,16 @@ function normalizarReciboDesdeMake(r) {
 
   var inq = formatearCampoValor(f["Nombre Inquilinos"] || f.inquilino || f.INQUILINO || f.Arrendatario || window.sesionActiva.nombre || "---");
   var dniInq = formatearCampoValor(f["DNI/NIE Inquilinos"] || f["DNI-NIE-NIF"] || f["DNI-NIE-CIF"] || f.dni_inquilino || window.sesionActiva["DNI-NIE-CIF"] || "");
-  var propietario = formatearCampoValor(f["Nombre Propietario"] || f.propietario || f.Propietario || f["Nombre Propietaria"] || "Propiedad Titular");
+  var propietario = formatearCampoValor(f["Nombre Propietario"] || f.propietario || f.Propietario || f["Nombre Propietaria"] || "Carmen Forcadell Chavalera");
+  var dniPropietario = formatearCampoValor(f["DNI Propietario"] || f.dni_propietario || "40913126J");
   var iban = formatearCampoValor(f["IBAN Bancario Propietario"] || f["IBAN Bancario"] || f.iban || window.EXPEDIENTE_ACTUAL.iban || "");
 
   var mesTexto = formatearCampoValor(f.Mes || "");
-  var fechaVal = formatearFechaHoraBD(f.Fecha_Valor || f["Fecha Valor"] || f.Fecha || f.periodo || f["Fecha del Contrato"] || "");
-  var periodo = [mesTexto, fechaVal].filter(Boolean).join(" · ") || new Date().toLocaleDateString("es-ES");
+  var fechaValorRaw = formatearFechaHoraBD(f.Fecha_Valor || f["Fecha Valor"] || "");
+  var fechaContratoRaw = formatearFechaHoraBD(f["Fecha del Contrato"] || f.Fecha || f.periodo || "");
+  var fechaValorFinal = fechaValorRaw || fechaContratoRaw || "";
+  var fechaVisual = formatearFechaValorVisual(fechaValorFinal);
+  var periodo = [mesTexto, fechaVisual].filter(Boolean).join(" · ") || "Sin Fecha Valor";
 
   var baseNum = parsearNumeroContable(formatearCampoValor(f.Importe !== undefined ? f.Importe : (f["Alquiler Base Oculto"] !== undefined ? f["Alquiler Base Oculto"] : f.importe)));
   var debeNum = parsearNumeroContable(formatearCampoValor(f.Debe !== undefined ? f.Debe : (f.DEBE !== undefined ? f.DEBE : f.debe)));
@@ -2843,7 +2901,7 @@ function normalizarReciboDesdeMake(r) {
   var totalConImpuestos = totalCalculado > 0 ? totalCalculado : +(baseCalculo * (1 + ivaPct - irpfPct)).toFixed(2);
 
   var importeMostrar = formatearEuros(totalConImpuestos || baseCalculo);
-  var fechaEmision = fechaVal || periodo;
+  var fechaEmision = fechaVisual || periodo;
   var fechaPago = formatearFechaHoraBD(f.fecha_pago || (esAbonado ? fechaEmision : "---"));
 
   var infoPdf = extraerDatosPdfSuministro(f);
@@ -2856,9 +2914,12 @@ function normalizarReciboDesdeMake(r) {
     inquilino: inq,
     "DNI-NIE-CIF": dniInq,
     propietario: propietario,
+    dni_propietario: dniPropietario,
     iban: iban,
     concepto: concepto,
     tipo: tipo,
+    fecha_valor: fechaValorFinal,
+    sin_fecha_valor: !fechaValorRaw,
     periodo: periodo,
     importe_base: baseCalculo,
     debe: debeNum,
@@ -3927,7 +3988,6 @@ window.eliminarFotoDelBookInmueble = function(nombrePropiedad, idxBorrar) {
 window.abrirModalSuministroManual = function(propPreseleccionada, idReciboEditar) {
   poblarSelectoresPropiedadesModales();
   document.getElementById("msg-sum-exito").style.display = "none";
-  document.getElementById("sum-fecha").value = new Date().toISOString().split("T")[0];
 
   if (propPreseleccionada) {
     document.getElementById("sum-propiedad").value = propPreseleccionada;
@@ -3939,6 +3999,7 @@ window.abrirModalSuministroManual = function(propPreseleccionada, idReciboEditar
       document.getElementById("sum-edit-id").value = rec.id_recibo;
       document.getElementById("sum-propiedad").value = rec.propiedad;
       document.getElementById("sum-tipo-apunte").value = rec.haber > 0 && rec.debe === 0 ? "HABER" : "DEBE";
+      document.getElementById("sum-fecha").value = convertirFechaAInputISO(rec.fecha_valor || rec.fecha_emision || rec.periodo);
       document.getElementById("sum-concepto").value = rec.concepto;
       document.getElementById("sum-importe-base").value = rec.importe_base || parsearNumeroContable(rec.importe);
       document.getElementById("sum-iva").value = String(rec.iva_pct || 0);
@@ -3946,6 +4007,7 @@ window.abrirModalSuministroManual = function(propPreseleccionada, idReciboEditar
     }
   } else {
     document.getElementById("sum-edit-id").value = "";
+    document.getElementById("sum-fecha").value = new Date().toISOString().split("T")[0];
     document.getElementById("sum-concepto").value = "";
     document.getElementById("sum-importe-base").value = "";
   }
@@ -3954,25 +4016,25 @@ window.abrirModalSuministroManual = function(propPreseleccionada, idReciboEditar
   document.getElementById("modal-suministro-manual").style.display = "flex";
 };
 
-window.calcularTotalConImpuestosModal = function() {
-  var base = parseFloat(document.getElementById("sum-importe-base").value) || 0;
-  var iva = parseFloat(document.getElementById("sum-iva").value) || 0;
-  var irpf = parseFloat(document.getElementById("sum-irpf").value) || 0;
-  var total = +(base * (1 + iva - irpf)).toFixed(2);
-  document.getElementById("sum-total-final").value = formatearEuros(total);
-};
-
 window.guardarMovimientoSuministroManual = async function(e) {
   e.preventDefault();
   var btn = document.getElementById("btn-guardar-sum-manual");
   var msg = document.getElementById("msg-sum-exito");
+
+  var fecha = document.getElementById("sum-fecha").value.trim();
+  if (!fecha) {
+    alert("⚠️ La Fecha Valor es obligatoria para mantener el orden contable.");
+    document.getElementById("sum-fecha").focus();
+    return;
+  }
+
   btn.disabled = true;
 
+  var fechaLark = fecha.replace(/-/g, "/"); // Formato YYYY/MM/DD de Lark Bitable
   var idEdit = document.getElementById("sum-edit-id").value;
   var idReciboFinal = idEdit || ("ID-ALQ-" + new Date().getFullYear() + String(Math.floor(Math.random()*9000+1000)));
   var prop = document.getElementById("sum-propiedad").value;
   var tipoApunte = document.getElementById("sum-tipo-apunte").value;
-  var fecha = document.getElementById("sum-fecha").value;
   var categoria = document.getElementById("sum-categoria").value;
   var concepto = document.getElementById("sum-concepto").value.trim();
   var base = parseFloat(document.getElementById("sum-importe-base").value) || 0;
@@ -3992,14 +4054,16 @@ window.guardarMovimientoSuministroManual = async function(e) {
   }
 
   var fichaProp = window.CARTERA_PROPIEDADES.find(function(p) { return String(p.nombre_propiedad).toUpperCase() === prop.toUpperCase(); }) || {};
+  var conceptoFinal = concepto.toLowerCase().startsWith(categoria.toLowerCase()) ? concepto : (categoria + " · " + concepto);
+
   var nuevoMov = normalizarReciboDesdeMake({
     id_recibo: idReciboFinal,
     Propiedad: prop,
     inquilino: fichaProp.inquilino_completo || fichaProp.inquilino || "---",
     "DNI-NIE-CIF": obtenerDniUnificado(fichaProp),
-    Fecha_Valor: fecha,
+    Fecha_Valor: fechaLark,
     Categoria: categoria,
-    Concepto: categoria + " · " + concepto,
+    Concepto: conceptoFinal,
     Importe: base,
     Debe: tipoApunte === "DEBE" ? base : 0,
     Haber: tipoApunte === "HABER" ? totalFinal : 0,
@@ -4016,6 +4080,206 @@ window.guardarMovimientoSuministroManual = async function(e) {
   } else {
     window.RECIBOS_CARTERA.unshift(nuevoMov);
   }
+
+  try { localStorage.setItem("LEVEL_CACHE_RECIBOS", JSON.stringify(window.RECIBOS_CARTERA)); } catch (_) {}
+
+  renderizarCarteraYRecibosPropietario();
+  renderizarRecibosInquilino(window.sesionActiva.propiedad, window.sesionActiva["DNI-NIE-CIF"]);
+  actualizarTarjetaSaldoVivoEnPantalla();
+
+  fetch(URL_WEBHOOK_PROPERTY_GESTION, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      accion: idEdit ? "editar_suministro_gasto" : "alta_suministro_gasto",
+      table_id: TABLE_ID_SUMINISTROS_GASTOS,
+      record_id: nuevoMov.record_id || "",
+      id_recibo: nuevoMov.id_recibo,
+      Propiedad: prop,
+      Fecha_Valor: fechaLark,
+      Fecha_Valor_ISO: fecha,
+      Categoria: categoria,
+      Concepto: nuevoMov.concepto,
+      Importe: base,
+      Debe: nuevoMov.debe,
+      Haber: nuevoMov.haber,
+      Iva_Aplicable: iva,
+      IRPF_Aplicable: irpf,
+      Total_Con_Impuestos: totalFinal,
+      Estado_Recibo: nuevoMov.estado,
+      archivo_nombre: archivoNombre,
+      archivo_base64: archivoBase64,
+      URL_Factura_FTP: urlFtpGenerada,
+      notificar_elena_whatsapp: notificar
+    })
+  }).catch(function(){});
+
+  msg.innerHTML = "✅ Apunte registrado con <strong>Fecha Valor " + escaparHTML(formatearFechaValorVisual(fechaLark)) + "</strong> en <strong>" + escaparHTML(prop) + "</strong>.";
+  msg.style.display = "block";
+  btn.disabled = false;
+};
+
+function fechaValorATimestamp(rec) {
+  var txt = String((rec && (rec.fecha_valor || rec.fecha_emision || rec.periodo)) || "");
+  var mIso = txt.match(/(\d{4})[-\/](\d{1,2})[-\/](\d{1,2})/);
+  if (mIso) return new Date(parseInt(mIso[1], 10), parseInt(mIso[2], 10) - 1, parseInt(mIso[3], 10)).getTime();
+  var mDmy = txt.match(/(\d{1,2})[-\/](\d{1,2})[-\/](\d{4})/);
+  if (mDmy) return new Date(parseInt(mDmy[3], 10), parseInt(mDmy[2], 10) - 1, parseInt(mDmy[1], 10)).getTime();
+  return 0;
+}
+
+window.imprimirInformeEjecutivoAbogadoPDF = function() {
+  enriquecerDatosCarteraYLimpiarRecibosVacios();
+  var exp = window.EXPEDIENTE_ACTUAL || {};
+  var propFiltro = exp.propiedad && exp.propiedad !== "---" && !exp.propiedad.includes(",") ? exp.propiedad : "";
+
+  var fichaProp = (window.CARTERA_PROPIEDADES || []).find(function(p) {
+    return propFiltro && String(p.nombre_propiedad || "").toUpperCase() === propFiltro.toUpperCase();
+  }) || {};
+
+  var movs = window.RECIBOS_CARTERA.filter(function(r) {
+    return !propFiltro || coincidenReciboYPropiedad(r, propFiltro, "");
+  }).sort(function(a, b) {
+    var diff = fechaValorATimestamp(a) - fechaValorATimestamp(b);
+    if (diff !== 0) return diff;
+    return String(a.id_recibo || "").localeCompare(String(b.id_recibo || ""));
+  });
+
+  // 1. Separar correctamente Propietario Real, Arrendatarios y Servicios Jurídicos
+  var propietarioNombre = "Carmen Forcadell Chavalera";
+  var propietarioDni = "40913126J";
+  if (window.sesionActiva.rol === "PROPIETARIO") {
+    propietarioNombre = window.sesionActiva.nombre || propietarioNombre;
+    propietarioDni = window.sesionActiva["DNI-NIE-CIF"] || propietarioDni;
+  } else if (movs.length > 0 && movs[0].propietario && movs[0].propietario !== "---") {
+    propietarioNombre = movs[0].propietario;
+    propietarioDni = movs[0].dni_propietario || propietarioDni;
+  }
+
+  var infoInquilinos = obtenerTitularesRealesPropiedad(Object.assign({}, fichaProp, { nombre_propiedad: propFiltro || exp.propiedad }));
+  var arrendatariosTxt = (infoInquilinos && infoInquilinos.detallado && infoInquilinos.detallado !== "---")
+    ? infoInquilinos.detallado
+    : (movs[0] ? movs[0].inquilino : "---");
+
+  var despachoTxt = window.sesionActiva.rol === "ABOGADO"
+    ? (window.sesionActiva.nombre + " (" + window.sesionActiva["DNI-NIE-CIF"] + ")")
+    : "Servicios Jurídicos Autorizados · Level.immo";
+
+  var direccionInmueble = fichaProp.direccion || exp.direccion || "---";
+  var ibanContrato = fichaProp.iban || exp.iban || (movs[0] ? movs[0].iban : "---");
+
+  // 2. Cálculos contables exactos y auditables
+  var sumaHaber = 0;
+  var sumaDebe = 0;
+  var totalPendienteDebe = 0;
+
+  movs.forEach(function(m) {
+    var h = parsearNumeroContable(m.haber);
+    var d = parsearNumeroContable(m.debe > 0 ? m.total_con_impuestos : 0);
+    sumaHaber += h;
+    sumaDebe += d;
+    if (String(m.estado || "").toUpperCase() === "PENDIENTE") {
+      totalPendienteDebe += d;
+    }
+  });
+
+  sumaHaber = +sumaHaber.toFixed(2);
+  sumaDebe = +sumaDebe.toFixed(2);
+  totalPendienteDebe = +totalPendienteDebe.toFixed(2);
+  var saldoNeto = +(sumaHaber - sumaDebe).toFixed(2);
+  var fechaEmisionInforme = new Date().toLocaleString("es-ES");
+
+  var w = window.open("", "_blank", "width=980,height=980");
+  if (!w) return;
+
+  var filasMovs = movs.map(function(m) {
+    var fechaCol = formatearFechaValorVisual(m.fecha_valor || m.fecha_emision || m.periodo) || "Sin fecha";
+    var badgeFecha = m.sin_fecha_valor ? ' <span style="color:#b45309;font-size:10px;">(Contrato)</span>' : '';
+    var esPend = String(m.estado || "").toUpperCase() === "PENDIENTE";
+    var importeDebeTxt = m.debe > 0 ? formatearEuros(m.total_con_impuestos) : "—";
+    var importeHaberTxt = m.haber > 0 ? formatearEuros(m.haber) : "—";
+
+    return '<tr>' +
+      '<td style="white-space:nowrap; font-weight:700;">' + escaparHTML(m.id_recibo) + '</td>' +
+      '<td style="white-space:nowrap;">' + escaparHTML(fechaCol) + badgeFecha + '</td>' +
+      '<td><strong>' + escaparHTML(m.propiedad) + '</strong> · ' + escaparHTML(m.concepto) + '</td>' +
+      '<td style="text-align:right; white-space:nowrap; color:#b91c1c; font-weight:700;">' + importeDebeTxt + '</td>' +
+      '<td style="text-align:right; white-space:nowrap; color:#047857; font-weight:700;">' + importeHaberTxt + '</td>' +
+      '<td style="white-space:nowrap; font-weight:800; color:' + (esPend ? '#b91c1c' : '#047857') + ';">' + escaparHTML(m.estado) + '</td>' +
+    '</tr>';
+  }).join("");
+
+  var htmlJudicial =
+    '<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">' +
+    '<title>Informe Ejecutivo de Auditoría Jurídica y Contable · ' + escaparHTML(propFiltro || "Cartera") + '</title>' +
+    '<style>' +
+      '@page { size: A4; margin: 14mm; }' +
+      'body { font-family: Helvetica, Arial, sans-serif; color: #0f172a; background: #fff; margin: 0; padding: 0; font-size: 12px; }' +
+      '.banner-top { background: #071224; color: #fff; padding: 18px 24px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }' +
+      '.brand-title { font-size: 24px; font-weight: 900; letter-spacing: -0.5px; }' +
+      '.brand-dot { display: inline-block; width: 8px; height: 8px; background: #10b981; border-radius: 50%; margin: 0 4px; }' +
+      '.brand-sub { color: #d99b26; font-size: 10.5px; font-weight: 800; letter-spacing: 1px; margin-top: 4px; }' +
+      'h1 { font-size: 18px; margin: 0 0 14px 0; color: #0f172a; border-bottom: 2px solid #0f172a; padding-bottom: 8px; text-transform: uppercase; }' +
+      '.grid-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }' +
+      '.meta-card { background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; padding: 11px 14px; line-height: 1.5; -webkit-print-color-adjust: exact; print-color-adjust: exact; }' +
+      '.meta-card strong { color: #0f172a; }' +
+      '.kpi-bar { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 18px; }' +
+      '.kpi-box { border: 1px solid #cbd5e1; border-radius: 6px; padding: 10px 12px; background: #f1f5f9; -webkit-print-color-adjust: exact; print-color-adjust: exact; }' +
+      '.kpi-lbl { font-size: 10px; text-transform: uppercase; color: #475569; font-weight: 700; }' +
+      '.kpi-val { font-size: 15px; font-weight: 900; margin-top: 4px; white-space: nowrap; }' +
+      'table { width: 100%; border-collapse: collapse; font-size: 11.5px; }' +
+      'th { background: #0f172a; color: #fff; text-align: left; padding: 9px 10px; font-size: 10.5px; text-transform: uppercase; -webkit-print-color-adjust: exact; print-color-adjust: exact; }' +
+      'td { border: 1px solid #cbd5e1; padding: 8px 10px; vertical-align: middle; }' +
+      'tr:nth-child(even) td { background: #f8fafc; -webkit-print-color-adjust: exact; print-color-adjust: exact; }' +
+      '.footer-cert { margin-top: 16px; padding-top: 10px; border-top: 1px solid #cbd5e1; font-size: 10.5px; color: #475569; display: flex; justify-content: space-between; }' +
+      '@media print { .no-print { display: none !important; } }' +
+    '</style></head><body>' +
+    '<div class="no-print" style="background:#f1f5f9; padding:10px; text-align:center; border-bottom:1px solid #cbd5e1; margin-bottom:14px;">' +
+      '<button onclick="window.print()" style="background:#0f172a; color:#fff; border:none; padding:9px 18px; border-radius:6px; font-weight:700; cursor:pointer;">🖨️ Imprimir / Guardar PDF Judicial (A4)</button>' +
+    '</div>' +
+    '<div class="banner-top">' +
+      '<div>' +
+        '<div class="brand-title">L<span class="brand-dot"></span>Level.immo</div>' +
+        '<div class="brand-sub">SERVICIOS JURÍDICOS AUTORIZADOS · CONSOLA DE AUDITORÍA</div>' +
+      '</div>' +
+      '<div style="text-align:right; font-size:11px; color:#cbd5e1;">' +
+        '<div><strong>LEVEL PUNTO IMMO 24365 SLU</strong></div>' +
+        '<div>API 4173 · AICAT 14200</div>' +
+        '<div>Emisión: ' + escaparHTML(fechaEmisionInforme) + '</div>' +
+      '</div>' +
+    '</div>' +
+    '<h1>Informe Ejecutivo de Auditoría Jurídica y Contable</h1>' +
+    '<div class="grid-meta">' +
+      '<div class="meta-card">' +
+        '<div><strong>Propietario / Parte Arrendadora:</strong> ' + escaparHTML(propietarioNombre) + ' (' + escaparHTML(propietarioDni) + ')</div>' +
+        '<div><strong>Inmueble Objeto de Auditoría:</strong> ' + escaparHTML(propFiltro || exp.propiedad || "Cartera") + '</div>' +
+        '<div><strong>Dirección del Inmueble:</strong> ' + escaparHTML(direccionInmueble) + '</div>' +
+      '</div>' +
+      '<div class="meta-card">' +
+        '<div><strong>Parte Arrendataria (Inquilinos):</strong> ' + escaparHTML(arrendatariosTxt) + '</div>' +
+        '<div><strong>Representación Jurídica Autorizada:</strong> ' + escaparHTML(despachoTxt) + '</div>' +
+        '<div><strong>IBAN Contractual de Cobro:</strong> ' + escaparHTML(ibanContrato) + '</div>' +
+      '</div>' +
+    '</div>' +
+    '<div class="kpi-bar">' +
+      '<div class="kpi-box"><div class="kpi-lbl">Total Cargos (Debe)</div><div class="kpi-val" style="color:#b91c1c;">' + formatearEuros(sumaDebe) + '</div></div>' +
+      '<div class="kpi-box"><div class="kpi-lbl">Total Abonado (Haber)</div><div class="kpi-val" style="color:#047857;">' + formatearEuros(sumaHaber) + '</div></div>' +
+      '<div class="kpi-box"><div class="kpi-lbl">Saldo Vivo (Haber - Debe)</div><div class="kpi-val" style="color:' + (saldoNeto >= 0 ? '#047857' : '#b91c1c') + ';">' + (saldoNeto > 0 ? '+' : '') + formatearEuros(saldoNeto) + '</div></div>' +
+      '<div class="kpi-box"><div class="kpi-lbl">Partidas Pendientes Cobro</div><div class="kpi-val" style="color:#b91c1c;">' + formatearEuros(totalPendienteDebe) + '</div></div>' +
+    '</div>' +
+    '<table><thead><tr><th>ID Apunte</th><th>Fecha Valor</th><th>Inmueble y Concepto Detallado</th><th style="text-align:right;">Debe</th><th style="text-align:right;">Haber</th><th>Estado</th></tr></thead>' +
+    '<tbody>' + filasMovs + '</tbody></table>' +
+    '<div class="footer-cert">' +
+      '<span>Documento generado desde el registro certificado de Level.immo (Ordenado cronológicamente por Fecha Valor).</span>' +
+      '<span>Ref. Expediente: ' + escaparHTML(exp.codigo || "LEGAL-AUDIT") + '</span>' +
+    '</div>' +
+    '<script>setTimeout(function(){ window.print(); }, 450);<\/script>' +
+    '</body></html>';
+
+  w.document.open();
+  w.document.write(htmlJudicial);
+  w.document.close();
+};
 
   renderizarCarteraYRecibosPropietario();
   renderizarRecibosInquilino(window.sesionActiva.propiedad, window.sesionActiva["DNI-NIE-CIF"]);
