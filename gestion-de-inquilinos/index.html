@@ -5068,92 +5068,6 @@ window.manejarContratoPdfSeleccionado = async function(event) {
   }
 };
 
-window.abrirContratoPdfPropiedad = function(urlContrato, nombreProp) {
-  if (!urlContrato || !urlContrato.startsWith("http")) {
-    alert("Esta propiedad todavía no tiene un contrato PDF subido.");
-    return;
-  }
-  mostrarIframePdfEnVisor(urlContrato, "Contrato de Arrendamiento", nombreProp);
-};
-  
-window.guardarNuevaPropiedad = function(e) {
-  e.preventDefault();
-  var btn = document.getElementById("btn-guardar-propiedad");
-  var msgExito = document.getElementById("msg-prop-exito");
-  btn.disabled = true;
-
-  var nombreP = document.getElementById("prop-alta-nombre").value.trim();
-  var tipoUso = document.getElementById("prop-alta-tipo").value;
-  var dirP = document.getElementById("prop-alta-dir").value.trim();
-  var rentaP = document.getElementById("prop-alta-renta").value.trim();
-  var latP = parseFloat(document.getElementById("prop-alta-lat").value.trim()) || "";
-  var lonP = parseFloat(document.getElementById("prop-alta-lon").value.trim()) || "";
-  var reglaP = document.getElementById("prop-alta-regla").value;
-  var revP = document.getElementById("prop-alta-revision").value.trim();
-  var ibanP = document.getElementById("prop-alta-iban").value.trim();
-  var fotosLimpias = limpiarListaUrlsMultimedia(document.getElementById("prop-alta-fotos").value);
-  var fotosRaw = fotosLimpias.join(", ");
-  var inpPortada = document.getElementById("prop-alta-portada");
-  var portadaRaw = inpPortada ? inpPortada.value.trim() : (fotosLimpias[0] || "");
-  var avisosP = document.getElementById("prop-alta-avisos").value.trim();
-
-  guardarCacheMultimediaPropiedad(nombreP, fotosLimpias, portadaRaw);
-
-  var nuevaFicha = normalizarPropiedadDesdeMake({
-    PROPIEDAD: nombreP,
-    Tipo_Inmueble: tipoUso,
-    "Regla de Facturación": reglaP,
-    "Dirección del Inmueble": dirP,
-    "Precio Alquiler": rentaP,
-    LAT: latP,
-    LON: lonP,
-    "Próxima Revisión Alquiler": revP,
-    "IBAN Bancario Propietario": ibanP,
-    Foto_Portada_URL: portadaRaw,
-    Fotos_URL: fotosRaw,
-    Avisos: avisosP,
-    "DNI-NIE-CIF": window.sesionActiva["DNI-NIE-CIF"]
-  });
-
-  var idxExistente = window.CARTERA_PROPIEDADES.findIndex(function(p) {
-    return String(p.nombre_propiedad || "").toUpperCase() === nombreP.toUpperCase();
-  });
-
-  if (idxExistente >= 0) {
-    window.CARTERA_PROPIEDADES[idxExistente] = Object.assign({}, window.CARTERA_PROPIEDADES[idxExistente], nuevaFicha);
-  } else {
-    window.CARTERA_PROPIEDADES.push(nuevaFicha);
-  }
-
-  renderizarCarteraYRecibosPropietario();
-  poblarSelectoresPropiedadesModales();
-
-  fetch(URL_WEBHOOK_PROPERTY_GESTION, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      accion: "alta_o_edicion_propiedad",
-      "DNI-NIE-CIF": window.sesionActiva["DNI-NIE-CIF"],
-      propiedad: nombreP,
-      PROPIEDAD: nombreP,
-      Tipo_Inmueble: tipoUso,
-      Regla_Facturacion: reglaP,
-      direccion: dirP,
-      cuota: rentaP,
-      iban: ibanP,
-      Foto_Portada_URL: portadaRaw,
-      Fotos_URL: fotosRaw,
-      foto_portada_url: portadaRaw,
-      todas_las_fotos_url: fotosRaw,
-      avisos: avisosP
-    })
-  }).finally(function() {
-    msgExito.innerHTML = "✅ Propiedad <strong>" + escaparHTML(nombreP) + "</strong> actualizada.";
-    msgExito.style.display = "block";
-    btn.disabled = false;
-  });
-};
-
 window.guardarNuevaPropiedad = function(e) {
   e.preventDefault();
   var btn = document.getElementById("btn-guardar-propiedad");
@@ -5243,7 +5157,13 @@ window.guardarNuevaPropiedad = function(e) {
     btn.disabled = false;
   });
 };
-
+  
+window.abrirModalAltaInquilino = function() {
+  document.getElementById("msg-inq-exito").style.display = "none";
+  poblarSelectoresPropiedadesModales();
+  document.getElementById("modal-alta-inquilino").style.display = "flex";
+};
+  
 window.guardarNuevoInquilino = function(e) {
   e.preventDefault();
   var btn = document.getElementById("btn-guardar-inquilino");
