@@ -991,6 +991,17 @@
           <button type="button" class="btn-primary" id="btn-acceso" onclick="llamarAlWebhook()" data-i18n="btn_request_pin">
             Solicitar Verificación VIP →
           </button>
+         <div style="margin-top:20px; padding:16px; background:linear-gradient(135deg, rgba(16,185,129,0.12) 0%, rgba(245,158,11,0.10) 100%); border:1px dashed var(--amber); border-radius:12px; text-align:center;">
+            <div style="font-size:12px; font-weight:800; color:var(--amber); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:4px;">
+              ✨ ¿Aún no eres cliente de Level.immo?
+            </div>
+            <p style="font-size:12.5px; color:var(--text-muted); margin-bottom:12px; line-height:1.45;">
+              Prueba nuestra consola de gestión autónoma de alquileres, saldo vivo y recibos PDF en 1 clic con datos de ejemplo.
+            </p>
+            <button type="button" class="btn-outline-sm" style="width:100%; padding:10px; border-color:var(--amber); color:var(--amber); font-weight:800; font-size:13px;" onclick="iniciarModoDemo()">
+              👁️ Probar Demo Interactiva (2 Propiedades) →
+            </button>
+          </div> 
         </div>
 
         <!-- FASE 2: PEDIR PIN -->
@@ -1040,7 +1051,20 @@
             </button>
           </div>
         </div>
-
+<!-- BARRA SUPERIOR MODO DEMO INTERACTIVO -->
+        <div id="demo-mode-banner" style="display:none; background:linear-gradient(90deg, rgba(245,158,11,0.22) 0%, rgba(16,185,129,0.18) 100%); border:1px solid var(--amber); border-radius:14px; padding:14px 20px; margin-bottom:20px; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;">
+          <div>
+            <div style="font-size:14px; font-weight:900; color:#fff;">🎭 MODO DEMO INTERACTIVO · CARTERA DE EJEMPLO (2 PROPIEDADES)</div>
+            <div style="font-size:12.5px; color:var(--text-muted); margin-top:2px;">Estás explorando datos ficticios. Contrata tu cuenta para automatizar tus propios alquileres, suministros y avisos.</div>
+          </div>
+          <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+            <a href="https://app.level-i.com/gestion-de-inquilinos" target="_blank" rel="noopener" class="btn-primary" style="width:auto; background:var(--amber); color:#042f2e; padding:10px 18px; text-decoration:none;">
+              🚀 CONTRATAR SERVICIO →
+            </a>
+            <button type="button" class="btn-logout" onclick="cerrarSesion()">✕ Salir de la Demo</button>
+          </div>
+        </div>
+        
         <!-- BARRA EXCLUSIVA PARA SERVICIOS JURÍDICOS / ABOGADO AUTORIZADO -->
         <div id="lawyer-executive-banner">
           <div style="width:100%; background:#071224; border-bottom:1px solid rgba(197,160,89,0.35);">
@@ -5920,8 +5944,112 @@ function alternarPantallaCompleta() { document.getElementById("main-layout").cla
 function abrirModal(id) { document.getElementById(id).style.display = "flex"; }
 function cerrarModal(id) { document.getElementById(id).style.display = "none"; }
 function cerrarVisorSeguro() { document.getElementById("modal-visor-seguro").style.display = "none"; }
+window.MODO_DEMO_ACTIVO = false;
 
+window.iniciarModoDemo = function() {
+  window.MODO_DEMO_ACTIVO = true;
+  window.sesionActiva = {
+    "DNI-NIE-CIF": "00000000T",
+    codigo_inquilino: "DEMO-001",
+    rol: "PROPIETARIO",
+    tabla_filtro: "PROPERTY_PROPIETARIOS",
+    propiedad: "Ático Paseo Marítimo",
+    nombre: "Propietario Demo Level.immo",
+    nombre_pila: "Invitado",
+    idioma: (window.sesionActiva && window.sesionActiva.idioma) || "es"
+  };
+
+  window.CARTERA_PROPIEDADES = [
+    normalizarPropiedadDesdeMake({
+      PROPIEDAD: "Ático Paseo Marítimo",
+      Tipo_Inmueble: "VIVIENDA",
+      "Regla de Facturación": "AGUA Y LUZ",
+      "Dirección del Inmueble": "Passeig Marítim, 24, 43540 La Ràpita",
+      "Precio Alquiler": "750",
+      "IBAN Bancario Propietario": "ES12 2100 0000 0000 0000 1234",
+      INQUILINO: "Laura Martínez Soler",
+      "DNI-NIE-CIF": "12345678A",
+      Avisos: "Revisión anual de caldera programada para el próximo mes.",
+      Max: 4
+    }),
+    normalizarPropiedadDesdeMake({
+      PROPIEDAD: "Local Comercial Centro",
+      Tipo_Inmueble: "LOCAL",
+      "Regla de Facturación": "DOMICILIADO INQUILINO",
+      "Dirección del Inmueble": "Carrer Major, 15, 43870 Amposta",
+      "Precio Alquiler": "900",
+      "IBAN Bancario Propietario": "ES12 2100 0000 0000 0000 1234",
+      INQUILINO: "Estudio Creativo Delta SL",
+      "DNI-NIE-CIF": "B98765432",
+      Avisos: "Facturación mensual con 21% IVA y 19% retención IRPF.",
+      Max: 4
+    })
+  ];
+
+  window.RECIBOS_CARTERA = [
+    normalizarReciboDesdeMake({
+      id_recibo: "DEMO-2026-01",
+      Propiedad: "Ático Paseo Marítimo",
+      inquilino: "Laura Martínez Soler",
+      "DNI-NIE-CIF": "12345678A",
+      Fecha_Valor: "2026/11/01",
+      Concepto: "Cuota mensual alquiler Noviembre",
+      Importe: 750,
+      Debe: 750,
+      Haber: 750,
+      Total_Con_Impuestos: 750,
+      "Estado Recibo": "Abonado"
+    }),
+    normalizarReciboDesdeMake({
+      id_recibo: "DEMO-2026-02",
+      Propiedad: "Ático Paseo Marítimo",
+      inquilino: "Laura Martínez Soler",
+      "DNI-NIE-CIF": "12345678A",
+      Fecha_Valor: "2026/11/15",
+      Concepto: "Regularización Luz · Factura real",
+      Importe: 68.50,
+      Debe: 68.50,
+      Haber: 0,
+      Total_Con_Impuestos: 68.50,
+      "Estado Recibo": "Pendiente"
+    }),
+    normalizarReciboDesdeMake({
+      id_recibo: "DEMO-2026-03",
+      Propiedad: "Local Comercial Centro",
+      inquilino: "Estudio Creativo Delta SL",
+      "DNI-NIE-CIF": "B98765432",
+      Fecha_Valor: "2026/11/01",
+      Concepto: "Alquiler Local Noviembre (+21% IVA -19% IRPF)",
+      Importe: 900,
+      Debe: 900,
+      Haber: 0,
+      Iva_Aplicable: 0.21,
+      IRPF_Aplicable: 0.19,
+      Total_Con_Impuestos: 918,
+      "Estado Recibo": "Pendiente"
+    })
+  ];
+
+  document.getElementById("login-section").style.display = "none";
+  document.getElementById("portal-dashboard").style.display = "block";
+  document.getElementById("main-layout").classList.add("fullscreen-mode");
+  var demoBanner = document.getElementById("demo-mode-banner");
+  if (demoBanner) demoBanner.style.display = "flex";
+
+  document.getElementById("badge-titular-activo").innerText = "MODO DEMO · PROPIETARIO INVITADO";
+  document.getElementById("btn-tab-propietaria").style.display = "inline-flex";
+  document.getElementById("owner-greeting-name").innerText = "Invitado";
+  document.getElementById("lawyer-executive-banner").style.display = "none";
+
+  renderizarCarteraYRecibosPropietario();
+  poblarSelectoresPropiedadesModales();
+  mostrarVistaInterna("propietaria");
+};
+  
 function cerrarSesion() {
+  window.MODO_DEMO_ACTIVO = false;
+  var demoBanner = document.getElementById("demo-mode-banner");
+  if (demoBanner) demoBanner.style.display = "none";
   window.datosEnSecreto = null;
   window.EXPEDIENTE_ACTUAL = {};
   window.CARTERA_PROPIEDADES = [];
