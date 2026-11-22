@@ -5132,7 +5132,22 @@ window.guardarNuevaPropiedad = function(e) {
   var idxExistente = window.CARTERA_PROPIEDADES.findIndex(function(p) {
     return String(p.nombre_propiedad || "").toUpperCase() === nombreP.toUpperCase();
   });
+var limiteMax = 4;
+  if (Array.isArray(window.CARTERA_PROPIEDADES) && window.CARTERA_PROPIEDADES.length > 0) {
+    var maxDetectado = Math.max.apply(null, window.CARTERA_PROPIEDADES.map(function(p) {
+      return parseInt(p.max_propiedades || p.Max || 4, 10) || 4;
+    }));
+    if (maxDetectado > 0) limiteMax = maxDetectado;
+  }
 
+  if (idxExistente === -1 && window.CARTERA_PROPIEDADES.length >= limiteMax) {
+    msgExito.className = "status-msg err";
+    msgExito.innerHTML = "⚠️ <strong>Límite de " + limiteMax + " propiedades alcanzado:</strong> Tu contrato actual cubre un máximo de " + limiteMax + " inmuebles. Para dar de alta una propiedad adicional, contacta con Level.immo para formalizar un nuevo contrato.";
+    msgExito.style.display = "block";
+    btn.disabled = false;
+    return;
+  }
+  msgExito.className = "status-msg ok";
   if (idxExistente >= 0) {
     window.CARTERA_PROPIEDADES[idxExistente] = Object.assign({}, window.CARTERA_PROPIEDADES[idxExistente], nuevaFicha);
   } else {
