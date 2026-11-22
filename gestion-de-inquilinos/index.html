@@ -6156,40 +6156,49 @@ window.imprimirInformeEjecutivoAbogadoPDF = function(propiedadForzada) {
   const esAbogado = window.sesionActiva && window.sesionActiva.rol === "ABOGADO";
   const exp = window.EXPEDIENTE_ACTUAL || {};
 
-  // Determinar propiedad única: priorizar parámetro, luego propiedad activa del abogado o expediente único
+  // 1. Determinar una ÚNICA propiedad (nunca mezclar fincas)
   let propUnica = String(propiedadForzada || "").trim();
-  if (!propUnica && esAbogado) {
-    if (window.PROPIEDAD_ACTIVA_ABOGADO) {
-      propUnica = window.PROPIEDAD_ACTIVA_ABOGADO;
-    } else if (Array.isArray(window.PROPIEDADES_ABOGADO_LISTA) && window.PROPIEDADES_ABOGADO_LISTA.length === 1) {
-      propUnica = window.PROPIEDADES_ABOGADO_LISTA[0];
-    } else if (Array.isArray(window.PROPIEDADES_ABOGADO_LISTA) && window.PROPIEDADES_ABOGADO_LISTA.length > 1) {
-      // Pedir elegir una propiedad concreta para no mezclar fincas
-      const tituloVisor = document.getElementById("visor-titulo");
-      const cajaVisor = document.getElementById("visor-contenido-nativo");
-      const modalVisor = document.getElementById("modal-visor-seguro");
-      if (tituloVisor && cajaVisor && modalVisor) {
-        tituloVisor.innerText = "⚖️ Selecciona la Propiedad para el Informe Judicial PDF";
-        cajaVisor.innerHTML =
-          '<p style="color:var(--text-muted); font-size:13px; margin-bottom:14px;">Para evitar mezclar fincas distintas en el mismo informe pericial, selecciona una única propiedad autorizada:</p>' +
-          '<div style="display:flex; flex-direction:column; gap:10px;">' +
-          window.PROPIEDADES_ABOGADO_LISTA.map(p =>
-            '<button type="button" class="btn-primary" style="text-align:left; background:var(--bg-card); color:#fff; border:1px solid var(--amber);" onclick="cerrarVisorSeguro(); window.seleccionarPropiedadAbogado(\'' + escapeHtmlCom(p) + '\'); window.imprimirInformeEjecutivoAbogadoPDF(\'' + escapeHtmlCom(p) + '\');">🏠 Generar Informe PDF exclusivamente de: <strong>' + escapeHtmlCom(p) + '</strong></button>'
-          ).join("") +
-          '</div>';
-        modalVisor.style.display = "flex";
-        return;
-      }
-    }
+
+  if (!propUnica && esAbogado && window.PROPIEDAD_ACTIVA_ABOGADO) {
+    propUnica = window.PROPIEDAD_ACTIVA_ABOGADO;
   }
 
   if (!propUnica && exp.propiedad && exp.propiedad !== "---" && !exp.propiedad.includes(",")) {
     propUnica = exp.propiedad;
   }
 
+  // Si no hay una propiedad concreta seleccionada, pedir elegir UNA
+  if (!propUnica) {
+    const listaDisponible = esAbogado
+      ? (window.PROPIEDADES_ABOGADO_LISTA || [])
+      : (window.CARTERA_PROPIEDADES || []).map(p => p.nombre_propiedad).filter(Boolean);
+
+    if (listaDisponible.length === 1) {
+      propUnica = listaDisponible[0];
+    } else if (listaDisponible.length > 1) {
+      const tituloVisor = document.getElementById("visor-titulo");
+      const cajaVisor = document.getElementById("visor-contenido-nativo");
+      const modalVisor = document.getElementById("modal-visor-seguro");
+      if (tituloVisor && cajaVisor && modalVisor) {
+        tituloVisor.innerText = "⚖️ Selecciona la Propiedad para el Informe Judicial PDF";
+        cajaVisor.innerHTML =
+          '<p style="color:var(--text-muted); font-size:13px; margin-bottom:14px;">Para no mezclar fincas distintas en el mismo informe, elige una única propiedad:</p>' +
+          '<div style="display:flex; flex-direction:column; gap:10px;">' +
+          listaDisponible.map(p =>
+            '<button type="button" class="btn-primary" style="text-align:left; background:var(--bg-card); color:#fff; border:1px solid var(--amber);" onclick="cerrarVisorSeguro(); window.imprimirInformeEjecutivoAbogadoPDF(\'' + escapeHtmlCom(p) + '\');">🏠 Generar Informe PDF exclusivamente de: <strong>' + escapeHtmlCom(p) + '</strong></button>'
+          ).join("") +
+          '</div>';
+        modalVisor.style.display = "flex";
+        return;
+      }
+    } else {
+      alert("⚠️ No hay ninguna propiedad seleccionada para generar el informe.");
+      return;
+    }
+  }
+
   const fichaProp = buscarFichaPropiedadPorNombre(propUnica) || {};
   const movs = (window.RECIBOS_CARTERA || []).filter(r => {
-    if (!propUnica) return true;
     const pRec = String(r.propiedad || "").trim().toUpperCase();
     const pTarget = propUnica.trim().toUpperCase();
     return pRec === pTarget || pRec.includes(pTarget) || pTarget.includes(pRec);
@@ -6246,11 +6255,11 @@ window.imprimirInformeEjecutivoAbogadoPDF = function(propiedadForzada) {
 
   const htmlJudicial =
     '<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">' +
-    '<title>Informe Judicial · ' + escapeHtmlCom(propUnica || "Expediente") + '</title>' +
+    '<title>Informe Judicial · ' + escapeHtmlCom(propUnica) + '</title>' +
     '<style>' +
       '@page { size: A4; margin: 14mm; }' +
-      'body { font-family: Helvetica, Arial, sans-serif; color: #0f172a; background: #fff; margin: 0; font-size: 12px; }' +
-      '.banner-top { background: #071224; color: #fff; padding: 16px 22px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }' +
+      'body { font-family: Helvetica, Arial, sans-serif; color: #0f172a; background: #fff; margin: 0; padding: 16px; font-size: 12px; }' +
+      '.banner-top { background: #071224; color: #fff; padding: 16px 22px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }' +
       'h1 { font-size: 17px; margin: 0 0 12px 0; border-bottom: 2px solid #0f172a; padding-bottom: 8px; text-transform: uppercase; }' +
       '.grid-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }' +
       '.meta-card { background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; padding: 10px 12px; line-height: 1.5; }' +
@@ -6259,22 +6268,23 @@ window.imprimirInformeEjecutivoAbogadoPDF = function(propiedadForzada) {
       '.kpi-lbl { font-size: 10px; text-transform: uppercase; color: #475569; font-weight: 700; }' +
       '.kpi-val { font-size: 14px; font-weight: 900; margin-top: 3px; }' +
       'table { width: 100%; border-collapse: collapse; font-size: 11.5px; }' +
-      'th { background: #0f172a; color: #fff; text-align: left; padding: 8px 10px; font-size: 10.5px; text-transform: uppercase; }' +
+      'th { background: #0f172a; color: #fff; text-align: left; padding: 8px 10px; font-size: 10.5px; text-transform: uppercase; -webkit-print-color-adjust: exact; print-color-adjust: exact; }' +
       'td { border: 1px solid #cbd5e1; padding: 7px 10px; }' +
-      '@media print { .no-print { display: none !important; } }' +
+      '@media print { .no-print { display: none !important; } body { padding: 0; } }' +
     '</style></head><body>' +
-    '<div class="no-print" style="background:#f1f5f9; padding:10px; text-align:center; margin-bottom:12px;">' +
-      '<button onclick="window.print()" style="background:#0f172a; color:#fff; border:none; padding:8px 16px; border-radius:6px; font-weight:700; cursor:pointer;">🖨️ Imprimir / Guardar PDF (A4)</button>' +
+    '<div class="no-print" style="background:#f1f5f9; padding:12px; border:1px solid #cbd5e1; border-radius:8px; display:flex; justify-content:center; gap:12px; margin-bottom:16px;">' +
+      '<button onclick="window.print()" style="background:#0f172a; color:#fff; border:none; padding:9px 18px; border-radius:6px; font-weight:700; cursor:pointer;">🖨️ Imprimir / Guardar PDF (A4)</button>' +
+      '<button onclick="window.close()" style="background:#dc2626; color:#fff; border:none; padding:9px 18px; border-radius:6px; font-weight:700; cursor:pointer;">✕ Cerrar</button>' +
     '</div>' +
     '<div class="banner-top">' +
       '<div><strong style="font-size:20px;">Level.immo</strong><div style="color:#d99b26; font-size:10.5px; font-weight:800;">SERVICIOS JURÍDICOS AUTORIZADOS · INFORME POR PROPIEDAD</div></div>' +
       '<div style="text-align:right; font-size:11px;"><div><strong>LEVEL PUNTO IMMO 24365 SLU</strong></div><div>API 4173 · AICAT 14200</div><div>' + escapeHtmlCom(fechaEmisionInforme) + '</div></div>' +
     '</div>' +
-    '<h1>Informe Ejecutivo · Inmueble: ' + escapeHtmlCom(propUnica || "Expediente") + '</h1>' +
+    '<h1>Informe Ejecutivo · Inmueble: ' + escapeHtmlCom(propUnica) + '</h1>' +
     '<div class="grid-meta">' +
       '<div class="meta-card">' +
         '<div><strong>Propietario:</strong> ' + escapeHtmlCom(propietarioNombre) + ' (' + escapeHtmlCom(propietarioDni) + ')</div>' +
-        '<div><strong>Propiedad Auditada:</strong> ' + escapeHtmlCom(propUnica || "---") + '</div>' +
+        '<div><strong>Propiedad Auditada:</strong> ' + escapeHtmlCom(propUnica) + '</div>' +
         '<div><strong>Dirección:</strong> ' + escapeHtmlCom(direccionInmueble) + '</div>' +
       '</div>' +
       '<div class="meta-card">' +
@@ -6290,7 +6300,6 @@ window.imprimirInformeEjecutivoAbogadoPDF = function(propiedadForzada) {
       '<div class="kpi-box"><div class="kpi-lbl">Pendiente Cobro</div><div class="kpi-val" style="color:#b91c1c;">' + formatearEuros(totalPendienteDebe) + '</div></div>' +
     '</div>' +
     '<table><thead><tr><th>ID</th><th>Fecha Valor</th><th>Concepto</th><th style="text-align:right;">Debe</th><th style="text-align:right;">Haber</th><th>Estado</th></tr></thead><tbody>' + filasMovs + '</tbody></table>' +
-    '<script>setTimeout(function(){ window.print(); }, 400);<\/script>' +
     '</body></html>';
 
   w.document.open();
