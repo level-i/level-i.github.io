@@ -3108,7 +3108,12 @@ window.abrirOSincronizarPdfRecibo = async function(idRecibo) {
     }
   }
 };
-
+  
+window.abrirContratoPdfPropiedad = function(urlPdf, nombrePropiedad) {
+  if (!urlPdf) return;
+  mostrarIframePdfEnVisor(urlPdf, "Contrato de Arrendamiento", nombrePropiedad || "");
+};
+  
 function mostrarIframePdfEnVisor(urlPdf, concepto, propiedad) {
   var titulo = document.getElementById("visor-titulo");
   var caja = document.getElementById("visor-contenido-nativo");
@@ -5136,6 +5141,21 @@ window.guardarNuevaPropiedad = function(e) {
     try { localStorage.setItem("LEVEL_CONTRATO_" + nombreP.toUpperCase(), contratoUrl); } catch (_) {}
   }
 
+  var idxExistente = window.CARTERA_PROPIEDADES.findIndex(function(p) {
+    return String(p.nombre_propiedad || "").toUpperCase() === nombreP.toUpperCase();
+  });
+
+  var limiteMax = parseInt((window.sesionActiva && window.sesionActiva.max_propiedades) || 4, 10) || 4;
+  if (idxExistente === -1 && window.CARTERA_PROPIEDADES.length >= limiteMax) {
+    msgExito.className = "status-msg err";
+    msgExito.innerHTML = "⚠️ <strong>Límite de " + limiteMax + " propiedades alcanzado:</strong> Tu contrato actual cubre un máximo de " + limiteMax + " inmuebles. Para dar de alta una propiedad adicional, contacta con Level.immo para formalizar un nuevo contrato.";
+    msgExito.style.display = "block";
+    btn.disabled = false;
+    return;
+  }
+  msgExito.className = "status-msg ok";
+
+  var previa = idxExistente >= 0 ? window.CARTERA_PROPIEDADES[idxExistente] : null;
   var nuevaFicha = normalizarPropiedadDesdeMake({
     PROPIEDAD: nombreP,
     Tipo_Inmueble: tipoUso,
@@ -5150,8 +5170,65 @@ window.guardarNuevaPropiedad = function(e) {
     Fotos_URL: fotosRaw,
     Contrato_PDF_URL: contratoUrl,
     Avisos: avisosP,
-    "DNI-NIE-CIF": window.sesionActiva["DNI-NIE-CIF"]
+    INQUILINO: previa ? (previa.inquilino_original || previa.inquilino || "Sin inquilino asignado") : "Sin inquilino asignado",
+    "DNI-NIE-CIF": previa ? (previa["DNI-NIE-CIF"] || "") : ""
   });
+
+  if (idxExistente >= 0) {
+    window.CARTERA_PROPIEDADES[idxExistente] = Object.assign({}, previa, nuevaFicha);
+  } else {
+    window.CARTERA_PROPIEDADES.push(nuevaFicha);
+  }
+
+  renderizarCarteraYRecibosPropietario();
+  poblarSelectoresPropiedadesModales();
+
+  if (window.MODO_DEMO_ACTIVO) {
+    msgExito.innerHTML = "🎭 <strong>Modo Demo:</strong> Propiedad <strong>" + escaparHTML(nombreP) + "</strong> simulada en pantalla (no se guarda en base de datos real).";
+    msgExito.style.display = "block";
+    btn.disabled = false;
+    return;
+  }
+
+  fetch(URL_WEBHOOK_PROPERTY_GESTION, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      accion: "alta_o_edicion_propiedad",
+      "DNI-NIE-CIF": window.sesionActiva["DNI-NIE-CIF"],
+      propiedad: nombreP,
+      PROPIEDAD: nombreP,
+      Tipo_Inmueble: tipoUso,
+      Regla_Facturacion: reglaP,
+      direccion: dirP,
+      cuota: rentaP,
+      iban: ibanP,
+      Foto_Portada_URL: portadaRaw,
+      Fotos_URL: fotosRaw,
+      foto_portada_url: portadaRaw,
+      todas_las_fotos_url: fotosRaw,
+      Contrato_PDF_URL: contratoUrl,
+      contrato_pdf_url: contratoUrl,
+      contrato_archivo_nombre: contratoNombre,
+      contrato_base64: contratoB64,
+      avisos: avisosP
+    })
+  })
+  .then(function(resp) {
+    if (!resp.ok) throw new Error("Error HTTP " + resp.status);
+    msgExito.className = "status-msg ok";
+    msgExito.innerHTML = "✅ Propiedad <strong>" + escaparHTML(nombreP) + "</strong>" + (contratoUrl ? " y contrato PDF" : "") + " enviados correctamente.";
+    msgExito.style.display = "block";
+  })
+  .catch(function(err) {
+    msgExito.className = "status-msg err";
+    msgExito.innerHTML = "⚠️ Error al sincronizar con el servidor: " + escaparHTML(err.message || "Revisa la rama en Make.");
+    msgExito.style.display = "block";
+  })
+  .finally(function() {
+    btn.disabled = false;
+  });
+};
 
   var idxExistente = window.CARTERA_PROPIEDADES.findIndex(function(p) {
     return String(p.nombre_propiedad || "").toUpperCase() === nombreP.toUpperCase();
