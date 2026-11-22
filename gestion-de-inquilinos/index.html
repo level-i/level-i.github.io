@@ -5849,7 +5849,12 @@ window.pintarSumaLevel();
 // ============================================================================
 // CANAL PRIVADO PROPIETARIO <-> ABOGADO (CON SELLO IP Y EXENCIÓN LSSI-CE)
 // ============================================================================
+// ============================================================================
+// MÓDULO ABOGADO LIMPIO + CANAL PRIVADO PROPIETARIO <-> ABOGADO (SIN ERRORES)
+// ============================================================================
 window.COMUNICACIONES_LEGALES = window.COMUNICACIONES_LEGALES || [];
+window.PROPIEDADES_ABOGADO_LISTA = [];
+window.PROPIEDAD_ACTIVA_ABOGADO = "";
 
 let contextoComLegal = {
   propiedad: "",
@@ -5860,15 +5865,359 @@ let contextoComLegal = {
   historico: []
 };
 
+function parsearListaPropiedadesAbogado(dataObj) {
+  const raw = formatearCampoValor(
+    (dataObj && (
+      dataObj.propiedades_autorizadas ||
+      dataObj.Propiedades_Autorizadas ||
+      dataObj.PROPERTY_PROPIEDADES ||
+      dataObj.propiedad ||
+      dataObj.PROPIEDAD
+    )) || ""
+  );
+  if (!raw || raw === "---") return [];
+  return raw
+    .split(/[,;\n|]+/)
+    .map(s => s.trim())
+    .filter(Boolean);
+}
+
+function buscarFichaPropiedadPorNombre(nombreProp) {
+  const target = String(nombreProp || "").trim().toUpperCase();
+  if (!target) return null;
+  return (window.CARTERA_PROPIEDADES || []).find(p => {
+    const n = String(p.nombre_propiedad || p.PROPIEDAD || p.propiedad || "").trim().toUpperCase();
+    return n === target || n.includes(target) || target.includes(n);
+  }) || null;
+}
+
+window.seleccionarPropiedadAbogado = function(nombreProp) {
+  const propElegida = String(nombreProp || "").trim();
+  if (!propElegida) return;
+  window.PROPIEDAD_ACTIVA_ABOGADO = propElegida;
+
+  // Resaltar chip activo
+  document.querySelectorAll("#chips-propiedades-expediente-abogado .prop-chip").forEach(btn => {
+    const esActiva = (btn.getAttribute("data-prop") || "").toUpperCase() === propElegida.toUpperCase();
+    btn.classList.toggle("active", esActiva);
+  });
+
+  const ficha = buscarFichaPropiedadPorNombre(propElegida);
+  const dirTexto = (ficha && ficha.direccion && ficha.direccion !== "---")
+    ? ficha.direccion
+    : (window.EXPEDIENTE_ACTUAL && window.EXPEDIENTE_ACTUAL.direccion && window.EXPEDIENTE_ACTUAL.direccion !== "---"
+        ? window.EXPEDIENTE_ACTUAL.direccion
+        : propElegida);
+
+  const rentaTexto = (ficha && (ficha.renta_mensual || ficha.cuota))
+    ? (ficha.renta_mensual || ficha.cuota)
+    : ((window.EXPEDIENTE_ACTUAL && window.EXPEDIENTE_ACTUAL.contrato_renta) || "Consultar contrato");
+
+  const ibanTexto = (ficha && ficha.iban)
+    ? ficha.iban
+    : ((window.EXPEDIENTE_ACTUAL && window.EXPEDIENTE_ACTUAL.iban) || "");
+
+  window.EXPEDIENTE_ACTUAL.propiedad = propElegida;
+  window.EXPEDIENTE_ACTUAL.direccion = dirTexto;
+  if (ibanTexto) window.EXPEDIENTE_ACTUAL.iban = ibanTexto;
+
+  const elProp = document.getElementById("val-propiedad");
+  if (elProp) elProp.innerText = propElegida;
+
+  const elDir = document.getElementById("val-direccion");
+  if (elDir) elDir.innerText = dirTexto;
+
+  const elContrato = document.getElementById("val-contrato-renta");
+  if (elContrato) {
+    elContrato.innerText = [
+      "AUTORIZADO",
+      rentaTexto ? "Alquiler: " + rentaTexto : "",
+      ibanTexto ? "IBAN: " + ibanTexto : ""
+    ].filter(Boolean).join(" · ");
+  }
+
+  if (typeof actualizarTarjetaSaldoVivoEnPantalla === "function") {
+    actualizarTarjetaSaldoVivoEnPantalla();
+  }
+  if (typeof renderizarRecibosInquilino === "function") {
+    renderizarRecibosInquilino(propElegida, "");
+  }
+  if (typeof actualizarMapaInmueble === "function") {
+    actualizarMapaInmueble(dirTexto, propElegida, ficha ? ficha.lat : "", ficha ? ficha.lon : "");
+  }
+  if (contextoComLegal && contextoComLegal.autorRol === "ABOGADO") {
+    contextoComLegal.propiedad = propElegida;
+    const lblProp = document.getElementById("comLegalPropiedadLabel");
+    if (lblProp) lblProp.textContent = propElegida;
+  }
+};
+
+function renderizarBarraChipsAbogado(propsLista) {
+  const boxExpediente = document.querySelector("#vista-residente-contenido .grid-2col .panel-box");
+  if (!boxExpediente) return;
+
+  let barra = document.getElementById("chips-propiedades-expediente-abogado");
+  if (!barra) {
+    barra = document.createElement("div");
+    barra.id = "chips-propiedades-expediente-abogado";
+    barra.style.cssText = "margin-bottom:14px; padding:10px 12px; background:var(--bg-input); border:1px solid var(--border); border-radius:10px;";
+    const header = boxExpediente.querySelector(".panel-header");
+    if (header && header.nextSibling) {
+      boxExpediente.insertBefore(barra, header.nextSibling);
+    } else {
+      boxExpediente.prepend(barra);
+    }
+  }
+
+  if (!Array.isArray(propsLista) || propsLista.length === 0) {
+    barra.style.display = "none";
+    return;
+  }
+
+  barra.style.display = "block";
+  const activaActual = window.PROPIEDAD_ACTIVA_ABOGADO || propsLista[0];
+  barra.innerHTML =
+    '<div style="font-size:11px; font-weight:800; color:var(--amber); text-transform:uppercase; margin-bottom:6px;">🏛️ Propiedades Autorizadas del Despacho (selecciona una para auditar e imprimir PDF):</div>' +
+    '<div class="prop-chips-bar" style="margin-top:0;">' +
+      propsLista.map(p => {
+        const isAct = String(p).toUpperCase() === String(activaActual).toUpperCase();
+        return '<button type="button" class="prop-chip ' + (isAct ? 'active' : '') + '" data-prop="' + escapeHtmlCom(p) + '" onclick="window.seleccionarPropiedadAbogado(\'' + escapeHtmlCom(p) + '\')">🏠 ' + escapeHtmlCom(p) + '</button>';
+      }).join("") +
+    '</div>';
+}
+
+function aplicarModoLimpioAbogado(data) {
+  const esAbogado = window.sesionActiva && window.sesionActiva.rol === "ABOGADO";
+
+  // Ocultar o mostrar bloques según rol
+  const incBox = document.getElementById("val-incidencias") ? document.getElementById("val-incidencias").closest(".panel-box") : null;
+  if (incBox) {
+    incBox.style.display = esAbogado ? "none" : "";
+  }
+
+  // Ocultar botón Asistente IA en la barra superior y sidebar si es abogado
+  document.querySelectorAll("button[onclick*='abrirChatElena']").forEach(btn => {
+    btn.style.display = esAbogado ? "none" : "";
+  });
+  const chatWin = document.getElementById("elena-chat-window");
+  if (chatWin && esAbogado) chatWin.style.display = "none";
+
+  if (!esAbogado) {
+    const barraAbg = document.getElementById("chips-propiedades-expediente-abogado");
+    if (barraAbg) barraAbg.style.display = "none";
+    return;
+  }
+
+  // Nombre real del abogado / despacho
+  const nombreDespacho = formatearCampoValor(
+    (data && (data.nombre_abogado || data.Nombre_Abogado || data.nombre || data.Arrendatario)) ||
+    (window.sesionActiva && window.sesionActiva.nombre) ||
+    "Despacho Jurídico Autorizado"
+  );
+  window.sesionActiva.nombre = nombreDespacho;
+  window.EXPEDIENTE_ACTUAL.nombre = nombreDespacho;
+
+  const elNombre = document.getElementById("val-nombre");
+  if (elNombre) elNombre.innerText = nombreDespacho;
+
+  const dniAbg = window.sesionActiva["DNI-NIE-CIF"] || "";
+  const elBadgeTop = document.getElementById("badge-titular-activo");
+  if (elBadgeTop) {
+    elBadgeTop.innerText = "ABOGADO: " + nombreDespacho + (dniAbg ? " (" + dniAbg + ")" : "");
+  }
+
+  const listaProps = parsearListaPropiedadesAbogado(data);
+  if (listaProps.length > 0) {
+    window.PROPIEDADES_ABOGADO_LISTA = listaProps;
+    const inicial = window.PROPIEDAD_ACTIVA_ABOGADO && listaProps.some(p => p.toUpperCase() === window.PROPIEDAD_ACTIVA_ABOGADO.toUpperCase())
+      ? window.PROPIEDAD_ACTIVA_ABOGADO
+      : listaProps[0];
+    renderizarBarraChipsAbogado(listaProps);
+    window.seleccionarPropiedadAbogado(inicial);
+  }
+}
+
+// Interceptar renderizarPortalConDatos para aplicar el modo limpio de abogado tras cargar datos
+(function engancharAbogadoAlPortal() {
+  const originalRender = window.renderizarPortalConDatos;
+  if (typeof originalRender === "function" && !originalRender._abogadoHooked) {
+    const wrapped = function(data, identificador) {
+      const res = originalRender.apply(this, arguments);
+      try { aplicarModoLimpioAbogado(data || {}); } catch (e) { console.error(e); }
+      return res;
+    };
+    wrapped._abogadoHooked = true;
+    window.renderizarPortalConDatos = wrapped;
+  }
+})();
+
+// ============================================================================
+// INFORME JUDICIAL PDF ESTRICTAMENTE POR UNA SOLA PROPIEDAD
+// ============================================================================
+window.imprimirInformeEjecutivoAbogadoPDF = function(propiedadForzada) {
+  if (typeof enriquecerDatosCarteraYLimpiarRecibosVacios === "function") {
+    enriquecerDatosCarteraYLimpiarRecibosVacios();
+  }
+
+  const esAbogado = window.sesionActiva && window.sesionActiva.rol === "ABOGADO";
+  const exp = window.EXPEDIENTE_ACTUAL || {};
+
+  // Determinar propiedad única: priorizar parámetro, luego propiedad activa del abogado o expediente único
+  let propUnica = String(propiedadForzada || "").trim();
+  if (!propUnica && esAbogado) {
+    if (window.PROPIEDAD_ACTIVA_ABOGADO) {
+      propUnica = window.PROPIEDAD_ACTIVA_ABOGADO;
+    } else if (Array.isArray(window.PROPIEDADES_ABOGADO_LISTA) && window.PROPIEDADES_ABOGADO_LISTA.length === 1) {
+      propUnica = window.PROPIEDADES_ABOGADO_LISTA[0];
+    } else if (Array.isArray(window.PROPIEDADES_ABOGADO_LISTA) && window.PROPIEDADES_ABOGADO_LISTA.length > 1) {
+      // Pedir elegir una propiedad concreta para no mezclar fincas
+      const tituloVisor = document.getElementById("visor-titulo");
+      const cajaVisor = document.getElementById("visor-contenido-nativo");
+      const modalVisor = document.getElementById("modal-visor-seguro");
+      if (tituloVisor && cajaVisor && modalVisor) {
+        tituloVisor.innerText = "⚖️ Selecciona la Propiedad para el Informe Judicial PDF";
+        cajaVisor.innerHTML =
+          '<p style="color:var(--text-muted); font-size:13px; margin-bottom:14px;">Para evitar mezclar fincas distintas en el mismo informe pericial, selecciona una única propiedad autorizada:</p>' +
+          '<div style="display:flex; flex-direction:column; gap:10px;">' +
+          window.PROPIEDADES_ABOGADO_LISTA.map(p =>
+            '<button type="button" class="btn-primary" style="text-align:left; background:var(--bg-card); color:#fff; border:1px solid var(--amber);" onclick="cerrarVisorSeguro(); window.seleccionarPropiedadAbogado(\'' + escapeHtmlCom(p) + '\'); window.imprimirInformeEjecutivoAbogadoPDF(\'' + escapeHtmlCom(p) + '\');">🏠 Generar Informe PDF exclusivamente de: <strong>' + escapeHtmlCom(p) + '</strong></button>'
+          ).join("") +
+          '</div>';
+        modalVisor.style.display = "flex";
+        return;
+      }
+    }
+  }
+
+  if (!propUnica && exp.propiedad && exp.propiedad !== "---" && !exp.propiedad.includes(",")) {
+    propUnica = exp.propiedad;
+  }
+
+  const fichaProp = buscarFichaPropiedadPorNombre(propUnica) || {};
+  const movs = (window.RECIBOS_CARTERA || []).filter(r => {
+    if (!propUnica) return true;
+    const pRec = String(r.propiedad || "").trim().toUpperCase();
+    const pTarget = propUnica.trim().toUpperCase();
+    return pRec === pTarget || pRec.includes(pTarget) || pTarget.includes(pRec);
+  }).sort((a, b) => {
+    const diff = (typeof fechaValorATimestamp === "function" ? fechaValorATimestamp(a) - fechaValorATimestamp(b) : 0);
+    if (diff !== 0) return diff;
+    return String(a.id_recibo || "").localeCompare(String(b.id_recibo || ""));
+  });
+
+  let sumaHaber = 0;
+  let sumaDebe = 0;
+  let totalPendienteDebe = 0;
+  movs.forEach(m => {
+    const h = parsearNumeroContable(m.haber);
+    const d = parsearNumeroContable(m.debe > 0 ? m.total_con_impuestos : 0);
+    sumaHaber += h;
+    sumaDebe += d;
+    if (String(m.estado || "").toUpperCase() === "PENDIENTE") {
+      totalPendienteDebe += d;
+    }
+  });
+
+  sumaHaber = +sumaHaber.toFixed(2);
+  sumaDebe = +sumaDebe.toFixed(2);
+  totalPendienteDebe = +totalPendienteDebe.toFixed(2);
+  const saldoNeto = +(sumaHaber - sumaDebe).toFixed(2);
+
+  const propietarioNombre = (movs[0] && movs[0].propietario && movs[0].propietario !== "---")
+    ? movs[0].propietario
+    : "Carmen Forcadell Chavalera";
+  const propietarioDni = (movs[0] && movs[0].dni_propietario) ? movs[0].dni_propietario : "40913126J";
+  const despachoTxt = esAbogado
+    ? ((window.sesionActiva.nombre || "Despacho Jurídico") + " (" + (window.sesionActiva["DNI-NIE-CIF"] || "") + ")")
+    : "Servicios Jurídicos Autorizados · Level.immo";
+  const direccionInmueble = fichaProp.direccion || exp.direccion || "---";
+  const ibanContrato = fichaProp.iban || exp.iban || (movs[0] ? movs[0].iban : "---");
+  const fechaEmisionInforme = new Date().toLocaleString("es-ES");
+
+  const w = window.open("", "_blank", "width=980,height=980");
+  if (!w) return;
+
+  const filasMovs = movs.map(m => {
+    const fechaCol = formatearFechaValorVisual(m.fecha_valor || m.fecha_emision || m.periodo) || "Sin fecha";
+    const esPend = String(m.estado || "").toUpperCase() === "PENDIENTE";
+    return '<tr>' +
+      '<td style="white-space:nowrap; font-weight:700;">' + escapeHtmlCom(m.id_recibo) + '</td>' +
+      '<td style="white-space:nowrap;">' + escapeHtmlCom(fechaCol) + '</td>' +
+      '<td><strong>' + escapeHtmlCom(m.propiedad) + '</strong> · ' + escapeHtmlCom(m.concepto) + '</td>' +
+      '<td style="text-align:right; white-space:nowrap; color:#b91c1c; font-weight:700;">' + (m.debe > 0 ? formatearEuros(m.total_con_impuestos) : "—") + '</td>' +
+      '<td style="text-align:right; white-space:nowrap; color:#047857; font-weight:700;">' + (m.haber > 0 ? formatearEuros(m.haber) : "—") + '</td>' +
+      '<td style="white-space:nowrap; font-weight:800; color:' + (esPend ? '#b91c1c' : '#047857') + ';">' + escapeHtmlCom(m.estado) + '</td>' +
+    '</tr>';
+  }).join("");
+
+  const htmlJudicial =
+    '<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">' +
+    '<title>Informe Judicial · ' + escapeHtmlCom(propUnica || "Expediente") + '</title>' +
+    '<style>' +
+      '@page { size: A4; margin: 14mm; }' +
+      'body { font-family: Helvetica, Arial, sans-serif; color: #0f172a; background: #fff; margin: 0; font-size: 12px; }' +
+      '.banner-top { background: #071224; color: #fff; padding: 16px 22px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }' +
+      'h1 { font-size: 17px; margin: 0 0 12px 0; border-bottom: 2px solid #0f172a; padding-bottom: 8px; text-transform: uppercase; }' +
+      '.grid-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }' +
+      '.meta-card { background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; padding: 10px 12px; line-height: 1.5; }' +
+      '.kpi-bar { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 16px; }' +
+      '.kpi-box { border: 1px solid #cbd5e1; border-radius: 6px; padding: 9px 11px; background: #f1f5f9; }' +
+      '.kpi-lbl { font-size: 10px; text-transform: uppercase; color: #475569; font-weight: 700; }' +
+      '.kpi-val { font-size: 14px; font-weight: 900; margin-top: 3px; }' +
+      'table { width: 100%; border-collapse: collapse; font-size: 11.5px; }' +
+      'th { background: #0f172a; color: #fff; text-align: left; padding: 8px 10px; font-size: 10.5px; text-transform: uppercase; }' +
+      'td { border: 1px solid #cbd5e1; padding: 7px 10px; }' +
+      '@media print { .no-print { display: none !important; } }' +
+    '</style></head><body>' +
+    '<div class="no-print" style="background:#f1f5f9; padding:10px; text-align:center; margin-bottom:12px;">' +
+      '<button onclick="window.print()" style="background:#0f172a; color:#fff; border:none; padding:8px 16px; border-radius:6px; font-weight:700; cursor:pointer;">🖨️ Imprimir / Guardar PDF (A4)</button>' +
+    '</div>' +
+    '<div class="banner-top">' +
+      '<div><strong style="font-size:20px;">Level.immo</strong><div style="color:#d99b26; font-size:10.5px; font-weight:800;">SERVICIOS JURÍDICOS AUTORIZADOS · INFORME POR PROPIEDAD</div></div>' +
+      '<div style="text-align:right; font-size:11px;"><div><strong>LEVEL PUNTO IMMO 24365 SLU</strong></div><div>API 4173 · AICAT 14200</div><div>' + escapeHtmlCom(fechaEmisionInforme) + '</div></div>' +
+    '</div>' +
+    '<h1>Informe Ejecutivo · Inmueble: ' + escapeHtmlCom(propUnica || "Expediente") + '</h1>' +
+    '<div class="grid-meta">' +
+      '<div class="meta-card">' +
+        '<div><strong>Propietario:</strong> ' + escapeHtmlCom(propietarioNombre) + ' (' + escapeHtmlCom(propietarioDni) + ')</div>' +
+        '<div><strong>Propiedad Auditada:</strong> ' + escapeHtmlCom(propUnica || "---") + '</div>' +
+        '<div><strong>Dirección:</strong> ' + escapeHtmlCom(direccionInmueble) + '</div>' +
+      '</div>' +
+      '<div class="meta-card">' +
+        '<div><strong>Despacho / Letrado:</strong> ' + escapeHtmlCom(despachoTxt) + '</div>' +
+        '<div><strong>IBAN Contractual:</strong> ' + escapeHtmlCom(ibanContrato) + '</div>' +
+        '<div><strong>Movimientos en Inmueble:</strong> ' + movs.length + '</div>' +
+      '</div>' +
+    '</div>' +
+    '<div class="kpi-bar">' +
+      '<div class="kpi-box"><div class="kpi-lbl">Total Debe</div><div class="kpi-val" style="color:#b91c1c;">' + formatearEuros(sumaDebe) + '</div></div>' +
+      '<div class="kpi-box"><div class="kpi-lbl">Total Haber</div><div class="kpi-val" style="color:#047857;">' + formatearEuros(sumaHaber) + '</div></div>' +
+      '<div class="kpi-box"><div class="kpi-lbl">Saldo Vivo (Haber - Debe)</div><div class="kpi-val" style="color:' + (saldoNeto >= 0 ? '#047857' : '#b91c1c') + ';">' + (saldoNeto > 0 ? '+' : '') + formatearEuros(saldoNeto) + '</div></div>' +
+      '<div class="kpi-box"><div class="kpi-lbl">Pendiente Cobro</div><div class="kpi-val" style="color:#b91c1c;">' + formatearEuros(totalPendienteDebe) + '</div></div>' +
+    '</div>' +
+    '<table><thead><tr><th>ID</th><th>Fecha Valor</th><th>Concepto</th><th style="text-align:right;">Debe</th><th style="text-align:right;">Haber</th><th>Estado</th></tr></thead><tbody>' + filasMovs + '</tbody></table>' +
+    '<script>setTimeout(function(){ window.print(); }, 400);<\/script>' +
+    '</body></html>';
+
+  w.document.open();
+  w.document.write(htmlJudicial);
+  w.document.close();
+};
+
+// ============================================================================
+// CANAL PRIVADO PROPIETARIO <-> ABOGADO (CON ADJUNTO, IP Y RESPUESTA ROBUSTA)
+// ============================================================================
 window.abrirCanalPrivadoLegalDesdeSesion = function() {
   const rol = (window.sesionActiva && window.sesionActiva.rol) || "PROPIETARIO";
-  const propActiva = (window.EXPEDIENTE_ACTUAL && window.EXPEDIENTE_ACTUAL.propiedad && window.EXPEDIENTE_ACTUAL.propiedad !== "---")
-    ? window.EXPEDIENTE_ACTUAL.propiedad
-    : ((window.CARTERA_PROPIEDADES && window.CARTERA_PROPIEDADES[0] && window.CARTERA_PROPIEDADES[0].nombre_propiedad) || "");
+  const propActiva = (rol === "ABOGADO" && window.PROPIEDAD_ACTIVA_ABOGADO)
+    ? window.PROPIEDAD_ACTIVA_ABOGADO
+    : ((window.EXPEDIENTE_ACTUAL && window.EXPEDIENTE_ACTUAL.propiedad && window.EXPEDIENTE_ACTUAL.propiedad !== "---")
+        ? window.EXPEDIENTE_ACTUAL.propiedad
+        : ((window.CARTERA_PROPIEDADES && window.CARTERA_PROPIEDADES[0] && window.CARTERA_PROPIEDADES[0].nombre_propiedad) || ""));
 
   const dniProp = rol === "PROPIETARIO"
     ? (window.sesionActiva["DNI-NIE-CIF"] || "")
-    : ((window.EXPEDIENTE_ACTUAL && window.EXPEDIENTE_ACTUAL.dni_propietario) || "");
+    : ((window.EXPEDIENTE_ACTUAL && window.EXPEDIENTE_ACTUAL.dni_propietario) || "40913126J");
 
   const dniAbg = rol === "ABOGADO"
     ? (window.sesionActiva["DNI-NIE-CIF"] || "")
@@ -5898,6 +6247,10 @@ function abrirModalComunicacionLegal({ propiedad, dniPropietario, dniAbogado, au
 
   const lblProp = document.getElementById("comLegalPropiedadLabel");
   if (lblProp) lblProp.textContent = contextoComLegal.propiedad || "Expediente General";
+
+  const estadoBox = document.getElementById("estadoEnvioComLegal");
+  if (estadoBox) estadoBox.style.display = "none";
+
   renderizarHistoricoComunicacionesLegales();
 
   const modal = document.getElementById("modalComunicacionLegal");
@@ -5958,15 +6311,17 @@ async function procesarEnvioComunicacionLegal(event) {
   event.preventDefault();
 
   const btn = document.getElementById("btnEnviarComLegal");
+  const estadoBox = document.getElementById("estadoEnvioComLegal");
   const asunto = document.getElementById("comLegalAsunto").value.trim();
   const prioridad = document.getElementById("comLegalPrioridad").value;
   const mensaje = document.getElementById("comLegalMensaje").value.trim();
-  const adjuntoUrl = document.getElementById("comLegalAdjuntoUrl").value.trim();
+  const fileInp = document.getElementById("comLegalArchivo");
 
   if (!mensaje) return;
 
   btn.disabled = true;
   btn.textContent = "Registrando con sello IP...";
+  if (estadoBox) estadoBox.style.display = "none";
 
   let ipEmisor = "No disponible";
   try {
@@ -5974,6 +6329,19 @@ async function procesarEnvioComunicacionLegal(event) {
     const dataIp = await resIp.json();
     ipEmisor = dataIp.ip || "No disponible";
   } catch (e) {}
+
+  let adjuntoUrl = "";
+  let archivoBase64 = "";
+  let archivoNombre = "";
+
+  if (fileInp && fileInp.files && fileInp.files[0]) {
+    const f = fileInp.files[0];
+    archivoNombre = ("comlegal_" + Date.now().toString(36) + "_" + f.name).replace(/[^a-zA-Z0-9._-]/g, "_");
+    adjuntoUrl = "https://level.immo/app-alquileres-propiedades/" + archivoNombre;
+    if (typeof convertirArchivoABase64 === "function") {
+      try { archivoBase64 = await convertirArchivoABase64(f); } catch (_) {}
+    }
+  }
 
   const fechaHoraAhora = new Date().toLocaleString("es-ES");
 
@@ -5989,6 +6357,8 @@ async function procesarEnvioComunicacionLegal(event) {
     prioridad: prioridad,
     mensaje: mensaje,
     adjunto_url: adjuntoUrl,
+    archivo_nombre: archivoNombre,
+    archivo_base64: archivoBase64,
     ip_emisor: ipEmisor,
     dispositivo_navegador: navigator.userAgent
   };
@@ -5999,9 +6369,27 @@ async function procesarEnvioComunicacionLegal(event) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload)
     });
-    const data = await resp.json();
 
-    if (data.status === "success") {
+    const rawText = await resp.text();
+    let guardadoOk = resp.ok;
+    let msgErrorServidor = "";
+
+    if (rawText && rawText.trim() !== "" && rawText.trim() !== "Accepted") {
+      try {
+        const dataJson = JSON.parse(rawText);
+        if (dataJson.status === "error" || dataJson.error) {
+          guardadoOk = false;
+          msgErrorServidor = dataJson.message || dataJson.error || "Error devuelto por el servidor";
+        } else if (dataJson.status === "success" || resp.ok) {
+          guardadoOk = true;
+        }
+      } catch (_) {
+        // Si Make devolvió texto plano HTTP 200, consideramos OK si resp.ok
+        guardadoOk = resp.ok;
+      }
+    }
+
+    if (guardadoOk) {
       const nuevoRegistro = {
         Fecha_Hora: fechaHoraAhora,
         Propiedad: contextoComLegal.propiedad,
@@ -6021,12 +6409,31 @@ async function procesarEnvioComunicacionLegal(event) {
 
       renderizarHistoricoComunicacionesLegales();
       document.getElementById("formComunicacionLegal").reset();
+      if (estadoBox) {
+        estadoBox.style.display = "block";
+        estadoBox.style.background = "#ecfdf5";
+        estadoBox.style.color = "#065f46";
+        estadoBox.style.border = "1px solid #10b981";
+        estadoBox.textContent = "✅ Comunicación registrada en el expediente con fecha, hora e IP.";
+      }
     } else {
-      alert("No se pudo registrar la comunicación: " + (data.message || "Error en servidor"));
+      if (estadoBox) {
+        estadoBox.style.display = "block";
+        estadoBox.style.background = "#fef2f2";
+        estadoBox.style.color = "#991b1b";
+        estadoBox.style.border = "1px solid #ef4444";
+        estadoBox.textContent = "⚠️ No se pudo registrar: " + (msgErrorServidor || "Revisa la rama en Make.");
+      }
     }
   } catch (err) {
     console.error("Error en comunicación legal:", err);
-    alert("Error de conexión al registrar la comunicación.");
+    if (estadoBox) {
+      estadoBox.style.display = "block";
+      estadoBox.style.background = "#fef2f2";
+      estadoBox.style.color = "#991b1b";
+      estadoBox.style.border = "1px solid #ef4444";
+      estadoBox.textContent = "⚠️ Error de red o bloqueo del navegador al conectar con el webhook.";
+    }
   } finally {
     btn.disabled = false;
     btn.textContent = "Registrar y Enviar Comunicación";
@@ -6034,14 +6441,13 @@ async function procesarEnvioComunicacionLegal(event) {
 }
 
 function escapeHtmlCom(str) {
-  return String(str)
+  return String(str === null || str === undefined ? "" : str)
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;");
 }
 
-// Inyectar botón de Canal Privado Propietario <-> Abogado en ambas vistas (nunca en Inquilino)
 (function inyectarBotonesCanalLegal() {
   const bannerAbgBtns = document.querySelector("#lawyer-executive-banner button[onclick*='imprimirInformeEjecutivoAbogadoPDF']");
   if (bannerAbgBtns && bannerAbgBtns.parentElement && !document.getElementById("btn-canal-legal-abogado")) {
@@ -6073,7 +6479,6 @@ function escapeHtmlCom(str) {
 <div id="modalComunicacionLegal" style="display:none; position:fixed; inset:0; background:rgba(15,23,42,0.72); backdrop-filter:blur(3px); z-index:9999; align-items:center; justify-content:center; padding:16px;">
   <div style="background:#ffffff; width:100%; max-width:740px; max-height:90vh; border-radius:14px; box-shadow:0 20px 45px rgba(0,0,0,0.25); display:flex; flex-direction:column; overflow:hidden; font-family:system-ui,-apple-system,sans-serif;">
     
-    <!-- Cabecera -->
     <div style="background:#0f172a; color:#ffffff; padding:16px 20px; display:flex; align-items:center; justify-content:space-between;">
       <div>
         <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:#93c5fd; font-weight:700;">Canal Confidencial · Expediente Jurídico</div>
@@ -6082,16 +6487,13 @@ function escapeHtmlCom(str) {
       <button type="button" onclick="cerrarModalComunicacionLegal()" style="background:rgba(255,255,255,0.12); border:none; color:#ffffff; width:32px; height:32px; border-radius:8px; font-size:18px; cursor:pointer;">✕</button>
     </div>
 
-    <!-- Cuerpo con scroll -->
     <div style="padding:18px 20px; overflow-y:auto; flex:1; background:#f8fafc;">
       
-      <!-- Aviso Legal Obligatorio (LSSI-CE / Trazabilidad) -->
       <div style="background:#eff6ff; border-left:4px solid #1d4ed8; padding:11px 14px; border-radius:8px; font-size:12px; color:#1e3a8a; margin-bottom:16px; line-height:1.45;">
         <strong>⚖️ Canal Registrado y Exención de Responsabilidad (Level.immo · API 4173 · AICAT 14200):</strong>
         Level.immo actúa exclusivamente como medio técnico de comunicación y registro trazable entre las partes intervinientes, sin emitir dictámenes jurídicos ni asumir responsabilidad sobre los contenidos o documentos aportados, que recae íntegramente sobre quien los emite. Quedan prohibidos los insultos, amenazas, coacciones, difamaciones o el tratamiento ilícito de datos personales. Cada envío queda registrado con sello de fecha, hora, dirección IP, navegador y usuario.
       </div>
 
-      <!-- Histórico de mensajes del expediente -->
       <div style="margin-bottom:18px;">
         <div style="font-size:12px; font-weight:700; color:#475569; text-transform:uppercase; letter-spacing:0.04em; margin-bottom:8px;">
           Histórico del expediente (<span id="comLegalPropiedadLabel">—</span>)
@@ -6101,7 +6503,6 @@ function escapeHtmlCom(str) {
         </div>
       </div>
 
-      <!-- Formulario de nueva comunicación -->
       <form id="formComunicacionLegal" onsubmit="procesarEnvioComunicacionLegal(event)" style="background:#ffffff; border:1px solid #cbd5e1; border-radius:10px; padding:14px;">
         <div style="font-size:13px; font-weight:700; color:#0f172a; margin-bottom:10px;">Nueva comunicación trazable</div>
         
@@ -6126,9 +6527,11 @@ function escapeHtmlCom(str) {
         </div>
 
         <div style="margin-bottom:12px;">
-          <label style="display:block; font-size:12px; font-weight:600; color:#334155; margin-bottom:4px;">Enlace a documento adjunto (opcional)</label>
-          <input type="url" id="comLegalAdjuntoUrl" placeholder="https://level.immo/..." style="width:100%; box-sizing:border-box; padding:8px 10px; border:1px solid #cbd5e1; border-radius:7px; font-size:13px; color:#0f172a; background:#ffffff;">
+          <label style="display:block; font-size:12px; font-weight:600; color:#334155; margin-bottom:4px;">Adjuntar documento / justificante (opcional)</label>
+          <input type="file" id="comLegalArchivo" accept=".pdf,image/*" style="width:100%; box-sizing:border-box; padding:7px 10px; border:1px solid #cbd5e1; border-radius:7px; font-size:12px; color:#0f172a; background:#ffffff;">
         </div>
+
+        <div id="estadoEnvioComLegal" style="display:none; padding:9px 12px; border-radius:8px; font-size:12.5px; font-weight:700; margin-bottom:10px;"></div>
 
         <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;">
           <span style="font-size:11px; color:#64748b;">🔒 Se registrará tu IP, navegador y fecha/hora exacta.</span>
