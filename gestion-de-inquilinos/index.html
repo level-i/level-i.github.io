@@ -3857,15 +3857,16 @@ function enriquecerDatosCarteraYLimpiarRecibosVacios() {
       p.total_titulares = infoT.total;
     });
 
-    try {
-      localStorage.setItem("LEVEL_CACHE_CARTERA", JSON.stringify(window.CARTERA_PROPIEDADES));
+   try {
+      if (!window.MODO_DEMO_ACTIVO) localStorage.setItem("LEVEL_CACHE_CARTERA", JSON.stringify(window.CARTERA_PROPIEDADES));
     } catch (_) {}
   }
 
   if (Array.isArray(window.RECIBOS_CARTERA) && window.RECIBOS_CARTERA.length > 0) {
     try {
-      localStorage.setItem("LEVEL_CACHE_RECIBOS", JSON.stringify(window.RECIBOS_CARTERA));
+      if (!window.MODO_DEMO_ACTIVO) localStorage.setItem("LEVEL_CACHE_RECIBOS", JSON.stringify(window.RECIBOS_CARTERA));
     } catch (_) {}
+    if (!window.MODO_DEMO_ACTIVO) localStorage.setItem("LEVEL_ABOGADOS_AUTORIZADOS", JSON.stringify(listaAbg));
   }
 }
 
@@ -6023,7 +6024,21 @@ function abrirModal(id) { document.getElementById(id).style.display = "flex"; }
 function cerrarModal(id) { document.getElementById(id).style.display = "none"; }
 function cerrarVisorSeguro() { document.getElementById("modal-visor-seguro").style.display = "none"; }
 window.MODO_DEMO_ACTIVO = false;
-
+(function blindarFetchEnModoDemo() {
+  var fetchReal = window.fetch;
+  if (typeof fetchReal !== "function" || fetchReal._demoShielded) return;
+  window.fetch = function(url, opts) {
+    if (window.MODO_DEMO_ACTIVO && String(url || "").indexOf("hook.eu1.make.com") !== -1) {
+      return Promise.resolve(new Response(JSON.stringify({ status: "demo_ok", respuesta: "🎭 Modo Demo: acción simulada en pantalla (no afecta a datos reales)." }), {
+        status: 200,
+        headers: { "Content-Type": "application/json" }
+      }));
+    }
+    return fetchReal.apply(this, arguments);
+  };
+  window.fetch._demoShielded = true;
+})();
+  
 window.iniciarModoDemo = function() {
   window.MODO_DEMO_ACTIVO = true;
   window.sesionActiva = {
