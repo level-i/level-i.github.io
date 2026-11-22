@@ -1169,6 +1169,9 @@
             <div class="panel-header" style="color:var(--amber); margin-bottom:12px;">
               <span>🧾 LIBRO DE RECIBOS Y FACTURAS (ALQUILER DÍA 1, SUMINISTROS Y LIQUIDACIÓN TPV)</span>
               <div class="prop-chips-bar" style="margin-top:0;">
+               <select id="select-propiedad-recibos" class="form-input" style="width:auto; min-width:210px; padding:6px 12px; font-size:12px; cursor:pointer;" onchange="seleccionarPropiedadRecibos(this.value)">
+                  <option value="TODAS">🏢 Todas las propiedades</option>
+                </select> 
                 <button type="button" class="prop-chip active" onclick="filtrarRecibosPropietario('TODOS', this)">Todos</button>
                 <button type="button" class="prop-chip" onclick="filtrarRecibosPropietario('PENDIENTE', this)">🔴 Pendientes (Debe)</button>
                 <button type="button" class="prop-chip" onclick="filtrarRecibosPropietario('ABONADO', this)">🟢 Abonados (Haber / PDF)</button>
@@ -4595,7 +4598,16 @@ function renderizarCarteraYRecibosPropietario(filtroTexto) {
       '</div>' +
     '</div>';
   }).join("");
-
+var selPropRec = document.getElementById("select-propiedad-recibos");
+  if (selPropRec) {
+    var valPrevio = window.filtroPropiedadRecibos || "TODAS";
+    selPropRec.innerHTML =
+      '<option value="TODAS">🏢 Todas las propiedades (' + window.CARTERA_PROPIEDADES.length + ')</option>' +
+      window.CARTERA_PROPIEDADES.map(function(p) {
+        return '<option value="' + escaparHTML(p.nombre_propiedad) + '">🏠 ' + escaparHTML(p.nombre_propiedad) + '</option>';
+      }).join("");
+    selPropRec.value = valPrevio;
+  }
   var propActiva = window.filtroPropiedadRecibos || "TODAS";
   var recibosFiltrados = (window.RECIBOS_CARTERA || []).filter(function(r) {
     var coincideProp = (propActiva === "TODAS") || coincidenReciboYPropiedad(r, propActiva, "");
