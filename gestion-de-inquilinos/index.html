@@ -2815,8 +2815,8 @@ function normalizarPropiedadDesdeMake(itemProp) {
     lat: lat,
     lon: lon,
     foto_portada: fotoPortada,
-    fotos: listaFotos
-    contrato_pdf_url: contratoUrl,
+    fotos: listaFotos,
+    contrato_pdf_url: contratoUrl
   };
 }
 
@@ -6502,97 +6502,6 @@ async function procesarEnvioComunicacionLegal(event) {
     const dataIp = await resIp.json();
     ipEmisor = dataIp.ip || "No disponible";
   } catch (e) {}
-
-  const fechaHoraAhora = new Date().toLocaleString("es-ES");
-
-  const payload = {
-    accion: "registrar_comunicacion_legal",
-    fecha_hora: fechaHoraAhora,
-    propiedad: contextoComLegal.propiedad,
-    dni_propietario: contextoComLegal.dniPropietario,
-    dni_abogado: contextoComLegal.dniAbogado,
-    autor_rol: contextoComLegal.autorRol,
-    autor_nombre: contextoComLegal.autorNombre,
-    asunto: asunto,
-    prioridad: prioridad,
-    mensaje: mensaje,
-    adjunto_url: "",
-    ip_emisor: ipEmisor,
-    dispositivo_navegador: navigator.userAgent
-  };
-
-  try {
-    const resp = await fetch(URL_WEBHOOK_PROPERTY_GESTION, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
-    });
-
-    const rawText = await resp.text();
-    let guardadoOk = resp.ok;
-    let msgErrorServidor = "";
-
-    if (rawText && rawText.trim() !== "" && rawText.trim() !== "Accepted") {
-      try {
-        const dataJson = JSON.parse(rawText);
-        if (dataJson.status === "error" || dataJson.error) {
-          guardadoOk = false;
-          msgErrorServidor = dataJson.message || dataJson.error || "Error devuelto por el servidor";
-        } else if (dataJson.status === "success" || resp.ok) {
-          guardadoOk = true;
-        }
-      } catch (_) {
-        guardadoOk = resp.ok;
-      }
-    }
-
-    if (guardadoOk) {
-      const nuevoRegistro = {
-        Fecha_Hora: fechaHoraAhora,
-        Propiedad: contextoComLegal.propiedad,
-        DNI_Propietario: contextoComLegal.dniPropietario,
-        DNI_Abogado: contextoComLegal.dniAbogado,
-        Autor_Rol: contextoComLegal.autorRol,
-        Autor_Nombre: contextoComLegal.autorNombre,
-        Asunto: asunto,
-        Prioridad: prioridad,
-        Mensaje: mensaje
-      };
-      contextoComLegal.historico.push(nuevoRegistro);
-      if (window.COMUNICACIONES_LEGALES !== contextoComLegal.historico) {
-        window.COMUNICACIONES_LEGALES.push(nuevoRegistro);
-      }
-
-      renderizarHistoricoComunicacionesLegales();
-      document.getElementById("formComunicacionLegal").reset();
-      if (estadoBox) {
-        estadoBox.style.display = "block";
-        estadoBox.style.background = "#ecfdf5";
-        estadoBox.style.color = "#065f46";
-        estadoBox.style.border = "1px solid #10b981";
-        estadoBox.textContent = "✅ Comunicación registrada en el expediente con fecha, hora e IP.";
-      }
-    } else if (estadoBox) {
-      estadoBox.style.display = "block";
-      estadoBox.style.background = "#fef2f2";
-      estadoBox.style.color = "#991b1b";
-      estadoBox.style.border = "1px solid #ef4444";
-      estadoBox.textContent = "⚠️ No se pudo registrar: " + (msgErrorServidor || "Revisa la rama en Make.");
-    }
-  } catch (err) {
-    console.error("Error en comunicación legal:", err);
-    if (estadoBox) {
-      estadoBox.style.display = "block";
-      estadoBox.style.background = "#fef2f2";
-      estadoBox.style.color = "#991b1b";
-      estadoBox.style.border = "1px solid #ef4444";
-      estadoBox.textContent = "⚠️ Error de red o bloqueo del navegador al conectar con el webhook.";
-    }
-  } finally {
-    btn.disabled = false;
-    btn.textContent = "Registrar y Enviar Comunicación";
-  }
-}
 
   const fechaHoraAhora = new Date().toLocaleString("es-ES");
 
