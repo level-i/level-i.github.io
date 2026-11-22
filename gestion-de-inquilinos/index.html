@@ -3366,25 +3366,6 @@ window.descargarReciboPDF = function(idRecibo) {
   ventanaPDF.document.close();
 };
 
-
-  function fechaValorATimestamp(rec) {
-  var txt = String((rec && (rec.fecha_emision || rec.periodo)) || "");
-  var mDmy = txt.match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/);
-  if (mDmy) return new Date(parseInt(mDmy[3], 10), parseInt(mDmy[2], 10) - 1, parseInt(mDmy[1], 10)).getTime();
-  var mIso = txt.match(/(\d{4})-(\d{1,2})-(\d{1,2})/);
-  if (mIso) return new Date(parseInt(mIso[1], 10), parseInt(mIso[2], 10) - 1, parseInt(mIso[3], 10)).getTime();
-  return 0;
-}
-
-window.imprimirInformeEjecutivoAbogadoPDF = function() {
-  var exp = window.EXPEDIENTE_ACTUAL || {};
-  var propFiltro = exp.propiedad && exp.propiedad !== "---" && !exp.propiedad.includes(",") ? exp.propiedad : "";
-  var movs = window.RECIBOS_CARTERA.filter(function(r) {
-    return !propFiltro || String(r.propiedad || "").toUpperCase().includes(propFiltro.toUpperCase());
-  }).sort(function(a, b) {
-    return fechaValorATimestamp(a) - fechaValorATimestamp(b);
-  });
-
   var sumaHaber = 0;
   var sumaDebe = 0;
   movs.forEach(function(m) {
