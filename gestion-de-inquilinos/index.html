@@ -1497,7 +1497,19 @@
         </div>
       </div>
 
-<!-- SUBIDA MULTIMEDIA LIMPIA (SIN URLS VISIBLES NI PALABRA FTP) + BARRA RADAR -->
+<!-- SUBIDA DE CONTRATO EN PDF DEL INMUEBLE -->
+      <div class="form-group" style="background:var(--bg-input); padding:14px; border-radius:12px; border:1px solid var(--amber); margin-bottom:14px;">
+        <label for="prop-file-contrato-pdf" class="form-label" style="color:var(--amber); margin-bottom:6px; font-size:13px;">
+          📄 Subir Contrato de Arrendamiento en PDF (Propiedad)
+        </label>
+        <input type="file" id="prop-file-contrato-pdf" accept="application/pdf,.pdf" class="form-input" style="padding:8px;" onchange="manejarContratoPdfSeleccionado(event)">
+        <div id="estado-contrato-pdf" style="font-size:12px; color:var(--text-muted); margin-top:6px;">Sin contrato PDF seleccionado.</div>
+        <input type="hidden" id="prop-alta-contrato-url" value="">
+        <input type="hidden" id="prop-alta-contrato-nombre" value="">
+        <input type="hidden" id="prop-alta-contrato-b64" value="">
+      </div>
+      
+      <!-- SUBIDA MULTIMEDIA LIMPIA (SIN URLS VISIBLES NI PALABRA FTP) + BARRA RADAR -->
       <div class="form-group" style="background:var(--bg-input); padding:16px; border-radius:12px; border:1px dashed var(--emerald);">
         <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:8px;">
           <label for="prop-file-ftp" class="form-label" style="color:var(--emerald); margin-bottom:0; font-size:13.5px;">
@@ -2744,7 +2756,7 @@ function normalizarPropiedadDesdeMake(itemProp) {
   );
   var avisosProp = formatearCampoValor(f.Avisos || f.avisos || f["Avisos Generales"] || "");
   var incProp = formatearCampoValor(f.Incidencias || f.incidencias || f.PROPERTY_INCIDENCIAS || "");
-
+  var contratoUrl = formatearCampoValor(f.Contrato_PDF_URL || f.contrato_pdf_url || f.Contrato || f["Contrato PDF"] || "");
   var lat = parseFloat(formatearCampoValor(f.LAT || f.Latitud || f.lat || ""));
   var lon = parseFloat(formatearCampoValor(f.LON || f.Longitud || f.lon || f.lng || ""));
   if (isNaN(lat)) lat = "";
@@ -2804,6 +2816,7 @@ function normalizarPropiedadDesdeMake(itemProp) {
     lon: lon,
     foto_portada: fotoPortada,
     fotos: listaFotos
+    contrato_pdf_url: contratoUrl,
   };
 }
 
@@ -4575,6 +4588,7 @@ function renderizarCarteraYRecibosPropietario(filtroTexto) {
       '</div>' +
       '<div style="display:flex; gap:6px; flex-wrap:wrap; padding-top:8px; border-top:1px solid rgba(30,41,59,0.6);">' +
         '<button type="button" class="btn-outline-sm" style="flex:1; font-weight:700; border-color:var(--emerald); color:var(--emerald);" onclick="inspeccionarInmuebleComoResidente(\'' + escaparHTML(p.nombre_propiedad || "") + '\')">' + escaparHTML(t.btn_exp) + '</button>' +
+      (p.contrato_pdf_url && p.contrato_pdf_url.startsWith("http") ? '<button type="button" class="btn-outline-sm" style="border-color:var(--neon-cyan); color:var(--neon-cyan); font-weight:800;" onclick="abrirContratoPdfPropiedad(\'' + escaparHTML(p.contrato_pdf_url) + '\', \'' + escaparHTML(p.nombre_propiedad || "") + '\')">📄 Contrato</button>' : '') +  
         '<button type="button" class="btn-outline-sm" onclick="abrirBookFotosInmueble(\'' + escaparHTML(p.nombre_propiedad || "") + '\')">📷 Book (' + numFotos + ')</button>' +
         '<button type="button" class="btn-outline-sm" onclick="abrirModalSuministroManual(\'' + escaparHTML(p.nombre_propiedad || "") + '\')">⚡ +Recibo</button>' +
         '<button type="button" class="btn-outline-sm" style="border-color:var(--amber); color:var(--amber);" onclick="abrirModalAltaPropiedad(\'' + escaparHTML(p.nombre_propiedad || "") + '\')">' + escaparHTML(t.btn_photos) + '</button>' +
@@ -4819,6 +4833,14 @@ window.abrirFichaContratoActual = function() {
   var saldoNum = calcularSaldoVivoPropiedad(propCalc, 0);
   var domNotif = exp.domicilio_social || exp.direccion_fiscal || exp.direccion || "---";
 
+  var ficha = (window.CARTERA_PROPIEDADES || []).find(function(p) {
+    return propCalc && String(p.nombre_propiedad || "").toUpperCase() === propCalc.toUpperCase();
+  }) || {};
+  var urlContrato = exp.contrato_pdf_url || ficha.contrato_pdf_url || "";
+  if (!urlContrato && propCalc) {
+    try { urlContrato = localStorage.getItem("LEVEL_CONTRATO_" + propCalc.toUpperCase()) || ""; } catch (_) {}
+  }
+
   document.getElementById("visor-titulo").innerText = "📄 Ficha Contractual, Co-Titulares, Domicilio Fiscal e IBAN · " + (exp.propiedad || "---");
   document.getElementById("visor-contenido-nativo").innerHTML =
     '<div class="panel-box" style="background:var(--bg-input); margin-bottom:0;">' +
@@ -4829,6 +4851,9 @@ window.abrirFichaContratoActual = function() {
       '<div class="info-row"><span class="info-label">Cuenta IBAN Asociada:</span><span class="info-value" style="color:var(--neon-cyan);">' + escaparHTML(exp.iban || "---") + '</span></div>' +
       '<div class="info-row"><span class="info-label">Condiciones / Renta:</span><span class="info-value">' + escaparHTML(exp.contrato_renta || "---") + '</span></div>' +
       '<div class="info-row"><span class="info-label">Saldo Vivo Actual (Haber - Debe):</span><span class="info-value" style="color:' + (saldoNum >= 0 ? 'var(--neon-green)' : 'var(--danger)') + ';">' + formatearEuros(saldoNum) + '</span></div>' +
+      (urlContrato && urlContrato.startsWith("http")
+        ? '<div style="margin-top:14px;"><button type="button" class="btn-primary" style="background:var(--amber); color:#042f2e;" onclick="abrirContratoPdfPropiedad(\'' + escaparHTML(urlContrato) + '\', \'' + escaparHTML(exp.propiedad || "") + '\')">📄 Abrir Contrato de Arrendamiento (PDF)</button></div>'
+        : '<div style="margin-top:12px; font-size:12px; color:var(--text-muted);">ℹ️ Sin contrato PDF adjuntado todavía en la ficha de esta propiedad.</div>') +
     '</div>';
   document.getElementById("modal-visor-seguro").style.display = "flex";
 };
@@ -4886,6 +4911,16 @@ window.precargarPropiedadExistente = function(clave) {
   });
 
   var inpPortada = document.getElementById("prop-alta-portada");
+  var stContrato = document.getElementById("estado-contrato-pdf");
+  var inpContratoFile = document.getElementById("prop-file-contrato-pdf");
+  var inpContratoUrl = document.getElementById("prop-alta-contrato-url");
+  var inpContratoNom = document.getElementById("prop-alta-contrato-nombre");
+  var inpContratoB64 = document.getElementById("prop-alta-contrato-b64");
+
+  if (inpContratoFile) inpContratoFile.value = "";
+  if (inpContratoNom) inpContratoNom.value = "";
+  if (inpContratoB64) inpContratoB64.value = "";
+
   if (existente && clave !== "NUEVA") {
     document.getElementById("prop-alta-nombre").value = existente.nombre_propiedad || "";
     document.getElementById("prop-alta-dir").value = (existente.direccion && existente.direccion !== "---") ? existente.direccion : "";
@@ -4899,6 +4934,17 @@ window.precargarPropiedadExistente = function(clave) {
     document.getElementById("prop-alta-fotos").value = fotosStr;
     if (inpPortada) inpPortada.value = existente.foto_portada || (fotosLimpias[0] || "");
     document.getElementById("prop-alta-avisos").value = existente.avisos || "";
+
+    var urlContratoGuardada = existente.contrato_pdf_url || "";
+    if (!urlContratoGuardada) {
+      try { urlContratoGuardada = localStorage.getItem("LEVEL_CONTRATO_" + String(existente.nombre_propiedad || "").toUpperCase()) || ""; } catch (_) {}
+    }
+    if (inpContratoUrl) inpContratoUrl.value = urlContratoGuardada;
+    if (stContrato) {
+      stContrato.innerHTML = (urlContratoGuardada && urlContratoGuardada.startsWith("http"))
+        ? '<span style="color:var(--emerald);">✅ Contrato PDF actual: <a href="' + escaparHTML(urlContratoGuardada) + '" target="_blank" rel="noopener" style="color:var(--neon-cyan); text-decoration:underline;">Ver Contrato</a></span>'
+        : 'Sin contrato PDF subido todavía.';
+    }
     previsualizarFotosModal(fotosStr);
   } else {
     document.getElementById("prop-alta-nombre").value = clave !== "NUEVA" ? clave : "";
@@ -4911,6 +4957,8 @@ window.precargarPropiedadExistente = function(clave) {
     document.getElementById("prop-alta-fotos").value = "";
     if (inpPortada) inpPortada.value = "";
     document.getElementById("prop-alta-avisos").value = "";
+    if (inpContratoUrl) inpContratoUrl.value = "";
+    if (stContrato) stContrato.textContent = "Sin contrato PDF seleccionado.";
     previsualizarFotosModal("");
   }
 };
@@ -4986,6 +5034,48 @@ window.vaciarGaleriaPropiedadModal = function() {
   previsualizarFotosModal("");
 };
 
+window.manejarContratoPdfSeleccionado = async function(event) {
+  var file = event.target && event.target.files && event.target.files[0];
+  var statusEl = document.getElementById("estado-contrato-pdf");
+  var inpUrl = document.getElementById("prop-alta-contrato-url");
+  var inpNom = document.getElementById("prop-alta-contrato-nombre");
+  var inpB64 = document.getElementById("prop-alta-contrato-b64");
+  if (!file) return;
+
+  if (file.size > 25 * 1024 * 1024) {
+    alert("⚠️ El contrato PDF supera el límite de 25 MB.");
+    event.target.value = "";
+    return;
+  }
+
+  var nombreProp = (document.getElementById("prop-alta-nombre").value || "").trim() || "propiedad";
+  var slug = nombreProp.toLowerCase().replace(/[^a-z0-9]/g, "") || "prop";
+  var cleanName = ("contrato_" + slug + "_" + Date.now().toString(36) + "_" + file.name).replace(/[^a-zA-Z0-9._-]/g, "_");
+  var urlFtp = "https://level.immo/app-alquileres-propiedades/" + cleanName;
+
+  if (statusEl) statusEl.innerHTML = "<span style='color:var(--amber);'>⏳ Preparando contrato PDF...</span>";
+
+  try {
+    var b64 = await convertirArchivoABase64(file);
+    if (inpUrl) inpUrl.value = urlFtp;
+    if (inpNom) inpNom.value = cleanName;
+    if (inpB64) inpB64.value = b64;
+    if (statusEl) {
+      statusEl.innerHTML = "<span style='color:var(--emerald); font-weight:700;'>✅ Contrato listo: " + escaparHTML(file.name) + ". Pulsa «Guardar Propiedad» abajo para registrarlo.</span>";
+    }
+  } catch (e) {
+    if (statusEl) statusEl.innerHTML = "<span style='color:#fca5a5;'>⚠️ Error leyendo el PDF del contrato.</span>";
+  }
+};
+
+window.abrirContratoPdfPropiedad = function(urlContrato, nombreProp) {
+  if (!urlContrato || !urlContrato.startsWith("http")) {
+    alert("Esta propiedad todavía no tiene un contrato PDF subido.");
+    return;
+  }
+  mostrarIframePdfEnVisor(urlContrato, "Contrato de Arrendamiento", nombreProp);
+};
+  
 window.guardarNuevaPropiedad = function(e) {
   e.preventDefault();
   var btn = document.getElementById("btn-guardar-propiedad");
@@ -5064,10 +5154,94 @@ window.guardarNuevaPropiedad = function(e) {
   });
 };
 
-window.abrirModalAltaInquilino = function() {
-  document.getElementById("msg-inq-exito").style.display = "none";
+window.guardarNuevaPropiedad = function(e) {
+  e.preventDefault();
+  var btn = document.getElementById("btn-guardar-propiedad");
+  var msgExito = document.getElementById("msg-prop-exito");
+  btn.disabled = true;
+
+  var nombreP = document.getElementById("prop-alta-nombre").value.trim();
+  var tipoUso = document.getElementById("prop-alta-tipo").value;
+  var dirP = document.getElementById("prop-alta-dir").value.trim();
+  var rentaP = document.getElementById("prop-alta-renta").value.trim();
+  var latP = parseFloat(document.getElementById("prop-alta-lat").value.trim()) || "";
+  var lonP = parseFloat(document.getElementById("prop-alta-lon").value.trim()) || "";
+  var reglaP = document.getElementById("prop-alta-regla").value;
+  var revP = document.getElementById("prop-alta-revision").value.trim();
+  var ibanP = document.getElementById("prop-alta-iban").value.trim();
+  var fotosLimpias = limpiarListaUrlsMultimedia(document.getElementById("prop-alta-fotos").value);
+  var fotosRaw = fotosLimpias.join(", ");
+  var inpPortada = document.getElementById("prop-alta-portada");
+  var portadaRaw = inpPortada ? inpPortada.value.trim() : (fotosLimpias[0] || "");
+  var avisosP = document.getElementById("prop-alta-avisos").value.trim();
+
+  var contratoUrl = (document.getElementById("prop-alta-contrato-url") && document.getElementById("prop-alta-contrato-url").value.trim()) || "";
+  var contratoNombre = (document.getElementById("prop-alta-contrato-nombre") && document.getElementById("prop-alta-contrato-nombre").value.trim()) || "";
+  var contratoB64 = (document.getElementById("prop-alta-contrato-b64") && document.getElementById("prop-alta-contrato-b64").value) || "";
+
+  guardarCacheMultimediaPropiedad(nombreP, fotosLimpias, portadaRaw);
+  if (contratoUrl) {
+    try { localStorage.setItem("LEVEL_CONTRATO_" + nombreP.toUpperCase(), contratoUrl); } catch (_) {}
+  }
+
+  var nuevaFicha = normalizarPropiedadDesdeMake({
+    PROPIEDAD: nombreP,
+    Tipo_Inmueble: tipoUso,
+    "Regla de Facturación": reglaP,
+    "Dirección del Inmueble": dirP,
+    "Precio Alquiler": rentaP,
+    LAT: latP,
+    LON: lonP,
+    "Próxima Revisión Alquiler": revP,
+    "IBAN Bancario Propietario": ibanP,
+    Foto_Portada_URL: portadaRaw,
+    Fotos_URL: fotosRaw,
+    Contrato_PDF_URL: contratoUrl,
+    Avisos: avisosP,
+    "DNI-NIE-CIF": window.sesionActiva["DNI-NIE-CIF"]
+  });
+
+  var idxExistente = window.CARTERA_PROPIEDADES.findIndex(function(p) {
+    return String(p.nombre_propiedad || "").toUpperCase() === nombreP.toUpperCase();
+  });
+
+  if (idxExistente >= 0) {
+    window.CARTERA_PROPIEDADES[idxExistente] = Object.assign({}, window.CARTERA_PROPIEDADES[idxExistente], nuevaFicha);
+  } else {
+    window.CARTERA_PROPIEDADES.push(nuevaFicha);
+  }
+
+  renderizarCarteraYRecibosPropietario();
   poblarSelectoresPropiedadesModales();
-  document.getElementById("modal-alta-inquilino").style.display = "flex";
+
+  fetch(URL_WEBHOOK_PROPERTY_GESTION, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      accion: "alta_o_edicion_propiedad",
+      "DNI-NIE-CIF": window.sesionActiva["DNI-NIE-CIF"],
+      propiedad: nombreP,
+      PROPIEDAD: nombreP,
+      Tipo_Inmueble: tipoUso,
+      Regla_Facturacion: reglaP,
+      direccion: dirP,
+      cuota: rentaP,
+      iban: ibanP,
+      Foto_Portada_URL: portadaRaw,
+      Fotos_URL: fotosRaw,
+      foto_portada_url: portadaRaw,
+      todas_las_fotos_url: fotosRaw,
+      Contrato_PDF_URL: contratoUrl,
+      contrato_pdf_url: contratoUrl,
+      contrato_archivo_nombre: contratoNombre,
+      contrato_base64: contratoB64,
+      avisos: avisosP
+    })
+  }).finally(function() {
+    msgExito.innerHTML = "✅ Propiedad <strong>" + escaparHTML(nombreP) + "</strong>" + (contratoUrl ? " y contrato PDF" : "") + " actualizados.";
+    msgExito.style.display = "block";
+    btn.disabled = false;
+  });
 };
 
 window.guardarNuevoInquilino = function(e) {
@@ -6315,7 +6489,6 @@ async function procesarEnvioComunicacionLegal(event) {
   const asunto = document.getElementById("comLegalAsunto").value.trim();
   const prioridad = document.getElementById("comLegalPrioridad").value;
   const mensaje = document.getElementById("comLegalMensaje").value.trim();
-  const fileInp = document.getElementById("comLegalArchivo");
 
   if (!mensaje) return;
 
@@ -6330,18 +6503,96 @@ async function procesarEnvioComunicacionLegal(event) {
     ipEmisor = dataIp.ip || "No disponible";
   } catch (e) {}
 
-  let adjuntoUrl = "";
-  let archivoBase64 = "";
-  let archivoNombre = "";
+  const fechaHoraAhora = new Date().toLocaleString("es-ES");
 
-  if (fileInp && fileInp.files && fileInp.files[0]) {
-    const f = fileInp.files[0];
-    archivoNombre = ("comlegal_" + Date.now().toString(36) + "_" + f.name).replace(/[^a-zA-Z0-9._-]/g, "_");
-    adjuntoUrl = "https://level.immo/app-alquileres-propiedades/" + archivoNombre;
-    if (typeof convertirArchivoABase64 === "function") {
-      try { archivoBase64 = await convertirArchivoABase64(f); } catch (_) {}
+  const payload = {
+    accion: "registrar_comunicacion_legal",
+    fecha_hora: fechaHoraAhora,
+    propiedad: contextoComLegal.propiedad,
+    dni_propietario: contextoComLegal.dniPropietario,
+    dni_abogado: contextoComLegal.dniAbogado,
+    autor_rol: contextoComLegal.autorRol,
+    autor_nombre: contextoComLegal.autorNombre,
+    asunto: asunto,
+    prioridad: prioridad,
+    mensaje: mensaje,
+    adjunto_url: "",
+    ip_emisor: ipEmisor,
+    dispositivo_navegador: navigator.userAgent
+  };
+
+  try {
+    const resp = await fetch(URL_WEBHOOK_PROPERTY_GESTION, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+
+    const rawText = await resp.text();
+    let guardadoOk = resp.ok;
+    let msgErrorServidor = "";
+
+    if (rawText && rawText.trim() !== "" && rawText.trim() !== "Accepted") {
+      try {
+        const dataJson = JSON.parse(rawText);
+        if (dataJson.status === "error" || dataJson.error) {
+          guardadoOk = false;
+          msgErrorServidor = dataJson.message || dataJson.error || "Error devuelto por el servidor";
+        } else if (dataJson.status === "success" || resp.ok) {
+          guardadoOk = true;
+        }
+      } catch (_) {
+        guardadoOk = resp.ok;
+      }
     }
+
+    if (guardadoOk) {
+      const nuevoRegistro = {
+        Fecha_Hora: fechaHoraAhora,
+        Propiedad: contextoComLegal.propiedad,
+        DNI_Propietario: contextoComLegal.dniPropietario,
+        DNI_Abogado: contextoComLegal.dniAbogado,
+        Autor_Rol: contextoComLegal.autorRol,
+        Autor_Nombre: contextoComLegal.autorNombre,
+        Asunto: asunto,
+        Prioridad: prioridad,
+        Mensaje: mensaje
+      };
+      contextoComLegal.historico.push(nuevoRegistro);
+      if (window.COMUNICACIONES_LEGALES !== contextoComLegal.historico) {
+        window.COMUNICACIONES_LEGALES.push(nuevoRegistro);
+      }
+
+      renderizarHistoricoComunicacionesLegales();
+      document.getElementById("formComunicacionLegal").reset();
+      if (estadoBox) {
+        estadoBox.style.display = "block";
+        estadoBox.style.background = "#ecfdf5";
+        estadoBox.style.color = "#065f46";
+        estadoBox.style.border = "1px solid #10b981";
+        estadoBox.textContent = "✅ Comunicación registrada en el expediente con fecha, hora e IP.";
+      }
+    } else if (estadoBox) {
+      estadoBox.style.display = "block";
+      estadoBox.style.background = "#fef2f2";
+      estadoBox.style.color = "#991b1b";
+      estadoBox.style.border = "1px solid #ef4444";
+      estadoBox.textContent = "⚠️ No se pudo registrar: " + (msgErrorServidor || "Revisa la rama en Make.");
+    }
+  } catch (err) {
+    console.error("Error en comunicación legal:", err);
+    if (estadoBox) {
+      estadoBox.style.display = "block";
+      estadoBox.style.background = "#fef2f2";
+      estadoBox.style.color = "#991b1b";
+      estadoBox.style.border = "1px solid #ef4444";
+      estadoBox.textContent = "⚠️ Error de red o bloqueo del navegador al conectar con el webhook.";
+    }
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "Registrar y Enviar Comunicación";
   }
+}
 
   const fechaHoraAhora = new Date().toLocaleString("es-ES");
 
@@ -6524,11 +6775,6 @@ function escapeHtmlCom(str) {
         <div style="margin-bottom:10px;">
           <label style="display:block; font-size:12px; font-weight:600; color:#334155; margin-bottom:4px;">Mensaje confidencial *</label>
           <textarea id="comLegalMensaje" rows="3" required placeholder="Redacte aquí la comunicación para la otra parte..." style="width:100%; box-sizing:border-box; padding:9px 10px; border:1px solid #cbd5e1; border-radius:7px; font-size:13px; color:#0f172a; background:#ffffff; resize:vertical;"></textarea>
-        </div>
-
-        <div style="margin-bottom:12px;">
-          <label style="display:block; font-size:12px; font-weight:600; color:#334155; margin-bottom:4px;">Adjuntar documento / justificante (opcional)</label>
-          <input type="file" id="comLegalArchivo" accept=".pdf,image/*" style="width:100%; box-sizing:border-box; padding:7px 10px; border:1px solid #cbd5e1; border-radius:7px; font-size:12px; color:#0f172a; background:#ffffff;">
         </div>
 
         <div id="estadoEnvioComLegal" style="display:none; padding:9px 12px; border-radius:8px; font-size:12.5px; font-weight:700; margin-bottom:10px;"></div>
