@@ -5845,22 +5845,47 @@ document.addEventListener("DOMContentLoaded", function() {
   }
 });
 window.pintarSumaLevel();
-const WEBHOOK_COM_LEGAL = "https://hook.eu1.make.com/j44fpvkmiv7ua8tttys25hehwbf9em8l";
 
-// Estado activo del canal legal
+// ============================================================================
+// CANAL PRIVADO PROPIETARIO <-> ABOGADO (CON SELLO IP Y EXENCIÓN LSSI-CE)
+// ============================================================================
+window.COMUNICACIONES_LEGALES = window.COMUNICACIONES_LEGALES || [];
+
 let contextoComLegal = {
   propiedad: "",
   dniPropietario: "",
   dniAbogado: "",
-  autorRol: "",      // "PROPIETARIO" o "ABOGADO"
+  autorRol: "",
   autorNombre: "",
-  historico: []      // Array con los registros devueltos por Make
+  historico: []
 };
 
-/**
- * Abre el modal cargando los datos del expediente activo.
- * Puedes llamarla desde el botón de Propietario o de Abogado.
- */
+window.abrirCanalPrivadoLegalDesdeSesion = function() {
+  const rol = (window.sesionActiva && window.sesionActiva.rol) || "PROPIETARIO";
+  const propActiva = (window.EXPEDIENTE_ACTUAL && window.EXPEDIENTE_ACTUAL.propiedad && window.EXPEDIENTE_ACTUAL.propiedad !== "---")
+    ? window.EXPEDIENTE_ACTUAL.propiedad
+    : ((window.CARTERA_PROPIEDADES && window.CARTERA_PROPIEDADES[0] && window.CARTERA_PROPIEDADES[0].nombre_propiedad) || "");
+
+  const dniProp = rol === "PROPIETARIO"
+    ? (window.sesionActiva["DNI-NIE-CIF"] || "")
+    : ((window.EXPEDIENTE_ACTUAL && window.EXPEDIENTE_ACTUAL.dni_propietario) || "");
+
+  const dniAbg = rol === "ABOGADO"
+    ? (window.sesionActiva["DNI-NIE-CIF"] || "")
+    : ((window.EXPEDIENTE_ACTUAL && window.EXPEDIENTE_ACTUAL.dni_abogado) || "");
+
+  const autorNombre = (window.sesionActiva && window.sesionActiva.nombre) || "Usuario Verificado";
+
+  abrirModalComunicacionLegal({
+    propiedad: propActiva,
+    dniPropietario: dniProp,
+    dniAbogado: dniAbg,
+    autorRol: rol,
+    autorNombre: autorNombre,
+    historico: window.COMUNICACIONES_LEGALES
+  });
+};
+
 function abrirModalComunicacionLegal({ propiedad, dniPropietario, dniAbogado, autorRol, autorNombre, historico = [] }) {
   contextoComLegal = {
     propiedad: propiedad || "",
@@ -5871,28 +5896,27 @@ function abrirModalComunicacionLegal({ propiedad, dniPropietario, dniAbogado, au
     historico: Array.isArray(historico) ? historico : []
   };
 
-  document.getElementById("comLegalPropiedadLabel").textContent = contextoComLegal.propiedad || "Sin especificar";
+  const lblProp = document.getElementById("comLegalPropiedadLabel");
+  if (lblProp) lblProp.textContent = contextoComLegal.propiedad || "Expediente General";
   renderizarHistoricoComunicacionesLegales();
 
   const modal = document.getElementById("modalComunicacionLegal");
-  modal.style.display = "flex";
+  if (modal) modal.style.display = "flex";
 }
 
 function cerrarModalComunicacionLegal() {
-  document.getElementById("modalComunicacionLegal").style.display = "none";
+  const modal = document.getElementById("modalComunicacionLegal");
+  if (modal) modal.style.display = "none";
 }
 
-/**
- * Pinta la lista de mensajes filtrados por la propiedad activa
- */
 function renderizarHistoricoComunicacionesLegales() {
   const contenedor = document.getElementById("listaComunicacionesLegales");
+  if (!contenedor) return;
   const propActiva = (contextoComLegal.propiedad || "").trim().toLowerCase();
 
-  // Filtramos por propiedad si viene informada; soporta formato plano o formato Lark { fields: {...} }
   const mensajes = contextoComLegal.historico
     .map(item => item.fields ? item.fields : item)
-    .filter(f => !propActiva || (f.Propiedad || "").trim().toLowerCase() === propActiva);
+    .filter(f => !propActiva || propActiva.includes(",") || (f.Propiedad || "").trim().toLowerCase() === propActiva);
 
   if (mensajes.length === 0) {
     contenedor.innerHTML = `<div style="text-align:center; color:#64748b; font-size:13px; padding:16px;">No hay comunicaciones registradas en este expediente todavía.</div>`;
@@ -5930,9 +5954,6 @@ function renderizarHistoricoComunicacionesLegales() {
   contenedor.scrollTop = contenedor.scrollHeight;
 }
 
-/**
- * Captura IP, envía el registro a Make y lo añade al histórico visual al instante
- */
 async function procesarEnvioComunicacionLegal(event) {
   event.preventDefault();
 
@@ -5947,7 +5968,6 @@ async function procesarEnvioComunicacionLegal(event) {
   btn.disabled = true;
   btn.textContent = "Registrando con sello IP...";
 
-  // 1. Obtener IP pública sin bloquear si hay cortafuegos
   let ipEmisor = "No disponible";
   try {
     const resIp = await fetch("https://api.ipify.org?format=json");
@@ -5974,7 +5994,7 @@ async function procesarEnvioComunicacionLegal(event) {
   };
 
   try {
-    const resp = await fetch(WEBHOOK_COM_LEGAL, {
+    const resp = await fetch(URL_WEBHOOK_PROPERTY_GESTION, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload)
@@ -5982,8 +6002,7 @@ async function procesarEnvioComunicacionLegal(event) {
     const data = await resp.json();
 
     if (data.status === "success") {
-      // Añadir al histórico local para que se vea inmediatamente sin recargar
-      contextoComLegal.historico.push({
+      const nuevoRegistro = {
         Fecha_Hora: fechaHoraAhora,
         Propiedad: contextoComLegal.propiedad,
         DNI_Propietario: contextoComLegal.dniPropietario,
@@ -5994,7 +6013,11 @@ async function procesarEnvioComunicacionLegal(event) {
         Prioridad: prioridad,
         Mensaje: mensaje,
         Adjunto_URL: adjuntoUrl
-      });
+      };
+      contextoComLegal.historico.push(nuevoRegistro);
+      if (window.COMUNICACIONES_LEGALES !== contextoComLegal.historico) {
+        window.COMUNICACIONES_LEGALES.push(nuevoRegistro);
+      }
 
       renderizarHistoricoComunicacionesLegales();
       document.getElementById("formComunicacionLegal").reset();
@@ -6017,178 +6040,106 @@ function escapeHtmlCom(str) {
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;");
 }
- const WEBHOOK_COM_LEGAL = "https://hook.eu1.make.com/j44fpvkmiv7ua8tttys25hehwbf9em8l";
 
-// Estado activo del canal legal
-let contextoComLegal = {
-  propiedad: "",
-  dniPropietario: "",
-  dniAbogado: "",
-  autorRol: "",      // "PROPIETARIO" o "ABOGADO"
-  autorNombre: "",
-  historico: []      // Array con los registros devueltos por Make
-};
-
-/**
- * Abre el modal cargando los datos del expediente activo.
- * Puedes llamarla desde el botón de Propietario o de Abogado.
- */
-function abrirModalComunicacionLegal({ propiedad, dniPropietario, dniAbogado, autorRol, autorNombre, historico = [] }) {
-  contextoComLegal = {
-    propiedad: propiedad || "",
-    dniPropietario: dniPropietario || "",
-    dniAbogado: dniAbogado || "",
-    autorRol: autorRol || "PROPIETARIO",
-    autorNombre: autorNombre || "",
-    historico: Array.isArray(historico) ? historico : []
-  };
-
-  document.getElementById("comLegalPropiedadLabel").textContent = contextoComLegal.propiedad || "Sin especificar";
-  renderizarHistoricoComunicacionesLegales();
-
-  const modal = document.getElementById("modalComunicacionLegal");
-  modal.style.display = "flex";
-}
-
-function cerrarModalComunicacionLegal() {
-  document.getElementById("modalComunicacionLegal").style.display = "none";
-}
-
-/**
- * Pinta la lista de mensajes filtrados por la propiedad activa
- */
-function renderizarHistoricoComunicacionesLegales() {
-  const contenedor = document.getElementById("listaComunicacionesLegales");
-  const propActiva = (contextoComLegal.propiedad || "").trim().toLowerCase();
-
-  // Filtramos por propiedad si viene informada; soporta formato plano o formato Lark { fields: {...} }
-  const mensajes = contextoComLegal.historico
-    .map(item => item.fields ? item.fields : item)
-    .filter(f => !propActiva || (f.Propiedad || "").trim().toLowerCase() === propActiva);
-
-  if (mensajes.length === 0) {
-    contenedor.innerHTML = `<div style="text-align:center; color:#64748b; font-size:13px; padding:16px;">No hay comunicaciones registradas en este expediente todavía.</div>`;
-    return;
+// Inyectar botón de Canal Privado Propietario <-> Abogado en ambas vistas (nunca en Inquilino)
+(function inyectarBotonesCanalLegal() {
+  const bannerAbgBtns = document.querySelector("#lawyer-executive-banner button[onclick*='imprimirInformeEjecutivoAbogadoPDF']");
+  if (bannerAbgBtns && bannerAbgBtns.parentElement && !document.getElementById("btn-canal-legal-abogado")) {
+    const btnAbg = document.createElement("button");
+    btnAbg.type = "button";
+    btnAbg.id = "btn-canal-legal-abogado";
+    btnAbg.className = "btn-primary";
+    btnAbg.style.cssText = "width:auto; background:#0f172a; color:#ffffff; border:1px solid #3b82f6; padding:10px 18px;";
+    btnAbg.innerText = "⚖️ Canal Privado con Propietario";
+    btnAbg.onclick = window.abrirCanalPrivadoLegalDesdeSesion;
+    bannerAbgBtns.parentElement.insertBefore(btnAbg, bannerAbgBtns);
   }
 
-  contenedor.innerHTML = mensajes.map(m => {
-    const esAbogado = (m.Autor_Rol || "").toUpperCase() === "ABOGADO";
-    const badgeBg = esAbogado ? "#fef3c7" : "#dbeafe";
-    const badgeColor = esAbogado ? "#92400e" : "#1e40af";
-    const prioColor = m.Prioridad === "Urgente" ? "#dc2626" : (m.Prioridad === "Alta" ? "#d97706" : "#475569");
-    const adjuntoHtml = m.Adjunto_URL
-      ? `<div style="margin-top:6px;"><a href="${escapeHtmlCom(m.Adjunto_URL)}" target="_blank" rel="noopener" style="font-size:12px; color:#1d4ed8; font-weight:600; text-decoration:underline;">📎 Ver documento adjunto</a></div>`
-      : "";
-
-    return `
-      <div style="border:1px solid #e2e8f0; border-radius:8px; padding:10px 12px; background:${esAbogado ? "#fffbeb" : "#f8fafc"};">
-        <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:4px;">
-          <div>
-            <span style="background:${badgeBg}; color:${badgeColor}; font-size:10px; font-weight:700; padding:2px 7px; border-radius:999px; text-transform:uppercase;">${escapeHtmlCom(m.Autor_Rol || "PARTE")}</span>
-            <strong style="font-size:13px; color:#0f172a; margin-left:5px;">${escapeHtmlCom(m.Autor_Nombre || "")}</strong>
-          </div>
-          <div style="font-size:11px; color:#64748b;">
-            <span style="font-weight:700; color:${prioColor}; margin-right:6px;">● ${escapeHtmlCom(m.Prioridad || "Normal")}</span>
-            ${escapeHtmlCom(m.Fecha_Hora || "")}
-          </div>
-        </div>
-        <div style="font-size:12px; font-weight:700; color:#1e293b; margin-bottom:3px;">Asunto: ${escapeHtmlCom(m.Asunto || "Sin asunto")}</div>
-        <div style="font-size:13px; color:#334155; white-space:pre-wrap; line-height:1.45;">${escapeHtmlCom(m.Mensaje || "")}</div>
-        ${adjuntoHtml}
-      </div>
-    `;
-  }).join("");
-
-  contenedor.scrollTop = contenedor.scrollHeight;
-}
-
-/**
- * Captura IP, envía el registro a Make y lo añade al histórico visual al instante
- */
-async function procesarEnvioComunicacionLegal(event) {
-  event.preventDefault();
-
-  const btn = document.getElementById("btnEnviarComLegal");
-  const asunto = document.getElementById("comLegalAsunto").value.trim();
-  const prioridad = document.getElementById("comLegalPrioridad").value;
-  const mensaje = document.getElementById("comLegalMensaje").value.trim();
-  const adjuntoUrl = document.getElementById("comLegalAdjuntoUrl").value.trim();
-
-  if (!mensaje) return;
-
-  btn.disabled = true;
-  btn.textContent = "Registrando con sello IP...";
-
-  // 1. Obtener IP pública sin bloquear si hay cortafuegos
-  let ipEmisor = "No disponible";
-  try {
-    const resIp = await fetch("https://api.ipify.org?format=json");
-    const dataIp = await resIp.json();
-    ipEmisor = dataIp.ip || "No disponible";
-  } catch (e) {}
-
-  const fechaHoraAhora = new Date().toLocaleString("es-ES");
-
-  const payload = {
-    accion: "registrar_comunicacion_legal",
-    fecha_hora: fechaHoraAhora,
-    propiedad: contextoComLegal.propiedad,
-    dni_propietario: contextoComLegal.dniPropietario,
-    dni_abogado: contextoComLegal.dniAbogado,
-    autor_rol: contextoComLegal.autorRol,
-    autor_nombre: contextoComLegal.autorNombre,
-    asunto: asunto,
-    prioridad: prioridad,
-    mensaje: mensaje,
-    adjunto_url: adjuntoUrl,
-    ip_emisor: ipEmisor,
-    dispositivo_navegador: navigator.userAgent
-  };
-
-  try {
-    const resp = await fetch(WEBHOOK_COM_LEGAL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
-    });
-    const data = await resp.json();
-
-    if (data.status === "success") {
-      // Añadir al histórico local para que se vea inmediatamente sin recargar
-      contextoComLegal.historico.push({
-        Fecha_Hora: fechaHoraAhora,
-        Propiedad: contextoComLegal.propiedad,
-        DNI_Propietario: contextoComLegal.dniPropietario,
-        DNI_Abogado: contextoComLegal.dniAbogado,
-        Autor_Rol: contextoComLegal.autorRol,
-        Autor_Nombre: contextoComLegal.autorNombre,
-        Asunto: asunto,
-        Prioridad: prioridad,
-        Mensaje: mensaje,
-        Adjunto_URL: adjuntoUrl
-      });
-
-      renderizarHistoricoComunicacionesLegales();
-      document.getElementById("formComunicacionLegal").reset();
-    } else {
-      alert("No se pudo registrar la comunicación: " + (data.message || "Error en servidor"));
-    }
-  } catch (err) {
-    console.error("Error en comunicación legal:", err);
-    alert("Error de conexión al registrar la comunicación.");
-  } finally {
-    btn.disabled = false;
-    btn.textContent = "Registrar y Enviar Comunicación";
+  const cardsOwner = document.querySelectorAll("#vista-propietaria-carmen .owner-card");
+  if (cardsOwner.length >= 4 && !document.getElementById("btn-canal-legal-propietario")) {
+    const btnProp = document.createElement("button");
+    btnProp.type = "button";
+    btnProp.id = "btn-canal-legal-propietario";
+    btnProp.className = "btn-radar-info";
+    btnProp.style.cssText = "background:#0f172a; color:#93c5fd; border:1px solid #3b82f6; margin-top:8px; width:100%;";
+    btnProp.innerText = "💬 Canal Privado con Abogado";
+    btnProp.onclick = window.abrirCanalPrivadoLegalDesdeSesion;
+    cardsOwner[3].appendChild(btnProp);
   }
-}
-
-function escapeHtmlCom(str) {
-  return String(str)
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
-} 
+})();
 </script>
+
+<!-- MODAL CANAL PRIVADO PROPIETARIO <-> ABOGADO -->
+<div id="modalComunicacionLegal" style="display:none; position:fixed; inset:0; background:rgba(15,23,42,0.72); backdrop-filter:blur(3px); z-index:9999; align-items:center; justify-content:center; padding:16px;">
+  <div style="background:#ffffff; width:100%; max-width:740px; max-height:90vh; border-radius:14px; box-shadow:0 20px 45px rgba(0,0,0,0.25); display:flex; flex-direction:column; overflow:hidden; font-family:system-ui,-apple-system,sans-serif;">
+    
+    <!-- Cabecera -->
+    <div style="background:#0f172a; color:#ffffff; padding:16px 20px; display:flex; align-items:center; justify-content:space-between;">
+      <div>
+        <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:#93c5fd; font-weight:700;">Canal Confidencial · Expediente Jurídico</div>
+        <h3 style="margin:2px 0 0; font-size:17px; font-weight:700;">Comunicaciones Propietario ↔ Despacho Legal</h3>
+      </div>
+      <button type="button" onclick="cerrarModalComunicacionLegal()" style="background:rgba(255,255,255,0.12); border:none; color:#ffffff; width:32px; height:32px; border-radius:8px; font-size:18px; cursor:pointer;">✕</button>
+    </div>
+
+    <!-- Cuerpo con scroll -->
+    <div style="padding:18px 20px; overflow-y:auto; flex:1; background:#f8fafc;">
+      
+      <!-- Aviso Legal Obligatorio (LSSI-CE / Trazabilidad) -->
+      <div style="background:#eff6ff; border-left:4px solid #1d4ed8; padding:11px 14px; border-radius:8px; font-size:12px; color:#1e3a8a; margin-bottom:16px; line-height:1.45;">
+        <strong>⚖️ Canal Registrado y Exención de Responsabilidad (Level.immo · API 4173 · AICAT 14200):</strong>
+        Level.immo actúa exclusivamente como medio técnico de comunicación y registro trazable entre las partes intervinientes, sin emitir dictámenes jurídicos ni asumir responsabilidad sobre los contenidos o documentos aportados, que recae íntegramente sobre quien los emite. Quedan prohibidos los insultos, amenazas, coacciones, difamaciones o el tratamiento ilícito de datos personales. Cada envío queda registrado con sello de fecha, hora, dirección IP, navegador y usuario.
+      </div>
+
+      <!-- Histórico de mensajes del expediente -->
+      <div style="margin-bottom:18px;">
+        <div style="font-size:12px; font-weight:700; color:#475569; text-transform:uppercase; letter-spacing:0.04em; margin-bottom:8px;">
+          Histórico del expediente (<span id="comLegalPropiedadLabel">—</span>)
+        </div>
+        <div id="listaComunicacionesLegales" style="display:flex; flex-direction:column; gap:10px; max-height:240px; overflow-y:auto; padding:10px; background:#ffffff; border:1px solid #e2e8f0; border-radius:10px;">
+          <div style="text-align:center; color:#64748b; font-size:13px; padding:16px;">No hay comunicaciones registradas en este expediente todavía.</div>
+        </div>
+      </div>
+
+      <!-- Formulario de nueva comunicación -->
+      <form id="formComunicacionLegal" onsubmit="procesarEnvioComunicacionLegal(event)" style="background:#ffffff; border:1px solid #cbd5e1; border-radius:10px; padding:14px;">
+        <div style="font-size:13px; font-weight:700; color:#0f172a; margin-bottom:10px;">Nueva comunicación trazable</div>
+        
+        <div style="display:grid; grid-template-columns:1fr 160px; gap:10px; margin-bottom:10px;">
+          <div>
+            <label style="display:block; font-size:12px; font-weight:600; color:#334155; margin-bottom:4px;">Asunto / Trámite *</label>
+            <input type="text" id="comLegalAsunto" required placeholder="Ej. Preparación burofax, Revisión contrato, Impago agua..." style="width:100%; box-sizing:border-box; padding:8px 10px; border:1px solid #cbd5e1; border-radius:7px; font-size:13px; color:#0f172a; background:#ffffff;">
+          </div>
+          <div>
+            <label style="display:block; font-size:12px; font-weight:600; color:#334155; margin-bottom:4px;">Prioridad</label>
+            <select id="comLegalPrioridad" style="width:100%; box-sizing:border-box; padding:8px 10px; border:1px solid #cbd5e1; border-radius:7px; font-size:13px; color:#0f172a; background:#ffffff;">
+              <option value="Normal">Normal</option>
+              <option value="Alta">Alta</option>
+              <option value="Urgente">Urgente</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="margin-bottom:10px;">
+          <label style="display:block; font-size:12px; font-weight:600; color:#334155; margin-bottom:4px;">Mensaje confidencial *</label>
+          <textarea id="comLegalMensaje" rows="3" required placeholder="Redacte aquí la comunicación para la otra parte..." style="width:100%; box-sizing:border-box; padding:9px 10px; border:1px solid #cbd5e1; border-radius:7px; font-size:13px; color:#0f172a; background:#ffffff; resize:vertical;"></textarea>
+        </div>
+
+        <div style="margin-bottom:12px;">
+          <label style="display:block; font-size:12px; font-weight:600; color:#334155; margin-bottom:4px;">Enlace a documento adjunto (opcional)</label>
+          <input type="url" id="comLegalAdjuntoUrl" placeholder="https://level.immo/..." style="width:100%; box-sizing:border-box; padding:8px 10px; border:1px solid #cbd5e1; border-radius:7px; font-size:13px; color:#0f172a; background:#ffffff;">
+        </div>
+
+        <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;">
+          <span style="font-size:11px; color:#64748b;">🔒 Se registrará tu IP, navegador y fecha/hora exacta.</span>
+          <button type="submit" id="btnEnviarComLegal" style="background:#1e3a8a; color:#ffffff; border:none; padding:9px 18px; border-radius:8px; font-size:13px; font-weight:600; cursor:pointer;">
+            Registrar y Enviar Comunicación
+          </button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+</div>
 </body>
 </html>
