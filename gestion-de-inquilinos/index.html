@@ -422,7 +422,15 @@
     color: var(--amber);
   }
   .session-controls { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-  .verified-pill { font-size: 12px; font-weight: 800; color: var(--amber); }
+  .verified-pill {
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--emerald);
+    background: var(--emerald-soft);
+    border: 1px solid rgba(16, 185, 129, 0.45);
+    padding: 6px 12px;
+    border-radius: 999px;
+  }
   .btn-outline-sm {
     background: var(--bg-input);
     color: var(--text-main);
@@ -3256,6 +3264,7 @@ window.descargarReciboPDF = function(idRecibo) {
 
   var dniRecibo = obtenerDniUnificado(rec) || window.sesionActiva["DNI-NIE-CIF"] || "---";
   var nombreEmisor = rec.propietario || (window.sesionActiva.rol === "PROPIETARIO" ? window.sesionActiva.nombre : "Propiedad Arrendadora");
+  var dniEmisor = rec.dni_propietario || (window.sesionActiva.rol === "PROPIETARIO" ? window.sesionActiva["DNI-NIE-CIF"] : "");
   var ibanRecibo = rec.iban || window.EXPEDIENTE_ACTUAL.iban || "---";
   var fechaAbono = (rec.fecha_pago && rec.fecha_pago !== "---") ? rec.fecha_pago : new Date().toLocaleDateString("es-ES");
 
@@ -3307,7 +3316,8 @@ window.descargarReciboPDF = function(idRecibo) {
         '<div>' + selloEstado + '</div>' +
       '</div>' +
       '<div class="grid-2">' +
-        '<div class="box"><strong>Parte Arrendadora:</strong><br>' + escaparHTML(nombreEmisor) + '<br>Inmueble: ' + escaparHTML(rec.propiedad) + '<br>IBAN: ' + escaparHTML(ibanRecibo) + '</div>' +
+        
+    '<div class="box"><strong>Parte Arrendadora:</strong><br>' + escaparHTML(nombreEmisor) + (dniEmisor ? '<br>DNI/NIE/CIF: ' + escaparHTML(dniEmisor) : '') + '<br>Inmueble: ' + escaparHTML(rec.propiedad) + '<br>IBAN: ' + escaparHTML(ibanRecibo) + '</div>' +
         '<div class="box"><strong>Parte Arrendataria:</strong><br>' + escaparHTML(rec.inquilino) + '<br>DNI/NIE/CIF: ' + escaparHTML(dniRecibo) + '<br>Fecha Abono: ' + escaparHTML(fechaAbono) + '</div>' +
       '</div>' +
       '<table><thead><tr><th>Concepto</th><th>Categoría</th><th>Periodo</th><th style="text-align:right;">Importe</th></tr></thead><tbody>' +
@@ -3316,7 +3326,6 @@ window.descargarReciboPDF = function(idRecibo) {
         '<tr class="total-row"><td colspan="3">TOTAL DOCUMENTO</td><td style="text-align:right;">' + formatearEuros(totalFinal) + '</td></tr>' +
       '</tbody></table>' +
     '</div>' +
-    '<script>setTimeout(function(){ window.print(); }, 400);<\/script>' +
     '</body></html>';
 
   ventanaPDF.document.open();
@@ -3510,6 +3519,7 @@ window.marcarReciboComoAbonado = function(idRecibo) {
       body: JSON.stringify({
         accion: "cambiar_estado_recibo",
         table_id_suministros: TABLE_ID_SUMINISTROS_GASTOS,
+        record_id: rec.record_id || "",
         id_recibo: rec.id_recibo,
         nuevo_estado: "Abonado",
         Haber: rec.haber,
@@ -3553,6 +3563,7 @@ window.revertirReciboAPendiente = function(idRecibo) {
       body: JSON.stringify({
         accion: "cambiar_estado_recibo",
         table_id_suministros: TABLE_ID_SUMINISTROS_GASTOS,
+        record_id: rec.record_id || "",
         id_recibo: rec.id_recibo,
         nuevo_estado: "Pendiente",
         Estado_Recibo: "Pendiente",
