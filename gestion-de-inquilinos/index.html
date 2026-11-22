@@ -5156,7 +5156,7 @@ window.guardarNuevaPropiedad = function(e) {
   var idxExistente = window.CARTERA_PROPIEDADES.findIndex(function(p) {
     return String(p.nombre_propiedad || "").toUpperCase() === nombreP.toUpperCase();
   });
-var limiteMax = 4;
+var limiteMax = parseInt((window.sesionActiva && window.sesionActiva.max_propiedades) || 4, 10) || 4;
   if (Array.isArray(window.CARTERA_PROPIEDADES) && window.CARTERA_PROPIEDADES.length > 0) {
     var maxDetectado = Math.max.apply(null, window.CARTERA_PROPIEDADES.map(function(p) {
       return parseInt(p.max_propiedades || p.Max || 4, 10) || 4;
@@ -5703,7 +5703,8 @@ function renderizarPortalConDatos(data, identificador) {
   window.sesionActiva.nombre_pila = pilaActiva;
   window.sesionActiva["DNI-NIE-CIF"] = dniActivo;
   window.sesionActiva.propiedad = window.EXPEDIENTE_ACTUAL.propiedad;
-
+  window.sesionActiva.max_propiedades = parseInt(data.Max || data.max || 4, 10) || 4;
+  
   // Etiqueta superior limpia sin duplicar los DNIs
   if (window.sesionActiva.rol === "INQUILINO") {
     document.getElementById("badge-titular-activo").innerText = "INQUILINO: " + (pilaActiva ? pilaActiva + " · " : "") + nombreActivo;
