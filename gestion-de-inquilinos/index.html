@@ -974,6 +974,17 @@
 
         <!-- FASE 1: PEDIR DNI-NIE-CIF -->
         <div id="fase-dni">
+          <div style="margin-top:20px; padding:16px; background:linear-gradient(135deg, rgba(16,185,129,0.12) 0%, rgba(245,158,11,0.10) 100%); border:1px dashed var(--amber); border-radius:12px; text-align:center;">
+            <div style="font-size:12px; font-weight:800; color:var(--amber); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:4px;">
+              ✨ ¿AÚN NO HAS PROBADO App.level-i.com/gestion-de-inquilinos?
+            </div>
+            <p style="font-size:12.5px; color:var(--text-muted); margin-bottom:12px; line-height:1.45;">
+              Prueba nuestra consola de gestión autónoma de alquileres, saldo vivo y recibos PDF en 1 clic con datos de ejemplo.
+            </p>
+            <button type="button" class="btn-outline-sm" style="width:100%; padding:10px; border-color:var(--amber); color:var(--amber); font-weight:800; font-size:13px;" onclick="abrirModalLeadDemo()">
+              👁️ Probar Demo Interactiva (2 Propiedades) →
+            </button>
+          </div>
           <div class="form-group">
             <label for="input-dni" class="form-label" data-i18n="label_dni">DNI / NIE / CIF del Titular o Letrado Autorizado</label>
             <input type="text" id="input-dni" name="DNI-NIE-CIF" class="form-input" placeholder="Ej: 00000000X / B12345678" autocomplete="off">
@@ -3975,9 +3986,14 @@ window.guardarMovimientoSuministroManual = async function(e) {
     var archivoNombre = "";
     var urlFtpGenerada = "";
     if (fileInput && fileInput.files && fileInput.files[0]) {
-      archivoNombre = String(idReciboFinal + "_" + Date.now().toString(36) + "_" + fileInput.files[0].name).replace(/[^a-zA-Z0-9._-]/g, "_");
-      urlFtpGenerada = "https://level.immo/app-alquileres-propiedades/" + archivoNombre;
-      try { archivoBase64 = await convertirArchivoABase64(fileInput.files[0]); } catch (_) {}
+      var archivoSubido = fileInput.files[0];
+      archivoNombre = String(idReciboFinal + "_" + Date.now().toString(36) + "_" + archivoSubido.name).replace(/[^a-zA-Z0-9._-]/g, "_");
+      if (window.MODO_DEMO_ACTIVO) {
+        urlFtpGenerada = URL.createObjectURL(archivoSubido);
+      } else {
+        urlFtpGenerada = "https://level.immo/app-alquileres-propiedades/" + archivoNombre;
+        try { archivoBase64 = await convertirArchivoABase64(archivoSubido); } catch (_) {}
+      }
     }
 
     var fichaProp = (window.CARTERA_PROPIEDADES || []).find(function(p) {
@@ -5738,10 +5754,13 @@ window.abrirModalLeadDemo = function() {
 
 window.enviarLeadYAbrirDemo = function(e) {
   e.preventDefault();
-  var nombre = document.getElementById("demo-lead-nombre").value.trim();
-  var tel = document.getElementById("demo-lead-tel").value.trim();
+ var nombre = document.getElementById("demo-lead-nombre").value.trim();
+  var prefijo = (document.getElementById("demo-lead-prefijo") && document.getElementById("demo-lead-prefijo").value) || "34";
+  var telRaw = document.getElementById("demo-lead-tel").value.trim().replace(/[^0-9]/g, "");
+  var tel = telRaw.startsWith(prefijo) ? telRaw : (prefijo + telRaw);
   var email = document.getElementById("demo-lead-email").value.trim();
-  if (!nombre || !tel || !email) return;
+  var chkLegal = document.getElementById("chk-privacidad-demo");
+  if (!nombre || !telRaw || !email || (chkLegal && !chkLegal.checked)) return; 
 
   // Único envío real a Make (se dispara ANTES de activar MODO_DEMO_ACTIVO)
   window.MODO_DEMO_ACTIVO = false;
@@ -6645,18 +6664,35 @@ function escapeHtmlCom(str) {
     <p style="font-size:13px; color:var(--text-muted); margin-bottom:16px; line-height:1.5;">
       Indícanos tus datos para abrir la consola de demostración con 2 propiedades de ejemplo (Barcelona y Madrid).
     </p>
-    <form id="form-lead-demo" onsubmit="enviarLeadYAbrirDemo(event)">
+    <form id="form-lead-demo" onsubmit="enviarLeadYAbrirDemo(event)" autocomplete="off">
       <div class="form-group">
         <label for="demo-lead-nombre" class="form-label">Nombre de pila *</label>
         <input type="text" id="demo-lead-nombre" class="form-input" placeholder="Ej: Carlos" required autocomplete="given-name">
       </div>
       <div class="form-group">
         <label for="demo-lead-tel" class="form-label">Teléfono móvil *</label>
-        <input type="tel" id="demo-lead-tel" class="form-input" placeholder="Ej: 600 112 233" required autocomplete="tel">
+        <div style="display:flex; gap:8px;">
+          <select id="demo-lead-prefijo" class="form-input" style="width:115px; padding:12px 8px; cursor:pointer;" aria-label="Prefijo internacional">
+            <option value="34" selected>🇪🇸 +34</option>
+            <option value="376">🇦🇩 +376</option>
+            <option value="33">🇫🇷 +33</option>
+            <option value="49">🇩🇪 +49</option>
+            <option value="44">🇬🇧 +44</option>
+            <option value="39">🇮🇹 +39</option>
+            <option value="351">🇵🇹 +351</option>
+          </select>
+          <input type="tel" id="demo-lead-tel" class="form-input" style="flex:1;" placeholder="600 112 233" required autocomplete="tel-national">
+        </div>
       </div>
       <div class="form-group">
         <label for="demo-lead-email" class="form-label">Correo electrónico *</label>
         <input type="email" id="demo-lead-email" class="form-input" placeholder="Ej: carlos@correo.com" required autocomplete="email">
+      </div>
+      <div class="privacy-box">
+        <input type="checkbox" id="chk-privacidad-demo" required>
+        <label for="chk-privacidad-demo">
+          Acepto las <span class="privacy-link" onclick="event.preventDefault(); abrirModal('modal-privacidad');">Condiciones y la Política de Privacidad</span>. Autorizo el envío de novedades y acceso a la demo de Level.immo.
+        </label>
       </div>
       <button type="submit" id="btn-entrar-demo-lead" class="btn-primary" style="background:var(--amber); color:#042f2e;">
         🚀 Entrar en la Demo Interactiva →
