@@ -3510,6 +3510,70 @@ window.marcarReciboComoAbonado = function(idRecibo) {
   var rec = window.RECIBOS_CARTERA.find(function(r) { return String(r.id_recibo) === String(idRecibo); });
   if (!rec) return;
 
+  var modalConf = document.getElementById("modal-confirmar-abono-dinamico");
+  if (!modalConf) {
+    modalConf = document.createElement("div");
+    modalConf.id = "modal-confirmar-abono-dinamico";
+    modalConf.className = "modal-backdrop";
+    modalConf.style.zIndex = "4000";
+    document.body.appendChild(modalConf);
+  }
+
+  modalConf.innerHTML =
+    '<div class="modal-card" style="max-width:460px; border-color:var(--amber);">' +
+      '<button type="button" class="modal-close-x" id="btn-cerrar-x-conf-abono" aria-label="Cerrar">&times;</button>' +
+      '<h3 style="color:var(--amber); margin-bottom:10px; padding-bottom:10px; border-bottom:1px solid var(--border);">⚠️ Confirmar Paso a Abonado</h3>' +
+      '<p style="font-size:13px; color:var(--text-muted); margin-bottom:14px; line-height:1.5;">' +
+        'Vas a marcar este recibo como <strong>ABONADO</strong> y emitir su justificante oficial en PDF:' +
+      '</p>' +
+      '<div style="background:var(--bg-input); border:1px solid var(--border); border-radius:10px; padding:12px 14px; margin-bottom:14px; font-size:13px;">' +
+        '<div style="color:#fff; font-weight:800; margin-bottom:4px;">' + escaparHTML(rec.concepto || "") + '</div>' +
+        '<div style="color:var(--text-muted);">Propiedad: <strong style="color:var(--emerald);">' + escaparHTML(rec.propiedad || "") + '</strong></div>' +
+        '<div style="color:var(--text-muted);">Importe: <strong style="color:#fff; font-size:15px;">' + escaparHTML(rec.importe || "") + '</strong></div>' +
+      '</div>' +
+      '<div class="privacy-box" style="border-color:rgba(245,158,11,0.45); margin-bottom:16px;">' +
+        '<input type="checkbox" id="chk-confirmar-abono-seguro">' +
+        '<label for="chk-confirmar-abono-seguro" style="color:#f8fafc; font-weight:600; cursor:pointer;">' +
+          'Sí, confirmo que he verificado el cobro y quiero pasar este recibo a estado <strong>ABONADO</strong>.' +
+        '</label>' +
+      '</div>' +
+      '<div style="display:flex; gap:10px; justify-content:flex-end;">' +
+        '<button type="button" id="btn-cancelar-conf-abono" class="btn-outline-sm" style="padding:10px 14px;">Cancelar</button>' +
+        '<button type="button" id="btn-aceptar-conf-abono" class="btn-primary" style="width:auto; background:var(--amber); color:#042f2e; padding:10px 16px;" disabled>✓ Confirmar Abono + PDF</button>' +
+      '</div>' +
+    '</div>';
+
+  modalConf.style.display = "flex";
+
+  var chk = document.getElementById("chk-confirmar-abono-seguro");
+  var btnOk = document.getElementById("btn-aceptar-conf-abono");
+  var btnCancel = document.getElementById("btn-cancelar-conf-abono");
+  var btnX = document.getElementById("btn-cerrar-x-conf-abono");
+
+  function cerrarConfirmacion() {
+    modalConf.style.display = "none";
+  }
+
+  chk.onchange = function() {
+    btnOk.disabled = !chk.checked;
+  };
+  btnCancel.onclick = cerrarConfirmacion;
+  btnX.onclick = cerrarConfirmacion;
+  modalConf.onclick = function(ev) {
+    if (ev.target === modalConf) cerrarConfirmacion();
+  };
+
+  btnOk.onclick = function() {
+    if (!chk.checked) return;
+    cerrarConfirmacion();
+    window.ejecutarAbonoReciboConfirmado(idRecibo);
+  };
+};
+
+window.ejecutarAbonoReciboConfirmado = function(idRecibo) {
+  var rec = window.RECIBOS_CARTERA.find(function(r) { return String(r.id_recibo) === String(idRecibo); });
+  if (!rec) return;
+
   rec.estado = "Abonado";
   rec.haber = parsearNumeroContable(rec.total_con_impuestos || rec.importe || rec.debe);
   rec.fecha_pago = new Date().toLocaleDateString("es-ES");
