@@ -1003,7 +1003,7 @@
             <p style="font-size:12.5px; color:var(--text-muted); margin-bottom:12px; line-height:1.45;">
               Prueba nuestra consola de gestión autónoma de alquileres, saldo vivo y recibos PDF en 1 clic con datos de ejemplo.
             </p>
-            <button type="button" class="btn-outline-sm" style="width:100%; padding:10px; border-color:var(--amber); color:var(--amber); font-weight:800; font-size:13px;" onclick="iniciarModoDemo()">
+            <button type="button" class="btn-outline-sm" style="width:100%; padding:10px; border-color:var(--amber); color:var(--amber); font-weight:800; font-size:13px;" onclick="abrirModalLeadDemo()">
               👁️ Probar Demo Interactiva (2 Propiedades) →
             </button>
           </div>
@@ -1521,7 +1521,7 @@
       <div class="grid-2col" style="margin-bottom:14px;">
         <div class="form-group" style="margin-bottom:0;">
           <label for="prop-alta-iban" class="form-label">Cuenta IBAN Bancaria del Propietario *</label>
-          <input type="text" id="prop-alta-iban" class="form-input" placeholder="ES00 0000 0000 0000 0000 0000" required>
+         <input type="text" id="prop-alta-iban" name="cuenta_prop_no_wallet" class="form-input" placeholder="ES00 0000 0000 0000 0000 0000" autocomplete="off" data-lpignore="true" required> 
         </div>
         <div class="form-group" style="margin-bottom:0;">
           <label for="prop-alta-revision" class="form-label">Próxima Revisión Contrato</label>
@@ -3101,6 +3101,7 @@ function mostrarIframePdfEnVisor(urlPdf, concepto, propiedad) {
 window.archivosSeleccionadosFTP = [];
 
 window.manejarPrevisualizacion = function(event) {
+  if (window.MODO_DEMO_ACTIVO) { event.target.value = ""; alert("🎭 En el Modo Demo la gestión de fotos está desactivada para mantener la galería de ejemplo."); return; }
   var input = event.target;
   var nuevos = Array.from(input.files || []);
   if (!Array.isArray(window.archivosSeleccionadosFTP)) window.archivosSeleccionadosFTP = [];
@@ -3761,6 +3762,7 @@ function guardarCacheMultimediaPropiedad(nombreProp, arrayFotos, urlPortada) {
 }
 
 window.subirArchivosFtpMake = async function() {
+  if (window.MODO_DEMO_ACTIVO) { alert("🎭 En el Modo Demo la gestión de fotos está desactivada para mantener la galería de ejemplo."); return; }
   var fileInput = document.getElementById("prop-file-ftp");
   var statusEl = document.getElementById("status-ftp-upload");
   var radarBox = document.getElementById("radar-upload-box");
@@ -3893,6 +3895,7 @@ window.establecerComoPortadaInmueble = function(nombrePropiedad, urlElegida) {
 };
 
 window.eliminarFotoDelBookInmueble = function(nombrePropiedad, idxBorrar) {
+  if (window.MODO_DEMO_ACTIVO) { alert("🎭 En el Modo Demo la gestión de fotos está desactivada para mantener la galería de ejemplo."); return; }
   var p = (window.CARTERA_PROPIEDADES || []).find(function(item) {
     return String(item.nombre_propiedad || "").toUpperCase() === String(nombrePropiedad || "").toUpperCase();
   });
@@ -4352,6 +4355,7 @@ function renderizarCarteraYRecibosPropietario(filtroTexto) {
         '<div class="info-row"><span class="info-label">DNI-NIE-CIF:</span><span class="info-value">' + escaparHTML(p.dnis_completos || obtenerDniUnificado(p) || "---") + '</span></div>' +
         '<div class="info-row"><span class="info-label">' + escaparHTML(t.lbl_rent_card) + '</span><span class="info-value" style="color:var(--emerald);">' + escaparHTML(p.renta_mensual || "---") + ' · ' + escaparHTML(p.regla_facturacion || "AGUA Y LUZ") + '</span></div>' +
       '</div>' +
+      (p.abogado_asignado ? '<div class="info-row"><span class="info-label">⚖️ Abogado asignado:</span><span class="info-value" style="color:var(--amber);">' + escaparHTML(p.abogado_asignado) + '</span></div>' : '') +
       '<div style="display:flex; gap:6px; flex-wrap:wrap; padding-top:8px; border-top:1px solid rgba(30,41,59,0.6);">' +
         '<button type="button" class="btn-outline-sm" style="flex:1; font-weight:700; border-color:var(--emerald); color:var(--emerald);" onclick="inspeccionarInmuebleComoResidente(\'' + escaparHTML(p.nombre_propiedad || "") + '\')">' + escaparHTML(t.btn_exp) + '</button>' +
         (p.contrato_pdf_url && p.contrato_pdf_url.startsWith("http") ? '<button type="button" class="btn-outline-sm" style="border-color:var(--neon-cyan); color:var(--neon-cyan); font-weight:800;" onclick="abrirContratoPdfPropiedad(\'' + escaparHTML(p.contrato_pdf_url) + '\', \'' + escaparHTML(p.nombre_propiedad || "") + '\')">📄 Contrato</button>' : '') +
@@ -4590,7 +4594,7 @@ window.abrirVisorNativoPropietario = function(modo) {
         (pendientes.length === 0
           ? '<div style="padding:14px; color:var(--emerald);">✅ Todos los recibos están al corriente de pago.</div>'
           : pendientes.map(function(r) {
-              return '<div class="receipt-row pending"><div class="receipt-info"><div class="receipt-concept">' + escaparHTML(r.concepto) + ' · ' + escaparHTML(r.propiedad) + '</div><div class="receipt-meta">Nº ' + escaparHTML(r.id_recibo) + ' · ' + escaparHTML(r.inquilino) + '</div></div><div class="receipt-actions"><span class="receipt-amount">' + escaparHTML(r.importe) + '</span><button type="button" class="btn-mark-paid" onclick="marcarReciboComoAbonado(\'' + escaparHTML(r.id_recibo) + '\')">✓ Marcar Abonado + PDF</button></div></div>';
+           return '<div class="receipt-row pending"><div class="receipt-info"><div class="receipt-concept">' + escaparHTML(r.concepto) + ' · ' + escaparHTML(r.propiedad) + '</div><div class="receipt-meta">Nº ' + escaparHTML(r.id_recibo) + ' · ' + escaparHTML(r.inquilino) + '</div></div><div class="receipt-actions"><span class="receipt-amount">' + escaparHTML(r.importe) + '</span><button type="button" class="btn-pdf-receipt" onclick="descargarReciboPDF(\'' + escaparHTML(r.id_recibo) + '\')">📄 Ver Recibo</button><button type="button" class="btn-mark-paid" onclick="marcarReciboComoAbonado(\'' + escaparHTML(r.id_recibo) + '\')">✓ Marcar Abonado + PDF</button></div></div>';   
             }).join("")) +
       '</div>' +
       '<div>' +
@@ -4786,8 +4790,9 @@ window.previsualizarFotosModal = function(cadenaUrls) {
     '</div>';
   }).join("");
 };
-
+if (window.MODO_DEMO_ACTIVO) { alert("🎭 En el Modo Demo la gestión de fotos está desactivada para mantener la galería de ejemplo."); return; }
 window.quitarFotoIndividualModal = function(idxBorrar) {
+  if (window.MODO_DEMO_ACTIVO) { alert("🎭 En el Modo Demo la gestión de fotos está desactivada para mantener la galería de ejemplo."); return; }
   var inpFotos = document.getElementById("prop-alta-fotos");
   var inpPortada = document.getElementById("prop-alta-portada");
   var nombreP = document.getElementById("prop-alta-nombre").value.trim();
@@ -4918,13 +4923,25 @@ window.guardarNuevaPropiedad = function(e) {
   renderizarCarteraYRecibosPropietario();
   poblarSelectoresPropiedadesModales();
 
-  if (window.MODO_DEMO_ACTIVO) {
-    msgExito.innerHTML = "🎭 <strong>Modo Demo:</strong> Propiedad <strong>" + escaparHTML(nombreP) + "</strong> simulada en pantalla (no se guarda en base de datos real).";
+if (window.MODO_DEMO_ACTIVO) {
+    var fichaDemo = (window.CARTERA_PROPIEDADES || []).find(function(p) {
+      return String(p.nombre_propiedad || "").toUpperCase() === String(propSel || "").toUpperCase();
+    });
+    if (fichaDemo) {
+      fichaDemo.inquilino_original = nombreInq;
+      fichaDemo.inquilino = nombreInq;
+      fichaDemo.inquilino_completo = nombreInq;
+      fichaDemo.inquilino_detallado = nombreInq + (dniInq ? " (" + dniInq + ")" : "");
+      fichaDemo["DNI-NIE-CIF"] = dniInq;
+      fichaDemo.dnis_completos = dniInq;
+    }
+    renderizarCarteraYRecibosPropietario();
+    msgExito.innerHTML = "🎭 <strong>Modo Demo:</strong> Inquilino <strong>" + escaparHTML(nombreInq) + "</strong> asignado en pantalla a <strong>" + escaparHTML(propSel) + "</strong> (no se guarda en base de datos real).";
     msgExito.style.display = "block";
     btn.disabled = false;
     return;
   }
-
+  
   fetch(URL_WEBHOOK_PROPERTY_GESTION, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -5523,8 +5540,16 @@ window.enviarAutorizacionAbogado = function(e) {
     enviar_email_bienvenida: enviarMail
   };
 
-  if (window.MODO_DEMO_ACTIVO) {
-    msgExitoLegal.innerHTML = "🎭 <strong>Modo Demo:</strong> Autorización de <strong>" + escaparHTML(nombreAbg) + "</strong> simulada en pantalla (no se guarda en base de datos real).";
+if (window.MODO_DEMO_ACTIVO) {
+    var propsAut = propAbg.split(",").map(function(s) { return s.trim().toUpperCase(); }).filter(Boolean);
+    (window.CARTERA_PROPIEDADES || []).forEach(function(p) {
+      var nomP = String(p.nombre_propiedad || "").trim().toUpperCase();
+      if (propsAut.indexOf(nomP) !== -1) {
+        p.abogado_asignado = estadoAbg === "REVOCADO" ? "" : nombreAbg;
+      }
+    });
+    renderizarCarteraYRecibosPropietario();
+    msgExitoLegal.innerHTML = "🎭 <strong>Modo Demo:</strong> <strong>" + escaparHTML(nombreAbg) + "</strong> " + (estadoAbg === "REVOCADO" ? "revocado" : "asignado") + " en pantalla en <strong>" + escaparHTML(propAbg) + "</strong> (no se guarda en base de datos real).";
     msgExitoLegal.style.display = "block";
     btnAbg.innerText = "⚖️ Asignar Abogado en Base de Datos y Enviar Email de Bienvenida →";
     btnAbg.disabled = false;
@@ -5702,8 +5727,42 @@ window.MODO_DEMO_ACTIVO = false;
   };
   window.fetch._demoShielded = true;
 })();
+window.abrirModalLeadDemo = function() {
+  var form = document.getElementById("form-lead-demo");
+  if (form) form.reset();
+  document.getElementById("modal-lead-demo").style.display = "flex";
+  var inpNom = document.getElementById("demo-lead-nombre");
+  if (inpNom) setTimeout(function() { inpNom.focus(); }, 60);
+};
 
-window.iniciarModoDemo = function() {
+window.enviarLeadYAbrirDemo = function(e) {
+  e.preventDefault();
+  var nombre = document.getElementById("demo-lead-nombre").value.trim();
+  var tel = document.getElementById("demo-lead-tel").value.trim();
+  var email = document.getElementById("demo-lead-email").value.trim();
+  if (!nombre || !tel || !email) return;
+
+  // Único envío real a Make (se dispara ANTES de activar MODO_DEMO_ACTIVO)
+  window.MODO_DEMO_ACTIVO = false;
+  fetch(URL_WEBHOOK_PROPERTY_GESTION, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      accion: "solicitud_demo_interesado",
+      nombre_pila: nombre,
+      telefono: tel,
+      email: email,
+      fecha_hora: new Date().toLocaleString("es-ES"),
+      origen: "DEMO_GESTION_INQUILINOS"
+    })
+  }).catch(function(){});
+
+  cerrarModal("modal-lead-demo");
+  window.iniciarModoDemo(nombre);
+};
+
+window.iniciarModoDemo = function(nombreVisitante) {
+  var nombrePilaDemo = (nombreVisitante && String(nombreVisitante).trim()) ? String(nombreVisitante).trim() : "Invitado";
   window.MODO_DEMO_ACTIVO = true;
   window.sesionActiva = {
     "DNI-NIE-CIF": "00000000T",
@@ -5711,8 +5770,8 @@ window.iniciarModoDemo = function() {
     rol: "PROPIETARIO",
     tabla_filtro: "PROPERTY_PROPIETARIOS",
     propiedad: "Ático Eixample",
-    nombre: "Lucía Navarro Beltrán (Demo)",
-    nombre_pila: "Lucía",
+    nombre: nombrePilaDemo + " (Demo)",
+    nombre_pila: nombrePilaDemo,
     idioma: (window.sesionActiva && window.sesionActiva.idioma) || "es"
   };
 
@@ -5752,7 +5811,7 @@ window.iniciarModoDemo = function() {
       id_recibo: "DEMO-2026-01",
       Propiedad: "Ático Eixample",
       inquilino: "Laura Martínez Soler",
-      propietario: "Lucía Navarro Beltrán",
+      propietario: nombrePilaDemo,
       "DNI-NIE-CIF": "12345678A",
       Fecha_Valor: "2026/11/01",
       Concepto: "Cuota mensual alquiler Noviembre",
@@ -5766,7 +5825,7 @@ window.iniciarModoDemo = function() {
       id_recibo: "DEMO-2026-02",
       Propiedad: "Ático Eixample",
       inquilino: "Laura Martínez Soler",
-      propietario: "Lucía Navarro Beltrán",
+      propietario: nombrePilaDemo,
       "DNI-NIE-CIF": "12345678A",
       Fecha_Valor: "2026/11/15",
       Concepto: "Regularización Luz · Factura suministro",
@@ -5780,7 +5839,7 @@ window.iniciarModoDemo = function() {
       id_recibo: "DEMO-2026-03",
       Propiedad: "Local Chamberí",
       inquilino: "Estudio Creativo Delta SL",
-      propietario: "Lucía Navarro Beltrán",
+      propietario: nombrePilaDemo,
       "DNI-NIE-CIF": "B98765432",
       Fecha_Valor: "2026/11/01",
       Concepto: "Alquiler Local Noviembre",
@@ -5800,9 +5859,9 @@ window.iniciarModoDemo = function() {
   var demoBanner = document.getElementById("demo-mode-banner");
   if (demoBanner) demoBanner.style.display = "flex";
 
-  document.getElementById("badge-titular-activo").innerText = "MODO DEMO · PROPIETARIO INVITADO";
+  document.getElementById("badge-titular-activo").innerText = "MODO DEMO · " + nombrePilaDemo.toUpperCase();
   document.getElementById("btn-tab-propietaria").style.display = "inline-flex";
-  document.getElementById("owner-greeting-name").innerText = "Lucía";
+  document.getElementById("owner-greeting-name").innerText = nombrePilaDemo;
   document.getElementById("lawyer-executive-banner").style.display = "none";
 
   renderizarCarteraYRecibosPropietario();
@@ -6573,6 +6632,35 @@ function escapeHtmlCom(str) {
       </form>
 
     </div>
+  </div>
+</div>
+  <!-- MODAL PUERTA DE ACCESO DEMO (CAPTACIÓN DE LEADS) -->
+<div id="modal-lead-demo" class="modal-backdrop" onclick="if(event.target === this) cerrarModal('modal-lead-demo')">
+  <div class="modal-card" style="max-width:480px; border-color:var(--amber);">
+    <button class="modal-close-x" onclick="cerrarModal('modal-lead-demo')" aria-label="Cerrar">&times;</button>
+    <h3 style="color:var(--amber); margin-bottom:8px; padding-bottom:10px; border-bottom:1px solid var(--border);">
+      👁️ Acceso a la Demo Interactiva
+    </h3>
+    <p style="font-size:13px; color:var(--text-muted); margin-bottom:16px; line-height:1.5;">
+      Indícanos tus datos para abrir la consola de demostración con 2 propiedades de ejemplo (Barcelona y Madrid).
+    </p>
+    <form id="form-lead-demo" onsubmit="enviarLeadYAbrirDemo(event)">
+      <div class="form-group">
+        <label for="demo-lead-nombre" class="form-label">Nombre de pila *</label>
+        <input type="text" id="demo-lead-nombre" class="form-input" placeholder="Ej: Carlos" required autocomplete="given-name">
+      </div>
+      <div class="form-group">
+        <label for="demo-lead-tel" class="form-label">Teléfono móvil *</label>
+        <input type="tel" id="demo-lead-tel" class="form-input" placeholder="Ej: 600 112 233" required autocomplete="tel">
+      </div>
+      <div class="form-group">
+        <label for="demo-lead-email" class="form-label">Correo electrónico *</label>
+        <input type="email" id="demo-lead-email" class="form-input" placeholder="Ej: carlos@correo.com" required autocomplete="email">
+      </div>
+      <button type="submit" id="btn-entrar-demo-lead" class="btn-primary" style="background:var(--amber); color:#042f2e;">
+        🚀 Entrar en la Demo Interactiva →
+      </button>
+    </form>
   </div>
 </div>
 </body>
