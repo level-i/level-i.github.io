@@ -2875,7 +2875,7 @@ function normalizarReciboDesdeMake(r) {
 
   var inq = formatearCampoValor(f["Nombre Inquilinos"] || f.inquilino || f.INQUILINO || f.Arrendatario || window.sesionActiva.nombre || "---");
   var dniInq = formatearCampoValor(f["DNI/NIE Inquilinos"] || f["DNI-NIE-NIF"] || f["DNI-NIE-CIF"] || f.dni_inquilino || window.sesionActiva["DNI-NIE-CIF"] || "");
-  var propietario = formatearCampoValor(f["Nombre Propietario"] || f.propietario || f.Propietario || f["Nombre Propietaria"] || (window.MODO_DEMO_ACTIVO ? "Lucía Navarro Beltrán" : "---"));
+  var propietario = formatearCampoValor(f["Nombre Propietario"] || f.propietario || f.Propietario || f["Nombre Propietaria"] || (window.MODO_DEMO_ACTIVO ? (window.sesionActiva.nombre_pila || "Invitado") : "---"));
   var dniPropietario = formatearCampoValor(f["DNI Propietario"] || f.dni_propietario || (window.MODO_DEMO_ACTIVO ? "00000000T" : ""));
   var iban = formatearCampoValor(f["IBAN Bancario Propietario"] || f["IBAN Bancario"] || f.iban || window.EXPEDIENTE_ACTUAL.iban || "");
 
@@ -3995,7 +3995,7 @@ window.guardarMovimientoSuministroManual = async function(e) {
       id_recibo: idReciboFinal,
       Propiedad: prop,
       inquilino: fichaProp.inquilino_completo || fichaProp.inquilino || "---",
-      propietario: fichaProp.propietario || (window.MODO_DEMO_ACTIVO ? "Lucía Navarro Beltrán" : (window.sesionActiva.nombre || "---")),
+      propietario: fichaProp.propietario || (window.MODO_DEMO_ACTIVO ? (window.sesionActiva.nombre_pila || "Invitado") : (window.sesionActiva.nombre || "---")),
       "DNI-NIE-CIF": obtenerDniUnificado(fichaProp),
       Fecha_Valor: fechaLark,
       Categoria: categoria,
@@ -4930,25 +4930,19 @@ window.guardarNuevaPropiedad = function(e) {
   renderizarCarteraYRecibosPropietario();
   poblarSelectoresPropiedadesModales();
 
-if (window.MODO_DEMO_ACTIVO) {
-    var fichaDemo = (window.CARTERA_PROPIEDADES || []).find(function(p) {
-      return String(p.nombre_propiedad || "").toUpperCase() === String(propSel || "").toUpperCase();
-    });
-    if (fichaDemo) {
-      fichaDemo.inquilino_original = nombreInq;
-      fichaDemo.inquilino = nombreInq;
-      fichaDemo.inquilino_completo = nombreInq;
-      fichaDemo.inquilino_detallado = nombreInq + (dniInq ? " (" + dniInq + ")" : "");
-      fichaDemo["DNI-NIE-CIF"] = dniInq;
-      fichaDemo.dnis_completos = dniInq;
-    }
+
     renderizarCarteraYRecibosPropietario();
     msgExito.innerHTML = "🎭 <strong>Modo Demo:</strong> Inquilino <strong>" + escaparHTML(nombreInq) + "</strong> asignado en pantalla a <strong>" + escaparHTML(propSel) + "</strong> (no se guarda en base de datos real).";
     msgExito.style.display = "block";
     btn.disabled = false;
     return;
   }
-  
+  if (window.MODO_DEMO_ACTIVO) {
+    msgExito.innerHTML = "🎭 <strong>Modo Demo:</strong> Propiedad <strong>" + escaparHTML(nombreP) + "</strong> simulada en pantalla (no se guarda en base de datos real).";
+    msgExito.style.display = "block";
+    btn.disabled = false;
+    return;
+  }
   fetch(URL_WEBHOOK_PROPERTY_GESTION, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -5010,7 +5004,19 @@ window.guardarNuevoInquilino = function(e) {
   var emailInq = document.getElementById("inq-alta-email").value.trim();
 
   if (window.MODO_DEMO_ACTIVO) {
-    msgExito.innerHTML = "🎭 <strong>Modo Demo:</strong> Inquilino <strong>" + escaparHTML(nombreInq) + "</strong> simulado en <strong>" + escaparHTML(propSel) + "</strong>.";
+    var fichaDemo = (window.CARTERA_PROPIEDADES || []).find(function(p) {
+      return String(p.nombre_propiedad || "").toUpperCase() === String(propSel || "").toUpperCase();
+    });
+    if (fichaDemo) {
+      fichaDemo.inquilino_original = nombreInq;
+      fichaDemo.inquilino = nombreInq;
+      fichaDemo.inquilino_completo = nombreInq;
+      fichaDemo.inquilino_detallado = nombreInq + (dniInq ? " (" + dniInq + ")" : "");
+      fichaDemo["DNI-NIE-CIF"] = dniInq;
+      fichaDemo.dnis_completos = dniInq;
+    }
+    renderizarCarteraYRecibosPropietario();
+    msgExito.innerHTML = "🎭 <strong>Modo Demo:</strong> Inquilino <strong>" + escaparHTML(nombreInq) + "</strong> asignado en pantalla a <strong>" + escaparHTML(propSel) + "</strong> (no se guarda en base de datos real).";
     msgExito.style.display = "block";
     btn.disabled = false;
     return;
