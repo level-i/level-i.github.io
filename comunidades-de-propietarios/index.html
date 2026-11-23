@@ -1,1 +1,662 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Level-i Comunidades | Oficina Tecnológica y Jurídica Digital</title>
+  <meta name="description" content="Juntas de propietarios en 40 minutos con Bot Moderador legal, acceso por PIN de WhatsApp, contabilidad IA y recobro certificado. Operado por Level.immo (API 4173 · AICAT 14200)." />
+  <style>
+    :root {
+      --bg: #080b10;
+      --surface: #0f141d;
+      --surface-elevated: #161d2a;
+      --border: #222c3d;
+      --border-hover: #384863;
+      --text: #f3f4f6;
+      --text-muted: #94a3b8;
+      --gold: #d4af37;
+      --gold-soft: rgba(212, 175, 55, 0.12);
+      --blue: #38bdf8;
+      --blue-soft: rgba(56, 189, 248, 0.12);
+      --danger: #f87171;
+      --success: #34d399;
+      --radius: 12px;
+    }
 
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, Helvetica, Arial, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .container { max-width: 1140px; margin: 0 auto; padding: 0 24px; }
+
+    /* Header */
+    header {
+      position: sticky; top: 0; z-index: 50;
+      background: rgba(8, 11, 16, 0.88);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      display: flex; align-items: center; justify-content: space-between;
+      height: 72px; gap: 16px;
+    }
+    .brand { display: flex; align-items: center; gap: 12px; font-weight: 700; letter-spacing: 0.04em; font-size: 1.05rem; }
+    .brand span.tag {
+      font-size: 0.72rem; font-weight: 600; color: var(--gold);
+      background: var(--gold-soft); border: 1px solid rgba(212, 175, 55, 0.3);
+      padding: 3px 9px; border-radius: 999px;
+    }
+    .nav-badge { font-size: 0.78rem; color: var(--text-muted); display: none; }
+    @media (min-width: 820px) { .nav-badge { display: inline-block; } }
+
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 12px 22px; border-radius: 8px; font-weight: 600; font-size: 0.95rem;
+      text-decoration: none; cursor: pointer; transition: all 0.2s ease; border: 1px solid transparent;
+    }
+    .btn-primary { background: var(--gold); color: #090c10; }
+    .btn-primary:hover { background: #e2be46; transform: translateY(-1px); }
+    .btn-outline { background: transparent; color: var(--text); border-color: var(--border); }
+    .btn-outline:hover { border-color: var(--text-muted); background: var(--surface); }
+
+    /* Hero */
+    .hero { padding: 76px 0 64px; border-bottom: 1px solid var(--border); }
+    .eyebrow {
+      display: inline-block; font-size: 0.78rem; font-weight: 600; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--gold); margin-bottom: 16px;
+    }
+    h1 {
+      font-size: clamp(2.1rem, 4.5vw, 3.4rem); line-height: 1.12;
+      font-weight: 800; letter-spacing: -0.02em; max-width: 900px; margin-bottom: 20px;
+    }
+    .hero p.lead {
+      font-size: 1.15rem; color: var(--text-muted); max-width: 760px; margin-bottom: 32px;
+    }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 14px; margin-bottom: 44px; }
+    .trust-strip {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px;
+      padding-top: 28px; border-top: 1px solid var(--border);
+    }
+    .trust-item { font-size: 0.88rem; color: var(--text-muted); display: flex; align-items: center; gap: 8px; }
+    .trust-item strong { color: var(--text); }
+    .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--gold); flex-shrink: 0; }
+
+    /* Sections */
+    section { padding: 72px 0; border-bottom: 1px solid var(--border); }
+    .section-head { max-width: 740px; margin-bottom: 44px; }
+    h2 { font-size: clamp(1.65rem, 3vw, 2.3rem); font-weight: 750; letter-spacing: -0.015em; margin-bottom: 12px; }
+    .section-head p { color: var(--text-muted); font-size: 1.05rem; }
+
+    /* Pain Grid */
+    .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 20px; }
+    .card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 26px;
+    }
+    .card-tag {
+      font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;
+      color: var(--danger); margin-bottom: 10px; display: block;
+    }
+    .card-tag.solution { color: var(--blue); }
+    .card h3 { font-size: 1.15rem; margin-bottom: 10px; }
+    .card p { color: var(--text-muted); font-size: 0.95rem; }
+
+    /* Interactive Profile Explorer */
+    .role-tabs {
+      display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 24px;
+    }
+    .role-tab {
+      background: var(--surface); color: var(--text-muted);
+      border: 1px solid var(--border); border-radius: 8px;
+      padding: 11px 18px; font-size: 0.92rem; font-weight: 600;
+      cursor: pointer; transition: all 0.2s ease;
+    }
+    .role-tab:hover { border-color: var(--border-hover); color: var(--text); }
+    .role-tab.active {
+      background: var(--gold-soft); color: var(--gold);
+      border-color: var(--gold);
+    }
+    .role-panel {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 32px;
+      display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 28px;
+    }
+    @media (max-width: 820px) { .role-panel { grid-template-columns: 1fr; } }
+    .role-panel h3 { font-size: 1.4rem; margin-bottom: 10px; }
+    .role-panel .role-sub { color: var(--text-muted); margin-bottom: 20px; font-size: 0.98rem; }
+    .feature-list { list-style: none; display: grid; gap: 12px; }
+    .feature-list li {
+      padding-left: 22px; position: relative; font-size: 0.95rem; color: var(--text);
+    }
+    .feature-list li::before {
+      content: "✓"; position: absolute; left: 0; color: var(--gold); font-weight: 700;
+    }
+    .role-box-side {
+      background: var(--surface-elevated); border: 1px solid var(--border);
+      border-radius: 10px; padding: 22px; display: flex; flex-direction: column; justify-content: space-between; gap: 18px;
+    }
+    .privacy-badge {
+      font-size: 0.78rem; font-weight: 700; color: var(--blue);
+      background: var(--blue-soft); padding: 4px 10px; border-radius: 6px; display: inline-block; margin-bottom: 8px;
+    }
+    .role-box-side p { font-size: 0.9rem; color: var(--text-muted); }
+
+    /* Ecosystem Strip */
+    .eco-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+    .eco-item {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 10px; padding: 18px;
+    }
+    .eco-item strong { display: block; font-size: 0.98rem; margin-bottom: 4px; color: var(--text); }
+    .eco-item span { font-size: 0.86rem; color: var(--text-muted); }
+
+    /* Form Section */
+    .form-wrapper {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 36px; max-width: 780px; margin: 0 auto;
+    }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 18px; }
+    @media (max-width: 640px) { .form-grid { grid-template-columns: 1fr; } }
+    .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+    .field label { font-size: 0.88rem; font-weight: 600; color: var(--text); }
+    .field input, .field select {
+      background: var(--bg); border: 1px solid var(--border); color: var(--text);
+      padding: 12px 14px; border-radius: 8px; font-size: 0.95rem; outline: none;
+    }
+    .field input:focus, .field select:focus { border-color: var(--gold); }
+
+    .dynamic-fields {
+      background: var(--surface-elevated); border: 1px solid var(--border);
+      border-radius: 10px; padding: 20px; margin-bottom: 20px;
+    }
+    .dynamic-title {
+      font-size: 0.82rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.05em; color: var(--gold); margin-bottom: 14px;
+    }
+
+    .checks { display: grid; gap: 10px; margin-bottom: 20px; }
+    .check-row { display: flex; align-items: flex-start; gap: 10px; font-size: 0.86rem; color: var(--text-muted); }
+    .check-row input { margin-top: 4px; accent-color: var(--gold); }
+    .check-row a { color: var(--gold); text-decoration: underline; }
+
+    .rgpd-layer {
+      font-size: 0.76rem; color: var(--text-muted); background: var(--bg);
+      border: 1px solid var(--border); border-radius: 8px; padding: 14px; margin-top: 20px;
+    }
+    .rgpd-layer strong { color: var(--text); }
+
+    .success-banner {
+      display: none; background: rgba(52, 211, 153, 0.1);
+      border: 1px solid var(--success); color: var(--text);
+      padding: 24px; border-radius: 10px; text-align: center;
+    }
+    .success-banner h3 { color: var(--success); margin-bottom: 8px; }
+
+    footer { padding: 40px 0; text-align: center; font-size: 0.84rem; color: var(--text-muted); }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="container nav-inner">
+      <div class="brand">
+        <span>LEVEL-I</span>
+        <span class="tag">COMUNIDADES</span>
+      </div>
+      <span class="nav-badge">Oficina Tecnológica y Jurídica Digital · API 4173 · AICAT 14200</span>
+      <a href="#solicitar-acceso" class="btn btn-primary">Solicitar Acceso Piloto</a>
+    </div>
+  </header>
+
+  <main>
+    <!-- HERO: GENERACIÓN DE NECESIDAD -->
+    <section class="hero">
+      <div class="container">
+        <span class="eyebrow">El fin de las juntas a gritos y el software de los años 90</span>
+        <h1>Juntas de propietarios en 40 minutos. Gestión blindada ante cualquier juez.</h1>
+        <p class="lead">
+          La primera oficina jurídica y tecnológica digital para comunidades de propietarios. Sin contraseñas olvidadas: acceso en 5 segundos por <strong>PIN de WhatsApp</strong>, <strong>Bot Moderador legal</strong>, contabilidad automática por IA y recobro certificado de morosos.
+        </p>
+        <div class="hero-actions">
+          <a href="#solicitar-acceso" class="btn btn-primary">Activar Comunidad Piloto / Solicitar Demo</a>
+          <a href="#perfiles" class="btn btn-outline">Ver qué encontrarás según tu perfil</a>
+        </div>
+        <div class="trust-strip">
+          <div class="trust-item"><span class="dot"></span><span>Acceso sin claves por <strong>PIN WhatsApp</strong></span></div>
+          <div class="trust-item"><span class="dot"></span><span>Normativa dual <strong>LPH y CCCat</strong></span></div>
+          <div class="trust-item"><span class="dot"></span><span>Actas con <strong>rastro IP y sello eIDAS</strong></span></div>
+          <div class="trust-item"><span class="dot"></span><span>Alta por Fecha de Corte en <strong>20 min</strong></span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROBLEMA VS SOLUCIÓN -->
+    <section>
+      <div class="container">
+        <div class="section-head">
+          <h2>Por qué el modelo tradicional de administración está agotado</h2>
+          <p>Los programas grises de escritorio y los grupos de WhatsApp vecinales generan opacidad, desgaste profesional y acuerdos fáciles de impugnar.</p>
+        </div>
+        <div class="grid-3">
+          <div class="card">
+            <span class="card-tag">El problema diario</span>
+            <h3>Juntas interminables e impugnables</h3>
+            <p>Reuniones de tres horas donde dos vecinos monopolizan el turno de palabra, se calculan coeficientes a mano y los morosos votan sin control previo.</p>
+          </div>
+          <div class="card">
+            <span class="card-tag">El cuello de botella</span>
+            <h3>Teléfonos colapsados por consultas básicas</h3>
+            <p>Decenas de llamadas semanales preguntando el saldo pendiente, pidiendo copias de recibos o reclamando el estado de una avería ya en curso.</p>
+          </div>
+          <div class="card">
+            <span class="card-tag">La pérdida financiera</span>
+            <h3>Morosidad lenta y sin trazabilidad</h3>
+            <p>Meses de retraso en reclamar cuotas vencidas y expedientes incompletos cuando el abogado necesita presentar un procedimiento monitorio en el juzgado.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- EXPLORADOR INTERACTIVO POR PERFIL -->
+    <section id="perfiles">
+      <div class="container">
+        <div class="section-head">
+          <h2>Qué encontrarás dentro según tu perfil</h2>
+          <p>Selecciona tu rol para ver el entorno privado, las herramientas activas y los límites de privacidad RGPD diseñados para ti.</p>
+        </div>
+
+        <div class="role-tabs" role="tablist">
+          <button class="role-tab active" data-role="propietario">Propietario / Presidente</button>
+          <button class="role-tab" data-role="inquilino">Inquilino</button>
+          <button class="role-tab" data-role="administrador">Administrador de Fincas</button>
+          <button class="role-tab" data-role="despacho">Despacho / Gestoría</button>
+          <button class="role-tab" data-role="abogado">Abogado</button>
+        </div>
+
+        <div class="role-panel" id="role-panel">
+          <!-- Contenido cargado dinámicamente por JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ECOSISTEMA LEVEL-I -->
+    <section>
+      <div class="container">
+        <div class="section-head">
+          <h2>Conectado al ecosistema integral de Level-i.com</h2>
+          <p>Mucho más que un software de fincas: una puerta directa a servicios inmobiliarios, financieros y jurídicos online con asistencia IA.</p>
+        </div>
+        <div class="eco-grid">
+          <div class="eco-item">
+            <strong>Demanda Invertida</strong>
+            <span>Conecta propietarios que desean vender con compradores verificados en Level-i.com.</span>
+          </div>
+          <div class="eco-item">
+            <strong>Hipotecas Pre-aprobadas</strong>
+            <span>Estudio financiero ágil y financiación de derramas extraordinarias para vecinos.</span>
+          </div>
+          <div class="eco-item">
+            <strong>Gestión de Inquilinos</strong>
+            <span>Control integral del alquiler residencial con contratos online y trazabilidad.</span>
+          </div>
+          <div class="eco-item">
+            <strong>Catastro y Firma Notarial</strong>
+            <span>Consultas catastrales, certificados de deuda al instante y tramitación notarial digital.</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FORMULARIO SEGMENTADO -->
+    <section id="solicitar-acceso">
+      <div class="container">
+        <div class="section-head" style="margin: 0 auto 36px; text-align: center;">
+          <h2>Solicita acceso anticipado o activa tu comunidad piloto</h2>
+          <p>Indica tu perfil y prepararemos tu entorno de demostración en menos de 24 horas.</p>
+        </div>
+
+        <div class="form-wrapper">
+          <form id="lead-form">
+            <div class="form-grid">
+              <div class="field">
+                <label for="nombre">Nombre y apellidos *</label>
+                <input type="text" id="nombre" name="nombre" required placeholder="Ej. Marc Vila" />
+              </div>
+              <div class="field">
+                <label for="whatsapp">Móvil con WhatsApp (para acceso PIN) *</label>
+                <input type="tel" id="whatsapp" name="whatsapp" required placeholder="Ej. 600 123 456" />
+              </div>
+            </div>
+
+            <div class="form-grid">
+              <div class="field">
+                <label for="email">Correo electrónico *</label>
+                <input type="email" id="email" name="email" required placeholder="nombre@dominio.com" />
+              </div>
+              <div class="field">
+                <label for="perfil">¿Cuál es tu perfil? *</label>
+                <select id="perfil" name="perfil" required>
+                  <option value="propietario">Particular (Propietario / Presidente)</option>
+                  <option value="administrador">Administrador de Fincas</option>
+                  <option value="despacho">Despacho Profesional / Gestoría</option>
+                  <option value="abogado">Abogado (Propiedad Horizontal / Monitorios)</option>
+                  <option value="inquilino">Inquilino</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Campos dinámicos según el perfil -->
+            <div class="dynamic-fields" id="dynamic-fields"></div>
+
+            <div class="checks">
+              <label class="check-row">
+                <input type="checkbox" id="acepta_privacidad" required />
+                <span>He leído y acepto la <a href="#privacidad-info">Política de Privacidad</a> para que <strong>Level.immo / Level-i.com</strong> gestione mi solicitud de acceso o demostración. *</span>
+              </label>
+              <label class="check-row">
+                <input type="checkbox" id="acepta_comercial" />
+                <span>Acepto recibir novedades e invitaciones sobre los servicios del ecosistema <strong>Level-i.com</strong>.</span>
+              </label>
+            </div>
+
+            <button type="submit" class="btn btn-primary" id="submit-btn" style="width: 100%; font-size: 1rem;">
+              Solicitar acceso piloto para mi comunidad
+            </button>
+
+            <div class="rgpd-layer" id="privacidad-info">
+              <strong>Información básica sobre Protección de Datos (RGPD):</strong><br />
+              <strong>Responsable:</strong> Level.immo (API 4173 Barcelona · AICAT 14200) / Level-i.com. ·
+              <strong>Finalidad:</strong> Gestionar tu solicitud de acceso, demostración o alta piloto en <em>app.level-i.com/comunidades-de-propietarios</em> y contactar contigo por WhatsApp, teléfono o email. ·
+              <strong>Legitimación:</strong> Consentimiento del interesado y medidas precontractuales (Art. 6.1.a y 6.1.b RGPD). ·
+              <strong>Destinatarios:</strong> No se cederán datos a terceros salvo obligación legal o proveedores tecnológicos bajo contrato de encargado del tratamiento en la UE. ·
+              <strong>Derechos:</strong> Acceso, rectificación, supresión, oposición, limitación y portabilidad escribiendo a <em>privacidad@level-i.com</em>.
+            </div>
+          </form>
+
+          <div class="success-banner" id="success-banner">
+            <h3>Solicitud registrada correctamente</h3>
+            <p id="success-text">En menos de 24 horas recibirás un mensaje en tu WhatsApp con las credenciales de acceso a tu demostración personalizada.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <p><strong>app.level-i.com/comunidades-de-propietarios</strong> · Operado por Level.immo (API 4173 Barcelona · AICAT 14200)</p>
+      <p style="margin-top: 6px;">Ecosistema Level-i.com: Demanda Invertida · Gestión de Inquilinos · Hipotecas Pre-aprobadas · Catastro · Firma Notarial Online</p>
+    </div>
+  </footer>
+
+  <script>
+    // 1. CONFIGURACIÓN DEL WEBHOOK (Pega aquí tu URL de Make cuando la actives)
+    const WEBHOOK_URL = "PEGA_AQUI_TU_WEBHOOK_URL";
+
+    // 2. CONTENIDO DINÁMICO POR PERFIL (Explorador de producto)
+    const ROLES_DATA = {
+      propietario: {
+        title: "Panel del Propietario y Presidente",
+        sub: "Transparencia absoluta sobre tus cuotas, participación directa en juntas sin desplazamientos y control inmediato de incidencias.",
+        features: [
+          "Consulta de saldo individual 24/7 y descarga de recibos históricos.",
+          "Pago rápido con tarjeta de cuotas o derramas pendientes desde el móvil.",
+          "Junta Virtual con Bot Moderador: debate ordenado y voto certificado con rastro IP.",
+          "Solicitud en 1 clic del Certificado de Estar al Corriente de Pago (Art. 9.1.e LPH).",
+          "Propuesta y aval digital para convocar Juntas Extraordinarias (al alcanzar el 25% legal).",
+          "Botón de Emergencia IA 24/7 con instrucciones de corte y aviso a guardia."
+        ],
+        privacy: "Aislamiento RGPD Propietario",
+        privacyText: "Visualizas exclusivamente tu contabilidad individual, las actas aprobadas y los documentos generales de tu finca. Ningún vecino ve tus datos personales ni tu saldo.",
+        cta: "Solicitar acceso piloto para mi comunidad"
+      },
+      inquilino: {
+        title: "Panel Operativo del Inquilino",
+        sub: "Un canal directo para resolver averías y emergencias del edificio sin molestar al propietario por gestiones cotidianas.",
+        features: [
+          "Acceso instantáneo con PIN de WhatsApp sin recordar contraseñas.",
+          "Botón de Emergencia IA 24/7 para fugas, ascensor bloqueado o fallos eléctricos.",
+          "Reporte de incidencias con fotografía y seguimiento de estado en tiempo real.",
+          "Consulta de normas de convivencia, tablón de avisos y reservas de zonas comunes."
+        ],
+        privacy: "Privacidad Estricta RGPD",
+        privacyText: "Cero acceso a saldos bancarios, cuotas comunitarias, actas económicas, votaciones ni datos personales de los propietarios.",
+        cta: "Solicitar acceso para mi vivienda en alquiler"
+      },
+      administrador: {
+        title: "Cockpit Multi-Comunidad para Administradores",
+        sub: "Reduce un 70% las llamadas repetitivas, cierra juntas en 40 minutos y blinda cada acuerdo frente a posibles impugnaciones.",
+        features: [
+          "Bot Moderador de Juntas con cálculo automático de coeficientes y doble mayoría (LPH y CCCat).",
+          "Bloqueo automático del botón de voto a propietarios morosos (Art. 15.2 LPH).",
+          "Contabilidad OCR 'Cero Clics': reenvía facturas PDF y la IA extrae proveedor, CIF, base e IVA.",
+          "Emisión y envío a firma electrónica (eIDAS) de Actas y Certificados de Deuda.",
+          "Semáforo legal del edificio con alertas automáticas de ITE, OCA, ascensores y seguros.",
+          "Migración en 20 minutos por Fecha de Corte y exportación total en 1 clic (.ZIP)."
+        ],
+        privacy: "Entorno Multi-Finca Segregado",
+        privacyText: "Cada comunidad opera como un compartimento estanco bajo contrato de Encargado del Tratamiento (Art. 28 RGPD), con coste repercutible en el presupuesto anual.",
+        cta: "Ver Demo de la Junta Virtual con Bot"
+      },
+      despacho: {
+        title: "Licencia Corporativa para Despachos y Gestorías",
+        sub: "Escala tu cartera de comunidades con imagen de oficina jurídica digital de alto nivel y soporte operativo centralizado.",
+        features: [
+          "Panel unificado para gestionar decenas o cientos de comunidades desde una sola cuenta.",
+          "Asignación granular de permisos por gestor, oficial o administrativo del despacho.",
+          "Recobro extrajudicial automatizado con huella digital probatoria respaldado por Level.immo.",
+          "Conciliación de ingresos por pasarela y validación humana de transferencias.",
+          "Sinergia opcional con servicios financieros e inmobiliarios de Level-i.com."
+        ],
+        privacy: "Control de Auditoría Corporativa",
+        privacyText: "Registro completo de acciones por usuario, servidores en la Unión Europea y portabilidad garantizada sin cláusulas de permanencia.",
+        cta: "Solicitar condiciones de Licencia B2B"
+      },
+      abogado: {
+        title: "Despacho Jurídico Digital para Abogados",
+        sub: "Recibe toda la prueba documental auditada y lista para presentar el Procedimiento Monitorio sin perseguir papeles.",
+        features: [
+          "Descarga en 1 clic del Certificado de Deuda y Acta de Liquidación listos para el juzgado.",
+          "Expediente íntegro de trazabilidad: requerimientos certificados, sellos de tiempo eIDAS y rastro IP.",
+          "Historial completo de convocatorias, quórum, votos salvados y bloqueos por morosidad.",
+          "Acceso gratuito al Panel Jurídico para despachos colaboradores de comunidades."
+        ],
+        privacy: "Acceso Limitado a Expedientes Jurídicos",
+        privacyText: "Acceso exclusivo a la documentación probatoria y expedientes de reclamación de las comunidades donde intervienes como letrado.",
+        cta: "Solicitar acceso gratuito al Panel Jurídico"
+      }
+    };
+
+    const DYNAMIC_FORM_FIELDS = {
+      propietario: `
+        <div class="dynamic-title">Datos de tu comunidad</div>
+        <div class="form-grid" style="margin-bottom:0;">
+          <div class="field" style="margin-bottom:0;">
+            <label for="extra_1">Nº aproximado de viviendas en la finca</label>
+            <select id="extra_1" name="viviendas_finca">
+              <option value="Menos de 15">Menos de 15 viviendas</option>
+              <option value="15 a 40">Entre 15 y 40 viviendas</option>
+              <option value="Mas de 40">Más de 40 viviendas</option>
+            </select>
+          </div>
+          <div class="field" style="margin-bottom:0;">
+            <label for="extra_2">Principal necesidad actual</label>
+            <select id="extra_2" name="necesidad">
+              <option value="Juntas virtuales">Juntas virtuales con Bot</option>
+              <option value="Control morosos">Control y recobro de morosos</option>
+              <option value="Transparencia cuentas">Transparencia de cuentas y saldos</option>
+              <option value="Autogestion">Autogestión integral</option>
+            </select>
+          </div>
+        </div>`,
+      administrador: `
+        <div class="dynamic-title">Datos de tu cartera profesional</div>
+        <div class="form-grid" style="margin-bottom:0;">
+          <div class="field" style="margin-bottom:0;">
+            <label for="extra_1">Comunidades gestionadas actualmente</label>
+            <select id="extra_1" name="volumen_comunidades">
+              <option value="1 a 25">De 1 a 25 comunidades</option>
+              <option value="26 a 100">De 26 a 100 comunidades</option>
+              <option value="Mas de 100">Más de 100 comunidades</option>
+            </select>
+          </div>
+          <div class="field" style="margin-bottom:0;">
+            <label for="extra_2">¿Quieres probarlo gratis en tu finca más conflictiva?</label>
+            <select id="extra_2" name="piloto_conflictiva">
+              <option value="Si, activar piloto">Sí, quiero probar un piloto real</option>
+              <option value="Ver demo primero">Prefiero ver una demo de 15 min primero</option>
+            </select>
+          </div>
+        </div>`,
+      despacho: `
+        <div class="dynamic-title">Datos del Despacho / Gestoría</div>
+        <div class="form-grid" style="margin-bottom:0;">
+          <div class="field" style="margin-bottom:0;">
+            <label for="extra_1">Nombre del despacho y ciudad</label>
+            <input type="text" id="extra_1" name="despacho_ciudad" placeholder="Ej. Gestoría Central · Barcelona" />
+          </div>
+          <div class="field" style="margin-bottom:0;">
+            <label for="extra_2">Volumen aproximado de viviendas</label>
+            <select id="extra_2" name="volumen_viviendas">
+              <option value="Menos de 500">Menos de 500 viviendas</option>
+              <option value="500 a 2000">Entre 500 y 2.000 viviendas</option>
+              <option value="Mas de 2000">Más de 2.000 viviendas</option>
+            </select>
+          </div>
+        </div>`,
+      abogado: `
+        <div class="dynamic-title">Datos del Despacho Jurídico</div>
+        <div class="form-grid" style="margin-bottom:0;">
+          <div class="field" style="margin-bottom:0;">
+            <label for="extra_1">Despacho / Colegio de Abogados (opcional)</label>
+            <input type="text" id="extra_1" name="colegio_despacho" placeholder="Ej. ICAB · Bufete Jurídico" />
+          </div>
+          <div class="field" style="margin-bottom:0;">
+            <label for="extra_2">Área de intervención principal</label>
+            <select id="extra_2" name="especialidad_legal">
+              <option value="Monitorios">Procedimientos Monitorios (Art. 21 LPH)</option>
+              <option value="Impugnacion actas">Blindaje e impugnación de actas</option>
+              <option value="Asesoramiento integral">Asesoramiento integral a comunidades</option>
+            </select>
+          </div>
+        </div>`,
+      inquilino: `
+        <div class="dynamic-title">Datos de tu vivienda en alquiler</div>
+        <div class="form-grid" style="margin-bottom:0;">
+          <div class="field" style="margin-bottom:0;">
+            <label for="extra_1">Ciudad / Código postal del edificio</label>
+            <input type="text" id="extra_1" name="ciudad_cp" placeholder="Ej. Barcelona · 08008" />
+          </div>
+          <div class="field" style="margin-bottom:0;">
+            <label for="extra_2">¿Tu comunidad ya tiene administrador?</label>
+            <select id="extra_2" name="tiene_admin">
+              <option value="Si">Sí, tiene administrador</option>
+              <option value="No lo se">No lo sé</option>
+            </select>
+          </div>
+        </div>`
+    };
+
+    // Renderizar explorador de perfiles
+    const rolePanel = document.getElementById("role-panel");
+    const roleTabs = document.querySelectorAll(".role-tab");
+    const perfilSelect = document.getElementById("perfil");
+    const dynamicFields = document.getElementById("dynamic-fields");
+    const submitBtn = document.getElementById("submit-btn");
+
+    function renderRole(roleKey) {
+      const data = ROLES_DATA[roleKey] || ROLES_DATA.propietario;
+      roleTabs.forEach(btn => btn.classList.toggle("active", btn.dataset.role === roleKey));
+      rolePanel.innerHTML = `
+        <div>
+          <h3>${data.title}</h3>
+          <p class="role-sub">${data.sub}</p>
+          <ul class="feature-list">
+            ${data.features.map(f => `<li>${f}</li>`).join("")}
+          </ul>
+        </div>
+        <div class="role-box-side">
+          <div>
+            <span class="privacy-badge">${data.privacy}</span>
+            <p>${data.privacyText}</p>
+          </div>
+          <a href="#solicitar-acceso" class="btn btn-primary" onclick="syncFormRole('${roleKey}')">${data.cta}</a>
+        </div>
+      `;
+    }
+
+    function syncFormRole(roleKey) {
+      perfilSelect.value = roleKey;
+      updateFormByRole(roleKey);
+    }
+
+    function updateFormByRole(roleKey) {
+      const data = ROLES_DATA[roleKey] || ROLES_DATA.propietario;
+      dynamicFields.innerHTML = DYNAMIC_FORM_FIELDS[roleKey] || DYNAMIC_FORM_FIELDS.propietario;
+      submitBtn.textContent = data.cta;
+    }
+
+    roleTabs.forEach(btn => {
+      btn.addEventListener("click", () => {
+        const key = btn.dataset.role;
+        renderRole(key);
+        syncFormRole(key);
+      });
+    });
+
+    perfilSelect.addEventListener("change", (e) => {
+      updateFormByRole(e.target.value);
+      renderRole(e.target.value);
+    });
+
+    // Inicialización
+    renderRole("propietario");
+    updateFormByRole("propietario");
+
+    // Envío del formulario
+    const form = document.getElementById("lead-form");
+    const successBanner = document.getElementById("success-banner");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Registrando solicitud...";
+
+      const payload = {
+        origen: "app.level-i.com/comunidades-de-propietarios",
+        fecha_iso: new Date().toISOString(),
+        nombre: document.getElementById("nombre").value.trim(),
+        whatsapp: document.getElementById("whatsapp").value.trim(),
+        email: document.getElementById("email").value.trim(),
+        perfil: perfilSelect.value,
+        detalle_1: document.getElementById("extra_1")?.value || "",
+        detalle_2: document.getElementById("extra_2")?.value || "",
+        acepta_privacidad: document.getElementById("acepta_privacidad").checked,
+        acepta_comercial: document.getElementById("acepta_comercial").checked
+      };
+
+      try {
+        if (WEBHOOK_URL && WEBHOOK_URL !== "PEGA_AQUI_TU_WEBHOOK_URL") {
+          await fetch(WEBHOOK_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+          });
+        }
+        form.style.display = "none";
+        successBanner.style.display = "block";
+      } catch (err) {
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Reintentar envío";
+        alert("Hubo un problema de conexión. Por favor, inténtalo de nuevo.");
+      }
+    });
+  </script>
+</body>
+</html>
