@@ -2,7 +2,7 @@
 <html lang="es" id="html-root">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Level.immo · Consola PropTech Multi-Tenant - Gestión de Alquileres, Suministros y Partes</title>
 <style>
   :root {
@@ -28,7 +28,13 @@
     --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   }
 
-  * { box-sizing: border-box; margin: 0; padding: 0; scrollbar-width: thin; scrollbar-color: var(--border) var(--bg-panel); }
+  *, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) var(--bg-panel);
+  }
   ::-webkit-scrollbar { width: 6px; height: 6px; }
   ::-webkit-scrollbar-track { background: var(--bg-panel); border-left: 1px solid var(--border); }
   ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
@@ -61,31 +67,40 @@
     left: 0;
     width: 100%;
     height: 55px;
-    background-color: var(--bg-panel);
-    border-bottom: 1px solid var(--border);
+    background-color: rgba(13, 19, 34, 0.95);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid rgba(16, 185, 129, 0.25);
     align-items: center;
     justify-content: space-between;
-    padding: 0 14px;
+    padding: 0 12px;
     z-index: 1000;
+    gap: 8px;
   }
-  .mobile-brand { font-size: 16px; font-weight: 800; color: #ffffff; text-decoration: none; }
+  .mobile-brand { font-size: 15px; font-weight: 800; color: #ffffff; text-decoration: none; white-space: nowrap; }
   .mobile-brand span { color: var(--emerald); }
-  .mobile-nav-buttons { display: flex; gap: 6px; }
+  .mobile-top-right { display: flex; align-items: center; gap: 6px; }
+  .mobile-nav-buttons { display: flex; gap: 5px; }
   .mobile-nav-btn {
     background-color: var(--bg-card);
     border: 1px solid var(--border);
     color: var(--text-muted);
-    padding: 6px 10px;
+    padding: 5px 8px;
     border-radius: 6px;
     font-size: 11px;
-    font-weight: 600;
+    font-weight: 700;
     text-decoration: none;
     transition: all 0.2s;
+    white-space: nowrap;
   }
   .mobile-nav-btn.active {
-    background: rgba(16, 185, 129, 0.15);
+    background: rgba(16, 185, 129, 0.16);
     color: #ffffff;
     border-color: var(--emerald);
+  }
+
+  /* BARRA INFERIOR FIJA FUTURISTA EN MÓVIL */
+  .mobile-fixed-dock {
+    display: none;
   }
 
   /* ESTRUCTURA 3 COLUMNAS Y PANTALLA COMPLETA */
@@ -228,7 +243,7 @@
     background: rgba(13, 19, 34, 0.9);
   }
   .topbar-title { font-size: 13.5px; color: var(--text-muted); font-weight: 500; }
-  .topbar-right { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .topbar-right { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
   .badge-private {
     background: var(--emerald-soft);
     border: 1px solid rgba(16, 185, 129, 0.4);
@@ -245,10 +260,10 @@
     background: var(--bg-card);
     color: #fff;
     border: 1px solid var(--border);
-    padding: 6px 12px;
+    padding: 6px 10px;
     border-radius: 8px;
-    font-size: 12.5px;
-    font-weight: 600;
+    font-size: 13px;
+    font-weight: 700;
     cursor: pointer;
     outline: none;
   }
@@ -508,7 +523,6 @@
   .info-label { color: var(--text-muted); }
   .info-value { font-weight: 700; color: #fff; text-align: right; }
 
-  /* BARRA ESPECIAL PARA EL ABOGADO / SERVICIOS JURÍDICOS */
   #lawyer-executive-banner {
     display: none;
     background: linear-gradient(90deg, rgba(59, 130, 246, 0.18) 0%, rgba(16, 185, 129, 0.14) 100%);
@@ -521,7 +535,6 @@
     overflow: hidden;
   }
 
-  /* SALDO VIVO ACTUAL (TARJETA DESTACADA) */
   .saldo-vivo-card {
     background: var(--bg-input);
     border: 1px solid var(--border);
@@ -538,7 +551,6 @@
   .saldo-amount.positivo { color: var(--neon-green); }
   .saldo-amount.negativo { color: var(--danger); }
 
-  /* GALERÍA DE FOTOS */
   .property-gallery {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(135px, 1fr));
@@ -556,7 +568,6 @@
   }
   .property-gallery img:hover { transform: scale(1.03); border-color: var(--emerald); }
 
-  /* BLOQUE DE MAPA Y NAVEGACIÓN GPS EN AUTO */
   .map-section-box {
     margin-top: 16px;
     padding-top: 14px;
@@ -605,7 +616,6 @@
     filter: invert(90%) hue-rotate(180deg) brightness(95%) contrast(90%);
   }
 
-  /* SELECTOR RÁPIDO DE PROPIEDADES (CHIPS) */
   .prop-chips-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
   .prop-chip {
     background: var(--bg-input);
@@ -624,7 +634,6 @@
     color: var(--emerald);
   }
 
-  /* FICHAS DE CARTERA Y TABLA DE RECIBOS */
   .portfolio-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -727,7 +736,6 @@
   }
   .btn-mark-paid:hover { background: var(--amber); color: #042f2e; }
 
-  /* HILO DE INCIDENCIAS TIPO CHAT */
   .incidencia-thread-card {
     background: var(--bg-input);
     border: 1px solid var(--border);
@@ -754,7 +762,7 @@
 
   .owner-cards-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     gap: 16px;
     margin-top: 14px;
     margin-bottom: 20px;
@@ -773,11 +781,11 @@
   .owner-card p { font-size: 12.5px; color: var(--text-muted); margin-bottom: 16px; line-height: 1.5; }
   .btn-radar-alert {
     display: inline-block;
-    background: #c0392b;
-    color: #fff;
+    background: var(--emerald);
+    color: #042f2e;
     padding: 10px 16px;
     border-radius: 8px;
-    font-weight: 700;
+    font-weight: 800;
     font-size: 12.5px;
     border: none;
     cursor: pointer;
@@ -823,8 +831,9 @@
     align-items: center;
     justify-content: center;
     padding: 20px;
-   }
   }
+  #modal-aviso-legal, #modal-privacidad, #modal-cookies { z-index: 3500; }
+
   .modal-card {
     background: var(--bg-panel);
     border: 1px solid var(--border);
@@ -854,6 +863,43 @@
     cursor: pointer;
   }
   .modal-close-x:hover { color: var(--danger); }
+
+  /* MARCA DE AGUA DIAGONAL DE PUNTA A PUNTA EN CERTIFICADO BORRADOR */
+  .solvencia-preview-shell {
+    position: relative;
+    overflow: hidden;
+    background: #0b1120;
+    border: 1px solid rgba(16, 185, 129, 0.35);
+    border-radius: 12px;
+    padding: 20px;
+  }
+  .solvencia-watermark-diag {
+    position: absolute;
+    inset: -35%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    transform: rotate(-32deg);
+    pointer-events: none;
+    user-select: none;
+    z-index: 12;
+  }
+  .solvencia-watermark-row {
+    display: flex;
+    gap: 54px;
+    white-space: nowrap;
+    font-size: 28px;
+    font-weight: 900;
+    letter-spacing: 8px;
+    text-transform: uppercase;
+    color: rgba(245, 158, 11, 0.16);
+    text-shadow: 0 0 18px rgba(0, 243, 255, 0.08);
+  }
+  .solvencia-body-layer {
+    position: relative;
+    z-index: 5;
+  }
 
   .legal-modal-content h4 { color: var(--text-main); font-size: 14px; margin: 14px 0 6px 0; font-weight: 800; }
   .legal-modal-content p, .legal-modal-content li { font-size: 13px; color: var(--text-muted); line-height: 1.65; margin-bottom: 8px; }
@@ -889,11 +935,53 @@
 
   @media (max-width: 980px) {
     .mobile-top-bar { display: flex; }
-    .app-layout { grid-template-columns: minmax(0, 1fr); margin-top: 55px; }
+    .mobile-fixed-dock {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: rgba(10, 16, 29, 0.94);
+      backdrop-filter: blur(12px);
+      border-top: 1px solid rgba(0, 243, 255, 0.25);
+      box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.65);
+      padding: 6px 6px calc(6px + env(safe-area-inset-bottom, 0px)) 6px;
+      gap: 4px;
+      z-index: 1500;
+    }
+    .mobile-dock-btn {
+      background: rgba(19, 28, 49, 0.85);
+      border: 1px solid rgba(30, 41, 59, 0.9);
+      border-radius: 10px;
+      color: var(--text-main);
+      padding: 6px 4px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      cursor: pointer;
+      min-height: 46px;
+      transition: all 0.2s;
+    }
+    .mobile-dock-btn:active {
+      border-color: var(--emerald);
+      background: rgba(16, 185, 129, 0.16);
+      transform: translateY(-1px);
+    }
+    .mobile-dock-icon { font-size: 16px; line-height: 1.1; }
+    .mobile-dock-tag { font-size: 9px; font-weight: 800; color: var(--text-muted); letter-spacing: 0.2px; }
+
+    .app-layout {
+      grid-template-columns: minmax(0, 1fr);
+      margin-top: 55px;
+      padding-bottom: calc(76px + env(safe-area-inset-bottom, 0px));
+    }
     .sidebar-left, .sidebar-right { display: none; }
     .grid-2col, .grid-3col, .grid-4col { grid-template-columns: 1fr; }
     .stage-content { padding: 18px 14px; }
-    #elena-chat-window { right: 0; bottom: 0; width: 100%; border-radius: 16px 16px 0 0; }
+    #elena-chat-window { right: 0; bottom: 0; width: 100%; border-radius: 16px 16px 0 0; z-index: 1900; }
   }
 </style>
 </head>
@@ -902,11 +990,44 @@
 <!-- BARRA SUPERIOR MÓVIL -->
 <div class="mobile-top-bar">
   <a href="https://app.level-i.com/mercado-real" class="mobile-brand" translate="no">L<span>•</span> Level.immo</a>
-  <div class="mobile-nav-buttons">
-    <a id="nav-demanda-mob" href="https://app.level-i.com/demanda-activa" class="mobile-nav-btn" data-i18n="nav_demanda_mob">🎯 Demanda</a>
-    <a id="nav-mercado-mob" href="https://app.level-i.com/mercado-real" class="mobile-nav-btn" data-i18n="nav_mercado_mob">📡 Mercado</a>
-    <a href="https://app.level-i.com/gestion-de-alquileres" class="mobile-nav-btn active" data-i18n="nav_usuarios_mob">🔑 Usuarios</a>
+  <div class="mobile-top-right">
+    <div class="mobile-nav-buttons">
+      <a id="nav-demanda-mob" href="https://app.level-i.com/demanda-activa" class="mobile-nav-btn" data-i18n="nav_demanda_mob">🎯 Demanda</a>
+      <a id="nav-mercado-mob" href="https://app.level-i.com/mercado-real" class="mobile-nav-btn" data-i18n="nav_mercado_mob">📡 Mercado</a>
+    </div>
+    <label for="lang-selector-mob" class="sr-only">Idioma</label>
+    <select id="lang-selector-mob" class="lang-select" style="padding:4px 6px; font-size:12px;" aria-label="Idioma" onchange="cambiarIdioma(this.value)" translate="no">
+      <option value="es">🇪🇸</option>
+      <option value="ca">🟨 CAT</option>
+      <option value="en">🇬🇧</option>
+      <option value="fr">🇫🇷</option>
+      <option value="de">🇩🇪</option>
+    </select>
   </div>
+</div>
+
+<!-- BARRA FIJA INFERIOR EN MÓVIL (UNIVERSAL CON ICONO + ETIQUETA BREVE) -->
+<div class="mobile-fixed-dock" id="mobile-fixed-dock" role="navigation" aria-label="Acciones rápidas">
+  <button type="button" class="mobile-dock-btn" onclick="abrirVisorNativoPropietario('morosidad')" title="Cobros">
+    <span class="mobile-dock-icon">🟢</span>
+    <span class="mobile-dock-tag" data-i18n="dock_cobros">COBROS</span>
+  </button>
+  <button type="button" class="mobile-dock-btn" onclick="abrirModalSuministroManual('')" title="Suministros / Gasto">
+    <span class="mobile-dock-icon">⚡</span>
+    <span class="mobile-dock-tag" data-i18n="dock_gasto">+GASTO</span>
+  </button>
+  <button type="button" class="mobile-dock-btn" onclick="abrirModalAvisoManual('')" title="Aviso">
+    <span class="mobile-dock-icon">📢</span>
+    <span class="mobile-dock-tag" data-i18n="dock_aviso">AVISO</span>
+  </button>
+  <button type="button" class="mobile-dock-btn" onclick="abrirModalCertificadoSolvencia()" title="Solvencia">
+    <span class="mobile-dock-icon">🏅</span>
+    <span class="mobile-dock-tag" data-i18n="dock_solv">SOLVENCIA</span>
+  </button>
+  <button type="button" class="mobile-dock-btn" id="dock-btn-legal-o-elena" onclick="accionRapidaLegalOMovil()" title="Legal / Elena IA">
+    <span class="mobile-dock-icon">⚖️</span>
+    <span class="mobile-dock-tag" id="dock-tag-legal-o-elena" data-i18n="dock_legal">LEGAL</span>
+  </button>
 </div>
 
 <div class="app-layout" id="main-layout">
@@ -956,11 +1077,11 @@
         <div class="badge-private">🔒 <span data-i18n="badge_encrypted">Acceso Cifrado Multi-Rol</span></div>
         <label for="lang-selector" class="sr-only">Seleccionar idioma</label>
         <select id="lang-selector" class="lang-select" aria-label="Seleccionar idioma" onchange="cambiarIdioma(this.value)" translate="no">
-          <option value="es">🇪🇸 Español</option>
-          <option value="ca">🟨 Català</option>
-          <option value="en">🇬🇧 English</option>
-          <option value="fr">🇫🇷 Français</option>
-          <option value="de">🇩🇪 Deutsch</option>
+          <option value="es">🇪🇸</option>
+          <option value="ca">🟨 CAT</option>
+          <option value="en">🇬🇧</option>
+          <option value="fr">🇫🇷</option>
+          <option value="de">🇩🇪</option>
         </select>
       </div>
     </header>
@@ -1047,6 +1168,9 @@
 
           <div class="session-controls">
             <span class="verified-pill" id="badge-titular-activo">VERIFICADO</span>
+            <button type="button" class="btn-outline-sm" style="border-color:var(--emerald); color:var(--emerald); font-weight:700;" onclick="abrirModalCertificadoSolvencia()">
+              🏅 Certificado de Solvencia
+            </button>
             <button type="button" class="btn-outline-sm" onclick="abrirChatElena()">
               💬 Asistente Elena IA
             </button>
@@ -1125,8 +1249,8 @@
 
           <div class="owner-cards-grid">
             <div class="owner-card">
-              <h3>🚨 Radar de Cobros y TPV</h3>
-              <p>Control de alquileres (día 1) y suministros pendientes, abono manual o vía TPV (10 € comisión servicio) y emisión de Recibo/Factura PDF.</p>
+              <h3>🟢 Radar de Cobros y TPV</h3>
+              <p>Control de alquileres (día 1) y suministros pendientes, abono manual o revertir estado y emisión de Recibo/Factura PDF.</p>
               <button type="button" class="btn-radar-alert" onclick="abrirVisorNativoPropietario('morosidad')">
                 Ver Recibos Pendientes y Emitir PDF
               </button>
@@ -1146,8 +1270,15 @@
               </button>
             </div>
             <div class="owner-card">
-              <h3>⚖️ Informe Jurídico / Pericial</h3>
-              <p>Genera al instante el dosier completo en PDF con extracto Debe/Haber, recibos impagados y chat histórico de incidencias.</p>
+              <h3>🏅 Certificado de Solvencia</h3>
+              <p>Vista previa en borrador con marca de agua diagonal y emisión oficial con coste para acreditar cumplimiento y saldo vivo.</p>
+              <button type="button" class="btn-radar-info" style="background:#0f766e; color:#fff; border:1px solid var(--emerald);" onclick="abrirModalCertificadoSolvencia()">
+                🏅 Abrir Certificado de Solvencia
+              </button>
+            </div>
+            <div class="owner-card">
+              <h3>⚖️ Solicitar Abogado / Informe Legal</h3>
+              <p>Solicita o asigna tu abogado, abre el canal privado o descarga el informe legal PDF por inmueble.</p>
               <button type="button" class="btn-radar-info" style="background:var(--amber); color:#042f2e;" onclick="imprimirInformeEjecutivoAbogadoPDF()">
                 🖨️ Descargar Informe PDF
               </button>
@@ -1163,7 +1294,7 @@
             <p style="font-size:13px; color:var(--text-muted); margin-bottom:14px; line-height:1.5;">
               Incorpora nuevos inmuebles a tu cartera o selecciona cualquiera de tus propiedades activas para subir fotografías directas al repositorio multimedia de <code>level.immo</code>, definir reglas de facturación o vincular arrendatarios.
             </p>
-            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:12px;">
+            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:12px;">
               <button type="button" class="btn-primary" style="background:var(--amber); color:#042f2e;" onclick="abrirModalAltaPropiedad('')">
                 ➕ Alta de Propiedad / Subir Fotos Multimedia →
               </button>
@@ -1237,16 +1368,16 @@
             </div>
           </div>
 
-          <!-- FORMULARIO DE ASIGNACIÓN DE ABOGADO (PLEGABLE EN ACORDEÓN) -->
+          <!-- FORMULARIO DE ASIGNACIÓN / SOLICITUD DE ABOGADO (PLEGABLE EN ACORDEÓN) -->
           <div class="panel-box" id="box-acordeon-abogado" style="background:var(--bg-card); margin-top:20px; margin-bottom:0; border-color:var(--emerald);">
             <div class="panel-header" style="color:var(--emerald); cursor:pointer; margin-bottom:0; border-bottom:none; padding-bottom:0;" onclick="toggleAcordeonAbogado()">
-              <span>⚖️ ASIGNAR ABOGADO / SERVICIOS JURÍDICOS Y ENVIAR BIENVENIDA</span>
-              <span class="badge badge-success" id="badge-toggle-abogado">➕ Desplegar Alta de Abogado ▾</span>
+              <span>⚖️ SOLICITAR / ASIGNAR ABOGADO O SERVICIOS JURÍDICOS</span>
+              <span class="badge badge-success" id="badge-toggle-abogado">➕ Desplegar Solicitud de Abogado ▾</span>
             </div>
 
             <div id="contenido-acordeon-abogado" style="display:none; padding-top:16px; margin-top:14px; border-top:1px solid var(--border);">
               <p style="font-size:13px; color:var(--text-muted); margin-bottom:16px; line-height:1.55;">
-                Registra a tu abogado o despacho jurídico en <code>PROPERTY_PROPIETARIOS_LEGAL_SERVICES</code>. Al guardar, el sistema registra los datos con el campo estandarizado <code>DNI-NIE-CIF</code> y dispara el correo de bienvenida permitiéndole consultar expedientes e imprimir informes periciales en PDF.
+                Solicita o registra a tu abogado o despacho jurídico en <code>PROPERTY_PROPIETARIOS_LEGAL_SERVICES</code>. Al guardar, el sistema registra los datos con el campo estandarizado <code>DNI-NIE-CIF</code> y dispara el correo de bienvenida permitiéndole consultar expedientes e imprimir informes legales en PDF.
               </p>
 
               <form onsubmit="enviarAutorizacionAbogado(event)">
@@ -1295,7 +1426,7 @@
                 </div>
 
                 <button type="submit" class="btn-primary" id="btn-enviar-abogado" style="background:var(--amber); color:#042f2e;">
-                  ⚖️ Asignar Abogado en Base de Datos y Enviar Email de Bienvenida →
+                  ⚖️ Solicitar / Asignar Abogado y Enviar Bienvenida →
                 </button>
                 <div id="msg-legal-exito" class="status-msg ok"></div>
                 <div id="msg-legal-error" class="status-msg err">❌ Error al registrar la autorización en Make.</div>
@@ -1378,8 +1509,11 @@
                 <button type="button" class="btn-outline-sm" style="flex:1; padding:10px; font-weight:700;" onclick="abrirFichaContratoActual()" data-i18n="btn_view_contract">
                   📄 Ver Ficha, Contrato, Fiscalidad e IBAN
                 </button>
+                <button type="button" class="btn-outline-sm" style="border-color:var(--emerald); color:var(--emerald); font-weight:800; padding:10px;" onclick="abrirModalCertificadoSolvencia()">
+                  🏅 Certificado Solvencia
+                </button>
                 <button type="button" id="btn-residente-pdf-abogado" class="btn-outline-sm" style="display:none; border-color:var(--amber); color:var(--amber); font-weight:800; padding:10px;" onclick="imprimirInformeEjecutivoAbogadoPDF()">
-                  🖨️ Imprimir Informe Judicial PDF
+                  🖨️ Imprimir Informe Legal PDF
                 </button>
               </div>
             </div>
@@ -1419,8 +1553,7 @@
       </section>
     </div>
   </main>
-
-  <!-- COLUMNA DERECHA -->
+<!-- COLUMNA DERECHA -->
   <aside class="sidebar-right">
     <div class="info-widget">
       <h4 data-i18n="side_sec_title">🛡️ ARQUITECTURA AUTOMÁTICA</h4>
@@ -1459,6 +1592,49 @@
       </button>
     </div>
   </aside>
+</div>
+
+<!-- ==========================================================================
+     MODAL CERTIFICADO DE SOLVENCIA (EXCLUSIVO INQUILINOS · BORRADOR CON MARCA DE AGUA)
+     ========================================================================== -->
+<div id="modal-certificado-solvencia" class="modal-backdrop" style="z-index: 3200;" onclick="if(event.target === this) cerrarModal('modal-certificado-solvencia')">
+  <div class="modal-card" style="max-width:740px; border-color:var(--emerald);">
+    <button class="modal-close-x" onclick="cerrarModal('modal-certificado-solvencia')" aria-label="Cerrar">&times;</button>
+    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:10px; padding-bottom:10px; border-bottom:1px solid var(--border);">
+      <h3 style="color:var(--emerald); margin:0;" id="solv-modal-title">🏅 Certificado de Solvencia del Inquilino</h3>
+      <span class="badge badge-warning" id="solv-badge-draft">BORRADOR · SIN EMITIR</span>
+    </div>
+
+    <p style="font-size:12.5px; color:var(--text-muted); margin-bottom:14px; line-height:1.5;" id="solv-modal-desc">
+      La previsualización en pantalla se muestra en modo borrador con marca de agua. La emisión oficial del certificado tiene un coste de <strong>15,00 €</strong>.
+    </p>
+
+    <div class="solvencia-preview-shell" id="solv-preview-box">
+      <div class="solvencia-watermark-diag" id="solv-watermark-diag" aria-hidden="true">
+        <div class="solvencia-watermark-row"><span class="solv-wm-word">Borrador</span><span class="solv-wm-word">Borrador</span><span class="solv-wm-word">Borrador</span></div>
+        <div class="solvencia-watermark-row"><span class="solv-wm-word">Borrador</span><span class="solv-wm-word">Borrador</span><span class="solv-wm-word">Borrador</span></div>
+        <div class="solv-watermark-row"><span class="solv-wm-word">Borrador</span><span class="solv-wm-word">Borrador</span><span class="solv-wm-word">Borrador</span></div>
+        <div class="solv-watermark-row"><span class="solv-wm-word">Borrador</span><span class="solv-wm-word">Borrador</span><span class="solv-wm-word">Borrador</span></div>
+      </div>
+
+      <div class="solvencia-body-layer" id="solv-contenido-ficha">
+        <div class="info-row"><span class="info-label">Arrendatario / Titular:</span><span class="info-value" id="solv-val-titular">---</span></div>
+        <div class="info-row"><span class="info-label">DNI / NIE / CIF:</span><span class="info-value" id="solv-val-dni">---</span></div>
+        <div class="info-row"><span class="info-label">Inmueble Arrendado:</span><span class="info-value" style="color:var(--emerald);" id="solv-val-propiedad">---</span></div>
+        <div class="info-row"><span class="info-label">Saldo Vivo Actual (Haber - Debe):</span><span class="info-value" id="solv-val-saldo">0,00 €</span></div>
+        <div class="info-row"><span class="info-label">Recibos Pendientes:</span><span class="info-value" id="solv-val-pendientes">0</span></div>
+        <div class="info-row"><span class="info-label">Coste de Emisión Oficial:</span><span class="info-value" style="color:var(--amber);">15,00 €</span></div>
+      </div>
+    </div>
+
+    <div style="margin-top:16px; display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end;">
+      <button type="button" class="btn-outline-sm" style="padding:10px 14px;" onclick="cerrarModal('modal-certificado-solvencia')">Cerrar</button>
+      <button type="button" class="btn-primary" id="btn-emitir-certificado-solvencia" style="width:auto; background:var(--emerald); color:#042f2e; padding:10px 18px;" onclick="emitirCertificadoSolvenciaOficial()">
+        🏅 Solicitar Emisión Oficial (15,00 €) →
+      </button>
+    </div>
+    <div id="msg-solv-estado" class="status-msg ok"></div>
+  </div>
 </div>
 
 <!-- ==========================================================================
@@ -1523,7 +1699,7 @@
       <div class="grid-2col" style="margin-bottom:14px;">
         <div class="form-group" style="margin-bottom:0;">
           <label for="prop-alta-iban" class="form-label">Cuenta IBAN Bancaria del Propietario *</label>
-         <input type="text" id="prop-alta-iban" name="cuenta_prop_no_wallet" class="form-input" placeholder="ES00 0000 0000 0000 0000 0000" autocomplete="off" data-lpignore="true" required> 
+          <input type="text" id="prop-alta-iban" name="cuenta_prop_no_wallet" class="form-input" placeholder="ES00 0000 0000 0000 0000 0000" autocomplete="off" data-lpignore="true" required>
         </div>
         <div class="form-group" style="margin-bottom:0;">
           <label for="prop-alta-revision" class="form-label">Próxima Revisión Contrato</label>
@@ -1531,7 +1707,6 @@
         </div>
       </div>
 
-      <!-- SUBIDA DE CONTRATO EN PDF DEL INMUEBLE -->
       <div class="form-group" style="background:var(--bg-input); padding:14px; border-radius:12px; border:1px solid var(--amber); margin-bottom:14px;">
         <label for="prop-file-contrato-pdf" class="form-label" style="color:var(--amber); margin-bottom:6px; font-size:13px;">
           📄 Subir Contrato de Arrendamiento en PDF (Propiedad)
@@ -1543,7 +1718,6 @@
         <input type="hidden" id="prop-alta-contrato-b64" value="">
       </div>
 
-      <!-- SUBIDA MULTIMEDIA + BARRA RADAR -->
       <div class="form-group" style="background:var(--bg-input); padding:16px; border-radius:12px; border:1px dashed var(--emerald);">
         <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:8px;">
           <label for="prop-file-ftp" class="form-label" style="color:var(--emerald); margin-bottom:0; font-size:13.5px;">
@@ -1998,7 +2172,7 @@
 </div>
 
 <!-- ==========================================================================
-     MODALES LEGALES ÍNTEGROS (LSSI-CE, LAU, RGPD/LOPDGDD, COOKIES E IA)
+     MODALES LEGALES ÍNTEGROS (Z-INDEX 3500 PARA QUEDAR POR ENCIMA DE LA DEMO)
      ========================================================================== -->
 <div id="modal-aviso-legal" class="modal-backdrop" style="z-index: 3500;" onclick="if(event.target === this) cerrarModal('modal-aviso-legal')">
   <div class="modal-card legal-modal-content">
@@ -2051,6 +2225,129 @@
   </div>
 </div>
 
+<!-- MODAL CANAL PRIVADO PROPIETARIO <-> ABOGADO -->
+<div id="modalComunicacionLegal" style="display:none; position:fixed; inset:0; background:rgba(15,23,42,0.72); backdrop-filter:blur(3px); z-index:9999; align-items:center; justify-content:center; padding:16px;">
+  <div style="background:#ffffff; width:100%; max-width:740px; max-height:90vh; border-radius:14px; box-shadow:0 20px 45px rgba(0,0,0,0.25); display:flex; flex-direction:column; overflow:hidden; font-family:system-ui,-apple-system,sans-serif;">
+    <div style="background:#0f172a; color:#ffffff; padding:16px 20px; display:flex; align-items:center; justify-content:space-between;">
+      <div>
+        <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:#93c5fd; font-weight:700;">Canal Confidencial · Expediente Jurídico</div>
+        <h3 style="margin:2px 0 0; font-size:17px; font-weight:700;">Comunicaciones Propietario ↔ Despacho Legal</h3>
+      </div>
+      <button type="button" onclick="cerrarModalComunicacionLegal()" style="background:rgba(255,255,255,0.12); border:none; color:#ffffff; width:32px; height:32px; border-radius:8px; font-size:18px; cursor:pointer;">✕</button>
+    </div>
+
+    <div style="padding:18px 20px; overflow-y:auto; flex:1; background:#f8fafc;">
+      <div style="background:#eff6ff; border-left:4px solid #1d4ed8; padding:11px 14px; border-radius:8px; font-size:12px; color:#1e3a8a; margin-bottom:16px; line-height:1.45;">
+        <strong>⚖️ Canal Registrado y Exención de Responsabilidad (Level.immo · API 4173 · AICAT 14200):</strong>
+        Level.immo actúa exclusivamente como medio técnico de comunicación y registro trazable entre las partes intervinientes, sin emitir dictámenes jurídicos ni asumir responsabilidad sobre los contenidos o documentos aportados, que recae íntegramente sobre quien los emite. Quedan prohibidos los insultos, amenazas, coacciones, difamaciones o el tratamiento ilícito de datos personales. Cada envío queda registrado con sello de fecha, hora, dirección IP, navegador y usuario.
+      </div>
+
+      <div style="margin-bottom:18px;">
+        <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; margin-bottom:8px;">
+          <div style="font-size:12px; font-weight:700; color:#475569; text-transform:uppercase; letter-spacing:0.04em;">
+            Histórico del expediente (<span id="comLegalPropiedadLabel">—</span>)
+          </div>
+          <select id="comLegalSelectPropiedad" onchange="cambiarPropiedadCanalLegal(this.value)" style="padding:5px 10px; border:1px solid #cbd5e1; border-radius:7px; font-size:12px; font-weight:700; color:#0f172a; background:#ffffff; cursor:pointer;"></select>
+        </div>
+        <div id="listaComunicacionesLegales" style="display:flex; flex-direction:column; gap:10px; max-height:240px; overflow-y:auto; padding:10px; background:#ffffff; border:1px solid #e2e8f0; border-radius:10px;">
+          <div style="text-align:center; color:#64748b; font-size:13px; padding:16px;">No hay comunicaciones registradas en este expediente todavía.</div>
+        </div>
+      </div>
+
+      <form id="formComunicacionLegal" onsubmit="procesarEnvioComunicacionLegal(event)" style="background:#ffffff; border:1px solid #cbd5e1; border-radius:10px; padding:14px;">
+        <div style="font-size:13px; font-weight:700; color:#0f172a; margin-bottom:10px;">Nueva comunicación trazable</div>
+        <div style="display:grid; grid-template-columns:1fr 160px; gap:10px; margin-bottom:10px;">
+          <div>
+            <label style="display:block; font-size:12px; font-weight:600; color:#334155; margin-bottom:4px;">Asunto / Trámite *</label>
+            <input type="text" id="comLegalAsunto" required placeholder="Ej. Preparación burofax, Revisión contrato, Impago agua..." style="width:100%; box-sizing:border-box; padding:8px 10px; border:1px solid #cbd5e1; border-radius:7px; font-size:13px; color:#0f172a; background:#ffffff;">
+          </div>
+          <div>
+            <label style="display:block; font-size:12px; font-weight:600; color:#334155; margin-bottom:4px;">Prioridad</label>
+            <select id="comLegalPrioridad" style="width:100%; box-sizing:border-box; padding:8px 10px; border:1px solid #cbd5e1; border-radius:7px; font-size:13px; color:#0f172a; background:#ffffff;">
+              <option value="Normal">Normal</option>
+              <option value="Alta">Alta</option>
+              <option value="Urgente">Urgente</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="margin-bottom:10px;">
+          <label style="display:block; font-size:12px; font-weight:600; color:#334155; margin-bottom:4px;">Mensaje confidencial *</label>
+          <textarea id="comLegalMensaje" rows="3" required placeholder="Redacte aquí la comunicación para la otra parte..." style="width:100%; box-sizing:border-box; padding:9px 10px; border:1px solid #cbd5e1; border-radius:7px; font-size:13px; color:#0f172a; background:#ffffff; resize:vertical;"></textarea>
+        </div>
+
+        <div id="estadoEnvioComLegal" style="display:none; padding:9px 12px; border-radius:8px; font-size:12.5px; font-weight:700; margin-bottom:10px;"></div>
+
+        <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;">
+          <span style="font-size:11px; color:#64748b;">🔒 Se registrará tu IP, navegador y fecha/hora exacta.</span>
+          <button type="submit" id="btnEnviarComLegal" style="background:#1e3a8a; color:#ffffff; border:none; padding:9px 18px; border-radius:8px; font-size:13px; font-weight:600; cursor:pointer;">
+            Registrar y Enviar Comunicación
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL PUERTA DE ACCESO DEMO (CAPTACIÓN DE LEADS + PERFIL DE USUARIO) -->
+<div id="modal-lead-demo" class="modal-backdrop" onclick="if(event.target === this) cerrarModal('modal-lead-demo')">
+  <div class="modal-card" style="max-width:490px; border-color:var(--amber);">
+    <button class="modal-close-x" onclick="cerrarModal('modal-lead-demo')" aria-label="Cerrar">&times;</button>
+    <h3 style="color:var(--amber); margin-bottom:8px; padding-bottom:10px; border-bottom:1px solid var(--border);">
+      👁️ Acceso a la Demo Interactiva
+    </h3>
+    <p style="font-size:13px; color:var(--text-muted); margin-bottom:16px; line-height:1.5;">
+      Indícanos tus datos y perfil para abrir la consola de demostración con 2 propiedades de ejemplo y recibir el pack adecuado.
+    </p>
+    <form id="form-lead-demo" onsubmit="enviarLeadYAbrirDemo(event)" autocomplete="off">
+      <div class="form-group">
+        <label for="demo-lead-nombre" class="form-label">Nombre de pila *</label>
+        <input type="text" id="demo-lead-nombre" class="form-input" placeholder="Ej: Carlos" required autocomplete="given-name">
+      </div>
+      <div class="form-group">
+        <label for="demo-lead-tel" class="form-label">Teléfono móvil *</label>
+        <div style="display:flex; gap:8px;">
+          <select id="demo-lead-prefijo" class="form-input" style="width:115px; padding:12px 8px; cursor:pointer;" aria-label="Prefijo internacional">
+            <option value="34" selected>🇪🇸 +34</option>
+            <option value="376">🇦🇩 +376</option>
+            <option value="33">🇫🇷 +33</option>
+            <option value="49">🇩🇪 +49</option>
+            <option value="44">🇬🇧 +44</option>
+            <option value="39">🇮🇹 +39</option>
+            <option value="351">🇵🇹 +351</option>
+          </select>
+          <input type="tel" id="demo-lead-tel" class="form-input" style="flex:1;" placeholder="600 112 233" required autocomplete="tel-national">
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="demo-lead-email" class="form-label">Correo electrónico *</label>
+        <input type="email" id="demo-lead-email" class="form-input" placeholder="Ej: carlos@correo.com" required autocomplete="email">
+      </div>
+      <div class="form-group">
+        <label for="demo-lead-perfil" class="form-label">¿Cuál es tu perfil principal? *</label>
+        <select id="demo-lead-perfil" class="form-input" style="cursor:pointer;" required>
+          <option value="" disabled selected>Selecciona tu perfil...</option>
+          <option value="PROPIETARIO_1_4">🏠 Propietario Particular (1 a 4 inmuebles)</option>
+          <option value="PROPIETARIO_CARTERA">🏛️ Gran Propietario / Inversor (+5 inmuebles)</option>
+          <option value="COMPRADOR_INTERNACIONAL">🌏 Inversor / Comprador Internacional</option>
+          <option value="COMUNIDAD_PROPIETARIOS">🏢 Comunidad de Propietarios / Presidente</option>
+          <option value="ABOGADO_DESPACHO">⚖️ Abogado / Despacho Jurídico</option>
+          <option value="ADVISOR_COLABORADOR">💼 Advisor / Colaborador Chivatazo Nacional</option>
+          <option value="INQUILINO">👤 Inquilino / Residente</option>
+        </select>
+      </div>
+      <div class="privacy-box">
+        <input type="checkbox" id="chk-privacidad-demo" required>
+        <label for="chk-privacidad-demo">
+          Acepto las <span class="privacy-link" onclick="event.preventDefault(); abrirModal('modal-privacidad');">Condiciones y la Política de Privacidad</span>. Autorizo el envío de novedades y acceso a la demo de Level.immo.
+        </label>
+      </div>
+      <button type="submit" id="btn-entrar-demo-lead" class="btn-primary" style="background:var(--amber); color:#042f2e;">
+        🚀 Entrar en la Demo Interactiva →
+      </button>
+    </form>
+  </div>
+</div>
 <script>
 // ============================================================================
 // ENDPOINTS DE MAKE: CEREBRO CENTRALIZADO PROPERTY_GESTION + LOGIN TOC_TOC
@@ -2064,6 +2361,7 @@ const TABLE_ID_SUMINISTROS_GASTOS = "tblOH6z7lROOWHkG";
 const TPV_UMBRAL_FIJO_EUROS = 1000.00;
 const TPV_COMISION_FIJA_EUROS = 10.00;
 const TPV_COMISION_PORCENTAJE = 0.015;
+const SOLVENCIA_COSTE_EMISION = 15.00;
 
 // ============================================================================
 // DICCIONARIO MULTILINGÜE COMPLETO (ES, CA, EN, FR, DE)
@@ -2104,7 +2402,12 @@ const I18N_DICCIONARIO = {
     side_sup_desc: "Notificaciones proactivas por WhatsApp de aperturas de facturación, avisos de suministros y registro histórico de incidencias.",
     btn_talk_elena: "💬 Hablar con Elena IA",
     chat_welcome: "Hola, soy Elena IA Advisor de Level.immo Alquileres. Todas nuestras conversaciones quedan registradas en tu expediente. ¿En qué puedo ayudarte hoy?",
-    math_prefix: "Verificación: ¿Cuánto es "
+    math_prefix: "Verificación: ¿Cuánto es ",
+    dock_cobros: "COBROS", dock_gasto: "+GASTO", dock_aviso: "AVISO", dock_solv: "SOLVENCIA", dock_legal: "LEGAL",
+    solv_watermark: "Borrador", solv_title: "🏅 Certificado de Solvencia del Inquilino",
+    solv_draft_badge: "BORRADOR · SIN EMITIR",
+    solv_desc: "La previsualización en pantalla se muestra en modo borrador con marca de agua. La emisión oficial del certificado tiene un coste de 15,00 €.",
+    solv_btn_emit: "🏅 Solicitar Emisión Oficial (15,00 €) →"
   },
   ca: {
     nav_demanda_mob: "🎯 Demanda", nav_mercado_mob: "📡 Mercat", nav_usuarios_mob: "🔑 Usuaris",
@@ -2141,7 +2444,12 @@ const I18N_DICCIONARIO = {
     side_sup_desc: "Notificacions proactives per WhatsApp d'obertures de facturació, avisos de subministraments i registre històric d'incidències.",
     btn_talk_elena: "💬 Parlar amb Elena IA",
     chat_welcome: "Hola, sóc l'Elena IA Advisor. Totes les nostres converses sobre lloguers, subministraments o incidències queden registrades al teu expedient. En què et puc ajudar avui?",
-    math_prefix: "Verificació: Quant és "
+    math_prefix: "Verificació: Quant és ",
+    dock_cobros: "COBRAMENTS", dock_gasto: "+DESPESA", dock_aviso: "AVÍS", dock_solv: "SOLVÈNCIA", dock_legal: "LEGAL",
+    solv_watermark: "Esborrany", solv_title: "🏅 Certificat de Solvència del Llogater",
+    solv_draft_badge: "ESBORRANY · SENSE EMETRE",
+    solv_desc: "La previsualització en pantalla es mostra en mode esborrany amb marca d'aigua. L'emissió oficial del certificat té un cost de 15,00 €.",
+    solv_btn_emit: "🏅 Sol·licitar Emissió Oficial (15,00 €) →"
   },
   en: {
     nav_demanda_mob: "🎯 Demand", nav_mercado_mob: "📡 Market", nav_usuarios_mob: "🔑 Users",
@@ -2178,7 +2486,12 @@ const I18N_DICCIONARIO = {
     side_sup_desc: "Proactive WhatsApp notifications for billing cycles, utility alerts and traceable incident history.",
     btn_talk_elena: "💬 Talk to Elena AI",
     chat_welcome: "Hello, I am Elena AI Advisor. All our conversations regarding rent, utilities or incidents are logged in your file. How can I help you today?",
-    math_prefix: "Verification: What is "
+    math_prefix: "Verification: What is ",
+    dock_cobros: "BILLING", dock_gasto: "+EXPENSE", dock_aviso: "NOTICE", dock_solv: "SOLVENCY", dock_legal: "LEGAL",
+    solv_watermark: "Draft", solv_title: "🏅 Tenant Solvency Certificate",
+    solv_draft_badge: "DRAFT · NOT ISSUED",
+    solv_desc: "On-screen preview is displayed as a watermarked draft. Official issuance of the certificate has a fee of €15.00.",
+    solv_btn_emit: "🏅 Request Official Issuance (€15.00) →"
   },
   fr: {
     nav_demanda_mob: "🎯 Demande", nav_mercado_mob: "📡 Marché", nav_usuarios_mob: "🔑 Accès",
@@ -2215,7 +2528,12 @@ const I18N_DICCIONARIO = {
     side_sup_desc: "Notifications proactives par WhatsApp des échéances, relevés de charges et suivi historique des incidents.",
     btn_talk_elena: "💬 Parler avec Elena IA",
     chat_welcome: "Bonjour, je suis Elena IA Advisor. Toutes nos conversations sur les loyers, charges ou incidents sont enregistrées dans votre dossier. Comment puis-je vous aider ?",
-    math_prefix: "Vérification : Combien font "
+    math_prefix: "Vérification : Combien font ",
+    dock_cobros: "LOYERS", dock_gasto: "+CHARGES", dock_aviso: "AVIS", dock_solv: "SOLVABILITÉ", dock_legal: "JURIDIQUE",
+    solv_watermark: "Brouillon", solv_title: "🏅 Certificat de Solvabilité du Locataire",
+    solv_draft_badge: "BROUILLON · NON ÉMIS",
+    solv_desc: "L'aperçu à l'écran s'affiche en mode brouillon avec filigrane. L'émission officielle du certificat coûte 15,00 €.",
+    solv_btn_emit: "🏅 Demander l'Émission Officielle (15,00 €) →"
   },
   de: {
     nav_demanda_mob: "🎯 Nachfrage", nav_mercado_mob: "📡 Markt", nav_usuarios_mob: "🔑 Zugang",
@@ -2252,25 +2570,30 @@ const I18N_DICCIONARIO = {
     side_sup_desc: "Proaktive WhatsApp-Benachrichtigungen für Abrechnungen, Nebenkosten und Vorfallshistorie.",
     btn_talk_elena: "💬 Mit Elena KI sprechen",
     chat_welcome: "Hallo, ich bin Elena KI-Advisor. Alle Gespräche über Mieten, Nebenkosten oder Vorfälle werden in Ihrer Akte protokolliert. Wie kann ich Ihnen heute helfen?",
-    math_prefix: "Verifizierung: Was ergibt "
+    math_prefix: "Verifizierung: Was ergibt ",
+    dock_cobros: "ZAHLUNG", dock_gasto: "+KOSTEN", dock_aviso: "HINWEIS", dock_solv: "BONITÄT", dock_legal: "RECHT",
+    solv_watermark: "Entwurf", solv_title: "🏅 Bonitätszertifikat des Mieters",
+    solv_draft_badge: "ENTWURF · NICHT AUSGESTELLT",
+    solv_desc: "Die Bildschirmvorschau wird als Entwurf mit Wasserzeichen angezeigt. Die offizielle Ausstellung kostet 15,00 €.",
+    solv_btn_emit: "🏅 Offizielle Ausstellung anfordern (15,00 €) →"
   }
 };
 
 const I18N_PANEL_INTERNO = {
   es: {
     owner_intro: "Audita el saldo vivo actual de cada propiedad, sube facturas reales de suministros (luz, agua) o cargos varios, emite avisos a tus inquilinos, gestiona liquidaciones TPV y autoriza a tu abogado:",
-    c1_t: "🚨 Radar de Cobros y TPV", c1_p: "Control de alquileres (día 1) y suministros pendientes, abono manual o revertir estado y emisión de Recibo/Factura PDF.", c1_b: "Ver Recibos Pendientes y Emitir PDF",
+    c1_t: "🟢 Radar de Cobros y TPV", c1_p: "Control de alquileres (día 1) y suministros pendientes, abono manual o revertir estado y emisión de Recibo/Factura PDF.", c1_b: "Ver Recibos Pendientes y Emitir PDF",
     c2_t: "⚡ Subir Suministro o Cargo Manual", c2_p: "Registra o edita facturas reales de luz, agua, reparaciones u otros conceptos en el Debe/Haber del inmueble y notifica con Elena IA.", c2_b: "➕ Subir / Editar Recibo o Gasto",
     c3_t: "📢 Emitir Aviso o Notificación", c3_p: "Publica avisos generales en el panel del inquilino y dispara notificación inmediata por WhatsApp mediante Elena IA Advisor.", c3_b: "📣 Redactar Aviso / Notificación",
-    c4_t: "⚖️ Abogado e Informe Judicial PDF", c4_p: "Autoriza a tu abogado o despacho jurídico y descarga al instante el dosier completo en PDF con extracto Debe/Haber.", c4_b: "⚖️ Asignar Abogado / Descargar PDF",
+    c4_t: "⚖️ Solicitar Abogado / Informe Legal", c4_p: "Solicita o asigna tu abogado, abre el canal privado o descarga al instante el dosier completo en PDF con extracto Debe/Haber.", c4_b: "⚖️ Solicitar Abogado / Descargar PDF",
     cfg_h: "🚀 CONFIGURACIÓN DE CARTERA · ALTA DE PROPIEDADES, INQUILINOS Y SERVICIOS JURÍDICOS",
     cfg_p: "Incorpora nuevos inmuebles a tu cartera, sube fotografías y vídeo a level.immo, vincula arrendatarios o autoriza a tu abogado.",
-    btn_alta_p: "➕ Alta de Propiedad / Subir Fotos →", btn_alta_i: "👤 Dar de Alta / Asignar Inquilino →", btn_alta_abg: "⚖️ Dar de Alta / Autorizar Abogado →",
+    btn_alta_p: "➕ Alta de Propiedad / Subir Fotos →", btn_alta_i: "👤 Dar de Alta / Asignar Inquilino →", btn_alta_abg: "⚖️ Solicitar / Autorizar Abogado →",
     sec_fichas: "🏛️ FICHAS DE INMUEBLES, SALDO VIVO ACTUAL (HABER - DEBE) E INQUILINOS",
     sec_sum: "⚡ MOTOR CONTABLE DE SUMINISTROS Y GASTOS (DEBE / HABER)", btn_add_sum: "➕ Añadir Factura / Apunte Contable",
     sec_rec: "🧾 LIBRO DE RECIBOS Y FACTURAS (ALQUILER DÍA 1, SUMINISTROS Y LIQUIDACIÓN TPV)",
     sec_geo: "🚗 GEOLOCALIZACIÓN DINÁMICA DE CARTERA Y NAVEGACIÓN GPS EN AUTO",
-    sec_abg: "⚖️ ASIGNAR ABOGADO / SERVICIOS JURÍDICOS Y ENVIAR BIENVENIDA",
+    sec_abg: "⚖️ SOLICITAR / ASIGNAR ABOGADO O SERVICIOS JURÍDICOS",
     saldo_t: "Saldo Vivo Actual a Fecha de Hoy (Haber - Debe)", saldo_s: "Suma acumulada de entregas a cuenta menos facturas y vencimientos",
     btn_inc: "➕ Abrir Parte / Responder", ph_search: "🔍 Buscar piso, dirección o inquilino...",
     chip_all: "Todos", chip_pend: "🔴 Pendientes (Debe)", chip_paid: "🟢 Abonados (Haber / PDF)",
@@ -2282,18 +2605,18 @@ const I18N_PANEL_INTERNO = {
   },
   ca: {
     owner_intro: "Audita el saldo viu actual de cada propietat, puja factures reals de subministraments (llum, aigua) o càrrecs diversos, emet avisos als teus llogaters, gestiona liquidacions TPV i autoritza el teu advocat:",
-    c1_t: "🚨 Radar de Cobraments i TPV", c1_p: "Control de lloguers (dia 1) i subministraments pendents, abonament manual o revertir estat i emissió de Rebut/Factura PDF.", c1_b: "Veure Rebuts Pendents i Emetre PDF",
+    c1_t: "🟢 Radar de Cobraments i TPV", c1_p: "Control de lloguers (dia 1) i subministraments pendents, abonament manual o revertir estat i emissió de Rebut/Factura PDF.", c1_b: "Veure Rebuts Pendents i Emetre PDF",
     c2_t: "⚡ Pujar Subministrament o Càrrec Manual", c2_p: "Registra o edita factures reals de llum, aigua, reparacions o altres conceptes al Deure/Haver de l'immoble i notifica amb Elena IA.", c2_b: "➕ Pujar / Editar Rebut o Despesa",
     c3_t: "📢 Emetre Avís o Notificació", c3_p: "Publica avisos generals al panell del llogater i envia notificació immediata per WhatsApp mitjançant Elena IA Advisor.", c3_b: "📣 Redactar Avís / Notificació",
-    c4_t: "⚖️ Advocat i Informe Judicial PDF", c4_p: "Autoritza el teu advocat o despatx jurídic i descarrega a l'instant el dossier complet en PDF amb extracte Deure/Haver.", c4_b: "⚖️ Assignar Advocat / Informe PDF",
+    c4_t: "⚖️ Sol·licitar Advocat / Informe Legal", c4_p: "Sol·licita o assigna el teu advocat, obre el canal privat o descarrega a l'instant el dossier complet en PDF amb extracte Deure/Haver.", c4_b: "⚖️ Sol·licitar Advocat / Informe PDF",
     cfg_h: "🚀 CONFIGURACIÓ DE CARTERA · ALTA DE PROPIETATS, LLOGATERS I SERVEIS JURÍDICS",
     cfg_p: "Incorpora nous immobles a la teva cartera, puja fotografies i vídeo a level.immo, vincula arrendataris o autoritza el teu advocat.",
-    btn_alta_p: "➕ Alta de Propietat / Pujar Fotos →", btn_alta_i: "👤 Donar d'Alta / Assignar Llogater →", btn_alta_abg: "⚖️ Donar d'Alta / Autoritzar Advocat →",
+    btn_alta_p: "➕ Alta de Propietat / Pujar Fotos →", btn_alta_i: "👤 Donar d'Alta / Assignar Llogater →", btn_alta_abg: "⚖️ Sol·licitar / Autoritzar Advocat →",
     sec_fichas: "🏛️ FITXES D'IMMOBLES, SALDO VIU ACTUAL (HAVER - DEURE) I LLOGATERS",
     sec_sum: "⚡ MOTOR COMPTABLE DE SUBMINISTRAMENTS I DESPESES (DEURE / HAVER)", btn_add_sum: "➕ Afegir Factura / Assentament Comptable",
     sec_rec: "🧾 LLIBRE DE REBUTS I FACTURES (LLOGUER DIA 1, SUBMINISTRAMENTS I LIQUIDACIÓ TPV)",
     sec_geo: "🚗 GEOLOCALITZACIÓ DINÀMICA DE CARTERA I NAVEGACIÓ GPS EN COTXE",
-    sec_abg: "⚖️ ASSIGNAR ADVOCAT / SERVEIS JURÍDICS I ENVIAR BENVINGUDA",
+    sec_abg: "⚖️ SOL·LICITAR / ASSIGNAR ADVOCAT O SERVEIS JURÍDICS",
     saldo_t: "Saldo Viu Actual a Data d'Avui (Haver - Deure)", saldo_s: "Suma acumulada de lliuraments a compte menys factures i venciments",
     btn_inc: "➕ Obrir Comunicat / Respondre", ph_search: "🔍 Cercar pis, adreça o llogater...",
     chip_all: "Tots", chip_pend: "🔴 Pendents (Deure)", chip_paid: "🟢 Abonats (Haver / PDF)",
@@ -2305,18 +2628,18 @@ const I18N_PANEL_INTERNO = {
   },
   en: {
     owner_intro: "Audit the live balance of each property, upload real utility bills (electricity, water) or miscellaneous charges, issue notices to your tenants, manage POS settlements and authorize your lawyer:",
-    c1_t: "🚨 Collections & POS Radar", c1_p: "Track rent (day 1) and pending utilities, manual payment or revert status and issue PDF Receipts/Invoices.", c1_b: "View Pending Receipts & Issue PDF",
+    c1_t: "🟢 Collections & POS Radar", c1_p: "Track rent (day 1) and pending utilities, manual payment or revert status and issue PDF Receipts/Invoices.", c1_b: "View Pending Receipts & Issue PDF",
     c2_t: "⚡ Upload Utility or Manual Charge", c2_p: "Log or edit real electricity, water, repair bills or other items in the Debit/Credit ledger and notify via Elena AI.", c2_b: "➕ Upload / Edit Receipt or Expense",
     c3_t: "📢 Issue Notice or Alert", c3_p: "Post general notices on the tenant's dashboard and trigger instant WhatsApp notifications via Elena AI Advisor.", c3_b: "📣 Write Notice / Notification",
-    c4_t: "⚖️ Lawyer & Legal PDF Report", c4_p: "Authorize your lawyer or law firm and instantly download the full PDF dossier with Debit/Credit statement.", c4_b: "⚖️ Assign Lawyer / PDF Report",
+    c4_t: "⚖️ Request Lawyer / Legal Report", c4_p: "Request or assign your lawyer, open the private channel or instantly download the full PDF dossier with Debit/Credit statement.", c4_b: "⚖️ Request Lawyer / PDF Report",
     cfg_h: "🚀 PORTFOLIO SETUP · ADD PROPERTIES, TENANTS & LEGAL SERVICES",
     cfg_p: "Add new properties to your portfolio, upload photos and video to level.immo, link tenants or authorize your lawyer.",
-    btn_alta_p: "➕ Add Property / Upload Photos →", btn_alta_i: "👤 Register / Assign Tenant →", btn_alta_abg: "⚖️ Authorize Lawyer / Legal Services →",
+    btn_alta_p: "➕ Add Property / Upload Photos →", btn_alta_i: "👤 Register / Assign Tenant →", btn_alta_abg: "⚖️ Request / Authorize Lawyer →",
     sec_fichas: "🏛️ PROPERTY CARDS, CURRENT LIVE BALANCE (CREDIT - DEBIT) & TENANTS",
     sec_sum: "⚡ UTILITIES & EXPENSES ACCOUNTING ENGINE (DEBIT / CREDIT)", btn_add_sum: "➕ Add Invoice / Accounting Entry",
     sec_rec: "🧾 RECEIPTS & INVOICES LEDGER (DAY 1 RENT, UTILITIES & POS SETTLEMENT)",
     sec_geo: "🚗 DYNAMIC PORTFOLIO GEOLOCATION & CAR GPS NAVIGATION",
-    sec_abg: "⚖️ ASSIGN LAWYER / LEGAL SERVICES & SEND WELCOME EMAIL",
+    sec_abg: "⚖️ REQUEST / ASSIGN LAWYER OR LEGAL SERVICES",
     saldo_t: "Current Live Balance as of Today (Credit - Debit)", saldo_s: "Cumulative sum of payments on account minus bills and due dates",
     btn_inc: "➕ Open Ticket / Reply", ph_search: "🔍 Search property, address or tenant...",
     chip_all: "All", chip_pend: "🔴 Pending (Debit)", chip_paid: "🟢 Paid (Credit / PDF)",
@@ -2328,18 +2651,18 @@ const I18N_PANEL_INTERNO = {
   },
   fr: {
     owner_intro: "Auditez le solde actuel de chaque bien, téléchargez les factures réelles (électricité, eau) ou charges diverses, envoyez des avis aux locataires, gérez les encaissements TPV et autorisez votre avocat :",
-    c1_t: "🚨 Radar d'Encaissements & TPV", c1_p: "Suivi des loyers (jour 1) et charges en attente, paiement manuel ou annulation d'état et émission de Quittance/Facture PDF.", c1_b: "Voir Quittances en Attente & PDF",
+    c1_t: "🟢 Radar d'Encaissements & TPV", c1_p: "Suivi des loyers (jour 1) et charges en attente, paiement manuel ou annulation d'état et émission de Quittance/Facture PDF.", c1_b: "Voir Quittances en Attente & PDF",
     c2_t: "⚡ Ajouter Charge ou Facture Manuelle", c2_p: "Enregistrez ou modifiez les factures d'eau, d'électricité, réparations ou autres au Débit/Crédit du bien et notifiez via Elena IA.", c2_b: "➕ Ajouter / Modifier Quittance ou Frais",
     c3_t: "📢 Émettre un Avis ou Notification", c3_p: "Publiez des avis sur le portail du locataire et envoyez une notification immédiate par WhatsApp via Elena IA Advisor.", c3_b: "📣 Rédiger Avis / Notification",
-    c4_t: "⚖️ Avocat & Rapport Juridique PDF", c4_p: "Autorisez votre avocat et générez instantanément le dossier PDF complet avec extrait Débit/Crédit.", c4_b: "⚖️ Assigner Avocat / Rapport PDF",
+    c4_t: "⚖️ Demander un Avocat / Rapport Juridique", c4_p: "Demandez ou autorisez votre avocat, ouvrez le canal privé ou générez instantanément le dossier PDF complet avec extrait Débit/Crédit.", c4_b: "⚖️ Demander Avocat / Rapport PDF",
     cfg_h: "🚀 CONFIGURATION DU PORTEFEUILLE · AJOUT DE BIENS, LOCATAIRES & AVOCAT",
     cfg_p: "Ajoutez de nouveaux biens à votre portefeuille, téléversez des photos sur level.immo, liez un locataire ou autorisez votre avocat.",
-    btn_alta_p: "➕ Ajouter un Bien / Photos →", btn_alta_i: "👤 Enregistrer / Assigner Locataire →", btn_alta_abg: "⚖️ Autoriser Avocat / Services Juridiques →",
+    btn_alta_p: "➕ Ajouter un Bien / Photos →", btn_alta_i: "👤 Enregistrer / Assigner Locataire →", btn_alta_abg: "⚖️ Demander / Autoriser Avocat →",
     sec_fichas: "🏛️ FICHES DES BIENS, SOLDE ACTUEL (CRÉDIT - DÉBIT) & LOCATAIRES",
     sec_sum: "⚡ MOTEUR COMPTABLE DES CHARGES ET DÉPENSES (DÉBIT / CRÉDIT)", btn_add_sum: "➕ Ajouter Facture / Écriture Comptable",
     sec_rec: "🧾 LIVRE DES QUITTANCES ET FACTURES (LOYER JOUR 1, CHARGES & TPV)",
     sec_geo: "🚗 GÉOLOCALISATION DYNAMIQUE DU PORTEFEUILLE & NAVIGATION GPS AUTO",
-    sec_abg: "⚖️ ASSIGNER AVOCAT / SERVICES JURIDIQUES & ENVOYER BIENVENUE",
+    sec_abg: "⚖️ DEMANDER / ASSIGNER AVOCAT OU SERVICES JURIDIQUES",
     saldo_t: "Solde Actuel à ce Jour (Crédit - Débit)", saldo_s: "Somme cumulée des acomptes versés moins les factures et échéances",
     btn_inc: "➕ Ouvrir Ticket / Répondre", ph_search: "🔍 Rechercher bien, adresse ou locataire...",
     chip_all: "Tous", chip_pend: "🔴 En attente (Débit)", chip_paid: "🟢 Payés (Crédit / PDF)",
@@ -2351,18 +2674,18 @@ const I18N_PANEL_INTERNO = {
   },
   de: {
     owner_intro: "Prüfen Sie den aktuellen Saldo jeder Immobilie, laden Sie echte Nebenkostenabrechnungen (Strom, Wasser) hoch, senden Sie Hinweise an Mieter, verwalten Sie POS-Zahlungen und autorisieren Sie Ihren Anwalt:",
-    c1_t: "🚨 Inkasso- & POS-Radar", c1_p: "Kontrolle von Mieten (Tag 1) und offenen Nebenkosten, Zahlung oder Status zurücksetzen sowie PDF-Quittung/Rechnung.", c1_b: "Offene Belege prüfen & PDF erstellen",
+    c1_t: "🟢 Inkasso- & POS-Radar", c1_p: "Kontrolle von Mieten (Tag 1) und offenen Nebenkosten, Zahlung oder Status zurücksetzen sowie PDF-Quittung/Rechnung.", c1_b: "Offene Belege prüfen & PDF erstellen",
     c2_t: "⚡ Nebenkosten oder Beleg hochladen", c2_p: "Erfassen oder bearbeiten Sie Strom-, Wasser-, Reparaturrechnungen im Soll/Haben der Immobilie und benachrichtigen Sie per Elena KI.", c2_b: "➕ Beleg oder Kosten hinzufügen/bearbeiten",
     c3_t: "📢 Hinweis oder Mitteilung senden", c3_p: "Veröffentlichen Sie Hinweise im Mieterportal und senden Sie sofortige WhatsApp-Benachrichtigungen über Elena KI-Advisor.", c3_b: "📣 Hinweis / Mitteilung verfassen",
-    c4_t: "⚖️ Anwalt & Rechtsbericht PDF", c4_p: "Autorisieren Sie Ihren Anwalt und erstellen Sie sofort das komplette PDF-Dossier mit Soll/Haben-Auszug.", c4_b: "⚖️ Anwalt zuweisen / PDF-Bericht",
+    c4_t: "⚖️ Anwalt anfordern / Rechtsbericht PDF", c4_p: "Fordern Sie Ihren Anwalt an, öffnen Sie den privaten Kanal oder erstellen Sie sofort das komplette PDF-Dossier mit Soll/Haben-Auszug.", c4_b: "⚖️ Anwalt anfordern / PDF-Bericht",
     cfg_h: "🚀 PORTFOLIO-KONFIGURATION · IMMOBILIEN, MIETER & RECHTSDIENSTE",
     cfg_p: "Fügen Sie neue Immobilien hinzu, laden Sie Fotos auf level.immo hoch, weisen Sie Mieter zu oder autorisieren Sie Ihren Anwalt.",
-    btn_alta_p: "➕ Immobilie anlegen / Fotos →", btn_alta_i: "👤 Mieter registrieren / zuweisen →", btn_alta_abg: "⚖️ Anwalt autorisieren →",
+    btn_alta_p: "➕ Immobilie anlegen / Fotos →", btn_alta_i: "👤 Mieter registrieren / zuweisen →", btn_alta_abg: "⚖️ Anwalt anfordern / autorisieren →",
     sec_fichas: "🏛️ IMMOBILIENKARTEN, AKTUELLER SALDO (HABEN - SOLL) & MIETER",
     sec_sum: "⚡ BUCHHALTUNGSMOTOR FÜR NEBENKOSTEN & AUSGABEN (SOLL / HABEN)", btn_add_sum: "➕ Rechnung / Buchungssatz hinzufügen",
     sec_rec: "🧾 QUITTUNGS- & RECHNUNGSBUCH (MIETE TAG 1, NEBENKOSTEN & POS-ABRECHNUNG)",
     sec_geo: "🚗 DYNAMISCHE PORTFOLIO-GEOLOKALISIERUNG & AUTO-GPS-NAVIGATION",
-    sec_abg: "⚖️ ANWALT / RECHTSDIENSTE ZUWEISEN & WILLKOMMENS-E-MAIL SENDEN",
+    sec_abg: "⚖️ ANWALT / RECHTSDIENSTE ANFORDERN ODER ZUWEISEN",
     saldo_t: "Aktueller Saldo zum heutigen Tag (Haben - Soll)", saldo_s: "Kumulierte Summe der Anzahlungen abzüglich Rechnungen und Fälligkeiten",
     btn_inc: "➕ Ticket öffnen / Antworten", ph_search: "🔍 Wohnung, Adresse oder Mieter suchen...",
     chip_all: "Alle", chip_pend: "🔴 Offen (Soll)", chip_paid: "🟢 Bezahlt (Haben / PDF)",
@@ -2401,6 +2724,101 @@ function escaparHTML(s) {
   });
 }
 
+function actualizarVisibilidadSolvenciaPorRol() {
+  var esInquilino = (window.sesionActiva && window.sesionActiva.rol === "INQUILINO");
+  document.querySelectorAll("[onclick*='abrirModalCertificadoSolvencia']").forEach(function(el) {
+    if (el.classList.contains("owner-card") || el.closest(".owner-card")) {
+      var card = el.closest(".owner-card");
+      if (card) card.style.display = esInquilino ? "flex" : "none";
+    } else if (el.classList.contains("mobile-dock-btn")) {
+      el.style.display = esInquilino ? "flex" : "none";
+    } else {
+      el.style.display = esInquilino ? "inline-flex" : "none";
+    }
+  });
+  var dock = document.getElementById("mobile-fixed-dock");
+  if (dock) {
+    dock.style.gridTemplateColumns = esInquilino ? "repeat(5, minmax(0, 1fr))" : "repeat(4, minmax(0, 1fr))";
+  }
+}
+
+window.accionRapidaLegalOMovil = function() {
+  var rol = (window.sesionActiva && window.sesionActiva.rol) || "INQUILINO";
+  if (rol === "PROPIETARIO") {
+    window.irDirectoAltaAbogado();
+  } else if (rol === "ABOGADO") {
+    window.imprimirInformeEjecutivoAbogadoPDF();
+  } else {
+    abrirChatElena();
+  }
+};
+
+window.abrirModalCertificadoSolvencia = function() {
+  if (!window.sesionActiva || window.sesionActiva.rol !== "INQUILINO") return;
+
+  var exp = window.EXPEDIENTE_ACTUAL || {};
+  var propCalc = (exp.propiedad && !exp.propiedad.includes(",")) ? exp.propiedad : "";
+  var saldoNum = calcularSaldoVivoPropiedad(propCalc, 0);
+  var pendientes = (window.RECIBOS_CARTERA || []).filter(function(r) {
+    var coincide = !propCalc || coincidenReciboYPropiedad(r, propCalc, exp.dni || "");
+    return coincide && String(r.estado || "").toUpperCase() === "PENDIENTE";
+  }).length;
+
+  var langActual = (window.sesionActiva && window.sesionActiva.idioma) || "es";
+  var dict = I18N_DICCIONARIO[langActual] || I18N_DICCIONARIO.es;
+  var wmWord = dict.solv_watermark || "Borrador";
+
+  document.querySelectorAll(".solv-wm-word").forEach(function(el) { el.innerText = wmWord; });
+  var elTitle = document.getElementById("solv-modal-title");
+  var elBadge = document.getElementById("solv-badge-draft");
+  var elDesc = document.getElementById("solv-modal-desc");
+  var elBtn = document.getElementById("btn-emitir-certificado-solvencia");
+  if (elTitle) elTitle.innerText = dict.solv_title || "🏅 Certificado de Solvencia del Inquilino";
+  if (elBadge) elBadge.innerText = dict.solv_draft_badge || "BORRADOR · SIN EMITIR";
+  if (elDesc) elDesc.innerText = dict.solv_desc || "";
+  if (elBtn) elBtn.innerText = dict.solv_btn_emit || "🏅 Solicitar Emisión Oficial (15,00 €) →";
+
+  document.getElementById("solv-val-titular").innerText = exp.nombre || window.sesionActiva.nombre || "---";
+  document.getElementById("solv-val-dni").innerText = exp.dni || window.sesionActiva["DNI-NIE-CIF"] || "---";
+  document.getElementById("solv-val-propiedad").innerText = exp.propiedad || "---";
+  var elSaldo = document.getElementById("solv-val-saldo");
+  elSaldo.innerText = (saldoNum > 0 ? "+" : "") + formatearEuros(saldoNum);
+  elSaldo.style.color = saldoNum >= 0 ? "var(--neon-green)" : "var(--danger)";
+  document.getElementById("solv-val-pendientes").innerText = pendientes + (pendientes === 0 ? " (Al corriente)" : " pendiente(s)");
+
+  var msg = document.getElementById("msg-solv-estado");
+  if (msg) msg.style.display = "none";
+  document.getElementById("modal-certificado-solvencia").style.display = "flex";
+};
+
+window.emitirCertificadoSolvenciaOficial = function() {
+  var btn = document.getElementById("btn-emitir-certificado-solvencia");
+  var msg = document.getElementById("msg-solv-estado");
+  if (!btn || !msg) return;
+
+  btn.disabled = true;
+  if (!window.MODO_DEMO_ACTIVO) {
+    fetch(URL_WEBHOOK_PROPERTY_GESTION, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        accion: "solicitar_certificado_solvencia",
+        "DNI-NIE-CIF": window.sesionActiva["DNI-NIE-CIF"] || "",
+        nombre: window.sesionActiva.nombre || "",
+        propiedad: window.EXPEDIENTE_ACTUAL.propiedad || "",
+        coste_emision: SOLVENCIA_COSTE_EMISION,
+        idioma: window.sesionActiva.idioma || "es"
+      })
+    }).catch(function(){});
+  }
+
+  msg.innerHTML = window.MODO_DEMO_ACTIVO
+    ? "🎭 <strong>Modo Demo:</strong> Solicitud de emisión oficial (" + formatearEuros(SOLVENCIA_COSTE_EMISION) + ") simulada. En producción se tramita el pago y se descarga sin marca de agua."
+    : "✅ Solicitud de emisión oficial (" + formatearEuros(SOLVENCIA_COSTE_EMISION) + ") registrada. Te enviaremos la pasarela y el certificado firmado sin marca de agua.";
+  msg.style.display = "block";
+  btn.disabled = false;
+};
+
 function inyectarAccesosDirectosAbogadoUI() {
   var panelesOwner = document.querySelectorAll("#vista-propietaria-carmen > .panel-box");
   if (panelesOwner.length > 0) {
@@ -2412,23 +2830,24 @@ function inyectarAccesosDirectosAbogadoUI() {
       btnAbg.className = "btn-primary";
       btnAbg.style.cssText = "background:var(--blue); color:#ffffff;";
       btnAbg.onclick = function() { window.irDirectoAltaAbogado(); };
-      btnAbg.innerText = "⚖️ Dar de Alta / Autorizar Abogado →";
+      btnAbg.innerText = "⚖️ Solicitar / Autorizar Abogado →";
       gridAltas.appendChild(btnAbg);
     }
   }
 
   var cards = document.querySelectorAll("#vista-propietaria-carmen .owner-card");
-  if (cards.length >= 4 && !document.getElementById("btn-card-abogado-top")) {
+  var cardLegal = cards[cards.length - 1];
+  if (cardLegal && !document.getElementById("btn-card-abogado-top")) {
     var wrapBtns = document.createElement("div");
     wrapBtns.style.cssText = "display:flex; flex-direction:column; gap:8px;";
-    var btnExistente = cards[3].querySelector("button");
+    var btnExistente = cardLegal.querySelector("button");
     var btnNuevoAbg = document.createElement("button");
     btnNuevoAbg.type = "button";
     btnNuevoAbg.id = "btn-card-abogado-top";
     btnNuevoAbg.className = "btn-radar-info";
     btnNuevoAbg.style.cssText = "background:var(--emerald); color:#042f2e; font-weight:800;";
     btnNuevoAbg.onclick = function() { window.irDirectoAltaAbogado(); };
-    btnNuevoAbg.innerText = "⚖️ Asignar / Dar de Alta Abogado";
+    btnNuevoAbg.innerText = "⚖️ Solicitar / Asignar Abogado";
     if (btnExistente && btnExistente.parentNode) {
       btnExistente.parentNode.insertBefore(wrapBtns, btnExistente);
       wrapBtns.appendChild(btnNuevoAbg);
@@ -2456,16 +2875,19 @@ function limpiarEstadoUI() {
     }
   }
 
-  var selIdioma = document.getElementById("lang-selector");
-  if (selIdioma) {
-    var idiomasPermitidos = ["es", "ca", "en", "fr", "de"];
-    Array.from(selIdioma.options).forEach(function(opt) {
-      if (idiomasPermitidos.indexOf(opt.value) === -1) {
-        opt.remove();
-      }
-    });
-  }
+  ["lang-selector", "lang-selector-mob"].forEach(function(idSel) {
+    var selIdioma = document.getElementById(idSel);
+    if (selIdioma) {
+      var idiomasPermitidos = ["es", "ca", "en", "fr", "de"];
+      Array.from(selIdioma.options).forEach(function(opt) {
+        if (idiomasPermitidos.indexOf(opt.value) === -1) {
+          opt.remove();
+        }
+      });
+    }
+  });
   inyectarAccesosDirectosAbogadoUI();
+  actualizarVisibilidadSolvenciaPorRol();
 }
 
 function parsearJsonBlindadoMake(rawText) {
@@ -2944,11 +3366,18 @@ function normalizarReciboDesdeMake(r) {
 }
 
 // ============================================================================
-// FUNCIÓN DE TRADUCCIÓN INTEGRAL
+// FUNCIÓN DE TRADUCCIÓN INTEGRAL CON PERSISTENCIA EN LOCALSTORAGE
 // ============================================================================
 window.cambiarIdioma = function(lang) {
   var l = I18N_DICCIONARIO[lang] ? lang : "es";
   window.sesionActiva.idioma = l;
+  try { localStorage.setItem("LEVEL_IDIOMA", l); } catch (_) {}
+
+  var selDesk = document.getElementById("lang-selector");
+  var selMob = document.getElementById("lang-selector-mob");
+  if (selDesk) selDesk.value = l;
+  if (selMob) selMob.value = l;
+
   document.documentElement.lang = l;
   document.documentElement.dir = "ltr";
 
@@ -2960,6 +3389,10 @@ window.cambiarIdioma = function(lang) {
     }
   });
 
+  document.querySelectorAll(".solv-wm-word").forEach(function(el) {
+    el.innerText = dict.solv_watermark || "Borrador";
+  });
+
   var p = I18N_PANEL_INTERNO[l] || I18N_PANEL_INTERNO.es;
   var ownerGreeting = document.getElementById("owner-greeting-name");
   if (ownerGreeting && ownerGreeting.parentElement) {
@@ -2968,11 +3401,11 @@ window.cambiarIdioma = function(lang) {
   }
 
   var cards = document.querySelectorAll("#vista-propietaria-carmen .owner-card");
-  if (cards.length >= 4) {
+  if (cards.length >= 5) {
     cards[0].querySelector("h3").innerText = p.c1_t; cards[0].querySelector("p").innerText = p.c1_p; cards[0].querySelector("button").innerText = p.c1_b;
     cards[1].querySelector("h3").innerText = p.c2_t; cards[1].querySelector("p").innerText = p.c2_p; cards[1].querySelector("button").innerText = p.c2_b;
     cards[2].querySelector("h3").innerText = p.c3_t; cards[2].querySelector("p").innerText = p.c3_p; cards[2].querySelector("button").innerText = p.c3_b;
-    cards[3].querySelector("h3").innerText = p.c4_t; cards[3].querySelector("p").innerText = p.c4_p;
+    cards[4].querySelector("h3").innerText = p.c4_t; cards[4].querySelector("p").innerText = p.c4_p;
     var btnAbgCard = document.getElementById("btn-card-abogado-top");
     if (btnAbgCard) btnAbgCard.innerText = p.btn_alta_abg;
   }
@@ -3319,8 +3752,7 @@ window.descargarReciboPDF = function(idRecibo) {
         '<div>' + selloEstado + '</div>' +
       '</div>' +
       '<div class="grid-2">' +
-        
-    '<div class="box"><strong>Parte Arrendadora:</strong><br>' + escaparHTML(nombreEmisor) + (dniEmisor ? '<br>DNI/NIE/CIF: ' + escaparHTML(dniEmisor) : '') + '<br>Inmueble: ' + escaparHTML(rec.propiedad) + '<br>IBAN: ' + escaparHTML(ibanRecibo) + '</div>' +
+        '<div class="box"><strong>Parte Arrendadora:</strong><br>' + escaparHTML(nombreEmisor) + (dniEmisor ? '<br>DNI/NIE/CIF: ' + escaparHTML(dniEmisor) : '') + '<br>Inmueble: ' + escaparHTML(rec.propiedad) + '<br>IBAN: ' + escaparHTML(ibanRecibo) + '</div>' +
         '<div class="box"><strong>Parte Arrendataria:</strong><br>' + escaparHTML(rec.inquilino) + '<br>DNI/NIE/CIF: ' + escaparHTML(dniRecibo) + '<br>Fecha Abono: ' + escaparHTML(fechaAbono) + '</div>' +
       '</div>' +
       '<table><thead><tr><th>Concepto</th><th>Categoría</th><th>Periodo</th><th style="text-align:right;">Importe</th></tr></thead><tbody>' +
@@ -4348,6 +4780,7 @@ window.seleccionarPropiedadRecibos = function(nombreProp) {
 function renderizarCarteraYRecibosPropietario(filtroTexto) {
   enriquecerDatosCarteraYLimpiarRecibosVacios();
   inyectarAccesosDirectosAbogadoUI();
+  actualizarVisibilidadSolvenciaPorRol();
 
   var langActual = (window.sesionActiva && window.sesionActiva.idioma) || "es";
   var t = I18N_PANEL_INTERNO[langActual] || I18N_PANEL_INTERNO.es;
@@ -4615,7 +5048,7 @@ window.inspeccionarInmuebleComoResidente = function(nombrePropiedad) {
       navBar.innerHTML =
         '<div style="display:flex; gap:8px; flex-wrap:wrap;">' +
           '<button type="button" onclick="mostrarVistaInterna(\'propietaria\')" style="background:var(--amber); color:#042f2e; border:none; padding:8px 16px; border-radius:8px; font-weight:900; font-size:13px; cursor:pointer;">⬅️ Volver a Cartera de Propiedades</button>' +
-          '<button type="button" onclick="irDirectoAltaAbogado()" style="background:var(--emerald); color:#042f2e; border:none; padding:8px 16px; border-radius:8px; font-weight:900; font-size:13px; cursor:pointer;">⚖️ Asignar Abogado</button>' +
+          '<button type="button" onclick="irDirectoAltaAbogado()" style="background:var(--emerald); color:#042f2e; border:none; padding:8px 16px; border-radius:8px; font-weight:900; font-size:13px; cursor:pointer;">⚖️ Solicitar / Asignar Abogado</button>' +
         '</div>' +
         '<div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">' +
           (window.CARTERA_PROPIEDADES || []).map(function(p) {
@@ -4634,7 +5067,7 @@ window.toggleAcordeonAbogado = function() {
   if (!body) return;
   var oculto = body.style.display === "none";
   body.style.display = oculto ? "block" : "none";
-  if (badge) badge.innerHTML = oculto ? "➖ Ocultar Formulario ▴" : "➕ Desplegar Alta de Abogado ▾";
+  if (badge) badge.innerHTML = oculto ? "➖ Ocultar Formulario ▴" : "➕ Desplegar Solicitud de Abogado ▾";
 };
 
 function poblarSelectoresPropiedadesModales() {
@@ -4655,7 +5088,7 @@ window.abrirVisorNativoPropietario = function(modo) {
   var titulo = document.getElementById("visor-titulo");
   var caja = document.getElementById("visor-contenido-nativo");
   if (modo === "morosidad") {
-    titulo.innerText = "🚨 Radar de Cobros, Revertir Estados y Emisión de Facturas/Recibos PDF";
+    titulo.innerText = "🟢 Radar de Cobros, Revertir Estados y Emisión de Facturas/Recibos PDF";
     var pendientes = window.RECIBOS_CARTERA.filter(function(r) { return String(r.estado || "").toUpperCase() === "PENDIENTE"; });
     var abonados = window.RECIBOS_CARTERA.filter(function(r) { return String(r.estado || "").toUpperCase() !== "PENDIENTE"; });
 
@@ -4665,7 +5098,7 @@ window.abrirVisorNativoPropietario = function(modo) {
         (pendientes.length === 0
           ? '<div style="padding:14px; color:var(--emerald);">✅ Todos los recibos están al corriente de pago.</div>'
           : pendientes.map(function(r) {
-           return '<div class="receipt-row pending"><div class="receipt-info"><div class="receipt-concept">' + escaparHTML(r.concepto) + ' · ' + escaparHTML(r.propiedad) + '</div><div class="receipt-meta">Nº ' + escaparHTML(r.id_recibo) + ' · ' + escaparHTML(r.inquilino) + '</div></div><div class="receipt-actions"><span class="receipt-amount">' + escaparHTML(r.importe) + '</span><button type="button" class="btn-pdf-receipt" onclick="descargarReciboPDF(\'' + escaparHTML(r.id_recibo) + '\')">📄 Ver Recibo</button><button type="button" class="btn-mark-paid" onclick="marcarReciboComoAbonado(\'' + escaparHTML(r.id_recibo) + '\')">✓ Marcar Abonado + PDF</button></div></div>';   
+              return '<div class="receipt-row pending"><div class="receipt-info"><div class="receipt-concept">' + escaparHTML(r.concepto) + ' · ' + escaparHTML(r.propiedad) + '</div><div class="receipt-meta">Nº ' + escaparHTML(r.id_recibo) + ' · ' + escaparHTML(r.inquilino) + '</div></div><div class="receipt-actions"><span class="receipt-amount">' + escaparHTML(r.importe) + '</span><button type="button" class="btn-pdf-receipt" onclick="descargarReciboPDF(\'' + escaparHTML(r.id_recibo) + '\')">📄 Ver Recibo</button><button type="button" class="btn-mark-paid" onclick="marcarReciboComoAbonado(\'' + escaparHTML(r.id_recibo) + '\')">✓ Marcar Abonado + PDF</button></div></div>';
             }).join("")) +
       '</div>' +
       '<div>' +
@@ -4995,15 +5428,13 @@ window.guardarNuevaPropiedad = function(e) {
   renderizarCarteraYRecibosPropietario();
   poblarSelectoresPropiedadesModales();
 
-renderizarCarteraYRecibosPropietario();
-  poblarSelectoresPropiedadesModales();
-
   if (window.MODO_DEMO_ACTIVO) {
     msgExito.innerHTML = "🎭 <strong>Modo Demo:</strong> Propiedad <strong>" + escaparHTML(nombreP) + "</strong> simulada en pantalla (no se guarda en base de datos real).";
     msgExito.style.display = "block";
     btn.disabled = false;
     return;
   }
+
   fetch(URL_WEBHOOK_PROPERTY_GESTION, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -5075,13 +5506,13 @@ window.guardarNuevoInquilino = function(e) {
       fichaDemo.inquilino_detallado = nombreInq + (dniInq ? " (" + dniInq + ")" : "");
       fichaDemo["DNI-NIE-CIF"] = dniInq;
       fichaDemo.dnis_completos = dniInq;
-      renderizarCarteraYRecibosPropietario();
+    }
+    renderizarCarteraYRecibosPropietario();
     msgExito.innerHTML = "🎭 <strong>Modo Demo:</strong> Inquilino <strong>" + escaparHTML(nombreInq) + "</strong> asignado en pantalla a <strong>" + escaparHTML(propSel) + "</strong> (no se guarda en base de datos real).";
     msgExito.style.display = "block";
     btn.disabled = false;
     return;
   }
-    }
 
   fetch(URL_WEBHOOK_PROPERTY_GESTION, {
     method: "POST",
@@ -5522,6 +5953,7 @@ function renderizarPortalConDatos(data, identificador) {
     window.sesionActiva.tabla_filtro = "PROPERTY_INQUILINOS";
   }
 
+  actualizarVisibilidadSolvenciaPorRol();
   pintarFichaExpedienteEnPantalla(data);
 
   var nombreActivo = window.EXPEDIENTE_ACTUAL.nombre !== "---" ? window.EXPEDIENTE_ACTUAL.nombre : "Titular Verificado";
@@ -5614,7 +6046,7 @@ window.enviarAutorizacionAbogado = function(e) {
     enviar_email_bienvenida: enviarMail
   };
 
-if (window.MODO_DEMO_ACTIVO) {
+  if (window.MODO_DEMO_ACTIVO) {
     var propsAut = propAbg.split(",").map(function(s) { return s.trim().toUpperCase(); }).filter(Boolean);
     (window.CARTERA_PROPIEDADES || []).forEach(function(p) {
       var nomP = String(p.nombre_propiedad || "").trim().toUpperCase();
@@ -5625,7 +6057,7 @@ if (window.MODO_DEMO_ACTIVO) {
     renderizarCarteraYRecibosPropietario();
     msgExitoLegal.innerHTML = "🎭 <strong>Modo Demo:</strong> <strong>" + escaparHTML(nombreAbg) + "</strong> " + (estadoAbg === "REVOCADO" ? "revocado" : "asignado") + " en pantalla en <strong>" + escaparHTML(propAbg) + "</strong> (no se guarda en base de datos real).";
     msgExitoLegal.style.display = "block";
-    btnAbg.innerText = "⚖️ Asignar Abogado en Base de Datos y Enviar Email de Bienvenida →";
+    btnAbg.innerText = "⚖️ Solicitar / Asignar Abogado y Enviar Bienvenida →";
     btnAbg.disabled = false;
     return;
   }
@@ -5652,7 +6084,7 @@ if (window.MODO_DEMO_ACTIVO) {
   .finally(function() {
     msgExitoLegal.innerHTML = "✅ <strong>" + escaparHTML(nombreAbg) + " (" + escaparHTML(dniAbg) + ")</strong> autorizado en <code>PROPERTY_PROPIETARIOS_LEGAL_SERVICES</code>.";
     msgExitoLegal.style.display = "block";
-    btnAbg.innerText = "⚖️ Asignar Abogado en Base de Datos y Enviar Email de Bienvenida →";
+    btnAbg.innerText = "⚖️ Solicitar / Asignar Abogado y Enviar Bienvenida →";
     btnAbg.disabled = false;
   });
 };
@@ -5801,6 +6233,7 @@ window.MODO_DEMO_ACTIVO = false;
   };
   window.fetch._demoShielded = true;
 })();
+
 window.abrirModalLeadDemo = function() {
   var form = document.getElementById("form-lead-demo");
   if (form) form.reset();
@@ -5811,13 +6244,16 @@ window.abrirModalLeadDemo = function() {
 
 window.enviarLeadYAbrirDemo = function(e) {
   e.preventDefault();
- var nombre = document.getElementById("demo-lead-nombre").value.trim();
+  var nombre = document.getElementById("demo-lead-nombre").value.trim();
   var prefijo = (document.getElementById("demo-lead-prefijo") && document.getElementById("demo-lead-prefijo").value) || "34";
   var telRaw = document.getElementById("demo-lead-tel").value.trim().replace(/[^0-9]/g, "");
   var tel = telRaw.startsWith(prefijo) ? telRaw : (prefijo + telRaw);
   var email = document.getElementById("demo-lead-email").value.trim();
+  var selPerfil = document.getElementById("demo-lead-perfil");
+  var perfilCodigo = selPerfil ? selPerfil.value : "SIN_DEFINIR";
+  var perfilTexto = (selPerfil && selPerfil.options[selPerfil.selectedIndex]) ? selPerfil.options[selPerfil.selectedIndex].text : perfilCodigo;
   var chkLegal = document.getElementById("chk-privacidad-demo");
-  if (!nombre || !telRaw || !email || (chkLegal && !chkLegal.checked)) return; 
+  if (!nombre || !telRaw || !email || !perfilCodigo || (chkLegal && !chkLegal.checked)) return;
 
   // Único envío real a Make (se dispara ANTES de activar MODO_DEMO_ACTIVO)
   window.MODO_DEMO_ACTIVO = false;
@@ -5829,28 +6265,24 @@ window.enviarLeadYAbrirDemo = function(e) {
       nombre_pila: nombre,
       telefono: tel,
       email: email,
+      perfil_usuario: perfilCodigo,
+      perfil_etiqueta: perfilTexto,
+      acepta_privacidad: true,
+      idioma: (window.sesionActiva && window.sesionActiva.idioma) || "es",
       fecha_hora: new Date().toLocaleString("es-ES"),
-      origen: "DEMO_GESTION_INQUILINOS"
+      origen: "DEMO_GESTION_INQUILINOS",
+      url_origen: window.location.href
     })
   }).catch(function(){});
 
   cerrarModal("modal-lead-demo");
-  window.iniciarModoDemo(nombre);
+  window.iniciarModoDemo(nombre, perfilCodigo);
 };
 
-window.iniciarModoDemo = function(nombreVisitante) {
+window.iniciarModoDemo = function(nombreVisitante, perfilCodigo) {
   var nombrePilaDemo = (nombreVisitante && String(nombreVisitante).trim()) ? String(nombreVisitante).trim() : "Invitado";
+  var esDemoInquilino = (String(perfilCodigo || "").toUpperCase() === "INQUILINO");
   window.MODO_DEMO_ACTIVO = true;
-  window.sesionActiva = {
-    "DNI-NIE-CIF": "00000000T",
-    codigo_inquilino: "DEMO-001",
-    rol: "PROPIETARIO",
-    tabla_filtro: "PROPERTY_PROPIETARIOS",
-    propiedad: "Ático Eixample",
-    nombre: nombrePilaDemo + " (Demo)",
-    nombre_pila: nombrePilaDemo,
-    idioma: (window.sesionActiva && window.sesionActiva.idioma) || "es"
-  };
 
   window.CARTERA_PROPIEDADES = [
     normalizarPropiedadDesdeMake({
@@ -5860,7 +6292,7 @@ window.iniciarModoDemo = function(nombreVisitante) {
       "Dirección del Inmueble": "Carrer d'Aragó, 214, 08011 Barcelona",
       "Precio Alquiler": "750",
       "IBAN Bancario Propietario": "ES12 2100 0000 0000 0000 1234",
-      INQUILINO: "Laura Martínez Soler",
+      INQUILINO: esDemoInquilino ? nombrePilaDemo : "Laura Martínez Soler",
       "DNI-NIE-CIF": "12345678A",
       Foto_Portada_URL: "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=1000&q=80",
       Fotos_URL: "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=1000&q=80, https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=1000&q=80",
@@ -5887,8 +6319,8 @@ window.iniciarModoDemo = function(nombreVisitante) {
     normalizarReciboDesdeMake({
       id_recibo: "DEMO-2026-01",
       Propiedad: "Ático Eixample",
-      inquilino: "Laura Martínez Soler",
-      propietario: nombrePilaDemo,
+      inquilino: esDemoInquilino ? nombrePilaDemo : "Laura Martínez Soler",
+      propietario: esDemoInquilino ? "Carlos Gómez (Propietario Demo)" : nombrePilaDemo,
       "DNI-NIE-CIF": "12345678A",
       Fecha_Valor: "2026/11/01",
       Concepto: "Cuota mensual alquiler Noviembre",
@@ -5901,8 +6333,8 @@ window.iniciarModoDemo = function(nombreVisitante) {
     normalizarReciboDesdeMake({
       id_recibo: "DEMO-2026-02",
       Propiedad: "Ático Eixample",
-      inquilino: "Laura Martínez Soler",
-      propietario: nombrePilaDemo,
+      inquilino: esDemoInquilino ? nombrePilaDemo : "Laura Martínez Soler",
+      propietario: esDemoInquilino ? "Carlos Gómez (Propietario Demo)" : nombrePilaDemo,
       "DNI-NIE-CIF": "12345678A",
       Fecha_Valor: "2026/11/15",
       Concepto: "Regularización Luz · Factura suministro",
@@ -5916,7 +6348,7 @@ window.iniciarModoDemo = function(nombreVisitante) {
       id_recibo: "DEMO-2026-03",
       Propiedad: "Local Chamberí",
       inquilino: "Estudio Creativo Delta SL",
-      propietario: nombrePilaDemo,
+      propietario: esDemoInquilino ? "Carlos Gómez (Propietario Demo)" : nombrePilaDemo,
       "DNI-NIE-CIF": "B98765432",
       Fecha_Valor: "2026/11/01",
       Concepto: "Alquiler Local Noviembre",
@@ -5930,6 +6362,46 @@ window.iniciarModoDemo = function(nombreVisitante) {
 
   window.COMUNICACIONES_LEGALES = [];
 
+  if (esDemoInquilino) {
+    window.sesionActiva = {
+      "DNI-NIE-CIF": "12345678A",
+      codigo_inquilino: "INQ-DEMO-01",
+      rol: "INQUILINO",
+      tabla_filtro: "PROPERTY_INQUILINOS",
+      propiedad: "Ático Eixample",
+      nombre: nombrePilaDemo + " (Demo Inquilino)",
+      nombre_pila: nombrePilaDemo,
+      idioma: (window.sesionActiva && window.sesionActiva.idioma) || "es"
+    };
+    renderizarPortalConDatos({
+      rol: "INQUILINO",
+      Arrendatario: nombrePilaDemo,
+      "DNI-NIE-CIF": "12345678A",
+      "Autho-code-inquilino": "INQ-DEMO-01",
+      PROPERTY_PROPIEDADES: "Ático Eixample",
+      "Dirección del Inmueble": "Carrer d'Aragó, 214, 08011 Barcelona",
+      cuota: "750",
+      iban: "ES12 2100 0000 0000 0000 1234",
+      Avisos: "Revisión anual de caldera programada para el próximo mes."
+    }, "12345678A");
+    var demoBannerInq = document.getElementById("demo-mode-banner");
+    if (demoBannerInq) demoBannerInq.style.display = "flex";
+    document.getElementById("badge-titular-activo").innerText = "MODO DEMO INQUILINO · " + nombrePilaDemo.toUpperCase();
+    return;
+  }
+
+  window.sesionActiva = {
+    "DNI-NIE-CIF": "00000000T",
+    codigo_inquilino: "DEMO-001",
+    rol: "PROPIETARIO",
+    tabla_filtro: "PROPERTY_PROPIETARIOS",
+    propiedad: "Ático Eixample",
+    nombre: nombrePilaDemo + " (Demo)",
+    nombre_pila: nombrePilaDemo,
+    idioma: (window.sesionActiva && window.sesionActiva.idioma) || "es"
+  };
+
+  actualizarVisibilidadSolvenciaPorRol();
   document.getElementById("login-section").style.display = "none";
   document.getElementById("portal-dashboard").style.display = "block";
   document.getElementById("main-layout").classList.add("fullscreen-mode");
@@ -5968,8 +6440,10 @@ function cerrarSesion() {
 }
 
 document.addEventListener("DOMContentLoaded", function() {
+  var idiomaGuardado = "es";
+  try { idiomaGuardado = localStorage.getItem("LEVEL_IDIOMA") || "es"; } catch (_) {}
   limpiarEstadoUI();
-  window.pintarSumaLevel();
+  window.cambiarIdioma(idiomaGuardado);
   setInterval(function() {
     var ahora = new Date();
     var el = document.getElementById("live-clock");
@@ -6631,7 +7105,8 @@ function escapeHtmlCom(str) {
   }
 
   const cardsOwner = document.querySelectorAll("#vista-propietaria-carmen .owner-card");
-  if (cardsOwner.length >= 4 && !document.getElementById("btn-canal-legal-propietario")) {
+  const cardLegal = cardsOwner[cardsOwner.length - 1];
+  if (cardLegal && !document.getElementById("btn-canal-legal-propietario")) {
     const btnProp = document.createElement("button");
     btnProp.type = "button";
     btnProp.id = "btn-canal-legal-propietario";
@@ -6639,123 +7114,9 @@ function escapeHtmlCom(str) {
     btnProp.style.cssText = "background:#0f172a; color:#93c5fd; border:1px solid #3b82f6; margin-top:8px; width:100%;";
     btnProp.innerText = "💬 Canal Privado con Abogado";
     btnProp.onclick = window.abrirCanalPrivadoLegalDesdeSesion;
-    cardsOwner[3].appendChild(btnProp);
+    cardLegal.appendChild(btnProp);
   }
 })();
 </script>
-
-<!-- MODAL CANAL PRIVADO PROPIETARIO <-> ABOGADO -->
-<div id="modalComunicacionLegal" style="display:none; position:fixed; inset:0; background:rgba(15,23,42,0.72); backdrop-filter:blur(3px); z-index:9999; align-items:center; justify-content:center; padding:16px;">
-  <div style="background:#ffffff; width:100%; max-width:740px; max-height:90vh; border-radius:14px; box-shadow:0 20px 45px rgba(0,0,0,0.25); display:flex; flex-direction:column; overflow:hidden; font-family:system-ui,-apple-system,sans-serif;">
-    
-    <div style="background:#0f172a; color:#ffffff; padding:16px 20px; display:flex; align-items:center; justify-content:space-between;">
-      <div>
-        <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:#93c5fd; font-weight:700;">Canal Confidencial · Expediente Jurídico</div>
-        <h3 style="margin:2px 0 0; font-size:17px; font-weight:700;">Comunicaciones Propietario ↔ Despacho Legal</h3>
-      </div>
-      <button type="button" onclick="cerrarModalComunicacionLegal()" style="background:rgba(255,255,255,0.12); border:none; color:#ffffff; width:32px; height:32px; border-radius:8px; font-size:18px; cursor:pointer;">✕</button>
-    </div>
-
-    <div style="padding:18px 20px; overflow-y:auto; flex:1; background:#f8fafc;">
-      
-      <div style="background:#eff6ff; border-left:4px solid #1d4ed8; padding:11px 14px; border-radius:8px; font-size:12px; color:#1e3a8a; margin-bottom:16px; line-height:1.45;">
-        <strong>⚖️ Canal Registrado y Exención de Responsabilidad (Level.immo · API 4173 · AICAT 14200):</strong>
-        Level.immo actúa exclusivamente como medio técnico de comunicación y registro trazable entre las partes intervinientes, sin emitir dictámenes jurídicos ni asumir responsabilidad sobre los contenidos o documentos aportados, que recae íntegramente sobre quien los emite. Quedan prohibidos los insultos, amenazas, coacciones, difamaciones o el tratamiento ilícito de datos personales. Cada envío queda registrado con sello de fecha, hora, dirección IP, navegador y usuario.
-      </div>
-
-      <div style="margin-bottom:18px;">
-        <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; margin-bottom:8px;">
-          <div style="font-size:12px; font-weight:700; color:#475569; text-transform:uppercase; letter-spacing:0.04em;">
-            Histórico del expediente (<span id="comLegalPropiedadLabel">—</span>)
-          </div>
-          <select id="comLegalSelectPropiedad" onchange="cambiarPropiedadCanalLegal(this.value)" style="padding:5px 10px; border:1px solid #cbd5e1; border-radius:7px; font-size:12px; font-weight:700; color:#0f172a; background:#ffffff; cursor:pointer;"></select>
-        </div>
-        <div id="listaComunicacionesLegales" style="display:flex; flex-direction:column; gap:10px; max-height:240px; overflow-y:auto; padding:10px; background:#ffffff; border:1px solid #e2e8f0; border-radius:10px;">
-          <div style="text-align:center; color:#64748b; font-size:13px; padding:16px;">No hay comunicaciones registradas en este expediente todavía.</div>
-        </div>
-      </div>
-
-      <form id="formComunicacionLegal" onsubmit="procesarEnvioComunicacionLegal(event)" style="background:#ffffff; border:1px solid #cbd5e1; border-radius:10px; padding:14px;">
-        <div style="font-size:13px; font-weight:700; color:#0f172a; margin-bottom:10px;">Nueva comunicación trazable</div>
-        
-        <div style="display:grid; grid-template-columns:1fr 160px; gap:10px; margin-bottom:10px;">
-          <div>
-            <label style="display:block; font-size:12px; font-weight:600; color:#334155; margin-bottom:4px;">Asunto / Trámite *</label>
-            <input type="text" id="comLegalAsunto" required placeholder="Ej. Preparación burofax, Revisión contrato, Impago agua..." style="width:100%; box-sizing:border-box; padding:8px 10px; border:1px solid #cbd5e1; border-radius:7px; font-size:13px; color:#0f172a; background:#ffffff;">
-          </div>
-          <div>
-            <label style="display:block; font-size:12px; font-weight:600; color:#334155; margin-bottom:4px;">Prioridad</label>
-            <select id="comLegalPrioridad" style="width:100%; box-sizing:border-box; padding:8px 10px; border:1px solid #cbd5e1; border-radius:7px; font-size:13px; color:#0f172a; background:#ffffff;">
-              <option value="Normal">Normal</option>
-              <option value="Alta">Alta</option>
-              <option value="Urgente">Urgente</option>
-            </select>
-          </div>
-        </div>
-
-        <div style="margin-bottom:10px;">
-          <label style="display:block; font-size:12px; font-weight:600; color:#334155; margin-bottom:4px;">Mensaje confidencial *</label>
-          <textarea id="comLegalMensaje" rows="3" required placeholder="Redacte aquí la comunicación para la otra parte..." style="width:100%; box-sizing:border-box; padding:9px 10px; border:1px solid #cbd5e1; border-radius:7px; font-size:13px; color:#0f172a; background:#ffffff; resize:vertical;"></textarea>
-        </div>
-
-        <div id="estadoEnvioComLegal" style="display:none; padding:9px 12px; border-radius:8px; font-size:12.5px; font-weight:700; margin-bottom:10px;"></div>
-
-        <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;">
-          <span style="font-size:11px; color:#64748b;">🔒 Se registrará tu IP, navegador y fecha/hora exacta.</span>
-          <button type="submit" id="btnEnviarComLegal" style="background:#1e3a8a; color:#ffffff; border:none; padding:9px 18px; border-radius:8px; font-size:13px; font-weight:600; cursor:pointer;">
-            Registrar y Enviar Comunicación
-          </button>
-        </div>
-      </form>
-
-    </div>
-  </div>
-</div>
-  <!-- MODAL PUERTA DE ACCESO DEMO (CAPTACIÓN DE LEADS) -->
-<div id="modal-lead-demo" class="modal-backdrop" onclick="if(event.target === this) cerrarModal('modal-lead-demo')">
-  <div class="modal-card" style="max-width:480px; border-color:var(--amber);">
-    <button class="modal-close-x" onclick="cerrarModal('modal-lead-demo')" aria-label="Cerrar">&times;</button>
-    <h3 style="color:var(--amber); margin-bottom:8px; padding-bottom:10px; border-bottom:1px solid var(--border);">
-      👁️ Acceso a la Demo Interactiva
-    </h3>
-    <p style="font-size:13px; color:var(--text-muted); margin-bottom:16px; line-height:1.5;">
-      Indícanos tus datos para abrir la consola de demostración con 2 propiedades de ejemplo (Barcelona y Madrid).
-    </p>
-    <form id="form-lead-demo" onsubmit="enviarLeadYAbrirDemo(event)" autocomplete="off">
-      <div class="form-group">
-        <label for="demo-lead-nombre" class="form-label">Nombre de pila *</label>
-        <input type="text" id="demo-lead-nombre" class="form-input" placeholder="Ej: Carlos" required autocomplete="given-name">
-      </div>
-      <div class="form-group">
-        <label for="demo-lead-tel" class="form-label">Teléfono móvil *</label>
-        <div style="display:flex; gap:8px;">
-          <select id="demo-lead-prefijo" class="form-input" style="width:115px; padding:12px 8px; cursor:pointer;" aria-label="Prefijo internacional">
-            <option value="34" selected>🇪🇸 +34</option>
-            <option value="376">🇦🇩 +376</option>
-            <option value="33">🇫🇷 +33</option>
-            <option value="49">🇩🇪 +49</option>
-            <option value="44">🇬🇧 +44</option>
-            <option value="39">🇮🇹 +39</option>
-            <option value="351">🇵🇹 +351</option>
-          </select>
-          <input type="tel" id="demo-lead-tel" class="form-input" style="flex:1;" placeholder="600 112 233" required autocomplete="tel-national">
-        </div>
-      </div>
-      <div class="form-group">
-        <label for="demo-lead-email" class="form-label">Correo electrónico *</label>
-        <input type="email" id="demo-lead-email" class="form-input" placeholder="Ej: carlos@correo.com" required autocomplete="email">
-      </div>
-      <div class="privacy-box">
-        <input type="checkbox" id="chk-privacidad-demo" required>
-        <label for="chk-privacidad-demo">
-          Acepto las <span class="privacy-link" onclick="event.preventDefault(); abrirModal('modal-privacidad');">Condiciones y la Política de Privacidad</span>. Autorizo el envío de novedades y acceso a la demo de Level.immo.
-        </label>
-      </div>
-      <button type="submit" id="btn-entrar-demo-lead" class="btn-primary" style="background:var(--amber); color:#042f2e;">
-        🚀 Entrar en la Demo Interactiva →
-      </button>
-    </form>
-  </div>
-</div>
 </body>
 </html>
