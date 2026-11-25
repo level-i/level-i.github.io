@@ -711,7 +711,7 @@
           </div>
 
           <div class="space-y-2.5 text-xs">
-            <input type="text" id="lead-name" data-i18n-placeholder="elena_ph_name" placeholder="Nom complet, Despatx o Empresa" class="w-full bg-[#080d14] border border-slate-700 rounded-lg px-3 py-2.5 text-white focus:border-emerald-500 focus:outline-none" />
+            <input type="text" id="lead-name" data-i18n-placeholder="elena_ph_name" placeholder="Nom complet o Empresa" class="w-full bg-[#080d14] border border-slate-700 rounded-lg px-3 py-2.5 text-white focus:border-emerald-500 focus:outline-none" />
             
             <div class="flex gap-2">
               <select id="lead-prefix" onchange="checkCustomPrefix(this.value)" class="bg-[#080d14] border border-slate-700 rounded-lg px-2 py-2.5 text-white font-semibold focus:border-emerald-500 focus:outline-none" translate="no">
@@ -860,6 +860,7 @@
       }).addTo(mainMap);
 
       mainMarker = L.marker([currentLat, currentLng]).addTo(mainMap);
+      mainMap.on('click', (e) => fetchCatastroByCoords(e.latlng.lat, e.latlng.lng, 'main'));
     }
 
     window.addEventListener('DOMContentLoaded', initInteractiveSatelliteMaps);
@@ -914,6 +915,7 @@
           });
           if (catastroOverlayVisible) catastroWmsFs.addTo(fsMap);
           fsMarker = L.marker([currentLat, currentLng]).addTo(fsMap);
+          fsMap.on('click', (e) => fetchCatastroByCoords(e.latlng.lat, e.latlng.lng, 'main'));
         } else if (fsMap) {
           fsMap.invalidateSize();
           fsMap.setView([currentLat, currentLng], 19);
@@ -1005,16 +1007,76 @@
       }
     }
 
+    // Consulta inversa oficial del Catastro: coordenadas (lat, lng) -> Referencia Catastral 14 car. + dirección
+    async function fetchCatastroByCoords(lat, lng, context = 'main') {
+      const refInput = document.getElementById(context + '-catastro-ref');
+      const locInput = document.getElementById(context + '-catastro-loc');
+      const status = document.getElementById(context + '-catastro-status');
+
+      const noParcelMsg = {
+        ca: "Sense parcel·la en aquest punt. Fes clic sobre un edifici.",
+        es: "Sin parcela en este punto. Haz clic sobre un edificio.",
+        en: "No parcel at this point. Click on a building.",
+        fr: "Aucune parcelle ici. Cliquez sur un bâtiment.",
+        de: "Kein Flurstück hier. Klicken Sie auf ein Gebäude.",
+        it: "Nessuna particella qui. Clicca su un edificio.",
+        ar: "لا توجد قطعة مساحية هنا. انقر على مبنى.",
+        zh: "此处无地籍地块，请点击建筑物。"
+      };
+
+      if (status) {
+        status.className = "text-[11px] text-sky-400 font-semibold";
+        status.textContent = "⏳ ...";
+      }
+
+      try {
+        const url = `https://ovc.catastro.meh.es/ovcservweb/OVCSWLocalizacionRC/OVCCoordenadas.asmx/Consulta_RCCOOR?SRS=EPSG:4326&Coordenada_X=${lng}&Coordenada_Y=${lat}`;
+        const res = await fetch(url);
+        const xmlText = await res.text();
+        const xmlDoc = new DOMParser().parseFromString(xmlText, "text/xml");
+
+        const pc1 = xmlDoc.querySelector("pc1");
+        const pc2 = xmlDoc.querySelector("pc2");
+        const ldt = xmlDoc.querySelector("ldt");
+
+        if (pc1 && pc2) {
+          const rc14 = (pc1.textContent.trim() + pc2.textContent.trim()).toUpperCase();
+          const addressText = ldt ? ldt.textContent.trim() : `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+
+          if (refInput) refInput.value = rc14;
+          if (locInput && ldt) locInput.value = addressText;
+
+          fetchCatastroDelMun(rc14);
+          updateMapPosition(lat, lng, `${rc14} · ${addressText}`);
+
+          if (status) {
+            status.className = "text-[11px] text-emerald-400 font-bold";
+            status.textContent = `✔ ${rc14} · ${addressText}`;
+          }
+        } else {
+          updateMapPosition(lat, lng, locInput ? locInput.value.trim() : "");
+          if (status) {
+            status.className = "text-[11px] text-amber-400 font-semibold";
+            status.textContent = `⚠️ ${noParcelMsg[currentLang] || noParcelMsg.es}`;
+          }
+        }
+      } catch (e) {
+        if (status) status.textContent = "";
+      }
+    }
+
     async function geocodeAddressToMap(context) {
       const locInput = document.getElementById(context + '-catastro-loc');
       if (!locInput || !locInput.value.trim()) return;
       const query = locInput.value.trim();
 
       try {
-        const resp = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query + ', España')}&limit=1`);
+        const resp = await fetch(`https://nominatim.openstreetmap.org/search?format=json&countrycodes=es&q=${encodeURIComponent(query)}&limit=1`);
         const data = await resp.json();
         if (data && data.length > 0) {
-          updateMapPosition(data[0].lat, data[0].lon, query);
+          const lat = parseFloat(data[0].lat);
+          const lng = parseFloat(data[0].lon);
+          await fetchCatastroByCoords(lat, lng, context);
         }
       } catch (e) {}
     }
