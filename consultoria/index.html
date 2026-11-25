@@ -458,7 +458,6 @@
               <span>📐</span> <span data-i18n="btn_open_carto">Plànol Parcel·la ↗</span>
             </button>
 
-            <!-- BOTÓN ESTRELLA ACTIVO: SOLICITAR DOSSIER TRIPLE (FICHA + VALOR REFERENCIA + VALOR MERCADO) -->
             <button type="button" onclick="openElenaModal('srv_5')" class="px-3.5 py-2 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/60 text-emerald-300 text-xs font-extrabold transition flex items-center gap-1.5 shadow-lg cursor-pointer">
               <span>📊</span> <span data-i18n="btn_val_ref_soon">Sol·licitar Valor de Referència + Mercat (Dossier) →</span>
             </button>
@@ -643,7 +642,7 @@
           </div>
         </div>
 
-        <!-- PASO 1: SELECCIÓN DE SERVICIO (INCLUYE OPCIÓN 5: DOSSIER TRIPLE) -->
+        <!-- PASO 1: SELECCIÓN DE SERVICIO -->
         <div id="elena-step-1" class="space-y-3.5 hidden">
           <div class="p-3.5 rounded-xl bg-[#182334] border border-slate-700 text-xs text-slate-200 space-y-1.5 leading-relaxed">
             <p data-i18n="elena_q1_p1">
@@ -834,6 +833,9 @@
     let catastroWmsFs = null;
     let catastroOverlayVisible = true;
 
+    let currentCatDel = "";
+    let currentCatMun = "";
+
     function initInteractiveSatelliteMaps() {
       if (typeof L === 'undefined') return;
 
@@ -924,6 +926,25 @@
       document.getElementById('map-fullscreen-modal').classList.remove('is-open');
     }
 
+    // Consulta en segundo plano los códigos oficiales de Provincia (del) y Municipio (mun)
+    async function fetchCatastroDelMun(cleanRef) {
+      currentCatDel = "";
+      currentCatMun = "";
+      if (cleanRef.length !== 14 && cleanRef.length !== 20) return;
+      try {
+        const url = `https://ovc.catastro.meh.es/ovcservweb/OVCSWLocalizacionRC/OVCCallejero.asmx/Consulta_DNPRC?Provincia=&Municipio=&RC=${cleanRef}`;
+        const res = await fetch(url);
+        const xmlText = await res.text();
+        const xmlDoc = new DOMParser().parseFromString(xmlText, "text/xml");
+        const cp = xmlDoc.querySelector("cp");
+        const cm = xmlDoc.querySelector("cm");
+        if (cp && cm) {
+          currentCatDel = cp.textContent.trim();
+          currentCatMun = cm.textContent.trim();
+        }
+      } catch (e) {}
+    }
+
     async function geolocateFromCatastro(context, openFichaAfter = false) {
       const refInput = document.getElementById(context + '-catastro-ref');
       const status = document.getElementById(context + '-catastro-status');
@@ -933,6 +954,7 @@
       if (clean.length !== 14 && clean.length !== 20) return;
 
       const rc14 = clean.substring(0, 14);
+      const delMunPromise = fetchCatastroDelMun(clean);
       const dict = i18n[currentLang] || i18n.ca;
       if (status) {
         status.className = "text-[11px] text-sky-400 font-semibold";
@@ -978,6 +1000,7 @@
       }
 
       if (openFichaAfter) {
+        await delMunPromise;
         openDirectCatastroFicha(context);
       }
     }
@@ -1006,11 +1029,15 @@
         const rc1 = clean.substring(0, 7);
         const rc2 = clean.substring(7, 14);
         const car = clean.length === 20 ? clean.substring(14, 18) : '';
-        const cc1 = clean.length === 20 ? clean.substring(18, 19) : '';
-        const cc2 = clean.length === 20 ? clean.substring(19, 20) : '';
+        const cc  = clean.length === 20 ? clean.substring(18, 20) : '';
 
-        const directFichaUrl = `https://www1.sedecatastro.gob.es/CYCBienInmueble/OVCConCiud.aspx?UrbRus=U&RefC=${clean}&rc1=${rc1}&rc2=${rc2}&car=${car}&cc1=${cc1}&cc2=${cc2}`;
-        window.open(directFichaUrl, '_blank', 'noopener');
+        if (currentCatDel && currentCatMun && clean.length === 20) {
+          const directFichaUrl = `https://www1.sedecatastro.gob.es/CYCBienInmueble/OVCConCiud.aspx?del=${currentCatDel}&mun=${currentCatMun}&UrbRus=U&RefC=${clean}&from=OVCBusqueda&pest=rc&RCCompleta=${clean}&final=&ZV=NO&anyoZV=`;
+          window.open(directFichaUrl, '_blank', 'noopener');
+        } else {
+          const listaUrl = `https://www1.sedecatastro.gob.es/CYCBienInmueble/OVCListaBienes.aspx?RC1=${rc1}&RC2=${rc2}&RC3=${car}&RC4=${cc}&esBice=&RCBice1=&RCBice2=&DenoBice=&pest=rc&final=&RCCompleta=${clean}&from=OVCBusqueda&ZV=NO&anyoZV=`;
+          window.open(listaUrl, '_blank', 'noopener');
+        }
       } else {
         window.open('https://www1.sedecatastro.gob.es/CYCBienInmueble/OVCBusqueda.aspx', '_blank', 'noopener');
       }
@@ -1147,10 +1174,11 @@
       const rc1 = cleanRef.substring(0, 7);
       const rc2 = cleanRef.substring(7, 14);
       const car = cleanRef.length === 20 ? cleanRef.substring(14, 18) : '';
-      const cc1 = cleanRef.length === 20 ? cleanRef.substring(18, 19) : '';
-      const cc2 = cleanRef.length === 20 ? cleanRef.substring(19, 20) : '';
+      const cc  = cleanRef.length === 20 ? cleanRef.substring(18, 20) : '';
       const cartoUrl = `https://www1.sedecatastro.gob.es/Cartografia/mapa.aspx?refcat=${rc14}&buscar=S`;
-      const fichaUrl = `https://www1.sedecatastro.gob.es/CYCBienInmueble/OVCConCiud.aspx?UrbRus=U&RefC=${cleanRef}&rc1=${rc1}&rc2=${rc2}&car=${car}&cc1=${cc1}&cc2=${cc2}`;
+      const fichaUrl = (currentCatDel && currentCatMun && cleanRef.length === 20)
+        ? `https://www1.sedecatastro.gob.es/CYCBienInmueble/OVCConCiud.aspx?del=${currentCatDel}&mun=${currentCatMun}&UrbRus=U&RefC=${cleanRef}&from=OVCBusqueda&pest=rc&RCCompleta=${cleanRef}&final=&ZV=NO&anyoZV=`
+        : `https://www1.sedecatastro.gob.es/CYCBienInmueble/OVCListaBienes.aspx?RC1=${rc1}&RC2=${rc2}&RC3=${car}&RC4=${cc}&esBice=&RCBice1=&RCBice2=&DenoBice=&pest=rc&final=&RCCompleta=${cleanRef}&from=OVCBusqueda&ZV=NO&anyoZV=`;
       return { fichaUrl, cartoUrl, rc14 };
     }
 
@@ -1301,7 +1329,6 @@
       document.getElementById('elena-step-1').classList.remove('hidden');
     }
 
-    // ENVÍO DEL EXPEDIENTE A MAKE (REGLA DE IDIOMA: SI SESIÓN = 'ca' -> CATALÁN; RESTO DE IDIOMAS -> CASTELLANO)
     function submitElenaLead() {
       const name = document.getElementById('lead-name').value.trim();
       const prefixSelect = document.getElementById('lead-prefix').value;
@@ -1327,7 +1354,6 @@
       const fullPhoneFormatted = `+${cleanPrefixDigits} ${rawPhone}`;
       const firstName = name.split(' ')[0];
 
-      // Regla de idioma del Dossier: Catalán si la sesión es 'ca', Castellano para el resto ('es', 'en', 'fr', 'de', 'it', 'ar', 'zh')
       const isCatalanSession = (currentLang === 'ca');
       const dossierLangCode = isCatalanSession ? 'ca' : 'es';
       const dossierDict = i18n[dossierLangCode];
@@ -1431,8 +1457,7 @@
         <div>WhatsApp: <strong>${fullPhoneFormatted}</strong> · Email: <strong>${email}</strong></div>
       `;
     }
-
-    // TEXTOS LEGALES EN LOS 8 IDIOMAS
+// TEXTOS LEGALES EN LOS 8 IDIOMAS
     const legalTexts = {
       ca: {
         aviso_title: "Avís Legal · LEVEL PUNTO IMMO 24365 SLU",
@@ -1644,7 +1669,7 @@
         elena_cat_box_title: "🗺️ Dades Cadastrals i Ubicació (Opcional)",
         elena_ph_catastro: "Referència Cadastral (14 o 20 caràcters)",
         elena_ph_loc: "Adreça i municipi de l'immoble...",
-        elena_ph_name: "Nom complet, Despatx o Empresa",
+        elena_ph_name: "Nom complet o Empresa",
         elena_ph_phone: "Telèfon / WhatsApp (600123456)",
         elena_ph_email: "Correu electrònic",
         elena_date_label: "📅 Data trucada",
@@ -1779,7 +1804,7 @@
         elena_cat_box_title: "🗺️ Datos Catastrales y Ubicación (Opcional)",
         elena_ph_catastro: "Referencia Catastral (14 o 20 caracteres)",
         elena_ph_loc: "Dirección y municipio del inmueble...",
-        elena_ph_name: "Nombre completo, Despacho o Empresa",
+        elena_ph_name: "Nombre completo o Empresa",
         elena_ph_phone: "Teléfono / WhatsApp (600123456)",
         elena_ph_email: "Correo electrónico",
         elena_date_label: "📅 Fecha llamada",
@@ -1914,7 +1939,7 @@
         elena_cat_box_title: "🗺️ Cadastral Data & Location (Optional)",
         elena_ph_catastro: "Cadastral Reference (14 or 20 characters)",
         elena_ph_loc: "Property address & municipality...",
-        elena_ph_name: "Full Name, Firm or Company",
+        elena_ph_name: "Full Name or Company",
         elena_ph_phone: "Phone / WhatsApp",
         elena_ph_email: "Email Address",
         elena_date_label: "📅 Call Date",
@@ -2049,7 +2074,7 @@
         elena_cat_box_title: "🗺️ Données Cadastrales et Localisation (Optionnel)",
         elena_ph_catastro: "Référence Cadastrale (14 ou 20 caractères)",
         elena_ph_loc: "Adresse et commune de l'immeuble...",
-        elena_ph_name: "Nom complet, Cabinet ou Société",
+        elena_ph_name: "Nom complet ou Société",
         elena_ph_phone: "Téléphone / WhatsApp",
         elena_ph_email: "Adresse e-mail",
         elena_date_label: "📅 Date d'appel",
@@ -2319,7 +2344,7 @@
         elena_cat_box_title: "🗺️ Dati Catastali e Posizione (Opzionale)",
         elena_ph_catastro: "Riferimento Catastale (14 o 20 caratteri)",
         elena_ph_loc: "Indirizzo e comune dell'immobile...",
-        elena_ph_name: "Nome completo, Studio o Azienda",
+        elena_ph_name: "Nome completo o Azienda",
         elena_ph_phone: "Telefono / WhatsApp",
         elena_ph_email: "Indirizzo email",
         elena_date_label: "📅 Data chiamata",
@@ -2454,7 +2479,7 @@
         elena_cat_box_title: "🗺️ بيانات السجل المساحي والموقع (اختياري)",
         elena_ph_catastro: "الرقم المرجعي للسجل المساحي (14 أو 20 رمزاً)",
         elena_ph_loc: "عنوان وبلدية العقار...",
-        elena_ph_name: "الاسم الكامل أو المكتب أو الشركة",
+        elena_ph_name: "الاسم الكامل أو الشركة",
         elena_ph_phone: "الهاتف / واتساب",
         elena_ph_email: "البريد الإلكتروني",
         elena_date_label: "📅 تاريخ المكالمة",
