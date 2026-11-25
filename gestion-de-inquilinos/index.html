@@ -262,6 +262,56 @@
     color: var(--text-main);
     border-left: 3px solid var(--emerald);
   }
+
+  /* EFECTO FINO LÁSER + BARRIDO SUAVE EN "ÚNETE AL EQUIPO DE ADVISORS" */
+  .advisor-spotlight-item {
+    position: relative;
+    overflow: hidden;
+    color: #e2e8f0;
+    background: linear-gradient(90deg, rgba(0, 243, 255, 0.07) 0%, rgba(16, 185, 129, 0.05) 100%);
+    border: 1px solid rgba(0, 243, 255, 0.24);
+    border-left: 2px solid var(--neon-cyan);
+    border-radius: 8px;
+    margin-top: 2px;
+  }
+  .advisor-spotlight-item::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -120%;
+    width: 65%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(0, 243, 255, 0.14), rgba(16, 185, 129, 0.12), transparent);
+    animation: advisorLaserSweep 7.5s ease-in-out infinite;
+    pointer-events: none;
+  }
+  .advisor-spotlight-item::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 1.5px;
+    width: 100%;
+    background: linear-gradient(90deg, transparent 0%, var(--neon-cyan) 50%, transparent 100%);
+    opacity: 0.42;
+    transition: opacity 0.25s ease;
+    pointer-events: none;
+  }
+  .advisor-spotlight-item:hover {
+    color: #ffffff;
+    border-color: rgba(0, 243, 255, 0.55);
+    border-left-color: var(--emerald);
+    box-shadow: 0 0 14px rgba(0, 243, 255, 0.14);
+  }
+  .advisor-spotlight-item:hover::after {
+    opacity: 0.95;
+  }
+  @keyframes advisorLaserSweep {
+    0% { left: -120%; }
+    45% { left: 140%; }
+    100% { left: 140%; }
+  }
+
   .promo-badge-nav {
     background: rgba(197, 160, 89, 0.1);
     border: 1px dashed var(--gold);
@@ -449,7 +499,7 @@
     transition: all 0.2s;
   }
   .ticker-fs-close:hover { background: var(--danger); color: #fff; }
-/* TARJETA DE ACCESO */
+  /* TARJETA DE ACCESO */
   .login-card {
     max-width: 510px;
     margin: 20px auto;
@@ -472,14 +522,18 @@
     border-radius: 10px;
     font-size: 14px;
     outline: none;
-    transition: border 0.2s;
+    transition: border 0.2s, box-shadow 0.2s;
   }
   .form-input:focus { border-color: var(--emerald); }
-  .form-input[readonly] {
-    background: rgba(15, 23, 42, 0.75);
-    color: var(--text-muted);
-    border-style: dashed;
+  .form-input[readonly], .form-input.locked-sensitive {
+    background: rgba(15, 23, 42, 0.82);
+    color: #cbd5e1;
+    border: 1px dashed rgba(245, 158, 11, 0.45);
     cursor: not-allowed;
+  }
+  .form-input.unlocked-sensitive {
+    border-color: var(--emerald);
+    box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.16);
   }
 
   .privacy-box {
@@ -882,7 +936,7 @@
   .receipt-row.haber-row { border-left-color: var(--neon-cyan); background: rgba(0, 243, 255, 0.04); }
   .receipt-info { display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 220px; }
   .receipt-concept { font-size: 14px; font-weight: 800; color: #fff; }
-  .receipt-meta { font-size: 12px; color: var(--text-muted); line-height: 1.4; }
+  .receipt-meta { font-size: 12px; color: var(--text-muted); line-height: 1.45; }
   .receipt-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
   .receipt-amount { font-size: 15.5px; font-weight: 900; color: #fff; margin-right: 4px; }
 
@@ -1277,7 +1331,7 @@
         <a href="https://app.level-i.com/gestion-de-alquileres" class="nav-item active" data-i18n="nav_inquilinos">👥 Acceso a Usuarios</a>
 
         <a href="https://app.level-i.com/chivatazo" class="promo-badge-nav" data-i18n="nav_chivatazo">📣 Chivatazo Nacional</a>
-        <a href="https://app.level-i.com/advisors" class="nav-item" data-i18n="nav_equipos">💼 Únete al Equipo de Advisors en tu Zona</a>
+        <a href="https://app.level-i.com/advisors" class="nav-item advisor-spotlight-item" data-i18n="nav_equipos">💼 Únete al Equipo de Advisors en tu Zona</a>
 
         <div style="padding: 14px; margin-top: 8px; background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.32); border-radius: 10px;">
           <div style="color: var(--emerald); font-size: 12px; font-weight: 800; margin-bottom: 4px;" data-i18n="nav_cobertura_titulo">🇪🇸 Disponible en toda España</div>
@@ -1335,7 +1389,7 @@
               ✨ ¿AÚN NO HAS PROBADO App.level-i.com/gestion-de-inquilinos?
             </div>
             <p style="font-size:12.5px; color:var(--text-muted); margin-bottom:12px; line-height:1.45;">
-              Prueba nuestra consola de gestión autónoma de alquileres, saldo vivo y recibos PDF en 1 clic con datos de ejemplo.
+              Prueba nuestra consola de gestión autónoma de alquileres, saldo vivo y recibos/facturas PDF en 1 clic con datos de ejemplo.
             </p>
             <button type="button" class="btn-outline-sm" style="width:100%; padding:10px; border-color:var(--amber); color:var(--amber); font-weight:800; font-size:13px;" onclick="abrirModalLeadDemo()">
               👁️ Probar Demo Interactiva (2 Propiedades) →
@@ -1463,7 +1517,7 @@
                 <span class="badge badge-info">CREDENCIAL ACTIVA</span>
               </div>
               <div style="font-size:12.5px; color:var(--text-muted); margin-top:4px;">
-                Acceso autorizado a contratos, saldo vivo contable ordenado por Fecha Valor (Debe/Haber), pagos a cuenta, desglose de impagos e histórico íntegro de comunicaciones.
+                Acceso autorizado a contratos, saldo vivo contable ordenado por Fecha Valor (Debe/Haber), pagos a cuenta (% cubierto), desglose de impagos e histórico íntegro de comunicaciones.
               </div>
             </div>
             <div style="display:flex; gap:10px; flex-wrap:wrap;">
@@ -1516,7 +1570,7 @@
                 <select id="select-propiedad-motor-contable" class="form-input" style="width:auto; min-width:205px; padding:6px 12px; font-size:12px; cursor:pointer; border-color:var(--neon-cyan);" onchange="seleccionarPropiedadMotorContable(this.value)">
                   <option value="TODAS">🌐 Cartera Global (Todas)</option>
                 </select>
-                <button type="button" id="btn-motor-add-apunte" class="btn-outline-sm" style="border-color:var(--neon-cyan); color:var(--neon-cyan); font-weight:700;" onclick="abrirModalSuministroManual('')">➕ Añadir Factura / Apunte Contable</button>
+                <button type="button" id="btn-motor-add-apunte" class="btn-outline-sm" style="border-color:var(--neon-cyan); color:var(--neon-cyan); font-weight:700;" onclick="abrirModalSuministroManual('')">➕ Añadir Apunte Contable / A Cuenta</button>
               </div>
             </div>
             <div id="contenedor-suministros-propietario" style="display:flex; flex-direction:column; gap:10px;"></div>
@@ -1526,7 +1580,7 @@
           <div class="owner-cards-grid">
             <div class="owner-card">
               <h3>🟢 Radar de Cobros y Transferencias</h3>
-              <p>Control de alquileres (día 1), suministros y pagos a cuenta pendientes, abono manual o revertir estado y emisión de Recibo/Factura PDF.</p>
+              <p>Control de alquileres (día 1), suministros y pagos a cuenta (% cubierto), abono manual o revertir estado y emisión de Recibo/Factura PDF.</p>
               <button type="button" class="btn-radar-alert" onclick="abrirVisorNativoPropietario('morosidad')">
                 Ver Recibos Pendientes y Emitir PDF
               </button>
@@ -1572,7 +1626,7 @@
           <!-- 2.º LIBRO DE RECIBOS Y FACTURAS CON TOTALES EN VIVO -->
           <div class="panel-box" style="background:var(--bg-card); margin-top:16px; margin-bottom:20px; border-color:var(--amber);">
             <div class="panel-header" style="color:var(--amber); margin-bottom:12px;">
-              <span id="titulo-libro-recibos">🧾 2. LIBRO DE RECIBOS Y FACTURAS (ALQUILER DÍA 1, SUMINISTROS Y TRANSFERENCIAS)</span>
+              <span id="titulo-libro-recibos">🧾 2. LIBRO DE RECIBOS Y FACTURAS (ALQUILER DÍA 1, SUMINISTROS Y PAGOS A CUENTA)</span>
               <div class="prop-chips-bar" style="margin-top:0;">
                 <select id="select-propiedad-recibos" class="form-input" style="width:auto; min-width:210px; padding:6px 12px; font-size:12px; cursor:pointer;" onchange="seleccionarPropiedadRecibos(this.value)">
                   <option value="TODAS">🏢 Elegir propiedad (Todas)</option>
@@ -1783,7 +1837,7 @@
 
           <div class="panel-box">
             <div class="panel-header">
-              <span data-i18n="recibos_box_title">🧾 EXTRACTOS DE ALQUILER, SUMINISTROS (DEBE/HABER), TRANSFERENCIAS Y FACTURAS PDF</span>
+              <span data-i18n="recibos_box_title">🧾 EXTRACTOS DE ALQUILER, SUMINISTROS (DEBE/HABER), TRANSFERENCIAS Y RECIBOS/FACTURAS PDF</span>
               <span class="badge badge-success">DATOS EN TIEMPO REAL</span>
             </div>
             <div id="val-recibos" style="font-size:13.5px; color:var(--text-muted);">---</div>
@@ -1793,7 +1847,7 @@
     </div>
   </main>
 
-  <!-- COLUMNA DERECHA (SIN ELENA IA ANTES DE INICIAR SESIÓN) -->
+  <!-- COLUMNA DERECHA -->
   <aside class="sidebar-right">
     <div class="info-widget">
       <h4 data-i18n="side_sec_title">🛡️ ARQUITECTURA AUTOMÁTICA</h4>
@@ -1818,19 +1872,19 @@
     <div class="info-widget">
       <h4 data-i18n="side_rule_title">⚖️ SALDO VIVO Y FISCALIDAD</h4>
       <p data-i18n="side_rule_desc">
-        El sistema calcula en tiempo real el Saldo Vivo Actual (Suma Haber - Suma Debe) separando las rentas de alquiler de los suministros, pagos a cuenta e IVA/IRPF según el NIF/CIF.
+        El sistema calcula en tiempo real el Saldo Vivo Actual (Suma Haber - Suma Debe) y el % cubierto por pagos a cuenta, emitiendo Recibos Oficiales o Facturas con IVA/IRPF cuando proceda.
       </p>
     </div>
 
     <div class="info-widget">
       <h4 data-i18n="side_sup_title">🔐 ACCESO PRIVADO VERIFICADO</h4>
       <p data-i18n="side_sup_desc">
-        Identifícate con tu DNI/NIE/CIF para acceder a tu expediente, gestionar cobros, descargar recibos oficiales en PDF o abrir consulta con Elena IA Advisor.
+        Identifícate con tu DNI/NIE/CIF para acceder a tu expediente, gestionar cobros, descargar recibos o facturas en PDF o abrir consulta con Elena IA Advisor.
       </p>
     </div>
   </aside>
 </div>
-<!-- ==========================================================================
+ <!-- ==========================================================================
      VENTANA FLOTANTE A PANTALLA COMPLETA AL HACER CLIC EN UN TITULAR DEL CARRUSEL
      ========================================================================== -->
 <div id="modal-detalle-ticker-apunte" class="ticker-fullscreen-modal" onclick="if(event.target === this) cerrarDetalleApunteTicker()">
@@ -1890,7 +1944,7 @@
 </div>
 
 <!-- ==========================================================================
-     MODAL 1: ALTA / EDICIÓN DE PROPIEDAD (DIRECCIÓN + CP + GPS + OCUPACION_MAX + IBAN)
+     MODAL 1: ALTA / EDICIÓN DE PROPIEDAD (FILTROS DE SEGURIDAD + OCUPACION_MAX + IBAN)
      ========================================================================== -->
 <div id="modal-alta-propiedad" class="modal-backdrop" onclick="if(event.target === this) cerrarModal('modal-alta-propiedad')">
   <div class="modal-card">
@@ -1899,7 +1953,7 @@
       ➕ Alta / Edición de Propiedad · Dirección GPS, Ocupación Máxima, IBAN y Multimedia
     </h3>
     <p style="font-size:12.5px; color:var(--text-muted); margin-bottom:12px; line-height:1.5;">
-      Selecciona un inmueble de tu cartera para actualizar sus datos o añade una nueva propiedad:
+      Selecciona un inmueble de tu cartera para actualizar sus datos o añade una nueva propiedad. Los campos sensibles (<strong>Precio Alquiler</strong>, <strong>Ocupacion_Max</strong> e <strong>IBAN</strong>) en inmuebles existentes requieren desbloqueo consciente para evitar cambios accidentales:
     </p>
     <div class="prop-chips-bar" id="chips-modal-alta-propiedad" style="margin-bottom:16px;">
       <button type="button" class="prop-chip active" onclick="precargarPropiedadExistente('NUEVA')">➕ Nueva Propiedad</button>
@@ -1927,11 +1981,17 @@
           </select>
         </div>
         <div class="form-group" style="margin-bottom:0;">
-          <label for="prop-alta-renta" class="form-label">Precio Alquiler Mensual (€) *</label>
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:4px; margin-bottom:6px;">
+            <label for="prop-alta-renta" class="form-label" style="margin-bottom:0;">Precio Alquiler (€) *</label>
+            <button type="button" id="btn-desbloquear-renta" class="btn-outline-sm" style="display:none; padding:2px 7px; font-size:10.5px; border-color:var(--amber); color:var(--amber);" ondblclick="desbloquearCampoSensiblePropiedad('prop-alta-renta', 'btn-desbloquear-renta')" onclick="avisarFiltroSensible('Precio Alquiler')">🔒 2x Clic</button>
+          </div>
           <input type="number" step="0.01" id="prop-alta-renta" class="form-input" placeholder="Ej: 650.00" required>
         </div>
         <div class="form-group" style="margin-bottom:0;">
-          <label for="prop-alta-ocupacion-max" class="form-label">Ocupación Máx. (<code>Ocupacion_Max</code>)</label>
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:4px; margin-bottom:6px;">
+            <label for="prop-alta-ocupacion-max" class="form-label" style="margin-bottom:0;"><code>Ocupacion_Max</code></label>
+            <button type="button" id="btn-desbloquear-ocup" class="btn-outline-sm" style="display:none; padding:2px 7px; font-size:10.5px; border-color:var(--amber); color:var(--amber);" ondblclick="desbloquearCampoSensiblePropiedad('prop-alta-ocupacion-max', 'btn-desbloquear-ocup')" onclick="avisarFiltroSensible('Ocupacion_Max')">🔒 2x Clic</button>
+          </div>
           <input type="number" min="0" max="30" step="1" id="prop-alta-ocupacion-max" class="form-input" placeholder="Ej: 3">
         </div>
       </div>
@@ -1940,7 +2000,7 @@
       <div class="structured-address-box">
         <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:10px;">
           <span style="font-size:12.5px; font-weight:800; color:var(--neon-cyan); text-transform:uppercase;">
-            📍 Dirección del Inmueble (Código Postal Obligatorio + Geolocalización Google)
+            📍 Dirección del Inmueble (Código Postal Obligatorio + Geolocalización)
           </span>
           <button type="button" class="btn-outline-sm" id="btn-geocodificar-direccion" style="border-color:var(--neon-cyan); color:var(--neon-cyan); font-weight:800;" onclick="resolverPoblacionYCoordenadasGoogle(true)">
             🛰️ Calcular Población, LAN y LON
@@ -1985,7 +2045,7 @@
             <input type="text" inputmode="numeric" maxlength="5" id="prop-alta-cp-confirm" class="form-input" placeholder="Repite el CP" oninput="manejarCambioCodigoPostal()" required>
           </div>
           <div class="form-group" style="margin-bottom:0;">
-            <label for="prop-alta-poblacion" class="form-label">Población (Auto vía Google) *</label>
+            <label for="prop-alta-poblacion" class="form-label">Población (Auto) *</label>
             <input type="text" id="prop-alta-poblacion" class="form-input" placeholder="Se rellena al confirmar CP" oninput="actualizarDireccionConcatenadaEnVivo()" required>
           </div>
         </div>
@@ -2155,8 +2215,8 @@
       <div id="msg-prop-exito" class="status-msg ok"></div>
     </form>
   </div>
-</div>
-<!-- ==========================================================================
+</div> 
+  <!-- ==========================================================================
      MODAL 2: ALTA / ASIGNACIÓN DE INQUILINO
      ========================================================================== -->
 <div id="modal-alta-inquilino" class="modal-backdrop" onclick="if(event.target === this) cerrarModal('modal-alta-inquilino')">
@@ -2166,7 +2226,7 @@
       👤 Dar de Alta / Asignar Inquilino a Propiedad
     </h3>
     <p style="font-size:12.5px; color:var(--text-muted); margin-bottom:14px; line-height:1.5;">
-      Vincula un arrendatario a cualquiera de tus propiedades. El régimen fiscal según su personalidad y tipo de inmueble se aplica automáticamente:
+      Vincula un arrendatario a cualquiera de tus propiedades. El tratamiento documental (Recibo Oficial entre partes o Factura con IVA/IRPF si procede) se aplica automáticamente según el tipo de inmueble y la personalidad fiscal:
     </p>
 
     <form onsubmit="guardarNuevoInquilino(event)">
@@ -2178,9 +2238,9 @@
         <div class="form-group" style="margin-bottom:0;">
           <label for="inq-alta-personalidad" class="form-label">Tipo Personalidad Fiscal *</label>
           <select id="inq-alta-personalidad" class="form-input" style="cursor:pointer;">
-            <option value="PARTICULAR">👤 Particular (Sin IVA / Sin IRPF)</option>
-            <option value="AUTONOMO">💼 Autónomo (IVA + Retención IRPF)</option>
-            <option value="EMPRESA">🏢 Empresa / Sociedad CIF (Con IVA)</option>
+            <option value="PARTICULAR">👤 Particular (Recibo Oficial · Sin IVA / Sin IRPF)</option>
+            <option value="AUTONOMO">💼 Autónomo (IVA + Retención IRPF si procede)</option>
+            <option value="EMPRESA">🏢 Empresa / Sociedad CIF (IVA / Retención si procede)</option>
           </select>
         </div>
       </div>
@@ -2225,7 +2285,7 @@
       ⚡ Subir / Editar Recibo, Pago a Cuenta o Concepto Vario (Debe / Haber)
     </h3>
     <p style="font-size:12.5px; color:var(--text-muted); margin-bottom:14px; line-height:1.5;">
-      Registra una cuota de alquiler, una factura de suministros o un <strong>pago a cuenta</strong> (por defecto imputado a <strong>Suministros —electricidad/agua—</strong> o excepcionalmente a <strong>Alquiler</strong>), reflejándose en las consolas de Propietario, Inquilino y Abogado.
+      Registra una cuota de alquiler, un suministro o un <strong>pago a cuenta</strong> (por defecto imputado a <strong>Suministros —electricidad/agua—</strong> o excepcionalmente a <strong>Alquiler</strong>). El sistema calcula automáticamente el <strong>% cubierto</strong> sobre el total del recibo/cargo y lo refleja en las consolas de Propietario, Inquilino y Abogado.
     </p>
 
     <form onsubmit="guardarMovimientoSuministroManual(event)">
@@ -2238,8 +2298,8 @@
         <div class="form-group" style="margin-bottom:0;">
           <label for="sum-tipo-apunte" class="form-label">Tipo de Apunte Contable *</label>
           <select id="sum-tipo-apunte" class="form-input" style="cursor:pointer;">
-            <option value="DEBE">🔴 DEBE (Factura emitida / Cargo a cobrar)</option>
-            <option value="HABER">🟢 HABER (Pago realizado / Pago a cuenta inquilino)</option>
+            <option value="DEBE">🔴 DEBE (Cargo / Cuota / Suministro)</option>
+            <option value="HABER">🟢 HABER (Abono / Pago a cuenta inquilino)</option>
           </select>
         </div>
         <div class="form-group" style="margin-bottom:0;">
@@ -2253,8 +2313,8 @@
           <label for="sum-categoria" class="form-label">Categoría del Concepto *</label>
           <select id="sum-categoria" class="form-input" style="cursor:pointer;" onchange="actualizarEtiquetaImporteApunte()">
             <option value="Cuota mensual alquiler">🏠 Cuota Mensual de Alquiler → Importe Alquiler</option>
-            <option value="Regularización Luz">⚡ Factura Real Electricidad (Luz) → Suministros / Otros</option>
-            <option value="Regularización Agua">💧 Factura Real Agua → Suministros / Otros</option>
+            <option value="Regularización Luz">⚡ Factura / Cargo Real Electricidad (Luz) → Suministros / Otros</option>
+            <option value="Regularización Agua">💧 Factura / Cargo Real Agua → Suministros / Otros</option>
             <option value="A cuenta suministros">💶 Pago a Cuenta de Suministros (Luz/Agua) → Suministros / Otros</option>
             <option value="A cuenta alquiler">🏠 Pago a Cuenta de Alquiler (Caso Excepcional) → Alquiler</option>
             <option value="Repercusión IBI / Comunidad / Residuos">🏛️ Repercusión IBI / Comunidad / Residuos → Suministros / Otros</option>
@@ -2262,7 +2322,7 @@
           </select>
         </div>
         <div class="form-group" style="margin-bottom:0;">
-          <label for="sum-concepto" class="form-label">Detalle / Observaciones en Recibo *</label>
+          <label for="sum-concepto" class="form-label">Detalle / Observaciones *</label>
           <input type="text" id="sum-concepto" class="form-input" placeholder="Ej: Pago a cuenta suministro eléctrico" required>
         </div>
       </div>
@@ -2274,19 +2334,19 @@
       </div>
 
       <div class="form-group">
-        <label for="sum-file-factura" class="form-label">Adjuntar Factura / Justificante PDF o Imagen (FTP level.immo)</label>
+        <label for="sum-file-factura" class="form-label">Adjuntar Justificante / Documento PDF o Imagen (FTP level.immo)</label>
         <input type="file" id="sum-file-factura" accept=".pdf,image/*" class="form-input" style="padding:8px;">
       </div>
 
       <div class="privacy-box" style="border-color:rgba(0,243,255,0.3);">
         <input type="checkbox" id="chk-notificar-elena-sum" checked>
         <label for="chk-notificar-elena-sum" style="color:#e2e8f0;">
-          <strong>📲 Notificar por WhatsApp al inquilino con Elena IA Advisor</strong> informando del nuevo cargo, pago a cuenta o abono y del saldo vivo actualizado.
+          <strong>📲 Notificar por WhatsApp al inquilino con Elena IA Advisor</strong> informando del apunte, pago a cuenta o % cubierto y del saldo vivo actualizado.
         </label>
       </div>
 
       <button type="submit" id="btn-guardar-sum-manual" class="btn-primary" style="background:var(--neon-cyan); color:#042f2e;">
-        ⚡ Registrar en SUMINISTROS Y GASTOS y Actualizar Saldo Vivo →
+        ⚡ Registrar en SUMINISTROS Y GASTOS, Calcular % Cubierto y Sincronizar →
       </button>
       <div id="msg-sum-exito" class="status-msg ok"></div>
     </form>
@@ -2438,6 +2498,7 @@
     <div id="msg-tpv-exito" class="status-msg ok"></div>
   </div>
 </div>
+
 <!-- ==========================================================================
      MODAL 7: ENVIAR ENLACE DE PAGO AL INQUILINO (SOLO ABOGADO / REQUERIMIENTO)
      ========================================================================== -->
@@ -2496,8 +2557,7 @@
     </form>
   </div>
 </div>
-
-<!-- VENTANA DE CHAT DE ELENA IA ADVISOR (100% DETERMINISTA + MANUAL MULTIIDIOMA + LLAMADA ADVISOR) -->
+  <!-- VENTANA DE CHAT DE ELENA IA ADVISOR (100% DETERMINISTA + MANUAL MULTIIDIOMA + LLAMADA ADVISOR) -->
 <div id="elena-chat-window">
   <div style="background:#131c31; padding:12px 16px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--border);">
     <div style="display:flex; align-items:center; gap:10px;">
@@ -2598,7 +2658,7 @@
       <h4>1. Responsable del Tratamiento</h4>
       <p><strong>LEVEL PUNTO IMMO 24365 SLU</strong> (NIF B-26745430, Travessera de Gràcia, 56, 3-1a, 08006 Barcelona) garantiza la confidencialidad y seguridad de los datos personales tratados conforme al RGPD y la LOPDGDD.</p>
       <h4>2. Finalidad y Trazabilidad</h4>
-      <p>La finalidad del tratamiento es mantener un registro ordenado, íntegro y auditable de la gestión del inmueble y del arrendamiento: control de vencimientos y cobros, contabilización de rentas, pagos a cuenta y suministros (Debe/Haber), comunicaciones operativas vía Elena IA Advisor, histórico de incidencias y generación de informes periciales o jurídicos cuando la propiedad lo habilite. El sistema conserva la trazabilidad de los movimientos y comunicaciones vinculadas al expediente (incluyendo sello temporal, identificador de sesión y dirección IP de origen) para acreditar el estado real de las cuentas y actuaciones en cada momento.</p>
+      <p>La finalidad del tratamiento es mantener un registro ordenado, íntegro y auditable de la gestión del inmueble y del arrendamiento: control de vencimientos y cobros, contabilización de rentas, entregas a cuenta y suministros (Debe/Haber), comunicaciones operativas vía Elena IA Advisor, histórico de incidencias y generación de informes periciales o jurídicos cuando la propiedad lo habilite. El sistema conserva la trazabilidad de los movimientos y comunicaciones vinculadas al expediente (incluyendo sello temporal, identificador de sesión y dirección IP de origen) para acreditar el estado real de las cuentas y actuaciones en cada momento.</p>
     </div>
     <button type="button" class="btn-primary" onclick="cerrarModal('modal-privacidad')">Entendido y Cerrar</button>
   </div>
@@ -2738,7 +2798,7 @@
     </form>
   </div>
 </div>
-<script>
+ <script>
 // ============================================================================
 // ENDPOINTS DE MAKE Y CONSTANTES DEL SISTEMA
 // ============================================================================
@@ -2863,7 +2923,7 @@ document.addEventListener("click", function() {
 });
 
 // ============================================================================
-// DICCIONARIO MULTILINGÜE COMPLETO (ES, CA, VA, EN, FR, DE)
+// DICCIONARIO MULTILINGÜE COMPLETO (ES, CA, VA CON LÉXICO PROPIO, EN, FR, DE)
 // ============================================================================
 const I18N_DICCIONARIO = {
   es: {
@@ -2894,11 +2954,11 @@ const I18N_DICCIONARIO = {
     btn_view_contract: "📄 Ver Ficha, Contrato, Fiscalidad e IBAN",
     avisos_box_title: "📢 AVISOS Y NOTIFICACIONES DEL INMUEBLE",
     inc_box_title: "🛠️ INCIDENCIAS Y PARTES (HISTÓRICO TRAZABLE TIPO CHAT)",
-    recibos_box_title: "🧾 EXTRACTOS DE ALQUILER, SUMINISTROS (DEBE/HABER), TRANSFERENCIAS Y FACTURAS PDF",
+    recibos_box_title: "🧾 EXTRACTOS DE ALQUILER, SUMINISTROS (DEBE/HABER), TRANSFERENCIAS Y RECIBOS/FACTURAS PDF",
     side_sec_title: "🛡️ ARQUITECTURA AUTOMÁTICA", side_rule_title: "⚖️ SALDO VIVO Y FISCALIDAD",
-    side_rule_desc: "El sistema calcula en tiempo real el Saldo Vivo Actual (Suma Haber - Suma Debe) separando rentas de suministros, pagos a cuenta e IVA/IRPF.",
+    side_rule_desc: "El sistema calcula en tiempo real el Saldo Vivo Actual (Suma Haber - Suma Debe) y el % cubierto por entregas a cuenta, emitiendo Recibos Oficiales o Facturas con IVA/IRPF cuando proceda.",
     side_sup_title: "🔐 ACCESO PRIVADO VERIFICADO",
-    side_sup_desc: "Identifícate con tu DNI/NIE/CIF para acceder a tu expediente, gestionar cobros, descargar recibos oficiales en PDF o consultar la guía Elena IA.",
+    side_sup_desc: "Identifícate con tu DNI/NIE/CIF para acceder a tu expediente, gestionar cobros, descargar recibos o facturas en PDF o consultar la guía Elena IA.",
     math_prefix: "Verificación: ¿Cuánto es ",
     dock_cobros: "COBROS", dock_gasto: "+GASTO", dock_aviso: "AVISO", dock_solv: "SOLVENCIA", dock_legal: "LEGAL",
     solv_watermark: "Borrador", solv_title: "🏅 Certificado de Solvencia del Inquilino",
@@ -2934,11 +2994,11 @@ const I18N_DICCIONARIO = {
     btn_view_contract: "📄 Veure Fitxa, Contracte, Fiscalitat i IBAN",
     avisos_box_title: "📢 AVISOS I NOTIFICACIONS DE L'IMMOBLE",
     inc_box_title: "🛠️ INCIDÈNCIES I COMUNICATS (HISTÒRIC TRAÇABLE TIPUS XAT)",
-    recibos_box_title: "🧾 EXTRACTES DE LLOGUER, SUBMINISTRAMENTS (DEURE/HAVER), TRANSFERÈNCIES I FACTURES PDF",
+    recibos_box_title: "🧾 EXTRACTES DE LLOGUER, SUBMINISTRAMENTS (DEURE/HAVER), TRANSFERÈNCIES I REBUTS/FACTURES PDF",
     side_sec_title: "🛡️ ARQUITECTURA AUTOMÀTICA", side_rule_title: "⚖️ SALDO VIU I FISCALITAT",
-    side_rule_desc: "El sistema calcula en temps real el Saldo Viu Actual (Suma Haver - Suma Deure) separant rendes de subministraments, a compte i IVA/IRPF.",
+    side_rule_desc: "El sistema calcula en temps real el Saldo Viu Actual (Suma Haver - Suma Deure) i el % cobert per lliuraments a compte, emetent Rebuts Oficials o Factures amb IVA/IRPF quan pertoqui.",
     side_sup_title: "🔐 ACCÉS PRIVAT VERIFICAT",
-    side_sup_desc: "Identifica't amb el teu DNI/NIE/CIF per accedir al teu expedient, gestionar cobraments, descarregar rebuts oficials en PDF o consultar la guia Elena IA.",
+    side_sup_desc: "Identifica't amb el teu DNI/NIE/CIF per accedir al teu expedient, gestionar cobraments, descarregar rebuts o factures en PDF o consultar la guia Elena IA.",
     math_prefix: "Verificació: Quant és ",
     dock_cobros: "COBRAMENTS", dock_gasto: "+DESPESA", dock_aviso: "AVÍS", dock_solv: "SOLVÈNCIA", dock_legal: "LEGAL",
     solv_watermark: "Esborrany", solv_title: "🏅 Certificat de Solvència del Llogater",
@@ -2948,40 +3008,40 @@ const I18N_DICCIONARIO = {
   },
   va: {
     nav_demanda_mob: "🎯 Demanda", nav_mercado_mob: "📡 Mercat", nav_usuarios_mob: "🔑 Usuaris",
-    nav_demanda: "🎯 Demanda Activa", nav_mercado_real: "📡 Mercat Real", nav_inquilinos: "👥 Accés d'Usuaris",
-    nav_chivatazo: "📣 Xivatazo Nacional", nav_equipos: "💼 Uniu-vos a l'Equip d'Advisors a la vostra Zona",
-    nav_cobertura_titulo: "📍 Disponible en tota Espanya", nav_cobertura_sub: "Sigueu el primer en la vostra zona.",
+    nav_demanda: "🎯 Demanda Activa", nav_mercado_real: "📡 Mercat Real", nav_inquilinos: "👥 Accés a Usuaris",
+    nav_chivatazo: "📣 Xivatazo Nacional", nav_equipos: "💼 Uneix-te a l'Equip d'Advisors en la teua Zona",
+    nav_cobertura_titulo: "📍 Disponible en tota Espanya", nav_cobertura_sub: "Sigues el primer en la teua zona.",
     link_legal: "Avís Legal", link_privacidad: "Privacitat i LOPD", link_cookies: "Cookies i IA",
     topbar_title: "Consola PropTech · Reverse Market & Gestió Autònoma de Lloguers",
     badge_encrypted: "Accés Xifrat Multi-Rol",
     login_title: "Accés Residents, Propietaris i Serveis Jurídics",
-    login_desc: "Introduïu el vostre DNI/NIE/CIF per a accedir de forma segura al vostre panell privat i rebre el vostre PIN temporal de 4 xifres per WhatsApp.",
+    login_desc: "Introduïx el teu DNI/NIE/CIF per a accedir de manera segura a la teua finestra privada i rebre el teu PIN temporal de 4 xifres per WhatsApp.",
     label_dni: "DNI / NIE / CIF del Titular o Lletrat Autoritzat",
     chk_accept_prefix: "Accepte les", chk_accept_link: "Condicions i la Privacitat",
-    chk_accept_suffix: "Autoritze la consulta xifrada del meu expedient i l'enviament de PIN per WhatsApp.",
+    chk_accept_suffix: "Autoritze la consulta xifrada del meu expedient i l'enviament del PIN per WhatsApp.",
     btn_request_pin: "Sol·licitar Verificació VIP →",
-    pin_sent_title: "Sol·licitud enviada al vostre WhatsApp!",
-    pin_sent_desc: "Introduïu el PIN temporal de 4 xifres rebut al vostre WhatsApp per a obrir el vostre expedient a pantalla completa:",
+    pin_sent_title: "¡Sol·licitud enviada al teu WhatsApp!",
+    pin_sent_desc: "Introduïx el PIN temporal de 4 xifres rebut en el teu WhatsApp per a obrir el teu expedient a pantalla completa:",
     btn_enter_portal: "Entrar al Portal a Pantalla Completa →", btn_back: "← Tornar arrere",
     tab_resident: "🏠 Expedient del Resident",
     tab_owner: "👑 Àrea Propietari (Cartera, Subministraments, Transferències, Avisos i Advocat)",
     btn_toggle_sidebars: "⛶ Mostrar/Ocultar Panells Laterals", btn_logout: "✕ Tancar Sessió",
     owner_area_header: "👑 ÀREA SEGURA DEL PROPIETARI · GESTIÓ AUTÒNOMA EN TEMPS REAL",
     owner_hello: "Hola,", exp_box_title: "🏠 EXPEDIENT I PROPIETAT",
-    lbl_tenant: "Llogater / Titular:", lbl_property: "Immoble(s):", lbl_address: "Adreça / Ubicació:",
+    lbl_tenant: "Arrendatari / Titular:", lbl_property: "Immoble(s):", lbl_address: "Adreça / Ubicació:",
     lbl_map_box: "📍 Geolocalització i Navegació GPS:",
     btn_drive_auto: "Com arribar-hi (Cotxe)", btn_open_maps: "Google Maps", btn_fly_3d: "Vol 3D",
     btn_view_contract: "📄 Veure Fitxa, Contracte, Fiscalitat i IBAN",
     avisos_box_title: "📢 AVISOS I NOTIFICACIONS DE L'IMMOBLE",
     inc_box_title: "🛠️ INCIDÈNCIES I COMUNICATS (HISTÒRIC TRAÇABLE TIPUS XAT)",
-    recibos_box_title: "🧾 EXTRACTES DE LLOGUER, SUBMINISTRAMENTS (DEURE/HAVER), TRANSFERÈNCIES I FACTURES PDF",
+    recibos_box_title: "🧾 EXTRACTES DE LLOGUER, SUBMINISTRAMENTS (DEURE/HAVER), TRANSFERÈNCIES I REBUTS/FACTURES PDF",
     side_sec_title: "🛡️ ARQUITECTURA AUTOMÀTICA", side_rule_title: "⚖️ SALDO VIU I FISCALITAT",
-    side_rule_desc: "El sistema calcula en temps real el Saldo Viu Actual (Suma Haver - Suma Deure) separant rendes de subministraments, a compte i IVA/IRPF.",
+    side_rule_desc: "El sistema calcula en temps real el Saldo Viu Actual (Suma Haver - Suma Deure) i el % cobert per pagaments a compte, emetent Rebuts Oficials o Factures amb IVA/IRPF quan corresponga.",
     side_sup_title: "🔐 ACCÉS PRIVAT VERIFICAT",
-    side_sup_desc: "Identifiqueu-vos amb el vostre DNI/NIE/CIF per a accedir al vostre expedient, gestionar cobraments, descarregar rebuts oficials en PDF o consultar la guia Elena IA.",
+    side_sup_desc: "Identifica't amb el teu DNI/NIE/CIF per a accedir al teu expedient, gestionar cobraments, descarregar rebuts o factures en PDF o consultar la guia Elena IA.",
     math_prefix: "Verificació: Quant és ",
     dock_cobros: "COBRAMENTS", dock_gasto: "+DESPESA", dock_aviso: "AVÍS", dock_solv: "SOLVÈNCIA", dock_legal: "LEGAL",
-    solv_watermark: "Esborrany", solv_title: "🏅 Certificat de Solvència del Llogater",
+    solv_watermark: "Esborrany", solv_title: "🏅 Certificat de Solvència de l'Arrendatari",
     solv_draft_badge: "ESBORRANY · SENSE EMETRE",
     solv_desc: "La previsualització en pantalla es mostra en mode esborrany amb marca d'aigua. L'emissió oficial del certificat té un cost de 15,00 €.",
     solv_btn_emit: "🏅 Sol·licitar Emissió Oficial (15,00 €) →"
@@ -3014,11 +3074,11 @@ const I18N_DICCIONARIO = {
     btn_view_contract: "📄 View File, Contract, Taxes & IBAN",
     avisos_box_title: "📢 PROPERTY NOTICES & ALERTS",
     inc_box_title: "🛠️ INCIDENTS & REPORTS (TRACEABLE CHAT HISTORY)",
-    recibos_box_title: "🧾 RENT & UTILITY STATEMENTS (DEBIT/CREDIT), BANK TRANSFER & PDF INVOICES",
+    recibos_box_title: "🧾 RENT & UTILITY STATEMENTS (DEBIT/CREDIT), BANK TRANSFER & PDF RECEIPTS/INVOICES",
     side_sec_title: "🛡️ AUTOMATIC ARCHITECTURE", side_rule_title: "⚖️ LIVE BALANCE & TAXATION",
-    side_rule_desc: "The system calculates the Current Live Balance (Credit - Debit) in real time, separating rent from utilities, on-account payments and taxes.",
+    side_rule_desc: "The system calculates the Current Live Balance (Credit - Debit) and % covered by on-account payments in real time, issuing Official Receipts or Invoices with VAT/withholding when applicable.",
     side_sup_title: "🔐 VERIFIED PRIVATE ACCESS",
-    side_sup_desc: "Sign in with your ID/NIE/Tax ID to access your file, manage payments, download official PDF receipts or open the Elena AI App Guide.",
+    side_sup_desc: "Sign in with your ID/NIE/Tax ID to access your file, manage payments, download PDF receipts or invoices or open the Elena AI App Guide.",
     math_prefix: "Verification: What is ",
     dock_cobros: "BILLING", dock_gasto: "+EXPENSE", dock_aviso: "NOTICE", dock_solv: "SOLVENCY", dock_legal: "LEGAL",
     solv_watermark: "Draft", solv_title: "🏅 Tenant Solvency Certificate",
@@ -3054,11 +3114,11 @@ const I18N_DICCIONARIO = {
     btn_view_contract: "📄 Voir Fiche, Contrat, Fiscalité et IBAN",
     avisos_box_title: "📢 AVIS ET NOTIFICATIONS DU BIEN",
     inc_box_title: "🛠️ INCIDENTS ET INTERVENTIONS (HISTORIQUE CHAT TRAÇABLE)",
-    recibos_box_title: "🧾 RELEVÉS DE LOYER, CHARGES (DÉBIT/CRÉDIT), VIREMENT ET FACTURES PDF",
+    recibos_box_title: "🧾 RELEVÉS DE LOYER, CHARGES (DÉBIT/CRÉDIT), VIREMENT ET QUITTANCES/FACTURES PDF",
     side_sec_title: "🛡️ ARCHITECTURE AUTOMATIQUE", side_rule_title: "⚖️ SOLDE ACTUEL ET FISCALITÉ",
-    side_rule_desc: "Le système calcule en temps réel le Solde Actuel (Crédit - Débit) en séparant loyers, charges, acomptes et fiscalité.",
+    side_rule_desc: "Le système calcule en temps réel le Solde Actuel (Crédit - Débit) et le % couvert par acomptes, émettant Quittances Officielles ou Factures avec TVA/retenue si applicable.",
     side_sup_title: "🔐 ACCÈS PRIVÉ VÉRIFIÉ",
-    side_sup_desc: "Identifiez-vous avec votre DNI/NIE/CIF pour accéder à votre dossier, gérer les paiements, télécharger les quittances PDF ou ouvrir le guide Elena IA.",
+    side_sup_desc: "Identifiez-vous avec votre DNI/NIE/CIF pour accéder à votre dossier, gérer les paiements, télécharger les documents PDF ou ouvrir le guide Elena IA.",
     math_prefix: "Vérification : Combien font ",
     dock_cobros: "LOYERS", dock_gasto: "+CHARGES", dock_aviso: "AVIS", dock_solv: "SOLVABILITÉ", dock_legal: "JURIDIQUE",
     solv_watermark: "Brouillon", solv_title: "🏅 Certificat de Solvabilité du Locataire",
@@ -3096,7 +3156,7 @@ const I18N_DICCIONARIO = {
     inc_box_title: "🛠️ VORVÄLLE & MELDUNGEN (NACHVOLLZIEHBARER CHAT-VERLAUF)",
     recibos_box_title: "🧾 MIET- & NEBENKOSTENABRECHNUNGEN (SOLL/HABEN), ÜBERWEISUNG & PDF-BELEGE",
     side_sec_title: "🛡️ AUTOMATISCHE ARCHITEKTUR", side_rule_title: "⚖️ AKTUELLER SALDO & STEUERN",
-    side_rule_desc: "Das System berechnet in Echtzeit den aktuellen Saldo (Haben - Soll), getrennt nach Mieten, Nebenkosten, Anzahlungen und Steuern.",
+    side_rule_desc: "Das System berechnet in Echtzeit den aktuellen Saldo (Haben - Soll) und den % gedeckten Anteil durch Anzahlungen und erstellt offizielle Quittungen oder Rechnungen mit MwSt./Abzug.",
     side_sup_title: "🔐 VERIFIZIERTER PRIVATZUGANG",
     side_sup_desc: "Melden Sie sich mit Ihrer DNI/NIE/CIF an, um Ihre Akte einzusehen, Zahlungen zu verwalten, PDF-Belege herunterzuladen oder das App-Handbuch zu öffnen.",
     math_prefix: "Verifizierung: Was ergibt ",
@@ -3110,97 +3170,97 @@ const I18N_DICCIONARIO = {
 
 const I18N_PANEL_INTERNO = {
   es: {
-    c1_t: "🟢 Radar de Cobros y Transferencias", c1_p: "Control de alquileres (día 1), suministros y pagos a cuenta pendientes, abono manual o revertir estado y emisión de Recibo/Factura PDF.", c1_b: "Ver Recibos Pendientes y Emitir PDF",
-    c2_t: "⚡ Subir Suministro, Pago a Cuenta o Cargo", c2_p: "Registra o edita facturas reales de luz, agua, pagos a cuenta o reparaciones en el Debe/Haber del inmueble y notifica con Elena IA.", c2_b: "➕ Subir / Editar Recibo o Pago a Cuenta",
+    c1_t: "🟢 Radar de Cobros y Transferencias", c1_p: "Control de alquileres (día 1), suministros y pagos a cuenta (% cubierto), abono manual o revertir estado y emisión de Recibo/Factura PDF.", c1_b: "Ver Recibos Pendientes y Emitir PDF",
+    c2_t: "⚡ Subir Suministro, Pago a Cuenta o Cargo", c2_p: "Registra o edita facturas/cargos reales de luz, agua, pagos a cuenta o reparaciones en el Debe/Haber del inmueble y notifica con Elena IA.", c2_b: "➕ Subir / Editar Recibo o Pago a Cuenta",
     c3_t: "📢 Emitir Aviso o Notificación", c3_p: "Publica avisos generales en el panel del inquilino y dispara notificación inmediata por WhatsApp mediante Elena IA Advisor.", c3_b: "📣 Redactar Aviso / Notificación",
     c4_t: "⚖️ Solicitar Abogado / Informe Legal", c4_p: "Solicita o asigna tu abogado, abre el canal privado o descarga al instante el dosier completo en PDF con extracto Debe/Haber y pagos a cuenta.", c4_b: "⚖️ Solicitar Abogado / Descargar PDF",
     btn_alta_p: "➕ Alta de Propiedad / Subir Fotos →", btn_alta_i: "👤 Dar de Alta / Asignar Inquilino →", btn_alta_abg: "⚖️ Solicitar / Autorizar Abogado →",
-    sec_sum: "⚡ 1. MOTOR CONTABLE ANUAL DE ALQUILERES, SUMINISTROS Y GASTOS", btn_add_sum: "➕ Añadir Factura / Apunte Contable",
-    sec_rec: "🧾 2. LIBRO DE RECIBOS Y FACTURAS (ALQUILER DÍA 1, SUMINISTROS Y TRANSFERENCIAS)",
+    sec_sum: "⚡ 1. MOTOR CONTABLE ANUAL DE ALQUILERES, SUMINISTROS Y GASTOS", btn_add_sum: "➕ Añadir Apunte Contable / A Cuenta",
+    sec_rec: "🧾 2. LIBRO DE RECIBOS Y FACTURAS (ALQUILER DÍA 1, SUMINISTROS Y PAGOS A CUENTA)",
     sec_fichas: "🏛️ 3. FICHAS DE INMUEBLES, SALDO VIVO ACTUAL (HABER - DEBE) E INQUILINOS",
     sec_geo: "🚗 4. GEOLOCALIZACIÓN DINÁMICA DE CARTERA Y NAVEGACIÓN GPS EN AUTO",
     sec_abg: "⚖️ 5. SOLICITAR / ASIGNAR ABOGADO O SERVICIOS JURÍDICOS",
-    saldo_t: "Saldo Vivo Actual a Fecha de Hoy (Haber - Debe)", saldo_s: "Suma acumulada de pagos a cuenta y abonos menos facturas y vencimientos",
+    saldo_t: "Saldo Vivo Actual a Fecha de Hoy (Haber - Debe)", saldo_s: "Suma acumulada de entregas a cuenta y abonos menos facturas y vencimientos",
     btn_inc: "➕ Abrir Parte / Responder", ph_search: "🔍 Buscar piso, dirección o inquilino...",
     chip_all: "Todos", chip_pend: "🔴 Pendientes (Debe)", chip_paid: "🟢 Abonados (Haber / PDF)",
     lbl_inq_card: "Inquilino(s):", lbl_rent_card: "Renta / Suministros:", btn_exp: "👁️ Expediente", btn_photos: "✏️ Editar / Fotos",
-    btn_mark_paid: "✓ Pasar a Abonado + PDF", btn_revert_pend: "↩️ Pasar a Pendiente", btn_edit: "✏️ Editar", btn_pdf: "📄 Recibo Oficial PDF", btn_orig_pdf: "📎 Ver Justificante / Factura PDF",
+    btn_mark_paid: "✓ Pasar a Abonado + PDF", btn_revert_pend: "↩️ Pasar a Pendiente", btn_edit: "✏️ Editar", btn_pdf: "📄 Descargar PDF", btn_orig_pdf: "📎 Ver Justificante / Adjunto PDF",
     btn_tpv_maint: "🏦 Pagar (Transferencia / Banco)",
     tpv_maint_title: "🗓️ Pago directo con tarjeta (TPV) disponible a partir de diciembre.",
     tpv_maint_desc: "En este momento debes realizar el ingreso mediante transferencia bancaria al IBAN del contrato. Puedes acceder directamente a la app/web de tu banco desde aquí o imprimir la hoja con todos los conceptos para llevarla a tu oficina o cajero.",
-    sum_bar_label: "Resumen del listado mostrado", sum_bar_count: "recibo(s)", sum_bar_total: "Importe Total", sum_bar_pend: "Pendiente (Debe)", sum_bar_paid: "Abonado (Haber)"
+    sum_bar_label: "Resumen del listado mostrado", sum_bar_count: "movimiento(s)", sum_bar_total: "Importe Total", sum_bar_pend: "Pendiente (Debe)", sum_bar_paid: "Abonado / A Cuenta (Haber)"
   },
   ca: {
-    c1_t: "🟢 Radar de Cobraments i Transferències", c1_p: "Control de lloguers (dia 1), subministraments i pagaments a compte pendents, abonament manual o revertir estat i emissió de Rebut/Factura PDF.", c1_b: "Veure Rebuts Pendents i Emetre PDF",
-    c2_t: "⚡ Pujar Subministrament, A Compte o Càrrec", c2_p: "Registra o edita factures reals de llum, aigua, pagaments a compte o reparacions al Deure/Haver de l'immoble i notifica amb Elena IA.", c2_b: "➕ Pujar / Editar Rebut o A Compte",
+    c1_t: "🟢 Radar de Cobraments i Transferències", c1_p: "Control de lloguers (dia 1), subministraments i pagaments a compte (% cobert), abonament manual o revertir estat i emissió de Rebut/Factura PDF.", c1_b: "Veure Rebuts Pendents i Emetre PDF",
+    c2_t: "⚡ Pujar Subministrament, A Compte o Càrrec", c2_p: "Registra o edita factures/càrrecs reals de llum, aigua, pagaments a compte o reparacions al Deure/Haver de l'immoble i notifica amb Elena IA.", c2_b: "➕ Pujar / Editar Rebut o A Compte",
     c3_t: "📢 Emetre Avís o Notificació", c3_p: "Publica avisos generals al panell del llogater i envia notificació immediata per WhatsApp mitjançant Elena IA Advisor.", c3_b: "📣 Redactar Avís / Notificació",
     c4_t: "⚖️ Sol·licitar Advocat / Informe Legal", c4_p: "Sol·licita o assigna el teu advocat, obre el canal privat o descarrega a l'instant el dossier complet en PDF amb extracte Deure/Haver i a compte.", c4_b: "⚖️ Sol·licitar Advocat / Informe PDF",
     btn_alta_p: "➕ Alta de Propietat / Pujar Fotos →", btn_alta_i: "👤 Donar d'Alta / Assignar Llogater →", btn_alta_abg: "⚖️ Sol·licitar / Autoritzar Advocat →",
-    sec_sum: "⚡ 1. MOTOR COMPTABLE ANUAL DE LLOGUERS, SUBMINISTRAMENTS I DESPESES", btn_add_sum: "➕ Afegir Factura / Assentament Comptable",
-    sec_rec: "🧾 2. LLIBRE DE REBUTS I FACTURES (LLOGUER DIA 1, SUBMINISTRAMENTS I TRANSFERÈNCIES)",
+    sec_sum: "⚡ 1. MOTOR COMPTABLE ANUAL DE LLOGUERS, SUBMINISTRAMENTS I DESPESES", btn_add_sum: "➕ Afegir Assentament Comptable / A Compte",
+    sec_rec: "🧾 2. LLIBRE DE REBUTS I FACTURES (LLOGUER DIA 1, SUBMINISTRAMENTS I A COMPTE)",
     sec_fichas: "🏛️ 3. FITXES D'IMMOBLES, SALDO VIU ACTUAL (HAVER - DEURE) I LLOGATERS",
     sec_geo: "🚗 4. GEOLOCALITZACIÓ DINÀMICA DE CARTERA I NAVEGACIÓ GPS EN COTXE",
     sec_abg: "⚖️ 5. SOL·LICITAR / ASSIGNAR ADVOCAT O SERVEIS JURÍDICS",
-    saldo_t: "Saldo Viu Actual a Data d'Avui (Haver - Deure)", saldo_s: "Suma acumulada de pagaments a compte i abonaments menys factures i venciments",
+    saldo_t: "Saldo Viu Actual a Data d'Avui (Haver - Deure)", saldo_s: "Suma acumulada de lliuraments a compte i abonaments menys factures i venciments",
     btn_inc: "➕ Obrir Comunicat / Respondre", ph_search: "🔍 Cercar pis, adreça o llogater...",
     chip_all: "Tots", chip_pend: "🔴 Pendents (Deure)", chip_paid: "🟢 Abonats (Haver / PDF)",
     lbl_inq_card: "Llogater(s):", lbl_rent_card: "Renda / Subministraments:", btn_exp: "👁️ Expedient", btn_photos: "✏️ Editar / Fotos",
-    btn_mark_paid: "✓ Passar a Abonat + PDF", btn_revert_pend: "↩️ Passar a Pendent", btn_edit: "✏️ Editar", btn_pdf: "📄 Rebut Oficial PDF", btn_orig_pdf: "📎 Veure Justificant / Factura PDF",
+    btn_mark_paid: "✓ Passar a Abonat + PDF", btn_revert_pend: "↩️ Passar a Pendent", btn_edit: "✏️ Editar", btn_pdf: "📄 Descarregar PDF", btn_orig_pdf: "📎 Veure Justificant / Adjunt PDF",
     btn_tpv_maint: "🏦 Pagar (Transferència / Banc)",
     tpv_maint_title: "🗓️ Pagament directe amb targeta (TPV) disponible a partir de desembre.",
     tpv_maint_desc: "En aquest moment has de fer l'ingrés mitjançant transferència bancària a l'IBAN del contracte. Pots accedir directament a l'app/web del teu banc des d'aquí o imprimir el full amb tots els conceptes per portar-lo a la teva oficina o caixer.",
-    sum_bar_label: "Resum del llistat mostrat", sum_bar_count: "rebut(s)", sum_bar_total: "Import Total", sum_bar_pend: "Pendent (Deure)", sum_bar_paid: "Abonat (Haver)"
+    sum_bar_label: "Resum del llistat mostrat", sum_bar_count: "moviment(s)", sum_bar_total: "Import Total", sum_bar_pend: "Pendent (Deure)", sum_bar_paid: "Abonat / A Compte (Haver)"
   },
   va: {
-    c1_t: "🟢 Radar de Cobraments i Transferències", c1_p: "Control de lloguers (dia 1), subministraments i pagaments a compte pendents, abonament manual o revertir estat i emissió de Rebut/Factura PDF.", c1_b: "Veure Rebuts Pendents i Emetre PDF",
-    c2_t: "⚡ Pujar Subministrament, A Compte o Càrrec", c2_p: "Registra o edita factures reals de llum, aigua, pagaments a compte o reparacions al Deure/Haver de l'immoble i notifica amb Elena IA.", c2_b: "➕ Pujar / Editar Rebut o A Compte",
-    c3_t: "📢 Emetre Avís o Notificació", c3_p: "Publica avisos generals en el panell del llogater i envia notificació immediata per WhatsApp mitjançant Elena IA Advisor.", c3_b: "📣 Redactar Avís / Notificació",
+    c1_t: "🟢 Radar de Cobraments i Transferències", c1_p: "Control de lloguers (dia 1), subministraments i pagaments a compte (% cobert), abonament manual o revertir estat i emissió de Rebut/Factura PDF.", c1_b: "Veure Rebuts Pendents i Emetre PDF",
+    c2_t: "⚡ Pujar Subministrament, A Compte o Càrrec", c2_p: "Registra o edita factures/càrrecs reals de llum, aigua, pagaments a compte o reparacions al Deure/Haver de l'immoble i notifica amb Elena IA.", c2_b: "➕ Pujar / Editar Rebut o A Compte",
+    c3_t: "📢 Emetre Avís o Notificació", c3_p: "Publica avisos generals en la finestra de l'arrendatari i envia notificació immediata per WhatsApp mitjançant Elena IA Advisor.", c3_b: "📣 Redactar Avís / Notificació",
     c4_t: "⚖️ Sol·licitar Advocat / Informe Legal", c4_p: "Sol·licita o assigna el teu advocat, obri el canal privat o descarrega a l'instant el dossier complet en PDF amb extracte Deure/Haver i a compte.", c4_b: "⚖️ Sol·licitar Advocat / Informe PDF",
-    btn_alta_p: "➕ Alta de Propietat / Pujar Fotos →", btn_alta_i: "👤 Donar d'Alta / Assignar Llogater →", btn_alta_abg: "⚖️ Sol·licitar / Autoritzar Advocat →",
-    sec_sum: "⚡ 1. MOTOR COMPTABLE ANUAL DE LLOGUERS, SUBMINISTRAMENTS I DESPESES", btn_add_sum: "➕ Afegir Factura / Assentament Comptable",
-    sec_rec: "🧾 2. LLIBRE DE REBUTS I FACTURES (LLOGUER DIA 1, SUBMINISTRAMENTS I TRANSFERÈNCIES)",
-    sec_fichas: "🏛️ 3. FITXES D'IMMOBLES, SALDO VIU ACTUAL (HAVER - DEURE) I LLOGATERS",
+    btn_alta_p: "➕ Alta de Propietat / Pujar Fotos →", btn_alta_i: "👤 Donar d'Alta / Assignar Arrendatari →", btn_alta_abg: "⚖️ Sol·licitar / Autoritzar Advocat →",
+    sec_sum: "⚡ 1. MOTOR COMPTABLE ANUAL DE LLOGUERS, SUBMINISTRAMENTS I DESPESES", btn_add_sum: "➕ Afegir Assentament Comptable / A Compte",
+    sec_rec: "🧾 2. LLIBRE DE REBUTS I FACTURES (LLOGUER DIA 1, SUBMINISTRAMENTS I A COMPTE)",
+    sec_fichas: "🏛️ 3. FITXES D'IMMOBLES, SALDO VIU ACTUAL (HAVER - DEURE) I ARRENDATARIS",
     sec_geo: "🚗 4. GEOLOCALITZACIÓ DINÀMICA DE CARTERA I NAVEGACIÓ GPS EN COTXE",
     sec_abg: "⚖️ 5. SOL·LICITAR / ASSIGNAR ADVOCAT O SERVEIS JURÍDICS",
     saldo_t: "Saldo Viu Actual a Data de Hui (Haver - Deure)", saldo_s: "Suma acumulada de pagaments a compte i abonaments menys factures i venciments",
-    btn_inc: "➕ Obrir Comunicat / Respondre", ph_search: "🔍 Buscar pis, adreça o llogater...",
+    btn_inc: "➕ Obrir Comunicat / Respondre", ph_search: "🔍 Buscar pis, adreça o arrendatari...",
     chip_all: "Tots", chip_pend: "🔴 Pendents (Deure)", chip_paid: "🟢 Abonats (Haver / PDF)",
-    lbl_inq_card: "Llogater(s):", lbl_rent_card: "Renda / Subministraments:", btn_exp: "👁️ Expedient", btn_photos: "✏️ Editar / Fotos",
-    btn_mark_paid: "✓ Passar a Abonat + PDF", btn_revert_pend: "↩️ Passar a Pendent", btn_edit: "✏️ Editar", btn_pdf: "📄 Rebut Oficial PDF", btn_orig_pdf: "📎 Veure Justificant / Factura PDF",
+    lbl_inq_card: "Arrendatari(s):", lbl_rent_card: "Renda / Subministraments:", btn_exp: "👁️ Expedient", btn_photos: "✏️ Editar / Fotos",
+    btn_mark_paid: "✓ Passar a Abonat + PDF", btn_revert_pend: "↩️ Passar a Pendent", btn_edit: "✏️ Editar", btn_pdf: "📄 Descarregar PDF", btn_orig_pdf: "📎 Veure Justificant / Adjunt PDF",
     btn_tpv_maint: "🏦 Pagar (Transferència / Banc)",
     tpv_maint_title: "🗓️ Pagament directe amb targeta (TPV) disponible a partir de desembre.",
-    tpv_maint_desc: "En este moment has de fer l'ingrés mitjançant transferència bancària a l'IBAN del contracte. Pots accedir directament a l'app/web del teu banc des d'ací o imprimir el full amb tots els conceptes per a portar-lo a la teva oficina o caixer.",
-    sum_bar_label: "Resum del llistat mostrat", sum_bar_count: "rebut(s)", sum_bar_total: "Import Total", sum_bar_pend: "Pendent (Deure)", sum_bar_paid: "Abonat (Haver)"
+    tpv_maint_desc: "En este moment has de fer l'ingrés mitjançant transferència bancària a l'IBAN del contracte. Pots accedir directament a l'app/web del teu banc des d'ací o imprimir el full amb tots els conceptes per a portar-lo a la teua oficina o caixer.",
+    sum_bar_label: "Resum del llistat mostrat", sum_bar_count: "moviment(s)", sum_bar_total: "Import Total", sum_bar_pend: "Pendent (Deure)", sum_bar_paid: "Abonat / A Compte (Haver)"
   },
   en: {
-    c1_t: "🟢 Collections & Bank Transfers Radar", c1_p: "Track rent (day 1), pending utilities and payments on account, manual payment or revert status and issue PDF Receipts/Invoices.", c1_b: "View Pending Receipts & Issue PDF",
-    c2_t: "⚡ Upload Utility, On-Account or Charge", c2_p: "Log or edit real electricity, water, payments on account or repair bills in the Debit/Credit ledger and notify via Elena AI.", c2_b: "➕ Upload / Edit Receipt or On-Account",
+    c1_t: "🟢 Collections & Bank Transfers Radar", c1_p: "Track rent (day 1), pending utilities and payments on account (% covered), manual payment or revert status and issue PDF Receipts/Invoices.", c1_b: "View Pending Receipts & Issue PDF",
+    c2_t: "⚡ Upload Utility, On-Account or Charge", c2_p: "Log or edit electricity, water, payments on account or repair entries in the Debit/Credit ledger and notify via Elena AI.", c2_b: "➕ Upload / Edit Receipt or On-Account",
     c3_t: "📢 Issue Notice or Alert", c3_p: "Post general notices on the tenant's dashboard and trigger instant WhatsApp notifications via Elena AI Advisor.", c3_b: "📣 Write Notice / Notification",
     c4_t: "⚖️ Request Lawyer / Legal Report", c4_p: "Request or assign your lawyer, open the private channel or instantly download the full PDF dossier with Debit/Credit statement.", c4_b: "⚖️ Request Lawyer / PDF Report",
     btn_alta_p: "➕ Add Property / Upload Photos →", btn_alta_i: "👤 Register / Assign Tenant →", btn_alta_abg: "⚖️ Request / Authorize Lawyer →",
-    sec_sum: "⚡ 1. ANNUAL RENTS, UTILITIES & EXPENSES ACCOUNTING ENGINE", btn_add_sum: "➕ Add Invoice / Accounting Entry",
-    sec_rec: "🧾 2. RECEIPTS & INVOICES LEDGER (DAY 1 RENT, UTILITIES & TRANSFERS)",
+    sec_sum: "⚡ 1. ANNUAL RENTS, UTILITIES & EXPENSES ACCOUNTING ENGINE", btn_add_sum: "➕ Add Accounting Entry / On-Account",
+    sec_rec: "🧾 2. RECEIPTS & INVOICES LEDGER (DAY 1 RENT, UTILITIES & ON-ACCOUNT)",
     sec_fichas: "🏛️ 3. PROPERTY CARDS, CURRENT LIVE BALANCE (CREDIT - DEBIT) & TENANTS",
     sec_geo: "🚗 4. DYNAMIC PORTFOLIO GEOLOCATION & CAR GPS NAVIGATION",
     sec_abg: "⚖️ 5. REQUEST / ASSIGN LAWYER OR LEGAL SERVICES",
-    saldo_t: "Current Live Balance as of Today (Credit - Debit)", saldo_s: "Cumulative sum of payments on account and credits minus bills and due dates",
+    saldo_t: "Current Live Balance as of Today (Credit - Debit)", saldo_s: "Cumulative sum of on-account payments and credits minus bills and due dates",
     btn_inc: "➕ Open Ticket / Reply", ph_search: "🔍 Search property, address or tenant...",
     chip_all: "All", chip_pend: "🔴 Pending (Debit)", chip_paid: "🟢 Paid (Credit / PDF)",
     lbl_inq_card: "Tenant(s):", lbl_rent_card: "Rent / Utilities:", btn_exp: "👁️ File", btn_photos: "✏️ Edit / Photos",
-    btn_mark_paid: "✓ Mark as Paid + PDF", btn_revert_pend: "↩️ Revert to Pending", btn_edit: "✏️ Edit", btn_pdf: "📄 Official PDF Receipt", btn_orig_pdf: "📎 View Receipt / Invoice PDF",
+    btn_mark_paid: "✓ Mark as Paid + PDF", btn_revert_pend: "↩️ Revert to Pending", btn_edit: "✏️ Edit", btn_pdf: "📄 Download PDF", btn_orig_pdf: "📎 View Attachment / Receipt PDF",
     btn_tpv_maint: "🏦 Pay (Bank Transfer / App)",
     tpv_maint_title: "🗓️ Direct card payment (POS) available starting in December.",
     tpv_maint_desc: "At this time, please pay by bank transfer to the contract's IBAN. You can access your bank's app/website directly here or print the payment sheet with all details for your branch or ATM.",
-    sum_bar_label: "Summary of displayed items", sum_bar_count: "receipt(s)", sum_bar_total: "Total Amount", sum_bar_pend: "Pending (Debit)", sum_bar_paid: "Paid (Credit)"
+    sum_bar_label: "Summary of displayed items", sum_bar_count: "item(s)", sum_bar_total: "Total Amount", sum_bar_pend: "Pending (Debit)", sum_bar_paid: "Paid / On-Account (Credit)"
   },
   fr: {
-    c1_t: "🟢 Radar d'Encaissements & Virements", c1_p: "Suivi des loyers (jour 1), charges et acomptes en attente, paiement manuel ou annulation d'état et émission de Quittance/Facture PDF.", c1_b: "Voir Quittances en Attente & PDF",
+    c1_t: "🟢 Radar d'Encaissements & Virements", c1_p: "Suivi des loyers (jour 1), charges et acomptes (% couvert), paiement manuel ou annulation d'état et émission de Quittance/Facture PDF.", c1_b: "Voir Quittances en Attente & PDF",
     c2_t: "⚡ Ajouter Charge, Acompte ou Frais", c2_p: "Enregistrez ou modifiez les factures d'eau, d'électricité, paiements d'acompte ou réparations au Débit/Crédit du bien et notifiez via Elena IA.", c2_b: "➕ Ajouter / Modifier Quittance ou Acompte",
     c3_t: "📢 Émettre un Avis ou Notification", c3_p: "Publiez des avis sur le portail du locataire et envoyez une notification immédiate par WhatsApp via Elena IA Advisor.", c3_b: "📣 Rédiger Avis / Notification",
     c4_t: "⚖️ Demander un Avocat / Rapport Juridique", c4_p: "Demandez ou autorisez votre avocat, ouvrez le canal privé ou générez instantanément le dossier PDF complet avec extrait Débit/Crédit.", c4_b: "⚖️ Demander Avocat / Rapport PDF",
     btn_alta_p: "➕ Ajouter un Bien / Photos →", btn_alta_i: "👤 Enregistrer / Assigner Locataire →", btn_alta_abg: "⚖️ Demander / Autoriser Avocat →",
-    sec_sum: "⚡ 1. MOTEUR COMPTABLE ANNUEL DES LOYERS, CHARGES ET DÉPENSES", btn_add_sum: "➕ Ajouter Facture / Écriture Comptable",
-    sec_rec: "🧾 2. LIVRE DES QUITTANCES ET FACTURES (LOYER JOUR 1, CHARGES & VIREMENTS)",
+    sec_sum: "⚡ 1. MOTEUR COMPTABLE ANNUEL DES LOYERS, CHARGES ET DÉPENSES", btn_add_sum: "➕ Ajouter Écriture Comptable / Acompte",
+    sec_rec: "🧾 2. LIVRE DES QUITTANCES ET FACTURES (LOYER JOUR 1, CHARGES & ACOMPTES)",
     sec_fichas: "🏛️ 3. FICHES DES BIENS, SOLDE ACTUEL (CRÉDIT - DÉBIT) & LOCATAIRES",
     sec_geo: "🚗 4. GÉOLOCALISATION DYNAMIQUE DU PORTEFEUILLE & NAVIGATION GPS AUTO",
     sec_abg: "⚖️ 5. DEMANDER / ASSIGNER AVOCAT OU SERVICES JURIDIQUES",
@@ -3208,20 +3268,20 @@ const I18N_PANEL_INTERNO = {
     btn_inc: "➕ Ouvrir Ticket / Répondre", ph_search: "🔍 Rechercher bien, adresse ou locataire...",
     chip_all: "Tous", chip_pend: "🔴 En attente (Débit)", chip_paid: "🟢 Payés (Crédit / PDF)",
     lbl_inq_card: "Locataire(s) :", lbl_rent_card: "Loyer / Charges :", btn_exp: "👁️ Dossier", btn_photos: "✏️ Modifier / Photos",
-    btn_mark_paid: "✓ Marquer Payé + PDF", btn_revert_pend: "↩️ Remettre en Attente", btn_edit: "✏️ Modifier", btn_pdf: "📄 Quittance PDF", btn_orig_pdf: "📎 Voir Justificatif / Facture PDF",
+    btn_mark_paid: "✓ Marquer Payé + PDF", btn_revert_pend: "↩️ Remettre en Attente", btn_edit: "✏️ Modifier", btn_pdf: "📄 Télécharger PDF", btn_orig_pdf: "📎 Voir Justificatif / Pièce PDF",
     btn_tpv_maint: "🏦 Payer (Virement / Banque)",
     tpv_maint_title: "🗓️ Paiement direct par carte (TPV) disponible à partir de décembre.",
     tpv_maint_desc: "Pour le moment, veuillez effectuer le règlement par virement bancaire sur l'IBAN du contrat. Vous pouvez accéder directement à l'application de votre banque ici ou imprimer la fiche récapitulative.",
-    sum_bar_label: "Récapitulatif de la liste affichée", sum_bar_count: "quittance(s)", sum_bar_total: "Montant Total", sum_bar_pend: "En attente (Débit)", sum_bar_paid: "Payé (Crédit)"
+    sum_bar_label: "Récapitulatif de la liste affichée", sum_bar_count: "écriture(s)", sum_bar_total: "Montant Total", sum_bar_pend: "En attente (Débit)", sum_bar_paid: "Payé / Acompte (Crédit)"
   },
   de: {
-    c1_t: "🟢 Inkasso- & Überweisungs-Radar", c1_p: "Kontrolle von Mieten (Tag 1), Nebenkosten und Anzahlungen, Zahlung oder Status zurücksetzen sowie PDF-Quittung/Rechnung.", c1_b: "Offene Belege prüfen & PDF erstellen",
+    c1_t: "🟢 Inkasso- & Überweisungs-Radar", c1_p: "Kontrolle von Mieten (Tag 1), Nebenkosten und Anzahlungen (% gedeckt), Zahlung oder Status zurücksetzen sowie PDF-Quittung/Rechnung.", c1_b: "Offene Belege prüfen & PDF erstellen",
     c2_t: "⚡ Nebenkosten, Anzahlung oder Beleg", c2_p: "Erfassen oder bearbeiten Sie Strom-, Wasser-, Anzahlungs- oder Reparaturbelege im Soll/Haben der Immobilie und benachrichtigen Sie per Elena KI.", c2_b: "➕ Beleg oder Anzahlung hinzufügen/bearbeiten",
     c3_t: "📢 Hinweis oder Mitteilung senden", c3_p: "Veröffentlichen Sie Hinweise im Mieterportal und senden Sie sofortige WhatsApp-Benachrichtigungen über Elena KI-Advisor.", c3_b: "📣 Hinweis / Mitteilung verfassen",
     c4_t: "⚖️ Anwalt anfordern / Rechtsbericht PDF", c4_p: "Fordern Sie Ihren Anwalt an, öffnen Sie den privaten Kanal oder erstellen Sie sofort das komplette PDF-Dossier mit Soll/Haben-Auszug.", c4_b: "⚖️ Anwalt anfordern / PDF-Bericht",
     btn_alta_p: "➕ Immobilie anlegen / Fotos →", btn_alta_i: "👤 Mieter registrieren / zuweisen →", btn_alta_abg: "⚖️ Anwalt anfordern / autorisieren →",
-    sec_sum: "⚡ 1. JÄHRLICHER BUCHHALTUNGSMOTOR FÜR MIETEN, NEBENKOSTEN & AUSGABEN", btn_add_sum: "➕ Rechnung / Buchungssatz hinzufügen",
-    sec_rec: "🧾 2. QUITTUNGS- & RECHNUNGSBUCH (MIETE TAG 1, NEBENKOSTEN & ÜBERWEISUNGEN)",
+    sec_sum: "⚡ 1. JÄHRLICHER BUCHHALTUNGSMOTOR FÜR MIETEN, NEBENKOSTEN & AUSGABEN", btn_add_sum: "➕ Buchungssatz / Anzahlung hinzufügen",
+    sec_rec: "🧾 2. QUITTUNGS- & RECHNUNGSBUCH (MIETE TAG 1, NEBENKOSTEN & ANZAHLUNGEN)",
     sec_fichas: "🏛️ 3. IMMOBILIENKARTEN, AKTUELLER SALDO (HABEN - SOLL) & MIETER",
     sec_geo: "🚗 4. DYNAMISCHE PORTFOLIO-GEOLOKALISIERUNG & AUTO-GPS-NAVIGATION",
     sec_abg: "⚖️ 5. ANWALT / RECHTSDIENSTE ANFORDERN ODER ZUWEISEN",
@@ -3229,16 +3289,16 @@ const I18N_PANEL_INTERNO = {
     btn_inc: "➕ Ticket öffnen / Antworten", ph_search: "🔍 Wohnung, Adresse oder Mieter suchen...",
     chip_all: "Alle", chip_pend: "🔴 Offen (Soll)", chip_paid: "🟢 Bezahlt (Haben / PDF)",
     lbl_inq_card: "Mieter:", lbl_rent_card: "Miete / Nebenkosten:", btn_exp: "👁️ Akte", btn_photos: "✏️ Bearbeiten / Fotos",
-    btn_mark_paid: "✓ Als Bezahlt markieren + PDF", btn_revert_pend: "↩️ Auf Offen zurücksetzen", btn_edit: "✏️ Bearbeiten", btn_pdf: "📄 Offizielle PDF-Quittung", btn_orig_pdf: "📎 Beleg / Rechnung PDF",
+    btn_mark_paid: "✓ Als Bezahlt markieren + PDF", btn_revert_pend: "↩️ Auf Offen zurücksetzen", btn_edit: "✏️ Bearbeiten", btn_pdf: "📄 PDF herunterladen", btn_orig_pdf: "📎 Beleg / Anhang PDF",
     btn_tpv_maint: "🏦 Zahlen (Überweisung / Bank)",
     tpv_maint_title: "🗓️ Direkte Kartenzahlung (POS) ab Dezember verfügbar.",
     tpv_maint_desc: "Bitte überweisen Sie den Betrag derzeit per Banküberweisung an die IBAN im Vertrag. Sie können hier direkt Ihre Banking-App öffnen oder ein Druckblatt mit allen Daten erstellen.",
-    sum_bar_label: "Zusammenfassung der angezeigten Liste", sum_bar_count: "Beleg(e)", sum_bar_total: "Gesamtbetrag", sum_bar_pend: "Offen (Soll)", sum_bar_paid: "Bezahlt (Haben)"
+    sum_bar_label: "Zusammenfassung der angezeigten Liste", sum_bar_count: "Buchung(en)", sum_bar_total: "Gesamtbetrag", sum_bar_pend: "Offen (Soll)", sum_bar_paid: "Bezahlt / Anzahlung (Haben)"
   }
 };
 
 // ============================================================================
-// MANUAL OFICIAL DE USO DE LA APP (ES, CA, VA, EN, FR, DE · SIN INVENCIONES)
+// MANUAL OFICIAL DE USO DE LA APP (ES, CA, VA CON LÉXICO PROPIO, EN, FR, DE)
 // ============================================================================
 const MANUAL_APP_I18N = {
   es: {
@@ -3246,9 +3306,9 @@ const MANUAL_APP_I18N = {
     intro: "Guía paso a paso verificada de todas las funciones disponibles en tu cuenta:",
     bloques: [
       "1️⃣ <strong>Acceso Seguro Multi-Rol:</strong> Inicia sesión con tu DNI/NIE/CIF y el PIN temporal de 4 cifras enviado a tu WhatsApp. El sistema identifica automáticamente si eres Propietario, Inquilino o Despacho Jurídico.",
-      "2️⃣ <strong>Altas de Cartera (Botones Superiores):</strong> Desde <em>➕ Alta de Propiedad</em> puedes dar de alta o editar inmuebles, validar el Código Postal con coordenadas GPS, registrar <code>Ocupacion_Max</code>, configurar gastos LAU, desbloquear con doble clic el IBAN bancario y subir contrato PDF y fotos.",
-      "3️⃣ <strong>Motor Contable Anual y Pagos a Cuenta (Bloque 1):</strong> Filtra por Año (2026, 2027 o Todos) y por Propiedad o Cartera Global. Registra cuotas de alquiler, suministros o pagos a cuenta (por defecto a cuenta de suministros o, en casos excepcionales, de alquiler). Haz clic en cualquier titular del carrusel lento inferior para abrir su ficha a pantalla completa.",
-      "4️⃣ <strong>Libro de Recibos y Pagos (Bloque 2):</strong> Filtra por Pendientes o Abonados. Los propietarios pueden pasar recibos a Abonado (generando PDF oficial) o revertirlos a Pendiente. Los inquilinos pueden realizar el pago por transferencia bancaria con QR SEPA, enlace directo a su banco u hoja imprimible A4 (TPV con tarjeta disponible a partir de diciembre).",
+      "2️⃣ <strong>Altas de Cartera (Botones Superiores):</strong> Desde <em>➕ Alta de Propiedad</em> puedes dar de alta o editar inmuebles, validar el Código Postal con coordenadas GPS, registrar <code>Ocupacion_Max</code>, configurar gastos LAU, desbloquear con doble clic campos sensibles (Precio Alquiler, <code>Ocupacion_Max</code> e IBAN) y subir contrato PDF y fotos.",
+      "3️⃣ <strong>Motor Contable Anual y Pagos a Cuenta (Bloque 1):</strong> Filtra por Año y por Propiedad o Cartera Global. Registra cuotas de alquiler, suministros o pagos a cuenta (por defecto a cuenta de suministros o, en casos excepcionales, de alquiler), calculando automáticamente el <strong>% cubierto</strong>. Haz clic en cualquier titular del carrusel para abrir su ficha a pantalla completa.",
+      "4️⃣ <strong>Libro de Recibos / Facturas y Pagos (Bloque 2):</strong> Filtra por Pendientes o Abonados. Se emiten Recibos Oficiales entre partes o Facturas con numeración correlativa e IVA/IRPF cuando proceda, enviando el registro a Lark. Los pagos se realizan por transferencia bancaria con QR SEPA, enlaces bancarios u hoja imprimible A4 (TPV con tarjeta disponible a partir de diciembre).",
       "5️⃣ <strong>Incidencias, Avisos y Despacho Jurídico:</strong> Registra partes de avería con foto y sello temporal IP, envía avisos por WhatsApp a tus inquilinos, autoriza a tu abogado o descarga el Informe Ejecutivo Judicial en PDF A4."
     ],
     pie: "Si deseas que un asesor te llame por teléfono, pulsa <strong>📞 Que me llamen</strong>."
@@ -3257,35 +3317,35 @@ const MANUAL_APP_I18N = {
     titulo: "📘 Manual Oficial · Consola de Gestió Autònoma Level.immo",
     intro: "Guia pas a pas verificada de totes les funcions disponibles al teu compte:",
     bloques: [
-      "1️⃣ <strong>Accés Segur Multi-Rol:</strong> Inicia sessió amb el teu DNI/NIE/CIF i el PIN temporal de 4 xifres enviat al teu WhatsApp. El sistema identifica automàticament si ets Propietari, Llogater o Despatx Jurídic.",
-      "2️⃣ <strong>Altes de Cartera (Botons Superiors):</strong> Des de <em>➕ Alta de Propietat</em> pots donar d'alta o editar immobles, validar el Codi Postal amb coordenades GPS, registrar <code>Ocupacion_Max</code>, configurar despeses LAU, desbloquejar amb doble clic l'IBAN bancari i pujar contracte PDF i fotos.",
-      "3️⃣ <strong>Motor Comptable Anual i A Compte (Bloc 1):</strong> Filtra per Any (2026, 2027 o Tots) i per Propietat o Cartera Global. Registra quotes de lloguer, subministraments o pagaments a compte (per defecte a compte de subministraments o, en casos excepcionals, de lloguer). Fes clic a qualsevol titular del carrusel per obrir-ne la fitxa a pantalla completa.",
-      "4️⃣ <strong>Llibre de Rebuts i Pagaments (Bloc 2):</strong> Filtra per Pendents o Abonats. Els propietaris poden passar rebuts a Abonat (generant PDF oficial) o revertir-los a Pendent. Els llogaters poden pagar per transferència amb QR SEPA, accés directe al banc o full imprimible A4 (TPV targeta operatiu al desembre).",
-      "5️⃣ <strong>Incidències, Avisos i Despatx Jurídic:</strong> Registra comunicats d'avaria amb foto i segell temporal IP, envia avisos per WhatsApp als llogaters, autoritza el teu advocat o descarrega l'Informe Executiu Judicial en PDF A4."
+      "1️⃣ <strong>Accés Segur Multi-Rol:</strong> Inicia sessió amb el teu DNI/NIE/CIF i el PIN temporal de 4 xifres enviat al teu WhatsApp.",
+      "2️⃣ <strong>Altes de Cartera (Botons Superiors):</strong> Des de <em>➕ Alta de Propietat</em> pots donar d'alta o editar immobles, validar el Codi Postal amb coordenades GPS, registrar <code>Ocupacion_Max</code>, configurar despeses LAU, desbloquejar amb doble clic camps sensibles i pujar contracte PDF i fotos.",
+      "3️⃣ <strong>Motor Comptable Anual i A Compte (Bloc 1):</strong> Filtra per Any i per Immoble o Cartera Global. Registra quotes de lloguer, subministraments o pagaments a compte (per defecte a compte de subministraments o, en casos excepcionals, de lloguer), calculant automàticament el <strong>% cobert</strong>. Fes clic a qualsevol element del carrusel per obrir-ne el detall a pantalla completa.",
+      "4️⃣ <strong>Llibre de Rebuts / Factures i Pagaments (Bloc 2):</strong> S'emeten Rebuts Oficials entre parts o Factures amb numeració correlativa i IVA/IRPF quan pertoqui, registrant-ho a Lark. Pagaments per transferència amb QR SEPA, accés directe al banc o full imprimible A4 (TPV targeta operatiu al desembre).",
+      "5️⃣ <strong>Incidències, Avisos i Despatx Jurídic:</strong> Registra comunicats d'avaria amb foto i segell temporal IP, envia avisos per WhatsApp, autoritza el teu advocat o descarrega l'Informe Executiu Judicial en PDF A4."
     ],
     pie: "Si vols que un assessor et truqui per telèfon, prem <strong>📞 Que em truquin</strong>."
   },
   va: {
     titulo: "📘 Manual Oficial · Consola de Gestió Autònoma Level.immo",
-    intro: "Guia pas a pas verificada de totes les funcions disponibles en el vostre compte:",
+    intro: "Guia pas a pas verificada de totes les funcions disponibles en el teu compte:",
     bloques: [
-      "1️⃣ <strong>Accés Segur Multi-Rol:</strong> Inicieu sessió amb el vostre DNI/NIE/CIF i el PIN temporal de 4 xifres enviat al vostre WhatsApp. El sistema identifica automàticament si sou Propietari, Llogater o Despatx Jurídic.",
-      "2️⃣ <strong>Altes de Cartera (Botons Superiors):</strong> Des de <em>➕ Alta de Propietat</em> podeu donar d'alta o editar immobles, validar el Codi Postal amb coordenades GPS, registrar <code>Ocupacion_Max</code>, configurar despeses LAU, desbloquejar amb doble clic l'IBAN bancari i pujar contracte PDF i fotos.",
-      "3️⃣ <strong>Motor Comptable Anual i A Compte (Bloc 1):</strong> Filtra per Any (2026, 2027 o Tots) i per Propietat o Cartera Global. Registra quotes de lloguer, subministraments o pagaments a compte (per defecte a compte de subministraments o, en casos excepcionals, de lloguer). Feu clic en qualsevol titular del carrusel per a obrir la fitxa a pantalla completa.",
-      "4️⃣ <strong>Llibre de Rebuts i Pagaments (Bloc 2):</strong> Filtra per Pendents o Abonats. Els propietaris poden passar rebuts a Abonat (generant PDF oficial) o revertir-los a Pendent. Els llogaters poden pagar per transferència amb QR SEPA, accés directe al banc o full imprimible A4 (TPV targeta operatiu al desembre).",
-      "5️⃣ <strong>Incidències, Avisos i Despatx Jurídic:</strong> Registra comunicats d'avaria amb foto i segell temporal IP, envia avisos per WhatsApp als llogaters, autoritza el vostre advocat o descarrega l'Informe Executiu Judicial en PDF A4."
+      "1️⃣ <strong>Accés Segur Multi-Rol:</strong> Inicia sessió amb el teu DNI/NIE/CIF i el PIN temporal de 4 xifres enviat al teu WhatsApp.",
+      "2️⃣ <strong>Altes de Cartera (Botons Superiors):</strong> Des de <em>➕ Alta de Propietat</em> pots donar d'alta o editar immobles, validar el Codi Postal amb coordenades GPS, registrar <code>Ocupacion_Max</code>, configurar despeses LAU, desbloquejar amb doble clic camps sensibles i pujar contracte PDF i fotos.",
+      "3️⃣ <strong>Motor Comptable Anual i A Compte (Bloc 1):</strong> Filtra per Any i per Immoble o Cartera Global. Registra quotes de lloguer, subministraments o pagaments a compte (per defecte a compte de subministraments o, en casos excepcionals, de lloguer), calculant automàticament el <strong>% cobert</strong>. Fes clic en qualsevol element del carrusel per a obrir el detall a pantalla completa.",
+      "4️⃣ <strong>Llibre de Rebuts / Factures i Pagaments (Bloc 2):</strong> S'emeten Rebuts Oficials entre parts o Factures amb numeració correlativa i IVA/IRPF quan corresponga, registrant-ho a Lark. Pagaments per transferència amb QR SEPA, accés directe al banc o full imprimible A4 (TPV targeta operatiu al desembre).",
+      "5️⃣ <strong>Incidències, Avisos i Despatx Jurídic:</strong> Registra comunicats d'avaria amb foto i segell temporal IP, envia avisos per WhatsApp, autoritza el teu advocat o descarrega l'Informe Executiu Judicial en PDF A4."
     ],
-    pie: "Si voleu que un assessor vos telephone, premeu <strong>📞 Que em telefonen</strong>."
+    pie: "Si vols que un assessor et telefone, premeu <strong>📞 Que em telefonen</strong>."
   },
   en: {
     titulo: "📘 Official Manual · Level.immo Autonomous Rental Console",
     intro: "Verified step-by-step guide to all features available in your account:",
     bloques: [
       "1️⃣ <strong>Secure Multi-Role Login:</strong> Sign in with your ID/NIE/Tax ID and the 4-digit temporary PIN sent to your WhatsApp.",
-      "2️⃣ <strong>Portfolio Setup (Top Buttons):</strong> Use <em>➕ Add Property</em> to register or edit properties, verify Postal Code with GPS coordinates, set <code>Ocupacion_Max</code>, set LAU expenses, double-click to edit the owner IBAN and upload PDF contracts and photos.",
-      "3️⃣ <strong>Annual Accounting Engine & On-Account Payments (Block 1):</strong> Filter by Year (2026, 2027 or All) and by Property or Global Portfolio. Log rent, utilities or payments on account (defaulting to utilities or, exceptionally, rent). Click any ticker item to open full details.",
-      "4️⃣ <strong>Receipts Ledger & Transfers (Block 2):</strong> Filter by Pending or Paid. Owners can mark receipts as Paid (generating an official PDF) or revert them to Pending. Tenants can pay via bank transfer with SEPA QR, direct bank links or printable A4 payment sheet (card POS launches in December).",
-      "5️⃣ <strong>Incidents, Notices & Legal Counsel:</strong> Log timestamped maintenance tickets with photos, send WhatsApp notices to tenants, authorize your lawyer or export the Judicial Executive PDF Report."
+      "2️⃣ <strong>Portfolio Setup (Top Buttons):</strong> Use <em>➕ Add Property</em> to register or edit properties, verify Postal Code with GPS coordinates, set <code>Ocupacion_Max</code>, set LAU expenses, double-click to unlock sensitive fields and upload PDF contracts and photos.",
+      "3️⃣ <strong>Annual Accounting Engine & On-Account Payments (Block 1):</strong> Filter by Year and by Property or Global Portfolio. Log rent, utilities or payments on account (defaulting to utilities or, exceptionally, rent), automatically calculating the <strong>% covered</strong>. Click any ticker item to open full details.",
+      "4️⃣ <strong>Receipts / Invoices Ledger & Transfers (Block 2):</strong> Issues Official Receipts between parties or Invoices with sequential numbering and VAT/withholding when applicable, logging to Lark. Pay via bank transfer with SEPA QR, direct bank links or printable A4 sheet (card POS launches in December).",
+      "5️⃣ <strong>Incidents, Notices & Legal Counsel:</strong> Log timestamped maintenance tickets with photos, send WhatsApp notices, authorize your lawyer or export the Judicial Executive PDF Report."
     ],
     pie: "If you would like an advisor to call you, click <strong>📞 Request a Call</strong>."
   },
@@ -3294,9 +3354,9 @@ const MANUAL_APP_I18N = {
     intro: "Guide étape par étape vérifié de toutes les fonctionnalités de votre compte :",
     bloques: [
       "1️⃣ <strong>Accès Sécurisé Multi-Rôle :</strong> Connectez-vous avec votre DNI/NIE/CIF et le code PIN temporaire à 4 chiffres reçu sur WhatsApp.",
-      "2️⃣ <strong>Configuration du Portefeuille (Boutons Supérieurs) :</strong> Utilisez <em>➕ Ajouter un Bien</em> pour créer ou modifier un bien, valider le code postal avec coordonnées GPS, renseigner <code>Ocupacion_Max</code>, déverrouiller l'IBAN par double-clic et téléverser contrat PDF et photos.",
-      "3️⃣ <strong>Moteur Comptable Annuel et Acomptes (Bloc 1) :</strong> Filtrez par Année (2026, 2027 ou Tous) et par Bien ou Portefeuille Global. Enregistrez loyers, charges ou acomptes (par défaut sur les charges ou, exceptionnellement, sur le loyer). Cliquez sur un élément du bandeau défilant pour ouvrir sa fiche complète.",
-      "4️⃣ <strong>Livre des Quittances et Virements (Bloc 2) :</strong> Marquez les quittances comme Payées (avec PDF officiel) ou remettez-les en attente. Les locataires disposent du QR SEPA, des liens bancaires et de la fiche imprimable A4 (paiement carte TPV en décembre).",
+      "2️⃣ <strong>Configuration du Portefeuille (Boutons Supérieurs) :</strong> Utilisez <em>➕ Ajouter un Bien</em> pour créer ou modifier un bien, valider le code postal avec coordonnées GPS, renseigner <code>Ocupacion_Max</code>, déverrouiller les champs sensibles par double-clic et téléverser contrat PDF et photos.",
+      "3️⃣ <strong>Moteur Comptable Annuel et Acomptes (Bloc 1) :</strong> Filtrez par Année et par Bien ou Portefeuille Global. Enregistrez loyers, charges ou acomptes (par défaut sur les charges ou, exceptionnellement, sur le loyer) avec calcul automatique du <strong>% couvert</strong>. Cliquez sur un élément du bandeau défilant pour ouvrir sa fiche complète.",
+      "4️⃣ <strong>Livre des Quittances / Factures et Virements (Bloc 2) :</strong> Émission de Quittances Officielles entre parties ou Factures à numérotation séquentielle avec TVA/retenue si applicable, enregistrées dans Lark. Virements avec QR SEPA, liens bancaires et fiche imprimable A4 (TPV carte en décembre).",
       "5️⃣ <strong>Incidents, Avis et Avocat :</strong> Enregistrez des tickets horodatés avec photo, envoyez des avis WhatsApp, autorisez votre avocat ou téléchargez le Rapport Judiciaire PDF A4."
     ],
     pie: "Pour être rappelé par un conseiller, cliquez sur <strong>📞 Être rappelé</strong>."
@@ -3306,15 +3366,15 @@ const MANUAL_APP_I18N = {
     intro: "Geprüfte Schritt-für-Schritt-Anleitung für alle Funktionen Ihres Kontos:",
     bloques: [
       "1️⃣ <strong>Sicherer Multi-Rollen-Zugang:</strong> Melden Sie sich mit Ihrer DNI/NIE/CIF und der 4-stelligen WhatsApp-PIN an.",
-      "2️⃣ <strong>Portfolio-Verwaltung (Obere Schaltflächen):</strong> Über <em>➕ Immobilie anlegen</em> erfassen oder bearbeiten Sie Objekte, prüfen Postleitzahl und GPS, hinterlegen <code>Ocupacion_Max</code>, entsperren die IBAN per Doppelklick und laden PDF-Verträge sowie Fotos hoch.",
-      "3️⃣ <strong>Jährlicher Buchhaltungsmotor & Anzahlungen (Block 1):</strong> Filtern Sie nach Jahr (2026, 2027 oder Alle) und nach Immobilie oder Gesamtportfolio. Erfassen Sie Mieten, Nebenkosten oder Anzahlungen (standardmäßig Nebenkosten oder ausnahmsweise Miete). Klicken Sie auf einen Ticker-Eintrag für die Vollbildansicht.",
-      "4️⃣ <strong>Quittungsbuch & Überweisungen (Block 2):</strong> Markieren Sie Belege als Bezahlt (inkl. offiziellem PDF) oder setzen Sie sie auf Offen zurück. Mieter zahlen per Überweisung mit SEPA-QR, Bank-Direktlink oder A4-Druckblatt (Karten-POS startet im Dezember).",
+      "2️⃣ <strong>Portfolio-Verwaltung (Obere Schaltflächen):</strong> Über <em>➕ Immobilie anlegen</em> erfassen oder bearbeiten Sie Objekte, prüfen Postleitzahl und GPS, hinterlegen <code>Ocupacion_Max</code>, entsperren sensible Felder per Doppelklick und laden PDF-Verträge sowie Fotos hoch.",
+      "3️⃣ <strong>Jährlicher Buchhaltungsmotor & Anzahlungen (Block 1):</strong> Filtern Sie nach Jahr und nach Immobilie oder Gesamtportfolio. Erfassen Sie Mieten, Nebenkosten oder Anzahlungen (standardmäßig Nebenkosten oder ausnahmsweise Miete) inklusive automatischer Berechnung des <strong>% gedeckten Anteils</strong>. Klicken Sie auf einen Ticker-Eintrag für die Vollbildansicht.",
+      "4️⃣ <strong>Quittungs- / Rechnungsbuch & Überweisungen (Block 2):</strong> Erstellt offizielle Quittungen zwischen den Parteien oder Rechnungen mit fortlaufender Nummerierung und MwSt./Abzug bei Bedarf und protokolliert in Lark. Überweisung mit SEPA-QR, Bank-Direktlink oder A4-Druckblatt (Karten-POS ab Dezember).",
       "5️⃣ <strong>Vorfälle, Hinweise & Rechtsanwalt:</strong> Erfassen Sie zeitgestempelte Schadensmeldungen mit Foto, senden Sie WhatsApp-Hinweise, autorisieren Sie Ihren Anwalt oder exportieren Sie den A4-Rechtsbericht als PDF."
     ],
     pie: "Wenn Sie einen Rückruf wünschen, klicken Sie auf <strong>📞 Rückruf anfordern</strong>."
   }
 };
-  window.CARTERA_PROPIEDADES = [];
+ window.CARTERA_PROPIEDADES = [];
 window.SUMINISTROS_GASTOS = [];
 window.RECIBOS_CARTERA = [];
 window.INCIDENCIAS_LISTA = [];
@@ -3376,8 +3436,32 @@ async function obtenerIpRealCliente() {
 }
 
 // ============================================================================
-// VALIDACIÓN MATEMÁTICA OFICIAL DE IBAN (ISO 13616 / MÓDULO 97) + DETECCIÓN BANCO
+// FILTROS DE SEGURIDAD EN CAMPOS SENSIBLES (DOBLE CLIC + VALIDACIÓN IBAN)
 // ============================================================================
+window.avisarFiltroSensible = function(nombreCampo) {
+  var badge = document.getElementById("iban-validation-badge");
+  if (badge) {
+    badge.className = "iban-bank-badge neutral";
+    badge.textContent = "🔒 Filtro de seguridad activo en «" + nombreCampo + "»: haz DOBLE CLIC sobre el botón «🔒 2x Clic» para habilitar la edición.";
+  }
+};
+
+window.desbloquearCampoSensiblePropiedad = function(inputId, btnId) {
+  var inp = document.getElementById(inputId);
+  var btn = document.getElementById(btnId);
+  if (!inp) return;
+  inp.readOnly = false;
+  inp.classList.remove("locked-sensitive");
+  inp.classList.add("unlocked-sensitive");
+  inp.dataset.desbloqueado = "1";
+  inp.focus();
+  if (btn) {
+    btn.textContent = "🔓 Editando";
+    btn.style.borderColor = "var(--emerald)";
+    btn.style.color = "var(--emerald)";
+  }
+};
+
 function validarIbanISO13616(ibanRaw) {
   var limpio = String(ibanRaw || "").replace(/\s+/g, "").toUpperCase();
   if (!limpio) {
@@ -3444,7 +3528,7 @@ window.avisarDobleClicIban = function() {
     var badge = document.getElementById("iban-validation-badge");
     if (badge) {
       badge.className = "iban-bank-badge neutral";
-      badge.textContent = "🔒 Campo protegido: haz DOBLE CLIC sobre el botón amarillo para habilitar la edición del IBAN.";
+      badge.textContent = "🔒 Campo protegido: haz DOBLE CLIC sobre el botón para habilitar la edición del IBAN.";
     }
   }
 };
@@ -3454,6 +3538,8 @@ window.desbloquearEdicionIbanPropiedad = function() {
   var btn = document.getElementById("btn-desbloquear-iban");
   if (!inp) return;
   inp.readOnly = false;
+  inp.classList.remove("locked-sensitive");
+  inp.classList.add("unlocked-sensitive");
   inp.dataset.desbloqueado = "1";
   inp.focus();
   if (btn) {
@@ -3465,7 +3551,7 @@ window.desbloquearEdicionIbanPropiedad = function() {
 };
 
 // ============================================================================
-// DIRECCIÓN ESTRUCTURADA + CP DOBLE CONFIRMACIÓN + GOOGLE POBLACIÓN / LAN / LON
+// DIRECCIÓN ESTRUCTURADA + CP DOBLE CONFIRMACIÓN + POBLACIÓN / LAN / LON
 // ============================================================================
 window.actualizarDireccionConcatenadaEnVivo = function() {
   var tipoVia = (document.getElementById("prop-alta-tipo-via") && document.getElementById("prop-alta-tipo-via").value) || "";
@@ -3692,7 +3778,7 @@ window.emitirCertificadoSolvenciaOficial = function() {
 };
 
 // ============================================================================
-// NORMALIZACIÓN Y UTILIDADES CONTABLES (ALQUILER VS SUMINISTROS / PAGOS A CUENTA)
+// NORMALIZACIÓN, PAGOS A CUENTA, % CUBIERTO Y ENVÍO DE RECIBOS A LARK
 // ============================================================================
 function esConceptoAlquiler(categoriaOrConcepto) {
   return /alquiler|renta|cuota mensual/i.test(String(categoriaOrConcepto || ""));
@@ -3859,7 +3945,7 @@ function obtenerNombreDePilaReal(d) {
 }
 
 function extraerDatosPdfSuministro(f) {
-  var resultado = { url_ftp: "", file_token: "", nombre_archivo: "factura.pdf" };
+  var resultado = { url_ftp: "", file_token: "", nombre_archivo: "documento.pdf" };
   if (!f || typeof f !== "object") return resultado;
 
   var urlPublica = formatearCampoValor(
@@ -3879,7 +3965,7 @@ function extraerDatosPdfSuministro(f) {
       var item = val[0];
       if (item.file_token || item.tmp_url || (item.name && /\.pdf$/i.test(item.name))) {
         resultado.file_token = item.file_token || "";
-        resultado.nombre_archivo = item.name || "factura.pdf";
+        resultado.nombre_archivo = item.name || "documento.pdf";
         if (item.url && !item.url.includes("open.larksuite.com")) {
           resultado.url_ftp = item.url;
         }
@@ -4127,7 +4213,11 @@ function normalizarReciboDesdeMake(r) {
   var esACuenta = esPagoACuenta(tipo + " " + concepto + " " + estadoRaw);
   var esAbonado = estadoRaw.toUpperCase().includes("ABONADO") || estadoRaw.toUpperCase().includes("PAGADO") || (haberNum > 0 && debeNum === 0);
 
-  var montoReferencia = impAlquilerExplicito > 0 ? impAlquilerExplicito : (impSuministrosExplicito > 0 ? impSuministrosExplicito : (baseNum > 0 ? baseNum : (debeNum > 0 ? debeNum : haberNum)));
+  // En pagos a cuenta, el importe propio del apunte es el haber/entrega real (no una cuota de alquiler de referencia)
+  var montoReferencia = esACuenta
+    ? (haberNum > 0 ? haberNum : (impSuministrosExplicito > 0 ? impSuministrosExplicito : (impAlquilerExplicito > 0 ? impAlquilerExplicito : baseNum)))
+    : (impAlquilerExplicito > 0 ? impAlquilerExplicito : (impSuministrosExplicito > 0 ? impSuministrosExplicito : (baseNum > 0 ? baseNum : (debeNum > 0 ? debeNum : haberNum))));
+
   if (debeNum === 0 && haberNum === 0 && montoReferencia > 0) {
     if (esAbonado) haberNum = montoReferencia;
     else debeNum = montoReferencia;
@@ -4135,18 +4225,18 @@ function normalizarReciboDesdeMake(r) {
 
   // Si es pago a cuenta y no se especifica explícitamente "alquiler", por defecto imputa a Suministros (electricidad/agua)
   var esAlquilerExcepcionalACuenta = esACuenta && /alquiler|renta/i.test(tipo + " " + concepto);
-  var esAlquilerFlag = impAlquilerExplicito > 0
-    ? true
-    : (impSuministrosExplicito > 0
-        ? false
-        : (esACuenta ? esAlquilerExcepcionalACuenta : esConceptoAlquiler(tipo + " " + concepto)));
+  var esAlquilerFlag = esACuenta
+    ? esAlquilerExcepcionalACuenta
+    : (impAlquilerExplicito > 0 ? true : (impSuministrosExplicito > 0 ? false : esConceptoAlquiler(tipo + " " + concepto)));
 
-  var importeAlquiler = impAlquilerExplicito > 0 ? impAlquilerExplicito : (esAlquilerFlag ? montoReferencia : 0);
-  var importeSuministrosOtros = impSuministrosExplicito > 0 ? impSuministrosExplicito : (!esAlquilerFlag ? montoReferencia : 0);
+  var importeAlquiler = esAlquilerFlag ? (impAlquilerExplicito > 0 ? impAlquilerExplicito : montoReferencia) : 0;
+  var importeSuministrosOtros = !esAlquilerFlag ? (impSuministrosExplicito > 0 ? impSuministrosExplicito : montoReferencia) : 0;
 
-  var baseCalculo = debeNum > 0 ? debeNum : (montoReferencia > 0 ? montoReferencia : haberNum);
+  var baseCalculo = esACuenta ? (haberNum > 0 ? haberNum : montoReferencia) : (debeNum > 0 ? debeNum : (montoReferencia > 0 ? montoReferencia : haberNum));
   var totalCalculado = parsearNumeroContable(formatearCampoValor(f.Total_Con_Impuestos));
-  var totalConImpuestos = totalCalculado > 0 ? totalCalculado : +(baseCalculo * (1 + ivaPct - irpfPct)).toFixed(2);
+  var totalConImpuestos = esACuenta
+    ? (haberNum > 0 ? haberNum : (totalCalculado > 0 ? totalCalculado : baseCalculo))
+    : (totalCalculado > 0 ? totalCalculado : +(baseCalculo * (1 + ivaPct - irpfPct)).toFixed(2));
 
   var importeMostrar = formatearEuros(totalConImpuestos || baseCalculo || haberNum);
   var fechaEmision = fechaVisual || periodo;
@@ -4186,10 +4276,63 @@ function normalizarReciboDesdeMake(r) {
     fecha_pago: fechaPago,
     url_factura: infoPdf.url_ftp || "",
     file_token_pdf: infoPdf.file_token || "",
-    nombre_archivo_pdf: infoPdf.nombre_archivo || "factura.pdf",
+    nombre_archivo_pdf: infoPdf.nombre_archivo || "documento.pdf",
     metodo_pago: f.metodo_pago || ""
   };
 }
+
+// Calcula el % cubierto por entregas/pagos a cuenta sobre los cargos pendientes/totales del inmueble
+function calcularResumenPorcentajeACuenta(nombrePropiedad) {
+  var propUp = String(nombrePropiedad || "").trim().toUpperCase();
+  var movs = (window.RECIBOS_CARTERA || []).filter(function(r) {
+    if (!propUp || propUp === "---" || propUp.includes(",")) return true;
+    return coincidenReciboYPropiedad(r, propUp, "");
+  });
+
+  var totalCargos = 0;
+  var totalACuenta = 0;
+  var totalPendienteReal = 0;
+
+  movs.forEach(function(m) {
+    var impCargo = parsearNumeroContable(m.debe > 0 ? (m.total_con_impuestos || m.debe) : 0);
+    var impHaber = parsearNumeroContable(m.haber);
+    if (m.es_a_cuenta) {
+      totalACuenta += impHaber;
+    } else if (impCargo > 0) {
+      totalCargos += impCargo;
+      if (String(m.estado || "").toUpperCase() === "PENDIENTE") {
+        totalPendienteReal += impCargo;
+      }
+    }
+  });
+
+  var cubiertoNeto = Math.min(totalPendienteReal > 0 ? totalPendienteReal : totalCargos, totalACuenta);
+  var basePct = totalPendienteReal > 0 ? totalPendienteReal : totalCargos;
+  var pctCubierto = basePct > 0 ? Math.min(100, +((cubiertoNeto / basePct) * 100).toFixed(1)) : 0;
+  var restanteTrasACuenta = Math.max(0, +(totalPendienteReal - totalACuenta).toFixed(2));
+
+  return {
+    totalCargos: +totalCargos.toFixed(2),
+    totalACuenta: +totalACuenta.toFixed(2),
+    totalPendienteReal: +totalPendienteReal.toFixed(2),
+    restanteTrasACuenta: restanteTrasACuenta,
+    pctCubierto: pctCubierto
+  };
+}
+
+function generarNumeroAscendenteDocumento(esFactura) {
+  var anio = new Date().getFullYear();
+  var prefijo = esFactura ? ("FAC-" + anio + "-") : ("REC-" + anio + "-");
+  var maxSeq = 0;
+  (window.RECIBOS_CARTERA || []).forEach(function(r) {
+    var id = String(r.id_recibo || "");
+    if (id.startsWith(prefijo)) {
+      var n = parseInt(id.slice(prefijo.length), 10);
+      if (!isNaN(n) && n > maxSeq) maxSeq = n;
+    }
+  });
+  return prefijo + String(maxSeq + 1).padStart(4, "0");
+}  
 // ============================================================================
 // TRADUCCIÓN INTEGRAL (CON PRIORIDAD EN CACHÉ) Y MODAL DE CONFIRMACIÓN (CTA)
 // ============================================================================
@@ -4354,6 +4497,7 @@ window.abrirDetalleApunteTicker = function(idRecibo) {
   var esProp = (window.sesionActiva && window.sesionActiva.rol === "PROPIETARIO");
   var langActual = (window.sesionActiva && window.sesionActiva.idioma) || "es";
   var t = I18N_PANEL_INTERNO[langActual] || I18N_PANEL_INTERNO.es;
+  var resPct = calcularResumenPorcentajeACuenta(rec.propiedad);
 
   var subEl = document.getElementById("ticker-fs-subtitle");
   var titEl = document.getElementById("ticker-fs-title");
@@ -4377,8 +4521,11 @@ window.abrirDetalleApunteTicker = function(idRecibo) {
       '<div class="info-row"><span class="info-label">Categoría Contable:</span><span class="info-value">' + (rec.es_a_cuenta ? "Pago a Cuenta (" + (rec.es_alquiler ? "Alquiler" : "Suministros") + ")" : (rec.es_alquiler ? "Importe Alquiler" : "Importe Suministros / Otros")) + '</span></div>' +
       '<div class="info-row"><span class="info-label">Cargo (Debe):</span><span class="info-value" style="color:#fca5a5;">' + formatearEuros(rec.debe) + '</span></div>' +
       '<div class="info-row"><span class="info-label">Abonado / A Cuenta (Haber):</span><span class="info-value" style="color:var(--neon-green);">' + formatearEuros(rec.haber) + '</span></div>' +
-      '<div class="info-row"><span class="info-label">Importe Total:</span><span class="info-value" style="font-size:18px; color:#fff;">' + escaparHTML(rec.importe) + '</span></div>' +
-      '<div class="info-row"><span class="info-label">Estado Actual:</span><span class="info-value">' + (esPend ? '<span class="badge badge-danger">PENDIENTE DE COBRO</span>' : '<span class="badge badge-success">ABONADO / A CUENTA (' + escaparHTML(rec.fecha_pago || "") + ')</span>') + '</span></div>' +
+      '<div class="info-row"><span class="info-label">Importe del Apunte:</span><span class="info-value" style="font-size:18px; color:#fff;">' + escaparHTML(rec.importe) + '</span></div>' +
+      (resPct.totalACuenta > 0
+        ? '<div class="info-row"><span class="info-label">Cobertura por Pagos a Cuenta en el Inmueble:</span><span class="info-value" style="color:var(--neon-cyan);">' + resPct.pctCubierto + '% cubierto (' + formatearEuros(resPct.totalACuenta) + ' a cuenta · Pendiente neto: ' + formatearEuros(resPct.restanteTrasACuenta) + ')</span></div>'
+        : '') +
+      '<div class="info-row"><span class="info-label">Estado Actual:</span><span class="info-value">' + (esPend ? '<span class="badge badge-danger">PENDIENTE DE COBRO</span>' : '<span class="badge badge-success">' + (rec.es_a_cuenta ? 'A CUENTA (' : 'ABONADO (') + escaparHTML(rec.fecha_pago || "") + ')</span>') + '</span></div>' +
     '</div>' +
     '<div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end;">' +
       (tienePdf ? '<button type="button" class="btn-outline-sm" style="border-color:var(--neon-cyan); color:var(--neon-cyan); font-weight:800; padding:10px 14px;" onclick="cerrarDetalleApunteTicker(); abrirOSincronizarPdfRecibo(\'' + escaparHTML(rec.id_recibo) + '\')">' + escaparHTML(t.btn_orig_pdf) + '</button>' : '') +
@@ -4414,12 +4561,12 @@ window.abrirOSincronizarPdfRecibo = async function(idRecibo) {
 
   if (rec.file_token_pdf) {
     if (titulo && caja && modal) {
-      titulo.innerText = "☁️ Publicando Factura PDF en el FTP de level.immo...";
+      titulo.innerText = "☁️ Publicando Documento PDF en el FTP de level.immo...";
       caja.innerHTML = '<div style="padding:30px; text-align:center; color:var(--neon-cyan); font-weight:700;">⏳ Generando enlace público en el FTP de <code>level.immo</code>...</div>';
       modal.style.display = "flex";
     }
 
-    var cleanName = String(rec.id_recibo + "_" + (rec.nombre_archivo_pdf || "factura.pdf")).replace(/[^a-zA-Z0-9._-]/g, "_");
+    var cleanName = String(rec.id_recibo + "_" + (rec.nombre_archivo_pdf || "documento.pdf")).replace(/[^a-zA-Z0-9._-]/g, "_");
     var urlEsperadaFtp = "https://level.immo/app-alquileres-contratos/" + cleanName;
 
     try {
@@ -4462,13 +4609,13 @@ function mostrarIframePdfEnVisor(urlPdf, concepto, propiedad) {
   var caja = document.getElementById("visor-contenido-nativo");
   var modal = document.getElementById("modal-visor-seguro");
   if (titulo && caja && modal) {
-    titulo.innerText = "📎 Justificante / Factura PDF · " + (concepto || "") + " (" + (propiedad || "") + ")";
+    titulo.innerText = "📎 Justificante / Documento PDF · " + (concepto || "") + " (" + (propiedad || "") + ")";
     caja.innerHTML =
       '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; padding:10px 14px; background:var(--bg-input); border:1px solid var(--border); border-radius:8px;">' +
         '<span style="font-size:12.5px; color:var(--emerald);">✅ Enlace público FTP verificado</span>' +
         '<a href="' + escaparHTML(urlPdf) + '" target="_blank" rel="noopener" class="btn-pdf-receipt" style="text-decoration:none;">⬇️ Abrir / Descargar PDF</a>' +
       '</div>' +
-      '<iframe src="' + escaparHTML(urlPdf) + '" style="width:100%; height:72vh; border:1px solid var(--border); border-radius:10px; background:#fff;" title="Factura PDF"></iframe>';
+      '<iframe src="' + escaparHTML(urlPdf) + '" style="width:100%; height:72vh; border:1px solid var(--border); border-radius:10px; background:#fff;" title="Documento PDF"></iframe>';
     modal.style.display = "flex";
   } else {
     window.open(urlPdf, "_blank");
@@ -4814,7 +4961,7 @@ window.eliminarFotoDelBookInmueble = function(nombrePropiedad, idxBorrar) {
 };
 
 // ============================================================================
-// PRECARGA Y GUARDADO DE PROPIEDAD (ALTA Y EDICIÓN CON OCUPACION_MAX)
+// PRECARGA Y GUARDADO DE PROPIEDAD (CON FILTROS DE SEGURIDAD SENSIBLES)
 // ============================================================================
 window.abrirModalAltaPropiedad = function(nombrePropOpcional) {
   limpiarEstadoUI();
@@ -4836,7 +4983,11 @@ window.precargarPropiedadExistente = function(clave) {
   });
 
   var inpRecId = document.getElementById("prop-alta-record-id");
+  var inpRenta = document.getElementById("prop-alta-renta");
+  var btnDesbloqRenta = document.getElementById("btn-desbloquear-renta");
   var inpOcupMax = document.getElementById("prop-alta-ocupacion-max");
+  var btnDesbloqOcup = document.getElementById("btn-desbloquear-ocup");
+
   var inpPortada = document.getElementById("prop-alta-portada");
   var inpPortadaFile = document.getElementById("prop-file-portada");
   var inpPortadaNom = document.getElementById("prop-alta-portada-nombre");
@@ -4864,7 +5015,32 @@ window.precargarPropiedadExistente = function(clave) {
   if (existente && clave !== "NUEVA") {
     if (inpRecId) inpRecId.value = existente.record_id || "";
     document.getElementById("prop-alta-nombre").value = existente.nombre_propiedad || "";
-    if (inpOcupMax) inpOcupMax.value = existente.ocupacion_max > 0 ? existente.ocupacion_max : "";
+
+    if (inpRenta) {
+      inpRenta.value = parsearNumeroContable(existente.renta_mensual || existente.cuota || "");
+      inpRenta.readOnly = true;
+      inpRenta.classList.add("locked-sensitive");
+      inpRenta.classList.remove("unlocked-sensitive");
+    }
+    if (btnDesbloqRenta) {
+      btnDesbloqRenta.style.display = "inline-flex";
+      btnDesbloqRenta.textContent = "🔒 2x Clic";
+      btnDesbloqRenta.style.borderColor = "var(--amber)";
+      btnDesbloqRenta.style.color = "var(--amber)";
+    }
+
+    if (inpOcupMax) {
+      inpOcupMax.value = existente.ocupacion_max > 0 ? existente.ocupacion_max : "";
+      inpOcupMax.readOnly = true;
+      inpOcupMax.classList.add("locked-sensitive");
+      inpOcupMax.classList.remove("unlocked-sensitive");
+    }
+    if (btnDesbloqOcup) {
+      btnDesbloqOcup.style.display = "inline-flex";
+      btnDesbloqOcup.textContent = "🔒 2x Clic";
+      btnDesbloqOcup.style.borderColor = "var(--amber)";
+      btnDesbloqOcup.style.color = "var(--amber)";
+    }
 
     var selTipo = document.getElementById("prop-alta-tipo");
     if (selTipo) {
@@ -4873,8 +5049,6 @@ window.precargarPropiedadExistente = function(clave) {
       });
       selTipo.value = tipoMatch ? tipoMatch.value : "Vivienda";
     }
-
-    document.getElementById("prop-alta-renta").value = parsearNumeroContable(existente.renta_mensual || existente.cuota || "");
 
     var dirCompleta = (existente.direccion && existente.direccion !== "---") ? existente.direccion : "";
     document.getElementById("prop-alta-dir").value = dirCompleta;
@@ -4923,6 +5097,7 @@ window.precargarPropiedadExistente = function(clave) {
       inpIban.dataset.ibanOriginal = ibanGuardado;
       inpIban.dataset.desbloqueado = "0";
       inpIban.readOnly = Boolean(ibanGuardado);
+      if (ibanGuardado) inpIban.classList.add("locked-sensitive");
     }
     if (btnDesbloqIban) {
       btnDesbloqIban.style.display = "inline-flex";
@@ -4952,9 +5127,21 @@ window.precargarPropiedadExistente = function(clave) {
   } else {
     if (inpRecId) inpRecId.value = "";
     document.getElementById("prop-alta-nombre").value = clave !== "NUEVA" ? clave : "";
-    if (inpOcupMax) inpOcupMax.value = "";
+    if (inpRenta) {
+      inpRenta.value = "";
+      inpRenta.readOnly = false;
+      inpRenta.classList.remove("locked-sensitive");
+    }
+    if (btnDesbloqRenta) btnDesbloqRenta.style.display = "none";
+
+    if (inpOcupMax) {
+      inpOcupMax.value = "";
+      inpOcupMax.readOnly = false;
+      inpOcupMax.classList.remove("locked-sensitive");
+    }
+    if (btnDesbloqOcup) btnDesbloqOcup.style.display = "none";
+
     document.getElementById("prop-alta-tipo").value = "Vivienda";
-    document.getElementById("prop-alta-renta").value = "";
     document.getElementById("prop-alta-tipo-via").value = "Calle";
     document.getElementById("prop-alta-nombre-via").value = "";
     document.getElementById("prop-alta-numero").value = "";
@@ -4979,6 +5166,7 @@ window.precargarPropiedadExistente = function(clave) {
       inpIban.dataset.ibanOriginal = ibanInicial;
       inpIban.dataset.desbloqueado = ibanInicial ? "0" : "1";
       inpIban.readOnly = Boolean(ibanInicial);
+      if (ibanInicial) inpIban.classList.add("locked-sensitive");
     }
     if (btnDesbloqIban) {
       btnDesbloqIban.style.display = ibanInicial ? "inline-flex" : "none";
@@ -5326,8 +5514,7 @@ window.guardarNuevaPropiedad = function(e) {
       }
     }
   });
-};
-
+};   
 window.abrirModalAltaInquilino = function() {
   document.getElementById("msg-inq-exito").style.display = "none";
   poblarSelectoresPropiedadesModales();
@@ -5337,7 +5524,6 @@ window.abrirModalAltaInquilino = function() {
 window.guardarNuevoInquilino = function(e) {
   e.preventDefault();
   var btn = document.getElementById("btn-guardar-inquilino");
-  var msgExito = document.getElementById("msg-inq-exito");
   if (btn.disabled) return;
 
   var propSel = document.getElementById("inq-alta-prop").value;
@@ -5412,8 +5598,9 @@ window.guardarNuevoInquilino = function(e) {
     }
   });
 };
+
 // ============================================================================
-// MOTOR CONTABLE ANUAL (CON PAGOS A CUENTA), LIBRO DE RECIBOS Y FICHAS
+// MOTOR CONTABLE ANUAL (PAGOS A CUENTA + % CUBIERTO), LIBRO Y FICHAS
 // ============================================================================
 function coincidenReciboYPropiedad(r, nombrePropiedad, dniTitular) {
   var propUp = String(nombrePropiedad || "").trim().toUpperCase();
@@ -5450,7 +5637,7 @@ function calcularSaldoVivoPropiedad(nombrePropiedad, fallbackDeuda) {
     var sumaDebe = 0;
     movs.forEach(function(m) {
       sumaHaber += parsearNumeroContable(m.haber);
-      sumaDebe += parsearNumeroContable(m.total_con_impuestos || m.debe);
+      sumaDebe += parsearNumeroContable(m.debe > 0 ? (m.total_con_impuestos || m.debe) : 0);
     });
     if (sumaHaber > 0 || sumaDebe > 0) {
       return +(sumaHaber - sumaDebe).toFixed(2);
@@ -5567,6 +5754,7 @@ function renderizarMotorContablePropietario() {
     totalHaberCaja += h;
   });
 
+  var resPct = calcularResumenPorcentajeACuenta(propFiltro === "TODAS" ? "" : propFiltro);
   var totalPendiente = Math.max(0, +(totalDebePeriodo - totalHaberCaja).toFixed(2));
   var saldoNeto = +(totalHaberCaja - totalDebePeriodo).toFixed(2);
 
@@ -5578,7 +5766,9 @@ function renderizarMotorContablePropietario() {
   if (recientes.length > 0) {
     var itemsHTML = recientes.map(function(m) {
       var esH = m.haber > 0 && m.debe === 0;
-      var etiquetaTipo = m.es_a_cuenta ? (m.es_alquiler ? "💶 A cuenta alq." : "⚡ A cuenta sum.") : (m.es_alquiler ? "🏠" : "⚡");
+      var etiquetaTipo = m.es_a_cuenta
+        ? (m.es_alquiler ? "💶 A cuenta alq. (" + resPct.pctCubierto + "%)" : "⚡ A cuenta sum. (" + resPct.pctCubierto + "%)")
+        : (m.es_alquiler ? "🏠" : "⚡");
       return '<button type="button" class="ticker-item ' + (esH ? 'is-haber' : 'is-debe') + '" onclick="abrirDetalleApunteTicker(\'' + escaparHTML(m.id_recibo) + '\')" title="Haz clic para ver el detalle completo">' +
         (esH ? '🟢' : '🔴') + ' ' + etiquetaTipo +
         ' <strong>' + escaparHTML(m.propiedad) + '</strong> · ' + escaparHTML(m.concepto) +
@@ -5606,12 +5796,12 @@ function renderizarMotorContablePropietario() {
       '<div style="background:var(--bg-input); border:1px solid rgba(239,68,68,0.35); border-radius:10px; padding:12px;">' +
         '<div style="font-size:11px; color:var(--text-muted); font-weight:700; text-transform:uppercase;">Suministros y Otros (' + escaparHTML(anioFiltro) + ')</div>' +
         '<div style="font-size:17px; font-weight:900; color:#fca5a5; margin-top:4px;">' + formatearEuros(totalSuministrosOtros) + '</div>' +
-        '<div style="font-size:10.5px; color:var(--text-muted); margin-top:3px;">A cuenta registrados: <strong style="color:var(--neon-cyan);">' + formatearEuros(totalPagosACuenta) + '</strong></div>' +
+        '<div style="font-size:10.5px; color:var(--text-muted); margin-top:3px;">A cuenta: <strong style="color:var(--neon-cyan);">' + formatearEuros(totalPagosACuenta) + ' (' + resPct.pctCubierto + '% cubierto)</strong></div>' +
       '</div>' +
       '<div style="background:var(--bg-input); border:1px solid rgba(245,158,11,0.35); border-radius:10px; padding:12px;">' +
         '<div style="font-size:11px; color:var(--text-muted); font-weight:700; text-transform:uppercase;">Pendiente de Cobro (Debe - Haber)</div>' +
         '<div style="font-size:17px; font-weight:900; color:var(--amber); margin-top:4px;">' + formatearEuros(totalPendiente) + '</div>' +
-        '<div style="font-size:10.5px; color:var(--text-muted); margin-top:3px;">Neto tras pagos a cuenta y abonos</div>' +
+        '<div style="font-size:10.5px; color:var(--text-muted); margin-top:3px;">Resto tras a cuenta: <strong style="color:#fff;">' + formatearEuros(resPct.restanteTrasACuenta) + '</strong></div>' +
       '</div>' +
       '<div style="background:var(--bg-input); border:1px solid rgba(0,243,255,0.35); border-radius:10px; padding:12px;">' +
         '<div style="font-size:11px; color:var(--text-muted); font-weight:700; text-transform:uppercase;">Total Cobrado / A Cuenta (Haber)</div>' +
@@ -5760,12 +5950,13 @@ function renderizarCarteraYRecibosPropietario(filtroTexto) {
     sumaVisibleHaber += parsearNumeroContable(r.haber);
 
     var calcTPV = calcularComisionTPVPropietario(impNum);
+    var resPct = calcularResumenPorcentajeACuenta(r.propiedad);
     var tienePdf = Boolean(r.url_factura || r.file_token_pdf);
     var btnPdfProveedor = tienePdf
       ? '<button type="button" class="btn-outline-sm" style="border-color:var(--neon-cyan); color:var(--neon-cyan); font-weight:800;" onclick="abrirOSincronizarPdfRecibo(\'' + escaparHTML(r.id_recibo) + '\')">' + escaparHTML(t.btn_orig_pdf) + '</button>'
       : '';
     var badgePartida = r.es_a_cuenta
-      ? '<span class="badge badge-warning" style="font-size:10px;">PAGO A CUENTA (' + (r.es_alquiler ? 'ALQUILER' : 'SUMINISTROS') + ')</span>'
+      ? '<span class="badge badge-warning" style="font-size:10px;">PAGO A CUENTA (' + (r.es_alquiler ? 'ALQUILER' : 'SUMINISTROS') + ' · ' + resPct.pctCubierto + '% CUBIERTO)</span>'
       : (r.es_alquiler
           ? '<span class="badge badge-success" style="font-size:10px;">ALQUILER</span>'
           : '<span class="badge badge-info" style="font-size:10px;">SUMINISTROS/OTROS</span>');
@@ -5777,6 +5968,7 @@ function renderizarCarteraYRecibosPropietario(filtroTexto) {
           'Nº ' + escaparHTML(r.id_recibo || "") + ' · Fecha: ' + escaparHTML(r.periodo || "") +
           ' · Inquilino: <strong>' + escaparHTML(r.inquilino || "---") + '</strong>' +
           ' · Debe: <strong>' + formatearEuros(r.debe) + '</strong> | Haber: <strong>' + formatearEuros(r.haber) + '</strong>' +
+          (resPct.totalACuenta > 0 ? ' · <span style="color:var(--neon-cyan);">% Cubierto: <strong>' + resPct.pctCubierto + '%</strong> (' + formatearEuros(resPct.totalACuenta) + ' a cuenta · Resto: ' + formatearEuros(resPct.restanteTrasACuenta) + ')</span>' : '') +
           ' · Neto TPV Prop.: <span style="color:var(--amber);">' + formatearEuros(calcTPV.neto) + '</span>' +
         '</div>' +
       '</div>' +
@@ -5829,6 +6021,7 @@ function renderizarRecibosInquilino(nombrePropiedad, dniTitular) {
     return;
   }
 
+  var resPct = calcularResumenPorcentajeACuenta(propClean);
   var esPropietario = (window.sesionActiva.rol === "PROPIETARIO");
   var esAbogado = (window.sesionActiva.rol === "ABOGADO");
 
@@ -5839,13 +6032,13 @@ function renderizarRecibosInquilino(nombrePropiedad, dniTitular) {
       ? '<button type="button" class="btn-outline-sm" style="border-color:var(--neon-cyan); color:var(--neon-cyan); font-weight:800;" onclick="abrirOSincronizarPdfRecibo(\'' + escaparHTML(r.id_recibo) + '\')">' + escaparHTML(t.btn_orig_pdf) + '</button>'
       : '';
     var badgeCuenta = r.es_a_cuenta
-      ? '<span class="badge badge-warning" style="margin-right:6px;">PAGO A CUENTA (' + (r.es_alquiler ? 'ALQUILER' : 'SUMINISTROS') + ')</span>'
+      ? '<span class="badge badge-warning" style="margin-right:6px;">PAGO A CUENTA (' + (r.es_alquiler ? 'ALQUILER' : 'SUMINISTROS') + ' · ' + resPct.pctCubierto + '% CUBIERTO)</span>'
       : '';
 
     return '<div class="receipt-row ' + (esPendiente ? 'pending' : 'haber-row') + '">' +
       '<div class="receipt-info">' +
         '<div class="receipt-concept">' + badgeCuenta + escaparHTML(r.concepto || "") + '</div>' +
-        '<div class="receipt-meta">Ref. Nº ' + escaparHTML(r.id_recibo || "") + ' · Fecha Valor: ' + escaparHTML(r.periodo || "") + ' · Debe: <strong>' + formatearEuros(r.debe) + '</strong> | Haber / A Cuenta: <strong>' + formatearEuros(r.haber) + '</strong></div>' +
+        '<div class="receipt-meta">Ref. Nº ' + escaparHTML(r.id_recibo || "") + ' · Fecha Valor: ' + escaparHTML(r.periodo || "") + ' · Debe: <strong>' + formatearEuros(r.debe) + '</strong> | Haber / A Cuenta: <strong>' + formatearEuros(r.haber) + '</strong>' + (resPct.totalACuenta > 0 ? ' · <span style="color:var(--neon-cyan);">% Cubierto: <strong>' + resPct.pctCubierto + '%</strong> (Resto pendiente: ' + formatearEuros(resPct.restanteTrasACuenta) + ')</span>' : '') + '</div>' +
       '</div>' +
       '<div class="receipt-actions">' +
         '<span class="receipt-amount">' + escaparHTML(r.importe || "") + '</span>' +
@@ -5988,7 +6181,6 @@ window.guardarMovimientoSuministroManual = async function(e) {
     var ipReg = await obtenerIpRealCliente();
     var fechaFormat = fecha.replace(/-/g, "/");
     var idEdit = document.getElementById("sum-edit-id").value;
-    var idReciboFinal = idEdit || ("ID-ALQ-" + new Date().getFullYear() + String(Math.floor(Math.random() * 9000 + 1000)));
     var prop = document.getElementById("sum-propiedad").value;
     var tipoApunte = document.getElementById("sum-tipo-apunte").value;
     var categoria = document.getElementById("sum-categoria").value;
@@ -5999,6 +6191,13 @@ window.guardarMovimientoSuministroManual = async function(e) {
     var esACta = esPagoACuenta(categoria + " " + concepto);
     var esAlqExcepcional = esACta && /alquiler|renta/i.test(categoria + " " + concepto);
     var esAlq = esACta ? esAlqExcepcional : esConceptoAlquiler(categoria + " " + concepto);
+
+    var fichaProp = (window.CARTERA_PROPIEDADES || []).find(function(p) {
+      return String(p.nombre_propiedad).toUpperCase() === String(prop).toUpperCase();
+    }) || {};
+
+    var esPersonaJuridicaOSujeto = /LOCAL|OFICINA|NAVE|EDIFICIO|GARAJE|TRASTERO|TEMPORADA/i.test(String(fichaProp.tipo_uso || ""));
+    var idReciboFinal = idEdit || generarNumeroAscendenteDocumento(esPersonaJuridicaOSujeto);
 
     var impAlquiler = esAlq ? base : 0;
     var impSuministrosOtros = !esAlq ? base : 0;
@@ -6031,9 +6230,6 @@ window.guardarMovimientoSuministroManual = async function(e) {
       }
     }
 
-    var fichaProp = (window.CARTERA_PROPIEDADES || []).find(function(p) {
-      return String(p.nombre_propiedad).toUpperCase() === String(prop).toUpperCase();
-    }) || {};
     var conceptoFinal = concepto.toLowerCase().startsWith(categoria.toLowerCase()) ? concepto : (categoria + " · " + concepto);
     var estadoFinal = esACta ? "Abonado a cuenta" : (tipoApunte === "HABER" ? "Abonado" : "Pendiente");
 
@@ -6063,6 +6259,8 @@ window.guardarMovimientoSuministroManual = async function(e) {
       window.RECIBOS_CARTERA.unshift(nuevoMov);
     }
 
+    var resPct = calcularResumenPorcentajeACuenta(prop);
+
     if (!window.MODO_DEMO_ACTIVO) {
       try { localStorage.setItem("LEVEL_CACHE_RECIBOS", JSON.stringify(window.RECIBOS_CARTERA)); } catch (_) {}
     }
@@ -6077,6 +6275,8 @@ window.guardarMovimientoSuministroManual = async function(e) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           accion: idEdit ? "editar_suministro_gasto" : "alta_suministro_gasto",
+          registrar_recibo_en_lark: true,
+          tipo_documento_sugerido: esPersonaJuridicaOSujeto ? "FACTURA" : "RECIBO_OFICIAL_ENTRE_PARTES",
           table_id: TABLE_ID_SUMINISTROS_GASTOS,
           record_id: nuevoMov.record_id || "",
           id_recibo: nuevoMov.id_recibo,
@@ -6086,6 +6286,8 @@ window.guardarMovimientoSuministroManual = async function(e) {
           Categoria: categoria,
           es_pago_a_cuenta: esACta,
           destino_a_cuenta: esACta ? (esAlq ? "ALQUILER" : "SUMINISTROS") : "",
+          porcentaje_cubierto_a_cuenta: resPct.pctCubierto,
+          importe_restante_tras_a_cuenta: resPct.restanteTrasACuenta,
           Concepto: nuevoMov.concepto,
           "Importe Alquiler": impAlquiler,
           "Importe Suministros / Otros": impSuministrosOtros,
@@ -6442,8 +6644,8 @@ function guardarCacheMultimediaPropiedad(nombreProp, arrayFotos, urlPortada) {
 }
 
 // ============================================================================
-// REGLA DE IDIOMA EN RECIBOS (ES POR DEFECTO; CA EN CATALUÑA; VA EN C. VALENCIANA)
-// + NOTA LEGAL DE OCUPACION_MAX, EMPADRONAMIENTO Y SUBARRIENDO
+// IDIOMA DEL RECIBO (ES POR DEFECTO; CA EN CATALUÑA; VA EN C. VALENCIANA)
+// + NOTA LEGAL CON OCUPACION_MAX + MODO DUAL (RECIBO OFICIAL VS FACTURA)
 // ============================================================================
 function detectarTerritorioInmueble(fichaProp, rec) {
   var texto = [
@@ -6486,7 +6688,7 @@ function construirNotaLegalRecibo(fichaProp, rec) {
     var lineOcupCa = ocupMax > 0
       ? " L'ocupació màxima permesa segons la cèdula d'habitabilitat és de <strong>" + ocupMax + " persona(es)</strong>."
       : "";
-    return "<strong>Avís Contractual i d'Ocupació:</strong> Aquest rebut acredita únicament el pagament de la renda o concepte indicat per part de l'arrendatari titular. Queda prohibit subarrendar o cedir l'ús de l'immoble sense consentiment previ i per escrit de la propietat, així com empadronar o incorporar tercers no autoritzats." +
+    return "<strong>Avís Contractual i d'Ocupació:</strong> Aquest document acredita el pagament o la liquidació corresponent a l'immoble i període indicats. Queda prohibit subarrendar o cedir l'ús de l'immoble sense consentiment previ i per escrit de la propietat, així com empadronar o incorporar tercers no autoritzats." +
       lineOcupCa +
       " L'incompliment del contracte, l'alta padronal indeguda o l'aportació de dades o documentació inexactes davant l'Administració podrà comportar les accions contractuals, administratives i, si s'escau, civils o penals (incloent-hi falsedat documental) que corresponguin.";
   }
@@ -6495,7 +6697,7 @@ function construirNotaLegalRecibo(fichaProp, rec) {
     var lineOcupVa = ocupMax > 0
       ? " L'ocupació màxima permesa segons la cèdula d'habitabilitat és de <strong>" + ocupMax + " persona(es)</strong>."
       : "";
-    return "<strong>Avís Contractual i d'Ocupació:</strong> Este rebut acredita únicament el pagament de la renda o concepte indicat per part de l'arrendatari titular. Queda prohibit subarrendar o cedir l'ús de l'immoble sense consentiment previ i per escrit de la propietat, així com empadronar o incorporar tercers no autoritzats." +
+    return "<strong>Avís Contractual i d'Ocupació:</strong> Este document acredita el pagament o la liquidació corresponent a l'immoble i període indicats. Queda prohibit subarrendar o cedir l'ús de l'immoble sense consentiment previ i per escrit de la propietat, així com empadronar o incorporar tercers no autoritzats." +
       lineOcupVa +
       " L'incompliment del contracte, l'alta padronal indeguda o l'aportació de dades o documentació inexactes davant l'Administració podrà comportar les accions contractuals, administratives i, si procedira, civils o penals (incloent-hi falsedat documental) que corresponguen.";
   }
@@ -6503,7 +6705,7 @@ function construirNotaLegalRecibo(fichaProp, rec) {
   var lineOcupEs = ocupMax > 0
     ? " La ocupación máxima permitida según cédula de habitabilidad es de <strong>" + ocupMax + " persona(s)</strong>."
     : "";
-  return "<strong>Aviso Contractual y de Ocupación:</strong> Este recibo acredita exclusivamente el pago de la renta o concepto indicado por el arrendatario titular. Queda prohibido subarrendar o ceder el uso del inmueble sin consentimiento previo y por escrito de la propiedad, así como empadronar o incorporar a terceros no autorizados." +
+  return "<strong>Aviso Contractual y de Ocupación:</strong> Este documento acredita el pago o liquidación correspondiente al inmueble y periodo indicados. Queda prohibido subarrendar o ceder el uso del inmueble sin consentimiento previo y por escrito de la propiedad, así como empadronar o incorporar a terceros no autorizados." +
     lineOcupEs +
     " El incumplimiento de lo pactado, el empadronamiento irregular o la aportación de datos o documentación inexactos ante la Administración podrá dar lugar a las acciones contractuales, administrativas y, en su caso, civiles o penales (incluida falsedad documental) que correspondan.";
 }
@@ -6514,18 +6716,23 @@ function calcularDesgloseFiscalRecibo(rec) {
   var irpfPct = parsearNumeroContable(rec.irpf_pct);
 
   var dniInq = String(obtenerDniUnificado(rec) || "").trim().toUpperCase();
+  var dniProp = String(rec.dni_propietario || "").trim().toUpperCase();
   var pers = String(rec.tipo_personalidad || "").trim().toUpperCase();
   var fichaProp = (window.CARTERA_PROPIEDADES || []).find(function(p) {
     return String(p.nombre_propiedad || "").toUpperCase() === String(rec.propiedad || "").toUpperCase();
   }) || {};
   var tipoUso = String(fichaProp.tipo_uso || "").toUpperCase();
+  var esSociedadPropietaria = /^[ABCDEFGHJNPQRSUVW]/.test(dniProp.charAt(0));
   var esInmuebleSujetoIva = /LOCAL|OFICINA|NAVE|EDIFICIO|GARAJE|TRASTERO|TEMPORADA/.test(tipoUso) || /^[ABCDEFGHJNPQRSUVW]/.test(dniInq.charAt(0));
 
-  if (ivaPct === 0 && irpfPct === 0 && esInmuebleSujetoIva) {
+  if (ivaPct === 0 && irpfPct === 0 && (esInmuebleSujetoIva || esSociedadPropietaria)) {
     if (pers === "AUTONOMO" || pers === "AUTÓNOMO") {
       ivaPct = 0.21;
       irpfPct = 0.19;
     } else if (pers === "EMPRESA" || /^[ABCDEFGHJNPQRSUVW]/.test(dniInq.charAt(0))) {
+      ivaPct = 0.21;
+      irpfPct = 0;
+    } else if (esSociedadPropietaria && /LOCAL|OFICINA|NAVE|GARAJE|TRASTERO|TEMPORADA/.test(tipoUso)) {
       ivaPct = 0.21;
       irpfPct = 0;
     }
@@ -6541,8 +6748,37 @@ function calcularDesgloseFiscalRecibo(rec) {
     cuotaIva: cuotaIva,
     cuotaIrpf: cuotaIrpf,
     totalFinal: totalFinal,
-    llevaImpuestos: (ivaPct > 0 || irpfPct > 0)
+    esFactura: (ivaPct > 0 || irpfPct > 0 || esSociedadPropietaria)
   };
+}
+
+function notificarRegistroReciboEnLark(rec, esFactura, fiscal) {
+  if (window.MODO_DEMO_ACTIVO) return;
+  var resPct = calcularResumenPorcentajeACuenta(rec.propiedad);
+  fetch(URL_WEBHOOK_PROPERTY_GESTION, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      accion: "registrar_recibo_o_factura_en_lark",
+      registrar_recibo_en_lark: true,
+      tipo_documento: esFactura ? "FACTURA" : "RECIBO_OFICIAL_ENTRE_PARTES",
+      id_documento: rec.id_recibo,
+      propiedad: rec.propiedad,
+      propietario: rec.propietario,
+      dni_propietario: rec.dni_propietario,
+      inquilino: rec.inquilino,
+      dni_inquilino: obtenerDniUnificado(rec),
+      concepto: rec.concepto,
+      periodo: rec.periodo,
+      base_imponible: fiscal.base,
+      iva_pct: fiscal.ivaPct,
+      irpf_pct: fiscal.irpfPct,
+      total_documento: fiscal.totalFinal,
+      es_pago_a_cuenta: Boolean(rec.es_a_cuenta),
+      porcentaje_cubierto_a_cuenta: resPct.pctCubierto,
+      estado: rec.estado
+    })
+  }).catch(function(){});
 }
 
 window.descargarReciboPDF = function(idRecibo) {
@@ -6560,26 +6796,31 @@ window.descargarReciboPDF = function(idRecibo) {
   var fechaAbono = (rec.fecha_pago && rec.fecha_pago !== "---") ? rec.fecha_pago : new Date().toLocaleDateString("es-ES");
 
   var fiscal = calcularDesgloseFiscalRecibo(rec);
-  var tituloDoc = fiscal.llevaImpuestos ? "Factura Oficial de Arrendamiento" : "Recibo Oficial de Arrendamiento / Suministros";
+  var tituloDoc = fiscal.esFactura
+    ? "Factura de Arrendamiento (Emisor Arrendador)"
+    : "Recibo Oficial entre Arrendador y Arrendatario";
   var notaLegalHTML = construirNotaLegalRecibo(fichaProp, rec);
+  var resPct = calcularResumenPorcentajeACuenta(rec.propiedad);
+
+  notificarRegistroReciboEnLark(rec, fiscal.esFactura, fiscal);
 
   var ventanaPDF = window.open("", "_blank", "width=880,height=940");
   if (!ventanaPDF) return;
 
   var filasImpuestosHTML = "";
-  if (fiscal.llevaImpuestos) {
+  if (fiscal.ivaPct > 0 || fiscal.irpfPct > 0) {
     filasImpuestosHTML =
       '<tr><td colspan="3" style="text-align:right; font-weight:600;">Base Imponible</td><td style="text-align:right;">' + formatearEuros(fiscal.base) + '</td></tr>' +
       (fiscal.ivaPct > 0
         ? '<tr><td colspan="3" style="text-align:right; font-weight:600;">IVA Repercutido (' + (fiscal.ivaPct * 100).toFixed(0) + '%)</td><td style="text-align:right; color:#047857;">+ ' + formatearEuros(fiscal.cuotaIva) + '</td></tr>'
         : '') +
       (fiscal.irpfPct > 0
-        ? '<tr><td colspan="3" style="text-align:right; font-weight:600;">Retención IRPF Arrendamiento (-' + (fiscal.irpfPct * 100).toFixed(0) + '%)</td><td style="text-align:right; color:#b91c1c;">- ' + formatearEuros(fiscal.cuotaIrpf) + '</td></tr>'
+        ? '<tr><td colspan="3" style="text-align:right; font-weight:600;">Retención IRPF (-' + (fiscal.irpfPct * 100).toFixed(0) + '%)</td><td style="text-align:right; color:#b91c1c;">- ' + formatearEuros(fiscal.cuotaIrpf) + '</td></tr>'
         : '');
   }
 
   var selloEstado = String(rec.estado).toUpperCase().includes("ABONADO")
-    ? '<div class="stamp">✓ ' + (rec.es_a_cuenta ? 'A CUENTA' : 'ABONADO') + ' (' + escaparHTML(rec.metodo_pago || "VERIFICADO") + ')</div>'
+    ? '<div class="stamp">✓ ' + (rec.es_a_cuenta ? 'A CUENTA (' + resPct.pctCubierto + '% CUBIERTO)' : 'ABONADO') + ' (' + escaparHTML(rec.metodo_pago || "VERIFICADO") + ')</div>'
     : '<div class="stamp" style="border-color:#ef4444; color:#b91c1c; background:#fef2f2;">PENDIENTE DE PAGO</div>';
 
   var htmlRecibo = '<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">' +
@@ -6589,7 +6830,7 @@ window.descargarReciboPDF = function(idRecibo) {
       'body { font-family: Helvetica, Arial, sans-serif; color: #1e293b; background: #fff; margin: 0; padding: 20px; }' +
       '.sheet { max-width: 740px; margin: 0 auto; border: 1px solid #cbd5e1; border-radius: 8px; padding: 34px; }' +
       '.header { display: flex; justify-content: space-between; border-bottom: 2px solid #0f172a; padding-bottom: 16px; margin-bottom: 20px; }' +
-      '.title-doc { font-size: 19px; font-weight: 800; color: #0f172a; text-transform: uppercase; }' +
+      '.title-doc { font-size: 18px; font-weight: 800; color: #0f172a; text-transform: uppercase; }' +
       '.stamp { display: inline-block; margin-top: 6px; padding: 6px 14px; border: 2px solid #10b981; color: #047857; background: #ecfdf5; font-weight: 800; font-size: 12px; border-radius: 6px; }' +
       '.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 22px; }' +
       '.box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px; font-size: 13px; line-height: 1.55; }' +
@@ -6603,7 +6844,7 @@ window.descargarReciboPDF = function(idRecibo) {
     '<div class="no-print" style="text-align:center; margin-bottom:16px;"><button onclick="window.print()" style="background:#0f172a; color:#fff; border:none; padding:10px 20px; border-radius:6px; font-weight:700; cursor:pointer;">🖨️ Descargar / Guardar en PDF (A4)</button></div>' +
     '<div class="sheet">' +
       '<div class="header">' +
-        '<div><div class="title-doc">' + escaparHTML(tituloDoc) + '</div><div>Referencia Nº ' + escaparHTML(rec.id_recibo) + ' · Fecha: ' + escaparHTML(rec.periodo) + '</div></div>' +
+        '<div><div class="title-doc">' + escaparHTML(tituloDoc) + '</div><div>Nº ' + escaparHTML(rec.id_recibo) + ' · Fecha: ' + escaparHTML(rec.periodo) + '</div></div>' +
         '<div>' + selloEstado + '</div>' +
       '</div>' +
       '<div class="grid-2">' +
@@ -6613,10 +6854,10 @@ window.descargarReciboPDF = function(idRecibo) {
       '<table><thead><tr><th>Concepto</th><th>Categoría</th><th>Periodo</th><th style="text-align:right;">Importe</th></tr></thead><tbody>' +
         '<tr><td><strong>' + escaparHTML(rec.concepto) + '</strong></td><td>' + escaparHTML(rec.tipo) + '</td><td>' + escaparHTML(rec.periodo) + '</td><td style="text-align:right;">' + formatearEuros(fiscal.base) + '</td></tr>' +
         filasImpuestosHTML +
-        '<tr class="total-row"><td colspan="3">TOTAL LÍQUIDO FACTURA / RECIBO</td><td style="text-align:right;">' + formatearEuros(fiscal.totalFinal) + '</td></tr>' +
+        '<tr class="total-row"><td colspan="3">TOTAL DEL DOCUMENTO</td><td style="text-align:right;">' + formatearEuros(fiscal.totalFinal) + '</td></tr>' +
       '</tbody></table>' +
       '<div class="legal-clause">' + notaLegalHTML + '</div>' +
-      '<div style="font-size:11px; color:#64748b; border-top:1px solid #e2e8f0; padding-top:12px; margin-top:16px;">Documento generado por la consola trazable Level.immo · LEVEL PUNTO IMMO 24365 SLU (API 4173 · AICAT 14200).</div>' +
+      '<div style="font-size:11px; color:#64748b; border-top:1px solid #e2e8f0; padding-top:12px; margin-top:16px;">Registro trazable en Level.immo · LEVEL PUNTO IMMO 24365 SLU (API 4173 · AICAT 14200).</div>' +
     '</div>' +
     '</body></html>';
 
@@ -6631,14 +6872,14 @@ window.marcarReciboComoAbonado = function(idRecibo) {
 
   window.mostrarModalConfirmacionCTA({
     titulo: "⚠️ Confirmar Paso a ABONADO",
-    descripcionHTML: "Vas a marcar este recibo como <strong>ABONADO</strong> en el Haber, actualizar el Saldo Vivo y generar su justificante oficial en PDF:",
+    descripcionHTML: "Vas a marcar este apunte como <strong>ABONADO</strong> en el Haber, actualizar el Saldo Vivo y registrar el recibo/documento en Lark:",
     resumenHTML:
       '<div style="color:#fff; font-weight:800; margin-bottom:4px;">' + escaparHTML(rec.concepto || "") + '</div>' +
       '<div style="color:var(--text-muted);">Propiedad: <strong style="color:var(--emerald);">' + escaparHTML(rec.propiedad || "") + '</strong></div>' +
       '<div style="color:var(--text-muted);">Inquilino: <strong>' + escaparHTML(rec.inquilino || "---") + '</strong></div>' +
       '<div style="color:var(--text-muted);">Importe: <strong style="color:var(--neon-green); font-size:15px;">' + escaparHTML(rec.importe || "") + '</strong></div>',
     textoCheckbox: "Sí, confirmo que he verificado el cobro y deseo pasarlo a estado ABONADO.",
-    textoBoton: "✓ Confirmar Abono + PDF",
+    textoBoton: "✓ Confirmar Abono + Recibo PDF",
     peligro: false,
     onConfirm: function() {
       window.ejecutarAbonoReciboConfirmado(idRecibo);
@@ -6668,6 +6909,7 @@ window.ejecutarAbonoReciboConfirmado = async function(idRecibo) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         accion: "cambiar_estado_recibo",
+        registrar_recibo_en_lark: true,
         table_id_suministros: TABLE_ID_SUMINISTROS_GASTOS,
         record_id: rec.record_id || "",
         id_recibo: rec.id_recibo,
@@ -6702,12 +6944,12 @@ window.revertirReciboAPendiente = function(idRecibo) {
 
   window.mostrarModalConfirmacionCTA({
     titulo: "↩️ Confirmar Paso a PENDIENTE (Debe)",
-    descripcionHTML: "Vas a anular el estado Abonado de este recibo y devolverlo a <strong>PENDIENTE DE PAGO</strong> en el Debe:",
+    descripcionHTML: "Vas a anular el estado Abonado de este movimiento y devolverlo a <strong>PENDIENTE DE PAGO</strong> en el Debe:",
     resumenHTML:
       '<div style="color:#fff; font-weight:800; margin-bottom:4px;">' + escaparHTML(rec.concepto || "") + '</div>' +
       '<div style="color:var(--text-muted);">Propiedad: <strong style="color:var(--emerald);">' + escaparHTML(rec.propiedad || "") + '</strong></div>' +
       '<div style="color:var(--text-muted);">Importe a reclamar: <strong style="color:#fca5a5; font-size:15px;">' + escaparHTML(rec.importe || "") + '</strong></div>',
-    textoCheckbox: "Sí, confirmo que este recibo está impagado o abonado por error y deseo devolverlo a PENDIENTE.",
+    textoCheckbox: "Sí, confirmo que este apunte está impagado o abonado por error y deseo devolverlo a PENDIENTE.",
     textoBoton: "↩️ Confirmar Paso a Pendiente",
     peligro: true,
     onConfirm: async function() {
@@ -6752,7 +6994,6 @@ window.revertirReciboAPendiente = function(idRecibo) {
     }
   });
 };
-
 // ============================================================================
 // TRANSFERENCIA BANCARIA + REGISTRO DE CLICS TPV (HASTA DICIEMBRE) + HOJA A4
 // ============================================================================
@@ -7058,7 +7299,7 @@ window.abrirVisorNativoPropietario = function(modo) {
   var titulo = document.getElementById("visor-titulo");
   var caja = document.getElementById("visor-contenido-nativo");
   if (modo === "morosidad") {
-    titulo.innerText = "🟢 Radar de Cobros, Revertir Estados y Emisión de Facturas/Recibos PDF";
+    titulo.innerText = "🟢 Radar de Cobros, Revertir Estados y Emisión de Recibos/Facturas PDF";
     var pendientes = window.RECIBOS_CARTERA.filter(function(r) { return String(r.estado || "").toUpperCase() === "PENDIENTE"; });
     var abonados = window.RECIBOS_CARTERA.filter(function(r) { return String(r.estado || "").toUpperCase() !== "PENDIENTE"; });
 
@@ -7085,6 +7326,7 @@ window.abrirFichaContratoActual = function() {
   var exp = window.EXPEDIENTE_ACTUAL || {};
   var propCalc = (exp.propiedad && !exp.propiedad.includes(",")) ? exp.propiedad : "";
   var saldoNum = calcularSaldoVivoPropiedad(propCalc, 0);
+  var resPct = calcularResumenPorcentajeACuenta(propCalc);
   var domNotif = exp.domicilio_social || exp.direccion_fiscal || exp.direccion || "---";
 
   var ficha = (window.CARTERA_PROPIEDADES || []).find(function(p) {
@@ -7105,6 +7347,7 @@ window.abrirFichaContratoActual = function() {
       (ficha.ocupacion_max > 0 ? '<div class="info-row"><span class="info-label">Ocupación Máxima (Cédula):</span><span class="info-value" style="color:var(--amber);">' + ficha.ocupacion_max + ' persona(s)</span></div>' : '') +
       '<div class="info-row"><span class="info-label">Cuenta IBAN Asociada:</span><span class="info-value" style="color:var(--neon-cyan);">' + escaparHTML(exp.iban || "---") + '</span></div>' +
       '<div class="info-row"><span class="info-label">Condiciones / Renta:</span><span class="info-value">' + escaparHTML(exp.contrato_renta || "---") + '</span></div>' +
+      (resPct.totalACuenta > 0 ? '<div class="info-row"><span class="info-label">Cobertura Pagos a Cuenta:</span><span class="info-value" style="color:var(--neon-cyan);">' + resPct.pctCubierto + '% cubierto (' + formatearEuros(resPct.totalACuenta) + ' a cuenta)</span></div>' : '') +
       '<div class="info-row"><span class="info-label">Saldo Vivo Actual (Haber - Debe):</span><span class="info-value" style="color:' + (saldoNum >= 0 ? 'var(--neon-green)' : 'var(--danger)') + ';">' + formatearEuros(saldoNum) + '</span></div>' +
       (urlContrato && (urlContrato.startsWith("http") || urlContrato.startsWith("blob:"))
         ? '<div style="margin-top:14px;"><button type="button" class="btn-primary" style="background:var(--amber); color:#042f2e;" onclick="abrirContratoPdfPropiedad(\'' + escaparHTML(urlContrato) + '\', \'' + escaparHTML(exp.propiedad || "") + '\')">📄 Abrir Contrato de Arrendamiento (PDF)</button></div>'
@@ -7825,7 +8068,8 @@ function resolverRespuestaDeterministaElena(textoUsuario) {
   }
   if (/saldo|deuda|debo|haber|debe|cuanto|cuánto|a cuenta/.test(q)) {
     var saldo = calcularSaldoVivoPropiedad(propCalc, 0);
-    return "💶 Dato verificado en expediente — Saldo Vivo Actual (Haber - Debe) " + (propCalc ? "de <strong>" + escaparHTML(propCalc) + "</strong>" : "de la cartera") + ": <strong>" + (saldo > 0 ? "+" : "") + formatearEuros(saldo) + "</strong>.";
+    var resPct = calcularResumenPorcentajeACuenta(propCalc);
+    return "💶 Dato verificado en expediente — Saldo Vivo Actual (Haber - Debe) " + (propCalc ? "de <strong>" + escaparHTML(propCalc) + "</strong>" : "de la cartera") + ": <strong>" + (saldo > 0 ? "+" : "") + formatearEuros(saldo) + "</strong>" + (resPct.totalACuenta > 0 ? " (Pagos a cuenta: " + formatearEuros(resPct.totalACuenta) + " · <strong>" + resPct.pctCubierto + "% cubierto</strong>)." : ".");
   }
   if (/recibo|factura|pagar|pendiente|pdf|transferencia|tpv/.test(q)) {
     var pendientes = (window.RECIBOS_CARTERA || []).filter(function(r) { return String(r.estado || "").toUpperCase() === "PENDIENTE"; });
@@ -7927,7 +8171,7 @@ function cerrarModal(id) {
 function cerrarVisorSeguro() { document.getElementById("modal-visor-seguro").style.display = "none"; }
 
 // ============================================================================
-// MODO DEMO INTERACTIVO (100% IDÉNTICO A LA CONSOLA REAL DEL PROPIETARIO)
+// MODO DEMO INTERACTIVO (CON % CUBIERTO EN PAGOS A CUENTA Y 5 PERFILES)
 // ============================================================================
 window.MODO_DEMO_ACTIVO = false;
 (function blindarFetchEnModoDemo() {
@@ -7994,7 +8238,7 @@ window.enviarLeadYAbrirDemo = async function(e) {
 window.iniciarModoDemo = function(nombreVisitante, perfilCodigo) {
   cerrarChatElena();
   var nombrePilaDemo = (nombreVisitante && String(nombreVisitante).trim()) ? String(nombreVisitante).trim() : "Invitado";
-  var esDemoInquilino = (String(perfilCodigo || "").toUpperCase() === "INQUILINO");
+  var esDemoAbogado = (String(perfilCodigo || "").toUpperCase() === "ABOGADO");
   window.MODO_DEMO_ACTIVO = true;
   window.filtroRecibosActual = "PENDIENTE";
   window.filtroPropiedadRecibos = "TODAS";
@@ -8020,7 +8264,7 @@ window.iniciarModoDemo = function(nombreVisitante, perfilCodigo) {
       "Otros Conceptos": 0,
       "Detalle Otros Conceptos": "",
       "IBAN Bancario Propietario": "ES79 2100 0813 6101 2345 6789",
-      INQUILINO: esDemoInquilino ? nombrePilaDemo : "Laura Martínez Soler",
+      INQUILINO: "Laura Martínez Soler",
       "DNI-NIE-CIF": "12345678A",
       Foto_Portada_URL: "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=1000&q=80",
       Fotos_URL: "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=1000&q=80, https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=1000&q=80",
@@ -8056,10 +8300,10 @@ window.iniciarModoDemo = function(nombreVisitante, perfilCodigo) {
 
   window.RECIBOS_CARTERA = [
     normalizarReciboDesdeMake({
-      id_recibo: "DEMO-2026-01",
+      id_recibo: "REC-2026-0001",
       Propiedad: "Ático Eixample",
-      inquilino: esDemoInquilino ? nombrePilaDemo : "Laura Martínez Soler",
-      propietario: esDemoInquilino ? "Carlos Gómez (Propietario Demo)" : nombrePilaDemo,
+      inquilino: "Laura Martínez Soler",
+      propietario: nombrePilaDemo,
       "DNI-NIE-CIF": "12345678A",
       Fecha_Valor: "2026/11/01",
       Concepto: "Cuota mensual alquiler Noviembre",
@@ -8072,10 +8316,26 @@ window.iniciarModoDemo = function(nombreVisitante, perfilCodigo) {
       "Estado Recibo": "Abonado"
     }),
     normalizarReciboDesdeMake({
-      id_recibo: "DEMO-2026-02",
+      id_recibo: "REC-2026-0002",
       Propiedad: "Ático Eixample",
-      inquilino: esDemoInquilino ? nombrePilaDemo : "Laura Martínez Soler",
-      propietario: esDemoInquilino ? "Carlos Gómez (Propietario Demo)" : nombrePilaDemo,
+      inquilino: "Laura Martínez Soler",
+      propietario: nombrePilaDemo,
+      "DNI-NIE-CIF": "12345678A",
+      Fecha_Valor: "2026/11/05",
+      Concepto: "Regularización suministro eléctrico (Luz)",
+      "Importe Alquiler": 0,
+      "Importe Suministros / Otros": 130.00,
+      Importe: 0,
+      Debe: 130.00,
+      Haber: 0,
+      Total_Con_Impuestos: 130.00,
+      "Estado Recibo": "Pendiente"
+    }),
+    normalizarReciboDesdeMake({
+      id_recibo: "REC-2026-0003",
+      Propiedad: "Ático Eixample",
+      inquilino: "Laura Martínez Soler",
+      propietario: nombrePilaDemo,
       "DNI-NIE-CIF": "12345678A",
       Fecha_Valor: "2026/11/10",
       Concepto: "Pago a cuenta suministro eléctrico",
@@ -8088,10 +8348,10 @@ window.iniciarModoDemo = function(nombreVisitante, perfilCodigo) {
       "Estado Recibo": "Abonado a cuenta"
     }),
     normalizarReciboDesdeMake({
-      id_recibo: "DEMO-2026-03",
+      id_recibo: "FAC-2026-0001",
       Propiedad: "Local Chamberí",
       inquilino: "Estudio Creativo Delta SL",
-      propietario: esDemoInquilino ? "Carlos Gómez (Propietario Demo)" : nombrePilaDemo,
+      propietario: nombrePilaDemo,
       "DNI-NIE-CIF": "B98765432",
       Tipo_Personalidad: "EMPRESA",
       Fecha_Valor: "2026/11/01",
@@ -8109,32 +8369,28 @@ window.iniciarModoDemo = function(nombreVisitante, perfilCodigo) {
 
   window.COMUNICACIONES_LEGALES = [];
 
-  if (esDemoInquilino) {
+  if (esDemoAbogado) {
     window.sesionActiva = {
-      "DNI-NIE-CIF": "12345678A",
-      codigo_inquilino: "INQ-DEMO-01",
-      rol: "INQUILINO",
-      tabla_filtro: "PROPERTY_INQUILINOS",
+      "DNI-NIE-CIF": "99999999R",
+      codigo_inquilino: "ABO-99999999R",
+      rol: "ABOGADO",
+      tabla_filtro: "PROPERTY_PROPIETARIOS_LEGAL_SERVICES",
       propiedad: "Ático Eixample",
-      nombre: nombrePilaDemo + " (Demo Inquilino)",
+      nombre: nombrePilaDemo + " · Despacho Jurídico (Demo)",
       nombre_pila: nombrePilaDemo,
       iban_propietario: "ES79 2100 0813 6101 2345 6789",
       idioma: (window.sesionActiva && window.sesionActiva.idioma) || "es"
     };
     renderizarPortalConDatos({
-      rol: "INQUILINO",
-      Arrendatario: nombrePilaDemo,
-      "DNI-NIE-CIF": "12345678A",
-      "Autho-code-inquilino": "INQ-DEMO-01",
-      PROPERTY_PROPIEDADES: "Ático Eixample",
-      "Dirección del Inmueble": "Calle Aragón, 214, 08011 Barcelona",
-      cuota: "750",
-      iban: "ES79 2100 0813 6101 2345 6789",
-      Avisos: "Revisión anual de caldera programada para el próximo mes."
-    }, "12345678A");
-    var demoBannerInq = document.getElementById("demo-mode-banner");
-    if (demoBannerInq) demoBannerInq.style.display = "flex";
-    document.getElementById("badge-titular-activo").innerText = "MODO DEMO INQUILINO · " + nombrePilaDemo.toUpperCase();
+      rol: "ABOGADO",
+      nombre_abogado: nombrePilaDemo + " · Despacho Jurídico (Demo)",
+      "DNI-NIE-CIF": "99999999R",
+      "Autho-code-abogado": "ABO-99999999R",
+      propiedades_autorizadas: "Ático Eixample, Local Chamberí"
+    }, "99999999R");
+    var demoBannerAbg = document.getElementById("demo-mode-banner");
+    if (demoBannerAbg) demoBannerAbg.style.display = "flex";
+    document.getElementById("badge-titular-activo").innerText = "MODO DEMO ABOGADO · " + nombrePilaDemo.toUpperCase();
     return;
   }
 
@@ -8474,6 +8730,7 @@ window.imprimirInformeEjecutivoAbogadoPDF = function(propiedadForzada) {
   }
 
   const fichaProp = buscarFichaPropiedadPorNombre(propUnica) || {};
+  const resPct = calcularResumenPorcentajeACuenta(propUnica);
   const movs = (window.RECIBOS_CARTERA || []).filter(r => {
     const pRec = String(r.propiedad || "").trim().toUpperCase();
     const pTarget = propUnica.trim().toUpperCase();
@@ -8522,7 +8779,7 @@ window.imprimirInformeEjecutivoAbogadoPDF = function(propiedadForzada) {
   const filasMovs = movs.map(m => {
     const fechaCol = formatearFechaValorVisual(m.fecha_valor || m.fecha_emision || m.periodo) || "Sin fecha";
     const esPend = String(m.estado || "").toUpperCase() === "PENDIENTE";
-    const etqCuenta = m.es_a_cuenta ? " [A CUENTA]" : "";
+    const etqCuenta = m.es_a_cuenta ? " [A CUENTA · " + resPct.pctCubierto + "% CUBIERTO]" : "";
     return '<tr>' +
       '<td style="white-space:nowrap; font-weight:700;">' + escapeHtmlCom(m.id_recibo) + '</td>' +
       '<td style="white-space:nowrap;">' + escapeHtmlCom(fechaCol) + '</td>' +
@@ -8571,7 +8828,7 @@ window.imprimirInformeEjecutivoAbogadoPDF = function(propiedadForzada) {
       '<div class="meta-card">' +
         '<div><strong>Despacho / Letrado:</strong> ' + escapeHtmlCom(despachoTxt) + '</div>' +
         '<div><strong>IBAN Contractual:</strong> ' + escapeHtmlCom(ibanContrato) + '</div>' +
-        '<div><strong>Entregas / Pagos a Cuenta:</strong> ' + formatearEuros(totalPagosACuenta) + '</div>' +
+        '<div><strong>Entregas / Pagos a Cuenta:</strong> ' + formatearEuros(totalPagosACuenta) + ' (' + resPct.pctCubierto + '% cubierto)</div>' +
         '<div><strong>Movimientos en Inmueble:</strong> ' + movs.length + '</div>' +
       '</div>' +
     '</div>' +
@@ -8579,7 +8836,7 @@ window.imprimirInformeEjecutivoAbogadoPDF = function(propiedadForzada) {
       '<div class="kpi-box"><div class="kpi-lbl">Total Debe</div><div class="kpi-val" style="color:#b91c1c;">' + formatearEuros(sumaDebe) + '</div></div>' +
       '<div class="kpi-box"><div class="kpi-lbl">Total Haber (Incl. A Cuenta)</div><div class="kpi-val" style="color:#047857;">' + formatearEuros(sumaHaber) + '</div></div>' +
       '<div class="kpi-box"><div class="kpi-lbl">Saldo Vivo (Haber - Debe)</div><div class="kpi-val" style="color:' + (saldoNeto >= 0 ? '#047857' : '#b91c1c') + ';">' + (saldoNeto > 0 ? '+' : '') + formatearEuros(saldoNeto) + '</div></div>' +
-      '<div class="kpi-box"><div class="kpi-lbl">Pendiente Cobro</div><div class="kpi-val" style="color:#b91c1c;">' + formatearEuros(totalPendienteDebe) + '</div></div>' +
+      '<div class="kpi-box"><div class="kpi-lbl">Pendiente Neto</div><div class="kpi-val" style="color:#b91c1c;">' + formatearEuros(resPct.restanteTrasACuenta) + '</div></div>' +
     '</div>' +
     '<table><thead><tr><th>ID</th><th>Fecha Valor</th><th>Concepto</th><th style="text-align:right;">Debe</th><th style="text-align:right;">Haber</th><th>Estado</th></tr></thead><tbody>' + filasMovs + '</tbody></table>' +
     '</body></html>';
@@ -8841,4 +9098,4 @@ function escapeHtmlCom(str) {
 }
 </script>
 </body>
-</html>  
+</html>
