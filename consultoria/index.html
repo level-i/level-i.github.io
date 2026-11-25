@@ -475,6 +475,12 @@
             </button>
           </div>
 
+          <!-- Aviso de truco clic en tejado -->
+          <div class="text-[11px] text-amber-300/90 bg-amber-500/10 border border-amber-500/25 rounded-lg px-3 py-1.5 flex items-center gap-2">
+            <span>💡</span>
+            <span data-i18n="map_click_tip">Truc: fes clic sobre qualsevol teulada del mapa per obtenir la seva Referència Cadastral a l'instant.</span>
+          </div>
+
           <!-- VISOR SATÉLITE CON ZOOM LIBRE + BOTÓN PANTALLA COMPLETA -->
           <div class="relative w-full h-72 sm:h-80 rounded-xl overflow-hidden border border-slate-700 bg-slate-950 shadow-inner">
             <div id="main-leaflet-map" class="w-full h-full z-10"></div>
@@ -813,8 +819,7 @@
 
   <!-- ================= LÓGICA JAVASCRIPT ================= -->
   <script>
-    const WEBHOOK_MAKE = "https://hook.eu1.make.com/loy5kvv4qmnvo748fmxo2qvt48mbf986";
-    const WEBHOOK_ELENA_VENTAS = "https://hook.eu1.make.com/3w2wmbbcc3evnvg8ajo3kjkucrd6dfkw";
+    const WEBHOOK_CONSULTORIA = "https://hook.eu1.make.com/8xd81xb9t3mg2ycwez1czd3quwhf2nef";
     const ASSET_ID = "CONSULTORIA-PATRIMONIAL-LEVEL-I";
 
     let currentLang = "ca";
@@ -1492,18 +1497,11 @@
         }
       };
 
-      Promise.allSettled([
-        fetch(WEBHOOK_ELENA_VENTAS, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload)
-        }),
-        fetch(WEBHOOK_MAKE, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload)
-        })
-      ]);
+      fetch(WEBHOOK_CONSULTORIA, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      }).catch(() => {});
 
       document.getElementById('elena-step-2').classList.add('hidden');
       document.getElementById('elena-step-3').classList.remove('hidden');
@@ -1610,7 +1608,7 @@
       document.getElementById('legal-modal').classList.remove('flex');
     }
 
-    // DICCIONARIO 100% COMPLETO EN LOS 8 IDIOMAS (SIN REFERENCIAS A ASESORÍAS)
+    // DICCIONARIO 100% COMPLETO EN LOS 8 IDIOMAS (CON AVISO CLIC EN TEJADO Y SIN REFERENCIAS A ASESORÍAS)
     const i18n = {
       ca: {
         btn_replay_video: "Activar Vídeo / So",
@@ -1620,6 +1618,7 @@
         btn_catastro_layer: "Capa Cadastre",
         btn_close_fs_map: "Tancar Pantalla Completa",
         fs_map_badge: "🛰️ VISTA AÈRIA SATÈL·LIT + PARCEL·LARI CADASTRAL (ZOOM LLIURE)",
+        map_click_tip: "Truc: fes clic sobre qualsevol teulada del mapa per obtenir la seva Referència Cadastral a l'instant.",
         cat_char_badge: "14 / 20 caràcters",
         badge_editable: "100% Editable",
         cta_share_bottom: "Compartir aquesta Pàgina de Consultoria",
@@ -1755,6 +1754,7 @@
         btn_catastro_layer: "Capa Catastro",
         btn_close_fs_map: "Cerrar Pantalla Completa",
         fs_map_badge: "🛰️ VISTA AÉREA SATÉLITE + PARCELARIO CATASTRAL (ZOOM LIBRE)",
+        map_click_tip: "Truco: haz clic sobre cualquier tejado del mapa para obtener su Referencia Catastral al instante.",
         cat_char_badge: "14 / 20 caracteres",
         badge_editable: "100% Editable",
         cta_share_bottom: "Compartir esta Página de Consultoría",
@@ -1890,6 +1890,7 @@
         btn_catastro_layer: "Cadastre Layer",
         btn_close_fs_map: "Close Full Screen",
         fs_map_badge: "🛰️ SATELLITE AERIAL VIEW + CADASTRAL PARCELS (FREE ZOOM)",
+        map_click_tip: "Tip: click on any roof on the map to get its Cadastral Reference instantly.",
         cat_char_badge: "14 / 20 characters",
         badge_editable: "100% Editable",
         cta_share_bottom: "Share this Consulting Page",
@@ -2025,6 +2026,7 @@
         btn_catastro_layer: "Calque Cadastre",
         btn_close_fs_map: "Fermer le Plein Écran",
         fs_map_badge: "🛰️ VUE AÉRIENNE SATELLITE + PARCELLAIRE CADASTRAL (ZOOM LIBRE)",
+        map_click_tip: "Astuce : cliquez sur n'importe quel toit de la carte pour obtenir sa Référence Cadastrale instantanément.",
         cat_char_badge: "14 / 20 caractères",
         badge_editable: "100% Modifiable",
         cta_share_bottom: "Partager cette Page de Conseil",
@@ -2160,6 +2162,7 @@
         btn_catastro_layer: "Kataster-Ebene",
         btn_close_fs_map: "Vollbild schließen",
         fs_map_badge: "🛰️ SATELLITEN-LUFTBILD + KATASTER-FLURKARTE (FREIER ZOOM)",
+        map_click_tip: "Tipp: Klicken Sie auf ein beliebiges Dach auf der Karte, um sofort die Katasterreferenz zu erhalten.",
         cat_char_badge: "14 / 20 Zeichen",
         badge_editable: "100% Editierbar",
         cta_share_bottom: "Diese Beratungsseite teilen",
@@ -2295,6 +2298,7 @@
         btn_catastro_layer: "Livello Catasto",
         btn_close_fs_map: "Chiudi Schermo Intero",
         fs_map_badge: "🛰️ VISTA AEREA SATELLITARE + PARTICELLARE CATASTALE (ZOOM LIBERO)",
+        map_click_tip: "Suggerimento: clicca su qualsiasi tetto sulla mappa per ottenere subito il Riferimento Catastale.",
         cat_char_badge: "14 / 20 caratteri",
         badge_editable: "100% Modificabile",
         cta_share_bottom: "Condividi questa Pagina di Consulenza",
@@ -2430,6 +2434,7 @@
         btn_catastro_layer: "طبقة السجل المساحي",
         btn_close_fs_map: "إغلاق ملء الشاشة",
         fs_map_badge: "🛰️ رؤية جوية عبر الأقمار الصناعية + مخطط السجل المساحي (تكبير حر)",
+        map_click_tip: "نصيحة: انقر على أي سطح مبنى على الخريطة للحصول على رقمه المساحي فوراً.",
         cat_char_badge: "14 / 20 رمزاً",
         badge_editable: "قابل للتعديل 100%",
         cta_share_bottom: "مشاركة صفحة الاستشارات هذه",
@@ -2565,6 +2570,7 @@
         btn_catastro_layer: "地籍图层",
         btn_close_fs_map: "关闭全屏",
         fs_map_badge: "🛰️ 高清卫星航拍 + 官方地籍地块图层（自由缩放）",
+        map_click_tip: "提示：点击地图上的任意建筑屋顶，即可立即获取其地籍参考编号。",
         cat_char_badge: "14 / 20 位字符",
         badge_editable: "100% 可编辑",
         cta_share_bottom: "分享此咨询中心页面",
