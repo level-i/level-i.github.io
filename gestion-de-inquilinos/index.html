@@ -7905,40 +7905,31 @@ window.volverFaseDni = function() {
 };
 
 async function consultarRolEnCascadeMake(dni, ipReg) {
-  var rolesOrden = ["INQUILINO", "PROPIETARIO", "ABOGADO"];
-  for (var i = 0; i < rolesOrden.length; i++) {
-    var rolPrueba = rolesOrden[i];
-    var res = await fetch(URL_WEBHOOK_TOC_TOC, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        accion: "solicitar_pin_acceso",
-        rol: rolPrueba,
-        "DNI-NIE-CIF": dni,
-        dni: dni,
-        idioma: window.sesionActiva.idioma || "es",
-        ip_registro: ipReg
-      })
-    });
-    var rawTxt = await res.text();
-    if (!rawTxt || !rawTxt.trim() || rawTxt.trim() === "Accepted") continue;
-    var data = parsearJsonBlindadoMake(rawTxt);
-    if (!data || data.error || data.encontrado === false) continue;
+  var res = await fetch(URL_WEBHOOK_TOC_TOC, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      accion: "solicitar_pin_acceso",
+      "DNI-NIE-CIF": dni,
+      dni: dni,
+      idioma: window.sesionActiva.idioma || "es",
+      ip_registro: ipReg
+    })
+  });
 
-    var itemsCheck = asegurarArrayDesdeMake(
-      data.inquilino_items || data.items_inquilino || (data.data && data.data.items) || data.items || []
-    );
-    var tieneRegistro = itemsCheck.length > 0 ||
-      Boolean(data.pin || data.PIN || data.pin_temporal || data.PROPIEDAD || data.propiedad || data.Propietario || data.nombre_propietario || data.nombre_abogado || data.Arrendatario || data.INQUILINO || data.cartera_propiedades || data.Lista_Propiedades_Autorizadas);
+  var rawTxt = await res.text();
+  if (!rawTxt || !rawTxt.trim()) return null;
 
-    if (tieneRegistro) {
-      if (!data.rol && !data.ROL) data.rol = rolPrueba;
-      return data;
-    }
+  if (rawTxt.trim() === "Accepted") {
+    return { ok: true, "DNI-NIE-CIF": dni };
   }
-  return null;
-}
 
+  var data = parsearJsonBlindadoMake(rawTxt);
+  if (!data || data.error || data.encontrado === false) return null;
+
+  return data;
+}
+  
 window.llamarAlWebhook = async function() {
   var dni = (document.getElementById("input-dni").value || "").trim().toUpperCase().replace(/[^A-Z0-9]/g, "");
   var chk = document.getElementById("chk-privacidad").checked;
