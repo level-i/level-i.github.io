@@ -8141,29 +8141,48 @@ window.validarPin = async function() {
 
   try {
     var payloadFinal = window.datosEnSecreto || {};
-    var ipReg = await obtenerIpRealCliente();
+    var rolesOrden = ["PROPIETARIO", "INQUILINO", "ABOGADO"];
+    var rolPrevio = String(reg.rol || reg.ROL || "").toUpperCase();
+    if (rolPrevio && rolesOrden.indexOf(rolPrevio) > 0) {
+      rolesOrden.splice(rolesOrden.indexOf(rolPrevio), 1);
+      rolesOrden.unshift(rolPrevio);
+    }
 
-    var res = await fetch(URL_WEBHOOK_PORTAL_DATOS, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        accion: "obtener_expediente_tras_pin",
-        "DNI-NIE-CIF": dni,
-        dni: dni,
-        pin: pinIngresado,
-        idioma: window.sesionActiva.idioma || "es",
-        ip_registro: ipReg
-      })
-    });
+    for (var i = 0; i < rolesOrden.length; i++) {
+      var rolPrueba = rolesOrden[i];
+      var res = await fetch(URL_WEBHOOK_PORTAL_DATOS, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          accion: "refrescar_expediente_sin_pin",
+          rol: rolPrueba,
+          "DNI-NIE-CIF": dni,
+          dni: dni
+        })
+      });
 
-    var rawTxt = await res.text();
-    window._ultimaRespuestaPropertyGestion = rawTxt;
+      var rawTxt = await res.text();
+      window._ultimaRespuestaPropertyGestion = rawTxt;
+      if (!rawTxt || !rawTxt.trim() || rawTxt.trim() === "Accepted") continue;
 
-    if (rawTxt && rawTxt.trim() && rawTxt.trim() !== "Accepted") {
       var dataPortal = parsearJsonBlindadoMake(rawTxt);
-      if (dataPortal && !dataPortal.error) {
+      if (!dataPortal || dataPortal.error || dataPortal.encontrado === false) continue;
+
+      var norm = normalizarPayloadMakeSiVienePlano(dataPortal);
+      var regCheck = extraerRegistroMake(norm, dni);
+      var itemsCheck = asegurarArrayDesdeMake(
+        norm.inquilino_items || norm.cartera_propiedades || norm.propiedades_propietario || norm.recibos || []
+      );
+      var tieneDatos = itemsCheck.length > 0 || Boolean(
+        regCheck.Propietario || regCheck.nombre_propietario || regCheck.Arrendatario ||
+        regCheck.INQUILINO || regCheck.PROPIEDAD || regCheck.propiedad || regCheck.nombre_abogado
+      );
+
+      if (tieneDatos) {
+        if (!dataPortal.rol && !dataPortal.ROL) dataPortal.rol = rolPrueba;
         payloadFinal = Object.assign({}, payloadFinal, dataPortal);
         window.datosEnSecreto = payloadFinal;
+        break;
       }
     }
 
@@ -8183,23 +8202,7 @@ window.validarPin = async function() {
     }
   }
 };
-
-  var reg = extraerRegistroMake(window.datosEnSecreto, window.sesionActiva["DNI-NIE-CIF"]);
-  var pinEsperado = formatearCampoValor(reg.pin || reg.PIN || reg.pin_temporal || "");
-  if (pinEsperado && pinIngresado !== pinEsperado) {
-    msgErr.innerText = "❌ PIN incorrecto. Verifica el mensaje recibido en WhatsApp.";
-    msgErr.style.display = "block";
-    return;
-  }
-
-  try {
-    sessionStorage.setItem("LEVEL_SESION_DNI", window.sesionActiva["DNI-NIE-CIF"]);
-    sessionStorage.setItem("LEVEL_SESION_PAYLOAD", JSON.stringify(window.datosEnSecreto));
-  } catch (_) {}
-
-  hidratarPortalDesdePayloadMake(window.datosEnSecreto, window.sesionActiva["DNI-NIE-CIF"]);
-};
-
+  
 window.recargarDatosSesionSinPin = async function() {
   if (window.MODO_DEMO_ACTIVO) return;
   var dni = window.sesionActiva["DNI-NIE-CIF"];
