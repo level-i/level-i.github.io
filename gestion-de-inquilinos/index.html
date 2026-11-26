@@ -1284,6 +1284,56 @@
       width: 100%;
       height: 44px;
       min-height: 44px; }
+  /* ACELERACIÓN MÓVIL */
+    .mobile-top-bar,
+    .mobile-fixed-dock,
+    .modal-backdrop,
+    .ticker-fullscreen-modal {
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
+    }
+    .mobile-top-bar {
+      background-color: #0d1322;
+    }
+    .mobile-fixed-dock {
+      background: #0a101d;
+      box-shadow: none;
+    }
+    .ticker-item {
+      box-shadow: none !important;
+      transition: none;
+    }
+    .advisor-spotlight-item::before {
+      animation: none;
+    }  
+  }
+.ticker-viewport {
+      width: 100%;
+      height: 44px;
+      min-height: 44px; }
+
+    /* ACELERACIÓN MÓVIL */
+    .mobile-top-bar,
+    .mobile-fixed-dock,
+    .modal-backdrop,
+    .ticker-fullscreen-modal {
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
+    }
+    .mobile-top-bar {
+      background-color: #0d1322;
+    }
+    .mobile-fixed-dock {
+      background: #0a101d;
+      box-shadow: none;
+    }
+    .ticker-item {
+      box-shadow: none !important;
+      transition: none;
+    }
+    .advisor-spotlight-item::before {
+      animation: none;
+    }
   }
 </style>
 </head>
@@ -5772,7 +5822,7 @@ function actualizarTarjetaSaldoVivoEnPantalla() {
 }
 
 function construirItemsCarrusel(movsFiltrados, resPctGlobal) {
-  return movsFiltrados.map(function(m) {
+  return movsFiltrados.slice(0, 12).map(function(m) {
     var impCargo = parsearNumeroContable(m.debe > 0 ? (m.total_con_impuestos || m.debe) : 0);
     var impHaber = parsearNumeroContable(m.haber);
     var resProp = calcularResumenPorcentajeACuenta(m.propiedad, obtenerDniUnificado(m));
@@ -7061,10 +7111,17 @@ function renderizarCarteraYRecibosPropietario(textoFiltroOpcional) {
   // 4. Chips de Geolocalización, Chips de Abogado y Chips de Modal Alta Propiedad
   var chipsMapa = document.getElementById("chips-mapa-propietario");
   if (chipsMapa) {
-    chipsMapa.innerHTML = props.map(function(p, idx) {
-      return '<button type="button" class="prop-chip ' + (idx === 0 ? 'active' : '') + '" onclick="seleccionarMapaPropietario(\'' + escaparHTML(p.nombre_propiedad) + '\', this)">📍 ' + escaparHTML(p.nombre_propiedad) + '</button>';
+    var propActivaMapa = window._ultimaPropMapaId
+      ? (props.find(function(x) { return x.nombre_propiedad === window._ultimaPropMapaId; }) || props[0])
+      : props[0];
+    chipsMapa.innerHTML = props.map(function(p) {
+      var esAct = propActivaMapa && p.nombre_propiedad === propActivaMapa.nombre_propiedad;
+      return '<button type="button" class="prop-chip ' + (esAct ? 'active' : '') + '" onclick="seleccionarMapaPropietario(\'' + escaparHTML(p.nombre_propiedad) + '\', this)">📍 ' + escaparHTML(p.nombre_propiedad) + '</button>';
     }).join("");
-    if (props[0]) actualizarMapaPropietario(props[0]);
+    if (propActivaMapa && window._ultimaPropMapaId !== propActivaMapa.nombre_propiedad) {
+      window._ultimaPropMapaId = propActivaMapa.nombre_propiedad;
+      actualizarMapaPropietario(propActivaMapa);
+    }
   }
 
   var chipsAbg = document.getElementById("chips-propiedades-abogado");
