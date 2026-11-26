@@ -1574,7 +1574,8 @@
             </div>
           </div>
         </div>
-<!-- SUBVISTA PROPIETARIA (ORDEN LÓGICO DE ARRIBA ABAJO) -->
+
+        <!-- SUBVISTA PROPIETARIA (ORDEN LÓGICO DE ARRIBA ABAJO) -->
         <div id="vista-propietaria-carmen" class="panel-box" style="display:none; border-color:var(--amber);">
           <div class="panel-header">
             <span data-i18n="owner_area_header">👑 ÁREA SEGURA DEL PROPIETARIO · GESTIÓN AUTÓNOMA EN TIEMPO REAL</span>
@@ -1927,7 +1928,6 @@
     </div>
   </aside>
 </div>
-
 <!-- ==========================================================================
      VENTANA FLOTANTE A PANTALLA COMPLETA AL HACER CLIC EN UN TITULAR DEL CARRUSEL
      ========================================================================== -->
@@ -2837,6 +2837,7 @@
     </form>
   </div>
 </div>
+
 <script>
 // ============================================================================
 // ENDPOINTS DE MAKE Y CONSTANTES DEL SISTEMA
@@ -3413,6 +3414,7 @@ const MANUAL_APP_I18N = {
     pie: "Wenn Sie einen Rückruf wünschen, klicken Sie auf <strong>📞 Rückruf anfordern</strong>."
   }
 };
+
 window.CARTERA_PROPIEDADES = [];
 window.SUMINISTROS_GASTOS = [];
 window.RECIBOS_CARTERA = [];
@@ -3473,7 +3475,7 @@ async function obtenerIpRealCliente() {
   } catch (_) {}
   return "No disponible";
 }
- // ============================================================================
+// ============================================================================
 // FILTROS DE SEGURIDAD EN CAMPOS SENSIBLES (DOBLE CLIC + VALIDACIÓN IBAN)
 // ============================================================================
 window.avisarFiltroSensible = function(nombreCampo) {
@@ -4318,43 +4320,6 @@ function normalizarReciboDesdeMake(r) {
   };
 }
 
-function calcularResumenPorcentajeACuenta(nombrePropiedad, dniTitular) {
-  var dniRef = dniTitular || ((window.sesionActiva && window.sesionActiva.rol === "INQUILINO") ? window.sesionActiva["DNI-NIE-CIF"] : "");
-  var movs = (window.RECIBOS_CARTERA || []).filter(function(r) {
-    return coincidenReciboYPropiedad(r, nombrePropiedad, dniRef);
-  });
-
-  var totalCargos = 0;
-  var totalACuenta = 0;
-  var totalPendienteReal = 0;
-
-  movs.forEach(function(m) {
-    var impCargo = parsearNumeroContable(m.debe > 0 ? (m.total_con_impuestos || m.debe) : 0);
-    var impHaber = parsearNumeroContable(m.haber);
-    if (m.es_a_cuenta) {
-      totalACuenta += impHaber;
-    } else if (impCargo > 0) {
-      totalCargos += impCargo;
-      if (String(m.estado || "").toUpperCase() === "PENDIENTE") {
-        totalPendienteReal += impCargo;
-      }
-    }
-  });
-
-  var basePct = totalPendienteReal > 0 ? totalPendienteReal : totalCargos;
-  var cubiertoNeto = Math.min(basePct, totalACuenta);
-  var pctCubierto = basePct > 0 ? Math.min(100, +((cubiertoNeto / basePct) * 100).toFixed(1)) : 0;
-  var restanteTrasACuenta = Math.max(0, +(totalPendienteReal - totalACuenta).toFixed(2));
-
-  return {
-    totalCargos: +totalCargos.toFixed(2),
-    totalACuenta: +totalACuenta.toFixed(2),
-    totalPendienteReal: +totalPendienteReal.toFixed(2),
-    restanteTrasACuenta: restanteTrasACuenta,
-    pctCubierto: pctCubierto
-  };
-}
-
 function generarNumeroAscendenteDocumento(esFactura) {
   var anio = new Date().getFullYear();
   var prefijo = esFactura ? ("FAC-" + anio + "-") : ("REC-" + anio + "-");
@@ -4519,7 +4484,8 @@ window.mostrarModalConfirmacionCTA = function(opciones) {
     if (typeof opciones.onConfirm === "function") opciones.onConfirm();
   };
 };
- // ============================================================================
+
+// ============================================================================
 // DETALLE A PANTALLA COMPLETA AL HACER CLIC EN UN TITULAR DEL CARRUSEL
 // ============================================================================
 window.abrirDetalleApunteTicker = function(idRecibo) {
@@ -6539,7 +6505,6 @@ window.enviarIncidenciaHistoricoMake = async function(e) {
     btn.innerText = "💬 Guardar en Histórico de Incidencias y Notificar por WhatsApp →";
   });
 };
-
 // ============================================================================
 // RENDERIZADO DE RECIBOS / FACTURAS, PDF (AVISO ARRIBA + LÍNEAS 1..N) Y LARK
 // ============================================================================
@@ -6942,7 +6907,8 @@ function renderizarRecibosInquilino(nombrePropiedad, dniTitular) {
   }).join("");
 
   caja.innerHTML = filasHtml + construirBarraResumenMovimientos(lista, langActual);
-}  
+}
+
 // ============================================================================
 // CARTERA DEL PROPIETARIO, LIBRO DE RECIBOS, GEOLOCALIZACIÓN Y ABOGADO
 // ============================================================================
@@ -6994,7 +6960,6 @@ function renderizarCarteraYRecibosPropietario(textoFiltroOpcional) {
     badgeCartera.innerText = props.length + " PROPIEDAD(ES) ACTIVA(S)";
   }
 
-  // 1. Selector de propiedad en Libro de Recibos
   var selRecProp = document.getElementById("select-propiedad-recibos");
   if (selRecProp) {
     var prevRecProp = window.filtroPropiedadRecibos || "TODAS";
@@ -7006,7 +6971,6 @@ function renderizarCarteraYRecibosPropietario(textoFiltroOpcional) {
     selRecProp.value = prevRecProp;
   }
 
-  // 2. Renderizado del Libro de Recibos
   var contRecibos = document.getElementById("contenedor-recibos-propietario");
   if (contRecibos) {
     var estadoF = window.filtroRecibosActual || "PENDIENTE";
@@ -7070,7 +7034,6 @@ function renderizarCarteraYRecibosPropietario(textoFiltroOpcional) {
     }
   }
 
-  // 3. Renderizado de Fichas de Inmuebles
   var contFichas = document.getElementById("contenedor-fichas-cartera");
   if (contFichas) {
     var qBuscar = String(textoFiltroOpcional !== undefined ? textoFiltroOpcional : ((document.getElementById("input-buscar-cartera") && document.getElementById("input-buscar-cartera").value) || "")).trim().toUpperCase();
@@ -7113,7 +7076,6 @@ function renderizarCarteraYRecibosPropietario(textoFiltroOpcional) {
     }
   }
 
-  // 4. Chips de Geolocalización, Chips de Abogado y Chips de Modal Alta Propiedad
   var chipsMapa = document.getElementById("chips-mapa-propietario");
   if (chipsMapa) {
     var propActivaMapa = window._ultimaPropMapaId
@@ -7485,7 +7447,8 @@ window.imprimirInformeEjecutivoAbogadoPDF = function() {
   );
   win.document.close();
 };
- // ============================================================================
+
+// ============================================================================
 // TRANSFERENCIA BANCARIA, ENLACE ABOGADO, CANAL LEGAL Y ELENA IA
 // ============================================================================
 window.abrirModalPagoTPV = function(idRecibo) {
@@ -7929,7 +7892,7 @@ async function consultarRolEnCascadeMake(dni, ipReg) {
 
   return data;
 }
-  
+
 window.llamarAlWebhook = async function() {
   var dni = (document.getElementById("input-dni").value || "").trim().toUpperCase().replace(/[^A-Z0-9]/g, "");
   var chk = document.getElementById("chk-privacidad").checked;
@@ -7986,6 +7949,7 @@ window.llamarAlWebhook = async function() {
     btn.innerText = (I18N_DICCIONARIO[window.sesionActiva.idioma] || I18N_DICCIONARIO.es).btn_request_pin;
   }
 };
+
 function normalizarPayloadMakeSiVienePlano(rawPayload) {
   if (!rawPayload) return {};
   if (typeof rawPayload === "string") {
@@ -8017,7 +7981,7 @@ function normalizarPayloadMakeSiVienePlano(rawPayload) {
   }
   return {};
 }
-  
+
 function hidratarPortalDesdePayloadMake(rawPayload, dniBuscado) {
   rawPayload = normalizarPayloadMakeSiVienePlano(rawPayload);
   window.MODO_DEMO_ACTIVO = false;
@@ -8202,7 +8166,7 @@ window.validarPin = async function() {
     }
   }
 };
-  
+
 window.recargarDatosSesionSinPin = async function() {
   if (window.MODO_DEMO_ACTIVO) return;
   var dni = window.sesionActiva["DNI-NIE-CIF"];
@@ -8216,7 +8180,9 @@ window.recargarDatosSesionSinPin = async function() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ accion: "refrescar_expediente_sin_pin", rol: rolActual, "DNI-NIE-CIF": dni, dni: dni })
     });
-    var data = parsearJsonBlindadoMake(await res.text());
+    var rawTxt = await res.text();
+    window._ultimaRespuestaPropertyGestion = rawTxt;
+    var data = parsearJsonBlindadoMake(rawTxt);
     if (data && !data.error) {
       window.datosEnSecreto = data;
       hidratarPortalDesdePayloadMake(data, dni);
@@ -8842,7 +8808,7 @@ function actualizarRelojesLevel() {
   if (c2) c2.innerText = str;
 }
 
-document.addEventListener("DOMContentLoaded", function() {
+function iniciarAppLevelImmo() {
   inicializarSelectoresIdiomaSVG();
   var langGuardado = "es";
   try { langGuardado = localStorage.getItem("LEVEL_IDIOMA") || "es"; } catch (_) {}
@@ -8859,7 +8825,13 @@ document.addEventListener("DOMContentLoaded", function() {
       hidratarPortalDesdePayloadMake(window.datosEnSecreto, dniCache);
     }
   } catch (_) {}
-});
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", iniciarAppLevelImmo);
+} else {
+  iniciarAppLevelImmo();
+}
 </script>
 </body>
-</html> 
+</html>
