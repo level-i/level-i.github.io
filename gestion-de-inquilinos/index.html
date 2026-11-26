@@ -7988,18 +7988,29 @@ window.llamarAlWebhook = async function() {
 };
 function normalizarPayloadMakeSiVienePlano(rawPayload) {
   if (!rawPayload) return {};
+  if (typeof rawPayload === "string") {
+    try { rawPayload = parsearJsonBlindadoMake(rawPayload); } catch (_) { return {}; }
+  }
   if (Array.isArray(rawPayload)) {
-    return { inquilino_items: rawPayload, recibos: rawPayload };
+    return {
+      inquilino_items: rawPayload,
+      cartera_propiedades: rawPayload,
+      recibos: rawPayload
+    };
   }
   if (typeof rawPayload === "object") {
     var clon = Object.assign({}, rawPayload);
-    var posiblesListas = ["records", "rows", "bundles", "data", "output", "resultado", "expediente"];
-    for (var i = 0; i < posiblesListas.length; i++) {
-      var k = posiblesListas[i];
+    var listasPosibles = [
+      "records", "rows", "bundles", "data", "output", "resultado",
+      "expediente", "propiedades", "cartera_propiedades", "propiedades_propietario",
+      "recibos", "suministros_y_gastos", "movimientos"
+    ];
+    for (var i = 0; i < listasPosibles.length; i++) {
+      var k = listasPosibles[i];
       if (Array.isArray(clon[k]) && clon[k].length > 0) {
         if (!clon.inquilino_items) clon.inquilino_items = clon[k];
+        if (!clon.cartera_propiedades) clon.cartera_propiedades = clon[k];
         if (!clon.recibos) clon.recibos = clon[k];
-        break;
       }
     }
     return clon;
@@ -8105,9 +8116,10 @@ function hidratarPortalDesdePayloadMake(rawPayload, dniBuscado) {
   actualizarVisibilidadSolvenciaPorRol();
 }
 
-window.validarPin = function() {
+window.validarPin = async function() {
   var pinIngresado = (document.getElementById("input-pin-user").value || "").trim();
   var msgErr = document.getElementById("msg-error");
+  var btn = document.getElementById("btn-validar-pin");
   msgErr.style.display = "none";
 
   if (!/^\d{4}$/.test(pinIngresado)) {
@@ -8115,6 +8127,62 @@ window.validarPin = function() {
     msgErr.style.display = "block";
     return;
   }
+
+  var dni = window.sesionActiva["DNI-NIE-CIF"];
+  var reg = extraerRegistroMake(window.datosEnSecreto, dni);
+  var pinEsperado = formatearCampoValor(reg.pin || reg.PIN || reg.pin_temporal || "");
+  if (pinEsperado && pinIngresado !== pinEsperado) {
+    msgErr.innerText = "❌ PIN incorrecto. Verifica el mensaje recibido en WhatsApp.";
+    msgErr.style.display = "block";
+    return;
+  }
+
+  if (btn) { btn.disabled = true; btn.innerText = "Cargando expediente..."; }
+
+  try {
+    var payloadFinal = window.datosEnSecreto || {};
+    var ipReg = await obtenerIpRealCliente();
+
+    var res = await fetch(URL_WEBHOOK_PORTAL_DATOS, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        accion: "obtener_expediente_tras_pin",
+        "DNI-NIE-CIF": dni,
+        dni: dni,
+        pin: pinIngresado,
+        idioma: window.sesionActiva.idioma || "es",
+        ip_registro: ipReg
+      })
+    });
+
+    var rawTxt = await res.text();
+    window._ultimaRespuestaPropertyGestion = rawTxt;
+
+    if (rawTxt && rawTxt.trim() && rawTxt.trim() !== "Accepted") {
+      var dataPortal = parsearJsonBlindadoMake(rawTxt);
+      if (dataPortal && !dataPortal.error) {
+        payloadFinal = Object.assign({}, payloadFinal, dataPortal);
+        window.datosEnSecreto = payloadFinal;
+      }
+    }
+
+    try {
+      sessionStorage.setItem("LEVEL_SESION_DNI", dni);
+      sessionStorage.setItem("LEVEL_SESION_PAYLOAD", JSON.stringify(payloadFinal));
+    } catch (_) {}
+
+    hidratarPortalDesdePayloadMake(payloadFinal, dni);
+  } catch (err) {
+    msgErr.innerText = "⚠️ Error al cargar los datos del expediente: " + (err && err.message ? err.message : "");
+    msgErr.style.display = "block";
+  } finally {
+    if (btn) {
+      btn.disabled = false;
+      btn.innerText = (I18N_DICCIONARIO[window.sesionActiva.idioma] || I18N_DICCIONARIO.es).btn_enter_portal;
+    }
+  }
+};
 
   var reg = extraerRegistroMake(window.datosEnSecreto, window.sesionActiva["DNI-NIE-CIF"]);
   var pinEsperado = formatearCampoValor(reg.pin || reg.PIN || reg.pin_temporal || "");
