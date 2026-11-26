@@ -3822,7 +3822,11 @@ window.emitirCertificadoSolvenciaOficial = function() {
 // NORMALIZACIÓN, PAGOS A CUENTA, % CUBIERTO Y ENVÍO DE RECIBOS A LARK
 // ============================================================================
 function esConceptoAlquiler(categoriaOrConcepto) {
-  return /alquiler|renta|cuota mensual/i.test(String(categoriaOrConcepto || ""));
+  var txt = String(categoriaOrConcepto || "");
+  if (/agua|luz|electric|gas|suministro|ibi|comunidad|residuo|basura|reparaci|aver[ií]a|cortado/i.test(txt)) {
+    return false;
+  }
+  return /alquiler|renta|cuota mensual/i.test(txt);
 }
 
 function esPagoACuenta(categoriaOrConcepto) {
@@ -5921,6 +5925,86 @@ function construirBarraResumenMovimientos(listaMovs, langActual) {
   '</div>';
 }
 
+function calcularMapaFifoCartera() {
+  var mapaResultado = {};
+  var porPropiedad = {};
+
+  (window.RECIBOS_CARTERA || []).forEach(function(r) {
+    var claveProp = String(r.propiedad || "GENERAL").trim().toUpperCase();
+    if (!porPropiedad[claveProp]) porPropiedad[claveProp] = [];
+    porPropiedad[claveProp].push(r);
+  });
+
+  Object.keys(porPropiedad).forEach(function(claveProp) {
+    var lista = porPropiedad[claveProp].slice().sort(function(a, b) {
+      var diff = fechaValorATimestamp(a) - fechaValorATimestamp(b);
+      if (diff !== 0) return diff;
+      return String(a.id_recibo || "").localeCompare(String(b.id_recibo || ""));
+    });
+
+    var bolsaACuenta = 0;
+    lista.forEach(function(m) {
+      if (m.es_a_cuenta) {
+        bolsaACuenta += parsearNumeroContable(m.haber);
+      }
+    });
+    bolsaACuenta = +bolsaACuenta.toFixed(2);
+
+    lista.forEach(function(m) {
+      var impCargo = parsearNumeroContable(m.debe > 0 ? (m.total_con_impuestos || m.debe) : 0);
+      var impHaber = parsearNumeroContable(m.haber);
+      var esPend = String(m.estado || "").toUpperCase() === "PENDIENTE" && impHaber < impCargo;
+
+      if (!esPend || m.es_a_cuenta || impCargo <= 0) {
+        mapaResultado[m.id_recibo] = { estadoFifo: "NORMAL", cubierto: impHaber, faltante: 0, pct: 100 };
+        return;
+      }
+
+      var faltaOriginal = +(impCargo - impHaber).toFixed(2);
+      if (bolsaACuenta <= 0) {
+        mapaResultado[m.id_recibo] = { estadoFifo: "PENDIENTE", cubierto: 0, faltante: faltaOriginal, pct: 0 };
+        return;
+      }
+
+      var aplicado = Math.min(faltaOriginal, bolsaACuenta);
+      bolsaACuenta = +(bolsaACuenta - aplicado).toFixed(2);
+      var faltante = +(faltaOriginal - aplicado).toFixed(2);
+      var pct = impCargo > 0 ? Math.min(100, +((aplicado / impCargo) * 100).toFixed(1)) : 0;
+
+      mapaResultado[m.id_recibo] = {
+        estadoFifo: faltante <= 0.009 ? "CUBIERTO_A_CUENTA" : "PARCIAL_A_CUENTA",
+        cubierto: +aplicado.toFixed(2),
+        faltante: Math.max(0, faltante),
+        pct: pct
+      };
+    });
+  });
+
+  return mapaResultado;
+}
+
+function obtenerBadgeFifoRecibo(r, mapaFifo) {
+  var impCargo = parsearNumeroContable(r.debe > 0 ? (r.total_con_impuestos || r.debe) : 0);
+  var impHaber = parsearNumeroContable(r.haber);
+  var esPend = String(r.estado || "").toUpperCase() === "PENDIENTE" && impHaber < impCargo;
+
+  if (r.es_a_cuenta) {
+    return '<span class="badge badge-info">💶 PAGO A CUENTA (' + escaparHTML(r.fecha_pago || r.periodo || "") + ')</span>';
+  }
+  if (!esPend) {
+    return '<span class="badge badge-success">🟢 ABONADO (' + escaparHTML(r.fecha_pago || "") + ')</span>';
+  }
+
+  var info = mapaFifo && mapaFifo[r.id_recibo];
+  if (info && info.estadoFifo === "CUBIERTO_A_CUENTA") {
+    return '<span class="badge badge-success">🟢 CUBIERTO A CUENTA (100%)</span>';
+  }
+  if (info && info.estadoFifo === "PARCIAL_A_CUENTA") {
+    return '<span class="badge badge-warning">🟠 PARCIAL A CUENTA: ' + formatearEuros(info.cubierto) + ' (' + info.pct + '%) · Faltan ' + formatearEuros(info.faltante) + '</span>';
+  }
+  return '<span class="badge badge-danger">🔴 PENDIENTE (DEBE)</span>';
+}
+
 function renderizarMotorContableSuministrosPropietario() {
   enriquecerDatosCarteraYLimpiarRecibosVacios();
   var caja = document.getElementById("contenedor-suministros-propietario");
@@ -5954,38 +6038,38 @@ function renderizarMotorContableSuministrosPropietario() {
     return okProp && okAnio;
   });
 
-  var totalAlquiler = 0;
+  var totalCuotasAlquiler = 0;
   var totalSuministrosOtros = 0;
   var totalPagosACuenta = 0;
-  var totalDebe = 0;
-  var totalHaber = 0;
-  var totalPendienteCobro = 0;
+  var totalVencidoDebe = 0;
+  var totalAbonadoHaber = 0;
 
   movsFiltrados.forEach(function(m) {
-    var impAlq = parsearNumeroContable(m.importe_alquiler);
-    var impSum = parsearNumeroContable(m.importe_suministros_otros);
     var impHaber = parsearNumeroContable(m.haber);
     var impDebe = parsearNumeroContable(m.debe > 0 ? (m.total_con_impuestos || m.debe) : 0);
-    var esPend = String(m.estado || "").toUpperCase() === "PENDIENTE" && impHaber < impDebe;
 
-    totalAlquiler += impAlq;
-    totalSuministrosOtros += impSum;
-    if (m.es_a_cuenta) totalPagosACuenta += impHaber;
-    totalDebe += impDebe;
-    totalHaber += impHaber;
-    if (esPend) totalPendienteCobro += Math.max(0, impDebe - impHaber);
+    if (m.es_a_cuenta) {
+      totalPagosACuenta += impHaber;
+    } else if (impDebe > 0) {
+      if (esConceptoAlquiler(m.tipo + " " + m.concepto)) {
+        totalCuotasAlquiler += impDebe;
+      } else {
+        totalSuministrosOtros += impDebe;
+      }
+    }
+
+    totalVencidoDebe += impDebe;
+    totalAbonadoHaber += impHaber;
   });
 
-  totalAlquiler = +totalAlquiler.toFixed(2);
+  totalCuotasAlquiler = +totalCuotasAlquiler.toFixed(2);
   totalSuministrosOtros = +totalSuministrosOtros.toFixed(2);
   totalPagosACuenta = +totalPagosACuenta.toFixed(2);
-  totalDebe = +totalDebe.toFixed(2);
-  totalHaber = +totalHaber.toFixed(2);
-  totalPendienteCobro = +totalPendienteCobro.toFixed(2);
+  totalVencidoDebe = +totalVencidoDebe.toFixed(2);
+  totalAbonadoHaber = +totalAbonadoHaber.toFixed(2);
 
-  var saldoVivo = +(totalHaber - totalDebe).toFixed(2);
+  var pendienteNeto = +(totalVencidoDebe - totalAbonadoHaber).toFixed(2);
   var resPctMotor = calcularResumenPorcentajeACuenta(propActual === "TODAS" ? "" : propActual);
-  var pctCoberturaMotor = totalDebe > 0 ? Math.min(100, +((Math.min(totalDebe, totalPagosACuenta) / totalDebe) * 100).toFixed(1)) : (totalPagosACuenta > 0 ? 100 : 0);
 
   var etiquetaAmbito = (propActual === "TODAS")
     ? "Cartera Global (" + props.length + " propiedades)"
@@ -5994,34 +6078,34 @@ function renderizarMotorContableSuministrosPropietario() {
 
   var html =
     '<div style="font-size:12px; color:var(--text-muted); margin-bottom:10px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px;">' +
-      '<span>Ámbito contable: <strong style="color:#fff;">' + escaparHTML(etiquetaAmbito) + '</strong> · <strong style="color:var(--amber);">' + escaparHTML(etiquetaAnio) + '</strong> · Orden cronológico por <strong>Fecha Valor</strong></span>' +
+      '<span>Ámbito contable: <strong style="color:#fff;">' + escaparHTML(etiquetaAmbito) + '</strong> · <strong style="color:var(--amber);">' + escaparHTML(etiquetaAnio) + '</strong> · Imputación automática FIFO por <strong>Fecha Valor</strong></span>' +
       '<span>Movimientos: <strong style="color:var(--neon-cyan);">' + movsFiltrados.length + '</strong></span>' +
     '</div>' +
     '<div class="grid-4col" style="margin-bottom:12px;">' +
       '<div style="background:var(--bg-input); border:1px solid var(--border); border-radius:10px; padding:12px;">' +
-        '<div style="font-size:11px; color:var(--text-muted); font-weight:700; text-transform:uppercase;">Alquileres (' + escaparHTML(etiquetaAnio) + ')</div>' +
-        '<div style="font-size:17px; font-weight:900; color:#fff; margin-top:4px;">' + formatearEuros(totalAlquiler) + '</div>' +
+        '<div style="font-size:11px; color:var(--text-muted); font-weight:700; text-transform:uppercase;">Total cuotas alquiler</div>' +
+        '<div style="font-size:17px; font-weight:900; color:#fff; margin-top:4px;">' + formatearEuros(totalCuotasAlquiler) + '</div>' +
       '</div>' +
       '<div style="background:var(--bg-input); border:1px solid var(--border); border-radius:10px; padding:12px;">' +
-        '<div style="font-size:11px; color:var(--text-muted); font-weight:700; text-transform:uppercase;">Suministros y Otros</div>' +
+        '<div style="font-size:11px; color:var(--text-muted); font-weight:700; text-transform:uppercase;">Total suministros + otros</div>' +
         '<div style="font-size:17px; font-weight:900; color:var(--neon-cyan); margin-top:4px;">' + formatearEuros(totalSuministrosOtros) + '</div>' +
       '</div>' +
       '<div style="background:var(--bg-input); border:1px solid var(--border); border-radius:10px; padding:12px;">' +
-        '<div style="font-size:11px; color:var(--text-muted); font-weight:700; text-transform:uppercase;">Total Cobrado / A Cuenta (Haber)</div>' +
-        '<div style="font-size:17px; font-weight:900; color:var(--neon-green); margin-top:4px;">' + formatearEuros(totalHaber) + '</div>' +
-        (totalPagosACuenta > 0 ? '<div style="font-size:11px; color:var(--neon-cyan); margin-top:2px;">A cuenta: ' + formatearEuros(totalPagosACuenta) + ' (' + pctCoberturaMotor + '% cubierto)</div>' : '') +
+        '<div style="font-size:11px; color:var(--text-muted); font-weight:700; text-transform:uppercase;">Total vencido (Debe)</div>' +
+        '<div style="font-size:17px; font-weight:900; color:var(--amber); margin-top:4px;">' + formatearEuros(totalVencidoDebe) + '</div>' +
       '</div>' +
       '<div style="background:var(--bg-input); border:1px solid var(--border); border-radius:10px; padding:12px;">' +
-        '<div style="font-size:11px; color:var(--text-muted); font-weight:700; text-transform:uppercase;">Pendiente de Cobro</div>' +
-        '<div style="font-size:17px; font-weight:900; color:' + (totalPendienteCobro > 0 ? '#fca5a5' : 'var(--neon-green)') + '; margin-top:4px;">' + formatearEuros(totalPendienteCobro) + '</div>' +
+        '<div style="font-size:11px; color:var(--text-muted); font-weight:700; text-transform:uppercase;">Total abonado (Haber)</div>' +
+        '<div style="font-size:17px; font-weight:900; color:var(--neon-green); margin-top:4px;">' + formatearEuros(totalAbonadoHaber) + '</div>' +
+        (totalPagosACuenta > 0 ? '<div style="font-size:11px; color:var(--neon-cyan); margin-top:2px;">Incluye a cuenta: ' + formatearEuros(totalPagosACuenta) + '</div>' : '') +
       '</div>' +
     '</div>' +
     '<div class="saldo-vivo-card" style="margin-top:0; margin-bottom:14px;">' +
       '<div>' +
-        '<div style="font-size:11.5px; font-weight:800; color:var(--text-muted); text-transform:uppercase;">Saldo Vivo (' + escaparHTML(etiquetaAmbito) + ' · ' + escaparHTML(etiquetaAnio) + ') · Haber - Debe</div>' +
-        '<div style="font-size:12px; color:var(--text-muted);">Haber: ' + formatearEuros(totalHaber) + ' · Debe: ' + formatearEuros(totalDebe) + (resPctMotor.totalACuenta > 0 ? ' · % Cubierto: ' + resPctMotor.pctCubierto + '%' : '') + '</div>' +
+        '<div style="font-size:11.5px; font-weight:800; color:var(--text-muted); text-transform:uppercase;">Pendiente (' + escaparHTML(etiquetaAmbito) + ' · ' + escaparHTML(etiquetaAnio) + ')</div>' +
+        '<div style="font-size:12px; color:var(--text-muted);">Total vencido (' + formatearEuros(totalVencidoDebe) + ') − Total abonado (' + formatearEuros(totalAbonadoHaber) + ')</div>' +
       '</div>' +
-      '<div class="saldo-amount ' + (saldoVivo >= 0 ? 'positivo' : 'negativo') + '">' + (saldoVivo > 0 ? '+' : '') + formatearEuros(saldoVivo) + '</div>' +
+      '<div class="saldo-amount ' + (pendienteNeto <= 0 ? 'positivo' : 'negativo') + '">' + (pendienteNeto > 0 ? formatearEuros(pendienteNeto) : (pendienteNeto < 0 ? 'A favor: ' + formatearEuros(Math.abs(pendienteNeto)) : '0,00 €')) + '</div>' +
     '</div>';
 
   if (movsFiltrados.length > 0) {
@@ -6861,19 +6945,13 @@ function renderizarRecibosInquilino(nombrePropiedad, dniTitular) {
   }
 
   var resPct = calcularResumenPorcentajeACuenta(nombrePropiedad, dniRef);
-
+  var mapaFifo = calcularMapaFifoCartera();
   var filasHtml = lista.map(function(r) {
     var impCargo = parsearNumeroContable(r.debe > 0 ? (r.total_con_impuestos || r.debe) : 0);
     var impHaber = parsearNumeroContable(r.haber);
     var esPend = String(r.estado || "").toUpperCase() === "PENDIENTE" && impHaber < impCargo;
     var tienePdf = Boolean(r.url_factura || r.file_token_pdf);
-
-    var badgeEstado = r.es_a_cuenta
-      ? '<span class="badge badge-info">A CUENTA · ' + resPct.pctCubierto + '% CUBIERTO (' + escaparHTML(r.fecha_pago || "") + ')</span>'
-      : (!esPend
-          ? '<span class="badge badge-success">ABONADO (' + escaparHTML(r.fecha_pago || "") + ')</span>'
-          : '<span class="badge badge-danger">PENDIENTE DE COBRO</span>');
-
+    var badgeEstado = obtenerBadgeFifoRecibo(r, mapaFifo);
     var detalleContable = 'Nº ' + escaparHTML(r.id_recibo) + ' · ' + escaparHTML(r.periodo) +
       ' · Debe: <strong style="color:#fca5a5;">' + formatearEuros(r.debe) + '</strong>' +
       ' · Haber: <strong style="color:var(--neon-green);">' + formatearEuros(r.haber) + '</strong>' +
@@ -6993,19 +7071,14 @@ function renderizarCarteraYRecibosPropietario(textoFiltroOpcional) {
     if (movsRec.length === 0) {
       contRecibos.innerHTML = '<div style="padding:14px; background:var(--bg-input); border:1px dashed var(--border); border-radius:10px; color:var(--text-muted); font-size:13px;">No hay recibos ni apuntes en este filtro.</div>';
     } else {
+     var mapaFifo = calcularMapaFifoCartera(); 
       var rowsRecHtml = movsRec.map(function(r) {
         var impCargo = parsearNumeroContable(r.debe > 0 ? (r.total_con_impuestos || r.debe) : 0);
         var impHaber = parsearNumeroContable(r.haber);
         var esPend = String(r.estado || "").toUpperCase() === "PENDIENTE" && impHaber < impCargo;
         var resPct = calcularResumenPorcentajeACuenta(r.propiedad, obtenerDniUnificado(r));
         var tienePdf = Boolean(r.url_factura || r.file_token_pdf);
-
-        var badgeEst = r.es_a_cuenta
-          ? '<span class="badge badge-info">A CUENTA · ' + resPct.pctCubierto + '% CUBIERTO</span>'
-          : (!esPend
-              ? '<span class="badge badge-success">ABONADO (' + escaparHTML(r.fecha_pago || "") + ')</span>'
-              : '<span class="badge badge-danger">PENDIENTE (DEBE)</span>');
-
+        var badgeEst = obtenerBadgeFifoRecibo(r, mapaFifo);
         var botonesRec = '';
         if (tienePdf) {
           botonesRec += '<button type="button" class="btn-outline-sm" style="border-color:var(--neon-cyan); color:var(--neon-cyan); font-weight:800;" onclick="abrirOSincronizarPdfRecibo(\'' + escaparHTML(r.id_recibo) + '\')">' + escaparHTML(t.btn_orig_pdf) + '</button>';
