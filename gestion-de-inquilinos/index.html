@@ -7986,8 +7986,29 @@ window.llamarAlWebhook = async function() {
     btn.innerText = (I18N_DICCIONARIO[window.sesionActiva.idioma] || I18N_DICCIONARIO.es).btn_request_pin;
   }
 };
-
+function normalizarPayloadMakeSiVienePlano(rawPayload) {
+  if (!rawPayload) return {};
+  if (Array.isArray(rawPayload)) {
+    return { inquilino_items: rawPayload, recibos: rawPayload };
+  }
+  if (typeof rawPayload === "object") {
+    var clon = Object.assign({}, rawPayload);
+    var posiblesListas = ["records", "rows", "bundles", "data", "output", "resultado", "expediente"];
+    for (var i = 0; i < posiblesListas.length; i++) {
+      var k = posiblesListas[i];
+      if (Array.isArray(clon[k]) && clon[k].length > 0) {
+        if (!clon.inquilino_items) clon.inquilino_items = clon[k];
+        if (!clon.recibos) clon.recibos = clon[k];
+        break;
+      }
+    }
+    return clon;
+  }
+  return {};
+}
+  
 function hidratarPortalDesdePayloadMake(rawPayload, dniBuscado) {
+  rawPayload = normalizarPayloadMakeSiVienePlano(rawPayload);
   window.MODO_DEMO_ACTIVO = false;
   var demoBanner = document.getElementById("demo-mode-banner");
   if (demoBanner) demoBanner.style.display = "none";
