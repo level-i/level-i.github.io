@@ -2853,7 +2853,8 @@ const URL_WEBHOOK_PROPERTY_GESTION = "https://hook.eu1.make.com/j44fpvkmiv7ua8tt
 const URL_WEBHOOK_TOC_TOC = "https://hook.eu1.make.com/flpdnde7wmt72tovyup6yjfkk7yuwmy6";
 const URL_WEBHOOK_PORTAL_DATOS = "https://hook.eu1.make.com/j44fpvkmiv7ua8tttys25hehwbf9em8l";
 const URL_WEBHOOK_LEGAL_SERVICES = "https://hook.eu1.make.com/7h10etd9klntm41oebrg4m1buc903uh4";
-
+const URL_WEBHOOK_ATENCION_CLIENTE = "https://hook.eu1.make.com/3ieb52jkhhc1f8advivhuztdhpbd686h";
+  
 // Clave opcional de Google Maps Geocoding API (si está vacía, usa respaldo oficial automático)
 const GOOGLE_MAPS_API_KEY = "";
 
@@ -7936,21 +7937,27 @@ window.enviarSolicitudLlamadaAdvisor = function(e) {
   var tel = document.getElementById("cb-telefono").value.trim();
   var franja = document.getElementById("cb-franja").value;
   var motivo = document.getElementById("cb-motivo").value.trim();
+  var rolActual = (window.sesionActiva && window.sesionActiva.rol) || "USUARIO";
+  var propActual = (window.EXPEDIENTE_ACTUAL && window.EXPEDIENTE_ACTUAL.propiedad) || (window.sesionActiva && window.sesionActiva.propiedad) || "";
+
   if (!window.MODO_DEMO_ACTIVO) {
-    fetch(URL_WEBHOOK_TOC_TOC, {
+    fetch(URL_WEBHOOK_ATENCION_CLIENTE, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        accion: "solicitud_llamada_advisor",
+        accion: "solicitud_llamada_elena",
+        rol: rolActual,
         nombre: nom,
+        "DNI-NIE-CIF": (window.sesionActiva && window.sesionActiva["DNI-NIE-CIF"]) || "",
         telefono: tel,
+        propiedad: propActual,
         franja: franja,
-        motivo: motivo,
-        "DNI-NIE-CIF": window.sesionActiva["DNI-NIE-CIF"] || ""
+        motivo: "[" + franja + "] " + motivo
       })
     }).catch(function(){});
   }
   document.getElementById("elena-callback-box").style.display = "none";
+  document.getElementById("cb-motivo").value = "";
   agregarBurbujaElena("✅ Hemos registrado tu solicitud de llamada para <strong>" + escaparHTML(nom) + "</strong> (" + escaparHTML(tel) + ") en la franja <em>" + escaparHTML(franja) + "</em>.");
 };
 
