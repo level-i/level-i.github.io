@@ -4077,7 +4077,15 @@ function normalizarPropiedadDesdeMake(itemProp) {
   var ocupacionMaxRaw = formatearCampoValor(f.Ocupacion_Max !== undefined ? f.Ocupacion_Max : (f["Ocupación máxima"] || f.ocupacion_max || ""));
   var ocupacionMax = parseInt(parsearNumeroContable(ocupacionMaxRaw), 10);
   if (isNaN(ocupacionMax) || ocupacionMax < 0) ocupacionMax = 0;
-
+  var fechaContratoProp = formatearFechaHoraBD(
+  f.Fecha_Contrato || f["Fecha del Contrato"] || f["Fecha Contrato"] || f.fecha_contrato || ""
+);
+var codigoPropiedadRaw = formatearCampoValor(
+  f.ID_Propiedad_Arrendada || f["ID Propiedad"] || f.Codigo_Propiedad || f.codigo_propiedad || ""
+);
+var codigoInquilinoRaw = formatearCampoValor(
+  f["Autho-code-inquilino"] || f.codigo_inquilino || f["ID Inquilino"] || ""
+);
   var sumaHaberProp = parsearNumeroContable(formatearCampoValor(f.Suma_Haber || f.Total_Ingresado_Haber || 0));
   var sumaDebeProp = parsearNumeroContable(formatearCampoValor(f.Suma_Debe || f.Total_Gastos_Debe || 0));
   var deudaRaw = formatearCampoValor(f.Saldo_Vivo_Actual !== undefined ? f.Saldo_Vivo_Actual : (f.Deuda !== undefined ? f.Deuda : (f.deuda || "0")));
@@ -4141,7 +4149,7 @@ function normalizarPropiedadDesdeMake(itemProp) {
     ? portadaExpl
     : (listaFotos.length > 0 ? listaFotos[0] : "");
 
-  return {
+ return {
     record_id: recId,
     nombre_propiedad: nombreProp,
     direccion: direccionProp,
@@ -4151,6 +4159,9 @@ function normalizarPropiedadDesdeMake(itemProp) {
     renta_mensual: cuotaProp,
     cuota: cuotaProp,
     ocupacion_max: ocupacionMax,
+    fecha_contrato: fechaContratoProp,
+    codigo_propiedad: codigoPropiedadRaw,
+    codigo_inquilino: codigoInquilinoRaw,
     deuda: deudaRaw,
     saldo_vivo: saldoVivo,
     suma_haber: sumaHaberProp,
@@ -4176,7 +4187,7 @@ function normalizarPropiedadDesdeMake(itemProp) {
     contrato_pdf_url: contratoUrl,
     max_propiedades: maxProps > 0 ? maxProps : 4
   };
-}
+} 
 
 function convertirFechaAInputISO(fechaStr) {
   var s = String(fechaStr || "").trim();
@@ -6630,17 +6641,30 @@ function calcularDesgloseFiscalRecibo(rec) {
 }
 
 function construirNotaLegalRecibo(fichaProp, rec) {
-  var occMax = (fichaProp && fichaProp.ocupacion_max > 0)
-    ? fichaProp.ocupacion_max
-    : ((window.EXPEDIENTE_ACTUAL && window.EXPEDIENTE_ACTUAL.ocupacion_max > 0) ? window.EXPEDIENTE_ACTUAL.ocupacion_max : 0);
+  var tipoUso = String(
+    (fichaProp && fichaProp.tipo_uso) ||
+    (window.EXPEDIENTE_ACTUAL && window.EXPEDIENTE_ACTUAL.tipo_uso) ||
+    ""
+  ).trim();
+
+  var esVivienda = /vivienda/i.test(tipoUso);
+  if (!esVivienda) {
+    return "";
+  }
+
+  var occMax = parseInt(parsearNumeroContable(
+    (fichaProp && fichaProp.ocupacion_max !== undefined ? fichaProp.ocupacion_max : 0) ||
+    (window.EXPEDIENTE_ACTUAL && window.EXPEDIENTE_ACTUAL.ocupacion_max !== undefined ? window.EXPEDIENTE_ACTUAL.ocupacion_max : 0)
+  ), 10);
+  if (isNaN(occMax)) occMax = 0;
 
   var textoOcupacion = occMax > 0
-    ? (" La ocupación máxima permitida según cédula de habitabilidad es de <strong>" + occMax + " persona(s)</strong>.")
-    : " Deberá respetarse en todo momento la ocupación máxima legal del inmueble.";
+    ? (" La ocupación máxima permitida en este inmueble es de <strong>" + occMax + " persona(s)</strong>.")
+    : "";
 
-  return "<strong>Aviso Contractual y de Ocupación:</strong> Este documento acredita el pago o liquidación correspondiente al inmueble y periodo indicados. Queda prohibido subarrendar o ceder el uso del inmueble sin consentimiento previo y por escrito de la propiedad, así como empadronar o incorporar a terceros no autorizados." +
+  return "<strong>Aviso Legal (Vivienda · Subarriendo y Empadronamiento):</strong> Queda expresamente prohibido el subarriendo total o parcial o la cesión del uso de la vivienda sin autorización previa y por escrito de la propiedad, así como los empadronamientos o incorporaciones no autorizados conforme al contrato y a la normativa vigente." +
     textoOcupacion +
-    " El incumplimiento de lo pactado, el empadronamiento irregular o la aportación de datos o documentación inexactos ante la Administración podrá dar lugar a las acciones contractuales, administrativas y, en su caso, civiles o penales (incluida falsedad documental) que correspondan.";
+    " El incumplimiento contractual o la aportación de datos irregulares podrá dar lugar a las acciones legales que correspondan.";
 }
 
 function notificarRegistroReciboEnLark(rec, esFactura, fiscal) {
@@ -6688,7 +6712,61 @@ function notificarRegistroReciboEnLark(rec, esFactura, fiscal) {
     }).catch(function(){});
   });
 }
+function formatearFechaYYMMDD(fechaStr) {
+  var s = String(fechaStr || "").trim();
+  if (!s) return "";
+  var mDmy = s.match(/\b(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})\b/);
+  if (mDmy) {
+    var dd = String(mDmy[1]).padStart(2, "0");
+    var mm = String(mDmy[2]).padStart(2, "0");
+    var yy = String(mDmy[3]).slice(-2);
+    return yy + mm + dd;
+  }
+  var mIso = s.match(/\b(\d{4})[\/\-](\d{1,2})[\/\-](\d{1,2})\b/);
+  if (mIso) {
+    var yy2 = String(mIso[1]).slice(-2);
+    var mm2 = String(mIso[2]).padStart(2, "0");
+    var dd2 = String(mIso[3]).padStart(2, "0");
+    return yy2 + mm2 + dd2;
+  }
+  return "";
+}
 
+function obtenerNumeroMovimientoOrdenado(rec) {
+  var dniRef = obtenerDniUnificado(rec) || "";
+  var movsContrato = (window.RECIBOS_CARTERA || [])
+    .filter(function(r) { return coincidenReciboYPropiedad(r, rec.propiedad, dniRef); })
+    .sort(function(a, b) {
+      var diff = fechaValorATimestamp(a) - fechaValorATimestamp(b);
+      if (diff !== 0) return diff;
+      return String(a.id_recibo || "").localeCompare(String(b.id_recibo || ""));
+    });
+
+  var idx = movsContrato.findIndex(function(r) {
+    return String(r.id_recibo) === String(rec.id_recibo);
+  });
+  var correlativo = idx >= 0 ? (idx + 1) : 1;
+  return String(correlativo).padStart(4, "0");
+}
+
+function construirReferenciaContratoYMovimiento(fichaProp, rec) {
+  var fechaRaw = (fichaProp && fichaProp.fecha_contrato) || (window.EXPEDIENTE_ACTUAL && window.EXPEDIENTE_ACTUAL.fecha_contrato) || "";
+  var yymmdd = formatearFechaYYMMDD(fechaRaw);
+
+  var propCodeRaw = (fichaProp && fichaProp.codigo_propiedad) || (window.EXPEDIENTE_ACTUAL && window.EXPEDIENTE_ACTUAL.codigo_propiedad) || "";
+  var propDigits = String(propCodeRaw).replace(/\D/g, "");
+
+  var inqCodeRaw = (fichaProp && fichaProp.codigo_inquilino) || (window.EXPEDIENTE_ACTUAL && window.EXPEDIENTE_ACTUAL.codigo_inquilino) || (window.sesionActiva && window.sesionActiva.codigo_inquilino) || "";
+  var inqDigits = String(inqCodeRaw).replace(/\D/g, "");
+
+  var numMov = obtenerNumeroMovimientoOrdenado(rec);
+
+  if (yymmdd && propDigits && inqDigits) {
+    var baseContrato = yymmdd + propDigits.padStart(4, "0") + inqDigits.padStart(3, "0");
+    return baseContrato + "-" + numMov;
+  }
+  return String(rec.id_recibo || "DOC") + "-" + numMov;
+}
 window.descargarReciboPDF = function(idRecibo) {
   var rec = window.RECIBOS_CARTERA.find(function(r) { return String(r.id_recibo) === String(idRecibo); });
   if (!rec) return;
@@ -6702,12 +6780,28 @@ window.descargarReciboPDF = function(idRecibo) {
   var dniEmisor = rec.dni_propietario || (window.sesionActiva.rol === "PROPIETARIO" ? window.sesionActiva["DNI-NIE-CIF"] : "");
   var ibanRecibo = rec.iban || window.EXPEDIENTE_ACTUAL.iban || "---";
   var fechaAbono = (rec.fecha_pago && rec.fecha_pago !== "---") ? rec.fecha_pago : new Date().toLocaleDateString("es-ES");
-
   var fiscal = calcularDesgloseFiscalRecibo(rec);
-  var tituloDoc = fiscal.esFactura
-    ? "Factura de Arrendamiento (Emisor Arrendador)"
-    : "Recibo Oficial entre Arrendador y Arrendatario";
-  var notaLegalHTML = construirNotaLegalRecibo(fichaProp, rec);
+var dniReceptor = String(dniRecibo || "").trim().toUpperCase();
+var tipoPersReceptor = String(rec.tipo_personalidad || "").trim().toUpperCase();
+var esAutonomoOEmpresa =
+  tipoPersReceptor.includes("AUTONOMO") ||
+  tipoPersReceptor.includes("AUTÓNOMO") ||
+  tipoPersReceptor.includes("EMPRESA") ||
+  tipoPersReceptor.includes("CIF") ||
+  tipoPersReceptor.includes("SOCIEDAD") ||
+  /[ABCDEFGHJNPQRSUVW]/.test(dniReceptor.charAt(0));
+
+var etiquetaTotalDocumento = esAutonomoOEmpresa ? "TOTAL FACTURA" : "TOTAL ABONADO";
+var refContratoCompleta = construirReferenciaContratoYMovimiento(fichaProp, rec);
+
+var tituloDoc = fiscal.esFactura
+  ? "Factura de Arrendamiento (Emisor Arrendador)"
+  : "Recibo Oficial entre Arrendador y Arrendatario";
+var notaLegalHTML = construirNotaLegalRecibo(fichaProp, rec);
+var bloqueAvisoLegalHTML = notaLegalHTML
+  ? '<div class="legal-clause">' + notaLegalHTML + '</div>'
+  : '';
+  
   var resPct = calcularResumenPorcentajeACuenta(rec.propiedad, dniRecibo);
 
   notificarRegistroReciboEnLark(rec, fiscal.esFactura, fiscal);
@@ -6788,19 +6882,19 @@ window.descargarReciboPDF = function(idRecibo) {
     '<div class="sheet-wrap">' +
       '<div class="line-gutter" aria-hidden="true">' + gutterNums + '</div>' +
       '<div class="sheet">' +
-        '<div class="header">' +
-          '<div><div class="title-doc">' + escaparHTML(tituloDoc) + '</div><div style="font-size:12.5px; margin-top:3px;">Nº ' + escaparHTML(rec.id_recibo) + ' · Fecha: ' + escaparHTML(rec.periodo) + '</div></div>' +
+        '<div><div class="title-doc">' + escaparHTML(tituloDoc) + '</div><div style="font-size:12.5px; margin-top:3px;">Nº Contrato: <strong>' + escaparHTML(refContratoCompleta) + '</strong> · Fecha: ' + escaparHTML(rec.periodo) + '</div></div>' +
+          
           '<div>' + selloEstado + '</div>' +
         '</div>' +
         '<div class="grid-2">' +
           '<div class="box"><strong>Parte Arrendadora (Emisor):</strong><br>' + escaparHTML(nombreEmisor) + (dniEmisor ? '<br>DNI/NIE/CIF: ' + escaparHTML(dniEmisor) : '') + '<br>Inmueble: ' + escaparHTML(rec.propiedad) + '<br>IBAN: ' + escaparHTML(ibanRecibo) + '</div>' +
           '<div class="box"><strong>Parte Arrendataria (Receptor):</strong><br>' + escaparHTML(rec.inquilino) + '<br>DNI/NIE/CIF: ' + escaparHTML(dniRecibo) + '<br>Régimen: ' + escaparHTML(detectarPersonalidadPorDni(dniRecibo)) + '<br>Fecha Abono: ' + escaparHTML(fechaAbono) + '</div>' +
         '</div>' +
-        '<div class="legal-clause">' + notaLegalHTML + '</div>' +
+        bloqueAvisoLegalHTML +
         '<div class="table-scroll"><table><thead><tr><th>Concepto</th><th>Categoría</th><th>Periodo</th><th style="text-align:right;">Importe</th></tr></thead><tbody>' +
           '<tr><td><strong>' + escaparHTML(rec.concepto) + '</strong></td><td>' + escaparHTML(rec.tipo) + '</td><td>' + escaparHTML(rec.periodo) + '</td><td style="text-align:right; white-space:nowrap;">' + formatearEuros(fiscal.base) + '</td></tr>' +
           filasImpuestosHTML +
-          '<tr class="total-row"><td colspan="3">TOTAL DEL DOCUMENTO</td><td style="text-align:right; white-space:nowrap;">' + formatearEuros(fiscal.totalFinal) + '</td></tr>' +
+          '<tr class="total-row">' + etiquetaTotalDocumento + '<td colspan="3"></td><td style="text-align:right; white-space:nowrap;">' + formatearEuros(fiscal.totalFinal) + '</td></tr>' +
         '</tbody></table></div>' +
         '<div class="doc-footer">Registro trazable en Level.immo · LEVEL PUNTO IMMO 24365 SLU (API 4173 · AICAT 14200).</div>' +
       '</div>' +
