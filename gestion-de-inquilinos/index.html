@@ -4572,20 +4572,28 @@ window.abrirOSincronizarPdfRecibo = async function(idRecibo) {
   var caja = document.getElementById("visor-contenido-nativo");
   var modal = document.getElementById("modal-visor-seguro");
 
-  if (rec.url_factura && !rec.url_factura.includes("open.larksuite.com")) {
-    mostrarIframePdfEnVisor(rec.url_factura, rec.concepto, rec.propiedad);
+  var urlDirecta = String(rec.url_factura || "").trim();
+  var esUrlValida = /^https?:\/\//i.test(urlDirecta) &&
+    !urlDirecta.includes("open.larksuite.com") &&
+    !/^https?:\/\/(www\.)?level\.immo\/?$/i.test(urlDirecta);
+
+  if (esUrlValida) {
+    mostrarIframePdfEnVisor(urlDirecta, rec.concepto, rec.propiedad);
     return;
   }
 
   if (rec.file_token_pdf) {
     if (titulo && caja && modal) {
-      titulo.innerText = "☁️ Publicando Documento PDF en el FTP de level.immo...";
-      caja.innerHTML = '<div style="padding:30px; text-align:center; color:var(--neon-cyan); font-weight:700;">⏳ Generando enlace público en el FTP de <code>level.immo</code>...</div>';
+      titulo.innerText = "⏳ Preparando documento adjunto...";
+      caja.innerHTML = '<div style="padding:30px; text-align:center; color:var(--neon-cyan); font-weight:700;">⏳ Solicitando enlace del documento a Make...</div>';
       modal.style.display = "flex";
     }
 
     var cleanName = String(rec.id_recibo + "_" + (rec.nombre_archivo_pdf || "documento.pdf")).replace(/[^a-zA-Z0-9._-]/g, "_");
-    var urlEsperadaFtp = "https://level.immo/app-alquileres-contratos/" + cleanName;
+    var carpetaDestino = /contrato/i.test(cleanName + " " + (rec.concepto || ""))
+      ? "app-alquileres-contratos"
+      : "app-alquileres-facturas";
+    var urlSugerida = "https://level.immo/" + carpetaDestino + "/" + cleanName;
 
     try {
       var res = await fetch(URL_WEBHOOK_PROPERTY_GESTION, {
@@ -4599,21 +4607,32 @@ window.abrirOSincronizarPdfRecibo = async function(idRecibo) {
           propiedad: rec.propiedad,
           file_token: rec.file_token_pdf,
           nombre_archivo: cleanName,
-          url_destino_sugerida: urlEsperadaFtp
+          url_destino_sugerida: urlSugerida
         })
       });
       var txt = await res.text();
-      var urlFinal = urlEsperadaFtp;
+      var urlFinal = "";
       try {
         var j = JSON.parse(txt);
-        urlFinal = j.url_ftp || j.URL_Factura_FTP || j.url || urlEsperadaFtp;
+        urlFinal = String(j.url_ftp || j.URL_Factura_FTP || j.url || "").trim();
       } catch (_) {}
 
-      rec.url_factura = urlFinal;
-      mostrarIframePdfEnVisor(urlFinal, rec.concepto, rec.propiedad);
+      if (urlFinal && /^https?:\/\//i.test(urlFinal)) {
+        rec.url_factura = urlFinal;
+        mostrarIframePdfEnVisor(urlFinal, rec.concepto, rec.propiedad);
+      } else if (caja) {
+        caja.innerHTML = '<div style="padding:24px; color:var(--amber); text-align:center;">⚠️ El documento aún no tiene una URL pública disponible. Revisa la subida en <code>/' + escaparHTML(carpetaDestino) + '/</code>.</div>';
+      }
     } catch (e) {
-      if (caja) caja.innerHTML = '<div style="padding:20px; color:#fca5a5;">⚠️ Error al sincronizar el PDF con el FTP.</div>';
+      if (caja) caja.innerHTML = '<div style="padding:20px; color:#fca5a5;">⚠️ No se pudo obtener el documento en este momento.</div>';
     }
+    return;
+  }
+
+  if (titulo && caja && modal) {
+    titulo.innerText = "📎 Documento · " + (rec.concepto || "") + " (" + (rec.propiedad || "") + ")";
+    caja.innerHTML = '<div style="padding:24px; color:var(--text-muted); text-align:center;">No hay un archivo PDF adjunto vinculado a este movimiento.</div>';
+    modal.style.display = "flex";
   }
 };
 
@@ -4627,11 +4646,11 @@ function mostrarIframePdfEnVisor(urlPdf, concepto, propiedad) {
   var caja = document.getElementById("visor-contenido-nativo");
   var modal = document.getElementById("modal-visor-seguro");
   if (titulo && caja && modal) {
-    titulo.innerText = "📎 Justificante / Documento PDF · " + (concepto || "") + " (" + (propiedad || "") + ")";
+    titulo.innerText = "📎 Documento · " + (concepto || "") + " (" + (propiedad || "") + ")";
     caja.innerHTML =
-      '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; padding:10px 14px; background:var(--bg-input); border:1px solid var(--border); border-radius:8px;">' +
-        '<span style="font-size:12.5px; color:var(--emerald);">✅ Enlace público FTP verificado</span>' +
-        '<a href="' + escaparHTML(urlPdf) + '" target="_blank" rel="noopener" class="btn-pdf-receipt" style="text-decoration:none;">⬇️ Abrir / Descargar PDF</a>' +
+      '<div style="display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:12px; padding:10px 14px; background:var(--bg-input); border:1px solid var(--border); border-radius:8px;">' +
+        '<span style="font-size:12.5px; color:var(--emerald);">✅ Documento disponible</span>' +
+        '<a href="' + escaparHTML(urlPdf) + '" target="_blank" rel="noopener" class="btn-pdf-receipt" style="text-decoration:none;">⬇️ Abrir / Descargar Documento</a>' +
       '</div>' +
       '<iframe src="' + escaparHTML(urlPdf) + '" style="width:100%; height:72vh; border:1px solid var(--border); border-radius:10px; background:#fff;" title="Documento PDF"></iframe>';
     modal.style.display = "flex";
@@ -8229,20 +8248,46 @@ function hidratarPortalDesdePayloadMake(rawPayload, dniBuscado) {
       document.getElementById("val-propiedad").innerText = "Sin propiedades autorizadas vinculadas";
     }
     mostrarVistaInterna("residente");
-  } else {
+ } else {
     if (tabProp) tabProp.style.display = "none";
     if (lawyerBanner) lawyerBanner.style.display = "none";
     if (btnPdfRes) btnPdfRes.style.display = "none";
 
-    var propInq = formatearCampoValor(reg.PROPIEDAD || reg.propiedad || (window.CARTERA_PROPIEDADES[0] && window.CARTERA_PROPIEDADES[0].nombre_propiedad) || "---");
-    if (propInq && propInq !== "---" && !window.CARTERA_PROPIEDADES.some(function(p) { return p.nombre_propiedad.toUpperCase() === propInq.toUpperCase(); })) {
-      window.CARTERA_PROPIEDADES.push(normalizarPropiedadDesdeMake(reg));
-    }
+    var propNormalizadaInq = normalizarPropiedadDesdeMake(reg);
+    var propInq = formatearCampoValor(
+      reg.PROPIEDAD ||
+      reg.propiedad ||
+      reg["Propiedad arrendada"] ||
+      reg.PROPERTY_PROPIEDADES ||
+      reg.Propiedad ||
+      reg.Inmueble ||
+      (propNormalizadaInq && propNormalizadaInq.nombre_propiedad !== "---" ? propNormalizadaInq.nombre_propiedad : "") ||
+      (window.CARTERA_PROPIEDADES[0] && window.CARTERA_PROPIEDADES[0].nombre_propiedad) ||
+      (window.RECIBOS_CARTERA[0] && window.RECIBOS_CARTERA[0].propiedad) ||
+      ""
+    );
+
     if (propInq && propInq !== "---") {
+      propNormalizadaInq.nombre_propiedad = propInq;
+      if (!window.CARTERA_PROPIEDADES.some(function(p) { return String(p.nombre_propiedad || "").toUpperCase() === propInq.toUpperCase(); })) {
+        window.CARTERA_PROPIEDADES.push(propNormalizadaInq);
+      }
+      window.sesionActiva.propiedad = propInq;
       cargarExpedientePropiedadEnVistaResidente(propInq);
+    } else {
+      document.getElementById("val-nombre").innerText = nombreTitular || "---";
+      document.getElementById("val-dni").innerText = dniBuscado + " · " + detectarPersonalidadPorDni(dniBuscado);
+      document.getElementById("val-propiedad").innerText = "Expediente vinculado";
+      actualizarTarjetaSaldoVivoEnPantalla();
+      renderizarRecibosInquilino("", dniBuscado);
+    }
+
+    var elCodAutho = document.getElementById("val-codigo-autho");
+    if (elCodAutho) {
+      elCodAutho.innerText = window.sesionActiva.codigo_inquilino || "---";
     }
     mostrarVistaInterna("residente");
-  }
+  } 
 
   actualizarVisibilidadSolvenciaPorRol();
 }
