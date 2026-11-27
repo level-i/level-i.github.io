@@ -8188,13 +8188,17 @@ function hidratarPortalDesdePayloadMake(rawPayload, dniBuscado) {
 
   window.sesionActiva = {
     "DNI-NIE-CIF": dniBuscado,
-    codigo_inquilino: formatearCampoValor(reg["Autho-code-inquilino"] || reg["Autho-code-propietario"] || reg["Autho-code-abogado"] || ""),
+    codigo_inquilino: formatearCampoValor(reg["Auto-code-inquilino"] || reg["Autho-code-propietario"] || reg["Autho-code-abogado"] || ""),
     rol: rolDetectado,
     tabla_filtro: rolDetectado === "PROPIETARIO" ? "PROPERTY_PROPIETARIOS" : (rolDetectado === "ABOGADO" ? "PROPERTY_PROPIETARIOS_LEGAL_SERVICES" : "PROPERTY_INQUILINOS"),
     propiedad: formatearCampoValor(reg.PROPIEDAD || reg.propiedad || reg.Lista_Propiedades_Autorizadas || ""),
     nombre: nombreTitular,
     nombre_pila: nombrePila,
     iban_propietario: ibanProp,
+    telefono: formatearCampoValor(
+      reg.Teléfono || reg.Telefono || reg["Teléfono Móvil"] || reg["Teléfono WhatsApp"] ||
+      reg.telefono_propietario || reg.telefono || reg.WhatsApp || reg.Movil || ""
+    ),
     idioma: window.sesionActiva.idioma || "es"
   };
 
