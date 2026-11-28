@@ -4029,9 +4029,13 @@ function extraerDatosPdfSuministro(f) {
   return resultado;
 }
 
+function limpiarIdAlfanumerico(v) {
+  return String(v || "").trim().toUpperCase().replace(/[^A-Z0-9]/g, "");
+}
+
 function extraerRegistroMake(rawPayload, identificadorBuscado) {
   if (!rawPayload) return {};
-  var target = String(identificadorBuscado || window.sesionActiva["DNI-NIE-CIF"] || "").trim().toUpperCase();
+  var target = limpiarIdAlfanumerico(identificadorBuscado || window.sesionActiva["DNI-NIE-CIF"] || "");
 
   var listaItems = null;
   if (rawPayload.inquilino_items) listaItems = asegurarArrayDesdeMake(rawPayload.inquilino_items);
@@ -4044,15 +4048,16 @@ function extraerRegistroMake(rawPayload, identificadorBuscado) {
     if (target) {
       itemCoincidente = listaItems.find(function(it) {
         var f = it.fields || it;
-        var dniFila = formatearCampoValor(f["DNI-NIE-CIF"] || f["DNI-NIE-NIF"] || f["DNI INQUILINO"] || f["DNI/NIE Inquilinos"] || f.dni_inquilino || f.dni || "").toUpperCase();
-        var codFila = formatearCampoValor(f["Autho-code-inquilino"] || f["Autho-code-propietario"] || f["Auto-code-propietario"] || f["Autho-code-abogado"] || f.codigo_inquilino || f.Search_Code || "").toUpperCase();
-        return dniFila.includes(target) || codFila.includes(target);
+        var dniFila = limpiarIdAlfanumerico(formatearCampoValor(
+          f["DNI-NIE-CIF"] || f["DNI-NIE-NIF"] || f["DNI INQUILINO"] || f["DNI/NIE Inquilinos"] || f.dni_inquilino || f.dni || ""
+        ));
+        var codFila = limpiarIdAlfanumerico(formatearCampoValor(
+          f["Autho-code-inquilino"] || f["Auto-code-inquilino"] || f["Autho-code-propietario"] || f["Auto-code-propietario"] || f["Autho-code-abogado"] || f.codigo_inquilino || f.Search_Code || ""
+        ));
+        return (dniFila && dniFila.includes(target)) || (codFila && codFila.includes(target));
       });
     }
     if (target && !itemCoincidente) {
-  return {};
-}
-if (target && !itemCoincidente) {
       return {};
     }
     var elegido = itemCoincidente || listaItems[0];
@@ -5842,7 +5847,7 @@ function coincidenReciboYPropiedad(r, nombrePropiedad, dniTitular) {
   var propRec = String(r.propiedad || "").trim().toUpperCase();
   var concRec = String(r.concepto || "").trim().toUpperCase();
   var dirRec = String(r.direccion || "").trim().toUpperCase();
-  var dniRec = String(obtenerDniUnificado(r) || "").trim().toUpperCase();
+  var dniRecLimpio = limpiarIdAlfanumerico(obtenerDniUnificado(r));
 
   var tienePropEspecifica = Boolean(propUp && propUp !== "---" && !propUp.includes(","));
   var matchProp = tienePropEspecifica
@@ -5850,19 +5855,26 @@ function coincidenReciboYPropiedad(r, nombrePropiedad, dniTitular) {
     : false;
 
   if (tienePropEspecifica) {
-    if (!matchProp) return false;
-    if (!dniUp) return true;
-    var listaDnisConProp = dniUp.split(",").map(function(s) { return s.trim(); }).filter(Boolean);
-    return !dniRec || listaDnisConProp.some(function(d) { return dniRec.includes(d); });
+    if (matchProp) {
+      if (!dniUp) return true;
+      var listaDnisConProp = dniUp.split(",").map(limpiarIdAlfanumerico).filter(Boolean);
+      return !dniRecLimpio || listaDnisConProp.some(function(d) { return dniRecLimpio.includes(d); });
+    }
+    // Si el nombre de la propiedad en recibos viene distinto pero el DNI del inquilino coincide exactamente, lo acepta
+    if (dniUp && dniRecLimpio) {
+      var listaDnisFallback = dniUp.split(",").map(limpiarIdAlfanumerico).filter(Boolean);
+      return listaDnisFallback.some(function(d) { return dniRecLimpio.includes(d); });
+    }
+    return false;
   }
 
   if (dniUp) {
-    var listaDnis = dniUp.split(",").map(function(s) { return s.trim(); }).filter(Boolean);
-    return listaDnis.some(function(d) { return dniRec.includes(d); });
+    var listaDnis = dniUp.split(",").map(limpiarIdAlfanumerico).filter(Boolean);
+    return listaDnis.some(function(d) { return dniRecLimpio.includes(d); });
   }
   return true;
 }
-
+  
 function calcularSaldoVivoPropiedad(nombrePropiedad, fallbackDeuda, dniTitular) {
   enriquecerDatosCarteraYLimpiarRecibosVacios();
   var dniRef = dniTitular || ((window.sesionActiva && window.sesionActiva.rol === "INQUILINO") ? window.sesionActiva["DNI-NIE-CIF"] : "");
@@ -8162,26 +8174,12 @@ function normalizarPayloadMakeSiVienePlano(rawPayload) {
     try { rawPayload = parsearJsonBlindadoMake(rawPayload); } catch (_) { return {}; }
   }
   if (Array.isArray(rawPayload)) {
-    return {
-      inquilino_items: rawPayload,
-      cartera_propiedades: rawPayload,
-      recibos: rawPayload
-    };
+    return { inquilino_items: rawPayload };
   }
   if (typeof rawPayload === "object") {
     var clon = Object.assign({}, rawPayload);
-    var listasPosibles = [
-      "records", "rows", "bundles", "data", "output", "resultado",
-      "expediente", "propiedades", "cartera_propiedades", "propiedades_propietario",
-      "recibos", "suministros_y_gastos", "movimientos"
-    ];
-    for (var i = 0; i < listasPosibles.length; i++) {
-      var k = listasPosibles[i];
-      if (Array.isArray(clon[k]) && clon[k].length > 0) {
-        if (!clon.inquilino_items) clon.inquilino_items = clon[k];
-        if (!clon.cartera_propiedades) clon.cartera_propiedades = clon[k];
-        if (!clon.recibos) clon.recibos = clon[k];
-      }
+    if (!clon.recibos) {
+      clon.recibos = clon.recibos_items || clon.suministros_y_gastos || clon.suministros_items || clon.gastos_items || clon.movimientos || clon.recibos_lista || [];
     }
     return clon;
   }
@@ -8222,13 +8220,19 @@ function hidratarPortalDesdePayloadMake(rawPayload, dniBuscado) {
     idioma: window.sesionActiva.idioma || "es"
   };
 
-  var rawProps = asegurarArrayDesdeMake(reg.cartera_propiedades || reg.propiedades_propietario || reg.propiedades || []);
+ var rawProps = asegurarArrayDesdeMake(
+    reg.cartera_propiedades || reg.propiedades_propietario || reg.propiedades ||
+    rawPayload.cartera_propiedades || rawPayload.propiedades_propietario || rawPayload.propiedades || []
+  );
   window.CARTERA_PROPIEDADES = rawProps.map(normalizarPropiedadDesdeMake);
 
-  var rawRecs = asegurarArrayDesdeMake(reg.recibos || reg.suministros_y_gastos || reg.movimientos || reg.recibos_lista || []);
+  var rawRecs = asegurarArrayDesdeMake(
+    reg.recibos || reg.recibos_items || reg.suministros_y_gastos || reg.suministros_items || reg.gastos_items || reg.movimientos || reg.recibos_lista ||
+    rawPayload.recibos || rawPayload.recibos_items || rawPayload.suministros_y_gastos || rawPayload.suministros_items || rawPayload.gastos_items || rawPayload.movimientos || rawPayload.recibos_lista || []
+  );
   window.RECIBOS_CARTERA = rawRecs.map(normalizarReciboDesdeMake);
+  
   enriquecerDatosCarteraYLimpiarRecibosVacios();
-
   document.getElementById("login-section").style.display = "none";
   document.getElementById("portal-dashboard").style.display = "block";
   document.getElementById("main-layout").classList.add("fullscreen-mode");
